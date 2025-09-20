@@ -6,11 +6,12 @@ import type { BalancesInfo, FetchedBalance } from '../../util/types';
 
 import { Coin, Lock1 } from 'iconsax-react';
 import { useCallback, useEffect, useMemo, useReducer } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ZERO, bnMax } from '@polkadot/util';
 
-import { useChainInfo, useFormatted, useLockedInReferenda, usePrices, useReservedDetails, useTranslation } from '../../hooks';
+import { useChainInfo, useFormatted, useIsExtensionPopup, useLockedInReferenda, usePrices, useReservedDetails, useTranslation } from '../../hooks';
 import { windowOpen } from '../../messaging';
 import { updateStorage } from '../../util';
 import { GOVERNANCE_CHAINS } from '../../util/constants';
@@ -23,6 +24,9 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
   const formatted = useFormatted(address, genesisHash);
   const reservedReason = useReservedDetails(formatted, genesisHash);
   const { api, chainName } = useChainInfo(genesisHash);
+  const isExtension = useIsExtensionPopup();
+  const navigate = useNavigate();
+
   const { delegatedBalance, totalLocked, unlockableAmount } = useLockedInReferenda(address, genesisHash, undefined); // TODO: timeToUnlock!
   const [state, dispatch] = useReducer(lockedReservedReducer, {
     data: undefined,
@@ -60,8 +64,14 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
   const hasAmount = useCallback((amount: BN | undefined | null) => amount && !amount.isZero(), []);
 
   const onTransferable = useCallback(() => {
-    address && windowOpen(`/send/${address}/${token?.genesisHash}/${assetId}`).catch(console.error);
-  }, [address, assetId, token?.genesisHash]);
+    if (!address) {
+      return;
+    }
+
+    const func = isExtension ? windowOpen : navigate;
+
+    func(`/send/${address}/${token?.genesisHash}/${assetId}`) as void;
+  }, [address, assetId, isExtension, navigate, token?.genesisHash]);
 
   const displayPopup = useCallback((type: Type) => () => {
     const items: Record<string, BN | undefined> = {};
