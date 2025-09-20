@@ -53,6 +53,7 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
         />
         <OpenerButton
         onClick={goToAccountPage}
+        type='Arrow'
         />
       </Stack>
     </Stack>

@@ -2,16 +2,20 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box } from '@mui/material';
-import { Edit } from 'iconsax-react';
+import { ArrowRight3, Edit } from 'iconsax-react';
 import React from 'react';
 
 interface Props {
   flip?: boolean;
   style?: React.CSSProperties | undefined;
+  type?: 'Edit' | 'Arrow';
   onClick?: () => void
 }
 
-export default function OpenerButton ({ flip, onClick, style = {} }: Props): React.ReactElement {
+export default function OpenerButton ({ flip, onClick, style = {}, type = 'Edit' }: Props): React.ReactElement {
+  const Icon = type === 'Arrow' ? ArrowRight3 : Edit;
+  const variant = type === 'Arrow' ? 'Bold' : 'Bulk';
+
   return (
     <Box
       onClick={onClick}
@@ -36,14 +40,14 @@ export default function OpenerButton ({ flip, onClick, style = {} }: Props): Rea
         ...style
       }}
     >
-      <Edit
+      <Icon
         className='edit-icon'
         color='currentColor'
         size='24px'
         style={{
           transform: flip ? 'scaleY(-1)' : undefined
         }}
-        variant='Bulk'
+        variant={variant}
       />
     </Box>
   );
