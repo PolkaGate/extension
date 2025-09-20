@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
-import { FLOATING_POINT_DIGIT, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
+import { FLOATING_POINT_DIGIT, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/numberUtils';
 import { BN_ZERO, noop } from '@polkadot/util';
@@ -24,7 +24,7 @@ import NumberedTitle from './partials/NumberedTitle';
 import useLimitedFeeCall from './useLimitedFeeCall';
 import useParaSpellFeeCall from './useParaSpellFeeCall';
 import useWarningMessage from './useWarningMessage';
-import { isOnSameChain, normalizeChainName } from './utils';
+import { normalizeChainName } from './utils';
 
 interface Props {
   inputs: Inputs | undefined;
@@ -49,37 +49,13 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
   const isNativeToken = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
   const amountAsBN = useMemo(() => decimal ? amountToMachine(amount, decimal) : undefined, [amount, decimal]);
 
-  const { maxFee, totalFee, transaction } = useLimitedFeeCall(address, assetId, assetToTransfer, inputs, genesisHash, teleportState, transferType);
-  const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, transferType, totalFee);
+  const { maxFee } = useLimitedFeeCall(address, assetId, assetToTransfer, inputs, genesisHash, teleportState, transferType);
   const { paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, amountAsBN, genesisHash, inputs, senderChainName, setError);
-
-  useEffect(() => {
-    // we only use these parts to support testnets otherwise we use paraSpell to form the transaction
-    if (!transaction) {
-      return;
-    }
-
-    setInputs((prevInputs) => ({
-      ...(prevInputs || {}),
-      transaction
-    }));
-  }, [setInputs, transaction]);
+  const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, transferType, paraSpellFee);
 
   useEffect(() => {
     if (!genesisHash) {
       return;
-    }
-
-    const _isOnSameChain = isOnSameChain(senderChainName, inputs?.recipientChain?.text);
-
-    if ((TEST_NETS.includes(genesisHash) || _isOnSameChain) && totalFee) {
-      setInputs((prevInputs) => {
-        if (prevInputs?.fee?.eq?.(totalFee)) {
-          return prevInputs;
-        }
-
-        return { ...prevInputs, fee: totalFee };
-      });
     }
 
     paraSpellFee && setInputs((prevInputs) => {
@@ -89,7 +65,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
 
       return { ...prevInputs, fee: paraSpellFee };
     });
-  }, [genesisHash, inputs?.recipientChain?.text, paraSpellFee, senderChainName, setInputs, totalFee]);
+  }, [genesisHash, inputs?.recipientChain?.text, paraSpellFee, senderChainName, setInputs]);
 
   useEffect(() => {
     paraSpellTransaction && setInputs((prevInputs) => ({
@@ -151,10 +127,10 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
     try {
       let mayBeEDasBN;
 
-      if (senderChainName && inputs?.token && !TEST_NETS.includes(genesisHash ?? '')) {
+      if (senderChainName && inputs?.token) {
         const _senderChainName = normalizeChainName(senderChainName);
 
-        mayBeEDasBN = getExistentialDeposit(_senderChainName as TChain, { symbol: inputs.token });
+        mayBeEDasBN = getExistentialDeposit(_senderChainName as TChain, { symbol: inputs.token }); // If ED is only relevant for native assets, we can simply retrieve it from the API
       } else {
         mayBeEDasBN = api?.consts['balances']['existentialDeposit'] as unknown as BN;
       }
@@ -167,7 +143,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
     } catch {
       return maybeED;
     }
-  }, [api?.consts, decimal, genesisHash, inputs?.token, senderChainName]);
+  }, [api?.consts, decimal, inputs?.token, senderChainName]);
 
   const onMinClick = useCallback(() => {
     setError(undefined);

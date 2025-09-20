@@ -172,9 +172,25 @@ export function isSystemChain (systemChainGenesis: string | undefined, relayGene
   return Object.values(systemChains).includes(systemChainGenesis ?? '');
 }
 
-export function extractRelayChainName (systemChainName: string | undefined): string | undefined {
+/**
+ * Extracts the base relay chain name from a system chain name.
+ *
+ * For example, "westendAssetHub" or "westendPeople" will return "westend".
+ * Optionally, only performs extraction if the chain is considered migrated.
+ *
+ * @param systemChainName - The name of the system chain (e.g., "westendAssetHub").
+ * @param withMigrationCheck - If true, extraction occurs only for chains identified as migrated.
+ *                             If false or omitted, extraction is always performed.
+ * @returns The normalized relay chain name, or the original name if not migrated (when migration check is applied),
+ *          or `undefined` if `systemChainName` is not provided.
+ */
+export function extractRelayChainName (systemChainName: string | undefined, withMigrationCheck?: boolean): string | undefined {
   if (!systemChainName) {
     return;
+  }
+
+  if (withMigrationCheck && !isMigratedByChainName(systemChainName)) {
+    return systemChainName;
   }
 
   return systemChainName
