@@ -16,21 +16,27 @@ import { createView, Popup } from '@polkadot/extension-ui';
     if (!disableDiagnostics) {
       const isProd = process.env['NODE_ENV'] === 'production';
 
-      Sentry.init({
-        dsn: process.env['SENTRY_DSN'],
-        integrations: [
-          Sentry.browserTracingIntegration(),
-          Sentry.replayIntegration()
-        ],
-        release: process.env['EXTENSION_VERSION'],
-        replaysOnErrorSampleRate: 1.0,
-        replaysSessionSampleRate: isProd ? 0.1 : 0.2,
-        tracePropagationTargets: [
-          /^chrome-extension:\/\/mgojgfjhknpmlojihdpjikinpgcaadlj/,
-          /^chrome-extension:\/\/ginchbkmljhldofnbjabmeophlhdldgp/
-        ],
-        tracesSampleRate: isProd ? 0.2 : 1.0
-      });
+      if (isProd) {
+        const SAMPLING_RATE = 0.1;
+
+        Sentry.init({
+          dsn: process.env['SENTRY_DSN'],
+          integrations: [
+            Sentry.browserTracingIntegration(),
+            Sentry.replayIntegration()
+          ],
+          release: process.env['EXTENSION_VERSION'],
+          replaysOnErrorSampleRate: SAMPLING_RATE,
+          replaysSessionSampleRate: SAMPLING_RATE,
+          tracePropagationTargets: [
+            /^chrome-extension:\/\/mgojgfjhknpmlojihdpjikinpgcaadlj/,
+            /^chrome-extension:\/\/ginchbkmljhldofnbjabmeophlhdldgp/
+          ],
+          tracesSampleRate: SAMPLING_RATE
+        });
+      } else {
+        console.log('Sentry disabled in development.');
+      }
     } else {
       console.log('Diagnostic reporting is disabled by user preference.');
     }
