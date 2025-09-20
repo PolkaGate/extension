@@ -12,17 +12,18 @@ import useTranslation from '../../../hooks/useTranslation';
 import LedgerErrorMessage from './LedgerErrorMessage';
 
 interface Props {
-  ledgerWarning: string | null;
   error: string | null | undefined;
-  ledgerLocked: boolean;
+  disabled?: boolean;
   isBusy?: boolean | undefined;
+  ledgerWarning: string | null;
+  ledgerLocked: boolean;
   onRefresh: () => void;
   onSignLedger: () => void;
   onCancel: () => void;
   style?: React.CSSProperties;
 }
 
-function LedgerButtons ({ error, isBusy, ledgerLocked, ledgerWarning, onCancel, onRefresh, onSignLedger, style = {} }: Props): React.ReactElement<Props> {
+function LedgerButtons ({ disabled, error, isBusy, ledgerLocked, ledgerWarning, onCancel, onRefresh, onSignLedger, style = {} }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
@@ -44,6 +45,7 @@ function LedgerButtons ({ error, isBusy, ledgerLocked, ledgerWarning, onCancel, 
       }
       <DecisionButtons
         cancelButton
+        disabled={disabled}
         divider
         flexibleWidth
         isBusy={isBusy}

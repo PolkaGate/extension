@@ -14,7 +14,7 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { DecisionButtons, SignArea3 } from '../../components';
-import { useCanPayFeeAndDeposit, useFormatted, useTeleport, useTranslation } from '../../hooks';
+import { useCanPayFeeAndDeposit, useChainInfo, useFormatted, useTeleport, useTranslation } from '../../hooks';
 import { WaitScreen2 } from '../../partials';
 import { toBN } from '../../util/utils';
 import HomeLayout from '../components/layout';
@@ -25,10 +25,12 @@ import Step2Recipient from './Step2Recipient';
 import Step3Amount from './Step3Amount';
 import Step4Summary from './Step4Summary';
 import { type Inputs } from './types';
+import useParaSpellFeeCall from './useParaSpellFeeCall';
 
 export default function SendFund (): React.ReactElement {
   const { t } = useTranslation();
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
+  const { chainName: senderChainName } = useChainInfo(genesisHash, true);
 
   const ref = useRef<HTMLDivElement | null>(null);
   const teleportState = useTeleport(genesisHash);
@@ -36,13 +38,46 @@ export default function SendFund (): React.ReactElement {
   const formatted = useFormatted(address, genesisHash);
 
   const [inputs, setInputs] = useState<Inputs>();
+  const [error, setError] = useState<string | undefined>();
   const [inputStep, setInputStep] = useState<INPUT_STEPS>(INPUT_STEPS.SENDER);
   const [flowStep, setFlowStep] = useState<TransactionFlowStep>(TRANSACTION_FLOW_STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
   const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
 
+  const { paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, inputs?.amountAsBN, genesisHash, inputs, senderChainName, setError);
   const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee ? toBN(inputs?.fee) : undefined);
+
+  useEffect(() => {
+    if (!genesisHash) {
+      return;
+    }
+
+    paraSpellFee && setInputs((prevInputs) => {
+      if (prevInputs?.fee?.eq?.(paraSpellFee)) {
+        return prevInputs;
+      }
+
+      return { ...prevInputs, fee: paraSpellFee };
+    });
+  }, [genesisHash, inputs?.recipientChain?.text, paraSpellFee, senderChainName, setInputs]);
+
+  useEffect(() => {
+    if (error) {
+      return;
+    }
+
+    setInputs((prevInputs) => {
+      return { ...prevInputs, error };
+    });
+  }, [error, setInputs]);
+
+  useEffect(() => {
+    paraSpellTransaction && setInputs((prevInputs) => ({
+      ...(prevInputs || {}),
+      paraSpellTransaction
+    }));
+  }, [paraSpellTransaction, setInputs]);
 
   useEffect(() => {
     if (!address || !genesisHash) {
@@ -90,15 +125,12 @@ export default function SendFund (): React.ReactElement {
 
   const inputTransaction = inputs?.paraSpellTransaction ?? inputs?.transaction;
 
-  const isLoading = useMemo(() => (inputStep === INPUT_STEPS.AMOUNT && !(inputs?.amount && inputTransaction && inputs?.fee)), [inputStep, inputs, inputTransaction]);
-
   const buttonDisable = useMemo(() =>
     (inputStep === INPUT_STEPS.SENDER && !inputs?.token) ||
     (inputStep === INPUT_STEPS.RECIPIENT && (!inputs?.recipientAddress || inputs?.recipientChain === undefined)) ||
-    isLoading ||
-    (inputStep === INPUT_STEPS.SUMMARY && !!inputs?.fee)
+     (inputStep === INPUT_STEPS.AMOUNT && !inputs?.amount)
     ,
-    [inputStep, inputs, isLoading]);
+    [inputStep, inputs]);
 
   const transactionDetail = useMemo(() => {
     return {
@@ -177,7 +209,7 @@ export default function SendFund (): React.ReactElement {
             }}
             onPrimaryClick={onNext}
             onSecondaryClick={onBack}
-            primaryBtnText={!inputs?.amount || !isLoading ? t('Next') : t('Preparing, please wait ...')}
+            primaryBtnText={t('Next')}
             primaryButtonProps={{
               style: { width: '85%' }
             }}
@@ -190,12 +222,12 @@ export default function SendFund (): React.ReactElement {
             }}
             style={{ justifyContent: 'start', margin: '0', marginTop: '32px', transition: 'all 250ms ease-out', width: ref?.current?.offsetWidth ? `${ref.current.offsetWidth}px` : '80%' }}
           />)
-        : inputTransaction &&
-        <Fade in={true} style={{ width: 'inherit' }} timeout={1000}>
+        : (<Fade in={true} style={{ width: 'inherit' }} timeout={1000}>
           <div>
             <SignArea3
               address={address}
               direction='horizontal'
+              disabled={!inputTransaction}
               genesisHash={genesisHash}
               ledgerStyle={{ position: 'unset' }}
               onClose={onBack}
@@ -222,7 +254,7 @@ export default function SendFund (): React.ReactElement {
               withCancel
             />
           </div>
-        </Fade>
+        </Fade>)
       }
       {
         flowStep === TRANSACTION_FLOW_STEPS.WAIT_SCREEN &&

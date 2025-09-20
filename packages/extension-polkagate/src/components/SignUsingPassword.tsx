@@ -62,6 +62,7 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 export interface SignUsingPasswordProps {
   api: ApiPromise | undefined;
   direction?: 'horizontal' | 'vertical';
+  disabled?:boolean;
   decisionButtonProps?: Partial<DecisionButtonProps>
   from: string | undefined;
   handleTxResult: (txResult: TxResult) => void;
@@ -75,7 +76,7 @@ export interface SignUsingPasswordProps {
   withCancel: boolean | undefined
 }
 
-function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', from, handleTxResult, onCancel, onUseProxy, preparedTransaction, proxies, setFlowStep, signerOption, style, withCancel }: SignUsingPasswordProps) {
+function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', disabled, from, handleTxResult, onCancel, onUseProxy, preparedTransaction, proxies, setFlowStep, signerOption, style, withCancel }: SignUsingPasswordProps) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
@@ -139,6 +140,7 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
           <DecisionButtons
             cancelButton
             direction={direction}
+            disabled={disabled}
             isBusy={isBusy}
             onPrimaryClick={onConfirm}
             onSecondaryClick={onCancel}
@@ -151,7 +153,7 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
           {isBlueish
             ? (
               <StakingActionButton
-                disabled={!password || hasError}
+                disabled={disabled || !password || hasError}
                 isBusy={isBusy}
                 onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
                 startIcon
@@ -160,7 +162,7 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
               />)
             : (
               <GradientButton
-                disabled={!password || hasError}
+                disabled={disabled || !password || hasError}
                 isBusy={isBusy}
                 onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
                 style={style}

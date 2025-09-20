@@ -13,6 +13,7 @@ import LedgerButtons from './LedgerButtons';
 interface Props {
   account: AccountJson;
   error: string | null | undefined;
+  disabled?: boolean;
   genesisHash?: string;
   onCancel: () => void;
   onSignature?: ({ signature }: { signature: HexString }) => void;
@@ -20,7 +21,7 @@ interface Props {
   setError: (value: string | null) => void;
 }
 
-function LedgerSign ({ account, error, genesisHash, onCancel, onSignature, payload, setError }: Props): React.ReactElement<Props> {
+function LedgerSign ({ account, disabled, error, genesisHash, onCancel, onSignature, payload, setError }: Props): React.ReactElement<Props> {
   const [isBusy, setIsBusy] = useState(false);
   const { accountIndex, addressOffset } = account;
 
@@ -58,6 +59,7 @@ function LedgerSign ({ account, error, genesisHash, onCancel, onSignature, paylo
 
   return (
     <LedgerButtons
+      disabled={disabled}
       error={error}
       isBusy={isBusy || ledgerLoading}
       ledgerLocked={ledgerLocked}

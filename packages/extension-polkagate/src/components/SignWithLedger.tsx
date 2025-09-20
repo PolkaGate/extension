@@ -20,6 +20,7 @@ import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/consta
 interface Props {
   address: string | undefined;
   api: ApiPromise | undefined;
+  disabled?: boolean,
   from: string | undefined;
   handleTxResult: (txResult: TxResult) => void
   onSecondaryClick: () => void;
@@ -31,7 +32,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function SignWithLedger ({ address, api, from, handleTxResult, onSecondaryClick, onSignature, payload, preparedTransaction, setFlowStep, signerPayload, style }: Props) {
+export default function SignWithLedger ({ address, api, disabled, from, handleTxResult, onSecondaryClick, onSignature, payload, preparedTransaction, setFlowStep, signerPayload, style }: Props) {
   const account = useAccount(address);
 
   const [error, setError] = useState<string | null>();
@@ -59,6 +60,7 @@ export default function SignWithLedger ({ address, api, from, handleTxResult, on
         account?.isGeneric || account?.isMigration
           ? <LedgerSignGeneric
             account={account}
+            disabled={disabled}
             error={error}
             onCancel={onSecondaryClick}
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -70,6 +72,7 @@ export default function SignWithLedger ({ address, api, from, handleTxResult, on
           : account &&
           <LedgerSign
             account={account}
+            disabled={disabled}
             error={error}
             genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
             onCancel={onSecondaryClick} // TODO: should be fixed later
