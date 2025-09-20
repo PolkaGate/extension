@@ -14,7 +14,7 @@ import { Motion } from '../../components';
 import { useSelectedAccount, useTranslation } from '../../hooks';
 import { WebsitesAccess } from '../../partials';
 import { VelvetBox } from '../../style';
-import DeriveAccount from '../home/DeriveAccount/DeriveAccount';
+import DeriveAccount from '../home/DeriveAccount';
 import ExportAllAccounts from '../home/ExportAllAccounts';
 import RenameAccount from '../home/RenameAccount';
 
