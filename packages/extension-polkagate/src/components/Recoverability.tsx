@@ -80,12 +80,11 @@ function Recoverability ({ style = {} }: Props): React.ReactElement {
     borderColor: '#1B133C',
     borderRadius: '12px',
     cursor: 'pointer',
+    height: '40px',
     justifyContent: 'center',
-    marginTop: '-5px',
-    p: '7px',
     position: 'relative',
     transition: 'all 250ms ease-out',
-    width: 'fit-content',
+    width: '40px',
     ...style
   };
 

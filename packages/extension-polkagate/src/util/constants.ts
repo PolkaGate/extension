@@ -164,6 +164,8 @@ const PROXY_TYPE_WESTEND = [...PROXY_TYPE_POLKADOT, 'SudoBalances'];
 const PROXY_TYPE_ASSET_HUBS = ['Any', 'Assets', 'AssetManager', 'AssetOwner', 'CancelProxy', 'Collator', 'NonTransfer'];
 const PROXY_TYPE_PASEO = [...PROXY_TYPE_POLKADOT];
 
+export const MIGRATED_PROXY_TYPES = ['Governance', 'NominationPools', 'Staking'];
+
 export const CHAIN_PROXY_TYPES = {
   AssetHubs: PROXY_TYPE_ASSET_HUBS,
   Kusama: PROXY_TYPE_KUSAMA,
@@ -314,6 +316,7 @@ export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 export const STORAGE_KEY = {
   ASSETS: 'migrated-assets',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
+  IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN: 'accountsMigratedToAnyChain',
   LOGIN_IFO: 'loginInfo',
   MY_POOL: 'MyPool',
   SELECTED_ACCOUNT: 'selectedAccount',

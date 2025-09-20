@@ -1,5 +1,26 @@
 # Change Log
 
+## [1.9.2](https://github.com/polkagate/extension/compare/v1.9.1...v1.9.2) (2025-09-20)
+
+
+### Bug Fixes
+
+* migrate accounts for compatibility with strict apps (e.g., Polkadot.js) ([#1895](https://github.com/polkagate/extension/issues/1895)) ([1b9c38c](https://github.com/polkagate/extension/commit/1b9c38c7e673e9a467ba70650f35c141754e0a0e)), closes [#1893](https://github.com/polkagate/extension/issues/1893)
+
+## [1.9.1](https://github.com/polkagate/extension/compare/v1.9.0...v1.9.1) (2025-09-20)
+
+
+### Bug Fixes
+
+* fullscreen 'Derive New Account' menu opens correct modal ([#1894](https://github.com/polkagate/extension/issues/1894)) ([a2d99db](https://github.com/polkagate/extension/commit/a2d99db674cd57a7598337ae54656beccfdd127c))
+
+# [1.9.0](https://github.com/polkagate/extension/compare/v1.8.8...v1.9.0) (2025-09-19)
+
+
+### Features
+
+* include migrated relay chain proxies for Asset Hubs [#1887](https://github.com/polkagate/extension/issues/1887) ([#1888](https://github.com/polkagate/extension/issues/1888)) ([ef9ec96](https://github.com/polkagate/extension/commit/ef9ec965a1ce6ca0cdbc758a78d4adcc5c66727a))
+
 ## [1.8.8](https://github.com/polkagate/extension/compare/v1.8.7...v1.8.8) (2025-09-18)
 
 

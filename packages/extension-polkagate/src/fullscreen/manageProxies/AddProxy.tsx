@@ -10,10 +10,12 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { Clock, Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { isMigratedByChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+
 import { AddressInput, DecisionButtons, DropSelect, MyTextField } from '../../components';
 import { useAccountDisplay, useFormatted, useTranslation } from '../../hooks';
 import { toTitleCase } from '../../util';
-import { CHAIN_PROXY_TYPES } from '../../util/constants';
+import { CHAIN_PROXY_TYPES, MIGRATED_PROXY_TYPES } from '../../util/constants';
 import { sanitizeChainName } from '../../util/utils';
 import { DraggableModal } from '../components/DraggableModal';
 import { PROXY_ICONS, STEPS } from './consts';
@@ -42,7 +44,15 @@ export default function AddProxy ({ chain, proxiedAddress, proxyItems, setNewDep
 
   const chainName = sanitizeChainName(chain?.name);
   const proxyTypeIndex = chainName?.toLowerCase()?.includes('assethub') ? 'AssetHubs' : chainName;
-  const PROXY_TYPE = CHAIN_PROXY_TYPES[proxyTypeIndex as keyof typeof CHAIN_PROXY_TYPES];
+  const PROXY_TYPE = useMemo(() => {
+    const baseType = CHAIN_PROXY_TYPES[proxyTypeIndex as keyof typeof CHAIN_PROXY_TYPES];
+
+    if (chainName && isMigratedByChainName(chainName)) {
+      return baseType.concat(MIGRATED_PROXY_TYPES);
+    }
+
+    return baseType;
+  }, [chainName, proxyTypeIndex]);
 
   const proxyTypeOptions = PROXY_TYPE.map((type: string): AdvancedDropdownOption => ({
     Icon: PROXY_ICONS[type as ProxyTypes] as Icon,

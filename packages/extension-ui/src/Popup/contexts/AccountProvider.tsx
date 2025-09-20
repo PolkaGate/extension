@@ -7,9 +7,9 @@ import React, { useEffect, useState } from 'react';
 
 import { canDerive } from '@polkadot/extension-base/utils';
 import { AccountContext } from '@polkadot/extension-polkagate/src/components/contexts';
-import { subscribeAccounts } from '@polkadot/extension-polkagate/src/messaging';
+import { subscribeAccounts, tieAccount } from '@polkadot/extension-polkagate/src/messaging';
 import { LOGIN_STATUS, type LoginInfo } from '@polkadot/extension-polkagate/src/popup/passwordManagement/types';
-import { getStorage, updateStorage } from '@polkadot/extension-polkagate/src/util';
+import { getStorage, setStorage, updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { buildHierarchy } from '@polkadot/extension-polkagate/src/util/buildHierarchy';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
@@ -32,6 +32,29 @@ export default function AccountProvider ({ children }: { children: React.ReactNo
   useEffect(() => {
     subscribeAccounts(setAccounts).catch(console.log);
   }, []);
+
+  useEffect(() => {
+    if (!accounts?.length) {
+      return;
+    }
+
+    // eslint-disable-next-line no-void
+    void (async () => {
+      try {
+        // Migrate accounts to any chain if not already migrated
+        const migrated = await getStorage(STORAGE_KEY.IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN);
+
+        if (!migrated) {
+          await Promise.all(accounts.map(({ address }) => tieAccount(address, null)));
+          await setStorage(STORAGE_KEY.IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN, true);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+    // The hook updates accounts data, so we track only the accounts array length as the dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accounts?.length]);
 
   useEffect(() => {
     const fetchLoginInfo = async () => {
