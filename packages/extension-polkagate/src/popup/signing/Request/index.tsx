@@ -21,7 +21,6 @@ interface Props {
   account: AccountJson;
   error: string | null;
   hexBytes: string | null;
-  isFirst: boolean;
   onSignature: ({ signature }: { signature: HexString; }) => void;
   payload: ExtrinsicPayload | null;
   request: RequestSign;
@@ -31,7 +30,7 @@ interface Props {
   url: string;
 }
 
-function Request ({ account, error, hexBytes, isFirst, onSignature, payload, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
+function Request ({ account, error, hexBytes, onSignature, payload, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -86,7 +85,6 @@ function Request ({ account, error, hexBytes, isFirst, onSignature, payload, req
       <RawData
         account={account}
         error={error}
-        isFirst={isFirst}
         request={request}
         setError={setError}
         setMode={setMode}

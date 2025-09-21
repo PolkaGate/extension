@@ -19,14 +19,13 @@ import SignWithPassword from './Request/SignWithPassword';
 
 interface Props {
   onCancel: () => void;
-  isFirst: boolean;
   fee?: Balance | undefined;
   request: SigningRequest;
   extrinsicPayload: ExtrinsicPayload;
   onSignature: ({ signature }: { signature: HexString; }) => void;
 }
 
-export default function Confirm ({ extrinsicPayload, fee, isFirst, onCancel, onSignature, request }: Props): React.ReactElement {
+export default function Confirm ({ extrinsicPayload, fee, onCancel, onSignature, request }: Props): React.ReactElement {
   const navigate = useNavigate();
   const { isExternal, isHardware } = request.account;
 
@@ -94,7 +93,6 @@ export default function Confirm ({ extrinsicPayload, fee, isFirst, onCancel, onS
           error={error}
           fee={fee}
           genesisHash={payload.genesisHash}
-          isFirst={isFirst}
           isSignable
           onCancel={onCancel}
           setError={setError}

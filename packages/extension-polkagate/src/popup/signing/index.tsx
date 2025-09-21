@@ -139,7 +139,6 @@ export default function Signing (): React.ReactElement {
               account={request.account}
               error={error}
               hexBytes={hexBytes}
-              isFirst={requestIndex === 0}
               onSignature={onSignature}
               payload={payload}
               request={request.request}
@@ -155,7 +154,6 @@ export default function Signing (): React.ReactElement {
         <Confirm
           extrinsicPayload={payload}
           fee={mode.fee}
-          isFirst={requestIndex === 0}
           onCancel={onCancel}
           onSignature={onSignature}
           request={request}
