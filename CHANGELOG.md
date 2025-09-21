@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.3](https://github.com/polkagate/extension/compare/v1.9.2...v1.9.3) (2025-09-21)
+
+
+### Bug Fixes
+
+* prevent auto renewal of the no password session ([#1905](https://github.com/polkagate/extension/issues/1905)) ([8467879](https://github.com/polkagate/extension/commit/8467879b17811c4fcbf67bd8c60fe483690fb6de))
+
 ## [1.9.2](https://github.com/polkagate/extension/compare/v1.9.1...v1.9.2) (2025-09-20)
 
 
