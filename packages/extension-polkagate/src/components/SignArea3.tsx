@@ -169,12 +169,22 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
     }
 
     if (showUseProxy) {
+      if (proxies === undefined) {
+        return {
+          alertText: t('This is a watch-only account. Checking if this account has proxy accounts.'),
+          buttonText: t('Loading'),
+          icon: <Data color={theme.palette.text.primary} size={18} variant='Bold' />,
+          isDisabled: false,
+          onClick: toggleSelectProxy
+        };
+      }
+
       if (proxies?.length) {
         return {
           alertText: t('This is a watch-only account. To complete this transaction, you must use a proxy.'),
           buttonText: t('Use Proxy'),
           icon: <Data color={theme.palette.text.primary} size={18} variant='Bold' />,
-          isDisabled: disabled,
+          isDisabled: false,
           onClick: toggleSelectProxy
         };
       }
@@ -239,8 +249,8 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
         {!selectedProxy && noPrivateKeyAccount && !isLedger && alertHandler &&
           <NoPrivateKeySigningButton
             {...alertHandler}
-             decisionButtonProps = {extraProps?.decisionButtonProps}
-             onDismiss={onClose}
+            decisionButtonProps={extraProps?.decisionButtonProps}
+            onDismiss={onClose}
             withCancel={withCancel}
           />
         }
