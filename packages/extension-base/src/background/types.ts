@@ -303,6 +303,7 @@ export interface RequestSigningApprovePassword {
   id: string;
   password?: string;
   savePass: boolean;
+  remainingTime?: number;
 }
 
 export interface RequestSigningApproveSignature {
