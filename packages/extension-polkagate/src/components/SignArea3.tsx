@@ -172,10 +172,10 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
       if (proxies === undefined) {
         return {
           alertText: t('This is a watch-only account. Checking if this account has proxy accounts.'),
-          buttonText: t('Loading'),
+          buttonText: t('Loading ...'),
           icon: <Data color={theme.palette.text.primary} size={18} variant='Bold' />,
-          isDisabled: false,
-          onClick: toggleSelectProxy
+          isDisabled: true,
+          onClick: noop
         };
       }
 
@@ -199,7 +199,7 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
     }
 
     return undefined;
-  }, [disabled, proxies?.length, showQrSign, showUseProxy, t, theme.palette.text.highlight, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
+  }, [disabled, proxies, showQrSign, showUseProxy, t, theme.palette.text.highlight, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
 
   const handleTxResult = useCallback((txResult: TxResult) => {
     try {
