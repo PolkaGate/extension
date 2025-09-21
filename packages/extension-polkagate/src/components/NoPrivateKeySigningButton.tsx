@@ -8,8 +8,7 @@ import { Warning2 } from 'iconsax-react';
 import React, { memo, type ReactNode } from 'react';
 
 import { useIsBlueish, useIsExtensionPopup, useTranslation } from '../hooks';
-import StakingActionButton from '../popup/staking/partial/StakingActionButton';
-import { DecisionButtons, GradientButton } from '.';
+import { DecisionButtons, VariantButton } from '.';
 
 interface Props {
   alertText: string;
@@ -20,59 +19,42 @@ interface Props {
   isDisabled?: boolean;
   onClick: () => void;
   onDismiss?: () => void;
+  withCancel?: boolean;
 }
 
-const NoPrivateKeySigningButton = ({ alertText, buttonText, decisionButtonProps, direction = 'horizontal', icon, isDisabled, onClick, onDismiss }: Props): React.ReactElement | null => {
+const NoPrivateKeySigningButton = ({ alertText, buttonText, decisionButtonProps, direction = 'horizontal', icon, isDisabled, onClick, onDismiss, withCancel }: Props): React.ReactElement | null => {
+  const { t } = useTranslation();
   const isBlueish = useIsBlueish();
   const isExtension = useIsExtensionPopup();
-  const { t } = useTranslation();
 
   return (
     <Stack direction='column' sx={{ width: '100%' }}>
-      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', rowGap: '8px'}}>
+      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', rowGap: '8px' }}>
         <Warning2 color={isBlueish ? '#596AFF' : '#FFCE4F'} size={isExtension ? 35 : 24} style={{ height: 'fit-content' }} variant='Bold' />
         <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-4'>
           {alertText}
         </Typography>
       </Container>
-      {onDismiss
-        ? (
-          <DecisionButtons
-            cancelButton
-            direction={direction}
-            disabled={isDisabled}
-            onPrimaryClick={onClick}
-            onSecondaryClick={onDismiss}
-            primaryBtnText={buttonText}
-            secondaryBtnText={t('Back')}
-            style={{ width: '100%' }}
-            {...decisionButtonProps}
-          />)
-        : <>
-          {
-            isBlueish
-              ? (
-                <StakingActionButton
-                  disabled={isDisabled}
-                  onClick={onClick}
-                  startIcon={icon}
-                  style={{ marginTop: '18px' }}
-                  text={buttonText}
-
-                />)
-              : (
-                <GradientButton
-                  contentPlacement='center'
-                  disabled={isDisabled}
-                  onClick={onClick}
-                  style={{
-                    height: '44px',
-                    marginTop: '18px'
-                  }}
-                  text={buttonText}
-                />)
-          }
-        </>
+      {onDismiss && withCancel
+        ? (<DecisionButtons
+          cancelButton
+          direction={direction}
+          disabled={isDisabled}
+          onPrimaryClick={onClick}
+          onSecondaryClick={onDismiss}
+          primaryBtnText={buttonText}
+          secondaryBtnText={t('Back')}
+          style={{ width: '100%' }}
+          {...decisionButtonProps}
+        />)
+        : (<VariantButton
+          disabled={isDisabled}
+          isBlueish={isBlueish}
+          onClick={onClick}
+          startIcon={icon}
+          style={{ height: '44px', marginTop: '18px' }}
+          text={buttonText}
+        />)
       }
     </Stack>
   );

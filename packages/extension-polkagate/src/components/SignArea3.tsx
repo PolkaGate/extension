@@ -239,8 +239,9 @@ function SignArea3 ({ address, direction, disabled, genesisHash, ledgerStyle, on
         {!selectedProxy && noPrivateKeyAccount && !isLedger && alertHandler &&
           <NoPrivateKeySigningButton
             {...alertHandler}
-             onDismiss={onClose}
              decisionButtonProps = {extraProps?.decisionButtonProps}
+             onDismiss={onClose}
+            withCancel={withCancel}
           />
         }
         {isLedger &&
