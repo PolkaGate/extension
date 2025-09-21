@@ -5,11 +5,13 @@ import type { Icon } from 'iconsax-react';
 
 import { Grid, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
+import { useHandleNavigation } from '../hooks';
 
 export interface Options {
   Icon?: Icon;
   isLine?: boolean;
+  isFullscreen?: boolean;
   pathname?: string;
   text?: string;
   value?: string | number | (() => void);
@@ -22,16 +24,17 @@ interface Props {
 
 function DropMenuRow ({ option, setOpen }: Props) {
   const [hovered, setHovered] = useState(false);
-  const navigate = useNavigate();
+  const handleNav = useHandleNavigation();
 
-  const { Icon, pathname, text, value } = option;
+  const { Icon, isFullscreen, pathname, text, value } = option;
 
   const onClick = useCallback(async () => {
     setOpen(false);
+
     typeof value === 'function'
       ? value()
-      : await navigate(value as string, { state: { pathname } });
-  }, [navigate, pathname, setOpen, value]);
+      : await handleNav(value as string, { state: { pathname } }, isFullscreen);
+  }, [handleNav, isFullscreen, pathname, setOpen, value]);
 
   return (
     <Grid
