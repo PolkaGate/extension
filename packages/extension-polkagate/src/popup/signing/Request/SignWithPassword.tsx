@@ -74,7 +74,7 @@ export default function SignWithPassword ({ address, error, fee, genesisHash, is
 
   const onSign = useCallback((): void => {
     setIsBusy(true);
-    approveSignPassword(signId, savePass, password)
+    approveSignPassword(signId, savePass, password, remainingTime)
       .then((): void => {
         setIsBusy(false);
         navigate('/') as void;
@@ -84,7 +84,7 @@ export default function SignWithPassword ({ address, error, fee, genesisHash, is
         setError(error.message);
         console.error(error);
       });
-  }, [navigate, password, savePass, setError, setIsBusy, signId]);
+  }, [navigate, password, remainingTime, savePass, setError, signId]);
 
   const onPassChange = useCallback((password: string): void => {
     setPassword(password);

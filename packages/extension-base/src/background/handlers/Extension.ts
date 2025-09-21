@@ -384,7 +384,7 @@ export default class Extension {
     };
   }
 
-  private signingApprovePassword ({ id, password, savePass }: RequestSigningApprovePassword): boolean {
+  private signingApprovePassword ({ id, password, remainingTime, savePass }: RequestSigningApprovePassword): boolean {
     const queued = this.#state.getSignRequest(id);
 
     assert(queued, 'Unable to find request');
@@ -432,7 +432,9 @@ export default class Extension {
     const result = request.sign(registry, pair);
 
     if (savePass) {
-      this.#cachedUnlocks[address] = Date.now() + PASSWORD_EXPIRY_MS;
+      const cacheTime = remainingTime || PASSWORD_EXPIRY_MS;
+
+      this.#cachedUnlocks[address] = (Date.now() + cacheTime);
     } else {
       pair.lock();
     }
