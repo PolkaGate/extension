@@ -28,8 +28,8 @@ const NoPrivateKeySigningButton = ({ alertText, buttonText, decisionButtonProps,
   const isExtension = useIsExtensionPopup();
 
   return (
-    <Stack direction='column' sx={{ width: '100%' }}>
-      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', rowGap: '8px' }}>
+    <Stack direction='column' sx={{ rowGap: '8px', width: '100%' }}>
+      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', columnGap: '8px' }}>
         <Warning2 color={isBlueish ? '#596AFF' : '#FFCE4F'} size={isExtension ? 35 : 24} style={{ height: 'fit-content' }} variant='Bold' />
         <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-4'>
           {alertText}
