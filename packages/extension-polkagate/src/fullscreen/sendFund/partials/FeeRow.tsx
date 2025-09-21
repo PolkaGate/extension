@@ -98,12 +98,12 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
   const showFeeSelector = !!feeAssets?.length && !account?.isExternal;
 
   return (
-    <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ height: '22px', px: '15px' }}>
+    <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ height: '22px', pl: '10px', pr: showFeeSelector ? '7px' : '20px' }}>
       <Typography color='primary.main' sx={{ textAlign: 'left' }} variant='B-1'>
         {t('Estimated fee')}
       </Typography>
       <ClickAwayListener onClickAway={handleClickAway}>
-        <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='end' ref={containerRef} sx={{ transform: showFeeSelector ? 'translateX(0)' : 'translateX(10px)', transition: 'all 400ms ease-out' }}>
+        <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='end' ref={containerRef} sx={{ transform: showFeeSelector ? 'translateX(-3px)' : 'translateX(0)', transition: 'all 400ms ease-out' }}>
           {canPayFee.isAbleToPay === false && canPayFee.warning &&
             <UnableToPayFee warningText={canPayFee.warning} />
           }
