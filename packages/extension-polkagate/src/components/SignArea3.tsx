@@ -272,6 +272,7 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
         }
         {(selectedProxy || !noPrivateKeyAccount) &&
           <SignUsingPassword
+            {...extraProps}
             api={api}
             direction={direction}
             disabled={disabled}
@@ -284,7 +285,6 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
             setFlowStep={setFlowStep}
             signerOption={signerOption}
             withCancel={withCancel}
-            {...extraProps}
           />
         }
       </Grid>
