@@ -434,7 +434,7 @@ export default class Extension {
     if (savePass) {
       const cacheTime = remainingTime || PASSWORD_EXPIRY_MS;
 
-      this.#cachedUnlocks[address] = (Date.now() + cacheTime);
+      this.#cachedUnlocks[address] = Date.now() + cacheTime;
     } else {
       pair.lock();
     }
