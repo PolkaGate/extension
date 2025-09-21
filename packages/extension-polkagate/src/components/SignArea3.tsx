@@ -65,7 +65,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-function SignArea3 ({ address, direction, disabled, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, extraProps, signUsingQRProps, signerOption, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
+function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingQRProps, signerOption, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
