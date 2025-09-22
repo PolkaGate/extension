@@ -3,7 +3,7 @@
 
 import type { Variant } from '@mui/material/styles/createTypography';
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
 import { ChainLogo, FormatBalance2, ShortAddress } from '../../../../components';
@@ -24,10 +24,10 @@ function Transfer ({ amount, genesisHash, to }: Props): React.ReactElement<Props
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   return (
-    <Stack direction='row' justifyContent='start' columnGap='10px' alignItems='center'>
+    <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start'>
       <ChainLogo genesisHash={genesisHash} size={36} />
-      <Stack direction='column' alignItems='flex-start'>
-        <Typography variant='B-2' color='#EAEBF1'>
+      <Stack alignItems='flex-start' direction='column'>
+        <Typography color='#EAEBF1' variant='B-2'>
           {decimal && token &&
             <FormatBalance2
               decimalPoint={2}
@@ -36,26 +36,25 @@ function Transfer ({ amount, genesisHash, to }: Props): React.ReactElement<Props
               value={amount}
             />}
         </Typography>
-        <Stack direction='row' columnGap='5px' alignItems='center'>
-          <Typography color='#BEAAD8' variant='B-4' sx={{ textWrapMode: 'noWrap' }}>
+        <Stack alignItems='center' columnGap='5px' direction='row'>
+          <Typography color='#BEAAD8' sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {t('Transfer to')}
           </Typography>
-          <Box sx={{ mt: '-5px' }}>
-            <PolkaGateIdenticon
-              address={to}
-              size={15}
-            />
-          </Box>
+          <PolkaGateIdenticon
+            address={to}
+            size={15}
+          />
           {accountName
             ? <Typography color='text.primary' textAlign='left' variant='B-2' width='100%'>
               {toTitleCase(accountName)}
             </Typography>
-            : <ShortAddress
-              address={to}
-              charsCount={4}
-              style={{ color: 'text.secondary', justifyContent: 'flex-start' }}
-              variant={'B-4' as Variant}
-            />
+            : (
+              <ShortAddress
+                address={to}
+                charsCount={4}
+                style={{ color: 'text.secondary', justifyContent: 'flex-start' }}
+                variant={'B-4' as Variant}
+              />)
           }
         </Stack>
       </Stack>
