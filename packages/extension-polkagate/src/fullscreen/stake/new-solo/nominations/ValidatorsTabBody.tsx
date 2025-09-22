@@ -53,7 +53,7 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
     const active: typeof nominatedValidatorsInformation = [];
     const nonElected: typeof nominatedValidatorsInformation = [];
 
-    nominatedValidatorsInformation?.forEach((info) => {
+    sortedAndFilteredValidators?.forEach((info) => {
       const others = (info.exposurePaged as unknown as SpStakingExposurePage | undefined)?.others;
 
       if (others?.length) {
@@ -66,7 +66,7 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
     });
 
     return { active, elected, nonElected };
-  }, [nominatedValidatorsInformation, stakingInfo?.stakingAccount?.accountId]);
+  }, [sortedAndFilteredValidators, stakingInfo?.stakingAccount?.accountId]);
 
   const onSearch = useCallback((input: string) => setSearch(input), []);
   const openValidatorManagement = useCallback(() => navigate('/fullscreen-stake/solo/manage-validator/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
