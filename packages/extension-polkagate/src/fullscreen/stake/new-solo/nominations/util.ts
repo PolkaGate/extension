@@ -66,8 +66,8 @@ export const getSortAndFilterValidators = (validatorsInformation: ValidatorInfor
     switch (sortConfig) {
       case VALIDATORS_SORTED_BY.MOST_STAKED.toString(): {
         // Sort by total stake (assuming there's a totalStake property)
-        const aStake = a.stakingLedger.total || 0;
-        const bStake = b.stakingLedger.total || 0;
+        const aStake = a.exposurePaged?.pageTotal || 0;
+        const bStake = b.exposurePaged?.pageTotal || 0;
 
         return Number(bStake) - Number(aStake); // Descending order
       }
