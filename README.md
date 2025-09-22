@@ -14,7 +14,6 @@ PolkaGate extension not only has all the abilities of the original Polkadot exte
 
 Currently, the following features are available:
   - Add watch-only account ( can be used as a proxied address) 
-  - Crowdloans (View Contributions/Auctions, and contribute to Crowdloans)
   - Governance 
   - Identity management
   - Proxy management
@@ -25,8 +24,8 @@ Currently, the following features are available:
   - View transaction history
   - View an address as QR code
   - Light client integration   
-  - Social recovery
   - Account Profiles
+  - and more
 
 ![extension shots](assets/extension.png)
 
