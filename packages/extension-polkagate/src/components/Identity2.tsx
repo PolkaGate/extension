@@ -213,27 +213,44 @@ function SocialLinks ({ accountInfo, socialStyles }: SocialProps): React.ReactEl
   const theme = useTheme();
   const isBlueish = useIsBlueish();
   const isDark = useIsDark();
-  const bgColor = !isDark ? '#CCD2EA' : undefined;
+  const { email, twitter, web } = accountInfo?.identity ?? {};
 
-  const iconColors = isBlueish ? '#809ACB' : theme.palette.icon.secondary;
+  if (!email && !web && !twitter) {
+    return null;
+  }
+
+  const iconColor = isBlueish ? '#809ACB' : theme.palette.icon.secondary;
+  const bgColor = !isDark ? '#CCD2EA' : undefined;
+  const iconSize = 18;
+  const width = '10.12px';
+
+  const socials = [
+    email && {
+      icon: <Email color={iconColor} width={width} />,
+      key: 'email',
+      link: `mailto:${email}`,
+      size: iconSize
+    },
+    web && {
+      icon: <Web color={iconColor} width={width} />,
+      key: 'web',
+      link: web,
+      size: iconSize
+    },
+    twitter && {
+      bgColor,
+      icon: <XIcon color={iconColor} width={width} />,
+      key: 'twitter',
+      link: `https://twitter.com/${twitter}`,
+      size: iconSize
+    }
+  ].filter(Boolean) as { key: string; icon: React.JSX.Element; link: string; size: number; bgColor?: string }[];
 
   return (
     <Grid alignItems='center' columnGap='2px' container id='socials' item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', ml: '5px', mt: '3%', width: 'fit-content', ...socialStyles }}>
-      {accountInfo?.identity?.email &&
-        <SocialIcon Icon={<Email color={iconColors} width='10.12px' />} link={`mailto:${accountInfo.identity.email}`} size={18} />
-      }
-      {accountInfo?.identity?.web &&
-        <SocialIcon Icon={<Web color={iconColors} width='10.12px' />} link={accountInfo?.identity.web} size={18} />
-
-      }
-      {accountInfo?.identity?.twitter &&
-        <SocialIcon Icon={<XIcon color={iconColors} width='10.12px' />} bgColor={bgColor} link={`https://twitter.com/${accountInfo.identity.twitter}`} size={18} />
-      }
-      {/* {_accountInfo?.identity?.riot &&
-              <Link href={`https://matrix.to/#/${_accountInfo.identity.riot}`} pl='5px' rel='noreferrer' target='_blank'>
-                <Box component='img' src={riot} sx={{ height: '12px', mb: '2px', width: '12px' }} />
-              </Link>
-            } */}
+      {socials.map(({ bgColor, icon, key, link, size }) => (
+        <SocialIcon Icon={icon} bgColor={bgColor} key={key} link={link} size={size} />
+      ))}
     </Grid>
   );
 }
