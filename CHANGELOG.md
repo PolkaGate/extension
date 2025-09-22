@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.4](https://github.com/polkagate/extension/compare/v1.9.3...v1.9.4) (2025-09-22)
+
+
+### Bug Fixes
+
+* resolve selected validators sort problems ([#1912](https://github.com/polkagate/extension/issues/1912)) ([d30e495](https://github.com/polkagate/extension/commit/d30e49562e1a79b576e3ac773294e6ecf8c90b27))
+
 ## [1.9.3](https://github.com/polkagate/extension/compare/v1.9.2...v1.9.3) (2025-09-21)
 
 
