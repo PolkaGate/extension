@@ -21,7 +21,6 @@ export const PROXY_ICONS: Record<ProxyTypes, React.ElementType> = {
   AssetManager: Setting2,
   AssetOwner: Profile2User,
   Assets: Wallet2,
-  Auction: HierarchySquare2,
   CancelProxy: CloseCircle,
   Collator: UserSquare,
   Governance: Judge,
