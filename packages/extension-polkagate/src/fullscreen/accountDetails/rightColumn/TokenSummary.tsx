@@ -6,8 +6,8 @@ import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/type
 import { Grid, Grow, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useMemo } from 'react';
 
+import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { FLOATING_POINT_DIGIT } from '@polkadot/extension-polkagate/src/util/constants';
-import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { AssetLogo, FormatPrice, ShowBalance4 } from '../../../components';

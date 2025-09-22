@@ -9,8 +9,8 @@ import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect,
 
 import { FetchingContext, WorkerContext } from '../components';
 import { getStorage, setStorage } from '../util';
+import { isHexToBn } from '../util';
 import { STORAGE_KEY } from '../util/constants';
-import { isHexToBn } from '../util/utils';
 import useFormatted from './useFormatted';
 
 const MY_POOL_SHARED_WORKER_KEY = 'getPool';

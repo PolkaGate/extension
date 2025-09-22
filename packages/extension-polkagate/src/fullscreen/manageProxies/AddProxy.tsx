@@ -14,9 +14,8 @@ import { isMigratedByChainName } from '@polkadot/extension-polkagate/src/util/mi
 
 import { AddressInput, DecisionButtons, DropSelect, MyTextField } from '../../components';
 import { useAccountDisplay, useFormatted, useTranslation } from '../../hooks';
-import { toTitleCase } from '../../util';
+import { sanitizeChainName, toTitleCase } from '../../util';
 import { CHAIN_PROXY_TYPES, MIGRATED_PROXY_TYPES } from '../../util/constants';
-import { sanitizeChainName } from '../../util/utils';
 import { DraggableModal } from '../components/DraggableModal';
 import { PROXY_ICONS, STEPS } from './consts';
 import { type ProxyFlowStep } from './types';

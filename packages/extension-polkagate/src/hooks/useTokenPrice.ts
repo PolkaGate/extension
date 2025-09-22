@@ -7,9 +7,8 @@ import { createAssets } from '@polkagate/apps-config/assets';
 import { useMemo } from 'react';
 
 import { useUserAddedPriceId } from '../fullscreen/addNewChain/utils';
-import { toCamelCase } from '../util';
+import { getPriceIdByChainName, isOnAssetHub, toCamelCase} from '../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
-import { getPriceIdByChainName, isOnAssetHub } from '../util/utils';
 import useChainInfo from './useChainInfo';
 import usePrices from './usePrices';
 

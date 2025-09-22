@@ -15,7 +15,7 @@ import { info } from '../../../assets/gif';
 import { BackWithLabel, Motion, ShowValue } from '../../../components';
 import { useBackground, useChainInfo, usePoolStakingInfo, useSelectedAccount, useTranslation } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
-import { amountToHuman } from '../../../util/utils';
+import { amountToHuman } from '../../../util';
 import StakingMenu from '../partial/StakingMenu';
 
 interface InfoBoxProps {

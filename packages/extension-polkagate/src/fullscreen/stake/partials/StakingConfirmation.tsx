@@ -13,8 +13,7 @@ import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } from '../../../components';
 import { useChainInfo, useCurrency, useRouteRefresh, useStakingConsts, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
-import { toTitleCase } from '../../../util';
-import { amountToHuman, countDecimalPlaces, getSubscanChainName, isValidAddress, toShortAddress } from '../../../util/utils';
+import { amountToHuman, countDecimalPlaces, getSubscanChainName, isValidAddress, toShortAddress, toTitleCase } from '../../../util';
 
 interface AmountProps {
   amount: string | undefined;

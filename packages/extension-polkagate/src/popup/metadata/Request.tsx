@@ -6,8 +6,7 @@ import type { MetadataDef } from '@polkadot/extension-inject/types';
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
-import { toTitleCase } from '@polkadot/extension-polkagate/src/util';
-import { toShortAddress } from '@polkadot/extension-polkagate/src/util/utils';
+import { toShortAddress, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 
 import { ActionContext, DecisionButtons } from '../../components';
 import { useMetadata, useTranslation } from '../../hooks';

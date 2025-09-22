@@ -10,7 +10,7 @@ import { Award, Graph, LockSlash, Moneys, Strongbox2, Timer, Trade } from 'icons
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
+import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { type BN } from '@polkadot/util';
 
 import { useChainInfo, usePrices, useTranslation } from '../../hooks';

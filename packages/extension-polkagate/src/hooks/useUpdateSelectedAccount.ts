@@ -4,10 +4,9 @@
 import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { isValidGenesis, setStorage } from '../util';
+import { isValidAddress, isValidGenesis, setStorage } from '../util';
 import { SELECTED_ACCOUNT_IN_STORAGE } from '../util/constants';
 import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
-import { isValidAddress } from '../util/utils';
 import useAccountSelectedChain from './useAccountSelectedChain';
 import useStakingPositions from './useStakingPositions';
 

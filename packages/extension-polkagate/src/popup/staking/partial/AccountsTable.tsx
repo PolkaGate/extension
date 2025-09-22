@@ -10,7 +10,7 @@ import React, { useMemo, useRef } from 'react';
 import { FadeOnScroll, FormatBalance2 } from '../../../components';
 import { useChainInfo, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
-import { isHexToBn, toShortAddress } from '../../../util/utils';
+import { isHexToBn, toShortAddress } from '../../../util';
 
 interface AccountItemProps {
   account: SpStakingIndividualExposure;

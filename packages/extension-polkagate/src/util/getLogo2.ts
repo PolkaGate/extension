@@ -6,10 +6,10 @@ import type React from 'react';
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
 
+import { sanitizeChainName } from './chain';
 import getChainName from './getChainName';
 import getNetworkMap from './getNetworkMap';
 import { isMigratedHub, mapRelayToSystemGenesisIfMigrated, mapSystemToRelay } from './migrateHubUtils';
-import { sanitizeChainName } from './utils';
 import { toCamelCase } from '.';
 
 const endpoints = createWsEndpoints();

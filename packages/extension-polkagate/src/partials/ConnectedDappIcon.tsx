@@ -1,21 +1,20 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Avatar } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ActionContext } from '../components';
 import { useAnimateOnce } from '../hooks';
 import { getAuthList } from '../messaging';
-import { extractBaseUrl } from '../util/utils';
+import { extractBaseUrl } from '../util';
 
 interface Tab {
   url?: string;
   favIconUrl?: string;
 }
 
-export default function ConnectedDappIcon(): React.ReactElement {
+export default function ConnectedDappIcon (): React.ReactElement {
   const onAction = useContext(ActionContext);
 
   const [checking, setChecking] = useState<boolean>(false);

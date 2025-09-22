@@ -10,8 +10,8 @@ import { useEffect } from 'react';
 import { isObject } from '@polkadot/util';
 
 import { updateMetadata } from '../messaging';
+import { isHexToBn } from '../util';
 import { FETCHING_ASSETS_FUNCTION_NAMES } from '../util/constants';
-import { isHexToBn } from '../util/utils';
 
 interface WorkerMessage { functionName?: string, metadata?: MetadataDef, results?: Record<string, MessageBody[]> }
 

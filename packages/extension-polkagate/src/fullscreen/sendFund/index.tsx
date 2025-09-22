@@ -16,7 +16,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { DecisionButtons, SignArea3 } from '../../components';
 import { useCanPayFeeAndDeposit, useChainInfo, useFormatted, useTeleport, useTranslation } from '../../hooks';
 import { WaitScreen2 } from '../../partials';
-import { toBN } from '../../util/utils';
+import { toBN } from '../../util';
 import HomeLayout from '../components/layout';
 import Confirmation from '../manageProxies/Confirmation';
 import StepsRow, { INPUT_STEPS } from './partials/StepsRow';

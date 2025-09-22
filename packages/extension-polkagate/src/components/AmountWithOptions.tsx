@@ -1,12 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 
+import { formatDecimal } from '../util';
 import { MAX_AMOUNT_LENGTH } from '../util/constants';
-import { formatDecimal } from '../util/utils';
 import InputWithLabel from './InputWithLabel';
 
 interface Props {

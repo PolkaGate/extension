@@ -20,8 +20,8 @@ import { RewardHeaderAmount } from '../fullscreen/stake/new-pool/claimReward/par
 import { useChainInfo, useFormatted, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { PoolItem } from '../popup/staking/partial/PoolsTable';
 import { PolkaGateIdenticon } from '../style';
+import { toShortAddress } from '../util';
 import getLogo2 from '../util/getLogo2';
-import { toShortAddress } from '../util/utils';
 import UnableToPayFee from './UnableToPayFee';
 
 interface AccountBoxProps {

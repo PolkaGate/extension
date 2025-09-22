@@ -16,7 +16,7 @@ import { useAccountName, useChainInfo, useFormatted, useIdentity, useIsBlueish, 
 import { Email, Web, XIcon } from '../popup/settings/icons';
 import SocialIcon from '../popup/settings/partials/SocialIcon';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
-import { isValidAddress } from '../util/utils';
+import { isValidAddress } from '../util';
 import { ChainLogo, GlowCheck, Identicon, Infotip, ShortAddress } from '.';
 
 interface Props {

@@ -13,9 +13,9 @@ import type { Inputs } from './types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
+import { decodeMultiLocation, isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 import { amountToMachine } from '@polkadot/extension-polkagate/src/util/numberUtils';
-import { decodeMultiLocation, isOnAssetHub } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ONE, BN_ZERO, isFunction } from '@polkadot/util';
 
 import { useChainInfo } from '../../hooks';

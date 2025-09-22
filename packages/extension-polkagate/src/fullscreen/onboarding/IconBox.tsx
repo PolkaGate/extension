@@ -8,7 +8,7 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useRef } from 'react';
 
 import { useIsHovered } from '../../hooks';
-import { pgBoxShadow } from '../../util/utils';
+import { pgBoxShadow } from '../../util';
 import { ICON_BOX_WIDTH } from '.';
 
 interface Props {

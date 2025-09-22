@@ -7,9 +7,9 @@ import { createWsEndpoints } from '@polkagate/apps-config';
 import { useMemo } from 'react';
 
 import { useUserAddedEndpoint } from '../fullscreen/addNewChain/utils';
+import { sanitizeChainName } from '../util';
 import chains from '../util/chains';
 import { AUTO_MODE } from '../util/constants';
-import { sanitizeChainName } from '../util/utils';
 
 const supportedLC = ['Polkadot', 'Kusama', 'Westend']; // chains with supported light client
 const allEndpoints = createWsEndpoints();

@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { AssetLogo, FormatBalance2, GradientDivider, MySkeleton, TwoToneText } from '../../../components';
 import { useIsExtensionPopup } from '../../../hooks';
-import { amountToHuman } from '../../../util/utils';
+import { amountToHuman } from '../../../util';
 
 interface AmountButtonProps extends AmountButtonInputProps {
   onClick: ({ target: { value } }: React.ChangeEvent<HTMLInputElement>, fromButtons?: boolean) => void;

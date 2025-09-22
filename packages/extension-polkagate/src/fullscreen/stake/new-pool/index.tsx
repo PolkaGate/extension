@@ -11,7 +11,7 @@ import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking
 import { BN_ZERO } from '@polkadot/util';
 
 import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useStakingRewardsChart } from '../../../hooks';
-import { isHexToBn } from '../../../util/utils';
+import { isHexToBn } from '../../../util';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
@@ -19,7 +19,7 @@ import StakingTabs from '../partials/StakingTabs';
 import { useStakingPopups } from '../util/utils';
 import PopUpHandlerPool from './PopUpHandlerPool';
 
-export default function PoolFullScreen(): React.ReactElement {
+export default function PoolFullScreen (): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
 
   useRouteRefresh(() => setRefresh(true));

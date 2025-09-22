@@ -6,7 +6,7 @@ import { getAssetsObject } from '@paraspell/sdk-pjs';
 
 import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
 import { toTitleCase } from '../../string';
-import { getSubstrateAddress } from '../../utils';
+import { getSubstrateAddress } from '../../address';
 // eslint-disable-next-line import/extensions
 import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
 

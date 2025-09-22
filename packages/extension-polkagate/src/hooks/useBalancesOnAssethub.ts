@@ -11,8 +11,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
+import { decodeMultiLocation, isOnAssetHub } from '../util';
 import { NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
-import { decodeMultiLocation, isOnAssetHub } from '../util/utils';
 import useChainInfo from './useChainInfo';
 import useFormatted from './useFormatted';
 

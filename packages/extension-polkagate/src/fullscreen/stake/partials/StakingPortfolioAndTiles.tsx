@@ -10,7 +10,7 @@ import React, { memo, useMemo } from 'react';
 
 import Ice from '@polkadot/extension-polkagate/src/components/SVG/Ice';
 import SnowFlake from '@polkadot/extension-polkagate/src/components/SVG/SnowFlake';
-import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
+import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { type BN } from '@polkadot/util';
 
 import { useChainInfo, useTranslation } from '../../../hooks';

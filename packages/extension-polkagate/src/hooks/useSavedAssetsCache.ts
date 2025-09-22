@@ -10,7 +10,7 @@ import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo } f
 import { STORAGE_KEY, TIME_TO_REMOVE_ALERT } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { getStorage, setStorage } from '../components/Loading';
-import { removeZeroBalanceRecords } from '../util/utils';
+import { removeZeroBalanceRecords } from '../util';
 import { DEFAULT_SAVED_ASSETS, type SavedAssets } from './useAssetsBalances';
 
 const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;

@@ -12,9 +12,8 @@ import { type BN, noop } from '@polkadot/util';
 import { ChainLogo, CryptoFiatBalance } from '../../../components';
 import { useChainInfo } from '../../../hooks';
 import { StakingBadge, TestnetBadge } from '../../../popup/staking/StakingPositions';
-import { updateStorage } from '../../../util';
+import { amountToHuman, updateStorage } from '../../../util';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, TEST_NETS } from '../../../util/constants';
-import { amountToHuman } from '../../../util/utils';
 
 interface TokenInfoProps {
   genesisHash: string;

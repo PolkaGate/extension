@@ -12,7 +12,7 @@ import type { BalancesInfo, FetchedBalance } from '../../util/types';
 
 import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
-import { toBN } from '../../util/utils';
+import { toBN } from '../../util';
 
 function isEmptyObject (obj: object): boolean {
   return Object.keys(obj).length === 0;

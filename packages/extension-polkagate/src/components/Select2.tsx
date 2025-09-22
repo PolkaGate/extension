@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { SelectChangeEvent } from '@mui/material';
 import type { IconTheme } from '@polkadot/react-identicon/types';
 import type { DropdownOption } from '../util/types';
@@ -12,8 +11,8 @@ import React, { useCallback, useLayoutEffect, useState } from 'react';
 
 import Icon from '@polkadot/react-identicon';
 
+import { sanitizeChainName } from '../util';
 import { DEMO_ACCOUNT } from '../util/constants';
-import { sanitizeChainName } from '../util/utils';
 import ChainLogo from './ChainLogo';
 
 interface Props {

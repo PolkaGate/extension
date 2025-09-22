@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import { SUPPORTED_NFT_CHAINS } from '../../../fullscreen/nft/utils/constants';
-import { getFormattedAddress } from '../../utils';
+import { getFormattedAddress } from '../../address';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
 
 const NFT_FUNCTION_NAME = 'getNFTs';

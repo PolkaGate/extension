@@ -20,9 +20,9 @@ import { noop } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useAccount, useAccountDisplay, useChainInfo, useFormatted, useProxies, useTranslation } from '../hooks';
+import { getSubstrateAddress } from '../util';
 import { send } from '../util/api';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
-import { getSubstrateAddress } from '../util/utils';
 import NoPrivateKeySigningButton from './NoPrivateKeySigningButton';
 import SignUsingPassword, { type SignUsingPasswordProps } from './SignUsingPassword';
 import { SignUsingQR, type SignUsingQRProps } from './SignUsingQR';

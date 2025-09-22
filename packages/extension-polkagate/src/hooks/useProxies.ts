@@ -16,7 +16,7 @@ import type { Proxy, ProxyTypes } from '../util/types';
 import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountContext } from '../components';
-import { getSubstrateAddress } from '../util/utils';
+import { getSubstrateAddress } from '../util';
 
 export default function useProxies (api: ApiPromise | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined {
   const [proxies, setProxies] = useState<Proxy[] | undefined>();

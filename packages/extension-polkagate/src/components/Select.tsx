@@ -11,8 +11,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
+import { sanitizeChainName } from '../util';
 import getLogo from '../util/getLogo';
-import { sanitizeChainName } from '../util/utils';
 import Label from './Label';
 
 interface Props {

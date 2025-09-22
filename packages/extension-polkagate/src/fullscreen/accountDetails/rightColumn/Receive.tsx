@@ -10,9 +10,9 @@ import { QRCode } from 'react-qrcode-logo';
 
 import { Address2, ChainLogo, DecisionButtons, GradientDivider, MySnackbar, SearchField } from '@polkadot/extension-polkagate/src/components/index';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
+import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util';
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
-import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util/utils';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { useSelectedAccount, useTranslation } from '../../../hooks';

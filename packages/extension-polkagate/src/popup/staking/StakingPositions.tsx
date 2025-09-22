@@ -13,8 +13,8 @@ import SnowFlake from '../../components/SVG/SnowFlake';
 import { useAccountAssets, useBackground, useIsDark, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
+import { amountToHuman } from '../../util';
 import { TEST_NETS } from '../../util/constants';
-import { amountToHuman } from '../../util/utils';
 import { TokenBalanceDisplay } from '../home/partial/TokenBalanceDisplay';
 
 export const TestnetBadge = ({ style }: { style?: SxProps<Theme>; }) => {
