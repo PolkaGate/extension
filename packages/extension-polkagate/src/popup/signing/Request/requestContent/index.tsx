@@ -39,7 +39,8 @@ function ShowTransactionSummary ({ genesisHash, info }: ShowTransactionSummaryPr
   switch (action) {
     case 'balances_transfer':
     case 'balances_transferKeepAlive':
-    case 'balances_transferAll': {
+    // case 'balances_transferAll':
+    {
       const amount = String(info?.args[1]);
       const to = String(info?.args[0]);
 
