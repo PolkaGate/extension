@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { type ReactNode } from 'react';
 
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { GradientButton } from '.';
@@ -11,11 +11,12 @@ export interface DecisionButtonProps {
   isBusy?: boolean | undefined;
   isBlueish: boolean | undefined;
   onClick: () => unknown;
+  startIcon?: ReactNode;
   style?: React.CSSProperties;
   text: string;
 }
 
-function VariantButton ({ disabled, isBlueish, isBusy, onClick, style, text }: DecisionButtonProps): React.ReactElement {
+function VariantButton ({ disabled, isBlueish, isBusy, onClick, startIcon, style, text }: DecisionButtonProps): React.ReactElement {
   return (
     <>
       {isBlueish
@@ -24,7 +25,7 @@ function VariantButton ({ disabled, isBlueish, isBusy, onClick, style, text }: D
             disabled={disabled}
             isBusy={isBusy}
             onClick={onClick}
-            startIcon
+            startIcon={startIcon}
             style={{ flex: 'none', ...style }}
             text={text}
           />)

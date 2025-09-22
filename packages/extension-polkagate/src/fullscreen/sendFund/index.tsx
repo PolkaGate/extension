@@ -228,6 +228,16 @@ export default function SendFund (): React.ReactElement {
               address={address}
               direction='horizontal'
               disabled={!inputTransaction}
+              extraProps={{
+                decisionButtonProps: {
+                  primaryButtonProps: { style: { width: '148%' } },
+                  secondaryButtonProps: {
+                    StartIcon: ArrowLeft,
+                    iconVariant: 'Linear',
+                    text: t('Back')
+                  }
+                }
+              }}
               genesisHash={genesisHash}
               ledgerStyle={{ position: 'unset' }}
               onClose={onBack}
@@ -238,16 +248,6 @@ export default function SendFund (): React.ReactElement {
               setShowProxySelection={setShowProxySelection}
               setTxInfo={setTxInfo}
               showProxySelection={showProxySelection}
-              signUsingPasswordProps={{
-                decisionButtonProps: {
-                  primaryButtonProps: { style: { width: '148%' } },
-                  secondaryButtonProps: {
-                    StartIcon: ArrowLeft,
-                    iconVariant: 'Linear',
-                    text: t('Back')
-                  }
-                }
-              }}
               signerOption={inputs?.feeInfo?.assetId ? { assetId: inputs.feeInfo.assetId } : undefined}
               style={{ position: 'unset', width: '73%' }}
               transaction={inputTransaction}
