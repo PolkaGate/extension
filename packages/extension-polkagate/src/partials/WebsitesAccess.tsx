@@ -7,8 +7,10 @@ import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { Key, Link2, Profile, Trash } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import useSound from 'use-sound';
 
 import { emptyList } from '../assets/icons/index';
+import { heavy } from '../assets/sounds';
 import { ActionButton, FadeOnScroll, MySnackbar, MyTooltip, SearchField } from '../components';
 import { useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { getAuthList, removeAuthorization } from '../messaging';
@@ -48,6 +50,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef(null);
   const isExtension = useIsExtensionPopup();
+  const [play] = useSound(heavy, { volume: 0.2 });
 
   const [isBusy, setIsBusy] = useState<boolean>();
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -61,10 +64,11 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
     removeAuthorization(url)
       .catch(console.error)
       .finally(() => {
+        play();
         setIsBusy(false);
         setShowSnackbar(true);
       });
-  }, []);
+  }, [play]);
 
   const onEditList = useCallback((info: AuthUrlInfo) => {
     setAccessToEdit(info);
