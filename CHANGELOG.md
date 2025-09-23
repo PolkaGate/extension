@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.7](https://github.com/polkagate/extension/compare/v1.9.6...v1.9.7) (2025-09-23)
+
+
+### Bug Fixes
+
+* show password input for consecutive signing requests ([#1909](https://github.com/polkagate/extension/issues/1909)) ([e1a2314](https://github.com/polkagate/extension/commit/e1a23148825f56830f4c738e1e3f6e470f4f0dab))
+
 ## [1.9.6](https://github.com/polkagate/extension/compare/v1.9.5...v1.9.6) (2025-09-23)
 
 
