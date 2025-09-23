@@ -172,6 +172,12 @@ function DisplayName ({ accountInfo, address, inTitleCase, name, nameStyle = {},
       );
     }
 
+    if (display && !subIdOnly) {
+      return displayParent
+        ? <span style={{ color: grey[500] }}>{display}</span>
+        : display;
+    }
+
     if (display && subIdOnly) {
       return maybeTitleCase(display);
     }
@@ -244,7 +250,7 @@ function SocialLinks ({ accountInfo, socialStyles }: SocialProps): React.ReactEl
     ].filter(Boolean) as { key: string; icon: React.JSX.Element; link: string; size: number; bgColor?: string }[];
   }, [email, isBlueish, isDark, theme.palette.icon.secondary, twitter, web]);
 
-    if (socials.length === 0) {
+  if (socials.length === 0) {
     return null;
   }
 

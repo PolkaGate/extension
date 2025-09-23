@@ -115,6 +115,7 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
           genesisHash={genesisHash ?? ''}
           identiconSize={36}
           inTitleCase
+          showSocial={false}
           style={{
             addressVariant: 'B-4',
             bgcolor: '#05091C',
