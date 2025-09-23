@@ -215,36 +215,38 @@ function SocialLinks ({ accountInfo, socialStyles }: SocialProps): React.ReactEl
   const isDark = useIsDark();
   const { email, twitter, web } = accountInfo?.identity ?? {};
 
-  if (!email && !web && !twitter) {
+  const socials = useMemo(() => {
+    const iconColor = isBlueish ? '#809ACB' : theme.palette.icon.secondary;
+    const bgColor = !isDark ? '#CCD2EA' : undefined;
+    const iconSize = 18;
+    const width = '10.12px';
+
+    return [
+      email && {
+        icon: <Email color={iconColor} width={width} />,
+        key: 'email',
+        link: `mailto:${email}`,
+        size: iconSize
+      },
+      web && {
+        icon: <Web color={iconColor} width={width} />,
+        key: 'web',
+        link: web,
+        size: iconSize
+      },
+      twitter && {
+        bgColor,
+        icon: <XIcon color={iconColor} width={width} />,
+        key: 'twitter',
+        link: `https://twitter.com/${twitter}`,
+        size: iconSize
+      }
+    ].filter(Boolean) as { key: string; icon: React.JSX.Element; link: string; size: number; bgColor?: string }[];
+  }, [email, isBlueish, isDark, theme.palette.icon.secondary, twitter, web]);
+
+    if (socials.length === 0) {
     return null;
   }
-
-  const iconColor = isBlueish ? '#809ACB' : theme.palette.icon.secondary;
-  const bgColor = !isDark ? '#CCD2EA' : undefined;
-  const iconSize = 18;
-  const width = '10.12px';
-
-  const socials = [
-    email && {
-      icon: <Email color={iconColor} width={width} />,
-      key: 'email',
-      link: `mailto:${email}`,
-      size: iconSize
-    },
-    web && {
-      icon: <Web color={iconColor} width={width} />,
-      key: 'web',
-      link: web,
-      size: iconSize
-    },
-    twitter && {
-      bgColor,
-      icon: <XIcon color={iconColor} width={width} />,
-      key: 'twitter',
-      link: `https://twitter.com/${twitter}`,
-      size: iconSize
-    }
-  ].filter(Boolean) as { key: string; icon: React.JSX.Element; link: string; size: number; bgColor?: string }[];
 
   return (
     <Grid alignItems='center' columnGap='2px' container item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', ml: '5px', mt: '3%', width: 'fit-content', ...socialStyles }}>
