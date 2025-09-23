@@ -23,7 +23,6 @@ export const POLKAGATE_POOL_IDS: Record<string, number> = {
 export const PRIVACY_POLICY_LINK = 'https://docs.polkagate.xyz/polkagate/polkagate-extension-user-guide/legal-and-security/privacy-policy';
 
 export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance in grey
-export const AUCTION_GRACE_PERIOD = 27000;// blocks
 export const MAX_NOMINATIONS = 16;
 export const FLOATING_POINT_DIGIT = 4;
 export const BLOCK_RATE = 6; // sec
@@ -87,11 +86,6 @@ export const TEST_NETS = [
 export const PROXY_CHAINS = [
   ...RELAY_CHAINS_GENESISHASH,
   ...ASSET_HUBS
-];
-
-export const CROWDLOANS_CHAINS = [
-  POLKADOT_GENESIS_HASH,
-  KUSAMA_GENESIS_HASH
 ];
 
 export const GOVERNANCE_CHAINS = [
@@ -236,10 +230,9 @@ export const MAYBE_LATER_PERIOD = 0; // 5 * 60 * 1000; // ms
 export const FULLSCREEN_WIDTH = '900px';
 export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
 
-type ProxyTypeIndex = 'CROWDLOAN' | 'GENERAL' | 'GOVERNANCE' | 'NOMINATION_POOLS' | 'SEND_FUND' | 'STAKING';
+type ProxyTypeIndex = 'GENERAL' | 'GOVERNANCE' | 'NOMINATION_POOLS' | 'SEND_FUND' | 'STAKING';
 
 export const PROXY_TYPE: Record<ProxyTypeIndex, ProxyTypes[]> = {
-  CROWDLOAN: ['Any', 'NonTransfer', 'Auction'],
   GENERAL: ['Any', 'NonTransfer'],
   GOVERNANCE: ['Any', 'NonTransfer', 'Governance'],
   NOMINATION_POOLS: ['Any', 'NonTransfer', 'Staking', 'NominationPools'],

@@ -94,7 +94,7 @@ const ProxyAccounts = ({ accounts, genesisHash }: ProxyAccountsProps) => {
           key={index}
           nameStyle={{ textAlign: 'center' }}
           showShortAddress
-          style={{ bgcolor: '#C6AECC26', borderRadius: '9px', color: '#AA83DC', m: '3px', padding: '4px 8px 4px 4px', variant: 'B-2' }}
+          style={{ backgroundColor: '#C6AECC26', borderRadius: '9px', color: '#AA83DC', margin: '3px', padding: '4px 8px 4px 4px', variant: 'B-2' }}
         />
       ))}
     </Grid>
@@ -127,13 +127,13 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
                     />
                   : <Identity2
                     address={accounts[0]}
-                    addressStyle={{ color: '#AA83DC' }}
+                    addressStyle={{ color: '#AA83DC', variant: 'B-1' }}
                     charsCount={5}
                     genesisHash={genesisHash}
                     nameStyle={{ paddingBottom: '7px', textAlign: 'center' }}
                     noIdenticon
                     showShortAddress
-                    style={{ addressVariant: 'B-1', maxWidth: '170px', overflow: 'hidden', padding: '10px 0 18px', textOverflow: 'ellipsis', variant: 'B-3' }}
+                    style={{ maxWidth: '170px', overflow: 'hidden', padding: '10px 0 18px', textOverflow: 'ellipsis', variant: 'B-3' }}
                     withShortAddress
                     />
               }

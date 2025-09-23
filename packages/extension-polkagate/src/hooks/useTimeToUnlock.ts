@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
-import blockToDate from '../popup/crowdloans/partials/blockToDate';
+import { blockToDate } from '../util/utils';
 import useChainInfo from './useChainInfo';
 import useCurrentBlockNumber from './useCurrentBlockNumber';
 import useFormatted from './useFormatted';
