@@ -4,7 +4,7 @@
 import { useContext, useMemo } from 'react';
 
 import { AccountsAssetsContext } from '../components';
-import { calcChange, calcPrice } from '../util/utils';
+import { calcChange, calcPrice } from '../util';
 import usePrices from './usePrices';
 
 export interface PortfolioType {

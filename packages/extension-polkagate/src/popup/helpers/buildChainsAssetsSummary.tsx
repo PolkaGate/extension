@@ -4,9 +4,8 @@
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Prices } from '../../util/types';
 
-import { toTitleCase } from '@polkadot/extension-polkagate/src/util';
+import { calcPrice, sanitizeChainName, toTitleCase} from '@polkadot/extension-polkagate/src/util';
 import chains from '@polkadot/extension-polkagate/src/util/chains';
-import { calcPrice, sanitizeChainName } from '@polkadot/extension-polkagate/src/util/utils';
 
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
 

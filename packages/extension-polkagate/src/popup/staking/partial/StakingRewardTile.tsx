@@ -8,7 +8,7 @@ import { Award, Chart21, Graph, MedalStar, Timer } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
+import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Thunder } from '../../../assets/gif';

@@ -7,7 +7,7 @@ import { Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme 
 import { Sticker } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
+import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 
 import { AssetLogo, FormatBalance3, FormatPrice, MySkeleton } from '../../../components';
 import Ice from '../../../components/SVG/Ice';

@@ -1,5 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 interface Commit {
@@ -36,7 +37,7 @@ const OWNER = 'Nick-1979';
 const REPO = 'mScience';
 const FILE_PATH = 'data.json';
 
-export async function getLastMsUpdateTime(): Promise<string> {
+export async function getLastMsUpdateTime (): Promise<string> {
   const url = `https://api.github.com/repos/${OWNER}/${REPO}/commits?path=${FILE_PATH}`;
 
   try {
@@ -58,7 +59,7 @@ export async function getLastMsUpdateTime(): Promise<string> {
   return '';
 }
 
-export async function getJsonFileFromRepo(): Promise<MsData[] | undefined> {
+export async function getJsonFileFromRepo (): Promise<MsData[] | undefined> {
   const url = `https://raw.githubusercontent.com/${OWNER}/${REPO}/master/${FILE_PATH}`;
 
   try {

@@ -8,8 +8,8 @@ import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { isStakingChain } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
-import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO, noop } from '@polkadot/util';
 
 import { ToggleDots } from '../../../components';

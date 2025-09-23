@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { sanitizeChainName } from './chain';
 import allChains from './chains';
-import { sanitizeChainName } from './utils';
 
 /**
  * @description get a chain genesis hash by its name

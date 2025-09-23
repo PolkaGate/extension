@@ -8,7 +8,7 @@ import React from 'react';
 
 import { FormatBalance2, GradientButton, GradientDivider } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
-import { formatTimestamp } from '../../util/utils';
+import { formatTimestamp } from '../../util';
 import { DraggableModal } from '../components/DraggableModal';
 
 interface Props {

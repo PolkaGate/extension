@@ -7,9 +7,8 @@ import type { SelectedType } from '@polkadot/extension-polkagate/src/util/types'
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountContext, SelectedContext } from '@polkadot/extension-polkagate/src/components/contexts';
-import { getAndWatchStorage } from '@polkadot/extension-polkagate/src/util';
+import { getAndWatchStorage, getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, PROFILE_TAGS, SELECTED_ACCOUNT_IN_STORAGE, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
-import { getSubstrateAddress } from '@polkadot/extension-polkagate/src/util/utils';
 
 interface Props {
   children: React.ReactNode;

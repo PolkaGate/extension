@@ -12,7 +12,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { isHexToBn } from '../util/utils';
+import { isHexToBn } from '../util';
 import useChainInfo from './useChainInfo';
 import useStashId from './useStashId';
 

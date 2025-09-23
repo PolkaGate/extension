@@ -7,9 +7,9 @@ import type { FeeInfo, Inputs } from '../types';
 import { ClickAwayListener, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
 import { FLOATING_POINT_DIGIT, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
-import { isOnAssetHub } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { AssetLogo, ShowBalance4 } from '../../../components';
 import { useAccount, useChainInfo, useFormatted, useTranslation } from '../../../hooks';

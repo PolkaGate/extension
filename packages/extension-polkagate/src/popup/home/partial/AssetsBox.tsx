@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
+import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 
 import { AssetNull } from '../../../components';
 import { useAccountAssets, useIsExtensionPopup, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';

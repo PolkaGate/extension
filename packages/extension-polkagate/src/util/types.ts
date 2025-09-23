@@ -192,40 +192,6 @@ export interface TxInfo extends TransactionDetail {
   payee?: Payee,
 }
 
-export interface Auction {
-  auctionCounter: number;
-  auctionInfo: [string, string];
-  blockchain: string;
-  crowdloans: Crowdloan[];
-  currentBlockNumber: number;
-  minContribution: string;
-  token: string;
-  winning: string[];
-}
-
-export interface Crowdloan {
-  fund: Fund;
-  identity: Identity;
-}
-
-interface Fund {
-  depositor: string;
-  verifier: string | null;
-  deposit: string;
-  raised: string;
-  end: number;
-  cap: string;
-  lastContribution: { ending: bigint };
-  firstPeriod: number;
-  lastPeriod: number;
-  trieIndex: number;
-  paraId: string;
-  hasLeased: boolean;
-  contributionBlock?: number;
-  contributionTimestamp?: number;
-  unlockingBlock?: number;
-}
-
 interface Identity {
   // 'judgements': [],
   //  'deposit':202580000000,
@@ -613,7 +579,7 @@ export interface ClaimedRewardInfo {
   timeStamp: number;
 }
 
-export type ProxyTypes = 'Any' | 'Assets' | 'AssetOwner'| 'AssetManager' | 'Auction' | 'CancelProxy' | 'Collator' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'Society' | 'NominationPools';
+export type ProxyTypes = 'Any' | 'Assets' | 'AssetOwner'| 'AssetManager' | 'CancelProxy' | 'Collator' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'Society' | 'NominationPools';
 
 export interface Proxy {
   delay: number;

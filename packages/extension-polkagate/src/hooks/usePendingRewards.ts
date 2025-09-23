@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { toBN } from '../util/utils';
+import { toBN } from '../util';
 import useActiveEraIndex from './useActiveEraIndex';
 import useChainInfo from './useChainInfo';
 import useFormatted from './useFormatted';

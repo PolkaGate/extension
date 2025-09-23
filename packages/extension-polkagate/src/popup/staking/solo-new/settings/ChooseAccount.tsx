@@ -10,7 +10,7 @@ import { noop } from '@polkadot/util';
 import { AccountContext, GradientDivider, Identity2, VariantButton } from '../../../../components';
 import { useChainInfo, useTranslation } from '../../../../hooks';
 import { SharePopup } from '../../../../partials';
-import { getFormattedAddress } from '../../../../util/utils';
+import { getFormattedAddress } from '../../../../util';
 import PRadio from '../../components/Radio';
 
 interface ChooseAccountMenuProps {
@@ -64,11 +64,9 @@ const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, se
                     addressStyle={{ color: isBlueish ? '#809ACB' : 'primary.main' }}
                     genesisHash={genesisHash ?? ''}
                     identiconSize={24}
+                    socialStyles={{ mt: 0 }}
                     style={{
                       color: checked ? isBlueish ? '#3988FF' : 'warning.main' : 'text.primary',
-                      'div div#socials': {
-                        mt: 0
-                      },
                       fontSize: '12px',
                       fontWeight: 500,
                       variant: 'B-4'
@@ -116,10 +114,11 @@ export default function ChooseAccount ({ genesisHash, isBlueish, setSpecificAcco
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px' }}>
         <Identity2
           address={specificAccount}
-          addressStyle={{ color: isBlueish ? '#809ACB' : 'primary.main', fontSize: '12px', fontWeight: 500 }}
+          addressStyle={{ color: isBlueish ? '#809ACB' : 'primary.main', fontSize: '12px', fontWeight: 500, variant: 'B-4' }}
           genesisHash={genesisHash ?? ''}
           identiconSize={36}
-          style={{ addressVariant: 'B-4', 'div div#socials': { mt: 0 }, variant: 'B-2' }}
+          socialStyles={{ mt: 0 }}
+          style={{ variant: 'B-2' }}
           withShortAddress
         />
         <ArrowCircleDown color={ isBlueish ? theme.palette.text.highlight : theme.palette.primary.main } onClick={handleToggleMenu} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />

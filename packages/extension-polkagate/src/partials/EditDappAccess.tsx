@@ -8,7 +8,7 @@ import React, { useCallback } from 'react';
 
 import { Motion } from '../components';
 import { useFavIcon, useTranslation } from '../hooks';
-import { extractBaseUrl } from '../util/utils';
+import { extractBaseUrl } from '../util';
 import ConnectedAccounts from './ConnectedAccounts';
 import DappInfo from './DappInfo';
 

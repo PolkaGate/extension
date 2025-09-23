@@ -16,7 +16,7 @@ import { useChainInfo, useTranslation, useValidatorApy } from '../../../hooks';
 import { Email, Web, XIcon } from '../../../popup/settings/icons';
 import SocialIcon from '../../../popup/settings/partials/SocialIcon';
 import { PolkaGateIdenticon, VelvetBox } from '../../../style';
-import { getSubstrateAddress, isHexToBn, toShortAddress } from '../../../util/utils';
+import { getSubstrateAddress, isHexToBn, toShortAddress } from '../../../util';
 import { getTokenUnit } from '../util/utils';
 import { InfoBox } from './InfoBox';
 

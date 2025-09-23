@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 /**
- * @description  this component is used to show an account balance in some pages like contributeToCrowdloan
+ * @description  this component is used to show an account balance
  * */
 
 import React from 'react';

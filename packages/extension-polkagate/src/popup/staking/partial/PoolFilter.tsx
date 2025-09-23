@@ -14,7 +14,7 @@ import { DecisionButtons, ExtensionPopup, GradientDivider } from '../../../compo
 import MySwitch from '../../../components/MySwitch';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, usePoolConst, useTranslation } from '../../../hooks';
-import { amountToHuman, amountToMachine } from '../../../util/utils';
+import { amountToHuman, amountToMachine } from '../../../util';
 import CheckBox from '../components/CheckBox';
 import Search from '../components/Search';
 import SortBy from './SortBy';

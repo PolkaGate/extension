@@ -17,7 +17,7 @@ function SocialIcon ({ Icon, bgColor, link, size = 32 }: Props): React.ReactElem
   const isDark = useIsDark();
   const isBlueish = useIsBlueish();
 
-  const goToLink = useCallback(() => window.open(link, '_blank'), [link]);
+  const goToLink = useCallback(() => window.open(link, '_blank', 'noopener,noreferrer'), [link]);
 
   return (
     <Grid

@@ -89,13 +89,13 @@ function ChildInfo ({ genesisHash, maybeChidAccount, onClose, parentAddress, par
         </Typography>
         <Identity2
           address={maybeChidAccount?.address}
-          addressStyle={{ color: 'primary.main' }}
+          addressStyle={{ color: 'primary.main', variant: 'B-1' }}
           charsCount={14}
           genesisHash={parentGenesis}
           identiconSize={30}
           identiconStyle={{ marginRight: '5px' }}
           name={childName ?? t('Unknown')}
-          style={{ addressVariant: 'B-1', bgcolor: 'background.default', borderRadius: '14px', marginTop: '20px', padding: '15px 10px', variant: 'B-2', width: '100%' }}
+          style={{ backgroundColor: 'background.default', borderRadius: '14px', marginTop: '20px', padding: '15px 10px', variant: 'B-2', width: '100%' }}
           withShortAddress
         />
         <MyTextField

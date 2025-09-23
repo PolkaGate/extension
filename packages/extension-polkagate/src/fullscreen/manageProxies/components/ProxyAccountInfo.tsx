@@ -9,8 +9,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
+import { toShortAddress } from '@polkadot/extension-polkagate/src/util';
 import { toTitleCase } from '@polkadot/extension-polkagate/src/util/string';
-import { toShortAddress } from '@polkadot/extension-polkagate/src/util/utils';
 
 import { GlowCheckbox, Identity2 } from '../../../components';
 import { useTranslation } from '../../../components/translate';

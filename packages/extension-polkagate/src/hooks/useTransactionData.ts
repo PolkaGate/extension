@@ -6,7 +6,7 @@ import type { ExtraDetailConfirmationPage, TxInfo } from '../util/types';
 
 import { useMemo } from 'react';
 
-import { toBN } from '../util/utils';
+import { toBN } from '../util';
 import useCanPayFeeAndDeposit from './useCanPayFeeAndDeposit';
 
 export default function useTransactionData (

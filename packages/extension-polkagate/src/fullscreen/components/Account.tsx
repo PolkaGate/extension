@@ -12,9 +12,9 @@ import { useNavigate } from 'react-router-dom';
 
 import NftManager from '@polkadot/extension-polkagate/src/class/nftManager';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
+import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
-import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN_ZERO } from '@polkadot/util';
 
 import { AssetLogo, FormatPrice, Identity2, MySkeleton } from '../../components';

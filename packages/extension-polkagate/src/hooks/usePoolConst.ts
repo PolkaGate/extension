@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { bnMax } from '@polkadot/util';
 
-import { sanitizeChainName, toBN } from '../util/utils';
+import { sanitizeChainName, toBN } from '../util';
 import useChainInfo from './useChainInfo';
 import useCurrentEraIndex from './useCurrentEraIndex';
 

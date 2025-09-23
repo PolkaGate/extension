@@ -9,7 +9,7 @@ import React from 'react';
 
 import { ExtensionPopup, FormatBalance2, GradientDivider } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { formatTimestamp } from '../../../util/utils';
+import { formatTimestamp } from '../../../util';
 import StakingActionButton from './StakingActionButton';
 
 interface Props {

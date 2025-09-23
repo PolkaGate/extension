@@ -14,7 +14,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { FormatBalance2, FormatPrice, ScrollingTextBox } from '../../../components';
 import { useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import GradientDivider from '../../../style/GradientDivider';
-import { amountToMachine, calcPrice } from '../../../util/utils';
+import { amountToMachine, calcPrice } from '../../../util';
 import HistoryDetail from './HistoryDetail';
 
 interface HistoryItemProps {

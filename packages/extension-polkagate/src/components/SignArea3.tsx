@@ -10,8 +10,8 @@ import type { ISubmittableResult, SignerPayloadJSON } from '@polkadot/types/type
 import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
-import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import { Data, Lock, ScanBarcode, Warning2 } from 'iconsax-react';
+import { Grid, useTheme } from '@mui/material';
+import { Data, Lock, ScanBarcode } from 'iconsax-react';
 import React, { memo, type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
@@ -19,15 +19,15 @@ import keyring from '@polkadot/ui-keyring';
 import { noop } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { useAccount, useAccountDisplay, useChainInfo, useFormatted, useIsBlueish, useIsExtensionPopup, useProxies, useTranslation } from '../hooks';
-import StakingActionButton from '../popup/staking/partial/StakingActionButton';
+import { useAccount, useAccountDisplay, useChainInfo, useFormatted, useProxies, useTranslation } from '../hooks';
+import { getSubstrateAddress } from '../util';
 import { send } from '../util/api';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
-import { getSubstrateAddress } from '../util/utils';
+import NoPrivateKeySigningButton from './NoPrivateKeySigningButton';
 import SignUsingPassword, { type SignUsingPasswordProps } from './SignUsingPassword';
 import { SignUsingQR, type SignUsingQRProps } from './SignUsingQR';
 import SignWithLedger from './SignWithLedger';
-import { GradientButton, SignUsingProxy } from '.';
+import { SignUsingProxy } from '.';
 
 interface AlertHandler {
   alertText: string;
@@ -36,53 +36,6 @@ interface AlertHandler {
   icon: ReactNode;
   onClick: () => void;
 }
-
-interface ChooseSigningButtonProps {
-  alertHandler: AlertHandler | undefined;
-}
-
-const NoPrivateKeySigningButton = ({ alertHandler }: ChooseSigningButtonProps) => {
-  const isBlueish = useIsBlueish();
-  const isExtension = useIsExtensionPopup();
-
-  if (!alertHandler) {
-    return null;
-  }
-
-  return (
-    <Stack direction='column' sx={{ width: '100%' }}>
-      <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex' }}>
-        <Warning2 color={isBlueish ? '#596AFF' : '#FFCE4F'} size={isExtension ? 35 : 24} style={{ height: 'fit-content' }} variant='Bold' />
-        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-4'>
-          {alertHandler.alertText}
-        </Typography>
-      </Container>
-      {
-        isBlueish
-          ? (
-            <StakingActionButton
-              disabled={alertHandler.isDisabled}
-              onClick={alertHandler.onClick}
-              startIcon={alertHandler.icon}
-              style={{ marginTop: '18px' }}
-              text={alertHandler.buttonText}
-
-            />)
-          : (
-            <GradientButton
-              contentPlacement='center'
-              disabled={alertHandler.isDisabled}
-              onClick={alertHandler.onClick}
-              style={{
-                height: '44px',
-                marginTop: '18px'
-              }}
-              text={alertHandler.buttonText}
-            />)
-      }
-    </Stack>
-  );
-};
 
 interface Props {
   address: string | undefined;
@@ -99,7 +52,7 @@ interface Props {
   setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
   showProxySelection: boolean;
   signerOption?: Partial<SignerOptions>;
-  signUsingPasswordProps?: Partial<SignUsingPasswordProps>;
+  extraProps?: Partial<SignUsingPasswordProps>;
   signUsingQRProps?: Partial<SignUsingQRProps>;
   style?: React.CSSProperties;
   transaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
@@ -112,7 +65,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-function SignArea3 ({ address, direction, disabled, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingPasswordProps, signUsingQRProps, signerOption, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
+function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingQRProps, signerOption, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -216,12 +169,22 @@ function SignArea3 ({ address, direction, disabled, genesisHash, ledgerStyle, on
     }
 
     if (showUseProxy) {
+      if (proxies === undefined) {
+        return {
+          alertText: t('This is a watch-only account. Checking if this account has proxy accounts.'),
+          buttonText: t('Loading ...'),
+          icon: <Data color={theme.palette.text.primary} size={18} variant='Bold' />,
+          isDisabled: true,
+          onClick: noop
+        };
+      }
+
       if (proxies?.length) {
         return {
           alertText: t('This is a watch-only account. To complete this transaction, you must use a proxy.'),
           buttonText: t('Use Proxy'),
           icon: <Data color={theme.palette.text.primary} size={18} variant='Bold' />,
-          isDisabled: disabled,
+          isDisabled: false,
           onClick: toggleSelectProxy
         };
       }
@@ -236,7 +199,7 @@ function SignArea3 ({ address, direction, disabled, genesisHash, ledgerStyle, on
     }
 
     return undefined;
-  }, [disabled, proxies?.length, showQrSign, showUseProxy, t, theme.palette.text.highlight, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
+  }, [disabled, proxies, showQrSign, showUseProxy, t, theme.palette.text.highlight, theme.palette.text.primary, toggleQrScan, toggleSelectProxy]);
 
   const handleTxResult = useCallback((txResult: TxResult) => {
     try {
@@ -283,9 +246,12 @@ function SignArea3 ({ address, direction, disabled, genesisHash, ledgerStyle, on
   return (
     <>
       <Grid container item sx={{ bottom: '13px', left: 0, position: 'absolute', px: '15px', right: 0, width: '100%', ...style }}>
-        {!selectedProxy && noPrivateKeyAccount && !isLedger &&
+        {!selectedProxy && noPrivateKeyAccount && !isLedger && alertHandler &&
           <NoPrivateKeySigningButton
-            alertHandler={alertHandler}
+            {...alertHandler}
+            decisionButtonProps={extraProps?.decisionButtonProps}
+            onDismiss={onClose}
+            withCancel={withCancel}
           />
         }
         {isLedger &&
@@ -306,6 +272,7 @@ function SignArea3 ({ address, direction, disabled, genesisHash, ledgerStyle, on
         }
         {(selectedProxy || !noPrivateKeyAccount) &&
           <SignUsingPassword
+            {...extraProps}
             api={api}
             direction={direction}
             disabled={disabled}
@@ -318,7 +285,6 @@ function SignArea3 ({ address, direction, disabled, genesisHash, ledgerStyle, on
             setFlowStep={setFlowStep}
             signerOption={signerOption}
             withCancel={withCancel}
-            {...signUsingPasswordProps}
           />
         }
       </Grid>

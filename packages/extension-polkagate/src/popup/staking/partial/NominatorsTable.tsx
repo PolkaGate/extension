@@ -15,7 +15,7 @@ import { FormatBalance2, GlowCheckbox } from '../../../components';
 import ValidatorInformationFS from '../../../fullscreen/stake/partials/ValidatorInformationFS';
 import { useChainInfo, useIsBlueish, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
-import { toShortAddress } from '../../../util/utils';
+import { toShortAddress } from '../../../util';
 import ValidatorDetail from './ValidatorDetail';
 
 interface ValidatorIdentityProp {

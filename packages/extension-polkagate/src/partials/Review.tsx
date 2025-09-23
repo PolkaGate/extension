@@ -20,8 +20,8 @@ import { RewardHeaderAmount } from '../fullscreen/stake/new-pool/claimReward/par
 import { useChainInfo, useFormatted, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { PoolItem } from '../popup/staking/partial/PoolsTable';
 import { PolkaGateIdenticon } from '../style';
+import { toShortAddress } from '../util';
 import getLogo2 from '../util/getLogo2';
-import { toShortAddress } from '../util/utils';
 import UnableToPayFee from './UnableToPayFee';
 
 interface AccountBoxProps {
@@ -60,13 +60,13 @@ const RowAccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', borderRadius: '14px', display: 'flex', gap: '12px', mb: '8px', p: '12px 8px' }}>
       <Identity2
         address={selectedAccount?.address}
-        addressStyle={{ color: isExtension ? 'text.highlight' : '#AA83DC' }}
+        addressStyle={{ color: isExtension ? 'text.highlight' : '#AA83DC', variant: 'B-4' }}
         charsCount={12}
         columnGap='5px'
         genesisHash={genesisHash ?? ''}
         identiconSize={36}
         showShortAddress
-        style={{ addressVariant: 'B-4', variant: 'B-3' }}
+        style={{ variant: 'B-3' }}
         withShortAddress
       />
     </Container>

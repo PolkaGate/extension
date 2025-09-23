@@ -10,7 +10,7 @@ import React, { useMemo } from 'react';
 import { FormatBalance2, ScrollingTextBox } from '../../../../components';
 import { useChainInfo } from '../../../../hooks';
 import { PoolIdenticon } from '../../../../popup/staking/partial/PoolIdenticon';
-import { isHexToBn } from '../../../../util/utils';
+import { isHexToBn } from '../../../../util';
 import { LoadingPoolInformation } from './LoadingPoolInformation';
 
 interface SelectedPoolInformationProps {

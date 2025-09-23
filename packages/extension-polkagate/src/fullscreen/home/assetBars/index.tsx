@@ -6,9 +6,9 @@ import type { AssetsWithUiAndPrice } from './types';
 import { Container, useTheme } from '@mui/material';
 import React, { useContext, useMemo } from 'react';
 
+import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
-import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountsAssetsContext, AssetNull } from '../../../components';

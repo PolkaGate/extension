@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { FETCHING_ASSETS_FUNCTION_NAMES, NATIVE_TOKEN_ASSET_ID, TEST_NETS } from '../../constants';
-import { getPriceIdByChainName } from '../../utils';
+import { getPriceIdByChainName } from '../../misc';
 import { balancify, closeWebsockets } from '../utils';
 import { getBalances } from './getBalances.js';
 

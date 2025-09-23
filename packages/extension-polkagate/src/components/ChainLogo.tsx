@@ -11,10 +11,10 @@ import { logoWhiteTransparent } from '../assets/logos';
 import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { useIsDark } from '../hooks';
 import { convertToCamelCase } from '../util';
+import { sanitizeChainName } from '../util';
 import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo2 from '../util/getLogo2';
 import { mapHubToRelay } from '../util/migrateHubUtils';
-import { sanitizeChainName } from '../util/utils';
 import { GenesisHashOptionsContext } from './contexts';
 
 interface Props {

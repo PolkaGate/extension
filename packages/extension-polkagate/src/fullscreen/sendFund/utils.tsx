@@ -6,9 +6,9 @@ import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/type
 
 import { getParaId, getRelayChainSymbol, hasSupportForAsset, SUBSTRATE_CHAINS, type TSubstrateChain } from '@paraspell/sdk-pjs';
 
+import { isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
 import { NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import { isMigratedByChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
-import { isOnAssetHub } from '@polkadot/extension-polkagate/src/util/utils';
 
 export const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 export const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;

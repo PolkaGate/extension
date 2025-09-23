@@ -9,8 +9,8 @@ import CountUp from 'react-countup';
 
 import { HideNumberShape1, HideNumberShape2 } from '../fullscreen/home/HideNumberShapes';
 import { useCurrency, useIsHideNumbers } from '../hooks';
+import { amountToHuman, getDecimal } from '../util';
 import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
-import { amountToHuman, getDecimal } from '../util/utils';
 import Dots, { type DotsVariant } from './Dots';
 import MySkeleton from './MySkeleton';
 

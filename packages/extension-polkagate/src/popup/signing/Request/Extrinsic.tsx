@@ -6,15 +6,15 @@ import type { Call, ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { AnyJson, SignerPayloadJSON } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 
-import { Avatar, Grid, Stack, Typography } from '@mui/material';
+import { Avatar, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useRef } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
-import { Address2, ChainLogo, DecisionButtons, FormatBalance2, FormatPrice } from '../../../components';
+import { ChainLogo, DecisionButtons, FormatBalance2, FormatPrice, Identity2 } from '../../../components';
 import { useAccountAssets, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useTokenPrice, useTranslation } from '../../../hooks';
+import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
-import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util/utils';
 import { getValue } from '../../account/util';
 import { type ModeData, SIGN_POPUP_MODE } from '../types';
 import RequestContent from './requestContent';
@@ -56,6 +56,7 @@ function decodeMethod (data: string, chain: Chain, specVersion: BN): Decoded {
 
 function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const dapp = new URL(url).origin;
   const faviconUrl = useFavIcon(dapp);
   const chain = useMetadata(genesisHash);
@@ -72,7 +73,7 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
   const call = useMemo(
     () => (api && decoded?.method)
       ? api.tx?.[decoded.method.section as keyof typeof api.tx]
-               ?.[decoded.method.method]
+      ?.[decoded.method.method]
       : undefined,
     [api, decoded?.method]
   );
@@ -107,17 +108,25 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
         </Typography>
       </Grid>
       <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='space-between' sx={{ m: '20px 0 15px' }}>
-        <Grid item width='45%'>
-          <Address2
-            address={address}
-            charsCount={4}
-            identiconSize={36}
-            inTitleCase
-            showAddress
-            showCopy={false}
-            style={{ bgcolor: '#05091C', borderRadius: '14px', height: '56px', width: '100%' }}
-          />
-        </Grid>
+        <Identity2
+          address={address}
+          addressStyle={{ color: 'text.secondary', variant: 'B-4' }}
+          charsCount={4}
+          genesisHash={genesisHash ?? ''}
+          identiconSize={36}
+          inTitleCase
+          showSocial={false}
+          style={{
+            backgroundColor: '#05091C',
+            borderRadius: '14px',
+            color: theme.palette.text.primary,
+            height: '56px',
+            paddingLeft: '10px',
+            variant: 'B-2',
+            width: '45%'
+          }}
+          withShortAddress
+        />
         <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
           {t('on')}
         </Typography>

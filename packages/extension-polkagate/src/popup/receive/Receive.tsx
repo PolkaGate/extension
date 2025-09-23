@@ -18,7 +18,7 @@ import MySnackbar from '../../components/MySnackbar';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
-import { sanitizeChainName, toShortAddress } from '../../util/utils';
+import { sanitizeChainName, toShortAddress } from '../../util';
 import BackButton from '../accountsLists/BackButton';
 
 const ListItem = styled(Grid)(() => ({

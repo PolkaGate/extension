@@ -29,7 +29,7 @@ export const getVoteType = (voteType: number | null | undefined) => {
   return undefined;
 };
 
-export function resolveActionType(historyItem: TransactionDetail): string {
+export function resolveActionType (historyItem: TransactionDetail): string {
   let action: string =
     isReward(historyItem)
       ? 'reward'
@@ -62,4 +62,31 @@ export const historyIconBgColor = (action: string) => {
   } as const;
 
   return actionColors[normalizedAction] || '#6743944D';
+};
+
+export function saveAsHistory (formatted: string, info: TransactionDetail) {
+  chrome.storage.local.get('history', (res) => {
+    const k = `${formatted}`;
+    const last = (res?.['history'] ?? {}) as unknown as Record<string, TransactionDetail[]>;
+
+    if (last[k]) {
+      last[k].push(info);
+    } else {
+      last[k] = [info];
+    }
+
+    // eslint-disable-next-line no-void
+    void chrome.storage.local.set({ history: last });
+  });
+}
+
+export async function getHistoryFromStorage (formatted: string): Promise<TransactionDetail[] | undefined> {
+  return new Promise((resolve) => {
+    chrome.storage.local.get('history', (res) => {
+      const k = `${formatted}`;
+      const last = (res?.['history'] ?? {}) as unknown as Record<string, TransactionDetail[]>;
+
+      resolve(last?.[k]);
+    });
+  });
 }

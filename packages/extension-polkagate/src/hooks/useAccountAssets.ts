@@ -6,8 +6,8 @@ import type { FetchedBalance } from '../util/types';
 import { useContext, useMemo } from 'react';
 
 import { AccountsAssetsContext } from '../components';
+import { isHexToBn } from '../util';
 import { TEST_NETS } from '../util/constants';
-import { isHexToBn } from '../util/utils';
 import useIsTestnetEnabled from './useIsTestnetEnabled';
 
 export const BN_MEMBERS = [

@@ -8,7 +8,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import { useChainInfo, useIsExtensionPopup, usePoolConst, useStakingConsts, useTranslation } from '../../../../hooks';
 import { StakingInfoStack } from '../../../../popup/staking/partial/NominatorsTable';
-import { areArraysEqual } from '../../../../util/utils';
+import { areArraysEqual } from '../../../../util';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../../util/utils';
 import { SelectedPoolInformation } from './SelectedPoolInformation';
 import { SelectedValidatorsInformation } from './SelectedValidatorsInformation';

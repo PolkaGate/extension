@@ -3,9 +3,10 @@
 
 import { BN_ZERO } from '@polkadot/util';
 
+import { getPriceIdByChainName } from '../..';
+import { isOnAssetHub } from '../../chain';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../constants';
 import { isMigratedHub } from '../../migrateHubUtils';
-import { getPriceIdByChainName, isOnAssetHub } from '../../utils';
 import { getStakingBalances } from '../shared-helpers/getStakingBalances';
 import { balancify } from '.';
 

@@ -6,9 +6,9 @@ import type { Chain } from '@polkadot/extension-chains/types';
 
 import { useMemo } from 'react';
 
+import { sanitizeChainName } from '../util';
 import chains from '../util/chains';
 import { isMigrated } from '../util/migrateHubUtils';
-import { sanitizeChainName } from '../util/utils';
 import useApi from './useApi';
 import useMetadata from './useMetadata';
 
