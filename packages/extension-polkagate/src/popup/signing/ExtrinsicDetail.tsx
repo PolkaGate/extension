@@ -14,8 +14,7 @@ import { formatNumber } from '@polkadot/util';
 
 import { ShowBalance } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
-import { toTitleCase } from '../../util';
-import { toBN } from '../../util/utils';
+import { toBN, toTitleCase } from '../../util';
 
 interface Data {
   hexBytes: string | null;

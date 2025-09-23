@@ -15,7 +15,7 @@ import { FormatBalance2, GlowCheckbox, MySkeleton } from '../../../../components
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../../hooks';
 import { type StakingInfoStackProps, ValidatorIdentity } from '../../../../popup/staking/partial/NominatorsTable';
 import { ValidatorIdSocials } from '../../../../popup/staking/partial/ValidatorDetail';
-import { toBN } from '../../../../util/utils';
+import { toBN } from '../../../../util';
 import ValidatorInformationFS from '../../partials/ValidatorInformationFS';
 
 interface InfoProps extends StakingInfoStackProps {

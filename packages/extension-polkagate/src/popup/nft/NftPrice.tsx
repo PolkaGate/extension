@@ -10,7 +10,7 @@ import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
 import { AssetLogo, ShowBalance } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
-import { amountToMachine } from '../../util/utils';
+import { amountToMachine } from '../../util';
 
 function NftPrice ({ nft, style = {} }: { nft: ItemInformation, style?: SxProps }) {
   const { t } = useTranslation();

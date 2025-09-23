@@ -12,8 +12,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { CryptoFiatBalance, ScrollingTextBox } from '../../components';
 import { useTokenPriceBySymbol, useTranslation } from '../../hooks';
-import { historyIconBgColor, resolveActionType } from '../../util';
-import { amountToMachine, calcPrice } from '../../util/utils';
+import { amountToMachine, calcPrice, historyIconBgColor, resolveActionType } from '../../util';
 import { COLUMN_WIDTH } from './consts';
 import HistoryDetail from './HistoryDetail';
 import HistoryIcon from './HistoryIcon';

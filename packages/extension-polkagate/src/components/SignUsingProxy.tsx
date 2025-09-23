@@ -14,7 +14,7 @@ import { SharePopup } from '../partials';
 import Radio from '../popup/staking/components/Radio';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { PolkaGateIdenticon } from '../style';
-import { getSubstrateAddress } from '../util/utils';
+import { getSubstrateAddress } from '../util';
 import { AccountContext, FadeOnScroll, GradientButton, Identity2, Progress } from '.';
 
 const ResetSelection = ({ onReset }: { onReset: () => void }) => {

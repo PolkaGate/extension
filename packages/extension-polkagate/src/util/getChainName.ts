@@ -3,8 +3,8 @@
 
 import type { DropdownOption } from './types';
 
+import { sanitizeChainName } from './chain';
 import allChains from './chains';
-import { sanitizeChainName } from './utils';
 import { toCamelCase } from '.';
 
 /**

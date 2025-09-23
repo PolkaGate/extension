@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { isEmail, isUrl, isWss } from '../util/utils';
+import { isEmail, isUrl, isWss } from '../util';
 import Label from './Label';
 import { Input } from './TextInputs';
 

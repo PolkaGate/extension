@@ -11,8 +11,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { getStorage, setStorage } from '../util';
-import { isHexToBn } from '../util/utils';
+import { getStorage, isHexToBn, setStorage } from '../util';
 import useBalances from './useBalances';
 import useChainInfo from './useChainInfo';
 import useCurrentEraIndex from './useCurrentEraIndex';

@@ -5,9 +5,9 @@ import type { FetchedBalance, PositionInfo } from '../../util/types';
 
 import { resolveStakingAssetId } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
+import { sanitizeChainName } from '../../util';
 import { STAKING_CHAINS, TEST_NETS } from '../../util/constants';
 import getChain from '../../util/getChain';
-import { sanitizeChainName } from '../../util/utils';
 
 export function getStakingAsset (accountAssets: FetchedBalance[] | null | undefined, genesisHash: string | undefined) {
   const _assetId = resolveStakingAssetId(genesisHash);

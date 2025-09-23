@@ -10,10 +10,10 @@ import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, us
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
+import { amountToHuman } from '../util';
 import { getNominationPoolsClaimedRewards } from '../util/api';
 import getRewardsSlashes from '../util/api/getRewardsSlashes';
 import { MAX_HISTORY_RECORD_TO_SHOW } from '../util/constants';
-import { amountToHuman } from '../util/utils';
 import useChainInfo from './useChainInfo';
 
 // Register Chart.js components for bar charts

@@ -3,7 +3,7 @@
 
 import React, { useContext } from 'react';
 
-import { sanitizeChainName } from '../util/utils';
+import { sanitizeChainName } from '../util';
 import AssetDualLogo from './AssetDualLogo';
 import ChainLogo from './ChainLogo';
 import { GenesisHashOptionsContext } from './contexts';

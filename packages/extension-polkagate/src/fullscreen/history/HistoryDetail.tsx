@@ -16,9 +16,9 @@ import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsExtensionPopup, useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../style';
 import { getVoteType, isReward, toTitleCase } from '../../util';
+import { amountToMachine, calcPrice, countDecimalPlaces, formatTimestamp, toShortAddress } from '../../util';
 import { CHAINS_WITH_BLACK_LOGO } from '../../util/constants';
 import getLogo from '../../util/getLogo';
-import { amountToMachine, calcPrice, countDecimalPlaces, formatTimestamp, toShortAddress } from '../../util/utils';
 
 interface Props {
   historyItem: TransactionDetail;

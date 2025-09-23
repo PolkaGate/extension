@@ -3,7 +3,7 @@
 
 import type { TransferRequest } from '../types';
 
-import { getSubscanChainName } from '../utils';
+import { getSubscanChainName } from '../chain';
 import { postReq } from './getTXsHistory';
 
 const nullObject = {

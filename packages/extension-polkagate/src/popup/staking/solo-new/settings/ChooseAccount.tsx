@@ -10,7 +10,7 @@ import { noop } from '@polkadot/util';
 import { AccountContext, GradientDivider, Identity2, VariantButton } from '../../../../components';
 import { useChainInfo, useTranslation } from '../../../../hooks';
 import { SharePopup } from '../../../../partials';
-import { getFormattedAddress } from '../../../../util/utils';
+import { getFormattedAddress } from '../../../../util';
 import PRadio from '../../components/Radio';
 
 interface ChooseAccountMenuProps {

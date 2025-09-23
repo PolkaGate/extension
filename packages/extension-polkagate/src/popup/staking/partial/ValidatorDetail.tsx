@@ -16,7 +16,7 @@ import { Transition } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsBlueish, useTranslation, useValidatorApy } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
-import { getSubscanChainName, isHexToBn, toShortAddress } from '../../../util/utils';
+import { getSubscanChainName, isHexToBn, toShortAddress } from '../../../util';
 import { Discord, Email, Github, Web, XIcon } from '../../settings/icons';
 import SocialIcon from '../../settings/partials/SocialIcon';
 import BlueGradient from '../stakingStyles/BlueGradient';

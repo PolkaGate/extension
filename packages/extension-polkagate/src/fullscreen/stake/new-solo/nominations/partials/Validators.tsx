@@ -9,7 +9,7 @@ import type { SpStakingExposurePage, SpStakingPagedExposureMetadata } from '@pol
 import { Stack } from '@mui/material';
 import React from 'react';
 
-import { toBN } from '@polkadot/extension-polkagate/src/util/utils';
+import { toBN } from '@polkadot/extension-polkagate/src/util';
 
 import { ValidatorInfo } from '../ValidatorItem';
 import Curve from './Curve';

@@ -1,5 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
 // @ts-nocheck
 
 import type { AccountJson, AccountWithChildren } from '@polkadot/extension-base/background/types';

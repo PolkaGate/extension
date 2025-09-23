@@ -16,8 +16,7 @@ import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } f
 import { useChainInfo, useCurrency, useIsBlueish, useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import StakingActionButton from '../../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../../style';
-import { toTitleCase } from '../../util';
-import { amountToHuman, countDecimalPlaces, getSubscanChainName, isValidAddress, toShortAddress } from '../../util/utils';
+import { amountToHuman, countDecimalPlaces, getSubscanChainName, isValidAddress, toShortAddress, toTitleCase } from '../../util';
 import { DraggableModal } from '../components/DraggableModal';
 
 const SubScanIcon = ({ size = '13px' }: { size?: string }) => (

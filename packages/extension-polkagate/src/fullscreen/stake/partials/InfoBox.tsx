@@ -11,8 +11,8 @@ import { type BN, isBn } from '@polkadot/util';
 import { ShowValue } from '../../../components';
 import AssetLogo from '../../../components/AssetLogo';
 import { useChainInfo, useIsExtensionPopup } from '../../../hooks';
+import { amountToHuman } from '../../../util';
 import getLogo2 from '../../../util/getLogo2';
-import { amountToHuman } from '../../../util/utils';
 
 interface InfoBoxProps {
   value: number | string | BN | undefined;

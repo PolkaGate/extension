@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import type { BN } from '@polkadot/util';
 import type { BalancesInfo } from '../../../util/types';
 
@@ -12,8 +11,8 @@ import React, { useCallback, useMemo } from 'react';
 
 import { AssetLogo } from '../../../components';
 import { useAccountAssets, usePrices } from '../../../hooks';
+import { amountToHuman } from '../../../util';
 import getLogo2 from '../../../util/getLogo2';
-import { amountToHuman } from '../../../util/utils';
 import { getValue } from '../../account/util';
 
 const MAX_ASSETS_TO_SHOW = 4; // we're gonna display up to 2 assets if they were available!

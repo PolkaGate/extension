@@ -13,8 +13,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
-import { toCamelCase } from '../util';
-import { isOnAssetHub } from '../util/utils';
+import { isOnAssetHub, toCamelCase } from '../util';
 import useChainInfo from './useChainInfo';
 
 const assetsChains = createAssets();

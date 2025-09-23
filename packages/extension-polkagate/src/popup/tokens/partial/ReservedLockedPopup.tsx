@@ -11,7 +11,7 @@ import { Bezier, Data, type Icon, Image, LikeDislike, Paperclip2, People, Profil
 import React, { useMemo } from 'react';
 
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials/index';
-import { calcPrice } from '@polkadot/extension-polkagate/src/util/utils';
+import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 
 import { GradientButton, GradientDivider } from '../../../components';
 import Ice from '../../../components/SVG/Ice';

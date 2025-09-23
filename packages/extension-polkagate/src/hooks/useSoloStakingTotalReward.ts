@@ -8,8 +8,8 @@ import { useEffect, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
+import { getSubscanChainName } from '../util';
 import { postData } from '../util/api';
-import { getSubscanChainName } from '../util/utils';
 import useStakingRewardDestinationAddress from './useStakingRewardDestinationAddress';
 
 export async function getStakingReward (chainName: string, address: AccountId | string | null): Promise<string | null> {

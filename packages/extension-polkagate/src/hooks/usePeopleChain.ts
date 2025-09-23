@@ -6,8 +6,8 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import { createWsEndpoints } from '@polkagate/apps-config';
 import { useMemo } from 'react';
 
+import { sanitizeChainName } from '../util';
 import { KUSAMA_PEOPLE_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_PEOPLE_GENESIS_HASH, RELAY_CHAINS_NAMES, WESTEND_PEOPLE_GENESIS_HASH } from '../util/constants';
-import { sanitizeChainName } from '../util/utils';
 import useChainInfo from './useChainInfo';
 import useMetadata from './useMetadata';
 

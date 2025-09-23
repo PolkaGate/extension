@@ -16,9 +16,8 @@ import { useChainInfo, useIsBlueish, useTranslation } from '../hooks';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../style';
-import { toTitleCase, updateStorage } from '../util';
+import { amountToHuman, countDecimalPlaces, getSubscanChainName, toShortAddress, toTitleCase, updateStorage } from '../util';
 import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
-import { amountToHuman, countDecimalPlaces, getSubscanChainName, toShortAddress } from '../util/utils';
 
 interface SubProps {
   transactionDetail: TransactionDetail;

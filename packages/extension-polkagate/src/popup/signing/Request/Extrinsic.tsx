@@ -13,8 +13,8 @@ import { bnToBn } from '@polkadot/util';
 
 import { ChainLogo, DecisionButtons, FormatBalance2, FormatPrice, Identity2 } from '../../../components';
 import { useAccountAssets, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useTokenPrice, useTranslation } from '../../../hooks';
+import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
-import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util/utils';
 import { getValue } from '../../account/util';
 import { type ModeData, SIGN_POPUP_MODE } from '../types';
 import RequestContent from './requestContent';

@@ -8,7 +8,7 @@ import React from 'react';
 
 import { useAccountName, useIsBlueish, useMyAccountIdentity } from '../hooks';
 import { PolkaGateIdenticon } from '../style';
-import { getSubstrateAddress } from '../util/utils';
+import { getSubstrateAddress } from '../util';
 
 export interface SignerInformation {
   selectedProxyAddress: string | undefined;

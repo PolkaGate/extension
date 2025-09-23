@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useFavIcon, useTranslation } from '../hooks';
 import { getAuthList, ignoreAuthRequest } from '../messaging';
 import TransactionIndex from '../popup/signing/TransactionIndex';
-import { extractBaseUrl } from '../util/utils';
+import { extractBaseUrl } from '../util';
 import ConnectedAccounts from './ConnectedAccounts';
 import DappInfo from './DappInfo';
 import SharePopup from './SharePopup';

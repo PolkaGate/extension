@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { calcInterval } from '../util/utils';
+import { calcInterval } from '../util';
 
 interface ValidatorEraInfo {
   netReward: number;

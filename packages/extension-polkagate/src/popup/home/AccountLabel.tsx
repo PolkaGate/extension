@@ -6,7 +6,7 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import { getProfileColor } from '@polkadot/extension-polkagate/src/util/utils';
+import { getProfileColor } from '@polkadot/extension-polkagate/src/util';
 
 import { useIsExtensionPopup, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
 

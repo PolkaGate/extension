@@ -16,8 +16,8 @@ import { FormatBalance2, GradientButton } from '../../../components';
 import { useIsExtensionPopup, usePoolConst, useStakingConsts, useTranslation } from '../../../hooks';
 import { SharePopup } from '../../../partials';
 import { RedGradient } from '../../../style';
+import { amountToHuman } from '../../../util';
 import { remainingTime } from '../../../util/time';
-import { amountToHuman } from '../../../util/utils';
 import InfoRow from './InfoRow';
 import Title from './Title';
 

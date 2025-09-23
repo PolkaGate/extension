@@ -7,7 +7,7 @@ import type { AccountId } from '@polkadot/types/interfaces/runtime';
 import { useContext, useMemo } from 'react';
 
 import { AccountContext } from '../components';
-import { getSubstrateAddress } from '../util/utils';
+import { getSubstrateAddress } from '../util';
 
 export default function useAccount (address: string | AccountId | null | undefined): AccountJson | undefined {
   const { accounts } = useContext(AccountContext);

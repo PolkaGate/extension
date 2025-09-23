@@ -17,7 +17,7 @@ import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, useIsExtensionPopup, usePoolDetail, useTranslation } from '../../../hooks';
 import { GradientDivider } from '../../../style';
-import { getSubscanChainName, isHexToBn, toShortAddress } from '../../../util/utils';
+import { getSubscanChainName, isHexToBn, toShortAddress } from '../../../util';
 import { Email, Web, XIcon } from '../../settings/icons';
 import SocialIcon from '../../settings/partials/SocialIcon';
 import BlueGradient from '../stakingStyles/BlueGradient';

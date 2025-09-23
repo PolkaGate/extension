@@ -5,7 +5,7 @@ import type { TransferRequest } from '../types';
 
 import request from 'umi-request';
 
-import { getSubscanChainName } from '../utils';
+import { getSubscanChainName } from '../chain';
 
 export function getNominationPoolsClaimedRewards (chainName: string, address: string, pageSize: number): Promise<TransferRequest> {
    const network = getSubscanChainName(chainName) as unknown as string;

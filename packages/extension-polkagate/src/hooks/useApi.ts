@@ -7,9 +7,9 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 
 import EndpointManager from '../class/endpointManager2';
 import { APIContext } from '../components';
+import { fastestConnection } from '../util';
 import LCConnector from '../util/api/lightClient-connect';
 import { AUTO_MODE } from '../util/constants';
-import { fastestConnection } from '../util/utils';
 import useEndpoint from './useEndpoint';
 import { useEndpoints } from './useEndpoints';
 

@@ -11,7 +11,7 @@ import AccountListModal from '../fullscreen/components/AccountListModal';
 import { useIsBlueish, useTranslation } from '../hooks';
 import QrScanner from '../popup/import/addWatchOnlyFullScreen/QrScanner';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
-import { isValidAddress } from '../util/utils';
+import { isValidAddress } from '../util';
 
 interface Props {
   allAddresses?: [string, string | null, string | undefined][]// todo : remove

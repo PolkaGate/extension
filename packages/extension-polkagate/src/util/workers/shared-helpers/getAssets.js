@@ -3,7 +3,7 @@
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { decodeMultiLocation } from '../../utils';
+import { decodeMultiLocation } from '../../address';
 
 // @ts-ignore
 export async function getAssets (addresses, api, assets, chainName, results) {

@@ -17,7 +17,7 @@ import { DetailPanel, GradientButton, GradientDivider } from '../../../../compon
 import SnowFlake from '../../../../components/SVG/SnowFlake';
 import { CollapseSection, PoolMembers, PoolReward, PoolStashIdSocials, RoleItem, StakingInfoStackWithIcon } from '../../../../popup/staking/partial/PoolDetail';
 import { PoolIdenticon } from '../../../../popup/staking/partial/PoolIdenticon';
-import { getSubscanChainName, toShortAddress } from '../../../../util/utils';
+import { getSubscanChainName, toShortAddress } from '../../../../util';
 
 interface PoolIdentityDetailProps {
   poolDetail: PoolInfo;

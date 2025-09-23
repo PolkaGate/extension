@@ -13,8 +13,8 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { FetchingContext } from '../components';
+import { decodeMultiLocation } from '../util';
 import { ASSET_HUBS, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
-import { decodeMultiLocation } from '../util/utils';
 import useChainInfo from './useChainInfo';
 import useFormatted from './useFormatted';
 import useSelectedAccount from './useSelectedAccount';

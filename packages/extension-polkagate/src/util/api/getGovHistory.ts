@@ -12,7 +12,7 @@ import request from 'umi-request';
 import { hexToU8a } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
 
-import { getSubscanChainName } from '../utils';
+import { getSubscanChainName } from '../chain';
 import { backoffSleep, BATCH_SIZE, MAX_RETRIES, RETRY_DELAY } from './utils';
 
 // Common types

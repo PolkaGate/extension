@@ -9,7 +9,7 @@ import { AddressInput } from '../../../../components';
 import { useIsExtensionPopup, useTranslation } from '../../../../hooks';
 import { SharePopup } from '../../../../partials';
 import PolkaGateIdenticon from '../../../../style/PolkaGateIdenticon';
-import { toShortAddress } from '../../../../util/utils';
+import { toShortAddress } from '../../../../util';
 import StakingActionButton from '../../partial/StakingActionButton';
 
 export interface RolesState {
