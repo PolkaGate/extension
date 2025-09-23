@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.6](https://github.com/polkagate/extension/compare/v1.9.5...v1.9.6) (2025-09-23)
+
+
+### Bug Fixes
+
+* resolve recipient address does not appear in the history ([#1913](https://github.com/polkagate/extension/issues/1913)) ([62d8553](https://github.com/polkagate/extension/commit/62d85532bf884ffc836ea38a4c2ece4b7a59a7c0))
+
 ## [1.9.5](https://github.com/polkagate/extension/compare/v1.9.4...v1.9.5) (2025-09-23)
 
 
