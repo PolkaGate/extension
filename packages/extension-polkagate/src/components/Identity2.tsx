@@ -110,6 +110,7 @@ function MerkleScienceTag ({ msData }: MerkleProps): React.ReactElement<Props> {
 
 interface IdenticonDisplayProps extends Partial<Props> {
   chain: Chain | null | undefined;
+  identiconSize: number;
   isSubId?: boolean;
 }
 
@@ -133,7 +134,7 @@ function IdenticonDisplay ({ address, chain, identiconSize, identiconStyle = {},
             <Identicon
               iconTheme={(chain?.icon ?? 'polkadot') as MyIconTheme}
               isSubId={isSubId}
-              judgement={judgement}
+              judgement={judgement as RegExpMatchArray}
               prefix={chain?.ss58Format ?? 42}
               size={identiconSize}
               value={address}
@@ -148,7 +149,7 @@ interface DisplayNameProps extends Partial<Props> {
   accountInfo: DeriveAccountInfo | null | undefined
 }
 
-function DisplayName ({ accountInfo, address, inTitleCase, name, nameStyle = {}, shortAddressProps, showShortAddress, style, subIdOnly = false }: DisplayNameProps): React.ReactElement<Props> {
+const DisplayName = React.memo(function DisplayName ({ accountInfo, address, inTitleCase, name, nameStyle = {}, shortAddressProps, showShortAddress, style, subIdOnly = false }: DisplayNameProps): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(address);
 
@@ -208,7 +209,7 @@ function DisplayName ({ accountInfo, address, inTitleCase, name, nameStyle = {},
       {renderDisplayName()}
     </Typography>
   );
-}
+});
 
 interface SocialProps {
   accountInfo: DeriveAccountInfo | null | undefined;
@@ -251,7 +252,7 @@ function SocialLinks ({ accountInfo, socialStyles }: SocialProps): React.ReactEl
   }, [email, isBlueish, isDark, theme.palette.icon.secondary, twitter, web]);
 
   if (socials.length === 0) {
-    return null;
+    return <></>;
   }
 
   return (
