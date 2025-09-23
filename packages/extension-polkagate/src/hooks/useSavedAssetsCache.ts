@@ -2,16 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
-import type { AlertType } from '../util/types';
 
-import { Chance } from 'chance';
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo } from 'react';
 
-import { STORAGE_KEY, TIME_TO_REMOVE_ALERT } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { getStorage, setStorage } from '../components/Loading';
 import { removeZeroBalanceRecords } from '../util';
 import { DEFAULT_SAVED_ASSETS, type SavedAssets } from './useAssetsBalances';
+import { useAlerts } from '.';
 
 const BALANCE_VALIDITY_PERIOD = 1 * 1000 * 60;
 
@@ -24,7 +23,6 @@ interface Params {
   setIsUpdate: Dispatch<SetStateAction<boolean>>;
   roundDone: boolean;
   setRoundDone: Dispatch<SetStateAction<boolean>>;
-  setAlerts: Dispatch<SetStateAction<AlertType[]>>;
   t: (key: string) => string;
   workerCallsCount: React.MutableRefObject<number>;
   selectedChains: string[] | undefined;
@@ -37,23 +35,17 @@ export default function useSavedAssetsCache ({ addresses,
   fetchedAssets,
   roundDone,
   selectedChains,
-  setAlerts,
   setFetchedAssets,
   setIsUpdate,
   setRoundDone,
   t,
   workerCallsCount }: Params) {
-  const random = useMemo(() => new Chance(), []);
+  const { notify } = useAlerts();
 
   // Alert function
   const addAlert = useCallback(() => {
-    const id = random.string({ length: 10 });
-
-    setAlerts((perv) => [...perv, { id, severity: 'success', text: t("Accounts' balances updated!") }]);
-    const timeout = setTimeout(() => setAlerts((prev) => prev.filter(({ id: alertId }) => alertId !== id)), TIME_TO_REMOVE_ALERT);
-
-    return () => clearTimeout(timeout);
-  }, [random, setAlerts, t]);
+   notify(t("Accounts' balances updated!"), 'success');
+  }, [notify, t]);
 
   // Save assets to storage
   const handleAccountsSaving = useCallback(() => {

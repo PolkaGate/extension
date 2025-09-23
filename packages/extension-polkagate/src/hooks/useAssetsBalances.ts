@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
-import type { AlertType, DropdownOption, FetchedBalance, UserAddedChains } from '../util/types';
+import type { DropdownOption, FetchedBalance, UserAddedChains } from '../util/types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
-import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { toCamelCase } from '../util';
@@ -35,7 +35,7 @@ const FUNCTIONS = Object.values(FETCHING_ASSETS_FUNCTION_NAMES);
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, setAlerts: Dispatch<SetStateAction<AlertType[]>>, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
@@ -133,7 +133,6 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, setAl
     fetchedAssets,
     roundDone,
     selectedChains,
-    setAlerts,
     setFetchedAssets,
     setIsUpdate,
     setRoundDone,
