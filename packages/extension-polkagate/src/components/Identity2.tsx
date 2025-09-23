@@ -1,8 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
+import type { Variant } from '@mui/material/styles/createTypography';
 import type { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -22,10 +21,14 @@ import { toTitleCase } from '../util';
 import { isValidAddress } from '../util/utils';
 import { ChainLogo, GlowCheck, Identicon, Infotip, ShortAddress } from '.';
 
+interface ExtendedStyle extends CSSProperties {
+  variant?: string;
+}
+
 interface Props {
   accountInfo?: DeriveAccountInfo | null;
   address?: string | AccountId;
-  addressStyle?: SxProps<Theme> | CSSProperties;
+  addressStyle?: ExtendedStyle;
   charsCount?: number;
   columnGap?: string;
   direction?: 'row' | 'column';
@@ -46,7 +49,7 @@ interface Props {
   showShortAddress?: boolean;
   showSocial?: boolean;
   socialStyles?: SxProps<Theme> | CSSProperties;
-  style?: SxProps<Theme> | CSSProperties;
+  style?: ExtendedStyle;
   subIdOnly?: boolean;
   withShortAddress?: boolean;
 }
@@ -205,7 +208,7 @@ const DisplayName = React.memo(function DisplayName ({ accountInfo, address, inT
   };
 
   return (
-    <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', ...nameStyle }} textAlign='left' variant={style?.variant}>
+    <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', ...nameStyle }} textAlign='left' variant={style?.variant as Variant}>
       {renderDisplayName()}
     </Typography>
   );
@@ -288,7 +291,7 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direct
     charsCount,
     inParentheses,
     style: { fontSize: style?.fontSize || '11px', justifyContent: 'flex-start', lineHeight: '15px', ...addressStyle },
-    variant: addressStyle?.variant ?? style?.addressVariant ?? style?.variant ?? 'B-2'
+    variant: addressStyle?.variant ?? style?.variant ?? 'B-2'
   }), [_formatted, address, charsCount, inParentheses, style, addressStyle]);
 
   return (

@@ -110,19 +110,18 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
       <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='space-between' sx={{ m: '20px 0 15px' }}>
         <Identity2
           address={address}
-          addressStyle={{ color: 'text.secondary' }}
+          addressStyle={{ color: 'text.secondary', variant: 'B-4' }}
           charsCount={4}
           genesisHash={genesisHash ?? ''}
           identiconSize={36}
           inTitleCase
           showSocial={false}
           style={{
-            addressVariant: 'B-4',
-            bgcolor: '#05091C',
+            backgroundColor: '#05091C',
             borderRadius: '14px',
             color: theme.palette.text.primary,
             height: '56px',
-            pl: '10px',
+            paddingLeft: '10px',
             variant: 'B-2',
             width: '45%'
           }}

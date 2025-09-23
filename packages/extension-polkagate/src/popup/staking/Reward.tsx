@@ -99,11 +99,10 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
           : (
             <Identity2
               address={reward.address}
-              addressStyle={{ color: 'text.highlight' }}
+              addressStyle={{ color: 'text.highlight', variant: 'B-4' }}
               genesisHash={genesisHash ?? ''}
               identiconSize={24}
               style={{
-                addressVariant: 'B-4',
                 color: theme.palette.text.primary,
                 variant: 'B-1',
                 width: '200px'
