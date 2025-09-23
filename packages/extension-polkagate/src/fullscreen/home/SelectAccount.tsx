@@ -56,11 +56,9 @@ const AccountsListToSelect = ({ genesisHash, handleClose, openMenu, selectedAcco
                     addressStyle={{ color: theme.palette.primary.main }}
                     genesisHash={genesisHash ?? ''}
                     identiconSize={24}
+                    socialStyles={{ mt: 0 }}
                     style={{
                       color: checked ? '#3988FF' : 'text.primary',
-                      'div div#socials': {
-                        mt: 0
-                      },
                       fontSize: '12px',
                       fontWeight: 500,
                       variant: 'B-4',
@@ -116,13 +114,14 @@ export default function SelectAccount ({ genesisHash, selectedAccount, setSelect
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px', ...style }}>
         <Identity2
           address={selectedAccount}
-          addressStyle={{ color: 'primary.main' }}
+          addressStyle={{ color: 'primary.main', variant: 'B-1' }}
           charsCount={14}
           genesisHash={genesisHash ?? ''}
           identiconSize={30}
           identiconStyle={{ marginRight: '5px' }}
           showSocial={false}
-          style={{ addressVariant: 'B-1', 'div div#socials': { mt: 0 }, variant: 'B-2' }}
+          socialStyles={{ mt: 0 }}
+          style={{ variant: 'B-2' }}
           withShortAddress
         />
         <ArrowCircleDown
