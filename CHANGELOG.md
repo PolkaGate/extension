@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.5](https://github.com/polkagate/extension/compare/v1.9.4...v1.9.5) (2025-09-23)
+
+
+### Bug Fixes
+
+* resolve transfer-all missing amount and long account name display issues on signing page ([#1918](https://github.com/polkagate/extension/issues/1918)) ([36ce74e](https://github.com/polkagate/extension/commit/36ce74ea4a3813fe331f5bc29733b554c23b952e)), closes [#1915](https://github.com/polkagate/extension/issues/1915) [#1917](https://github.com/polkagate/extension/issues/1917)
+
 ## [1.9.4](https://github.com/polkagate/extension/compare/v1.9.3...v1.9.4) (2025-09-22)
 
 
