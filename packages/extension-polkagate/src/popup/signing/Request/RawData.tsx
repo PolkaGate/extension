@@ -20,7 +20,6 @@ import SignWithPassword from './SignWithPassword';
 interface Props {
   account: AccountJson;
   error: string | null;
-  isFirst: boolean;
   request: RequestSign;
   setMode: React.Dispatch<React.SetStateAction<ModeData>>;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
@@ -28,7 +27,7 @@ interface Props {
   url: string;
 }
 
-export default function RawData ({ account, error, isFirst, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
+export default function RawData ({ account, error, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dapp = new URL(url).origin;
@@ -114,7 +113,6 @@ export default function RawData ({ account, error, isFirst, request, setError, s
       <SignWithPassword
         address={account.address}
         error={error}
-        isFirst={isFirst}
         isSignable={!isHardware && !isExternal}
         onCancel={onCancel}
         setError={setError}

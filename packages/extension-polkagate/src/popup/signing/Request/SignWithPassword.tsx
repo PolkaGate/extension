@@ -18,7 +18,6 @@ interface Props {
   address: string;
   error: string | null;
   fee?: Balance;
-  isFirst: boolean;
   isSignable: boolean;
   genesisHash?: string;
   setError: (value: string | null) => void;
@@ -27,7 +26,7 @@ interface Props {
   withSavePassword?: boolean;
 }
 
-export default function SignWithPassword ({ address, error, fee, genesisHash, isFirst, isSignable, onCancel, setError, signId, withSavePassword }: Props): JSX.Element {
+export default function SignWithPassword ({ address, error, fee, genesisHash, isSignable, onCancel, setError, signId, withSavePassword }: Props): JSX.Element {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -95,7 +94,7 @@ export default function SignWithPassword ({ address, error, fee, genesisHash, is
 
   return (
     <>
-      {isSignable && isFirst && (
+      {isSignable && (
         <Grid container item>
           {isLocked && (
             <PasswordInput
