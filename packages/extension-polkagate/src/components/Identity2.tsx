@@ -247,7 +247,7 @@ function SocialLinks ({ accountInfo, socialStyles }: SocialProps): React.ReactEl
   ].filter(Boolean) as { key: string; icon: React.JSX.Element; link: string; size: number; bgColor?: string }[];
 
   return (
-    <Grid alignItems='center' columnGap='2px' container id='socials' item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', ml: '5px', mt: '3%', width: 'fit-content', ...socialStyles }}>
+    <Grid alignItems='center' columnGap='2px' container item justifyContent='flex-end' sx={{ height: 'inherit', minWidth: 'fit-content', ml: '5px', mt: '3%', width: 'fit-content', ...socialStyles }}>
       {socials.map(({ bgColor, icon, key, link, size }) => (
         <SocialIcon Icon={icon} bgColor={bgColor} key={key} link={link} size={size} />
       ))}
