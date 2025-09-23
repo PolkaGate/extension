@@ -323,7 +323,7 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direct
             <ShortAddress {...shortAddressProps} />
           </Grid>
         }
-        {_showSocial && _accountInfo?.identity?.email &&
+        {_showSocial &&
           <SocialLinks
             accountInfo={_accountInfo}
             socialStyles={socialStyles}
