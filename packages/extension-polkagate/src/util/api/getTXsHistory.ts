@@ -359,7 +359,8 @@ function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { d
 
       case 'transfer':
       {
-        const paramTo = encodeAddress(hexToU8a((params?.[0].value as AccountId)?.Id) ?? '', prefix);
+        const toId = (params?.[0].value as AccountId | undefined)?.Id;
+        const paramTo = toId ? encodeAddress(hexToU8a(toId), prefix) : '';
         const paramAmount = params?.[1].value as string | undefined;
 
         const { amount = paramAmount, from = '', to = paramTo } = transfer ?? {};
