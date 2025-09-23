@@ -229,6 +229,7 @@ async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string
         interface ResponseType {
           data: {
             params: ParamTypesMapping[typeof functionName];
+            transfer: { amount: string; from: string; to: string; };
           };
         }
 
@@ -297,9 +298,10 @@ export async function getTXsHistory (chainName: string, address: string, pageNum
   };
 }
 
-function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; } }, prefix: number) {
+function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; transfer: { amount: string; from: string; to: string; } } }, prefix: number) {
   try {
     const params = txDetail.data.params;
+    const transfer = txDetail.data?.transfer;
     const id = (params?.[1]?.value as AccountId)?.Id as string | undefined;
     const formattedAddress = id ? encodeAddress(hexToU8a(id), prefix) : undefined;
 
@@ -353,12 +355,15 @@ function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { d
 
       case 'transfer_keep_alive':
       case 'transfer_allow_death':
+      case 'transfer_all':
 
       case 'transfer':
       {
-        const from = '';
-        const to = encodeAddress(hexToU8a((params?.[0].value as AccountId)?.Id) ?? '', prefix);
-        const amount = params?.[1].value as string | undefined;
+        const toId = (params?.[0].value as AccountId | undefined)?.Id;
+        const paramTo = toId ? encodeAddress(hexToU8a(toId), prefix) : '';
+        const paramAmount = params?.[1].value as string | undefined;
+
+        const { amount = paramAmount, from = '', to = paramTo } = transfer ?? {};
 
         return {
           amount,
@@ -422,14 +427,6 @@ function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { d
 
         return { calls };
       }
-
-      // case 'transfer_all':
-      // {
-      //   const amount = txDetail.data?.transfer?.
-      //   const to = encodeAddress(hexToU8a((params?.[0].value as AccountId)?.Id) ?? '', prefix);
-
-      //   return { to };
-      // }
 
       default:
         return {};

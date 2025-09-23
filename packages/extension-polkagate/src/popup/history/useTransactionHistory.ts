@@ -17,7 +17,7 @@ import { getHistoryFromStorage } from './hookUtils/getHistoryFromStorage';
 import { saveHistoryToStorage } from './hookUtils/saveHistoryToStorage';
 import { extrinsicsReducer, formatString, log, receivedReducer } from './hookUtils/utils';
 
-export default function useTransactionHistory(address: AccountId | string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
+export default function useTransactionHistory (address: AccountId | string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
   const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
   const [isLoading, setIsLoading] = useState(false);
@@ -133,10 +133,16 @@ export default function useTransactionHistory(address: AccountId | string | unde
             ? 'solo staking'
             : extrinsic.call_module;
       const subAction = action === 'balances' ? 'send' : formatString(extrinsic.call_module_function);
+      const isAlreadyInHuman = (extrinsic.amount && extrinsic.amount.indexOf('.') >= 0) || false;
+      const amount = extrinsic.amount !== undefined
+        ? isAlreadyInHuman
+          ? extrinsic.amount
+          : (Number(extrinsic.amount) / (10 ** decimal)).toString()
+        : undefined;
 
       return {
         action,
-        amount: extrinsic.amount !== undefined ? (Number(extrinsic.amount) / (10 ** decimal)).toString() : undefined,
+        amount,
         block: extrinsic.block_num,
         calls: extrinsic.calls,
         chain,
