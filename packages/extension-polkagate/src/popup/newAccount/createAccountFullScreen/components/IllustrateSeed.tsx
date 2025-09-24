@@ -14,7 +14,7 @@ const IllustrateSeed = ({ seed, style }: { style?: SxProps<Theme>, seed: null | 
 
   return (
     <Box position='relative' sx={style}>
-      <Grid container item>
+      <Grid aria-hidden={!revealed} container id='seed-words' item>
         {wordsArray?.map((word, index) => (
           <Stack
             alignItems='center'
@@ -61,7 +61,17 @@ const IllustrateSeed = ({ seed, style }: { style?: SxProps<Theme>, seed: null | 
       </Grid>
       {!revealed && (
         <Box
+          role='button'
+          tabIndex={0}
+          aria-controls='seed-words'
+          aria-label={t('Reveal recovery phrase') as string}
           onClick={() => setRevealed(true)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              setRevealed(true);
+            }
+          }}
           sx={{
             alignItems: 'center',
             animation: 'fadeIn 0.5s',
