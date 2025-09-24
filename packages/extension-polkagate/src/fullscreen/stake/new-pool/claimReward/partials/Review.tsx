@@ -14,10 +14,11 @@ interface RewardHeaderAmountProps {
   amount: string | undefined;
   genesisHash: string;
   token: string | undefined;
+  title?: string;
   style?: SxProps<Theme>;
 }
 
-export const RewardHeaderAmount = ({ amount, genesisHash, style, token }: RewardHeaderAmountProps) => {
+export const RewardHeaderAmount = ({ amount, genesisHash, style, title, token }: RewardHeaderAmountProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
@@ -25,7 +26,7 @@ export const RewardHeaderAmount = ({ amount, genesisHash, style, token }: Reward
   return (
     <Stack sx={{ alignItems: 'center', ...style }}>
       <Typography color={isExtension ? theme.palette.text.highlight : '#AA83DC'} variant='B-2'>
-        {t('Claim Rewards')}
+        {title || t('Claim Rewards')}
       </Typography>
       <Amount
         amount={amount}

@@ -12,7 +12,7 @@ import useCurrentBlockNumber from './useCurrentBlockNumber';
 import useHasDelegated from './useHasDelegated';
 import useTimeToUnlock from './useTimeToUnlock';
 
-interface Lock {
+export interface Lock {
   classId: BN;
   endBlock: BN;
   locked: string;
