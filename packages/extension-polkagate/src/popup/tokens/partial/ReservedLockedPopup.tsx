@@ -6,11 +6,12 @@ import type { BN } from '@polkadot/util';
 import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CallMerge as CallMergeIcon } from '@mui/icons-material';
-import { Container, Grid, Typography } from '@mui/material';
-import { Bezier, Data, type Icon, Image, LikeDislike, Paperclip2, People, ProfileCircle, Record, Sagittarius, Shield, UsdCoin } from 'iconsax-react';
-import React, { useMemo } from 'react';
+import { Container, Grid, IconButton, styled, Typography } from '@mui/material';
+import { Bezier, Data, type Icon, Image, LikeDislike, Paperclip2, People, ProfileCircle, Record, Sagittarius, Shield, Unlock, UsdCoin } from 'iconsax-react';
+import React, { memo, useMemo } from 'react';
 
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials/index';
+import { BEAT_ANIMATION } from '@polkadot/extension-polkagate/src/partials/UnableToPayFee';
 import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 
 import { GradientButton, GradientDivider } from '../../../components';
@@ -75,8 +76,26 @@ const reasonIcon = (reason: string): React.ReactNode => {
   }
 };
 
-function Item ({ amount, decimal, noDivider, price, reason, token }: { amount: BN, decimal: number, noDivider: boolean, price: number, token: string, reason: string }) {
+interface ItemProps {
+  amount: BN;
+  decimal: number;
+  noDivider: boolean;
+  price: number;
+  token: string;
+  reason: string;
+  openLocked: (() => void) | undefined;
+}
+
+const BeatUnlockIcon = styled(Unlock)`
+  display: inline-block;
+  transform-origin: center;
+  animation: ${BEAT_ANIMATION} 0.8s infinite;
+`;
+
+function Item ({ amount, decimal, noDivider, openLocked, price, reason, token }: ItemProps) {
   const totalBalance = useMemo(() => calcPrice(price, amount, decimal), [amount, decimal, price]);
+
+  const isGovernance = useMemo(() => reason.toLocaleLowerCase().includes('gov'), [reason]);
 
   return (
     <>
@@ -85,9 +104,16 @@ function Item ({ amount, decimal, noDivider, price, reason, token }: { amount: B
           {reasonIcon(reason)}
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-between' xs>
-          <Typography color='text.primary' textTransform='capitalize' variant='B-2' width='fit-content'>
-            {reason}
-          </Typography>
+          <Grid alignItems='center' container gap='12px' item width='fit-content'>
+            <Typography color='text.primary' textTransform='capitalize' variant='B-2' width='fit-content'>
+              {reason}
+            </Typography>
+            {isGovernance && openLocked &&
+              <IconButton onClick={openLocked}>
+                <BeatUnlockIcon color='#AA83DC' size='20' variant='Bold' />
+              </IconButton>
+            }
+          </Grid>
           <Grid container direction='column' item width='fit-content'>
             <ColumnAmounts
               cryptoAmount={amount}
@@ -116,6 +142,7 @@ interface Props {
   decimal: number | undefined;
   price: number;
   token: string | undefined;
+  openLocked: (() => void) | undefined;
 }
 
 interface ContentProps {
@@ -125,14 +152,18 @@ interface ContentProps {
   price: number;
   style?: React.CSSProperties;
   token: string | undefined;
+  openLocked: (() => void) | undefined;
 }
 
-function Content ({ decimal, handleClose, items, price, style = {}, token }: ContentProps) {
+function Content ({ decimal, handleClose, items, openLocked, price, style = {}, token }: ContentProps) {
   const { t } = useTranslation();
 
-  const stillLoading = Object.entries(items).some(([_, amount]) => amount === undefined);
-  const reasonsToShow = Object.entries(items).filter(([_, amount]) => amount !== undefined) as [string, BN][];
-  const noReasons = stillLoading === false && reasonsToShow.length === 0;
+  const { reasonsToShow, stillLoading } = useMemo(() => ({
+    reasonsToShow: Object.entries(items).filter(([_, amount]) => amount !== undefined) as [string, BN][],
+    stillLoading: Object.entries(items).some(([_, amount]) => amount === undefined)
+  }), [items]);
+
+  const noReasons = useMemo(() => (stillLoading === false && reasonsToShow.length === 0), [reasonsToShow.length, stillLoading]);
 
   return (
     <>
@@ -146,6 +177,7 @@ function Content ({ decimal, handleClose, items, price, style = {}, token }: Con
               decimal={decimal ?? 0}
               key={index}
               noDivider={noDivider}
+              openLocked={openLocked}
               price={price}
               reason={reason}
               token={token ?? ''}
@@ -180,7 +212,7 @@ function Content ({ decimal, handleClose, items, price, style = {}, token }: Con
   );
 }
 
-export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token }: Props) {
+function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, items, openLocked, openMenu, price, title, token }: Props) {
   return (
     <SharePopup
       modalProps={{
@@ -213,9 +245,12 @@ export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, 
         decimal={decimal}
         handleClose={handleClose}
         items={items}
+        openLocked={openLocked}
         price={price}
         token={token}
       />
     </SharePopup>
   );
 }
+
+export default memo(ReservedLockedPopup);

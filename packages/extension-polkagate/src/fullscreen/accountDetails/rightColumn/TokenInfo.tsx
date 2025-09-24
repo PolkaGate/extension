@@ -27,12 +27,14 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-    const { closeMenu,
+    const { UnlockTrackElement,
+      closeMenu,
       displayPopup,
       hasAmount,
       lockedBalance,
       lockedTooltip,
       onTransferable,
+      openLocked,
       reservedBalance,
       state,
       tokenPrice,
@@ -58,7 +60,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
   const BOX_BG = '#05091C';
   const ICON_SIZE = '20';
 
-  return (
+  return UnlockTrackElement || (
     <>
       <Grid container item sx={{ display: 'flex', gap: '4px', mb: '10px', p: '15px', pb: '10px' }}>
         <Typography sx={{ display: 'flex', mb: '10px', width: '100%' }} variant='B-3'>
@@ -139,6 +141,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
         decimal={token?.decimal}
         handleClose={closeMenu}
         items={state.data?.items ?? {}}
+        openLocked={openLocked}
         openMenu={!!state.type}
         price={tokenPrice}
         title={state.type ?? ''}

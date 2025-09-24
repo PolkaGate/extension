@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
+import type { Lock } from '../../hooks/useLockedInReferenda';
 import type { BalancesInfo, FetchedBalance } from '../../util/types';
 
 import { Coin, Lock1 } from 'iconsax-react';
-import { useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
@@ -16,7 +17,15 @@ import { windowOpen } from '../../messaging';
 import { updateStorage } from '../../util';
 import { GOVERNANCE_CHAINS } from '../../util/constants';
 import { getValue } from '../account/util';
+import UnlockTrack from './partial/UnlockTrack';
 import { lockedReservedReducer, type Type } from './LockedReserved';
+
+export interface UnlockType {
+  classToUnlock: Lock[] | undefined;
+  isDisable: boolean;
+  lockedTooltip: string | undefined;
+  unlockableAmount: BN | undefined;
+}
 
 export function useTokenInfoDetails (address: string | undefined, genesisHash: string | undefined, token: FetchedBalance | undefined) {
   const { t } = useTranslation();
@@ -27,11 +36,16 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
 
-  const { delegatedBalance, totalLocked, unlockableAmount } = useLockedInReferenda(address, genesisHash, undefined); // TODO: timeToUnlock!
+  const { classToUnlock, delegatedBalance, isDisable, totalLocked, unlockableAmount } = useLockedInReferenda(address, genesisHash, undefined); // TODO: timeToUnlock!
   const [state, dispatch] = useReducer(lockedReservedReducer, {
     data: undefined,
     type: undefined
   });
+  const [openUnlockReview, setOpenUnlockReview] = useState<boolean>(false);
+
+  const openLocked = useCallback(() => {
+    setOpenUnlockReview(true);
+  }, [setOpenUnlockReview]);
 
   const assetId = token?.assetId;
 
@@ -177,13 +191,29 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
     dispatch({ type: 'CLOSE_MENU' });
   }, []);
 
+  const unlockTracks: UnlockType = useMemo(() => ({ classToUnlock, isDisable, lockedTooltip, unlockableAmount }), [classToUnlock, isDisable, lockedTooltip, unlockableAmount]);
+
+  const UnlockTrackElement = useMemo(() => (
+    openUnlockReview
+      ? (
+        <UnlockTrack
+          address={address}
+          genesisHash={genesisHash}
+          setOpenUnlockReview={setOpenUnlockReview}
+          unlockTracks={unlockTracks}
+        />)
+      : undefined
+  ), [address, genesisHash, openUnlockReview, unlockTracks]);
+
   return {
+    UnlockTrackElement,
     closeMenu,
     displayPopup,
     hasAmount,
     lockedBalance,
     lockedTooltip,
     onTransferable,
+    openLocked: classToUnlock && classToUnlock.length > 0 ? openLocked : undefined,
     pricesInCurrency,
     reservedBalance,
     state,

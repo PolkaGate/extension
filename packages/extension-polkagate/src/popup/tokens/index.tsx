@@ -50,12 +50,14 @@ function Tokens (): React.ReactElement {
 
   const logoInfo = useMemo(() => getLogo2(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
 
-  const {closeMenu,
+  const { UnlockTrackElement,
+    closeMenu,
     displayPopup,
     hasAmount,
     lockedBalance,
     lockedTooltip,
     onTransferable,
+    openLocked,
     pricesInCurrency,
     reservedBalance,
     state,
@@ -70,7 +72,7 @@ function Tokens (): React.ReactElement {
 
   const backHome = useCallback(() => navigate('/') as void, [navigate]);
 
-  return (
+  return UnlockTrackElement || (
     <Motion variant='flip'>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
         <UserDashboardHeader homeType='default' />
@@ -170,6 +172,7 @@ function Tokens (): React.ReactElement {
         decimal={token?.decimal}
         handleClose={closeMenu}
         items={state.data?.items ?? {}}
+        openLocked={openLocked}
         openMenu={!!state.type}
         price={tokenPrice}
         title={state.type ?? ''}
