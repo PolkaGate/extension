@@ -7,9 +7,8 @@ import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { watchStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import useSelectedAccount from '@polkadot/extension-polkagate/src/hooks/useSelectedAccount';
 import { PolkaGateIdenticon } from '@polkadot/extension-polkagate/src/style/index';
-import { DEFAULT_ACCOUNT_ICON_THEME, ICON_THEME_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { DEFAULT_ACCOUNT_ICON_THEME, DEMO_ACCOUNT, ICON_THEME_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util/index';
 
 import { useTranslation } from '../../../components/translate';
@@ -74,7 +73,6 @@ function Item ({ address, iconTheme, label, selectedTheme }: ItemProps): React.R
 
 export default function AccountIcon (): React.ReactElement {
   const { t } = useTranslation();
-  const selectedAccount = useSelectedAccount();
   const [selectedTheme, setSelectedTheme] = useState<MyIconTheme>();
 
   useEffect(() => {
@@ -93,25 +91,25 @@ export default function AccountIcon (): React.ReactElement {
       </Typography>
       <Stack columnGap='10px' direction='row' sx={{ alignItems: 'center' }}>
         <Item
-          address={selectedAccount?.address}
+          address={DEMO_ACCOUNT}
           iconTheme='polkasoul'
           label= {t('Polka Soul')}
           selectedTheme={selectedTheme}
         />
         <Item
-          address={selectedAccount?.address}
+          address={DEMO_ACCOUNT}
           iconTheme='polkadot'
           label= {t('Dots')}
           selectedTheme={selectedTheme}
         />
         <Item
-          address={selectedAccount?.address}
+          address={DEMO_ACCOUNT}
           iconTheme='beachball'
           label= {t('Ball')}
           selectedTheme={selectedTheme}
         />
         <Item
-          address={selectedAccount?.address}
+          address={DEMO_ACCOUNT}
           iconTheme='ethereum'
           label= {t('Cube')}
           selectedTheme={selectedTheme}
