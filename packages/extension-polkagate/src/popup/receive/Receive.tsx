@@ -11,12 +11,11 @@ import { QRCode } from 'react-qrcode-logo';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
 import { ChainLogo, NeonButton, SearchField, Transition } from '../../components';
 import MySnackbar from '../../components/MySnackbar';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
-import { useSelectedAccount, useTranslation } from '../../hooks';
+import { useFormatted, useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util';
 import BackButton from '../accountsLists/BackButton';
@@ -159,13 +158,7 @@ interface QrCodeProps {
 
 function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: QrCodeProps) {
   const { t } = useTranslation();
-
-  const formattedAddress = useMemo(() => {
-    const publicKey = decodeAddress(address);
-    const formatted = encodeAddress(publicKey, selectedChain.ss58Format);
-
-    return formatted;
-  }, [address, selectedChain.ss58Format]);
+  const formattedAddress = useFormatted(address, selectedChain?.genesisHash);
 
   const chainLogo = useMemo(() => {
     const chainName = sanitizeChainName(selectedChain?.name)?.toLowerCase();

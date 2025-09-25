@@ -60,15 +60,14 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
   const isDark = useIsDark();
   const imgRef = useRef<HTMLImageElement>(null);
   const _genesisHash = mapHubToRelay(genesisHash);
-  const [isDarkLogo, setIsDarkLogo] = useState(false);
-
   const maybeUserAddedChainColor = useUserAddedChainColor(_genesisHash);
   const options = useContext(GenesisHashOptionsContext);
+
+  const [isDarkLogo, setIsDarkLogo] = useState(false);
 
   const foundChainName = options.find(({ text, value }) => value === _genesisHash || (chainName && haveSameWords(text, chainName)))?.text;
 
   const _chainName = sanitizeChainName(foundChainName || chainName, true);
-
   const chainLogoInfo = getLogo2(_chainName);
   const _logo = logo || (showSquare ? chainLogoInfo?.logoSquare : chainLogoInfo?.logo);
 

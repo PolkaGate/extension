@@ -4,6 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { getStorage, watchStorage } from '../components/Loading';
+import { STORAGE_KEY } from '../util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '../util/defaultSelectedChains';
 
 /**
@@ -15,11 +16,11 @@ export default function useSelectedChains (): string[] | undefined {
   const defaultSelectedGenesisHashes = useMemo(() => DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string), []);
 
   useEffect(() => {
-    getStorage('selectedChains').then((res) => {
+    getStorage(STORAGE_KEY.SELECTED_CHAINS).then((res) => {
       setSelected(res as string[] || defaultSelectedGenesisHashes);
     }).catch(console.error);
 
-    const unsubscribe = watchStorage('selectedChains', setSelected);
+    const unsubscribe = watchStorage(STORAGE_KEY.SELECTED_CHAINS, setSelected);
 
     return () => {
       unsubscribe();

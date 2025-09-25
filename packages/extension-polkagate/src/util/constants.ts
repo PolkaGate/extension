@@ -67,6 +67,14 @@ export const RELAY_CHAINS_GENESISHASH = [
   PASEO_GENESIS_HASH
 ];
 
+const ETHEREUM_GENESISHASH = '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3';
+const GORELI_GENESISHASH = '0x5fbe6b8f0e9b91f8c5c88ee6f7a3b7f7d05c1e71f6e4c4c1c6e8c123456789ab';
+
+export const EVM_CHAINS_GENESISHASH = [
+  ETHEREUM_GENESISHASH,
+  GORELI_GENESISHASH
+];
+
 export const ASSET_HUBS = [
   WESTMINT_GENESIS_HASH,
   STATEMINE_GENESIS_HASH,
@@ -313,6 +321,7 @@ export const STORAGE_KEY = {
   LOGIN_IFO: 'loginInfo',
   MY_POOL: 'MyPool',
   SELECTED_ACCOUNT: 'selectedAccount',
+  SELECTED_CHAINS: 'selectedChains',
   SELECTED_PROFILE: 'profile',
   TEST_NET_ENABLED: 'testnet_enabled',
   VALIDATORS_INFO: 'validatorsInfo'
@@ -321,6 +330,7 @@ export const STORAGE_KEY = {
 // Function names for asset fetching worker calls
 export const FETCHING_ASSETS_FUNCTION_NAMES = {
   ASSET_HUB: 'getAssetOnAssetHub',
+  EVM: 'getEvmAssets',
   MULTI_ASSET: 'getAssetOnMultiAssetChain',
   RELAY: 'getAssetOnRelayChain'
 };
