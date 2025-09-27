@@ -131,49 +131,54 @@ function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount:
 function DetailHeader ({ historyItem }: Props) {
   const sign = isReward(historyItem) || isReceived(historyItem) ? '+' : isSend(historyItem) ? '-' : '';
 
+  const { action, amount = '0', chain, decimal = 0, subAction, success, token = '' } = historyItem;
+
   return (
     <GlowBox style={{ m: 0, pb: '15px', width: '100%' }}>
       <HistoryStatus
-        action={historyItem.subAction ?? historyItem.action}
-        success={historyItem.success}
+        action={subAction ?? action}
+        success={success}
       />
       <HistoryAmount
-        amount={historyItem.amount ?? '0'}
-        decimal={historyItem.decimal ?? 0}
-        genesisHash={historyItem.chain?.genesisHash ?? ''}
+        amount={amount}
+        decimal={decimal}
+        genesisHash={chain?.genesisHash ?? ''}
         sign={sign}
-        token={historyItem.token ?? ''}
+        token={token}
       />
     </GlowBox>
   );
 }
 
 function DetailCard ({ historyItem }: Props) {
+  const { calls, conviction, decimal = 0, delegatee, from, refId, to, token = '', txHash: hash = '', voteType } = historyItem;
+
   const items = useMemo(() => {
     const card: Record<string, string | number>[] = [];
 
     const createNamedObject = (name: keyof TransactionDetail) => ({ [name]: historyItem[name] as string | number });
 
-    const hash = { hash: historyItem.txHash ?? '' };
-
     card.push(createNamedObject('date'));
-    historyItem.from && card.push({ from: historyItem.from.address ?? '' });
-    historyItem.to && card.push({ to: historyItem.to.address ?? '' });
-    historyItem.delegatee && card.push(createNamedObject('delegatee'));
-    historyItem.conviction && card.push(createNamedObject('conviction'));
-    historyItem.voteType && card.push(createNamedObject('voteType'));
-    historyItem.refId && card.push(createNamedObject('refId'));
+    from && card.push({ from: from.address ?? '' });
+    to && card.push({ to: to.address ?? '' });
+    delegatee && card.push(createNamedObject('delegatee'));
+    conviction && card.push(createNamedObject('conviction'));
+    voteType && card.push(createNamedObject('voteType'));
+    refId && card.push(createNamedObject('refId'));
     card.push(createNamedObject('fee'));
     card.push(createNamedObject('block'));
-    card.push(hash);
+    card.push({ hash });
 
     return card;
-  }, [historyItem]);
+  }, [conviction, delegatee, from, hash, historyItem, refId, to, voteType]);
 
   return (
     <VelvetBox style={{ padding: '4px' }}>
       <Container disableGutters sx={{ bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', p: '12px 18px', width: '100%' }}>
-        {historyItem.calls?.length && <DisplayCalls calls={historyItem.calls} />}
+        {
+          calls?.length &&
+          <DisplayCalls calls={calls} />
+        }
         {items.map((item, index) => {
           const [key, value] = Object.entries(item)[0];
           const withDivider = items.length > index + 1;
@@ -205,7 +210,7 @@ function DetailCard ({ historyItem }: Props) {
                           : isFee
                             ? <FormatBalance2
                               decimalPoint={4}
-                              decimals={[historyItem?.decimal ?? 0]}
+                              decimals={[decimal]}
                               style={{
                                 color: '#AA83DC',
                                 fontFamily: 'Inter',
@@ -213,7 +218,7 @@ function DetailCard ({ historyItem }: Props) {
                                 fontWeight: 500,
                                 width: 'max-content'
                               }}
-                              tokens={[historyItem?.token ?? '']}
+                              tokens={[token]}
                               value={value as string}
                               />
                             : value
@@ -237,7 +242,7 @@ function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail 
 
   const { link, name } = useMemo(() => getLink(chainName ?? '', 'extrinsic', historyItem?.txHash ?? ''), [chainName, historyItem?.txHash]);
 
-  const openExplorer = useCallback(() => window.open(link, '_blank'), [link]);
+  const openExplorer = useCallback(() => link && window.open(link, '_blank'), [link]);
 
   return (
     <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid #FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1, ...style }}>
@@ -249,6 +254,7 @@ function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail 
             <FadeOnScroll containerRef={containerRef} />
           </Grid>
           <GradientButton
+            disabled={!link}
             onClick={openExplorer}
             startIconNode={
               <Avatar
@@ -313,6 +319,7 @@ function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React
             noDivider
             onClose={handleClose}
             open={!!historyItem}
+            showBackIconAsClose
             style={{ backgroundColor: '#1B133C', minHeight: '400px', padding: ' 20px 10px 10px' }}
             title={historyItem?.subAction ?? historyItem?.action}
             >

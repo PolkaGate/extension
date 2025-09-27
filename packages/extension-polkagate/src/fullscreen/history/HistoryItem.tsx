@@ -7,6 +7,7 @@ import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight2, CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
+import HistoryDetail from '@polkadot/extension-polkagate/src/popup/history/newDesign/HistoryDetail';
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
 import { BN_ZERO } from '@polkadot/util';
 
@@ -14,7 +15,6 @@ import { CryptoFiatBalance, ScrollingTextBox } from '../../components';
 import { useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import { amountToMachine, calcPrice, historyIconBgColor, resolveActionType } from '../../util';
 import { COLUMN_WIDTH } from './consts';
-import HistoryDetail from './HistoryDetail';
 import HistoryIcon from './HistoryIcon';
 
 interface HistoryItemProps {
