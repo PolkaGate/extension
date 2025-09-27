@@ -23,7 +23,7 @@ export default function Step1Sender ({ inputs, setInputs }: Props): React.ReactE
   const { t } = useTranslation();
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
-  const { chainName } = useChainInfo(genesisHash);
+  const { chainName } = useChainInfo(genesisHash, true);
 
   return (
     <Motion style={{ width: 'fit-content' }} variant='fade'>

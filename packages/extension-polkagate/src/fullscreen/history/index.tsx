@@ -80,7 +80,7 @@ function HistoryFs (): React.ReactElement {
 
     const result = flattenedHistories.map((item) => {
       if (item.token === token) {
-        return { ...item, decimal };
+       return { ...item, decimal: item.decimal ?? decimal };
       }
 
       return undefined;

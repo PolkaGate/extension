@@ -9,8 +9,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
-import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 import LedgerErrorMessage from '@polkadot/extension-polkagate/src/popup/signing/ledger/LedgerErrorMessage';
+import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 import { POLKADOT_SLIP44, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import settings from '@polkadot/ui-settings';

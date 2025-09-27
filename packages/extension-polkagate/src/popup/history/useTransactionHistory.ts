@@ -377,7 +377,7 @@ export default function useTransactionHistory (address: AccountId | string | und
     try {
       const res = await getTXsHistory(chainName, String(address), pageNum, chain.ss58Format);
 
-      if (!requested || !res || res.for !== requested) {
+      if (!requested || requested !== res?.for) {
         return;
       }
 
@@ -428,7 +428,7 @@ export default function useTransactionHistory (address: AccountId | string | und
     try {
       const res = await getTxTransfers(chainName, String(address), pageNum, SINGLE_PAGE_SIZE);
 
-      if (!requested || !res || res.for !== requested) {
+      if (!requested || requested !== res?.for) {
         return;
       }
 

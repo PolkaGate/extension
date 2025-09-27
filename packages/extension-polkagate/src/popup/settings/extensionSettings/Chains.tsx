@@ -51,7 +51,7 @@ export default function Chains (): React.ReactElement {
   useEffect(() => {
     const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
 
-    getStorage('selectedChains').then((res) => {
+    getStorage(STORAGE_KEY.SELECTED_CHAINS).then((res) => {
       (res as string[])?.length
         ? setInitialChains(new Set(res as string[]))
         : setInitialChains(new Set(defaultSelectedGenesisHashes));
@@ -74,7 +74,7 @@ export default function Chains (): React.ReactElement {
   }, [selectedChains]);
 
   const handleChainsChanges = useCallback((chains: Set<string>) => {
-    setStorage('selectedChains', [...chains]).catch(console.error);
+    setStorage(STORAGE_KEY.SELECTED_CHAINS, [...chains]).catch(console.error);
     updateSavedAssetsInStorage();
   }, [updateSavedAssetsInStorage]);
 

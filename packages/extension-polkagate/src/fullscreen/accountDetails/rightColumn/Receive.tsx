@@ -13,9 +13,8 @@ import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2'
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util';
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { useSelectedAccount, useTranslation } from '../../../hooks';
+import { useFormatted, useSelectedAccount, useTranslation } from '../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 
 interface Props {
@@ -134,19 +133,9 @@ function Receive ({ address, closePopup, onClose, setAddress }: Props): React.Re
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [selectedChain, setSelectedChain] = useState<NetworkInfo | undefined>();
 
+  const formattedAddress = useFormatted(address, selectedChain?.genesisHash);
   const chainName = useMemo(() => selectedChain ? sanitizeChainName(selectedChain?.name)?.toLowerCase() : '', [selectedChain]);
   const chainLogo = useMemo(() => getLogo2(chainName), [chainName]);
-
-  const formattedAddress = useMemo(() => {
-    if (!selectedChain) {
-      return address;
-    }
-
-    const publicKey = decodeAddress(address);
-    const formatted = encodeAddress(publicKey, selectedChain.ss58Format);
-
-    return formatted;
-  }, [address, selectedChain]);
 
   const onCopy = useCallback(() => {
     formattedAddress && navigator.clipboard.writeText(formattedAddress).catch((err) => console.error('Error copying text: ', err));

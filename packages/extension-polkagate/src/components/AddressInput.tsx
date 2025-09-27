@@ -81,9 +81,11 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
       setInvalidAddress(false);
     } else {
       navigator.clipboard.readText().then((clipText) => {
-        isValidAddress(clipText) ? setAddress && setAddress(clipText) : setAddress && setAddress(undefined);
+       const isValid = isValidAddress(clipText);
+
+       isValid ? setAddress?.(clipText) : setAddress?.(undefined);
         setEnteredAddress(clipText);
-        setInvalidAddress(!(isValidAddress(clipText)));
+        setInvalidAddress(!isValid);
       }).catch(console.error);
     }
   }, [address, enteredAddress, setAddress]);
@@ -131,7 +133,7 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
                     size='18'
                     style={{ cursor: 'pointer', margin: '0 2px 0' }}
                     variant='Bulk'
-                  />
+                    />
                 }
               </InputAdornment>
             ),

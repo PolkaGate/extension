@@ -309,13 +309,15 @@ export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 export const STORAGE_KEY = {
   ASSETS: 'migrated-assets',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
+  HISTORY: 'history',
   IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN: 'accountsMigratedToAnyChain',
   LOGIN_IFO: 'loginInfo',
   MY_POOL: 'MyPool',
   SELECTED_ACCOUNT: 'selectedAccount',
+  SELECTED_CHAINS: 'selectedChains',
   SELECTED_PROFILE: 'profile',
   TEST_NET_ENABLED: 'testnet_enabled',
-  VALIDATORS_INFO: 'validatorsInfo'
+  VALIDATORS_INFO: 'validatorsInfo',
 };
 
 // Function names for asset fetching worker calls

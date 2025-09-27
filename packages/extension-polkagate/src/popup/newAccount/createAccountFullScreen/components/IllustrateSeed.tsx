@@ -114,7 +114,6 @@ const SecretPhraseGuard = ({ revealed, setRevealed }: { revealed: boolean; setRe
 
 const IllustrateSeed = ({ seed, style }: { style?: SxProps<Theme>, seed: null | string }) => {
   const wordsArray = seed?.split(' ');
-
   const [revealed, setRevealed] = useState<boolean>(false);
 
   return (
