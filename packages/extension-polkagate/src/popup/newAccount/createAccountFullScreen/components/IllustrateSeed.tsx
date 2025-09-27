@@ -19,7 +19,7 @@ const IllustrateSeed = ({ seed, style }: { style?: SxProps<Theme>, seed: null | 
           <Stack
             alignItems='center'
             direction='row'
-            key={word}
+            key={`${index}-${word}`}
             onMouseEnter={() => setIsHovered(index)}
             onMouseLeave={() => setIsHovered(undefined)}
             sx={{
