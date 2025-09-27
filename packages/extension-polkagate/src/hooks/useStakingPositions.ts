@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { amountToHuman } from '../util/numberUtils';
+import { amountToHuman } from '../util';
 import useAccountAssets from './useAccountAssets';
 import usePrices from './usePrices';
 

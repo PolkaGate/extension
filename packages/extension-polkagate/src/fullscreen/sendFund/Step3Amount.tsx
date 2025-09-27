@@ -13,9 +13,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
+import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util';
 import { FLOATING_POINT_DIGIT, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
-import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util/numberUtils';
 import { BN_ZERO, noop } from '@polkadot/util';
 
 import { ActionButton, AssetLogo, Motion, MyTextField, ShowBalance4 } from '../../components';
