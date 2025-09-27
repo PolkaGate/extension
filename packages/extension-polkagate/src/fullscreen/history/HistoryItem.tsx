@@ -74,13 +74,14 @@ function HistoryItem ({ historyItem }: HistoryItemProps) {
     setHistoryItemDetail(item);
   }, []);
 
+  const { action: hAction, amount, chain, date, decimal = 0, from, subAction, to, token } = historyItem;
   const action = resolveActionType(historyItem);
-  const price = useTokenPriceBySymbol(historyItem.token ?? '', historyItem.chain?.genesisHash ?? '');
-  const fiatBalance = useMemo(() => calcPrice(price.price, amountToMachine(historyItem.amount, historyItem.decimal ?? 0) ?? BN_ZERO, historyItem.decimal ?? 0), [historyItem.amount, historyItem.decimal, price.price]);
+  const price = useTokenPriceBySymbol(token ?? '', chain?.genesisHash ?? '');
+  const fiatBalance = useMemo(() => calcPrice(price.price, amountToMachine(amount, decimal) ?? BN_ZERO, decimal), [amount, decimal, price.price]);
 
   const iconBgColor = historyIconBgColor(action);
-  const isTransfer = historyItem.action.toLowerCase() === 'balances';
-  const isSend = historyItem.subAction?.toLowerCase() === 'send';
+  const isTransfer = hAction.toLowerCase() === 'balances';
+  const isSend = subAction?.toLowerCase() === 'send';
 
   return (
     <>
@@ -91,7 +92,7 @@ function HistoryItem ({ historyItem }: HistoryItemProps) {
               <HistoryIcon action={action} />
             </Grid>
             <ScrollingTextBox
-              text={historyItem.subAction ?? ''}
+              text={subAction ?? ''}
               textStyle={{
                 color: 'text.primary',
                 ml: '5px',
@@ -105,14 +106,14 @@ function HistoryItem ({ historyItem }: HistoryItemProps) {
             {isTransfer
               ? <Stack alignItems='center' direction='row' sx={{ columnGap: '5px', justifyContent: 'start' }} width='fit-content'>
                 <PolkaGateIdenticon
-                  address={historyItem.to?.address || historyItem.from.address}
+                  address={to?.address || from.address}
                   size={24}
                 />
                 <ScrollingTextBox
                   scrollOnHover
                   text={isSend
-                    ? (historyItem.to?.name || historyItem.to?.address) ?? ''
-                    : (historyItem.from.name || historyItem.from.address) ?? ''
+                    ? (to?.name || to?.address) ?? ''
+                    : (from.name || from.address) ?? ''
                   }
                   textStyle={{
                     color: '#BEAAD8',
@@ -122,14 +123,14 @@ function HistoryItem ({ historyItem }: HistoryItemProps) {
                 />
               </Stack>
               : (<Typography color='#BEAAD8' textTransform='capitalize' variant='B-2'>
-                {historyItem.action}
+                {hAction}
               </Typography>)
             }
           </Grid>
           <CryptoFiatBalance
-            cryptoBalance={amountToMachine(historyItem.amount, historyItem.decimal ?? 0)}
+            cryptoBalance={amountToMachine(amount, decimal)}
             cryptoProps={{ style: { color: '#AA83DC', fontSize: '11px' } }}
-            decimal={historyItem.decimal}
+            decimal={decimal}
             fiatBalance={fiatBalance}
             fiatProps={{ decimalColor: theme.palette.text.primary }}
             style={{
@@ -138,9 +139,9 @@ function HistoryItem ({ historyItem }: HistoryItemProps) {
               textAlign: 'right',
               width: COLUMN_WIDTH.AMOUNT
             }}
-            token={historyItem.token}
+            token={token}
           />
-          <TimeOfTX date={historyItem.date} style={{ paddingLeft: '15px', width: COLUMN_WIDTH.DATE }} />
+          <TimeOfTX date={date} style={{ paddingLeft: '15px', width: COLUMN_WIDTH.DATE }} />
           <HistoryStatus historyItem={historyItem} />
         </Grid>
         <Box onClick={openDetail(historyItem)} sx={{ alignItems: 'center', bgcolor: '#2D1E4A', borderRadius: '8px', cursor: 'pointer', display: 'flex', height: '36px', justifyContent: 'center', width: '34px' }}>
