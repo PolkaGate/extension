@@ -30,11 +30,12 @@ export interface TransactionFlowProps {
   restakeReward?: boolean;
   setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
   showAccountBox?: boolean;
+  noStakingHomeButton?: boolean;
   reviewHeader?: React.ReactNode;
   extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
 }
 
-export default function TransactionFlow ({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, setRestakeReward, showAccountBox, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
+export default function TransactionFlow ({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, noStakingHomeButton, pool, proxyTypeFilter, restakeReward, reviewHeader, setRestakeReward, showAccountBox, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
   useBackground('staking');
   const { t } = useTranslation();
 
@@ -93,6 +94,7 @@ export default function TransactionFlow ({ address, backPathTitle, closeReview, 
             address={address ?? ''}
             close={closeReview}
             genesisHash={genesisHash}
+            noStakingHomeButton={noStakingHomeButton}
             transactionDetail={transactionDetail}
           />
         }

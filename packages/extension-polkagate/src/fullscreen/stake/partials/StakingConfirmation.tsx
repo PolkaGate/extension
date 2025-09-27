@@ -305,7 +305,7 @@ export default function Confirmation ({ address, backToHome, genesisHash, goToHi
       />
       <Buttons
         address={address}
-        backToHome={handleHome}
+        backToHome={backToHome ? handleHome : undefined}
         genesisHash={genesisHash}
         goToHistory={goToHistory}
       />
