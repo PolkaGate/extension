@@ -61,23 +61,22 @@ const Word = ({ index, word }: WordProps) => {
 
 const TIME_OUT = 300;
 
-const SecretPhraseGuard = () => {
+const SecretPhraseGuard = ({ revealed, setRevealed }: { revealed: boolean; setRevealed: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const { t } = useTranslation();
 
-  const [revealed, setRevealed] = useState<boolean>(false);
   const [removeGlass, setRemoveGlass] = useState<boolean>(false);
 
   const invisible = useCallback(() => setRemoveGlass(true), []);
 
   useAnimateOnce(revealed, { delay: TIME_OUT, onStart: invisible });
 
-  const reveal = useCallback(() => setRevealed(true), []);
+  const reveal = useCallback(() => setRevealed(true), [setRevealed]);
   const onKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       setRevealed(true);
     }
-  }, []);
+  }, [setRevealed]);
 
   return (
     <Box
@@ -116,9 +115,11 @@ const SecretPhraseGuard = () => {
 const IllustrateSeed = ({ seed, style }: { style?: SxProps<Theme>, seed: null | string }) => {
   const wordsArray = seed?.split(' ');
 
+  const [revealed, setRevealed] = useState<boolean>(false);
+
   return (
     <Box position='relative' sx={style}>
-      <Grid container id='seed-words' item>
+      <Grid aria-hidden={!revealed} container id='seed-words' item>
         {wordsArray?.map((word, index) => (
           <Word
             index={index}
@@ -127,7 +128,10 @@ const IllustrateSeed = ({ seed, style }: { style?: SxProps<Theme>, seed: null | 
           />
         ))}
       </Grid>
-      <SecretPhraseGuard />
+      <SecretPhraseGuard
+        revealed={revealed}
+        setRevealed={setRevealed}
+      />
     </Box>
   );
 };
