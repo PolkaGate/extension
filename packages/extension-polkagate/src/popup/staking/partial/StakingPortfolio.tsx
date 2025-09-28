@@ -9,7 +9,7 @@ import React, { useMemo } from 'react';
 
 import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 
-import { AssetLogo, FormatBalance3, FormatPrice, MySkeleton } from '../../../components';
+import { AssetLogo, DisplayBalance, FormatPrice, MySkeleton } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, usePrices, useTokenPrice, useTranslation } from '../../../hooks';
@@ -182,14 +182,11 @@ export default function StakingPortfolio ({ buttons = [], disabled, genesisHash,
             />)
         }
       </Grid>
-      <FormatBalance3
-        balanceProps={{
-          decimal,
-          decimalPoint: 4,
-          token,
-          value: staked
-        }}
-        balanceStyle={{
+      <DisplayBalance
+        balance={staked}
+        decimal={decimal}
+        skeletonStyle={{ bgcolor: '#BEAAD840', borderRadius: '10px', margin: '10px 0 1px', width: '88px' }}
+        style={{
           backgroundColor: isFullScreen ? '#AA83DC26' : 'transparent',
           borderRadius: '9px',
           color: textColor,
@@ -198,10 +195,7 @@ export default function StakingPortfolio ({ buttons = [], disabled, genesisHash,
           fontWeight: 500,
           padding: isFullScreen ? '3px 4px 1px' : 0
         }}
-        skeletonBgColor='#BEAAD840'
-        skeletonStyle={{ borderRadius: '10px', margin: '10px 0 1px', width: '88px' }}
-        style={{ margin: '-3px 0 6px', width: staked && isFullScreen ? 'fit-content' : '100%' }}
-        withSkeleton
+        token={token}
       />
       <Buttons
         buttons={buttons}

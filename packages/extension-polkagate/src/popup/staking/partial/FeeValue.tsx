@@ -5,10 +5,10 @@
 
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Container, Skeleton, Stack, Typography, useTheme } from '@mui/material';
+import { Container, Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { FormatBalance2, GradientDivider } from '../../../components';
+import { DisplayBalance, GradientDivider } from '../../../components';
 import { useIsExtensionPopup, useTranslation } from '../../../hooks';
 
 interface Props {
@@ -28,30 +28,16 @@ export default function FeeValue ({ decimal, feeValue, token }: Props): React.Re
         <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} variant='B-1'>
           {t('Fee')}
         </Typography>
-        {feeValue
-          ? (
-            <FormatBalance2
-              decimalPoint={4}
-              decimals={[decimal ?? 0]}
-              style={{
-                color: theme.palette.text.primary,
-                fontFamily: 'Inter',
-                fontSize: '13px',
-                fontWeight: 500,
-                width: 'max-content'
-              }}
-              tokens={[token ?? '']}
-              value={feeValue}
-            />)
-          : (
-            <Skeleton
-              animation='wave'
-              height='12px'
-              sx={{ borderRadius: '50px', fontWeight: 'bold', transform: 'none', width: '70px' }}
-              variant='text'
-            />
-          )
-        }
+        <DisplayBalance
+          balance={feeValue}
+          decimal={decimal}
+          skeletonStyle={{ width: '70px' }}
+          style={{
+            color: theme.palette.text.primary,
+            width: 'max-content'
+          }}
+          token={token}
+        />
       </Container>
       <GradientDivider />
     </Stack>

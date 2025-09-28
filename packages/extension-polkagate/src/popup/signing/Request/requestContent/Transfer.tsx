@@ -3,10 +3,10 @@
 
 import type { Variant } from '@mui/material/styles/createTypography';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { ChainLogo, FormatBalance2, ShortAddress } from '../../../../components';
+import { ChainLogo, DisplayBalance, ShortAddress } from '../../../../components';
 import { useAccountName, useChainInfo, useTranslation } from '../../../../hooks';
 import PolkaGateIdenticon from '../../../../style/PolkaGateIdenticon';
 import { toTitleCase } from '../../../../util/string';
@@ -19,6 +19,7 @@ interface Props {
 
 function Transfer ({ amount, genesisHash, to }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const accountName = useAccountName(to || '');
 
   const { decimal, token } = useChainInfo(genesisHash, true);
@@ -27,15 +28,13 @@ function Transfer ({ amount, genesisHash, to }: Props): React.ReactElement<Props
     <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start'>
       <ChainLogo genesisHash={genesisHash} size={36} />
       <Stack alignItems='flex-start' direction='column'>
-        <Typography color='#EAEBF1' variant='B-2'>
-          {decimal && token &&
-            <FormatBalance2
-              decimalPoint={2}
-              decimals={[decimal]}
-              tokens={[token]}
-              value={amount}
-            />}
-        </Typography>
+        <DisplayBalance
+          balance={amount}
+          decimal={decimal}
+          decimalPoint={2}
+          style={{ color: '#EAEBF1', ...theme.typography['B-2'] }}
+          token={token}
+        />
         <Stack alignItems='center' columnGap='5px' direction='row'>
           <Typography color='#BEAAD8' sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {t('Transfer to')}

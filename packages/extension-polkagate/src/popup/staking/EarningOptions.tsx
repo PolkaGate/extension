@@ -5,14 +5,14 @@
 
 import type { PositionInfo } from '../../util/types';
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { extractRelayChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { BN_ZERO } from '@polkadot/util';
 
-import { BackWithLabel, ChainLogo, FadeOnScroll, FormatBalance2, Motion, SearchField } from '../../components';
+import { BackWithLabel, ChainLogo, DisplayBalance, FadeOnScroll, Motion, SearchField } from '../../components';
 import { useAccountAssets, useBackground, useIsDark, useIsTestnetEnabled, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
@@ -23,6 +23,7 @@ import { getEarningOptions } from './utils';
 export default function EarningOptions (): React.ReactElement {
   useBackground('default');
 
+  const theme = useTheme();
   const { t } = useTranslation();
   const isDark = useIsDark();
   const account = useSelectedAccount();
@@ -110,12 +111,13 @@ export default function EarningOptions (): React.ReactElement {
                         <Typography sx={{ mt: '-7px' }} variant='B-2'>
                           {tokenSymbol}
                         </Typography>
-                        <Typography color='#BEAAD8' sx={{ lineHeight: '10px' }} variant='B-4'>
-                          <FormatBalance2
-                            decimals={[decimal]}
-                            label={`${t('Available')}:`}
-                            tokens={[tokenSymbol]}
-                            value={freeBalance || availableBalance || BN_ZERO}
+                        <Typography color='#BEAAD8' sx={{ alignItems: 'center', display: 'flex', gap: '5px', lineHeight: '10px' }} variant='B-4'>
+                          {`${t('Available')}:`}
+                          <DisplayBalance
+                            balance={freeBalance || availableBalance || BN_ZERO}
+                            decimal={decimal}
+                            style={{ ...theme.typography['B-4'] }}
+                            token={tokenSymbol}
                           />
                         </Typography>
                       </Stack>

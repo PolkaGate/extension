@@ -7,7 +7,7 @@ import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
 import { Container, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useMemo, useRef } from 'react';
 
-import { FadeOnScroll, FormatBalance2 } from '../../../components';
+import { DisplayBalance, FadeOnScroll } from '../../../components';
 import { useChainInfo, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { isHexToBn, toShortAddress } from '../../../util';
@@ -42,9 +42,10 @@ const TableItem = ({ account, decimal, token, totalStaked, withDivider }: Accoun
             {toShortAddress(account.who.toString())}
           </Typography>
         </Container>
-        <FormatBalance2
+        <DisplayBalance
+          balance={account.value}
+          decimal={decimal}
           decimalPoint={2}
-          decimals={[decimal ?? 0]}
           style={{
             color: theme.palette.text.primary,
             fontFamily: 'Inter',
@@ -54,8 +55,7 @@ const TableItem = ({ account, decimal, token, totalStaked, withDivider }: Accoun
             textAlign: 'left',
             width: '35%'
           }}
-          tokens={[token ?? '']}
-          value={account.value}
+          token={token}
         />
         <Typography color='text.primary' sx={{ textAlign: 'right', width: '15%' }} variant='B-4'>
           {percentage}%

@@ -10,7 +10,7 @@ import React, { memo, useCallback, useMemo } from 'react';
 import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/partials/FailSuccessIcon';
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
-import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } from '../../../components';
+import { ActionButton, DisplayBalance, GradientButton, Identity2, NeonButton } from '../../../components';
 import { useChainInfo, useCurrency, useRouteRefresh, useStakingConsts, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
 import { amountToHuman, countDecimalPlaces, getSubscanChainName, isValidAddress, toShortAddress, toTitleCase } from '../../../util';
@@ -189,18 +189,14 @@ const Detail = ({ genesisHash, transactionDetail }: DetailProps) => {
                       ? toShortAddress(String(content as string), 6)
                       : isBalance
                         ? (
-                          <FormatBalance2
-                            decimalPoint={4}
-                            decimals={[decimal ?? 0]}
+                          <DisplayBalance
+                            balance={content as string}
+                            decimal={decimal}
                             style={{
                               color: theme.palette.primary.main,
-                              fontFamily: 'Inter',
-                              fontSize: '13px',
-                              fontWeight: 500,
                               width: 'max-content'
                             }}
-                            tokens={[token ?? '']}
-                            value={content as string}
+                            token={token}
                           />)
                         : isDate
                           ? new Date(content as string).toLocaleString('en-US', { day: 'numeric', hour: 'numeric', hour12: true, minute: '2-digit', month: 'short', second: '2-digit', weekday: 'short', year: 'numeric' })

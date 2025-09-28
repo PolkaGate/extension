@@ -7,7 +7,7 @@ import { Collapse, Container, Grid, Stack, useTheme } from '@mui/material';
 import { ArrowRight2 } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { FormatBalance2, ScrollingTextBox } from '../../../../components';
+import { DisplayBalance, ScrollingTextBox } from '../../../../components';
 import { useChainInfo } from '../../../../hooks';
 import { PoolIdenticon } from '../../../../popup/staking/partial/PoolIdenticon';
 import { isHexToBn } from '../../../../util';
@@ -45,12 +45,11 @@ export const SelectedPoolInformation = ({ genesisHash, isExtension, onClick, ope
                 }}
                 width={isExtension ? 230 : 250}
               />
-              <FormatBalance2
-                decimals={[decimal ?? 0]}
-                style={{ ...theme.typography['B-4'], color: textColor, width: 'fit-content' }}
-                tokenColor={textColor}
-                tokens={[token ?? '']}
-                value={isHexToBn(poolDetail.bondedPool?.points.toString() ?? '0')}
+              <DisplayBalance
+                balance={isHexToBn(poolDetail.bondedPool?.points.toString() ?? '0')}
+                decimal={decimal}
+                style={{ ...theme.typography['B-4'], color: textColor }}
+                token={token}
               />
             </Stack>
             <Grid container item sx={{ bgcolor: '#2D1E4A', borderRadius: '6px', p: '20px 10px', width: 'fit-content' }}>

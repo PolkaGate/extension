@@ -12,7 +12,7 @@ import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/par
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
 import { subscan } from '../../assets/icons';
-import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } from '../../components';
+import { ActionButton, DisplayBalance, GradientButton, Identity2, NeonButton } from '../../components';
 import { useChainInfo, useCurrency, useIsBlueish, useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import StakingActionButton from '../../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../../style';
@@ -228,26 +228,22 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                       ? toShortAddress(String(content), 6)
                       : isBalance
                         ? (
-                          <FormatBalance2
-                            decimalPoint={4}
-                            decimals={[(isFee && typeof content === 'object' && 'decimal' in (content as any)
-                              ? (content as FeeInfo).decimal
-                              : isFee ? nativeAssetDecimal : _decimal) ?? 0]}
-                            style={{
-                              color: isBlueish ? theme.palette.text.highlight : theme.palette.primary.main,
-                              fontFamily: 'Inter',
-                              fontSize: '13px',
-                              fontWeight: 500,
-                              width: 'max-content'
-                            }}
-                            tokens={[(isFee && typeof content === 'object' && 'token' in (content as any)
-                              ? (content as FeeInfo).token
-                              : isFee ? nativeToken : _token) ?? '']}
-                            value={
+                          <DisplayBalance
+                            balance={
                               isFee && typeof content === 'object' && 'fee' in (content as any)
                                 ? (content as FeeInfo).fee
                                 : (content as string)
                             }
+                            decimal={(isFee && typeof content === 'object' && 'decimal' in (content as any)
+                              ? (content as FeeInfo).decimal
+                              : isFee ? nativeAssetDecimal : _decimal) ?? 0}
+                            style={{
+                              color: isBlueish ? theme.palette.text.highlight : theme.palette.primary.main,
+                              width: 'max-content'
+                            }}
+                            token={(isFee && typeof content === 'object' && 'token' in (content as any)
+                              ? (content as FeeInfo).token
+                              : isFee ? nativeToken : _token) ?? ''}
                           />)
                         : isDate
                           ? new Date(content as number).toLocaleString('en-US', { day: 'numeric', hour: 'numeric', hour12: true, minute: '2-digit', month: 'short', second: '2-digit', weekday: 'short', year: 'numeric' })

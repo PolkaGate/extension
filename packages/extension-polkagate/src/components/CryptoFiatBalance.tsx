@@ -9,17 +9,17 @@ import { Grid, useTheme } from '@mui/material';
 import React, { memo } from 'react';
 
 import { useIsBlueish } from '../hooks';
-import { FormatBalance2, FormatPrice, MySkeleton } from '.';
+import { DisplayBalance, FormatPrice, MySkeleton } from '.';
 
 type FormatPriceProps = ComponentProps<typeof FormatPrice>;
-type FormatBalance2Props = ComponentProps<typeof FormatBalance2>;
+type DisplayBalanceProps = ComponentProps<typeof DisplayBalance>;
 
 interface Props {
   cryptoBalance: BN | undefined;
   decimal: number | undefined;
   fiatBalance: number | undefined;
   fiatProps?: Partial<FormatPriceProps>;
-  cryptoProps?: Partial<FormatBalance2Props>;
+  cryptoProps?: Partial<DisplayBalanceProps>;
   token: string | undefined;
   style?: React.CSSProperties;
   whichFirst?: 'crypto' | 'fiat';
@@ -47,10 +47,10 @@ export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fi
   };
 
   const _balanceProps = {
+    balance: cryptoBalance,
+    decimal,
     decimalPoint: 2,
-    decimals: [decimal],
-    tokens: [token],
-    value: cryptoBalance,
+    token,
     ...cryptoProps,
     style: { ...balanceStyle, ...cryptoProps?.style }
   };
@@ -72,10 +72,10 @@ export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fi
   const renderBalances = () => whichFirst === 'fiat'
     ? <>
       <FormatPrice {..._priceProps} />
-      <FormatBalance2 {..._balanceProps} />
+      <DisplayBalance {..._balanceProps} />
     </>
     : <>
-      <FormatBalance2 {..._balanceProps} />
+      <DisplayBalance {..._balanceProps} />
       <FormatPrice {..._priceProps} />
     </>;
 

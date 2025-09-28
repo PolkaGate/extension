@@ -14,7 +14,7 @@ import React, { memo, useMemo } from 'react';
 import { type BN, isBn, noop } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 
-import { AssetLogo, FormatBalance2, GradientDivider, Identity2, MySkeleton, MyTooltip, SignArea3 } from '../components';
+import { AssetLogo, DisplayBalance, GradientDivider, Identity2, MySkeleton, MyTooltip, SignArea3 } from '../components';
 import RestakeRewardToggler from '../fullscreen/stake/new-pool/claimReward/partials/RestakeRewardToggler';
 import { RewardHeaderAmount } from '../fullscreen/stake/new-pool/claimReward/partials/Review';
 import { useChainInfo, useFormatted, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
@@ -136,18 +136,14 @@ export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decim
           {content
             ? isBn(content)
               ? (
-                <FormatBalance2
-                  decimalPoint={4}
-                  decimals={[decimal ?? 0]}
+                <DisplayBalance
+                  balance={content}
+                  decimal={decimal}
                   style={{
                     color: '#ffffff',
-                    fontFamily: 'Inter',
-                    fontSize: '13px',
-                    fontWeight: 500,
                     width: 'max-content'
                   }}
-                  tokens={[token ?? '']}
-                  value={content}
+                  token={token}
                 />)
               : isAddress(content)
                 ? (

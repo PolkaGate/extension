@@ -11,7 +11,7 @@ import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material
 import React, { type CSSProperties, memo, useCallback, useMemo, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
-import { ActionButton, DetailPanel, FormatBalance2, GradientButton, Identity2 } from '../../../components';
+import { ActionButton, DetailPanel, DisplayBalance, GradientButton, Identity2 } from '../../../components';
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../hooks';
 import { Email, Web, XIcon } from '../../../popup/settings/icons';
 import SocialIcon from '../../../popup/settings/partials/SocialIcon';
@@ -65,12 +65,12 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
           <Typography color='#AA83DC' textAlign='left' variant='B-4'>
             {t('Staked')}:
           </Typography>
-          <FormatBalance2
+          <DisplayBalance
+            balance={nominator.value}
+            decimal={decimal}
             decimalPoint={2}
-            decimals={[decimal ?? 0]}
-            style={{ color: theme.palette.text.primary, fontFamily: 'Inter', fontSize: '12px', fontWeight: 500, width: 'fit-content' }}
-            tokens={[token ?? '']}
-            value={nominator.value}
+            style={{ color: theme.palette.text.primary, fontFamily: 'Inter', fontSize: '12px', fontWeight: 500}}
+            token={token}
           />
         </Grid>
       </Stack>
@@ -153,14 +153,13 @@ const RightColumnContent = ({ genesisHash, onSelect, validator }: RightColumnCon
         </Typography>
         <InfoBox
           Amount={
-            <FormatBalance2
+            <DisplayBalance
+              balance={validator.stakingLedger.total}
+              decimal={decimal}
               decimalPoint={2}
-              decimals={[decimal ?? 0]}
-              style={{ ...theme.typography['H-2'], color: theme.palette.text.primary, width: 'fit-content' }}
-              tokens={[token ?? '']}
-              value={validator.stakingLedger.total}
+              style={{ ...theme.typography['H-2'], color: theme.palette.text.primary }}
+              token={token}
               withCurrency={false}
-              withSi={false}
             />
           }
           label={t('Staked') + valueUnit}

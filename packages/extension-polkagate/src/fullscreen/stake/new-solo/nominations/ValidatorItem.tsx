@@ -11,7 +11,7 @@ import React, { memo, useCallback, useMemo } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { FormatBalance2, GlowCheckbox, MySkeleton } from '../../../../components';
+import { DisplayBalance, GlowCheckbox, MySkeleton } from '../../../../components';
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../../hooks';
 import { type StakingInfoStackProps, ValidatorIdentity } from '../../../../popup/staking/partial/NominatorsTable';
 import { ValidatorIdSocials } from '../../../../popup/staking/partial/ValidatorDetail';
@@ -37,12 +37,12 @@ const InfoWithIcons = memo(function InfoWithIcons ({ StartIcon, amount, decimal,
         {title}:
       </Typography>
       {amount &&
-        <FormatBalance2
+        <DisplayBalance
+          balance={amount}
+          decimal={decimal}
           decimalPoint={2}
-          decimals={[decimal ?? 0]}
-          style={{ color: theme.palette.text.primary, fontFamily: 'Inter', fontSize: '12px', fontWeight: 500, width: 'fit-content' }}
-          tokens={[token ?? '']}
-          value={amount}
+          style={{ color: theme.palette.text.primary, fontFamily: 'Inter', fontSize: '12px', fontWeight: 500 }}
+          token={token}
         />}
       {text &&
         <Typography color='text.primary' textAlign='left' variant='B-4' width='fit-content'>

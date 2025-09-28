@@ -14,11 +14,11 @@ import { useParams } from 'react-router-dom';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util';
-import { FLOATING_POINT_DIGIT, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
+import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { BN_ZERO, noop } from '@polkadot/util';
 
-import { ActionButton, AssetLogo, Motion, MyTextField, ShowBalance4 } from '../../components';
+import { ActionButton, AssetLogo, DisplayBalance, Motion, MyTextField } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
 import NumberedTitle from './partials/NumberedTitle';
 import useLimitedFeeCall from './useLimitedFeeCall';
@@ -187,15 +187,12 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
             {t('Available')}
           </Typography>
           <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} />
-          <Typography color='text.primary' sx={{ textAlign: 'left' }} variant='B-1'>
-            <ShowBalance4
-              balance={transferableBalance}
-              decimal={decimal}
-              decimalPoint={FLOATING_POINT_DIGIT}
-              genesisHash={genesisHash}
-              token={inputs?.token}
-            />
-          </Typography>
+          <DisplayBalance
+            balance={transferableBalance}
+            decimal={decimal}
+            style={{ color: 'text.primary' }}
+            token={inputs?.token}
+          />
         </Stack>
       </Stack>
       {(inputs?.error || error || warningMessage) &&
