@@ -4,6 +4,7 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { Compact, u64, u128 } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
+import type { INumber } from '@polkadot/types-codec/types';
 
 import { Fade, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { memo, useMemo } from 'react';
@@ -33,7 +34,7 @@ function createElement (prefix: string, postfix: string, unit: string, isShort =
 
 function applyFormat (
   decimalPoint: number,
-  value: Balance | Compact<u128 | u64> | BN | string,
+  value: Balance | Compact<u128 | u64 | INumber> | BN | string,
   decimal: number,
   token: string,
   withCurrency = true,
@@ -47,8 +48,8 @@ function applyFormat (
 
   if (prefix.length > THOUSAND_LENGTH) {
     const [major, rest] = formatBalance(value, { decimals: decimal, withUnit: false }).split('.');
-    const minor = rest.substr(0, decimalPoint);
-    const unit = rest.substr(4);
+    const minor = rest.substring(0, decimalPoint);
+    const unit = rest.substring(4);
 
     return (
       <>
@@ -64,7 +65,7 @@ function applyFormat (
 
 interface DisplayBalanceProps {
   api?: ApiPromise;
-  balance: Balance | Compact<u128 | u64> | string | BN | null | undefined;
+  balance: Balance | Compact<u128 | u64 | INumber> | string | BN | null | undefined;
   decimal?: number;
   decimalPoint?: number;
   genesisHash?: string | undefined;
