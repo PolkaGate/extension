@@ -46,7 +46,7 @@ export const SelectedPoolInformation = ({ genesisHash, isExtension, onClick, ope
                 width={isExtension ? 230 : 250}
               />
               <DisplayBalance
-                balance={isHexToBn(poolDetail.bondedPool?.points.toString() ?? '0')}
+                balance={isHexToBn(poolDetail.bondedPool?.points?.toString() ?? '0')}
                 decimal={decimal}
                 style={{ ...theme.typography['B-4'], color: textColor }}
                 token={token}

@@ -84,14 +84,6 @@ function DisplayBalance ({ api, balance, decimal, decimalPoint, genesisHash, isS
   const theme = useTheme();
   const { decimal: nativeDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
-  const adaptiveDecimalPoint = useMemo(() =>
-    balance && decimal
-      ? (String(balance).length >= decimal - 1
-        ? DEFAULT_DECIMAL_PRECISION
-        : HIGH_PRECISION_DECIMAL)
-      : undefined
-  , [balance, decimal]);
-
   const { apiDecimal, apiToken } = useMemo(() => {
     if (!api) {
       return { apiDecimal: undefined, apiToken: undefined };
@@ -105,6 +97,15 @@ function DisplayBalance ({ api, balance, decimal, decimalPoint, genesisHash, isS
 
   const resolvedDecimal = useMemo(() => decimal || nativeDecimal || apiDecimal, [apiDecimal, decimal, nativeDecimal]);
   const resolvedToken = useMemo(() => token || nativeToken || apiToken, [apiToken, nativeToken, token]);
+
+  const adaptiveDecimalPoint = useMemo(() =>
+    balance && resolvedDecimal
+      ? (String(balance).length >= resolvedDecimal - 1
+        ? DEFAULT_DECIMAL_PRECISION
+        : HIGH_PRECISION_DECIMAL)
+      : undefined
+  , [balance, resolvedDecimal]);
+
   const resolvedDecimalPoint = useMemo(() => {
     if (decimalPoint) {
       return decimalPoint;
