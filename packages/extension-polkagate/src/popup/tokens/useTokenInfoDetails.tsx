@@ -23,7 +23,8 @@ import { lockedReservedReducer, type Type } from './LockedReserved';
 export interface UnlockType {
   classToUnlock: Lock[] | undefined;
   isDisable: boolean;
-  lockedTooltip: string | undefined;
+  lockedTooltip: string | null | undefined;
+  openLocked: () => void;
   unlockableAmount: BN | undefined;
 }
 
@@ -36,7 +37,7 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
 
-  const { classToUnlock, delegatedBalance, isDisable, totalLocked, unlockableAmount } = useLockedInReferenda(address, genesisHash, undefined); // TODO: timeToUnlock!
+  const { classToUnlock, delegatedBalance, isDisable, timeToUnlock, totalLocked, unlockableAmount } = useLockedInReferenda(address, genesisHash, undefined);
   const [state, dispatch] = useReducer(lockedReservedReducer, {
     data: undefined,
     type: undefined
@@ -68,12 +69,16 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
   }, [delegatedBalance, reservedReason, totalLocked]);
 
   const lockedTooltip = useMemo(() => {
-    if (!unlockableAmount || unlockableAmount.isZero() || !GOVERNANCE_CHAINS.includes(chainName ?? '') || !api) {
+    if (!GOVERNANCE_CHAINS.includes(chainName?.toLowerCase() ?? '') || !api) {
       return undefined;
     }
 
+    if (!unlockableAmount || unlockableAmount.isZero()) {
+      return timeToUnlock;
+    }
+
     return (t('{{amount}} can be unlocked', { replace: { amount: api.createType('Balance', unlockableAmount).toHuman() } }));
-  }, [api, chainName, t, unlockableAmount]);
+  }, [api, chainName, t, timeToUnlock, unlockableAmount]);
 
   const hasAmount = useCallback((amount: BN | undefined | null) => amount && !amount.isZero(), []);
 
@@ -191,7 +196,7 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
     dispatch({ type: 'CLOSE_MENU' });
   }, []);
 
-  const unlockTracks: UnlockType = useMemo(() => ({ classToUnlock, isDisable, lockedTooltip, unlockableAmount }), [classToUnlock, isDisable, lockedTooltip, unlockableAmount]);
+  const unlockTracks: UnlockType = useMemo(() => ({ classToUnlock, isDisable, lockedTooltip, openLocked, unlockableAmount }), [classToUnlock, isDisable, lockedTooltip, openLocked, unlockableAmount]);
 
   const UnlockTrackElement = useMemo(() => (
     openUnlockReview
@@ -213,11 +218,11 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
     lockedBalance,
     lockedTooltip,
     onTransferable,
-    openLocked: classToUnlock && classToUnlock.length > 0 ? openLocked : undefined,
     pricesInCurrency,
     reservedBalance,
     state,
     tokenPrice,
-    transferable
+    transferable,
+    unlockTracks: classToUnlock && classToUnlock.length > 0 ? unlockTracks : undefined
   };
 }

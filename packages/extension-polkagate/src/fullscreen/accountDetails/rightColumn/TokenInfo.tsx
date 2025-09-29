@@ -34,11 +34,11 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
       lockedBalance,
       lockedTooltip,
       onTransferable,
-      openLocked,
       reservedBalance,
       state,
       tokenPrice,
-      transferable } = useTokenInfoDetails(address, genesisHash, token);
+      transferable,
+      unlockTracks } = useTokenInfoDetails(address, genesisHash, token);
 
   const onStaking = useCallback((type: string) => () => {
     navigate(`/fullscreen-stake/${type}/${address}/${genesisHash}`) as void;
@@ -141,11 +141,11 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
         decimal={token?.decimal}
         handleClose={closeMenu}
         items={state.data?.items ?? {}}
-        openLocked={openLocked}
         openMenu={!!state.type}
         price={tokenPrice}
         title={state.type ?? ''}
         token={token?.token}
+        unlockTracks={unlockTracks}
       />
     </>
   );

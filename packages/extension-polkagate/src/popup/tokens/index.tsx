@@ -57,12 +57,12 @@ function Tokens (): React.ReactElement {
     lockedBalance,
     lockedTooltip,
     onTransferable,
-    openLocked,
     pricesInCurrency,
     reservedBalance,
     state,
     tokenPrice,
-    transferable } = useTokenInfoDetails(address, genesisHash, token);
+    transferable,
+    unlockTracks } = useTokenInfoDetails(address, genesisHash, token);
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
@@ -172,11 +172,11 @@ function Tokens (): React.ReactElement {
         decimal={token?.decimal}
         handleClose={closeMenu}
         items={state.data?.items ?? {}}
-        openLocked={openLocked}
         openMenu={!!state.type}
         price={tokenPrice}
         title={state.type ?? ''}
         token={token?.token}
+        unlockTracks={unlockTracks}
       />
     </Motion>
   );
