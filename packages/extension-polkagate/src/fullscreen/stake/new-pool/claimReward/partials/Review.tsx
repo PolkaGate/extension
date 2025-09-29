@@ -18,7 +18,7 @@ interface RewardHeaderAmountProps {
   style?: SxProps<Theme>;
 }
 
-export const RewardHeaderAmount = ({ amount, genesisHash, style, title, token }: RewardHeaderAmountProps) => {
+export const RewardHeaderAmount = ({ amount, genesisHash, style = {}, title, token }: RewardHeaderAmountProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();

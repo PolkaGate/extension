@@ -128,7 +128,7 @@ export default function UnlockTrack ({ address, genesisHash, setOpenUnlockReview
   const batchAll = api?.tx['utility']['batchAll'];
 
   const tx = useMemo(() => {
-    if (!api || !unlockTracks.classToUnlock || !remove || !unlockClass || !batchAll) {
+    if (!api || !address || !unlockTracks.classToUnlock || !remove || !unlockClass || !batchAll) {
       return undefined;
     }
 
