@@ -3,6 +3,8 @@
 
 import type { ProxyTypes } from './types';
 
+import { EVM_TEST_CHAINS_GENESISHASH } from './evmUtils/constantsEth';
+
 export const EXTENSION_NAME = 'PolkaGate';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const SUPPORT_EMAIL = 'support@polkagate.xyz';
@@ -74,13 +76,18 @@ export const ASSET_HUBS = [
   PASEO_ASSET_HUB_GENESIS_HASH
 ];
 
-export const TEST_NETS = [
+export const POLKADOT_TEST_NETS = [
   WESTEND_GENESIS_HASH,
   WESTMINT_GENESIS_HASH,
   WESTEND_PEOPLE_GENESIS_HASH,
   PASEO_GENESIS_HASH,
   PASEO_ASSET_HUB_GENESIS_HASH,
   PASEO_PEOPLE_GENESIS_HASH
+];
+
+export const TEST_NETS = [
+  ...POLKADOT_TEST_NETS,
+  ...EVM_TEST_CHAINS_GENESISHASH
 ];
 
 export const PROXY_CHAINS = [
@@ -323,6 +330,7 @@ export const STORAGE_KEY = {
 // Function names for asset fetching worker calls
 export const FETCHING_ASSETS_FUNCTION_NAMES = {
   ASSET_HUB: 'getAssetOnAssetHub',
+  EVM: 'getEvmAssets',
   MULTI_ASSET: 'getAssetOnMultiAssetChain',
   RELAY: 'getAssetOnRelayChain'
 };

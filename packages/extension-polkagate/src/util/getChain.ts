@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 import type { Chain } from '@polkadot/extension-chains/types';
 
 import allChains from './chains';
@@ -23,5 +21,5 @@ export default function getChain (_genesisHash: string | undefined): Chain | und
     found.name = found.chain;
   }
 
-  return found;
+  return found as unknown as Chain;
 }

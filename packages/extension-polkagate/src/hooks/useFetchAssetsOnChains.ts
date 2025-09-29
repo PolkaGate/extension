@@ -6,6 +6,8 @@ import type { DropdownOption, UserAddedChains } from '../util/types';
 import { createAssets } from '@polkagate/apps-config/assets';
 import { useCallback, useMemo } from 'react';
 
+import { isEthereumAddress } from '@polkadot/util-crypto';
+
 import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH } from '../util/constants';
 import getChainName from '../util/getChainName';
 
@@ -70,10 +72,39 @@ export default function useFetchAssetsOnChains ({ addresses, genesisOptions, use
       userAddedEndpoints
     }), [postToWorker, userAddedEndpoints]);
 
-  const fetchAssets = useCallback((genesisHash: string, isSingleTokenChain: boolean, maybeMultiAssetChainName?: string): number => {
+  const fetchEvmAssets = useCallback((chainName: string, _addresses: string[]) =>
+    postToWorker(FETCHING_ASSETS_FUNCTION_NAMES.EVM, {
+      addresses: _addresses,
+      chainName
+    }), [postToWorker]);
+
+  const fetchAssets = useCallback((genesisHash: string, isSingleTokenChain: boolean, isEvmChain: boolean, maybeMultiAssetChainName?: string): number => {
     if (!addresses?.length) {
       console.warn('No addresses provided to fetch assets.');
 
+      return FAILED;
+    }
+
+    const { evm: evmAddresses, substrate: substrateAddresses } = addresses.reduce((res, address) => {
+      (isEthereumAddress(address) ? res.evm : res.substrate).push(address);
+
+      return res;
+    }, { evm: [] as string[], substrate: [] as string[] });
+
+    if (evmAddresses?.length && isEvmChain) {
+      console.log(' to fetch evm chains balances:', evmAddresses?.length)
+      const chainName = getChainName(genesisHash, genesisOptions);
+
+      if (!chainName) {
+        console.error('Unable to resolve chain name for evm chain:', genesisHash);
+
+        return FAILED;
+      }
+
+      return fetchEvmAssets(chainName, evmAddresses);
+    }
+
+    if (!substrateAddresses?.length) {
       return FAILED;
     }
 
@@ -87,7 +118,7 @@ export default function useFetchAssetsOnChains ({ addresses, genesisOptions, use
         return FAILED;
       }
 
-      return fetchAssetOnRelayChain(chainName, addresses);
+      return fetchAssetOnRelayChain(chainName, substrateAddresses);
     }
 
     // Asset hubs (like Statemint)
@@ -100,16 +131,16 @@ export default function useFetchAssetsOnChains ({ addresses, genesisOptions, use
         return FAILED;
       }
 
-      return fetchAssetOnAssetHub(chainName, addresses);
+      return fetchAssetOnAssetHub(chainName, substrateAddresses);
     }
 
     // Other chains supporting multi-asset logic
     if (maybeMultiAssetChainName) {
-      return fetchAssetOnMultiAssetChain(maybeMultiAssetChainName, addresses);
+      return fetchAssetOnMultiAssetChain(maybeMultiAssetChainName, substrateAddresses);
     }
 
     return FAILED;
-  }, [addresses, genesisOptions, fetchAssetOnRelayChain, fetchAssetOnAssetHub, fetchAssetOnMultiAssetChain]);
+  }, [addresses, fetchEvmAssets, genesisOptions, fetchAssetOnRelayChain, fetchAssetOnAssetHub, fetchAssetOnMultiAssetChain]);
 
   return { fetchAssets };
 }

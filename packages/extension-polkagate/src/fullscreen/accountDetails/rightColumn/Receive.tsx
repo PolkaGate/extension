@@ -5,14 +5,16 @@ import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/ha
 
 import { Grid, Grow, Stack, styled, Typography } from '@mui/material';
 import { DocumentCopy } from 'iconsax-react';
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
 
 import { Address2, ChainLogo, DecisionButtons, GradientDivider, MySnackbar, SearchField } from '@polkadot/extension-polkagate/src/components/index';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util';
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
+import { ETHEREUM_GENESISHASH } from '@polkadot/extension-polkagate/src/util/evmUtils/constantsEth';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { useFormatted, useSelectedAccount, useTranslation } from '../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
@@ -109,7 +111,7 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
 }
 
 function AddressComponent ({ address, chainName, onCopy }: AddressComponentProp) {
-    const { isHovered, ref } = useIsHovered();
+  const { isHovered, ref } = useIsHovered();
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
@@ -136,6 +138,12 @@ function Receive ({ address, closePopup, onClose, setAddress }: Props): React.Re
   const formattedAddress = useFormatted(address, selectedChain?.genesisHash);
   const chainName = useMemo(() => selectedChain ? sanitizeChainName(selectedChain?.name)?.toLowerCase() : '', [selectedChain]);
   const chainLogo = useMemo(() => getLogo2(chainName), [chainName]);
+
+  useEffect(() => {
+    if (isEthereumAddress(address)) {
+      setSelectedChain({ genesisHash: ETHEREUM_GENESISHASH, name: 'Ethereum' } as NetworkInfo);
+    }
+  }, [address]);
 
   const onCopy = useCallback(() => {
     formattedAddress && navigator.clipboard.writeText(formattedAddress).catch((err) => console.error('Error copying text: ', err));

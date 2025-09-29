@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 
 import { toCamelCase } from '../util';
 import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH, TEST_NETS } from '../util/constants';
+import { EVM_CHAINS_GENESISHASH } from '../util/evmUtils/constantsEth';
 import getChainName from '../util/getChainName';
 import { isMigratedRelay, mapHubToRelay } from '../util/migrateHubUtils';
 import useFetchAssetsOnChains from './useFetchAssetsOnChains';
@@ -35,7 +36,7 @@ const FUNCTIONS = Object.values(FETCHING_ASSETS_FUNCTION_NAMES);
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
+export default function useAssetsBalances(accounts: AccountJson[] | null, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
@@ -153,15 +154,17 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, genes
       _selectedChains.includes(value as string) &&
       !ASSET_HUBS.includes(value as string) &&
       !RELAY_CHAINS_GENESISHASH.includes(value as string) &&
+      !EVM_CHAINS_GENESISHASH.includes(value as string) &&
       !multipleAssetsChainsNames.includes(toCamelCase(text) || '')
     );
 
     /** Fetch assets for all the selected chains by default */
     _selectedChains?.forEach((genesisHash) => {
       const isSingleTokenChain = !!singleAssetChains.find(({ value }) => value === genesisHash);
+      const isEvmChain = EVM_CHAINS_GENESISHASH.includes(genesisHash);
       const maybeMultiAssetChainName = multipleAssetsChainsNames.find((chainName) => chainName === getChainName(genesisHash));
 
-      const call = fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
+      const call = fetchAssets(genesisHash, isSingleTokenChain, isEvmChain, maybeMultiAssetChainName);
 
       workerCallsCount.current += call;
     });

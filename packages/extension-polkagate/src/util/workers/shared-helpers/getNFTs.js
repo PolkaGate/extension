@@ -3,6 +3,8 @@
 
 // @ts-nocheck
 
+import { isEthereumAddress } from '@polkadot/util-crypto';
+
 import { SUPPORTED_NFT_CHAINS } from '../../../fullscreen/nft/utils/constants';
 import { getFormattedAddress } from '../../address';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
@@ -234,7 +236,9 @@ async function getNFTs (addresses) {
  * @param {MessagePort } port
  */
 export default async function getNftHandler (addresses, port) {
-  if (!addresses) {
+  const filteredAddresses = addresses?.filter((addr) => !isEthereumAddress(addr));
+
+  if (!filteredAddresses) {
     console.warn('Shared worker, No addresses to NFTs');
 
     return port.postMessage(JSON.stringify({ functionName: NFT_FUNCTION_NAME, results: undefined }));
@@ -242,7 +246,7 @@ export default async function getNftHandler (addresses, port) {
 
   for (let tryCount = 1; tryCount <= 5; tryCount++) {
     try {
-      const allItems = await getNFTs(addresses);
+      const allItems = await getNFTs(filteredAddresses);
 
       console.info('Shared worker, accounts NFTs fetched!');
       port.postMessage(JSON.stringify({ functionName: NFT_FUNCTION_NAME, results: allItems }));

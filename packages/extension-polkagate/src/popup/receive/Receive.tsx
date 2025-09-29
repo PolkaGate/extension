@@ -5,12 +5,14 @@ import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/ha
 
 import { Container, Dialog, Grid, styled, Typography } from '@mui/material';
 import { ArrowCircleLeft, DocumentCopy, ScanBarcode } from 'iconsax-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
 
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
+import { ETHEREUM_GENESISHASH } from '@polkadot/extension-polkagate/src/util/evmUtils/constantsEth';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { ChainLogo, NeonButton, SearchField, Transition } from '../../components';
 import MySnackbar from '../../components/MySnackbar';
@@ -171,9 +173,9 @@ function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: 
   return (
     <Grid container item justifyContent='center'>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '8px 6px' }}>
-          <BackButton
-            onClick={onBack}
-          />
+        <BackButton
+          onClick={onBack}
+        />
         <Grid alignItems='center' columnGap='8px' container item width='fit-content'>
           <ChainLogo chainName={selectedChain.name} size={24} />
           <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
@@ -230,6 +232,12 @@ export default function Receive ({ openPopup, setOpenPopup }: Props) {
   const selectedAddress = useSelectedAccount();
 
   const [selectedChain, setSelectedChain] = useState<NetworkInfo | undefined>();
+
+  useEffect(() => {
+    if (isEthereumAddress(selectedAddress?.address)) {
+      setSelectedChain({ genesisHash: ETHEREUM_GENESISHASH, name: 'Ethereum' } as NetworkInfo);
+    }
+  }, [selectedAddress?.address]);
 
   const handleClose = useCallback(() => {
     setOpenPopup();

@@ -37,24 +37,53 @@ function sortNetworks(a, b) {
             ? -1
             : 1;
 }
-// added by PolkaGate
-knownGenesis.westmint = [
-    '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9'
+
+const polkagateAddedGenesisHashes = {
+    westmint: '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9',
+    polkadotPeople: '0x67fa177a097bfa18f77ea95ab56e9bcdfeb0e5b8a40e46298bb93e16b6fc5008',
+    westendPeople: '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c',
+    kusamaPeople: '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f',
+    paseo: '0x77afd6190f1554ad45fd0d31aee62aacc33c6db0ea801129acb813f913e0764f',
+    paseoAssetHub: '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2',
+    ethereum: '0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3',
+    goerli: '0x5fbe6b8f0e9b91f8c5c88ee6f7a3b7f7d05c1e71f6e4c4c1c6e8c123456789ab',
+    sepolia: '0x25a5cc106eea7138acab33231d7160d69cb777ee0c2c553fcddf5138993e6dd9'
+};
+
+Object.entries(polkagateAddedGenesisHashes).forEach(([key, hash]) => (knownGenesis[key] = [hash]));
+
+const evmTestChains = [
+    {
+        prefix: 5, // Goerli testnet
+        network: "goerli",
+        displayName: "Goerli Testnet",
+        symbols: ["ETH"],
+        decimals: [18],
+        standardAccount: "0x",
+        website: "https://goerli.net/#about"
+    },
+    {
+        prefix: 60, // Sepolia testnet
+        network: "sepolia",
+        displayName: "Sepolia Testnet",
+        symbols: ["ETH"],
+        decimals: [18],
+        standardAccount: "0x",
+        website: "https://sepolia.dev"
+    }
 ];
-knownGenesis.polkadotPeople = [
-    '0x67fa177a097bfa18f77ea95ab56e9bcdfeb0e5b8a40e46298bb93e16b6fc5008'
-];
-knownGenesis.westendPeople = [
-    '0x1eb6fb0ba5187434de017a70cb84d4f47142df1d571d0ef9e7e1407f2b80b93c'
-];
-knownGenesis.kusamaPeople = [
-    '0xc1af4cb4eb3918e5db15086c0cc5ec17fb334f728b7c65dd44bfe1e174ff8b3f'
-];
-knownGenesis.paseo = [
-    '0x77afd6190f1554ad45fd0d31aee62aacc33c6db0ea801129acb813f913e0764f'
-];
-knownGenesis.paseoAssetHub = [
-    '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2'
+
+const evmChains = [
+    {
+        prefix: 60, // Ethereum's SLIP-44 coin type
+        network: "ethereum",
+        displayName: "Ethereum Mainnet",
+        symbols: ["ETH"],
+        decimals: [18],
+        standardAccount: "0x",
+        website: "https://ethereum.org"
+    },
+    ...evmTestChains
 ];
 
 const testnets = [{
@@ -143,7 +172,7 @@ const peopleChains = [
     }
 ];
 
-knownSubstrate.push(...assetHubs, ...peopleChains, ...testnets);
+knownSubstrate.push(...assetHubs, ...peopleChains, ...testnets, ...evmChains);
 
 export const allNetworks = knownSubstrate.map(toExpanded);
 export const availableNetworks = allNetworks.filter(filterAvailable).sort(sortNetworks);

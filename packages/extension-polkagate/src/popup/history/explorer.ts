@@ -4,11 +4,15 @@
 import { getSubscanChainName } from '@polkadot/extension-polkagate/src/util';
 import { CHAINS_ON_POLKAHOLIC } from '@polkadot/extension-polkagate/src/util/constants';
 
-export function getLink (chainName: string, type: 'account' | 'extrinsic' = 'extrinsic', data: string): {link: string | undefined, name: string | undefined, } {
+export function getLink (chainName: string, type: 'account' | 'extrinsic' = 'extrinsic', data: string): { link: string | undefined, name: string | undefined, } {
+  if (chainName.toLowerCase() === 'ethereum') {
+     return { link: 'https://etherscan.io/tx/' + String(data), name: 'etherscan' };
+  }
+
   if (type === 'extrinsic') {
     const maybeTheFirstPartOfChain = chainName?.split(' ')?.[0];
 
-   const explorer = CHAINS_ON_POLKAHOLIC.includes(chainName ?? '') ? 'polkaholic' : 'subscan';
+    const explorer = CHAINS_ON_POLKAHOLIC.includes(chainName ?? '') ? 'polkaholic' : 'subscan';
 
     switch (explorer) {
       case 'subscan':

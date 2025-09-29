@@ -118,7 +118,7 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, proxyTypeFilter, selectedPr
 interface Props {
   openMenu: boolean;
   handleClose: () => void;
-  proxies: Proxy[] | undefined;
+  proxies: Proxy[] | undefined |null;
   genesisHash: string | null | undefined;
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
   selectedProxy: Proxy | undefined;

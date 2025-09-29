@@ -203,6 +203,7 @@ export interface RequestAccountCreateExternal {
   address: string;
   genesisHash?: HexString | null;
   name: string;
+  type?: KeypairType;
 }
 
 export interface RequestAccountCreateSuri {

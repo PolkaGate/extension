@@ -18,6 +18,7 @@ import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../style';
 import { amountToHuman, countDecimalPlaces, getSubscanChainName, toShortAddress, toTitleCase, updateStorage } from '../util';
 import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
+import type { BN } from '@polkadot/util';
 
 interface SubProps {
   transactionDetail: TransactionDetail;
@@ -67,7 +68,7 @@ const ConfirmationHeader = ({ genesisHash, transactionDetail }: SubProps) => {
   );
 };
 
-interface ListItemType { content: FeeInfo | string | number | undefined; title: string; }
+interface ListItemType { content: FeeInfo | string | number | BN | undefined; title: string; }
 
 const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
   const { t } = useTranslation();

@@ -8,7 +8,7 @@ import { ClickAwayListener, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
-import { FLOATING_POINT_DIGIT, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
+import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
 import { AssetLogo, ShowBalance4 } from '../../../components';
@@ -79,6 +79,8 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
     };
   }, [decimal, inputs.fee, maybeSelectedNonNativeFeeAsset, maybePartialFee, token]);
 
+  console.log('feeInfo:', JSON.stringify(feeInfo))
+
   useEffect(() => {
     setInputs((prevInputs) => ({
       ...(prevInputs || {}),
@@ -111,7 +113,7 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
             <ShowBalance4
               balance={feeInfo.fee}
               decimal={feeInfo.decimal}
-              decimalPoint={FLOATING_POINT_DIGIT}
+              decimalPoint={10}
               token={feeInfo.token}
             />
           </Typography>

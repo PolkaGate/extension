@@ -16,6 +16,7 @@ export const sanitizeChainName = (chainName: string | undefined, withMigration?:
     .replace(' Chain', '')
     .replace(' Finance', '')
     .replace(' Testnet', '')
+    .replace(' Mainnet', '')
     .replace(/\s/g, '');
 
   sanitizedChainName = withMigration && isMigratedHub(sanitizedChainName)

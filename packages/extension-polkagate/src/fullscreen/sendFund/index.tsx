@@ -10,8 +10,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { AccountsStore } from '@polkadot/extension-base/stores';
 import { PROXY_TYPE, TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '@polkadot/extension-polkagate/src/util/constants';
+import { getEthFee } from '@polkadot/extension-polkagate/src/util/evmUtils/getEthFee';
 import keyring from '@polkadot/ui-keyring';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
+import { cryptoWaitReady, isEthereumAddress } from '@polkadot/util-crypto';
 
 import { DecisionButtons, SignArea3 } from '../../components';
 import { useCanPayFeeAndDeposit, useChainInfo, useFormatted, useTeleport, useTranslation } from '../../hooks';
@@ -19,6 +20,7 @@ import { WaitScreen2 } from '../../partials';
 import { toBN } from '../../util';
 import HomeLayout from '../components/layout';
 import Confirmation from '../manageProxies/Confirmation';
+import RecipientAddress from './partials/RecipientAddress';
 import StepsRow, { INPUT_STEPS } from './partials/StepsRow';
 import Step1Sender from './Step1Sender';
 import Step2Recipient from './Step2Recipient';
@@ -27,12 +29,13 @@ import Step4Summary from './Step4Summary';
 import { type Inputs } from './types';
 import useParaSpellFeeCall from './useParaSpellFeeCall';
 
-export default function SendFund (): React.ReactElement {
+export default function SendFund(): React.ReactElement {
   const { t } = useTranslation();
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const { chainName: senderChainName } = useChainInfo(genesisHash, true);
 
   const ref = useRef<HTMLDivElement | null>(null);
+  const ethFeeRef = useRef<boolean>(false);
   const teleportState = useTeleport(genesisHash);
   const navigate = useNavigate();
   const formatted = useFormatted(address, genesisHash);
@@ -47,6 +50,34 @@ export default function SendFund (): React.ReactElement {
 
   const { paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, inputs?.amountAsBN, genesisHash, inputs, senderChainName, setError);
   const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee ? toBN(inputs?.fee) : undefined);
+
+  useEffect(() => {
+    const { amount, fee, recipientAddress: to, token } = inputs ?? {};
+
+    if (ethFeeRef.current || fee || !address || !isEthereumAddress(address) || !senderChainName || !amount || !to || !token || !RecipientAddress) {
+      return;
+    }
+
+    if (Number(amount) <= 0) {
+      return;
+    }
+
+    ethFeeRef.current = true;
+
+    getEthFee({
+      chainName: senderChainName,
+      from: address,
+      to,
+      token,
+      value: amount
+    }).then((fee) => {
+      console.log('fee:', String(fee));
+      fee && setInputs((prev) => ({
+        ...(prev || {}),
+        fee
+      }));
+    }).catch(console.error);
+  }, [address, inputs, senderChainName]);
 
   useEffect(() => {
     if (!genesisHash) {
@@ -128,7 +159,7 @@ export default function SendFund (): React.ReactElement {
   const buttonDisable = useMemo(() =>
     (inputStep === INPUT_STEPS.SENDER && !inputs?.token) ||
     (inputStep === INPUT_STEPS.RECIPIENT && (!inputs?.recipientAddress || inputs?.recipientChain === undefined)) ||
-     (inputStep === INPUT_STEPS.AMOUNT && !inputs?.amount)
+    (inputStep === INPUT_STEPS.AMOUNT && !inputs?.amount)
     ,
     [inputStep, inputs]);
 
@@ -227,7 +258,7 @@ export default function SendFund (): React.ReactElement {
             <SignArea3
               address={address}
               direction='horizontal'
-              disabled={!inputTransaction}
+              // disabled={!inputTransaction}
               extraProps={{
                 decisionButtonProps: {
                   primaryButtonProps: { style: { width: '148%' } },

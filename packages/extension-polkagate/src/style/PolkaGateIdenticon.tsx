@@ -9,6 +9,7 @@ import Icon from '@polkadot/react-identicon';
 
 import { AccountIconThemeContext } from '../components';
 import PolkaSoul from './PolkaSoul';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 type IconTheme = BaseIconTheme | 'polkasoul';
 
@@ -23,10 +24,12 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function PolkaGateIdenticon ({ address, iconTheme, onCopy, prefix, size, style = {} }: Props) {
+function PolkaGateIdenticon({ address, iconTheme, onCopy, prefix, size, style = {} }: Props) {
   const { accountIconTheme } = useContext(AccountIconThemeContext);
 
-  const _theme = (iconTheme ?? accountIconTheme) as IconTheme | undefined;
+  const _theme = isEthereumAddress(String(address))
+    ? 'polkasoul'
+    : (iconTheme ?? accountIconTheme) as IconTheme | undefined;
 
   return (
     <span style={{ height: `${size}px`, width: `${size}px`, ...style }}>

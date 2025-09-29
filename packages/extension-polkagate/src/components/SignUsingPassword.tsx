@@ -9,7 +9,7 @@ import type { DecisionButtonProps } from './DecisionButtons';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Data } from 'iconsax-react';
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { BeatLoader } from 'react-spinners';
 
 import keyring from '@polkadot/ui-keyring';
@@ -19,9 +19,12 @@ import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { signAndSend } from '../util/api';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
 import { DecisionButtons, GradientButton, MyTooltip, PasswordInput } from '.';
+// import { getEthProvider } from '../util/evmUtils/getEthProvider';
+// import { ethers } from 'ethers';
+// import { KeyringEthSigner } from './signerAdaptor';
 
 interface UseProxyProps {
-  proxies: Proxy[] | undefined;
+  proxies: Proxy[] | undefined | null;
   onClick: (() => void) | undefined;
 }
 
@@ -34,7 +37,13 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
     return null;
   }
 
-  if (!proxies) {
+  if (proxies === null) {
+    return (
+      <></>
+    );
+  }
+
+  if (proxies === undefined) {
     return (
       <Grid container item sx={{ alignItems: 'center', width: 'fit-content' }}>
         <MyTooltip
@@ -62,21 +71,21 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 export interface SignUsingPasswordProps {
   api: ApiPromise | undefined;
   direction?: 'horizontal' | 'vertical';
-  disabled?:boolean;
+  disabled?: boolean;
   decisionButtonProps?: Partial<DecisionButtonProps>
   from: string | undefined;
   handleTxResult: (txResult: TxResult) => void;
   onCancel: () => void;
   onUseProxy: (() => void) | undefined;
   preparedTransaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
-  proxies: Proxy[] | undefined;
+  proxies: Proxy[] | undefined | null;
   setFlowStep: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
   signerOption: Partial<SignerOptions> | undefined;
   style?: React.CSSProperties;
   withCancel: boolean | undefined
 }
 
-function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', disabled, from, handleTxResult, onCancel, onUseProxy, preparedTransaction, proxies, setFlowStep, signerOption, style, withCancel }: SignUsingPasswordProps) {
+function SignUsingPassword({ api, decisionButtonProps, direction = 'vertical', disabled, from, handleTxResult, onCancel, onUseProxy, preparedTransaction, proxies, setFlowStep, signerOption, style, withCancel }: SignUsingPasswordProps) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
@@ -97,13 +106,30 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
 
       setBusy(true);
 
-      const signer = keyring.getPair(from);
+      const kePair = keyring.getPair(from);
 
-      signer.unlock(password);
+      kePair.unlock(password);
+
+      // const provider = getEthProvider('sepolia');
+      // const signer = new KeyringEthSigner(kePair, provider);
+      // const { chainId } = await provider.getNetwork();
+
+      // const { maxFeePerGas, maxPriorityFeePerGas } = await provider.getFeeData();
+      // const tx = await signer.sendTransaction({
+      //   to: '0xa4Eff15578D1450912DED08c85679F453C45A710',
+      //   value: ethers.parseEther('0.000001'),
+      //   gasLimit: 21000n,
+      //   maxFeePerGas,
+      //   maxPriorityFeePerGas,
+      //   chainId
+      // });
+
+      // console.log('Tx hash:', tx.hash);
+      // console.log('Transaction confirmed:', receipt.transactionHash);
 
       setFlowStep(TRANSACTION_FLOW_STEPS.WAIT_SCREEN);
 
-      const txResult = await signAndSend(api, preparedTransaction, signer, from, signerOption);
+      const txResult = await signAndSend(api, preparedTransaction, kePair, from, signerOption);
 
       setFlowStep(TRANSACTION_FLOW_STEPS.CONFIRMATION);
       setBusy(false);
@@ -115,7 +141,7 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
     }
   }, [api, from, handleTxResult, password, preparedTransaction, setFlowStep, signerOption]);
 
-  const confirmText = !api ? t('Loading ...') : t('Confirm');
+  const confirmText = useMemo(() => !api ? t('Loading ...') : t('Confirm'), [api, t]);
 
   return (
     <Stack direction='column' sx={{ width: '100%' }}>

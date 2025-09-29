@@ -15,11 +15,13 @@ import type { Proxy, ProxyTypes } from '../util/types';
 
 import { useCallback, useContext, useEffect, useState } from 'react';
 
+import { isEthereumAddress } from '@polkadot/util-crypto';
+
 import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util';
 
-export default function useProxies (api: ApiPromise | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined {
-  const [proxies, setProxies] = useState<Proxy[] | undefined>();
+export default function useProxies (api: ApiPromise | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined | null{
+  const [proxies, setProxies] = useState<Proxy[] | undefined | null>();
   const [proxiesWithAvailability, setProxiesWithAvailability] = useState<Proxy[] | undefined>();
   const { accounts } = useContext(AccountContext);
 
@@ -40,7 +42,15 @@ export default function useProxies (api: ApiPromise | undefined, proxiedAddress:
   }, [api, onlyAvailableWithTypes, proxiedAddress, proxies]);
 
   useEffect(() => {
-    proxiedAddress && api && getProxies();
+    if (isEthereumAddress(String(proxiedAddress))) {
+      return setProxies(null);
+    }
+
+    if (!proxiedAddress || !api) {
+      return;
+    }
+
+    getProxies();
   }, [api, getProxies, proxiedAddress]);
 
   useEffect(() => {
