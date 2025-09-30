@@ -6,13 +6,14 @@ import type { Compact, u64, u128 } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { INumber } from '@polkadot/types-codec/types';
 
-import { Fade, Skeleton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Fade, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { memo, useMemo } from 'react';
 
 import { type BN, formatBalance } from '@polkadot/util';
 
 import { useChainInfo, useIsDark } from '../hooks';
 import { FLOATING_POINT_DIGIT } from '../util/constants';
+import { MySkeleton } from '.';
 
 const THOUSAND_LENGTH = 4;
 const DEFAULT_DECIMAL_PRECISION = 2;
@@ -104,7 +105,7 @@ function DisplayBalance ({ api, balance, decimal, decimalPoint, genesisHash, isS
         ? DEFAULT_DECIMAL_PRECISION
         : HIGH_PRECISION_DECIMAL)
       : undefined
-  , [balance, resolvedDecimal]);
+    , [balance, resolvedDecimal]);
 
   const resolvedDecimalPoint = useMemo(() => {
     if (decimalPoint) {
@@ -120,9 +121,11 @@ function DisplayBalance ({ api, balance, decimal, decimalPoint, genesisHash, isS
 
   if (balance === undefined || balance === null || !resolvedDecimal || !resolvedToken) {
     return (
-      <Skeleton
-        animation='wave'
-        sx={{ bgcolor: isDark ? '#946CC826' : '#99A1C459', borderRadius: '50px', display: 'inline-block', height: '15px', transform: 'none', width: '90px', ...skeletonStyle }}
+      <MySkeleton
+        bgcolor={isDark ? '#946CC826' : '#99A1C459'}
+        height={15}
+        style={skeletonStyle}
+        width={90}
       />
     );
   }

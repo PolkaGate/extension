@@ -6,9 +6,9 @@ import type { DotsVariant } from '@polkadot/extension-polkagate/src/components/D
 import type { BN } from '@polkadot/util';
 
 import { Grid, useTheme } from '@mui/material';
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 
-import { useIsBlueish } from '../hooks';
+import { useIsBlueish, useIsDark } from '../hooks';
 import { DisplayBalance, FormatPrice, MySkeleton } from '.';
 
 type FormatPriceProps = ComponentProps<typeof FormatPrice>;
@@ -27,35 +27,36 @@ interface Props {
   skeletonAlignment?: 'flex-start' | 'flex-end';
 }
 
-export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fiatBalance, fiatProps, skeletonAlignment = 'flex-end', skeletonColor, style = {}, token = '', whichFirst = 'fiat' }: Props) {
+function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fiatBalance, fiatProps, skeletonAlignment = 'flex-end', skeletonColor, style = {}, token = '', whichFirst = 'fiat' }: Props) {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
+  const isDark = useIsDark();
 
-  const isDark = theme.palette.mode === 'dark';
-  const balanceColor = isDark
+  const balanceColor = useMemo(() => isDark
     ? isBlueish ? theme.palette.text.primary : '#BEAAD8'
-    : '#291443';
-  const priceColor = isDark ? '#BEAAD8' : '#8F97B8';
+    : '#291443'
+  , [isBlueish, isDark, theme.palette.text.primary]);
+  const priceColor = useMemo(() => isDark ? '#BEAAD8' : '#8F97B8', [isDark]);
 
-  const balanceStyle = {
+  const balanceStyle = useMemo(() => ({
     color: balanceColor,
     fontFamily: 'Inter',
     fontSize: '12px',
     fontWeight: 500,
     lineHeight: '10px',
     width: 'max-content'
-  };
+  }), [balanceColor]);
 
-  const _balanceProps = {
+  const _balanceProps = useMemo(() => ({
     balance: cryptoBalance,
     decimal,
     decimalPoint: 2,
     token,
     ...cryptoProps,
     style: { ...balanceStyle, ...cryptoProps?.style }
-  };
+  }), [balanceStyle, cryptoBalance, cryptoProps, decimal, token]);
 
-  const _priceProps = {
+  const _priceProps = useMemo(() => ({
     commify: true,
     decimalColor: theme.palette.text.secondary,
     dotStyle: 'normal' as DotsVariant,
@@ -67,9 +68,9 @@ export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fi
     skeletonHeight: 14,
     width: 'fit-content',
     ...fiatProps
-  };
+  }), [fiatBalance, fiatProps, theme.palette.text.secondary]);
 
-  const renderBalances = () => whichFirst === 'fiat'
+  const renderBalances = useMemo(() => whichFirst === 'fiat'
     ? <>
       <FormatPrice {..._priceProps} />
       <DisplayBalance {..._balanceProps} />
@@ -77,7 +78,7 @@ export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fi
     : <>
       <DisplayBalance {..._balanceProps} />
       <FormatPrice {..._priceProps} />
-    </>;
+    </>, [_balanceProps, _priceProps, whichFirst]);
 
   return (
     <Grid container direction='column' item sx={{ '> div.balance': { color: priceColor, ...theme.typography['S-2'] }, alignItems: 'start', rowGap: '6px', width: 'fit-content', ...style }}>
@@ -93,7 +94,7 @@ export function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fi
           />
         </Grid>
         : <>
-          {renderBalances()}
+          {renderBalances}
         </>
       }
     </Grid>
