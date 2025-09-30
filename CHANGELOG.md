@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.10.0](https://github.com/polkagate/extension/compare/v1.9.7...v1.10.0) (2025-09-30)
+
+
+### Features
+
+* add governance unlock feature showing remaining time if not yet unlockable ([13bc064](https://github.com/polkagate/extension/commit/13bc064ba6fb6fd9cd65f2c02c232e2c6448e42a))
+
 ## [1.9.7](https://github.com/polkagate/extension/compare/v1.9.6...v1.9.7) (2025-09-23)
 
 
