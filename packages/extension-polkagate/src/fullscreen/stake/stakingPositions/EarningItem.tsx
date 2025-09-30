@@ -9,7 +9,7 @@ import React, { memo, useCallback, useMemo } from 'react';
 
 import { type BN, BN_ZERO } from '@polkadot/util';
 
-import { FormatBalance2 } from '../../../components';
+import { DisplayBalance } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { TestnetBadge } from '../../../popup/staking/StakingPositions';
 import { TEST_NETS } from '../../../util/constants';
@@ -40,8 +40,9 @@ const Available = ({ balance, decimal, token }: StakedProps) => {
             variant='text'
           />)
         : (
-          <FormatBalance2
-            decimals={[decimal ?? 0]}
+          <DisplayBalance
+            balance={balance}
+            decimal={decimal}
             style={{
               borderRadius: '9px',
               color: theme.palette.text.secondary,
@@ -50,8 +51,7 @@ const Available = ({ balance, decimal, token }: StakedProps) => {
               fontWeight: 600,
               width: 'max-content'
             }}
-            tokens={[token ?? '']}
-            value={balance}
+            token={token}
           />)}
     </Grid>
   );

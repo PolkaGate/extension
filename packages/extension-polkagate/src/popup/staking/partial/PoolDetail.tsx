@@ -12,7 +12,7 @@ import React, { Fragment, memo, useCallback, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import Subscan from '../../../assets/icons/Subscan';
-import { CryptoFiatBalance, FadeOnScroll, FormatBalance2, Identity2, Progress, Transition } from '../../../components';
+import { CryptoFiatBalance, DisplayBalance, FadeOnScroll, Identity2, Progress, Transition } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, useIsExtensionPopup, usePoolDetail, useTranslation } from '../../../hooks';
@@ -201,12 +201,12 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
                     showShortAddress
                     style={{ variant: 'B-4', width: '43%' }}
                   />
-                  <FormatBalance2
-                    decimals={[decimal ?? 0]}
+                  <DisplayBalance
+                    balance={isHexToBn(member.member.points.toString())}
+                    decimal={decimal}
                     style={{ ...theme.typography['B-4'], textAlign: 'left', width: '35%' }}
+                    token={token}
                     tokenColor={color}
-                    tokens={[token ?? '']}
-                    value={isHexToBn(member.member.points.toString())}
                   />
                   <Typography color='text.primary' textAlign='right' variant='B-4' width='22%'>
                     {isNaN(percentage) ? '--' : percentage.toFixed(2)}%

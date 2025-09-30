@@ -8,7 +8,7 @@ import React, { Fragment, useCallback, useMemo, useRef } from 'react';
 
 import { timeDiffSummary } from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/pendingReward/timeDiffSummary';
 
-import { AssetLogo, FadeOnScroll, FormatBalance2, GradientDivider, Identity2, MySkeleton } from '../../../../components';
+import { AssetLogo, DisplayBalance, FadeOnScroll, GradientDivider, Identity2, MySkeleton } from '../../../../components';
 import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../../hooks';
 import getLogo2 from '../../../../util/getLogo2';
 import CheckBox from '../../components/CheckBox';
@@ -52,7 +52,6 @@ export const TableHeader = ({ checked, onSelectAll }: TableHeaderProp) => {
 };
 
 interface RewardsTableProp {
-  adaptiveDecimalPoint: number | undefined;
   expandedRewards: ExpandedRewards[] | undefined;
   selectedToPayout: ExpandedRewards[];
   onSelect: (info: ExpandedRewards, checked: boolean) => void;
@@ -71,7 +70,7 @@ const StyledSkeleton = () => {
   );
 };
 
-export const RewardsTable = ({ adaptiveDecimalPoint, eraToDate, expandedRewards, genesisHash, onSelect, selectedToPayout }: RewardsTableProp) => {
+export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selectedToPayout }: RewardsTableProp) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
@@ -114,18 +113,18 @@ export const RewardsTable = ({ adaptiveDecimalPoint, eraToDate, expandedRewards,
                     />
                   </Grid>
                   <Grid item sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px' }}>
-                    <FormatBalance2
-                      decimalPoint={adaptiveDecimalPoint}
-                      decimals={[decimal ?? 0]}
+                    <DisplayBalance
+                      balance={value}
+                      decimal={decimal}
                       style={{
                         color: theme.palette.text.primary,
                         ...theme.typography['B-2'],
                         textAlign: 'left',
                         width: 'max-content'
                       }}
+                      token={token}
                       tokenColor={theme.palette.text.highlight}
-                      tokens={[token ?? '']}
-                      value={value}
+                      useAdaptiveDecimalPoint
                       withCurrency={false}
                     />
                     <AssetLogo assetSize='16px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} token={token} />

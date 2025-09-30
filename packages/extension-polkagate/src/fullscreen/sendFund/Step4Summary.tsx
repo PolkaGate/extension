@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
-import { AssetLogo, Motion, ShowBalance4 } from '../../components';
+import { AssetLogo, DisplayBalance, Motion } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
 import FeeRow from './partials/FeeRow';
 import FromToBox from './partials/FromToBox';
@@ -46,15 +46,14 @@ export default function Step4Summary ({ canPayFee, inputs, setInputs }: Props): 
         </Typography>
         <Stack alignItems='center' columnGap='8px' direction='row' justifyContent='start' sx={{ height: '45px' }}>
           <AssetLogo assetSize='32px' genesisHash={genesisHash} logo={logoInfo?.logo} />
-          <Typography color='text.primary' sx={{ textAlign: 'left' }} variant='H-1'>
-            <ShowBalance4
-              balance={inputs.amountAsBN}
-              balanceProps={{ tokenColor: theme.palette.text.secondary }}
-              decimal={inputs?.decimal}
-              genesisHash={genesisHash}
-              token={inputs?.token}
-            />
-          </Typography>
+          <DisplayBalance
+            balance={inputs.amountAsBN}
+            decimal={inputs?.decimal}
+            style={{ color: 'text.primary', ...theme.typography['H-1'] }}
+            token={inputs?.token}
+            tokenColor={theme.palette.text.secondary}
+            useAdaptiveDecimalPoint
+          />
         </Stack>
       </Stack>
       <Stack alignItems='start' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '146px', mt: '20px', p: '15px', width: '766px' }}>

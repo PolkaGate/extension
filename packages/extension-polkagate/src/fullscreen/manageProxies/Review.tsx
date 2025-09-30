@@ -12,10 +12,10 @@ import React, { useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { ChainLogo, FadeOnScroll, ShowBalance, SignArea3 } from '../../components';
+import { ChainLogo, DisplayBalance, FadeOnScroll, SignArea3 } from '../../components';
 import { useCanPayFeeAndDeposit, useChainInfo, useTranslation } from '../../hooks';
 import { UnableToPayFee } from '../../partials';
-import { FLOATING_POINT_DIGIT, PROXY_TYPE, type TransactionFlowStep } from '../../util/constants';
+import { PROXY_TYPE, type TransactionFlowStep } from '../../util/constants';
 import ProxyAccountInfo from './components/ProxyAccountInfo';
 import { type ProxyFlowStep } from './types';
 
@@ -36,13 +36,13 @@ interface Props {
 }
 
 function DisplayValue ({ balance, canPayFee, decimal, genesisHash, label, token }: {
-    canPayFee?: CanPayFee;
-    label: string;
-    genesisHash: string | undefined;
-    balance: BN | undefined;
-    decimal: number | undefined;
-    token: string | undefined;
-  }): React.ReactElement {
+  canPayFee?: CanPayFee;
+  label: string;
+  genesisHash: string | undefined;
+  balance: BN | undefined;
+  decimal: number | undefined;
+  token: string | undefined;
+}): React.ReactElement {
   return (
     <Stack direction='row' justifyContent='space-between'>
       <Typography color='#AA83DC' variant='B-1'>
@@ -53,15 +53,12 @@ function DisplayValue ({ balance, canPayFee, decimal, genesisHash, label, token 
           <UnableToPayFee warningText={canPayFee.warning} />
         }
         <ChainLogo genesisHash={genesisHash} size={18} />
-        <Typography color='#EAEBF1' variant='B-1'>
-          {decimal && token &&
-            <ShowBalance
-              balance={balance}
-              decimal={decimal}
-              decimalPoint={FLOATING_POINT_DIGIT}
-              token={token}
-            />}
-        </Typography>
+        <DisplayBalance
+          balance={balance}
+          decimal={decimal}
+          style={{ color: '#EAEBF1' }}
+          token={token}
+        />
       </Stack>
     </Stack>
   );

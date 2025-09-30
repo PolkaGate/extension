@@ -10,7 +10,7 @@ import React, { useMemo, useRef } from 'react';
 
 import { type BN, noop } from '@polkadot/util';
 
-import { CryptoFiatBalance, FormatBalance2, FormatPrice, MySkeleton, MyTooltip } from '../../../components';
+import { CryptoFiatBalance, DisplayBalance, FormatPrice, MySkeleton, MyTooltip } from '../../../components';
 import { useIsDark, useIsHideNumbers, useIsHovered } from '../../../hooks';
 
 interface TileActionButtonProps {
@@ -97,8 +97,6 @@ const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: Staki
 
   const { isHideNumbers } = useIsHideNumbers();
 
-  const adaptiveDecimalPoint = useMemo(() => staked && decimal && (String(staked).length >= decimal - 1 ? 2 : 4), [decimal, staked]);
-
   const isDisabled = useMemo(() => Boolean(staked?.isZero()), [staked]);
 
   return (
@@ -135,19 +133,16 @@ const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: Staki
             textColor={isDisabled ? '#674394' : undefined}
             width='fit-content'
           />
-          <FormatBalance2
-            decimalPoint={adaptiveDecimalPoint}
-            decimals={[decimal ?? 0]}
+          <DisplayBalance
+            balance={staked}
+            decimal={decimal}
             style={{
               color: isDisabled ? '#674394' : theme.palette.text.secondary,
-              fontFamily: 'Inter',
-              fontSize: '12px',
-              fontWeight: 500,
               marginTop: '6px',
               width: 'max-content'
             }}
-            tokens={[token ?? '']}
-            value={staked}
+            token={token}
+            useAdaptiveDecimalPoint
           />
         </Stack>
       }

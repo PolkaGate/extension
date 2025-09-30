@@ -10,7 +10,7 @@ import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { BN_ZERO } from '@polkadot/util';
 
-import { FadeOnScroll, FormatBalance2, FormatPrice, GradientButton, Transition } from '../../../components';
+import { DisplayBalance, FadeOnScroll, FormatPrice, GradientButton, Transition } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsExtensionPopup, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
@@ -208,18 +208,14 @@ function DetailCard ({ historyItem }: Props) {
                         : isVoteType
                           ? getVoteType(value as number)
                           : isFee
-                            ? <FormatBalance2
-                              decimalPoint={4}
-                              decimals={[decimal]}
+                            ? <DisplayBalance
+                              balance={value as string}
+                              decimal={decimal}
                               style={{
                                 color: '#AA83DC',
-                                fontFamily: 'Inter',
-                                fontSize: '13px',
-                                fontWeight: 500,
                                 width: 'max-content'
                               }}
-                              tokens={[token]}
-                              value={value as string}
+                              token={token}
                               />
                             : value
                   }

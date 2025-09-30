@@ -4,7 +4,7 @@
 import type { BN } from '@polkadot/util';
 import type { PositionInfo } from '../../../util/types';
 
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack, useTheme } from '@mui/material';
 import { Clock, Medal, WalletMoney } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { BN_ZERO } from '@polkadot/util';
 
 import { info, money } from '../../../assets/gif';
-import { FormatBalance2, GradientButton } from '../../../components';
+import { DisplayBalance, GradientButton } from '../../../components';
 import { useIsExtensionPopup, usePoolConst, useStakingConsts, useTranslation } from '../../../hooks';
 import { SharePopup } from '../../../partials';
 import { RedGradient } from '../../../style';
@@ -29,16 +29,17 @@ interface Props {
 }
 
 function AvailableBalance ({ availableBalance, decimal, isExtension, token }: { availableBalance: BN, decimal: number, isExtension: boolean, token: string }): React.ReactElement {
+  const theme = useTheme();
+
   return (
     <Box sx={{ alignContent: 'center', bgcolor: '#BFA1FF26', borderRadius: '12px', height: '32px', margin: isExtension ? 0 : '20px auto 0', position: isExtension ? 'absolute' : 'initial', px: '10px', right: '15px', width: 'fit-content' }}>
-      <Typography color='#BEAAD8' variant='B-2'>
-        <FormatBalance2
-          decimalPoint={2}
-          decimals={[decimal]}
-          tokens={[token]}
-          value={availableBalance}
-        />
-      </Typography>
+      <DisplayBalance
+        balance={availableBalance}
+        decimal={decimal}
+        decimalPoint={2}
+        style={{ color: '#BEAAD8', ...theme.typography['B-2'] }}
+        token={token}
+      />
     </Box>
   );
 }

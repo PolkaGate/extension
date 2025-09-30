@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { Box, Container, Grid, Skeleton, Stack, styled, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, Stack, styled, Typography } from '@mui/material';
 import React, { useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { type BN } from '@polkadot/util';
 
 import { CreatePoolIcon, JoinPoolIcon } from '../../../../assets/icons';
-import { BackWithLabel, FormatBalance2, Motion } from '../../../../components';
+import { BackWithLabel, DisplayBalance, Motion } from '../../../../components';
 import { useBackground, useChainInfo, useIsExtensionPopup, useIsHovered, usePoolConst, useSelectedAccount, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 
@@ -48,7 +48,6 @@ interface OptionProp {
 }
 
 export const Option = ({ decimal, icon, isSelected, minimumText, onClick, title, token, value }: OptionProp) => {
-  const theme = useTheme();
   const isExtension = useIsExtensionPopup();
   const refContainer = useRef(null);
   const hovered = useIsHovered(refContainer);
@@ -72,22 +71,12 @@ export const Option = ({ decimal, icon, isSelected, minimumText, onClick, title,
         <Typography color='text.highlight' variant='B-1'>
           {minimumText}
         </Typography>
-        {value
-          ? (
-            <FormatBalance2
-              decimals={[decimal ?? 0]}
-              style={{ ...theme.typography['B-1'] }}
-              tokens={[token ?? '']}
-              value={value}
-            />)
-          : (
-            <Skeleton
-              animation='wave'
-              height={18}
-              sx={{ transform: 'none' }}
-              variant='text'
-              width={80}
-            />)}
+        <DisplayBalance
+          balance={value}
+          decimal={decimal}
+          skeletonStyle={{ height: '18px', width: '80px' }}
+          token={token}
+        />
       </Stack>
     </OptionBox>
   );

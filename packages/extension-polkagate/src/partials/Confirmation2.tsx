@@ -11,7 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 
 import Subscan from '../assets/icons/Subscan';
-import { ActionButton, FormatBalance2, NeonButton } from '../components';
+import { ActionButton, DisplayBalance, NeonButton } from '../components';
 import { useChainInfo, useIsBlueish, useTranslation } from '../hooks';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
@@ -107,18 +107,14 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
                       ? toShortAddress(String(content), 6)
                       : (isFee || isAmount)
                         ? (
-                          <FormatBalance2
-                            decimalPoint={4}
-                            decimals={[decimal ?? 0]}
+                          <DisplayBalance
+                            balance={content as string}
+                            decimal={decimal}
                             style={{
                               color: theme.palette.text.highlight,
-                              fontFamily: 'Inter',
-                              fontSize: '13px',
-                              fontWeight: 500,
                               width: 'max-content'
                             }}
-                            tokens={[token ?? '']}
-                            value={content as string}
+                            token={token}
                           />)
                         : content as string
                   }

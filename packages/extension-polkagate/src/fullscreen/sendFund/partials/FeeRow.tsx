@@ -8,10 +8,10 @@ import { ClickAwayListener, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
-import { FLOATING_POINT_DIGIT, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
+import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
-import { AssetLogo, ShowBalance4 } from '../../../components';
+import { AssetLogo, DisplayBalance } from '../../../components';
 import { useAccount, useChainInfo, useFormatted, useTranslation } from '../../../hooks';
 import { UnableToPayFee } from '../../../partials';
 import usePartialFee from '../usePartialFee';
@@ -107,14 +107,15 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
           {canPayFee.isAbleToPay === false && canPayFee.warning &&
             <UnableToPayFee warningText={canPayFee.warning} />
           }
-          <Typography color='text.primary' sx={{ ml: '5px', textAlign: 'left' }} variant='B-1'>
-            <ShowBalance4
-              balance={feeInfo.fee}
-              decimal={feeInfo.decimal}
-              decimalPoint={FLOATING_POINT_DIGIT}
-              token={feeInfo.token}
-            />
-          </Typography>
+          <DisplayBalance
+            balance={feeInfo.fee}
+            decimal={feeInfo.decimal}
+            style={{
+              color: 'text.primary',
+              ml: '5px'
+            }}
+            token={feeInfo.token}
+          />
           <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={feeLogoInfo?.logo} />
           {showFeeSelector &&
             <OpenerButton

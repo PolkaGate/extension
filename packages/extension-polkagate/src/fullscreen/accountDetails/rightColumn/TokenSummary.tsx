@@ -7,10 +7,9 @@ import { Grid, Grow, Skeleton, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useMemo } from 'react';
 
 import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util';
-import { FLOATING_POINT_DIGIT } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, FormatPrice, ShowBalance4 } from '../../../components';
+import { AssetLogo, DisplayBalance, FormatPrice } from '../../../components';
 import { usePrices } from '../../../hooks';
 import DailyChange from '../../../popup/home/partial/DailyChange';
 import { GlowBox } from '../../../style';
@@ -68,11 +67,12 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
         ? <Typography color='text.secondary' sx={{ height: '18px' }} variant='B-4'>
           {token?.token}
         </Typography>
-        : <Skeleton
-          animation='wave'
-          height={12}
-          sx={{ borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '30px' }}
-        />
+        : (
+          <Skeleton
+            animation='wave'
+            height={12}
+            sx={{ borderRadius: '50px', display: 'inline-block', fontWeight: 'bold', transform: 'none', width: '30px' }}
+          />)
       }
       <FormatPrice
         commify
@@ -88,21 +88,16 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
         withSmallDecimal
       />
       <Grid alignItems='center' container item sx={{ columnGap: '5px', height: '30px', width: 'fit-content' }}>
-        <ShowBalance4
+        <DisplayBalance
           balance={token?.totalBalance}
-          balanceProps={{
-            style: {
-              color: '#BEAAD8',
-              fontFamily: 'Inter',
-              fontSize: '12px',
-              fontWeight: 500,
-              width: 'max-content'
-            }
-          }}
           decimal={token?.decimal}
-          decimalPoint={FLOATING_POINT_DIGIT}
           genesisHash={token?.genesisHash}
           skeletonStyle={{ width: '130px' }}
+          style={{
+            ...theme.typography['B-4'],
+            color: '#BEAAD8',
+            width: 'max-content'
+          }}
           token={token?.token}
         />
         {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&

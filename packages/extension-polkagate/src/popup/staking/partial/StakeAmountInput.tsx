@@ -9,7 +9,7 @@ import type { LogoInfo } from '../../../util/getLogo2';
 import { Collapse, Container, Grid, Stack, styled, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { AssetLogo, FormatBalance2, GradientDivider, MySkeleton, TwoToneText } from '../../../components';
+import { AssetLogo, DisplayBalance, GradientDivider, TwoToneText } from '../../../components';
 import { useIsExtensionPopup } from '../../../hooks';
 import { amountToHuman } from '../../../util';
 
@@ -129,27 +129,19 @@ const SubAmount = ({ amount, decimal, dividerStyle, genesisHash, isExtension, lo
           {title}
         </Typography>
         <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} />
-        {amount
-          ? (
-            <FormatBalance2
-              decimalPoint={4}
-              decimals={[decimal ?? 0]}
-              style={{
-                color: theme.palette.text.primary,
-                fontFamily: 'Inter',
-                fontSize: '13px',
-                fontWeight: 500,
-                width: 'max-content'
-              }}
-              tokens={[token ?? '']}
-              value={amount}
-            />)
-          : (
-            <MySkeleton
-              style={{ borderRadius: '50px', width: '70px' }}
-            />
-          )
-        }
+        <DisplayBalance
+          balance={amount}
+          decimal={decimal}
+          skeletonStyle={{ width: '70px' }}
+          style={{
+            color: theme.palette.text.primary,
+            fontFamily: 'Inter',
+            fontSize: '13px',
+            fontWeight: 500,
+            width: 'max-content'
+          }}
+          token={token}
+        />
       </Container>
     </>
   );

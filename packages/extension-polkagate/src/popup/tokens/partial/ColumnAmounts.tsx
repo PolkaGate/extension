@@ -6,7 +6,7 @@ import type { BN } from '@polkadot/util';
 import { Grid, useTheme } from '@mui/material';
 import React, { memo } from 'react';
 
-import { FormatBalance2, FormatPrice } from '../../../components';
+import { DisplayBalance, FormatPrice } from '../../../components';
 
 interface ColumnAmountsProps {
   fiatAmount: number;
@@ -39,18 +39,15 @@ export const ColumnAmounts = memo(function ColumnAmounts ({ balanceColor, color,
         width='fit-content'
         withSmallDecimal
       />
-      <FormatBalance2
+      <DisplayBalance
+        balance={cryptoAmount}
+        decimal={decimal}
         decimalPoint={2}
-        decimals={[decimal]}
         style={{
           color: balanceColor || color || '#BEAAD8',
-          fontFamily: 'Inter',
-          fontSize: '12px',
-          fontWeight: 500,
           width: 'max-content'
         }}
-        tokens={[token]}
-        value={cryptoAmount}
+        token={token}
       />
     </Grid>
   );

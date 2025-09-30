@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, FormatPrice, Motion } from '../../components';
+import { AssetLogo, BackWithLabel, DisplayBalance, FadeOnScroll, FormatPrice, Motion } from '../../components';
 import { useAccountAssets, useBackground, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
@@ -102,18 +102,14 @@ function Tokens (): React.ReactElement {
               withSmallDecimal
             />
             <Grid alignItems='center' container item sx={{ columnGap: '5px', lineHeight: '10px', width: 'fit-content' }}>
-              <FormatBalance2
-                decimalPoint={4}
-                decimals={[token?.decimal ?? 0]}
+              <DisplayBalance
+                balance={token?.totalBalance}
+                decimal={token?.decimal}
                 style={{
                   color: '#BEAAD8',
-                  fontFamily: 'Inter',
-                  fontSize: '12px',
-                  fontWeight: 500,
                   width: 'max-content'
                 }}
-                tokens={[token?.token ?? '']}
-                value={token?.totalBalance}
+                token={token?.token}
               />
               {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&
                 <DailyChange
