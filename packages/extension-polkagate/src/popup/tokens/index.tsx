@@ -50,7 +50,8 @@ function Tokens (): React.ReactElement {
 
   const logoInfo = useMemo(() => getLogo2(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
 
-  const {closeMenu,
+  const { UnlockTrackElement,
+    closeMenu,
     displayPopup,
     hasAmount,
     lockedBalance,
@@ -60,7 +61,8 @@ function Tokens (): React.ReactElement {
     reservedBalance,
     state,
     tokenPrice,
-    transferable } = useTokenInfoDetails(address, genesisHash, token);
+    transferable,
+    unlockTracks } = useTokenInfoDetails(address, genesisHash, token);
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
@@ -70,7 +72,7 @@ function Tokens (): React.ReactElement {
 
   const backHome = useCallback(() => navigate('/') as void, [navigate]);
 
-  return (
+  return UnlockTrackElement || (
     <Motion variant='flip'>
       <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
         <UserDashboardHeader homeType='default' />
@@ -174,6 +176,7 @@ function Tokens (): React.ReactElement {
         price={tokenPrice}
         title={state.type ?? ''}
         token={token?.token}
+        unlockTracks={unlockTracks}
       />
     </Motion>
   );

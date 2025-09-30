@@ -26,6 +26,7 @@ export default function useTimeToUnlock (address: string | undefined, genesisHas
   const [lockedInRef, setLockedInReferenda] = useState<BN>();
   const [totalLocked, setTotalLocked] = useState<BN | null>();
   const [timeToUnlock, setTimeToUnlock] = useState<string | null>();
+  const [unlockDate, setUnlockDate] = useState<string | null>();
   const [miscRefLock, setMiscRefLock] = useState<BN>();
 
   const biggestOngoingLock = useCallback((sortedLocks: Lock[]) => {
@@ -114,12 +115,14 @@ export default function useTimeToUnlock (address: string | undefined, genesisHas
     }
 
     if (indexOfBiggestNotLockable === 0 || biggestVote.eq(referendaLocks[indexOfBiggestNotLockable].total)) { // nothing is unlockable
-      const dateOptions = { day: 'numeric', hour: 'numeric', month: 'short', year: 'numeric' } as Intl.DateTimeFormatOptions;
+      const dateOptions = { day: 'numeric', hour: 'numeric', month: 'short' } as Intl.DateTimeFormatOptions;
       const dateString = blockToDate(Number(referendaLocks[indexOfBiggestNotLockable].endBlock), currentBlock, dateOptions);
+
+      setUnlockDate(dateString);
 
       setUnlockableAmount(BN_ZERO);
 
-      return setTimeToUnlock(t('Unlockable on {{dateString}}', { replace: { dateString } }));
+      return setTimeToUnlock(t('Unlocks on {{dateString}}', { replace: { dateString } }));
     }
 
     const amountStillLocked = referendaLocks[indexOfBiggestNotLockable].total;
@@ -157,6 +160,7 @@ export default function useTimeToUnlock (address: string | undefined, genesisHas
     lockedInRef,
     timeToUnlock,
     totalLocked,
+    unlockDate,
     unlockableAmount
   };
 }

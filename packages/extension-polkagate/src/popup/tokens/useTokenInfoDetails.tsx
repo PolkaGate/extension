@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
+import type { Lock } from '../../hooks/useLockedInReferenda';
 import type { BalancesInfo, FetchedBalance } from '../../util/types';
 
 import { Coin, Lock1 } from 'iconsax-react';
-import { useCallback, useEffect, useMemo, useReducer } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
@@ -16,7 +17,17 @@ import { windowOpen } from '../../messaging';
 import { updateStorage } from '../../util';
 import { GOVERNANCE_CHAINS } from '../../util/constants';
 import { getValue } from '../account/util';
+import UnlockTrack from './partial/UnlockTrack';
 import { lockedReservedReducer, type Type } from './LockedReserved';
+
+export interface UnlockType {
+  classToUnlock: Lock[] | undefined;
+  isDisable: boolean;
+  lockedTooltip: string | null | undefined;
+  openLocked: () => void;
+  unlockDate: string | null | undefined;
+  unlockableAmount: BN | undefined;
+}
 
 export function useTokenInfoDetails (address: string | undefined, genesisHash: string | undefined, token: FetchedBalance | undefined) {
   const { t } = useTranslation();
@@ -27,11 +38,16 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
 
-  const { delegatedBalance, totalLocked, unlockableAmount } = useLockedInReferenda(address, genesisHash, undefined); // TODO: timeToUnlock!
+  const { classToUnlock, delegatedBalance, isDisable, timeToUnlock, totalLocked, unlockDate, unlockableAmount } = useLockedInReferenda(address, genesisHash, undefined);
   const [state, dispatch] = useReducer(lockedReservedReducer, {
     data: undefined,
     type: undefined
   });
+  const [openUnlockReview, setOpenUnlockReview] = useState<boolean>(false);
+
+  const openLocked = useCallback(() => {
+    setOpenUnlockReview(true);
+  }, [setOpenUnlockReview]);
 
   const assetId = token?.assetId;
 
@@ -54,12 +70,16 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
   }, [delegatedBalance, reservedReason, totalLocked]);
 
   const lockedTooltip = useMemo(() => {
-    if (!unlockableAmount || unlockableAmount.isZero() || !GOVERNANCE_CHAINS.includes(chainName ?? '') || !api) {
+    if (!GOVERNANCE_CHAINS.includes(chainName?.toLowerCase() ?? '') || !api) {
       return undefined;
     }
 
+    if (!unlockableAmount || unlockableAmount.isZero()) {
+      return timeToUnlock;
+    }
+
     return (t('{{amount}} can be unlocked', { replace: { amount: api.createType('Balance', unlockableAmount).toHuman() } }));
-  }, [api, chainName, t, unlockableAmount]);
+  }, [api, chainName, t, timeToUnlock, unlockableAmount]);
 
   const hasAmount = useCallback((amount: BN | undefined | null) => amount && !amount.isZero(), []);
 
@@ -177,7 +197,22 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
     dispatch({ type: 'CLOSE_MENU' });
   }, []);
 
+  const unlockTracks: UnlockType = useMemo(() => ({ classToUnlock, isDisable, lockedTooltip, openLocked, unlockDate, unlockableAmount }), [classToUnlock, isDisable, lockedTooltip, openLocked, unlockDate, unlockableAmount]);
+
+  const UnlockTrackElement = useMemo(() => (
+    openUnlockReview
+      ? (
+        <UnlockTrack
+          address={address}
+          genesisHash={genesisHash}
+          setOpenUnlockReview={setOpenUnlockReview}
+          unlockTracks={unlockTracks}
+        />)
+      : undefined
+  ), [address, genesisHash, openUnlockReview, unlockTracks]);
+
   return {
+    UnlockTrackElement,
     closeMenu,
     displayPopup,
     hasAmount,
@@ -188,6 +223,7 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
     reservedBalance,
     state,
     tokenPrice,
-    transferable
+    transferable,
+    unlockTracks
   };
 }

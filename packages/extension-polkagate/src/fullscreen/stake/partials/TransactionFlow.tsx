@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SxProps, Theme } from '@mui/material';
 import type { SubmittableExtrinsic } from '@polkadot/api-base/types/submittable';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { FullScreenTransactionFlow } from '../../../fullscreen/stake/util/utils';
@@ -33,9 +34,10 @@ interface Props {
   transactionInformation: Content[];
   extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
   reviewHeader?: React.ReactNode;
+  reviewStyle?: SxProps<Theme>;
 }
 
-function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, flowStep, genesisHash, onClose, pool, proxyTypeFilter, reviewHeader, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
+function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, flowStep, genesisHash, onClose, pool, proxyTypeFilter, reviewHeader, reviewStyle, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
   const navigate = useNavigate();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
 
@@ -59,6 +61,7 @@ function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, f
           setTxInfo={setTxInfo}
           showAccountBox={showAccountBox}
           showProxySelection={showProxySelection}
+          style={reviewStyle}
           transaction={transaction}
           transactionInformation={txInformation}
         />

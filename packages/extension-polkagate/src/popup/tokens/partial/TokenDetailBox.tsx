@@ -60,14 +60,13 @@ function TokenDetailBox ({ Icon, amount, background = '#2D1E4A4D', decimal, desc
       <TokenDetailBoxContainer background={background} clickable={clickable} onClick={onClick}>
         <Grid container direction='column' gap='8px' item>
           <Icon color={clickable ? '#AA83DC' : DISABLED_COLOR} size={iconSize} variant={iconVariant ?? 'Bulk'} />
-          <Grid alignItems='center' container item sx={{ columnGap: '6px' }}>
+          <Grid alignItems='center' container item sx={{ columnGap: '6px', flexWrap: 'nowrap' }}>
             <Typography color={clickable ? 'text.secondary' : DISABLED_COLOR} sx={{ textWrap: 'nowrap' }} variant='B-1'>
               {title}
             </Typography>
             {description &&
               <MyTooltip
                 content={description}
-                notShow={!!description}
               >
                 <InfoCircle color={clickable ? '#AA83DC' : DISABLED_COLOR} size='19' variant='Bold' />
               </MyTooltip>
