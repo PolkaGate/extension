@@ -3,7 +3,6 @@
 
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
 import type { TransferType } from '@polkadot/extension-polkagate/src/util/types';
-import type { BN } from '@polkadot/util';
 import type { Inputs } from './types';
 
 import { Box, Stack, Typography } from '@mui/material';
@@ -16,7 +15,7 @@ import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
-import { BN_ZERO, noop } from '@polkadot/util';
+import { BN, BN_ZERO, noop } from '@polkadot/util';
 
 import { ActionButton, AssetLogo, DisplayBalance, Motion, MyTextField } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
@@ -49,7 +48,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
   const amountAsBN = useMemo(() => decimal ? amountToMachine(amount, decimal) : undefined, [amount, decimal]);
 
   const { maxFee } = useLimitedFeeCall(address, assetId, assetToTransfer, inputs, genesisHash, teleportState, transferType);
-  const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, transferType, inputs?.fee);
+  const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, transferType, new BN(inputs?.fee?.originFee?.fee || 0));
 
   useEffect(() => {
     amountAsBN && setInputs((prevInputs) => ({

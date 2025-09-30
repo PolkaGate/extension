@@ -14,7 +14,7 @@ import keyring from '@polkadot/ui-keyring';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { DecisionButtons, SignArea3 } from '../../components';
-import { useCanPayFeeAndDeposit, useChainInfo, useFormatted, useTeleport, useTranslation } from '../../hooks';
+import { useCanPayFeeAndDeposit, useFormatted, useTeleport, useTranslation } from '../../hooks';
 import { WaitScreen2 } from '../../partials';
 import { toBN } from '../../util';
 import HomeLayout from '../components/layout';
@@ -30,7 +30,6 @@ import useParaSpellFeeCall from './useParaSpellFeeCall';
 export default function SendFund (): React.ReactElement {
   const { t } = useTranslation();
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
-  const { chainName: senderChainName } = useChainInfo(genesisHash, true);
 
   const ref = useRef<HTMLDivElement | null>(null);
   const teleportState = useTeleport(genesisHash);
@@ -45,8 +44,8 @@ export default function SendFund (): React.ReactElement {
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
   const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
 
-  const { paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, inputs?.amountAsBN, genesisHash, inputs, senderChainName, setError);
-  const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee ? toBN(inputs?.fee) : undefined);
+  const { isCrossChain, paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, inputs?.amountAsBN, genesisHash, inputs, setError);
+  const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee?.originFee.fee ? toBN(inputs?.fee?.originFee.fee) : undefined);
 
   useEffect(() => {
     if (!genesisHash) {
@@ -54,13 +53,9 @@ export default function SendFund (): React.ReactElement {
     }
 
     paraSpellFee && setInputs((prevInputs) => {
-      if (prevInputs?.fee?.eq?.(paraSpellFee)) {
-        return prevInputs;
-      }
-
-      return { ...prevInputs, fee: paraSpellFee };
+      return { ...prevInputs, fee: paraSpellFee, isCrossChain };
     });
-  }, [genesisHash, inputs?.recipientChain?.text, paraSpellFee, senderChainName, setInputs]);
+  }, [genesisHash, isCrossChain, paraSpellFee, setInputs]);
 
   useEffect(() => {
     if (error) {

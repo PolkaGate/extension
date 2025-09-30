@@ -1,11 +1,17 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { TLocation, TXcmFeeBase, UnableToComputeError } from '@paraspell/sdk-pjs';
 import type { SubmittableExtrinsic } from '@polkadot/api-base/types';
 import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 import type { AnyNumber, ISubmittableResult } from '@polkadot/types/types';
 import type { Bytes } from '@polkadot/types-codec';
 import type { BN } from '@polkadot/util';
+
+export interface ParaspellFees {
+  originFee: TXcmFeeBase & { sufficient: boolean; balanceAfter: bigint; };
+  destinationFee: TXcmFeeBase & { balanceAfter: bigint | UnableToComputeError; };
+}
 
 export interface Inputs {
   amount?: string | undefined;
@@ -13,7 +19,8 @@ export interface Inputs {
   assetId?: string | number;
   decimal?: number;
   error?: string;
-  fee?: BN;
+  fee?: ParaspellFees;
+  isCrossChain?: boolean;
   paraSpellTransaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   transaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   recipientAddress?: string | undefined;
@@ -38,4 +45,10 @@ export interface FeeInfo {
   decimal: number | undefined;
   fee: BN | null | undefined;
   token: string | undefined;
+  destinationFee?: {
+    assetId: TLocation | undefined;
+    decimal: number | undefined;
+    fee: BN;
+    token: string | undefined;
+  }
 }

@@ -4,28 +4,28 @@
 import type React from 'react';
 import type { SubmittableExtrinsic } from '@polkadot/api-base/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import type { Inputs } from './types';
+import type { BN } from '@polkadot/util';
+import type { Inputs, ParaspellFees } from './types';
 
 import { Builder, Native, type TDestination, type TSubstrateChain } from '@paraspell/sdk-pjs';
 import { useEffect, useState } from 'react';
 
 import { useChainInfo } from '@polkadot/extension-polkagate/src/hooks';
-import { BN } from '@polkadot/util';
 
 import { isNativeAsset, normalizeChainName } from './utils';
 
-export default function useParaSpellFeeCall (address: string | undefined, amountAsBN: BN | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, senderChainName: string | undefined, setError: React.Dispatch<React.SetStateAction<string | undefined>>) {
-  const { api } = useChainInfo(genesisHash);
-  const [paraSpellFee, setParaSpellFee] = useState<BN>();
+export default function useParaSpellFeeCall (address: string | undefined, amountAsBN: BN | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, setError: React.Dispatch<React.SetStateAction<string | undefined>>) {
+  const { api, chainName: senderChainName } = useChainInfo(genesisHash);
+  const [paraSpellFee, setParaSpellFee] = useState<ParaspellFees>();
   const [paraSpellTransaction, setParaSpellTransaction] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>>();
+  const _recipientChainName = inputs?.recipientChain?.text;
 
   useEffect(() => {
     if (!api || !inputs || amountAsBN?.isZero()) {
       return;
     }
 
-    const { assetId, recipientAddress, recipientChain, token } = inputs;
-    const _recipientChainName = recipientChain?.text;
+    const { assetId, recipientAddress, token } = inputs;
 
     if (!senderChainName || !amountAsBN || !address || !token || !_recipientChainName || !recipientAddress || !address) {
       return;
@@ -55,16 +55,20 @@ export default function useParaSpellFeeCall (address: string | undefined, amount
     builder
       .getTransferInfo()
       .then((info) => {
-        const fee = info.origin.xcmFee.fee + info.destination.xcmFee.fee;
+        const fees = {
+          destinationFee: info.destination.xcmFee,
+          originFee: info.origin.xcmFee
+        };
 
-        setParaSpellFee(new BN(fee.toString()));
+        setParaSpellFee(fees);
       }).catch((err) => {
         setError('Something went wrong while calculating estimated fee!');
         console.error('Something went wrong while getting fee', err);
       });
-  }, [api, address, senderChainName, amountAsBN, genesisHash, setError, inputs?.assetId, inputs?.token, inputs?.recipientChain?.text, inputs?.recipientAddress]);
+  }, [_recipientChainName, api, address, senderChainName, amountAsBN, genesisHash, setError, inputs?.assetId, inputs?.token, inputs?.recipientChain?.text, inputs?.recipientAddress]);
 
   return {
+    isCrossChain: senderChainName !== _recipientChainName,
     paraSpellFee,
     paraSpellTransaction
   };
