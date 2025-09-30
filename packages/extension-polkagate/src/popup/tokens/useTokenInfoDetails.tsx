@@ -25,6 +25,7 @@ export interface UnlockType {
   isDisable: boolean;
   lockedTooltip: string | null | undefined;
   openLocked: () => void;
+  unlockDate: string | null | undefined;
   unlockableAmount: BN | undefined;
 }
 
@@ -37,7 +38,7 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
 
-  const { classToUnlock, delegatedBalance, isDisable, timeToUnlock, totalLocked, unlockableAmount } = useLockedInReferenda(address, genesisHash, undefined);
+  const { classToUnlock, delegatedBalance, isDisable, timeToUnlock, totalLocked, unlockDate, unlockableAmount } = useLockedInReferenda(address, genesisHash, undefined);
   const [state, dispatch] = useReducer(lockedReservedReducer, {
     data: undefined,
     type: undefined
@@ -196,7 +197,7 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
     dispatch({ type: 'CLOSE_MENU' });
   }, []);
 
-  const unlockTracks: UnlockType = useMemo(() => ({ classToUnlock, isDisable, lockedTooltip, openLocked, unlockableAmount }), [classToUnlock, isDisable, lockedTooltip, openLocked, unlockableAmount]);
+  const unlockTracks: UnlockType = useMemo(() => ({ classToUnlock, isDisable, lockedTooltip, openLocked, unlockDate, unlockableAmount }), [classToUnlock, isDisable, lockedTooltip, openLocked, unlockDate, unlockableAmount]);
 
   const UnlockTrackElement = useMemo(() => (
     openUnlockReview
@@ -223,6 +224,6 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
     state,
     tokenPrice,
     transferable,
-    unlockTracks: classToUnlock && classToUnlock.length > 0 ? unlockTracks : undefined
+    unlockTracks
   };
 }

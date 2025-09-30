@@ -28,6 +28,7 @@ interface OutputType {
   lockedInRef: BN | undefined
   timeToUnlock: string | null | undefined;
   totalLocked: BN | null | undefined;
+  unlockDate: string | null | undefined;
   unlockableAmount: BN | undefined;
 }
 
@@ -35,7 +36,7 @@ export default function useLockedInReferenda (address: string | undefined, genes
   const delegatedBalance = useHasDelegated(address, genesisHash, refreshNeeded);
   const referendaLocks = useAccountLocks(address, genesisHash, 'referenda', 'convictionVoting', false, refreshNeeded);
   const currentBlock = useCurrentBlockNumber(genesisHash);
-  const { lockedInRef, timeToUnlock, totalLocked, unlockableAmount } = useTimeToUnlock(address, genesisHash, delegatedBalance, referendaLocks, refreshNeeded);
+  const { lockedInRef, timeToUnlock, totalLocked, unlockDate, unlockableAmount } = useTimeToUnlock(address, genesisHash, delegatedBalance, referendaLocks, refreshNeeded);
 
   const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
   const isDisable = useMemo(() => !unlockableAmount || unlockableAmount.isZero() || !classToUnlock || !totalLocked, [classToUnlock, totalLocked, unlockableAmount]);
@@ -52,6 +53,7 @@ export default function useLockedInReferenda (address: string | undefined, genes
     lockedInRef,
     timeToUnlock,
     totalLocked,
+    unlockDate,
     unlockableAmount
   };
 }

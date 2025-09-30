@@ -7,7 +7,7 @@ import type { UnlockType } from '../useTokenInfoDetails';
 import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CallMerge as CallMergeIcon } from '@mui/icons-material';
-import { Container, Grid, IconButton, styled, Typography } from '@mui/material';
+import { Container, Grid, IconButton, Stack, styled, Typography, useTheme } from '@mui/material';
 import { Bezier, Data, type Icon, Image, LikeDislike, Paperclip2, People, ProfileCircle, Record, Sagittarius, Shield, Unlock, UsdCoin } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
@@ -15,7 +15,7 @@ import { SharePopup } from '@polkadot/extension-polkagate/src/partials/index';
 import { BEAT_ANIMATION } from '@polkadot/extension-polkagate/src/partials/UnableToPayFee';
 import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 
-import { GradientButton, GradientDivider, MyTooltip } from '../../../components';
+import { GradientButton, GradientDivider, TwoToneText } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useTranslation } from '../../../hooks';
@@ -77,6 +77,25 @@ const reasonIcon = (reason: string): React.ReactNode => {
   }
 };
 
+const ReasonAndDescription = ({ description, inColorPart, reason }: { reason: string; description?: string | null; inColorPart?: string | null; }) => {
+  const theme = useTheme();
+
+  return (
+    <Stack sx={{ alignItems: 'flex-start', width: 'fit-content' }}>
+      <Typography color='text.primary' textTransform='capitalize' variant='B-2' width='fit-content'>
+        {reason}
+      </Typography>
+      {description &&
+        <TwoToneText
+          color='#674394'
+          style={{ color: theme.palette.text.secondary, ...theme.typography['B-5'] }}
+          text={description}
+          textPartInColor={inColorPart || undefined}
+        />}
+    </Stack>
+  );
+};
+
 interface ItemProps {
   amount: BN;
   decimal: number;
@@ -107,18 +126,16 @@ function Item ({ amount, decimal, noDivider, price, reason, token, unlockTracks 
           {reasonIcon(reason)}
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-between' xs>
-          <Grid alignItems='center' container gap='12px' item width='fit-content'>
-            <Typography color='text.primary' textTransform='capitalize' variant='B-2' width='fit-content'>
-              {reason}
-            </Typography>
+          <Grid alignItems='center' container gap='4px' item width='fit-content'>
+            <ReasonAndDescription
+              description={unlockTracks?.lockedTooltip}
+              inColorPart={unlockTracks?.unlockDate}
+              reason={reason}
+            />
             {isGovernance && unlockTracks &&
-              <MyTooltip content={unlockTracks.lockedTooltip}>
-                <span>
-                  <IconButton disabled={unlockTracks.isDisable} onClick={unlockTracks.openLocked}>
-                    <BeatUnlockIcon beat={!unlockTracks.isDisable} color={unlockTracks.isDisable ? '#2d1e4aff' : '#AA83DC'} size='20' variant='Bold' />
-                  </IconButton>
-                </span>
-              </MyTooltip>
+              <IconButton disabled={unlockTracks.isDisable} onClick={unlockTracks.openLocked} sx={{ p: '4px' }}>
+                <BeatUnlockIcon beat={!unlockTracks.isDisable} color={unlockTracks.isDisable ? '#2d1e4aff' : '#AA83DC'} size='20' variant='Bold' />
+              </IconButton>
             }
           </Grid>
           <Grid container direction='column' item width='fit-content'>
