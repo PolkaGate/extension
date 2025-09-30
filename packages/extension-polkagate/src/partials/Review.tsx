@@ -7,7 +7,7 @@ import type { ISubmittableResult } from '@polkadot/types/types';
 import type { TransactionFlowStep } from '../util/constants';
 import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
 
-import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Stack, type SxProps, type Theme,Typography, useTheme } from '@mui/material';
 import { type Icon as IconType, InfoCircle } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
@@ -191,9 +191,10 @@ export interface ReviewProps {
   restakeReward?: boolean;
   setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
   reviewHeader?: React.ReactNode;
+  style?: SxProps<Theme>
 }
 
-export default function Review ({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review ({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, style = {}, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
@@ -203,7 +204,7 @@ export default function Review ({ amount, closeReview, genesisHash, pool, proxyT
   const fsStyle = isExtension ? {} : { bgcolor: '#05091C', borderRadius: '14px', gap: '7px', padding: '15px 15px 8px' };
 
   return (
-    <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%', zIndex: 1 }}>
+    <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%', zIndex: 1, ...style }}>
       {reviewHeader}
       {!showAccountBox && setRestakeReward && restakeReward !== undefined &&
         <RewardHeaderAmount

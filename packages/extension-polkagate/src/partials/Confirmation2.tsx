@@ -134,9 +134,10 @@ interface Props {
   transactionDetail: TransactionDetail;
   genesisHash: string | undefined;
   close?: () => void
+  noStakingHomeButton?: boolean;
 }
 
-export default function Confirmation2 ({ address, close, genesisHash, transactionDetail }: Props) {
+export default function Confirmation2 ({ address, close, genesisHash, noStakingHomeButton = false, transactionDetail }: Props) {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
   const navigate = useNavigate();
@@ -199,17 +200,18 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
           }}
           text={t('History')}
         />
-        <ActionButton
-          contentPlacement='center'
-          isBlueish
-          onClick={backToStakingHome}
-          style={{
-            height: '44px',
-            width: '345px'
-          }}
-          text={t('Staking Home')}
-          variant='text'
-        />
+        {!noStakingHomeButton &&
+          <ActionButton
+            contentPlacement='center'
+            isBlueish
+            onClick={backToStakingHome}
+            style={{
+              height: '44px',
+              width: '345px'
+            }}
+            text={t('Staking Home')}
+            variant='text'
+          />}
         <StakingActionButton
           onClick={goToExplorer}
           startIcon={

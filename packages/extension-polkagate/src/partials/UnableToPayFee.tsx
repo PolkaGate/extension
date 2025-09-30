@@ -7,7 +7,7 @@ import React from 'react';
 
 import { MyTooltip } from '../components';
 
-const BEAT_ANIMATION = keyframes`
+export const BEAT_ANIMATION = keyframes`
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.2); }
 `;

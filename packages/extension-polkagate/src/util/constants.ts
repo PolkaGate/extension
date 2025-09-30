@@ -99,7 +99,7 @@ export const GOVERNANCE_CHAINS = [
   'interlay',
   'centrifuge',
   'phala',
-  'basilik'
+  'basilisk'
 ];
 
 export const SOCIAL_RECOVERY_CHAINS = [

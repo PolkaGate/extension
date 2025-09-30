@@ -27,7 +27,8 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-    const { closeMenu,
+    const { UnlockTrackElement,
+      closeMenu,
       displayPopup,
       hasAmount,
       lockedBalance,
@@ -36,7 +37,8 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
       reservedBalance,
       state,
       tokenPrice,
-      transferable } = useTokenInfoDetails(address, genesisHash, token);
+      transferable,
+      unlockTracks } = useTokenInfoDetails(address, genesisHash, token);
 
   const onStaking = useCallback((type: string) => () => {
     navigate(`/fullscreen-stake/${type}/${address}/${genesisHash}`) as void;
@@ -58,7 +60,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
   const BOX_BG = '#05091C';
   const ICON_SIZE = '20';
 
-  return (
+  return UnlockTrackElement || (
     <>
       <Grid container item sx={{ display: 'flex', gap: '4px', mb: '10px', p: '15px', pb: '10px' }}>
         <Typography sx={{ display: 'flex', mb: '10px', width: '100%' }} variant='B-3'>
@@ -143,6 +145,7 @@ function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement 
         price={tokenPrice}
         title={state.type ?? ''}
         token={token?.token}
+        unlockTracks={unlockTracks}
       />
     </>
   );
