@@ -7,4 +7,5 @@ export * from './fastestEndpoint.js';
 export * from './getChainEndpoints.js';
 export * from './getChainEndpointsFromGenesisHash.js';
 export * from './metadataFromApi';
+export * from './newReferendaNotification.js';
 export * from './toGetNativeToken.js';

@@ -6,7 +6,7 @@ import type { TextValuePair } from '../NotificationSettings';
 
 import { Stack } from '@mui/material';
 import { UserOctagon } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { ExtensionPopup, GradientButton, GradientDivider } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -31,6 +31,13 @@ function SelectChain ({ onChains, onClose, open, options, previousState, title }
   const { t } = useTranslation();
 
   const [selectedChains, setSelectedChains] = useState<string[]>(previousState ?? []);
+
+  // Ensure state updates when previousState changes
+  useEffect(() => {
+    if (previousState) {
+      setSelectedChains(previousState);
+    }
+  }, [previousState]);
 
   // Handles selecting or deselecting
   const handleSelect = useCallback((newSelect: string) => {

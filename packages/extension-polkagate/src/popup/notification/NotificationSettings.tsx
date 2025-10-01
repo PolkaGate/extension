@@ -14,7 +14,7 @@ import { noop } from '@polkadot/util';
 
 import { AccountContext, ActionCard, BackWithLabel, Motion, MySwitch } from '../../components';
 import { getStorage, setStorage } from '../../components/Loading';
-import { useTranslation } from '../../hooks';
+import { useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { SETTING_PAGES } from '../settings';
 import SelectAccount from './partials/SelectAccount';
@@ -84,6 +84,7 @@ const CARD_STYLE = { alignItems: 'center', height: '64px' };
 export default function NotificationSettings () {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const selectedAddress = useSelectedAccount()?.address;
   const { accounts } = useContext(AccountContext);
 
   const [notificationSetting, dispatch] = useReducer(notificationSettingReducer, initialNotificationState);
@@ -178,7 +179,7 @@ export default function NotificationSettings () {
     closePopup();
   }, [closePopup]);
 
-  const onNotificationCancel = useCallback(() => navigate(`/settings/${SETTING_PAGES.ACCOUNT}`) as void, [navigate]);
+  const onNotificationCancel = useCallback(() => navigate(`/settings-${SETTING_PAGES.ACCOUNT}/${selectedAddress}`) as void, [navigate, selectedAddress]);
   const openPopup = useCallback((popup: Popups) => () => setPopup(popup), []);
 
   return (
@@ -278,7 +279,7 @@ export default function NotificationSettings () {
         onClose={closePopup}
         open={popups === Popups.STAKING_REWARDS}
         options={SUPPORTED_STAKING_NOTIFICATION_CHAIN}
-        previousState={notificationSetting.governance}
+        previousState={notificationSetting.stakingRewards}
         title={t('Staking Rewards')}
       />
     </>

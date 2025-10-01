@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
+import { closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, newRefNotif, toGetNativeToken } from '../utils';
 import { getAssets } from './getAssets.js';
 
 /**
@@ -39,6 +39,7 @@ export async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainNam
   // }
 
   await getAssets(addresses, api, nonNativeAssets, chainName, results);
+  await newRefNotif(api, chainName, port);
 
   console.info(chainName, ': account assets fetched.');
   port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, results }));
