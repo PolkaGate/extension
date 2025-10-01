@@ -206,7 +206,7 @@ function NetworkSettings (): React.ReactElement {
 
   return (
     <Motion variant='slide'>
-      <Stack alignItems='flex-start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', maxHeight: 'calc(100vh - 195px)', minHeight: '600px', m: '5px', overflow: 'auto', p: '0 0 30px 20px', width: 'fill-available' }}>
+      <Stack alignItems='flex-start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', maxHeight: 'calc(100vh - 195px)', m: '5px', minHeight: '600px', overflow: 'auto', p: '0 0 30px 20px', width: 'fill-available' }}>
         <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ my: '5px' }} width='95.5%'>
           <Typography color='text.primary' fontSize='22px' m='22px 0 12px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-4'>
             {t('Networks to view assets')}

@@ -313,11 +313,13 @@ export const STORAGE_KEY = {
   IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN: 'accountsMigratedToAnyChain',
   LOGIN_IFO: 'loginInfo',
   MY_POOL: 'MyPool',
+  NOTIFICATIONS: 'notifications',
+  NOTIFICATION_SETTINGS: 'notificationSetting',
   SELECTED_ACCOUNT: 'selectedAccount',
   SELECTED_CHAINS: 'selectedChains',
   SELECTED_PROFILE: 'profile',
   TEST_NET_ENABLED: 'testnet_enabled',
-  VALIDATORS_INFO: 'validatorsInfo',
+  VALIDATORS_INFO: 'validatorsInfo'
 };
 
 // Function names for asset fetching worker calls
