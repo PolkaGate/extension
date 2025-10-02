@@ -5,6 +5,16 @@ import { KUSAMA_GENESIS, PASEO_GENESIS, POLKADOT_GENESIS, WESTEND_GENESIS } from
 
 import { KUSAMA_PEOPLE_GENESIS_HASH, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, PASEO_ASSET_HUB_GENESIS_HASH, PASEO_PEOPLE_GENESIS_HASH, POLKADOT_PEOPLE_GENESIS_HASH, STAKING_CHAINS, STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH, WESTEND_GENESIS_HASH, WESTEND_PEOPLE_GENESIS_HASH, WESTMINT_GENESIS_HASH } from './constants';
 
+/** These two lines need to be adapted on next migration for Polkadot */
+export const migratedRelayNames = ['kusama', 'paseo', 'westend'];
+export const migratedRelays = [KUSAMA_GENESIS, PASEO_GENESIS, WESTEND_GENESIS_HASH];
+
+type SystemChainsName = 'hub' | 'people' | 'assetHub';
+
+type RelayToSystemChainsType = Record<string, {
+  [K in SystemChainsName]?: string;
+}>;
+
 export const relayToSystemChains = {
   [KUSAMA_GENESIS]: {
     hub: STATEMINE_GENESIS_HASH,
@@ -24,30 +34,20 @@ export const relayToSystemChains = {
   }
 };
 
-export const migratedRelaysToSystemChains = {
-  [PASEO_GENESIS]: {
-    hub: PASEO_ASSET_HUB_GENESIS_HASH,
-    people: PASEO_PEOPLE_GENESIS_HASH
-  },
-  [WESTEND_GENESIS]: {
-    hub: WESTMINT_GENESIS_HASH,
-    people: WESTEND_PEOPLE_GENESIS_HASH
-  }
-};
+const migratedRelaysSet = new Set(migratedRelays);
 
-export const hubToRelay = {
-  [PASEO_ASSET_HUB_GENESIS_HASH]: PASEO_GENESIS,
-  [WESTMINT_GENESIS_HASH]: WESTEND_GENESIS_HASH
-};
+export const migratedRelaysToSystemChains: RelayToSystemChainsType = Object.fromEntries(
+  Object.entries(relayToSystemChains).filter(([relay]) =>
+    migratedRelaysSet.has(relay)
+  )
+);
 
-export const migratedRelays = [PASEO_GENESIS, WESTEND_GENESIS_HASH];
-export const migratedRelayNames = ['paseo', 'westend'];
-
-type SystemChainsName = 'hub' | 'people' | 'assetHub';
-
-type RelayToSystemChainsType = Record<string, {
-  [K in SystemChainsName]?: string;
-}>;
+export const hubToRelay: Record<string, string> = Object.fromEntries(
+  Object.entries(relayToSystemChains)
+    .filter(([relay]) => migratedRelaysSet.has(relay))
+    .map(([relay, systemChains]): [string, string] => [systemChains.hub, relay])
+    .filter(([hub]) => !!hub)
+);
 
 /** Adjusts the provided genesis hash to its corresponding system chain genesis hash if applicable.
  * @param genesisHash - The original genesis hash of the chain.
@@ -59,9 +59,7 @@ export function mapRelayToSystemGenesisIfMigrated (genesisHash: string | null | 
     return;
   }
 
-  const chains = migratedRelaysToSystemChains as RelayToSystemChainsType;
-
-  return chains[genesisHash]?.[type] ?? genesisHash;
+  return migratedRelaysToSystemChains[genesisHash]?.[type] ?? genesisHash;
 }
 
 /** Maps a system chain genesis hash to its corresponding relay chain genesis hash if applicable.
@@ -92,7 +90,7 @@ export function mapHubToRelay (genesisHash: string | undefined | null): string |
     return;
   }
 
-  return (hubToRelay as Record<string, string>)?.[genesisHash] ?? genesisHash;
+  return hubToRelay?.[genesisHash] ?? genesisHash;
 }
 
 /** Checks if the provided genesis hash corresponds to a migrated relay chain.
@@ -100,7 +98,7 @@ export function mapHubToRelay (genesisHash: string | undefined | null): string |
  * @returns True if the genesis hash is in the list of migrated relays; otherwise, false.
  */
 export function isMigratedRelay (genesisHash: string): boolean {
-  return migratedRelays.includes(genesisHash);
+  return migratedRelaysSet.has(genesisHash);
 }
 
 /** Checks if the provided genesis hash corresponds to a migrated hub chain.
@@ -108,10 +106,14 @@ export function isMigratedRelay (genesisHash: string): boolean {
  * @returns True if the genesis hash has a mapping in hubToRelay; otherwise, false.
  */
 export function isMigratedHub (info: string | undefined): boolean {
-  return !!(info && (
-    (hubToRelay as Record<string, string>)?.[info] || // check by genesishash
-    (info.toLowerCase().includes('hub') && migratedRelayNames.find((relayName) => info?.toLowerCase()?.includes(relayName)))// check by chain name
-  ));
+  if (!info) {
+    return false;
+  }
+
+  return !!(
+    hubToRelay?.[info] || // check by genesishash
+    isMigratedByChainName(info) // check by chain name
+  );
 }
 
 export function isMigrated (genesisHash: string): boolean {
@@ -155,7 +157,7 @@ export function isStakingChain (genesisHash: string | undefined): boolean | unde
     return;
   }
 
-  return STAKING_CHAINS.includes(genesisHash ?? '');
+  return STAKING_CHAINS.includes(genesisHash);
 }
 
 export function isSystemChain (systemChainGenesis: string | undefined, relayGenesis: string | undefined): boolean | undefined {
