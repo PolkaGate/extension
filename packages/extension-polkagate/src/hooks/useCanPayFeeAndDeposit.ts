@@ -93,24 +93,24 @@ export default function useCanPayFeeAndDeposit (
    * Proxy pays fees, main account pays deposits
    */
   const determineProxyPaymentStatement = useCallback((canPayFee: boolean, canPayDeposit: boolean, hasDeposit: boolean): CanPayStatements => {
-    if (hasDeposit) {
-      if (canPayFee && canPayDeposit) {
-        return CanPayStatements.CAN_PAY;
-      }
-
-      if (canPayFee && !canPayDeposit) {
-        return CanPayStatements.CAN_NOT_PAY_DEPOSIT;
-      }
-
-      if (!canPayFee && canPayDeposit) {
-        return CanPayStatements.PROXY_CAN_PAY_FEE;
-      }
-
-      return CanPayStatements.CAN_NOT_PAY;
-    } else {
+    if (!hasDeposit) {
       // No deposit required, only need to check fee payment
       return canPayFee ? CanPayStatements.CAN_PAY : CanPayStatements.PROXY_CAN_PAY_FEE;
     }
+
+    if (canPayFee && canPayDeposit) {
+      return CanPayStatements.CAN_PAY;
+    }
+
+    if (canPayFee && !canPayDeposit) {
+      return CanPayStatements.CAN_NOT_PAY_DEPOSIT;
+    }
+
+    if (!canPayFee && canPayDeposit) {
+      return CanPayStatements.PROXY_CAN_PAY_FEE;
+    }
+
+    return CanPayStatements.CAN_NOT_PAY;
   }, []);
 
   /**
@@ -118,24 +118,24 @@ export default function useCanPayFeeAndDeposit (
    * Main account must pay both fees and deposits
    */
   const determineDirectPaymentStatement = useCallback((canPayFee: boolean, canPayDeposit: boolean, canPayWholeAmount: boolean, hasDeposit: boolean): CanPayStatements => {
-    if (hasDeposit) {
-      if (canPayWholeAmount) {
-        return CanPayStatements.CAN_PAY;
-      }
-
-      if (canPayDeposit && !canPayFee) {
-        return CanPayStatements.CAN_NOT_PAY_FEE;
-      }
-
-      if (!canPayDeposit && canPayFee) {
-        return CanPayStatements.CAN_NOT_PAY_DEPOSIT;
-      }
-
-      return CanPayStatements.CAN_NOT_PAY;
-    } else {
+    if (!hasDeposit) {
       // No deposit required, only check fee payment
       return canPayFee ? CanPayStatements.CAN_PAY : CanPayStatements.CAN_NOT_PAY_FEE;
     }
+
+    if (canPayWholeAmount) {
+      return CanPayStatements.CAN_PAY;
+    }
+
+    if (canPayDeposit && !canPayFee) {
+      return CanPayStatements.CAN_NOT_PAY_FEE;
+    }
+
+    if (!canPayDeposit && canPayFee) {
+      return CanPayStatements.CAN_NOT_PAY_DEPOSIT;
+    }
+
+    return CanPayStatements.CAN_NOT_PAY;
   }, []);
 
   /**
@@ -147,9 +147,9 @@ export default function useCanPayFeeAndDeposit (
 
     if (useProxy) {
       return determineProxyPaymentStatement(canPayFee, canPayDeposit, hasDeposit);
-    } else {
-      return determineDirectPaymentStatement(canPayFee, canPayDeposit, canPayWholeAmount, hasDeposit);
     }
+
+    return determineDirectPaymentStatement(canPayFee, canPayDeposit, canPayWholeAmount, hasDeposit);
   }, [determineDirectPaymentStatement, determineProxyPaymentStatement]);
 
   /**

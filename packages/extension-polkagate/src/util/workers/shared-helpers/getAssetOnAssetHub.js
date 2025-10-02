@@ -34,7 +34,7 @@ export async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainNam
   //   const assetMetaData = await api.query.foreignAssets.metadata(id);
 
   //   if (assetMetaData.toHuman().symbol === 'MYTH') {
-  //     console.log('new foreign asset id:', encodeMultiLocation(id));
+  //     console.log('new foreign asset id:', encodeLocation(id));
   //   }
   // }
 

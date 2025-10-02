@@ -44,7 +44,8 @@ export default function SendFund (): React.ReactElement {
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
   const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
 
-  const { isCrossChain, paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, inputs?.amountAsBN, genesisHash, inputs, setError);
+  const isReadyToMakeTx = inputStep === INPUT_STEPS.SUMMARY;
+  const { isCrossChain, paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setError);
   const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee?.originFee.fee ? toBN(inputs?.fee?.originFee.fee) : undefined);
 
   useEffect(() => {
@@ -53,7 +54,11 @@ export default function SendFund (): React.ReactElement {
     }
 
     paraSpellFee && setInputs((prevInputs) => {
-      return { ...prevInputs, fee: paraSpellFee, isCrossChain };
+      return {
+        ...prevInputs,
+        fee: paraSpellFee,
+        isCrossChain
+      };
     });
   }, [genesisHash, isCrossChain, paraSpellFee, setInputs]);
 

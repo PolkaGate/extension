@@ -1,91 +1,96 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ApiPromise } from '@polkadot/api';
-// @ts-ignore
-import type { PalletAssetsAssetMetadata } from '@polkadot/types/lookup';
-import type { AnyNumber } from '@polkadot/types-codec/types';
-import type { FeeAssetInfo } from './types';
+import { getFeeAssets, type TAssetInfo, type TChain, type TJunction, type TJunctions, type TLocation } from '@paraspell/sdk-pjs';
+import { useMemo } from 'react';
 
-import { useEffect, useState } from 'react';
+import { normalizeChainName } from './utils';
 
-import { BN } from '@polkadot/util';
+/**
+ * Normalizes a MultiLocation into a consistent format for fee payment logic.
+ *
+ * - If the MultiLocation represents a local asset (contains both PalletInstance and GeneralIndex):
+ *   - Flattens `parents` from 1 → 0
+ *   - Returns an interior with `X2` containing exactly the PalletInstance and GeneralIndex
+ *
+ * - If the MultiLocation represents a foreign/cross-chain asset:
+ *   - Leaves `parents` unchanged
+ *   - Returns an interior with `X2` containing only the first two relevant entries (e.g. Parachain + PalletInstance)
+ *
+ * @param location - The original MultiLocation object to normalize
+ * @returns The normalized MultiLocation with a consistent `X2` structure
+ */
+function normalizeMultiLocation (location: TLocation): TLocation {
+  let { interior, parents } = location;
 
-import { useChainInfo } from '../../hooks';
+  const keys = Object.keys({} as TJunctions).filter((k) => k !== 'Here') as (keyof TJunctions)[];
 
-const getFeeAssetLocation = (api: ApiPromise, id: BN): AnyNumber | object => {
-  const metadata = api.registry.metadata;
-  const palletIndex = metadata.pallets.filter((a) => a.name.toString() === 'Assets')[0].index.toString();
+  // Find the actual Xn array
+  let currentEntries: TJunction[] = [];
 
-  // FIX ME: it may not be applicable for all chains
-  const palletInstance = { PalletInstance: palletIndex };
-  const generalIndex = { GeneralIndex: id };
+  if (interior !== 'Here') {
+    for (const key of keys) {
+      const raw = interior?.[key];
+      const entries: TJunction[] = Array.isArray(raw) ? raw : [];
+
+      if (entries.length) {
+        currentEntries = entries;
+        break; // Only one Xn exists
+      }
+    }
+  }
+
+  // Check if local asset
+  const hasLocal =
+    currentEntries.some((e) => 'PalletInstance' in e) &&
+    currentEntries.some((e) => 'GeneralIndex' in e);
+
+  // Flatten parents only for local assets
+  if (hasLocal && parents === 1) {
+    parents = 0;
+  }
+
+  // Build X2 with exactly two relevant entries
+  const x2: TJunction[] = [];
+
+  if (hasLocal) {
+    for (const e of currentEntries) {
+      if ('PalletInstance' in e || 'GeneralIndex' in e) {
+        x2.push(e);
+      }
+    }
+  } else if (currentEntries.length) {
+    // foreign/cross-chain assets: take first two entries
+    x2.push(currentEntries[0]);
+
+    if (currentEntries[1]) {
+      x2.push(currentEntries[1]);
+    }
+  }
 
   return {
-    interior: { X2: [palletInstance, generalIndex] },
-    parents: 0
+    interior: {
+      X2: x2
+    },
+    parents
   };
-};
+}
 
-export default function usePayWithAsset (genesisHash: string | undefined): FeeAssetInfo[] | undefined {
-  const { api } = useChainInfo(genesisHash);
-  const [feeAssetsInfo, setFeeAssetsInfo] = useState<FeeAssetInfo[]>();
-  const [sufficientAssetIds, setSufficientAssetIds] = useState<BN[]>();
-
-  useEffect(() => {
-    if (!api) {
+export default function usePayWithAsset (chainName: string | undefined): Omit<TAssetInfo, 'isFeeAsset'>[] | undefined {
+  return useMemo(() => {
+    if (!chainName) {
       return;
     }
 
-    setFeeAssetsInfo(undefined);
+    const normalizedChainName = normalizeChainName(chainName) as TChain;
 
-    api.query['assets']?.['asset'].entries().then((res) => {
-      const isSufficientAssets = res.filter(([, asset]) => {
-        // @ts-ignore
-        return asset.toPrimitive()?.isSufficient;
-      });
+    const feeAssets = getFeeAssets(normalizedChainName);
 
-      const ids = isSufficientAssets.map(([id, _]) => {
-        const assetIdInHuman = id.toHuman() as string[];
+    const normalizedFeeAssets = feeAssets.map((a) => ({
+      ...a,
+      location: a.location ? normalizeMultiLocation(a.location) : a.location
+    }));
 
-        if (!assetIdInHuman?.[0]) {
-          console.warn('Invalid asset ID format:', id.toHuman());
-
-          return null;
-        }
-
-        try {
-          return new BN(assetIdInHuman[0].replaceAll(',', ''));
-        } catch (error) {
-          console.error('Failed to parse asset ID:', assetIdInHuman[0], error);
-
-          return null;
-        }
-      }).filter((id): id is BN => id !== null);
-
-      setSufficientAssetIds(ids);
-    }).catch(console.error);
-  }, [api, genesisHash]);
-
-  useEffect(() => {
-    if (!api || !sufficientAssetIds?.length) {
-      return;
-    }
-
-    api.query['assets']?.['metadata'].multi(sufficientAssetIds).then((res) => {
-      const info = res.map((r, index) => {
-        const id = sufficientAssetIds[index];
-
-        return {
-          id,
-          multiLocation: getFeeAssetLocation(api, id),
-          ...(r.toPrimitive() as unknown as PalletAssetsAssetMetadata)
-        } as unknown as FeeAssetInfo;
-      });
-
-      setFeeAssetsInfo(info);
-    }).catch(console.error);
-  }, [api, sufficientAssetIds]);
-
-  return feeAssetsInfo;
+    return normalizedFeeAssets;
+  }, [chainName]);
 }

@@ -20,6 +20,8 @@ import { BN_ONE, BN_ZERO, isFunction } from '@polkadot/util';
 import { useChainInfo } from '../../hooks';
 import { INVALID_PARA_ID, isOnSameChain, XCM_LOC } from './utils';
 
+/** This hook is DEPRECATED */
+
 // This hook is used to estimate fees and prepare the transaction for sending funds for testnets mostly and non xcm transfers on other chains since paraspell does not support transfer all as well
 export default function useLimitedFeeCall (address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, inputs: Inputs | undefined, genesisHash: string | undefined, teleportState: Teleport, transferType: string) {
   const { api, chainName: senderChainName } = useChainInfo(genesisHash);

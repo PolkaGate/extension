@@ -20,6 +20,7 @@ export interface Inputs {
   decimal?: number;
   error?: string;
   fee?: ParaspellFees;
+  feeInfo?: FeeInfo | undefined; // fee extra info
   isCrossChain?: boolean;
   paraSpellTransaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   transaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
@@ -27,7 +28,6 @@ export interface Inputs {
   recipientChain?: DropdownOption | undefined; // NOTE: value cold be genesishash or para id!
   recipientGenesisHashOrParaId?: string | undefined;
   token?: string;
-  feeInfo?: FeeInfo | undefined;
 }
 
 export interface FeeAssetInfo {
@@ -37,7 +37,7 @@ export interface FeeAssetInfo {
   decimals: BN;
   isFrozen: boolean;
   id: BN;
-  multiLocation: AnyNumber | object;
+  location: AnyNumber | object;
 }
 
 export interface FeeInfo {

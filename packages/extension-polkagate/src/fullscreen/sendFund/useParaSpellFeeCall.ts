@@ -4,72 +4,88 @@
 import type React from 'react';
 import type { SubmittableExtrinsic } from '@polkadot/api-base/types';
 import type { ISubmittableResult } from '@polkadot/types/types';
-import type { BN } from '@polkadot/util';
 import type { Inputs, ParaspellFees } from './types';
 
-import { Builder, Native, type TDestination, type TSubstrateChain } from '@paraspell/sdk-pjs';
+import { Builder, type TDestination, type TSubstrateChain } from '@paraspell/sdk-pjs';
 import { useEffect, useState } from 'react';
 
 import { useChainInfo } from '@polkadot/extension-polkagate/src/hooks';
 
-import { isNativeAsset, normalizeChainName } from './utils';
+import { getCurrency, normalizeChainName } from './utils';
 
-export default function useParaSpellFeeCall (address: string | undefined, amountAsBN: BN | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, setError: React.Dispatch<React.SetStateAction<string | undefined>>) {
+interface ParaSpellState {
+  paraSpellFee?: ParaspellFees;
+  paraSpellTransaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
+}
+
+export default function useParaSpellFeeCall (address: string | undefined, isReadyToMakeTx: boolean | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, setError: React.Dispatch<React.SetStateAction<string | undefined>>) {
   const { api, chainName: senderChainName } = useChainInfo(genesisHash);
-  const [paraSpellFee, setParaSpellFee] = useState<ParaspellFees>();
-  const [paraSpellTransaction, setParaSpellTransaction] = useState<SubmittableExtrinsic<'promise', ISubmittableResult>>();
-  const _recipientChainName = inputs?.recipientChain?.text;
+  const [isCrossChain, setIsCrossChain] = useState<boolean>();
+  const [paraSpellState, setParaSpellState] = useState<ParaSpellState>({});
+
+  const { amountAsBN,
+    assetId,
+    recipientAddress,
+    recipientChain,
+    token } = inputs ?? {};
 
   useEffect(() => {
-    if (!api || !inputs || amountAsBN?.isZero()) {
-      return;
-    }
+    const _recipientChainName = recipientChain?.text;
 
-    const { assetId, recipientAddress, token } = inputs;
-
-    if (!senderChainName || !amountAsBN || !address || !token || !_recipientChainName || !recipientAddress || !address) {
+    if (!isReadyToMakeTx || assetId === undefined || !senderChainName || !amountAsBN || !api || amountAsBN?.isZero() || !address || !token || !_recipientChainName || !recipientAddress || !address) {
       return;
     }
 
     const fromChain = normalizeChainName(senderChainName);
     const toChain = normalizeChainName(_recipientChainName);
 
-    const symbolOrId = assetId !== undefined
-      ? isNativeAsset(api, token, assetId)
-        ? { symbol: Native(token) }
-        : { id: assetId }
-      : { symbol: token };
+    setIsCrossChain(fromChain !== toChain);
+    const currency = getCurrency(api, token, assetId);
+
+    // const nativeToken = api.registry.chainTokens[0];
+    // const feeAssetId = inputs?.feeInfo?.assetId;
+    // const feeCurrency = feeAssetId ? { location: feeAssetId } : { symbol: Native(nativeToken) };
 
     const builder = Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
       .from(fromChain as TSubstrateChain)
       .to(toChain as TDestination)
-      .currency({ amount: amountAsBN.toString(), ...symbolOrId })
-      /* .feeAsset(CURRENCY) - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+      .currency({ amount: amountAsBN.toString(), ...currency })
+      // .feeAsset(feeCurrency) // - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
       .address(recipientAddress)
       .senderAddress(address);
 
-    builder.build().then((tx) => {
-      setParaSpellTransaction(tx);
-    }).catch(console.error);
+    let cancelled = false;
 
-    builder
-      .getTransferInfo()
-      .then((info) => {
-        const fees = {
-          destinationFee: info.destination.xcmFee,
-          originFee: info.origin.xcmFee
-        };
+    Promise.all([builder.build(), builder.getTransferInfo()])
+      .then(([tx, info]) => {
+        console.log('transfer info:', info);
 
-        setParaSpellFee(fees);
+        if (cancelled) {
+          return;
+        }
+
+        setParaSpellState({
+          paraSpellFee: {
+            destinationFee: info.destination.xcmFee,
+            originFee: info.origin.xcmFee
+          },
+          paraSpellTransaction: tx
+        });
       }).catch((err) => {
-        setError('Something went wrong while calculating estimated fee!');
-        console.error('Something went wrong while getting fee', err);
+        if (!cancelled) {
+          setError('Something went wrong while calculating estimated fee!');
+        }
+
+        console.error('fee calc error', err);
       });
-  }, [_recipientChainName, api, address, senderChainName, amountAsBN, genesisHash, setError, inputs?.assetId, inputs?.token, inputs?.recipientChain?.text, inputs?.recipientAddress]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [api, address, senderChainName, genesisHash, isReadyToMakeTx, setError, assetId, token, recipientChain?.text, recipientAddress, amountAsBN]);
 
   return {
-    isCrossChain: senderChainName !== _recipientChainName,
-    paraSpellFee,
-    paraSpellTransaction
+    isCrossChain,
+    ...paraSpellState
   };
 }

@@ -1,20 +1,19 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { CanPayFee, FetchedBalance } from '../../../util/types';
+import type { CanPayFee } from '../../../util/types';
 import type { FeeInfo, Inputs } from '../types';
 
 import { Box, ClickAwayListener, Stack, Typography } from '@mui/material';
+import { deepEqual, type TAssetInfo } from '@paraspell/sdk-pjs';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
-import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
+import { encodeLocation } from '@polkadot/extension-polkagate/src/util';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { BN } from '@polkadot/util';
 
 import { AssetLogo, DisplayBalance } from '../../../components';
-import { useAccount, useChainInfo, useFormatted, useTranslation } from '../../../hooks';
-import { UnableToPayFee } from '../../../partials';
+import { useAccount, useAccountAssets, useChainInfo, useFormatted, useTranslation } from '../../../hooks';
 import usePartialFee from '../usePartialFee';
 import usePayWithAsset from '../usePayWithAsset';
 import CustomizedDropDown from './CustomizedDropDown';
@@ -22,46 +21,75 @@ import OpenerButton from './OpenerButton';
 
 interface Props {
   address: string | undefined;
-  canPayFee: CanPayFee;
+  canPayFee?: CanPayFee; // TODO: Needs a fix to be used since it only works for. native assets
   inputs: Inputs;
   genesisHash: string | undefined;
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
 }
 
-export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setInputs }: Props): React.ReactElement {
+export default function FeeRow ({ address, genesisHash, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { api, decimal, token } = useChainInfo(genesisHash);
-  const feeAssets = usePayWithAsset(genesisHash);
-  const formatted = useFormatted(address, genesisHash);
+  const accountAssetsOnOrigin = useAccountAssets(address, genesisHash);
   const account = useAccount(address);
+  const { api, chainName, decimal, token } = useChainInfo(genesisHash);
+  const feeAssets = usePayWithAsset(chainName);
+  const formatted = useFormatted(address, genesisHash);
+
+  const feeAssetsWithBalance = useMemo(() => {
+    if (!feeAssets || !accountAssetsOnOrigin) {
+      return;
+    }
+
+    return feeAssets.filter(
+      // @ts-ignore
+      ({ assetId, isNative, location }) =>
+        accountAssetsOnOrigin.find((a) =>
+          (isNative && a.isNative === isNative) ||
+          String(a.assetId) === assetId ||
+          a.assetId === encodeLocation(location))
+    );
+  }, [accountAssetsOnOrigin, feeAssets]);
 
   const [openTokenList, setOpenTokenList] = useState<boolean>(false);
   const [selectedAssetId, setSelectedAssetId] = useState<string>();
 
-  const maybeSelectedNonNativeFeeAsset = useMemo(() => feeAssets?.find(({ id }) => id.toString() === selectedAssetId), [feeAssets, selectedAssetId]);
-  const maybePartialFee = usePartialFee(api, inputs, formatted, maybeSelectedNonNativeFeeAsset?.multiLocation);
+  const maybeSelectedNonNativeFeeAsset = useMemo(() =>
+    feeAssetsWithBalance?.find(({ location }) =>
+      encodeLocation(location) === selectedAssetId
+    )
+    , [feeAssetsWithBalance, selectedAssetId]);
 
-  const feeAssetsToShow = useMemo(() => {
-    const nativeAsset = {
-      assetId: isOnAssetHub(genesisHash) ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB : NATIVE_TOKEN_ASSET_ID,
-      genesisHash,
-      token
-    };
+  const maybePartialFee = usePartialFee(api, inputs, formatted, maybeSelectedNonNativeFeeAsset?.location);
 
-    const nonNativeAssets = feeAssets?.map(({ id, symbol }) => ({ assetId: id, genesisHash, token: symbol }));
-
-    if (!maybeSelectedNonNativeFeeAsset) {
-      return nonNativeAssets as unknown as Partial<FetchedBalance>[];
+  const feeOptions = useMemo(() => {
+    if (!feeAssetsWithBalance) {
+      return [];
     }
 
-    const filteredNonNativeAssets = nonNativeAssets?.filter(({ assetId }) => {
-      return assetId?.toString() !== maybeSelectedNonNativeFeeAsset.id.toString();
-    }) as unknown as Partial<FetchedBalance>[];
+    let normalizedFeeAssets: Omit<TAssetInfo, 'isFeeAsset'>[] = [];
+    // @ts-ignore
+    const nativeAsset = feeAssetsWithBalance.find(({ isNative }) => isNative);
+    // @ts-ignore
+    const nonNativeAssets = feeAssetsWithBalance.filter(({ isNative }) => !isNative);
 
-    return [...filteredNonNativeAssets, nativeAsset] as Partial<FetchedBalance>[];
-  }, [feeAssets, genesisHash, maybeSelectedNonNativeFeeAsset, token]);
+    if (!maybeSelectedNonNativeFeeAsset) {
+      normalizedFeeAssets = nonNativeAssets;
+    } else {
+      const filteredNonNativeAssets = nonNativeAssets?.filter(({ location }) => {
+        return !deepEqual(location, maybeSelectedNonNativeFeeAsset.location);
+      });
+
+      normalizedFeeAssets = [...filteredNonNativeAssets, ...(nativeAsset ? [nativeAsset] : [])];
+    }
+
+    return normalizedFeeAssets.map(({ location, symbol }) => ({
+      assetId: encodeLocation(location) as string,
+      genesisHash,
+      token: symbol
+    }));
+  }, [feeAssetsWithBalance, genesisHash, maybeSelectedNonNativeFeeAsset]);
 
   const feeInfo: FeeInfo = useMemo(() => {
     const { asset, fee } = inputs.fee?.destinationFee || {};
@@ -77,7 +105,7 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
 
     if (maybeSelectedNonNativeFeeAsset) {
       return {
-        assetId: maybeSelectedNonNativeFeeAsset?.multiLocation,
+        assetId: maybeSelectedNonNativeFeeAsset?.location,
         decimal: Number(maybeSelectedNonNativeFeeAsset.decimals),
         fee: maybePartialFee,
         token: maybeSelectedNonNativeFeeAsset.symbol.toString(),
@@ -101,8 +129,15 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
     }));
   }, [feeInfo, setInputs]);
 
-  const feeLogoInfo = useMemo(() => getLogo2(genesisHash, feeInfo.token), [feeInfo.token, genesisHash]);
-  const maybeDestinationChainFeeLogoInfo = useMemo(() => getLogo2(inputs.recipientChain?.text, feeInfo.destinationFee?.token), [feeInfo.destinationFee?.token, inputs.recipientChain?.text]);
+  const feeLogoInfo = useMemo(() =>
+    getLogo2(genesisHash, feeInfo.token)
+    , [feeInfo.token, genesisHash]);
+
+  const maybeDestinationChainFeeLogoInfo = useMemo(() =>
+    inputs.recipientChain?.text && feeInfo.destinationFee?.token
+      ? getLogo2(inputs.recipientChain?.text, feeInfo.destinationFee.token)
+      : undefined
+    , [feeInfo.destinationFee?.token, inputs.recipientChain?.text]);
 
   const onToggleTokenSelection = useCallback(() => {
     setOpenTokenList(!openTokenList);
@@ -112,7 +147,7 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
     setOpenTokenList(false);
   }, []);
 
-  const showFeeSelector = !!feeAssets?.length && !account?.isExternal;
+  const showFeeSelector = !!feeOptions?.length && !account?.isExternal;
 
   return (
 
@@ -123,9 +158,9 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
         </Typography>
         <ClickAwayListener onClickAway={handleClickAway}>
           <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='end' ref={containerRef} sx={{ transform: showFeeSelector ? 'translateX(-3px)' : 'translateX(0)', transition: 'all 400ms ease-out' }}>
-            {canPayFee.isAbleToPay === false && canPayFee.warning &&
+            {/* {canPayFee.isAbleToPay === false && canPayFee.warning &&
               <UnableToPayFee warningText={canPayFee.warning} />
-            }
+            } */}
             <DisplayBalance
               balance={feeInfo.fee}
               decimal={feeInfo.decimal}
@@ -144,10 +179,11 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
             }
           </Stack>
         </ClickAwayListener>
-        {!!feeAssets?.length && openTokenList &&
+        {showFeeSelector && openTokenList &&
           <CustomizedDropDown
-            assets={feeAssetsToShow}
+            assets={feeOptions}
             containerRef={containerRef}
+            isSmall
             open={openTokenList}
             setSelectedAsset={setSelectedAssetId}
             style={{ marginLeft: '6px' }}
@@ -161,10 +197,10 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
             <Typography color='primary.main' sx={{ textAlign: 'left' }} variant='B-1'>
               {t('Cross-chain fee')}
             </Typography>
-            <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='end' ref={containerRef} sx={{ transform: showFeeSelector ? 'translateX(-3px)' : 'translateX(0)', transition: 'all 400ms ease-out' }}>
-              {canPayFee.isAbleToPay === false && canPayFee.warning &&
+            <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='end' sx={{ transform: showFeeSelector ? 'translateX(-3px)' : 'translateX(0)', transition: 'all 400ms ease-out' }}>
+              {/* {canPayFee.isAbleToPay === false && canPayFee.warning &&
                 <UnableToPayFee warningText={canPayFee.warning} />
-              }
+              } */}
               <DisplayBalance
                 balance={feeInfo.destinationFee?.fee}
                 decimal={feeInfo.destinationFee?.decimal}
@@ -174,7 +210,12 @@ export default function FeeRow ({ address, canPayFee, genesisHash, inputs, setIn
                 }}
                 token={feeInfo.destinationFee?.token}
               />
-              <AssetLogo assetSize='18px' chainName={inputs.recipientChain?.text} logo={maybeDestinationChainFeeLogoInfo?.logo} />
+              <AssetLogo
+                assetSize='18px'
+                chainName={inputs.recipientChain?.text}
+                logo={maybeDestinationChainFeeLogoInfo?.logo}
+                token={feeInfo.destinationFee?.token}
+              />
             </Stack>
           </Stack>
           <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', my: '10px', width: '766px' }} />
