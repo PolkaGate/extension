@@ -131,8 +131,8 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
               return (
                 <Grid
                   alignItems='center'
-                  // eslint-disable-next-line react/jsx-no-bind
-                  container item justifyContent='space-between' key={index} onClick={() => onItemClick(text, String(value))} sx={{
+                  container
+                  item justifyContent='space-between' key={index} onClick={() => onItemClick(text, String(value))} onDoubleClick={onApply} sx={{
                     '&:hover': { bgcolor: '#6743944D' },
                     borderRadius: '12px',
                     lineHeight: '55px',

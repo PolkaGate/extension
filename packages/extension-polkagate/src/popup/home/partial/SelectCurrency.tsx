@@ -24,6 +24,7 @@ interface Props {
 interface CurrencyOptionProps {
   handleCurrencySelect: (currency: CurrencyItemType) => () => void;
   selectedCurrency: CurrencyItemType | undefined;
+  onDoubleClick?: () => void
 }
 
 interface CurrencyListProps extends CurrencyOptionProps {
@@ -67,7 +68,7 @@ const CategoryHeader = ({ type }: { type: 'crypto' | 'fiat' }) => {
   );
 };
 
-const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = false, selectedCurrency, type }: CurrencyListProps) => {
+const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = false, onDoubleClick, selectedCurrency, type }: CurrencyListProps) => {
   const flagSVG = useCallback((currency: CurrencyItemType) => {
     const countryCode = currency.code.slice(0, 2).toUpperCase();
 
@@ -101,7 +102,7 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = fals
       <CategoryHeader type={type} />
       {currencyList.map((currency, index) => (
         <Fragment key={index}>
-          <ListItem className={selectedCurrency === currency ? 'selected' : ''} container item key={currency.code} onClick={handleCurrencySelect(currency)}>
+          <ListItem className={selectedCurrency === currency ? 'selected' : ''} container item key={currency.code} onClick={handleCurrencySelect(currency)} onDoubleClick={onDoubleClick}>
             <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
               <Box
                 component='img'
@@ -125,7 +126,7 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = fals
   );
 };
 
-const CurrencyOptions = memo(function LanguageOptions({ handleCurrencySelect, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
+const CurrencyOptions = memo(function CO ({ handleCurrencySelect, onDoubleClick, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [searchedCurrencies, setSearchedCurrencies] = useState<CurrencyItemType[]>();
@@ -165,6 +166,7 @@ const CurrencyOptions = memo(function LanguageOptions({ handleCurrencySelect, se
         <CurrencyList
           currencyList={cryptos}
           handleCurrencySelect={handleCurrencySelect}
+          onDoubleClick={onDoubleClick}
           selectedCurrency={selectedCurrency}
           type='crypto'
         />
@@ -172,6 +174,7 @@ const CurrencyOptions = memo(function LanguageOptions({ handleCurrencySelect, se
           currencyList={fiats}
           handleCurrencySelect={handleCurrencySelect}
           noLastDivider
+          onDoubleClick={onDoubleClick}
           selectedCurrency={selectedCurrency}
           type='fiat'
         />
@@ -212,6 +215,7 @@ function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAc
       <CurrencyOptions
         handleCurrencySelect={handleCurrencySelect}
         selectedCurrency={selectedCurrency}
+        onDoubleClick={applyLanguageChange}
       />
       <GradientButton
         contentPlacement='center'
@@ -237,8 +241,8 @@ function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
 
   return (
     <SharePopup
-      onClose={handleClose}
       modalProps={{ showBackIconAsClose: true }}
+      onClose={handleClose}
       open={openMenu}
       popupProps={{
         TitleIcon: Hashtag,
