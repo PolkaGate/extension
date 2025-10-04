@@ -9,11 +9,12 @@ import type { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../util/typ
 
 import React, { useCallback, useMemo, useState } from 'react';
 
+import { PROCESSING_TITLE } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ZERO } from '@polkadot/util';
 
 import { SelectedProxy } from '../../components';
 import { useEstimatedFee, useTranslation } from '../../hooks';
-import { WaitScreen2 } from '../../partials';
+import { WaitScreen } from '../../partials';
 import { DraggableModal } from '../components/DraggableModal';
 import Confirmation from './Confirmation';
 import { STEPS } from './consts';
@@ -198,7 +199,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
         [STEPS.REVIEW, STEPS.SIGN_QR].includes(step)
           ? t('Review')
           : step === STEPS.WAIT_SCREEN
-            ? t('In process')
+            ? t(PROCESSING_TITLE)
             : t('Confirmation')
       }
     >
@@ -222,7 +223,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
         }
         {
           step === STEPS.WAIT_SCREEN &&
-          <WaitScreen2 />
+          <WaitScreen />
         }
         {
           step === STEPS.CONFIRMATION && transactionDetail &&

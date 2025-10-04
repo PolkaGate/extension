@@ -90,8 +90,8 @@
   "Version": "Version",
   "We are working on your transaction.": "Nous traitons votre transaction.",
   "The transaction is ready.": "La transaction est prête.",
-  "The transaction is sent.": "La transaction est envoyée.",
-  "The transaction is now in Blockchain.": "La transaction est maintenant sur la Blockchain.",
+  "The transaction has been sent.": "La transaction est envoyée.",
+  "The transaction is now on-chain.": "La transaction est maintenant sur la Blockchain.",
   "Vote": "Voter",
   "Conviction": "Conviction",
   "Checking": "Vérification",
@@ -857,5 +857,9 @@
   "Unlock Amount": "Montant à déverrouiller",
   "Unlocking Amount": "Montant en cours de déverrouillage",
   "Network fee": "Frais réseau",
-  "Cross-chain fee": "Frais inter-chaînes"
+  "Cross-chain fee": "Frais inter-chaînes",
+  "working": "en cours",
+  "ready": "prêt",
+  "sent": "envoyé",
+  "on-chain": "sur la blockchain"
 }

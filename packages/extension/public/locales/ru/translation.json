@@ -90,8 +90,8 @@
   "Version": "Версия",
   "We are working on your transaction.": "Мы обрабатываем вашу транзакцию.",
   "The transaction is ready.": "Транзакция готова.",
-  "The transaction is sent.": "Транзакция отправлена.",
-  "The transaction is now in Blockchain.": "Транзакция теперь в блокчейне.",
+  "The transaction has been sent.": "Транзакция отправлена.",
+  "The transaction is now on-chain.": "Транзакция теперь в блокчейне.",
   "Vote": "Голосовать",
   "Conviction": "Убежденность",
   "Checking": "Проверка",
@@ -856,5 +856,9 @@
   "Unlock Amount": "Сумма разблокировки",
   "Unlocking Amount": "Разблокируемая сумма",
   "Network fee": "Сетевая комиссия",
-  "Cross-chain fee": "Комиссия межсетевого перевода"
+  "Cross-chain fee": "Комиссия межсетевого перевода",
+  "working": "в работе",
+  "ready": "готово",
+  "sent": "отправлено",
+  "on-chain": "в блокчейне"
 }

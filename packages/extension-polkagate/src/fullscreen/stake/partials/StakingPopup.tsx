@@ -9,6 +9,8 @@ import type { ExtraDetailConfirmationPage, PoolInfo, Proxy, ProxyTypes } from '.
 
 import React, { useCallback, useState } from 'react';
 
+import { PROCESSING_TITLE } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { Progress, SelectedProxy } from '../../../components';
 import { DraggableModal, type DraggableModalProps } from '../../../fullscreen/components/DraggableModal';
 import { useRouteRefresh, useTranslation } from '../../../hooks';
@@ -79,7 +81,7 @@ export default function StakingPopup ({ _onClose, address, children, extraDetail
       open
       showBackIconAsClose={showBack ?? !showCloseIcon}
       style={style}
-      title={title}
+      title={flowStep === FULLSCREEN_STAKING_TX_FLOW.WAIT_SCREEN ? t(PROCESSING_TITLE) : title}
     >
       {flowStep === FULLSCREEN_STAKING_TX_FLOW.NONE && children
         ? children

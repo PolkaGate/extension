@@ -12,7 +12,7 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useTransactionData } from '../../../../../hooks';
-import { WaitScreen2 } from '../../../../../partials';
+import { WaitScreen } from '../../../../../partials';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../../../../../util/constants';
 import Confirmation from '../../../partials/StakingConfirmation';
 import Review from './Review';
@@ -66,7 +66,7 @@ function ClaimRewardsTransactionFlow ({ address, amount, closeReview, flowStep, 
       }
       {
         flowStep === TRANSACTION_FLOW_STEPS.WAIT_SCREEN &&
-        <WaitScreen2 />
+        <WaitScreen />
       }
       {flowStep === TRANSACTION_FLOW_STEPS.CONFIRMATION && transactionDetail &&
         <Confirmation

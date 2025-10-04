@@ -326,3 +326,5 @@ export const FETCHING_ASSETS_FUNCTION_NAMES = {
   MULTI_ASSET: 'getAssetOnMultiAssetChain',
   RELAY: 'getAssetOnRelayChain'
 };
+
+export const PROCESSING_TITLE = 'Processing';

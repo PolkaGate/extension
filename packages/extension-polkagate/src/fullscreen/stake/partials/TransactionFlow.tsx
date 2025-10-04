@@ -11,7 +11,7 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useTransactionData } from '../../../hooks';
-import { WaitScreen2 } from '../../../partials';
+import { WaitScreen } from '../../../partials';
 import Review, { type Content } from '../../../partials/Review';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../../../util/constants';
 import Confirmation from './StakingConfirmation';
@@ -68,7 +68,7 @@ function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, f
       }
       {
         flowStep === TRANSACTION_FLOW_STEPS.WAIT_SCREEN &&
-        <WaitScreen2 />
+        <WaitScreen />
       }
       {
         flowStep === TRANSACTION_FLOW_STEPS.CONFIRMATION && transactionDetail &&
