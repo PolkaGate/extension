@@ -68,7 +68,7 @@ const CategoryHeader = ({ type }: { type: 'crypto' | 'fiat' }) => {
   );
 };
 
-const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = false, onDoubleClick, selectedCurrency, type }: CurrencyListProps) => {
+const CurrencyList = memo(function CL ({ currencyList, handleCurrencySelect, noLastDivider = false, onDoubleClick, selectedCurrency, type }: CurrencyListProps) {
   const flagSVG = useCallback((currency: CurrencyItemType) => {
     const countryCode = currency.code.slice(0, 2).toUpperCase();
 
@@ -100,31 +100,35 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = fals
   return (
     <>
       <CategoryHeader type={type} />
-      {currencyList.map((currency, index) => (
-        <Fragment key={index}>
-          <ListItem className={selectedCurrency === currency ? 'selected' : ''} container item key={currency.code} onClick={handleCurrencySelect(currency)} onDoubleClick={onDoubleClick}>
-            <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-              <Box
-                component='img'
-                src={flagSVG(currency)}
-                sx={{ borderRadius: '5px', height: '18px', width: '18px' }}
+      {currencyList.map((currency, index) => {
+        const isSelected = selectedCurrency?.code === currency.code;
+
+        return (
+          <Fragment key={index}>
+            <ListItem className={isSelected ? 'selected' : ''} container item key={currency.code} onClick={handleCurrencySelect(currency)} onDoubleClick={onDoubleClick}>
+              <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
+                <Box
+                  component='img'
+                  src={flagSVG(currency)}
+                  sx={{ borderRadius: '5px', height: '18px', width: '18px' }}
+                />
+                <Typography color='text.primary' variant='B-2'>
+                  {currency.country} - {currency.sign}
+                </Typography>
+              </Grid>
+              <GlowCheck
+                show={isSelected}
               />
-              <Typography color='text.primary' variant='B-2'>
-                {currency.country} - {currency.sign}
-              </Typography>
-            </Grid>
-            <GlowCheck
-              show={selectedCurrency === currency}
-            />
-          </ListItem>
-          {(!noLastDivider || index !== currencyList.length - 1) &&
-            <GradientDivider style={{ my: '3px' }} />
-          }
-        </Fragment>
-      ))}
+            </ListItem>
+            {(!noLastDivider || index !== currencyList.length - 1) &&
+              <GradientDivider style={{ my: '3px' }} />
+            }
+          </Fragment>
+        );
+      })}
     </>
   );
-};
+});
 
 const CurrencyOptions = memo(function CO ({ handleCurrencySelect, onDoubleClick, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
   const { t } = useTranslation();
@@ -187,7 +191,7 @@ const CurrencyOptions = memo(function CO ({ handleCurrencySelect, onDoubleClick,
   );
 });
 
-function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAction<boolean>> }): React.ReactElement {
+function Content ({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAction<boolean>> }): React.ReactElement {
   const { t } = useTranslation();
   const { currency, setCurrency } = useContext(CurrencyContext);
 
@@ -197,9 +201,7 @@ function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAc
     !selectedCurrency && currency && setSelectedCurrency(currency);
   }, [currency, selectedCurrency]);
 
-  const handleCurrencySelect = useCallback((currency: CurrencyItemType) => () => {
-    setSelectedCurrency(currency);
-  }, []);
+  const handleCurrencySelect = useCallback((currency: CurrencyItemType) => () => setSelectedCurrency(currency), []);
 
   const applyLanguageChange = useCallback(() => {
     if (selectedCurrency) {
@@ -214,8 +216,8 @@ function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAc
     <Grid container item justifyContent='center' sx={{ position: 'relative', py: '1px', zIndex: 1 }}>
       <CurrencyOptions
         handleCurrencySelect={handleCurrencySelect}
-        selectedCurrency={selectedCurrency}
         onDoubleClick={applyLanguageChange}
+        selectedCurrency={selectedCurrency}
       />
       <GradientButton
         contentPlacement='center'
@@ -225,7 +227,6 @@ function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAc
           bottom: '6px',
           height: '44px',
           position: 'absolute',
-          width: '345px',
           zIndex: 10
         }}
         text={t('Apply')}
@@ -234,7 +235,7 @@ function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAc
   );
 }
 
-function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
+function SelectCurrency ({ openMenu, setOpenMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const handleClose = useCallback(() => setOpenMenu(false), [setOpenMenu]);
