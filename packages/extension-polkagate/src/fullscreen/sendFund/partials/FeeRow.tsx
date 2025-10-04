@@ -31,11 +31,11 @@ export default function FeeRow ({ address, genesisHash, inputs, setInputs }: Pro
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const formatted = useFormatted(address, genesisHash);
   const accountAssetsOnOrigin = useAccountAssets(address, genesisHash);
   const account = useAccount(address);
   const { api, chainName, decimal, token } = useChainInfo(genesisHash);
   const feeAssets = usePayWithAsset(chainName);
-  const formatted = useFormatted(address, genesisHash);
 
   const feeAssetsWithBalance = useMemo(() => {
     if (!feeAssets || !accountAssetsOnOrigin) {

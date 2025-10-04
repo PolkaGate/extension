@@ -103,10 +103,17 @@ export function getCurrency (api: ApiPromise, token: string, assetId: number | s
   return { id: assetId };
 }
 
-export const getLocation = (api: ApiPromise, id: BN): AnyNumber | object => {
+export const getLocation = (api: ApiPromise, id: BN): AnyNumber | object | undefined => {
   const metadata = api.registry.metadata;
-  const palletIndex = metadata.pallets.filter((a) => a.name.toString() === 'Assets')[0].index.toString();
+  const assetsPallet = metadata.pallets.filter((a) => a.name.toString() === 'Assets');
 
+   if (assetsPallet?.[0].index === undefined) {
+    console.warn('Assets pallet not found in metadata; cannot build location for asset id', id.toString());
+
+    return undefined;
+  }
+
+const palletIndex = assetsPallet[0].index.toString();
   // FIX ME: it may not be applicable for all chains
   const palletInstance = { PalletInstance: palletIndex };
   const generalIndex = { GeneralIndex: id };
