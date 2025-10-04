@@ -23,9 +23,10 @@ interface Props {
 }
 
 interface LanguageOptionProps {
+  handleLanguageSelect: (lang: string) => () => void;
+  onDoubleClick: () => void;
   options: LanguageOptions[];
   selectedLanguage: string | undefined;
-  handleLanguageSelect: (lang: string) => () => void;
 }
 
 const ListItem = styled(Grid)(() => ({
@@ -46,7 +47,7 @@ const ListItem = styled(Grid)(() => ({
 }));
 
 const LanguageSelect = React.memo(
-  function F ({ handleLanguageSelect, options, selectedLanguage }: LanguageOptionProps): React.ReactElement {
+  function F ({ handleLanguageSelect, onDoubleClick, options, selectedLanguage }: LanguageOptionProps): React.ReactElement {
     const flag = useCallback((value: string) => {
       const option = options.find((item) => item?.flag?.toUpperCase() === value.toUpperCase() || String(item.value).toUpperCase() === value.toUpperCase());
       const key = String(option?.flag ?? option?.value ?? 'EN');
@@ -59,7 +60,7 @@ const LanguageSelect = React.memo(
       <Grid container item justifyContent='center' sx={{ maxHeight: '380px', overflowY: 'auto' }}>
         {options.map(({ text, value }, index) => (
           <React.Fragment key={index}>
-            <ListItem className={selectedLanguage === value ? 'selected' : ''} container item key={value} onClick={handleLanguageSelect(value as string)}>
+            <ListItem className={selectedLanguage === value ? 'selected' : ''} container item key={value} onClick={handleLanguageSelect(value as string)} onDoubleClick={onDoubleClick}>
               <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
                 <Box
                   component='img'
@@ -102,6 +103,7 @@ function Content ({ onClose }: { onClose: ExtensionPopupCloser }): React.ReactEl
     <Grid container item justifyContent='center' sx={{ position: 'relative', py: '5px', zIndex: 1 }}>
       <LanguageSelect
         handleLanguageSelect={handleLanguageSelect}
+        onDoubleClick={applyLanguageChange}
         options={options}
         selectedLanguage={maybeSelectedLanguage ?? languageTicker}
       />
