@@ -45,41 +45,45 @@ export default function useParaSpellFeeCall (address: string | undefined, isRead
     // const nativeToken = api.registry.chainTokens[0];
     // const feeAssetId = inputs?.feeInfo?.assetId;
     // const feeCurrency = feeAssetId ? { location: feeAssetId } : { symbol: Native(nativeToken) };
+    try {
+      const builder = Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
+        .from(fromChain as TSubstrateChain)
+        .to(toChain as TDestination)
+        .currency({ amount: amountAsBN.toString(), ...currency })
+        // .feeAsset(feeCurrency) // - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+        .address(recipientAddress)
+        .senderAddress(address);
 
-    const builder = Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
-      .from(fromChain as TSubstrateChain)
-      .to(toChain as TDestination)
-      .currency({ amount: amountAsBN.toString(), ...currency })
-      // .feeAsset(feeCurrency) // - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
-      .address(recipientAddress)
-      .senderAddress(address);
+      let cancelled = false;
 
-    let cancelled = false;
+      Promise.all([builder.build(), builder.getTransferInfo()])
+        .then(([tx, info]) => {
+          if (cancelled) {
+            return;
+          }
 
-    Promise.all([builder.build(), builder.getTransferInfo()])
-      .then(([tx, info]) => {
-        if (cancelled) {
-          return;
-        }
+          setParaSpellState({
+            paraSpellFee: {
+              destinationFee: info.destination.xcmFee,
+              originFee: info.origin.xcmFee
+            },
+            paraSpellTransaction: tx
+          });
+        }).catch((err) => {
+          if (!cancelled) {
+            setError('Something went wrong while calculating estimated fee!');
+          }
 
-        setParaSpellState({
-          paraSpellFee: {
-            destinationFee: info.destination.xcmFee,
-            originFee: info.origin.xcmFee
-          },
-          paraSpellTransaction: tx
+          console.error('fee calc error', err);
         });
-      }).catch((err) => {
-        if (!cancelled) {
-          setError('Something went wrong while calculating estimated fee!');
-        }
 
-        console.error('fee calc error', err);
-      });
-
-    return () => {
-      cancelled = true;
-    };
+      return () => {
+        cancelled = true;
+      };
+    } catch (error) {
+      setError('Something went wrong while calculating estimated fee, try again later!');
+      console.log('Something went wrong:', error?.message)
+    }
   }, [api, address, senderChainName, genesisHash, isReadyToMakeTx, setError, assetId, token, recipientChain?.text, recipientAddress, amountAsBN]);
 
   return {
