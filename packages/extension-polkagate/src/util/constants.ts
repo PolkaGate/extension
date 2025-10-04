@@ -307,7 +307,7 @@ export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000; // 2 minutes
 export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 
 export const STORAGE_KEY = {
-  ASSETS: 'migrated-assets',
+  ASSETS: 'migrated-assets1',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   HISTORY: 'history',
   IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN: 'accountsMigratedToAnyChain',
