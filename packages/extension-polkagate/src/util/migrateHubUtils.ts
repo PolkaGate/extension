@@ -9,7 +9,7 @@ import { KUSAMA_PEOPLE_GENESIS_HASH, NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_I
 export const migratedRelayNames = ['kusama', 'paseo', 'westend'];
 export const migratedRelays = [KUSAMA_GENESIS, PASEO_GENESIS, WESTEND_GENESIS];
 
-type SystemChainsName = 'hub' | 'people' | 'assetHub';
+type SystemChainsName = 'assetHub' | 'people';
 
 type RelayToSystemChainsType = Record<string, {
   [K in SystemChainsName]?: string;
@@ -17,19 +17,19 @@ type RelayToSystemChainsType = Record<string, {
 
 export const relayToSystemChains = {
   [KUSAMA_GENESIS]: {
-    hub: STATEMINE_GENESIS_HASH,
+    assetHub: STATEMINE_GENESIS_HASH,
     people: KUSAMA_PEOPLE_GENESIS_HASH
   },
   [PASEO_GENESIS]: {
-    hub: PASEO_ASSET_HUB_GENESIS_HASH,
+    assetHub: PASEO_ASSET_HUB_GENESIS_HASH,
     people: PASEO_PEOPLE_GENESIS_HASH
   },
   [POLKADOT_GENESIS]: {
-    hub: STATEMINT_GENESIS_HASH,
+    assetHub: STATEMINT_GENESIS_HASH,
     people: POLKADOT_PEOPLE_GENESIS_HASH
   },
   [WESTEND_GENESIS]: {
-    hub: WESTMINT_GENESIS_HASH,
+    assetHub: WESTMINT_GENESIS_HASH,
     people: WESTEND_PEOPLE_GENESIS_HASH
   }
 };
@@ -45,16 +45,16 @@ export const migratedRelaysToSystemChains: RelayToSystemChainsType = Object.from
 export const hubToRelay: Record<string, string> = Object.fromEntries(
   Object.entries(relayToSystemChains)
     .filter(([relay]) => migratedRelaysSet.has(relay))
-    .map(([relay, systemChains]): [string, string] => [systemChains.hub, relay])
-    .filter(([hub]) => !!hub)
+    .map(([relay, systemChains]): [string, string] => [systemChains.assetHub, relay])
+    .filter(([assetHub]) => !!assetHub)
 );
 
 /** Adjusts the provided genesis hash to its corresponding system chain genesis hash if applicable.
  * @param genesisHash - The original genesis hash of the chain.
- * @param type - The type of system chain to map to ('hub', 'people', or 'assetHub'). Defaults to 'hub'.
+ * @param type - The type of system chain to map to ( 'people', or 'assetHub'). Defaults to 'assetHub'.
  * @returns The adjusted genesis hash if a mapping exists; otherwise, returns the original genesis hash.
  */
-export function mapRelayToSystemGenesisIfMigrated (genesisHash: string | null | undefined, type: SystemChainsName = 'hub'): string | undefined {
+export function mapRelayToSystemGenesisIfMigrated (genesisHash: string | null | undefined, type: SystemChainsName = 'assetHub'): string | undefined {
   if (!genesisHash) {
     return;
   }
@@ -64,7 +64,7 @@ export function mapRelayToSystemGenesisIfMigrated (genesisHash: string | null | 
 
 /** Maps a system chain genesis hash to its corresponding relay chain genesis hash if applicable.
  * Supports all system chain types defined in relayToSystemChains for future extensibility.
- * @param systemGenesisHash - The genesis hash of the system chain (e.g., hub, people, assetHub, etc).
+ * @param systemGenesisHash - The genesis hash of the system chain (e.g., people, assetHub, etc).
  * @returns The relay chain genesis hash if a mapping exists; otherwise, returns the original genesis hash.
  */
 export function mapSystemToRelay (systemGenesisHash: string | undefined | null, withMigrationCheck = true): string | undefined | null {
@@ -81,8 +81,8 @@ export function mapSystemToRelay (systemGenesisHash: string | undefined | null, 
   return systemGenesisHash;
 }
 
-/** Maps a hub genesis hash to its corresponding relay chain genesis hash if applicable.
- * @param genesisHash - The original genesis hash of the hub chain.
+/** Maps a assetHub genesis hash to its corresponding relay chain genesis hash if applicable.
+ * @param genesisHash - The original genesis hash of the assetHub chain.
  * @returns The relay chain genesis hash if a mapping exists; otherwise, returns the original genesis hash.
  */
 export function mapHubToRelay (genesisHash: string | undefined | null): string | undefined {
@@ -101,8 +101,8 @@ export function isMigratedRelay (genesisHash: string): boolean {
   return migratedRelaysSet.has(genesisHash);
 }
 
-/** Checks if the provided genesis hash corresponds to a migrated hub chain.
- * @param info - The genesis hash or hub chain name to check.
+/** Checks if the provided genesis hash corresponds to a migrated assetHub chain.
+ * @param info - The genesis hash or assetHub chain name to check.
  * @returns True if the genesis hash has a mapping in hubToRelay; otherwise, false.
  */
 export function isMigratedHub (info: string | undefined): boolean {
@@ -132,7 +132,7 @@ export function isMigratedByChainName (name: string): boolean {
     return migratedRelayNames.some((relayName) => lcName.includes(relayName));
   }
 
-  // Exact match for non-hub chains
+  // Exact match for non-assetHub chains
   return migratedRelayNames.some((relayName) => lcName === relayName);
 }
 
