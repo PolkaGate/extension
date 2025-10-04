@@ -132,7 +132,6 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
                     genesisHash={genesisHash}
                     nameStyle={{ paddingBottom: '7px', textAlign: 'center' }}
                     noIdenticon
-                    showShortAddress
                     style={{ maxWidth: '170px', overflow: 'hidden', padding: '10px 0 18px', textOverflow: 'ellipsis', variant: 'B-3' }}
                     withShortAddress
                     />
