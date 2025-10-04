@@ -82,8 +82,8 @@
   "Value": "",
   "We are working on your transaction.": "",
   "The transaction is ready.": "",
-  "The transaction is sent.": "",
-  "The transaction is now in Blockchain.": "",
+  "The transaction has been sent.": "",
+  "The transaction is now on-chain.": "",
   "Metadata": "",
   "Method": "",
   "Reset": "",
@@ -551,7 +551,6 @@
   "This account is already added as a {{proxyType}} proxy.": "",
   "An account cannot be its own proxy.": "",
   "block(s)": "",
-  "In process": "",
   "The chosen blockchain does not support this function.": "",
   "Proxy added": "",
   "You can add new proxies or remove existing ones for the selected account. Keep in mind that a deposit is required to maintain proxies.": "",
@@ -577,7 +576,6 @@
   "Checking proxy accounts ...": "",
   "Loading, please wait ...": "",
   "Sender": "",
-  "Processing": "",
   "Loading ...": "",
   "Select network": "",
   "Unknown network": "",
@@ -811,5 +809,9 @@
   "Unlock Amount": "",
   "Unlocking Amount": "",
   "Network fee": "",
-  "Cross-chain fee": ""
+  "Cross-chain fee": "",
+  "working": "",
+  "ready": "",
+  "sent": "",
+  "on-chain": ""
 }

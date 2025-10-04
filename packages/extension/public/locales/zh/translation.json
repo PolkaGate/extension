@@ -90,8 +90,8 @@
   "Version": "版本",
   "We are working on your transaction.": "我们正在处理您的交易。",
   "The transaction is ready.": "交易已准备好。",
-  "The transaction is sent.": "交易已发送。",
-  "The transaction is now in Blockchain.": "交易已上链。",
+  "The transaction has been sent.": "交易已发送。",
+  "The transaction is now on-chain.": "交易已上链。",
   "Vote": "投票",
   "Conviction": "信念",
   "Checking": "检查中",
@@ -850,5 +850,9 @@
   "Unlock Amount": "解锁金额",
   "Unlocking Amount": "正在解锁金额",
   "Network fee": "网络费用",
-  "Cross-chain fee": "跨链费用"
+  "Cross-chain fee": "跨链费用",
+  "working": "处理中",
+  "ready": "准备就绪",
+  "sent": "已发送",
+  "on-chain": "已上链"
 }
