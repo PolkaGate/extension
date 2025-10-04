@@ -561,3 +561,106 @@ export const updateReferendas = (preciousRefs: ReferendaNotificationType[] | nul
 
   return (filterOut ?? []).concat(newRefs);
 };
+
+/**
+ * Normalize timestamp to milliseconds.
+ * Accepts seconds (10-digit) or milliseconds (13-digit) or string numbers.
+ */
+function normalizeToMs (ts?: number | string): number {
+  if (ts == null) {
+    return NaN;
+  }
+
+  const n = typeof ts === 'string' ? Number.parseInt(ts, 10) : ts;
+
+  if (!Number.isFinite(n)) {
+    return NaN;
+  }
+
+  // heuristics: if value is suspiciously small treat as seconds
+  // seconds timestamps are ~1e9..1e10, ms timestamps are ~1e12..
+  return n < 1e12 ? n * 1000 : n;
+}
+
+/**
+ * Format a Date (ms) to YYYY-MM-DD (local or UTC).
+ */
+function dateKeyFromMs (ms: number): string {
+  const d = new Date(ms);
+
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+
+  return `${y}-${m}-${day}`; // local YYYY-MM-DD
+}
+
+/**
+ * Group received funds by day (YYYY-MM-DD).
+ *
+ * Returns an object where keys are date strings and values are arrays of transfers.
+ * Each transfer is enriched with its originating network and address.
+ */
+export function groupByDay<
+  T extends { data: K[]; address: string; network: DropdownOption },
+  K extends { timestamp: string | number }
+> (
+  receivedFunds?: T[] | null
+): Record<string, (K & { network: DropdownOption; address: string })[]> {
+  const groups: Record<string, (K & { network: DropdownOption; address: string })[]> = {};
+  const seen = new Set(); // to avoid duplicates globally
+
+  if (!Array.isArray(receivedFunds)) {
+    return groups;
+  }
+
+  for (const networkItem of receivedFunds) {
+    if (!Array.isArray(networkItem?.data)) {
+      continue;
+    }
+
+    for (const item of networkItem.data) {
+      const ms = normalizeToMs(item.timestamp);
+
+      if (!Number.isFinite(ms)) {
+        continue;
+      }
+
+      const signature = JSON.stringify(item);
+
+      if (seen.has(signature)) {
+        continue;
+      } // skip duplicate
+
+      seen.add(signature);
+
+      const key = dateKeyFromMs(ms);
+
+      const enriched = {
+        ...item,
+        address: networkItem.address,
+        network: networkItem.network
+      };
+
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+
+      groups[key].push(enriched);
+    }
+  }
+
+  // Sort items within each group (newest first)
+  for (const k in groups) {
+    groups[k].sort(
+      (a, b) => normalizeToMs(b.timestamp) - normalizeToMs(a.timestamp)
+    );
+  }
+
+  // Sort groups (newest date first)
+  const ordered = Object.fromEntries(
+    Object.entries(groups).sort(([a], [b]) => (a < b ? 1 : a > b ? -1 : 0))
+  );
+
+  return ordered;
+}
