@@ -6,7 +6,7 @@ import React from 'react';
 
 import { type BN } from '@polkadot/util';
 
-import { FormatBalance2, MySkeleton } from '../../../components';
+import { DisplayBalance } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useTranslation } from '../../../hooks';
@@ -44,27 +44,19 @@ export default function AvailableToStake ({ availableAmount, decimal, stakeType,
           }
         </Box>
         <Container disableGutters sx={{ display: 'flex', flexDirection: 'column' }}>
-          {availableAmount
-            ? (
-              <FormatBalance2
-                decimalPoint={4}
-                decimals={[decimal ?? 0]}
-                style={{
-                  color: '#ffffff',
-                  fontFamily: 'Inter',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  width: 'max-content'
-                }}
-                tokens={[token ?? '']}
-                value={availableAmount}
-              />)
-            : (
-              <MySkeleton
-                style={{ margin: '4px 0', width: '100px' }}
-              />
-            )
-          }
+          <DisplayBalance
+            balance={availableAmount}
+            decimal={decimal}
+            skeletonStyle={{ margin: '4px 0', width: '100px' }}
+            style={{
+              color: '#ffffff',
+              fontFamily: 'Inter',
+              fontSize: '14px',
+              fontWeight: 600,
+              width: 'max-content'
+            }}
+            token={token}
+          />
           <Typography color='text.highlight' variant='B-4' width='fit-content'>
             {t('Available to Stake')}
           </Typography>

@@ -19,7 +19,6 @@
   "Insufficient balance to complete the transaction. {{extraText}}": "",
   "Insufficient balance for transaction deposit. {{extraText}}": "",
   "Copied": "",
-  "everything": "",
   "Fullscreen": "",
   "Account has proxy on {{chains}}.": "",
   "Import account": "",
@@ -257,7 +256,6 @@
   "Unable to fetch NFT/Unique items!": "",
   "Unlock date unknown": "",
   "Locked in ongoing referenda": "",
-  "Unlockable on {{dateString}}": "",
   "The transaction has been finalized!": "",
   "Connected Accounts": "",
   "Here you can manage the current connections to your accounts": "",
@@ -807,5 +805,9 @@
   "have accounts": "",
   "If you already have accounts, you can import them using your preferred method. For batch imports, you can restore multiple accounts from a file.": "",
   "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your account. Keep it carefully to not lose your assets.": "",
-  "This is a watch-only account. Checking if this account has proxy accounts.": ""
+  "This is a watch-only account. Checking if this account has proxy accounts.": "",
+  "Click to reveal — make sure no one is watching!": "",
+  "Unlocks on {{dateString}}": "",
+  "Unlock Amount": "",
+  "Unlocking Amount": ""
 }

@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.10.1](https://github.com/polkagate/extension/compare/v1.10.0...v1.10.1) (2025-10-04)
+
+
+### Bug Fixes
+
+* handle cross-chain fee calculation issue ([#1928](https://github.com/polkagate/extension/issues/1928)) ([8b06a92](https://github.com/polkagate/extension/commit/8b06a92e8e47f31b1ab0c779b59077e107e0e779))
+
 # [1.10.0](https://github.com/polkagate/extension/compare/v1.9.7...v1.10.0) (2025-09-30)
 
 

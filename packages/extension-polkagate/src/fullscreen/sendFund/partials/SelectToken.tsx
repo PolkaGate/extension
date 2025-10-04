@@ -73,7 +73,7 @@ export default function SelectToken ({ address, assetId, genesisHash, inputs, se
         <Stack alignItems='end' direction='row' justifyContent='space-between' mt='15px' onClick={accountAssetsOnCurrentChain?.length ? onToggleTokenSelection : noop} ref={containerRef} sx={{ cursor: accountAssetsOnCurrentChain?.length ? 'pointer' : 'default' }} width='150px'>
           <Stack alignItems='end' direction='row' justifyContent='start'>
             {logoInfo &&
-              <AssetLogo assetSize='36px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+              <AssetLogo assetSize='36px' genesisHash={genesisHash} logo={logoInfo?.logo} token={asset?.token} />
             }
             <Stack alignItems='center' direction='column' justifyContent='start' ml='7px' width='80%'>
               <Typography color='#AA83DC' sx={{ textAlign: 'left', width: '100%' }} variant='B-4'>

@@ -6,7 +6,7 @@ import React, { useMemo } from 'react';
 
 import { type BN } from '@polkadot/util';
 
-import { AssetLogo, FormatBalance2, MySkeleton } from '../../../components';
+import { AssetLogo, DisplayBalance } from '../../../components';
 import { useIsExtensionPopup } from '../../../hooks';
 import getLogo2 from '../../../util/getLogo2';
 
@@ -30,29 +30,20 @@ export default function TokenStakeStatus ({ amount, decimal, genesisHash, style,
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', borderRadius: '14px', columnGap: '10px', display: 'flex', p: '8.5px 10px', width: '100%', ...style }}>
       <AssetLogo assetSize='36px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
       <Container disableGutters sx={{ display: 'flex', flexDirection: 'column' }}>
-        {amount
-          ? (
-            <FormatBalance2
-              decimalPoint={4}
-              decimals={[decimal ?? 0]}
-              style={{
-                color: '#ffffff',
-                fontFamily: 'Inter',
-                fontSize: '14px',
-                fontWeight: 600,
-                width: 'max-content'
-              }}
-              tokenColor={textColor}
-              tokens={[token ?? '']}
-              value={amount}
-            />)
-          : (
-            <MySkeleton
-              height= {16}
-              style={{ borderRadius: '50px', fontWeight: 600, marginBottom: '5px', width: '100px' }}
-            />
-          )
-        }
+        <DisplayBalance
+          balance={amount}
+          decimal={decimal}
+          skeletonStyle={{ marginBottom: '5px', width: '100px' }}
+          style={{
+            color: '#ffffff',
+            fontFamily: 'Inter',
+            fontSize: '14px',
+            fontWeight: 600,
+            width: 'max-content'
+          }}
+          token={token}
+          tokenColor={textColor}
+        />
         <Typography color={textColor} variant='B-4' width='fit-content'>
           {text}
         </Typography>

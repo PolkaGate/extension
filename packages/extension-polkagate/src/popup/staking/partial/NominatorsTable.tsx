@@ -11,7 +11,7 @@ import { ArrowRight2 } from 'iconsax-react';
 import React, { type CSSProperties, memo, useCallback, useMemo } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
-import { FormatBalance2, GlowCheckbox } from '../../../components';
+import { DisplayBalance, GlowCheckbox } from '../../../components';
 import ValidatorInformationFS from '../../../fullscreen/stake/partials/ValidatorInformationFS';
 import { useChainInfo, useIsBlueish, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
@@ -71,16 +71,16 @@ export const StakingInfoStack = memo(function StakingInfoStack ({ adjustedColorF
   return (
     <Stack direction='column' sx={{ width: 'fit-content' }}>
       {amount &&
-        <FormatBalance2
+        <DisplayBalance
+          balance={amount}
+          decimal={decimal}
           decimalPoint={2}
-          decimals={[decimal ?? 0]}
           style={{
             color: theme.palette.text.primary,
             ...theme.typography[isExtension ? 'B-2' : 'B-4'],
             width: 'max-content'
           }}
-          tokens={[token ?? '']}
-          value={amount}
+          token={token}
         />}
       {text &&
         <Typography color={secondaryColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>

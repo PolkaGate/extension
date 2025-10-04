@@ -1486,7 +1486,7 @@ export const usePendingRewardsSolo = (
 ) => {
   const { t } = useTranslation();
   const formatted = useFormatted(address, genesisHash);
-  const { api, decimal } = useChainInfo(genesisHash);
+  const { api } = useChainInfo(genesisHash);
   const currentBlock = useCurrentBlockNumber(genesisHash);
   const pendingRewards = usePendingRewards(address, genesisHash);
 
@@ -1562,8 +1562,6 @@ export const usePendingRewardsSolo = (
     return selectedToPayout.reduce((sum: BN, value: ExpandedRewards) => sum.add((value)[3]), BN_ZERO);
   }, [selectedToPayout]);
 
-  const adaptiveDecimalPoint = totalSelectedPending && decimal && (String(totalSelectedPending).length >= decimal - 1 ? 2 : 4);
-
   const tx = useMemo(() => {
     if (!selectedToPayout.length || !payoutStakers || !batch) {
       return undefined;
@@ -1623,7 +1621,6 @@ export const usePendingRewardsSolo = (
   }, [selectedToPayout]);
 
   return {
-    adaptiveDecimalPoint,
     eraToDate,
     estimatedFee,
     expandedRewards,

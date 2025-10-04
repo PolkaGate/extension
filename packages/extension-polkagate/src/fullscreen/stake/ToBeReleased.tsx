@@ -6,7 +6,7 @@ import type { DateAmount } from '../../hooks/useSoloStakingInfo';
 import { Container, Grid, Stack, Typography } from '@mui/material';
 import React from 'react';
 
-import { FormatBalance2, GradientButton, GradientDivider } from '../../components';
+import { DisplayBalance, GradientButton, GradientDivider } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
 import { formatTimestamp } from '../../util';
 import { DraggableModal } from '../components/DraggableModal';
@@ -45,18 +45,15 @@ export default function ToBeReleased ({ genesisHash, onClose, onRestake, toBeRel
                   <Typography color='text.highlight' variant='B-1' width='fit-content'>
                     {formatTimestamp(info.date, ['month', 'day', 'hours', 'minutes', 'ampm'])}
                   </Typography>
-                  <FormatBalance2
+                  <DisplayBalance
+                    balance={info.amount}
+                    decimal={decimal}
                     decimalPoint={2}
-                    decimals={[decimal ?? 0]}
                     style={{
                       color: '#ffffff',
-                      fontFamily: 'Inter',
-                      fontSize: '13px',
-                      fontWeight: 500,
                       width: 'max-content'
                     }}
-                    tokens={[token ?? '']}
-                    value={info.amount}
+                    token={token}
                   />
                 </Grid>
                 {!noDivider && <GradientDivider style={{ my: '4px' }} />}

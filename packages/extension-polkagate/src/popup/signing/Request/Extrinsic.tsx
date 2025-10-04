@@ -11,7 +11,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
-import { ChainLogo, DecisionButtons, FormatBalance2, FormatPrice, Identity2 } from '../../../components';
+import { ChainLogo, DecisionButtons, DisplayBalance, FormatPrice, Identity2 } from '../../../components';
 import { useAccountAssets, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useTokenPrice, useTranslation } from '../../../hooks';
 import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
@@ -136,15 +136,12 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
             <Typography color='#EAEBF1' variant='B-2'>
               {chainName}
             </Typography>
-            <Typography color='#BEAAD8' variant='B-4'>
-              {decimal && token &&
-                <FormatBalance2
-                  decimalPoint={2}
-                  decimals={[decimal]}
-                  tokens={[token]}
-                  value={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
-                />}
-            </Typography>
+            <DisplayBalance
+              balance={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
+              decimal={decimal}
+              style={{ color: '#BEAAD8', ...theme.typography['B-4'] }}
+              token={token}
+            />
           </Stack>
         </Stack>
       </Grid>

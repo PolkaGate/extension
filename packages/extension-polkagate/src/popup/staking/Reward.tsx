@@ -10,7 +10,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { AssetLogo, BackWithLabel, FadeOnScroll, FormatBalance2, Identity2, Motion, Progress } from '../../components';
+import { AssetLogo, BackWithLabel, DisplayBalance, FadeOnScroll, Identity2, Motion, Progress } from '../../components';
 import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewardsChart, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import getLogo2 from '../../util/getLogo2';
@@ -72,23 +72,23 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
         <Typography color='text.primary' textAlign='left' variant='B-2' width='15%'>
           {reward.era}
         </Typography>
-        <FormatBalance2
+        <DisplayBalance
+          balance={reward.amount}
+          decimal={decimal}
           decimalPoint={2}
-          decimals={[decimal ?? 0]}
           style={{
             color: theme.palette.text.primary,
             ...theme.typography['B-2'],
             textAlign: 'left',
             width: 'max-content'
           }}
+          token={token}
           tokenColor={theme.palette.text.highlight}
-          tokens={[token ?? '']}
-          value={reward.amount}
         />
         <ArrowDown2 color={theme.palette.text.highlight} size='14' style={{ rotate: isExpanded ? '180deg' : 'none', transition: 'all 150ms ease-out' }} />
       </Container>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', p: '8px 12px', position: 'relative', width: '100%' }}>
-        <Typography color='text.highlight' variant='B-1' width='fit-content' textAlign='left'>
+        <Typography color='text.highlight' textAlign='left' variant='B-1' width='fit-content'>
           {t('Reward source')}
         </Typography>
         {reward.poolId

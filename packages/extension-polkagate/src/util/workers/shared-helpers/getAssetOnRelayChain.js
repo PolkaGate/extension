@@ -38,6 +38,7 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
         chainName,
         decimal: api.registry.chainDecimals[0],
         genesisHash,
+        isNative: true,
         poolName,
         priceId,
         token: api.registry.chainTokens[0],

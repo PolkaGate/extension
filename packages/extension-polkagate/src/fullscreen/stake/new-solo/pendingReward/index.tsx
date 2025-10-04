@@ -5,7 +5,7 @@ import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material
 import React, { useCallback, useState } from 'react';
 
 import { Badge } from '../../../../assets/gif';
-import { DecisionButtons, FormatBalance2 } from '../../../../components';
+import { DecisionButtons, DisplayBalance } from '../../../../components';
 import { useChainInfo, usePendingRewardsSolo, useTranslation } from '../../../../hooks';
 import { PROXY_TYPE } from '../../../../util/constants';
 import StakingPopup from '../../partials/StakingPopup';
@@ -25,8 +25,7 @@ export default function PendingRewards ({ address, genesisHash, onClose }: Props
 
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.NONE);
 
-  const { adaptiveDecimalPoint,
-    eraToDate,
+  const { eraToDate,
     expandedRewards,
     onSelect,
     onSelectAll,
@@ -97,17 +96,17 @@ export default function PendingRewards ({ address, genesisHash, onClose }: Props
               <Typography color='#AA83DC' variant='B-4'>
                 {t('Total')}:
               </Typography>
-              <FormatBalance2
-                decimalPoint={adaptiveDecimalPoint}
-                decimals={[decimal ?? 0]}
+              <DisplayBalance
+                balance={totalSelectedPending}
+                decimal={decimal}
                 style={{
                   color: theme.palette.text.primary,
                   ...theme.typography['B-2'],
                   textAlign: 'right',
                   width: 'max-content'
                 }}
-                tokens={[token ?? '']}
-                value={totalSelectedPending}
+                token={token}
+                useAdaptiveDecimalPoint
               />
             </Container>
           </Container>

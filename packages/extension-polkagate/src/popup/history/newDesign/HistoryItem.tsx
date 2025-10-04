@@ -11,7 +11,7 @@ import HistoryIcon from '@polkadot/extension-polkagate/src/fullscreen/history/Hi
 import { historyIconBgColor, isReward, resolveActionType } from '@polkadot/extension-polkagate/src/util/index';
 import { BN_ZERO } from '@polkadot/util';
 
-import { FormatBalance2, FormatPrice, ScrollingTextBox } from '../../../components';
+import { DisplayBalance, FormatPrice, ScrollingTextBox } from '../../../components';
 import { useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import GradientDivider from '../../../style/GradientDivider';
 import { amountToMachine, calcPrice } from '../../../util';
@@ -169,16 +169,16 @@ function HistoryItem ({ historyDate, historyItems, short }: HistoryItemProps) {
                     historyItem={historyItem}
                   />
                   <Grid alignItems='flex-end' container direction='column' item width='fit-content'>
-                    <FormatBalance2
+                    <DisplayBalance
+                      balance={amountToMachine(historyItem.amount, historyItem.decimal ?? 0)}
+                      decimal={historyItem.decimal}
                       decimalPoint={2}
-                      decimals={[historyItem.decimal ?? 0]}
                       style={{
                         color: theme.palette.text.primary,
                         ...theme.typography['B-2'],
                         width: 'max-content'
                       }}
-                      tokens={[historyItem.token ?? '']}
-                      value={amountToMachine(historyItem.amount, historyItem.decimal ?? 0)}
+                      token={historyItem.token}
                     />
                     <HistoryStatusAmount historyItem={historyItem} short={short} />
                   </Grid>

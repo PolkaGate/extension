@@ -10,7 +10,7 @@ import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { AssetLogo, FormatBalance2, Identity2, Motion, Progress } from '../../components';
+import { AssetLogo, DisplayBalance, Identity2, Motion, Progress } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
 import getLogo2 from '../../util/getLogo2';
 import RewardConfigureButton from './new-solo/components/RewardConfigureButton';
@@ -177,30 +177,29 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
     <Collapse collapsedSize='48px' in={isExpanded} sx={{ bgcolor: '#060518', borderRadius: '14px', display: 'block' }}>
       <Container disableGutters onClick={handleExpand} sx={{ alignItems: 'center', bgcolor: '#060518', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '6px', pl: '18px', transition: 'all 150ms ease-out', width: '100%' }}>
         <Typography color='text.primary' textAlign='left' variant='B-2' width='40%'>
-          {new Date(reward.timeStamp * 1000).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
+          {new Date(reward.timeStamp * 1000).toLocaleDateString('en-US', { day: 'numeric', month: 'short', weekday: 'short', year: 'numeric' })}
         </Typography>
         <Typography color='text.secondary' textAlign='left' variant='B-2' width='15%'>
           {reward.era}
         </Typography>
-        <FormatBalance2
+        <DisplayBalance
+          balance={reward.amount}
+          decimal={decimal}
           decimalPoint={2}
-          decimals={[decimal ?? 0]}
           style={{
             color: theme.palette.text.primary,
             ...theme.typography['B-2'],
             textAlign: 'left',
             width: 'max-content'
           }}
-          tokenColor={theme.palette.text.primary}
-          tokens={[token ?? '']}
-          value={reward.amount}
+          token={token}
         />
         <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '36px', width: '36px' }}>
           <ArrowDown2 color='#AA83DC' size='14' style={{ rotate: isExpanded ? '180deg' : 'none', transition: 'all 150ms ease-out' }} variant='Bold' />
         </Grid>
       </Container>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', m: '6px', p: '8px 12px', position: 'relative', width: 'calc(100% - 12px)' }}>
-        <Typography color='#AA83DC' variant='B-1' width='fit-content' textAlign='left'>
+        <Typography color='#AA83DC' textAlign='left' variant='B-1' width='fit-content'>
           {t('Reward source')}
         </Typography>
         {reward.poolId
@@ -218,7 +217,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
               width: '330px'
             }}
             withShortAddress
-          />}
+            />}
       </Container>
     </Collapse>
   );
