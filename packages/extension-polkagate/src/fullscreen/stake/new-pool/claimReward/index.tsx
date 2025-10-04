@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 
 import { useClaimRewardPool, useTranslation } from '../../../../hooks';
-import { PROXY_TYPE } from '../../../../util/constants';
+import { PROCESSING_TITLE, PROXY_TYPE } from '../../../../util/constants';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../../util/utils';
 import ClaimRewardsPopup from './partials/ClaimRewardsPopup';
 
@@ -35,7 +35,11 @@ export default function ClaimReward ({ address, genesisHash, onClose }: Props): 
       setFlowStep={setFlowStep}
       setRestake={setRestake}
       showBack
-      title={t('Review')}
+      title={
+        flowStep === FULLSCREEN_STAKING_TX_FLOW.WAIT_SCREEN
+          ? t(PROCESSING_TITLE)
+          : t('Review')
+      }
       transaction={tx}
       transactionInformation={transactionInformation}
     />
