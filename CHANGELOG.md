@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.11.1](https://github.com/polkagate/extension/compare/v1.11.0...v1.11.1) (2025-10-04)
+
+
+### Bug Fixes
+
+* remove duplicate proxy address when account not found in extension ([61b34a6](https://github.com/polkagate/extension/commit/61b34a668d57ef956edca8f8d497ca9f2ec100a0)), closes [#1926](https://github.com/polkagate/extension/issues/1926)
+
 # [1.11.0](https://github.com/polkagate/extension/compare/v1.10.1...v1.11.0) (2025-10-04)
 
 
