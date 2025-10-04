@@ -58,8 +58,6 @@ export default function useParaSpellFeeCall (address: string | undefined, isRead
 
     Promise.all([builder.build(), builder.getTransferInfo()])
       .then(([tx, info]) => {
-        console.log('transfer info:', info);
-
         if (cancelled) {
           return;
         }
