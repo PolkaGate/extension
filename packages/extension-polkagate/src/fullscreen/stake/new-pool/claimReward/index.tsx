@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { useClaimRewardPool, useTranslation } from '../../../../hooks';
 import { PROCESSING_TITLE, PROXY_TYPE } from '../../../../util/constants';
@@ -23,6 +23,19 @@ export default function ClaimReward ({ address, genesisHash, onClose }: Props): 
 
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.REVIEW);
 
+  const title = useMemo(() => {
+    switch (flowStep) {
+      case FULLSCREEN_STAKING_TX_FLOW.WAIT_SCREEN:
+        return PROCESSING_TITLE;
+
+      case FULLSCREEN_STAKING_TX_FLOW.CONFIRMATION:
+        return t('Confirmation');
+
+      default:
+        return t('Review');
+    }
+  }, [flowStep, t]);
+
   return (
     <ClaimRewardsPopup
       address={address}
@@ -35,11 +48,7 @@ export default function ClaimReward ({ address, genesisHash, onClose }: Props): 
       setFlowStep={setFlowStep}
       setRestake={setRestake}
       showBack
-      title={
-        flowStep === FULLSCREEN_STAKING_TX_FLOW.WAIT_SCREEN
-          ? t(PROCESSING_TITLE)
-          : t('Review')
-      }
+      title={title}
       transaction={tx}
       transactionInformation={transactionInformation}
     />
