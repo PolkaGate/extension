@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.11.0](https://github.com/polkagate/extension/compare/v1.10.1...v1.11.0) (2025-10-04)
+
+
+### Features
+
+* add support for migrating Kusama hub ([#1932](https://github.com/polkagate/extension/issues/1932)) ([edb2e3a](https://github.com/polkagate/extension/commit/edb2e3ac5aff4f8d4945287c0aa359845acdb5b3))
+
 ## [1.10.1](https://github.com/polkagate/extension/compare/v1.10.0...v1.10.1) (2025-10-04)
 
 
