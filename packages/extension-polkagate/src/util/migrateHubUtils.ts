@@ -62,7 +62,8 @@ export function mapRelayToSystemGenesisIfMigrated (genesisHash: string | null | 
   return migratedRelaysToSystemChains[genesisHash]?.[type] ?? genesisHash;
 }
 
-/** Maps a system chain genesis hash to its corresponding relay chain genesis hash if applicable.
+/**
+ * Maps a system chain genesis hash to its corresponding relay chain genesis hash if applicable.
  * Supports all system chain types defined in relayToSystemChains for future extensibility.
  * @param systemGenesisHash - The genesis hash of the system chain (e.g., people, assetHub, etc).
  * @returns The relay chain genesis hash if a mapping exists; otherwise, returns the original genesis hash.
@@ -81,7 +82,8 @@ export function mapSystemToRelay (systemGenesisHash: string | undefined | null, 
   return systemGenesisHash;
 }
 
-/** Maps a assetHub genesis hash to its corresponding relay chain genesis hash if applicable.
+/**
+ * Maps a assetHub genesis hash to its corresponding relay chain genesis hash if applicable.
  * @param genesisHash - The original genesis hash of the assetHub chain.
  * @returns The relay chain genesis hash if a mapping exists; otherwise, returns the original genesis hash.
  */
@@ -93,7 +95,8 @@ export function mapHubToRelay (genesisHash: string | undefined | null): string |
   return hubToRelay?.[genesisHash] ?? genesisHash;
 }
 
-/** Checks if the provided genesis hash corresponds to a migrated relay chain.
+/**
+ * Checks if the provided genesis hash corresponds to a migrated relay chain.
  * @param genesisHash - The genesis hash to check.
  * @returns True if the genesis hash is in the list of migrated relays; otherwise, false.
  */
@@ -101,7 +104,8 @@ export function isMigratedRelay (genesisHash: string): boolean {
   return migratedRelaysSet.has(genesisHash);
 }
 
-/** Checks if the provided genesis hash corresponds to a migrated assetHub chain.
+/**
+ * Checks if the provided genesis hash corresponds to a migrated assetHub chain.
  * @param info - The genesis hash or assetHub chain name to check.
  * @returns True if the genesis hash has a mapping in hubToRelay; otherwise, false.
  */
@@ -116,13 +120,22 @@ export function isMigratedHub (info: string | undefined): boolean {
   );
 }
 
+/**
+ * Determines whether the given chain genesis hash belongs to a migrated chain.
+ * A chain is considered migrated if either:
+ * - It is listed as a migrated relay chain (`isMigratedRelay`), or
+ * - It corresponds to a migrated hub chain (`isMigratedHub`).
+ * @param genesisHash - The genesis hash of the chain to check.
+ * @returns `true` if the chain is migrated; otherwise `false`.
+ */
 export function isMigrated (genesisHash: string): boolean {
   return isMigratedRelay(genesisHash) || isMigratedHub(genesisHash);
 }
 
 /**
  * Checks if a chain is considered migrated based on its name.
- * Returns true for chains like "westend" and "westendAssetHub".
+ * @param name - The chain name of the chain to check.
+ * @returns true for chains like "westend" and "westendAssetHub".
  */
 export function isMigratedByChainName (name: string): boolean {
   const lcName = name.toLowerCase();
@@ -136,7 +149,8 @@ export function isMigratedByChainName (name: string): boolean {
   return migratedRelayNames.some((relayName) => lcName === relayName);
 }
 
-/** Resolves the appropriate staking asset ID based on the provided genesis hash.
+/**
+ * Resolves the appropriate staking asset ID based on the provided genesis hash.
  * If the genesis hash corresponds to a migrated relay chain, it returns the asset ID for the
  * native token on AssetHub; otherwise, it returns the standard native token asset ID.
  * @param genesisHash - The genesis hash of the chain.
@@ -152,6 +166,11 @@ export function resolveStakingAssetId (genesisHash: string | undefined): string 
     : `${NATIVE_TOKEN_ASSET_ID}`;
 }
 
+/**
+ * Checks if the given genesis hash belongs to a staking-enabled chain.
+ * @param genesisHash - The genesis hash of the chain to check.
+ * @returns `true` if the chain supports staking, otherwise `false`.
+ */
 export function isStakingChain (genesisHash: string | undefined): boolean | undefined {
   if (!genesisHash) {
     return;
@@ -160,6 +179,14 @@ export function isStakingChain (genesisHash: string | undefined): boolean | unde
   return STAKING_CHAINS.includes(genesisHash);
 }
 
+/**
+ * Determines whether a given system chain genesis hash belongs to a specific relay chain.
+ * Looks up the relay's system chains from `relayToSystemChains` and checks if the
+ * provided `systemChainGenesis` matches any of them (e.g., hub, people, assetHub).
+ * @param systemChainGenesis - The genesis hash of the system chain to check.
+ * @param relayGenesis - The genesis hash of the relay chain to check against.
+ * @returns `true` if the system chain belongs to the given relay,`false` if it does not, or `undefined` if the relay genesis is not provided or not recognized.
+ */
 export function isSystemChain (systemChainGenesis: string | undefined, relayGenesis: string | undefined): boolean | undefined {
   if (!relayGenesis) {
     return;
@@ -176,7 +203,6 @@ export function isSystemChain (systemChainGenesis: string | undefined, relayGene
 
 /**
  * Extracts the base relay chain name from a system chain name.
- *
  * For example, "westendAssetHub" or "westendPeople" will return "westend".
  * Optionally, only performs extraction if the chain is considered migrated.
  *

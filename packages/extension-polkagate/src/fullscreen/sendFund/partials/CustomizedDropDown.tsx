@@ -11,7 +11,8 @@ import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { AssetLogo } from '../../../components';
 import { useIsHovered } from '../../../hooks';
 
-const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'preferredWidth' })(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
+const DropContentContainer = styled(Grid,
+  { shouldForwardProp: (prop) => prop !== 'preferredWidth' && prop !== 'isSmall' })(({ isSmall, preferredWidth }: { isSmall?: boolean, preferredWidth: number | undefined }) => ({
   background: '#05091C',
   border: '4px solid',
   borderColor: '#1B133C',
@@ -22,14 +23,22 @@ const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !=
   marginTop: '4px',
   maxHeight: '400px',
   minWidth: '197px',
-  overflow: 'hidden',
+  overflow: 'auto',
   padding: '6px',
-  rowGap: '4px',
+  rowGap: isSmall ? '7px' : '4px',
   transition: 'all 250ms ease-out',
   width: `${preferredWidth}px`
 }));
 
-function Row ({ assetId, genesisHash, setSelectedAsset, token }: { assetId: string, token: string, genesisHash: string, setSelectedAsset: React.Dispatch<React.SetStateAction<string | undefined>> }): React.ReactElement {
+interface RowProps {
+  assetId: string,
+  isSmall?: boolean,
+  token: string,
+  genesisHash: string,
+  setSelectedAsset: React.Dispatch<React.SetStateAction<string | undefined>>
+}
+
+function Row ({ assetId, genesisHash, isSmall, setSelectedAsset, token }: RowProps): React.ReactElement {
   const refContainer = useRef(null);
   const hovered = useIsHovered(refContainer);
 
@@ -44,8 +53,8 @@ function Row ({ assetId, genesisHash, setSelectedAsset, token }: { assetId: stri
       alignItems='center' columnGap='5px' direction='row' justifyContent='space-between' onClick={onClick} ref={refContainer}
       sx={{ backgroundColor: hovered ? '#6743944D' : 'transparent', borderRadius: '8px', cursor: 'pointer', height: '40px', px: '5px', width: '100%' }}
     >
-      <AssetLogo assetSize='28px' genesisHash={genesisHash} logo={logoInfo?.logo} />
-      <Typography color={hovered ? '#FF4FB9' : '#EAEBF1'} sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }} variant='B-2'>
+      <AssetLogo assetSize={isSmall ? '18px' : '28px'} genesisHash={genesisHash} logo={logoInfo?.logo} />
+      <Typography color={hovered ? '#FF4FB9' : '#EAEBF1'} sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }} variant={isSmall ? 'B-1' : 'B-2'}>
         {token}
       </Typography>
     </Stack>
@@ -56,12 +65,13 @@ interface DropContentProps {
   assets: Partial<FetchedBalance>[]
   containerRef: React.RefObject<HTMLDivElement | null>;
   contentDropWidth?: number | undefined;
+  isSmall?: boolean;
   open: boolean;
   setSelectedAsset: React.Dispatch<React.SetStateAction<string | undefined>>;
   style?: CSSProperties;
 }
 
-export default function CustomizedDropDown ({ assets, containerRef, contentDropWidth, open, setSelectedAsset, style = {} }: DropContentProps) {
+export default function CustomizedDropDown ({ assets, containerRef, contentDropWidth, isSmall, open, setSelectedAsset, style = {} }: DropContentProps) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 
@@ -88,12 +98,13 @@ export default function CustomizedDropDown ({ assets, containerRef, contentDropW
         vertical: 'top'
       }}
     >
-      <DropContentContainer container direction='column' item preferredWidth={contentDropWidth}>
+      <DropContentContainer container direction='column' isSmall={isSmall} item preferredWidth={contentDropWidth}>
         {assets.map(({ assetId, genesisHash, token }, index) => {
           return (
             <Row
               assetId={String(assetId)}
               genesisHash={genesisHash ?? ''}
+              isSmall={isSmall}
               key={index}
               setSelectedAsset={setSelectedAsset}
               token={token ?? ''}

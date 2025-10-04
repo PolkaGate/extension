@@ -1,12 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
+// @ts-nocheck
 import { getAssetsObject } from '@paraspell/sdk-pjs';
 
+import { getSubstrateAddress } from '../../address';
 import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
 import { toTitleCase } from '../../string';
-import { getSubstrateAddress } from '../../address';
 // eslint-disable-next-line import/extensions
 import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
 
@@ -38,7 +38,11 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
     }
 
     // @ts-ignore
-    const formatted = entry[0].toHuman()[0];
+    const [formatted, assetIdRaw] = entry[0].toHuman() ?? [];
+
+    // ensure assetId is a string and remove commas
+    const assetId = assetIdRaw?.toString().replace(/,/g, '');
+
     const storageKey = entry[0].toString();
 
     // @ts-ignore
@@ -74,7 +78,7 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
 
       const asset = {
         ED: maybeAssetInfo?.extras?.existentialDeposit ?? maybeAssetInfo?.existentialDeposit,
-        assetId: maybeAssetInfo.id,
+        assetId: assetId ?? maybeAssetInfo.id,
         balanceDetails: balancifyAsset(balance),
         chainName,
         decimal: maybeAssetInfo.decimal,

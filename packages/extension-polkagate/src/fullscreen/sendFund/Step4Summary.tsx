@@ -75,16 +75,13 @@ export default function Step4Summary ({ canPayFee, inputs, setInputs }: Props): 
           label={t('To')}
         />
       </Stack>
-      <Stack direction='column' sx={{ m: '25px 10px 20px', width: '766px' }}>
-        <FeeRow
-          address={address}
-          canPayFee={canPayFee}
-          genesisHash={genesisHash}
-          inputs={inputs}
-          setInputs={setInputs}
-        />
-        <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', my: '10px', width: '766px' }} />
-      </Stack>
+      <FeeRow
+        address={address}
+        canPayFee={canPayFee}
+        genesisHash={genesisHash}
+        inputs={inputs}
+        setInputs={setInputs}
+      />
     </Motion>
   );
 }

@@ -47,6 +47,7 @@ export async function toGetNativeToken (addresses, api, chainName) {
       chainName,
       decimal: api.registry.chainDecimals[0],
       genesisHash,
+      isNative: true,
       poolName: maybeStakingTotals?.pooled?.poolName,
       poolReward: maybeStakingTotals?.pooled?.poolReward ?? BN_ZERO,
       pooledBalance: maybeStakingTotals?.pooled?.pooledBalance ?? BN_ZERO,

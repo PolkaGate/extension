@@ -922,6 +922,7 @@ export interface FetchedBalance {
   frozenFee?: BN,
   frozenMisc?: BN,
   genesisHash: string,
+  isNative?: boolean;
   lockedBalance?: BN,
   poolName?: string,
   priceId: string,

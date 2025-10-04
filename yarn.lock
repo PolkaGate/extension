@@ -2407,50 +2407,50 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@paraspell/assets@npm:11.7.2":
-  version: 11.7.2
-  resolution: "@paraspell/assets@npm:11.7.2"
+"@paraspell/assets@npm:11.8.5":
+  version: 11.8.5
+  resolution: "@paraspell/assets@npm:11.8.5"
   dependencies:
-    "@paraspell/sdk-common": "npm:11.7.2"
-  checksum: 10/c3ce5a2c4d488b58fabfe3255310c2b62aa40469193e23279e7147f28e3e0da70c1ac31d11009c2e15fe1a6fe13282fc485a605db45a596516b9783383a5800c
+    "@paraspell/sdk-common": "npm:11.8.5"
+  checksum: 10/c43cc030ff7e14c0717a22ece0d36e71e51d3c07431a03c57b342946d7b8fec951a3adc1ffd5e333cc5d328fd04a34e90637b143f3454751728b6478f7484c03
   languageName: node
   linkType: hard
 
-"@paraspell/pallets@npm:11.7.2":
-  version: 11.7.2
-  resolution: "@paraspell/pallets@npm:11.7.2"
+"@paraspell/pallets@npm:11.8.5":
+  version: 11.8.5
+  resolution: "@paraspell/pallets@npm:11.8.5"
   dependencies:
-    "@paraspell/sdk-common": "npm:11.7.2"
-  checksum: 10/7c38a5c2a3074ffe90a608c40edcde4228411e98278b0d5da20e5b2e5c61c4de39eca5e0f380254ffa6ffe6680a3349c8b059dc1f65944ab6ad6e89f01aa05aa
+    "@paraspell/sdk-common": "npm:11.8.5"
+  checksum: 10/a14fa6ab2b61923328e02e286040c7034dd882dc17057c620b3979e7c6519e2abb9c6c0f3ad51b77947caeacb4ce8ae145ae63aaa6b073662dccbf0d3cd032f6
   languageName: node
   linkType: hard
 
-"@paraspell/sdk-common@npm:11.7.2":
-  version: 11.7.2
-  resolution: "@paraspell/sdk-common@npm:11.7.2"
-  checksum: 10/91c7c4b2ac55ba73daf5d3ca83711a3a58ccce6a2c3acfde7709af0c9bef952000ca4ce0ba4fe6dae44fff540e0060979e3a5ca2081a6b36bc7cd7070b4d0867
+"@paraspell/sdk-common@npm:11.8.5":
+  version: 11.8.5
+  resolution: "@paraspell/sdk-common@npm:11.8.5"
+  checksum: 10/0ee30e2fa449a92da21c7ac742dd346d1697339119014ae3fc6a2ab887505e26fe689cf004bf8d33875edbc2da67a660a7518f7b3c1dcef7e4d5e5c54ac3b448
   languageName: node
   linkType: hard
 
-"@paraspell/sdk-core@npm:11.7.2":
-  version: 11.7.2
-  resolution: "@paraspell/sdk-core@npm:11.7.2"
+"@paraspell/sdk-core@npm:11.8.5":
+  version: 11.8.5
+  resolution: "@paraspell/sdk-core@npm:11.8.5"
   dependencies:
     "@noble/hashes": "npm:^1.8.0"
-    "@paraspell/assets": "npm:11.7.2"
-    "@paraspell/pallets": "npm:11.7.2"
-    "@paraspell/sdk-common": "npm:11.7.2"
+    "@paraspell/assets": "npm:11.8.5"
+    "@paraspell/pallets": "npm:11.8.5"
+    "@paraspell/sdk-common": "npm:11.8.5"
     "@scure/base": "npm:^2.0.0"
     viem: "npm:^2.36.0"
-  checksum: 10/15db5b5fbc86a6ce480a2db7852eb2efe31e5d7f2a46e019795128026fd3c300cccaeb92f4f43d9fc94323d35eb7d6b0f954cb4500e3f89850b85f954d41d30b
+  checksum: 10/a138fe17a7db0122339efb56855b9e87b06a0ffa7aab6ff37246ec94b29df704882fcaa695062b3a09ddca4b2b1ddb34ffc737dc02fd8acca46898642cc5fd67
   languageName: node
   linkType: hard
 
-"@paraspell/sdk-pjs@npm:^11.7.2":
-  version: 11.7.2
-  resolution: "@paraspell/sdk-pjs@npm:11.7.2"
+"@paraspell/sdk-pjs@npm:^11.8.5":
+  version: 11.8.5
+  resolution: "@paraspell/sdk-pjs@npm:11.8.5"
   dependencies:
-    "@paraspell/sdk-core": "npm:11.7.2"
+    "@paraspell/sdk-core": "npm:11.8.5"
     "@snowbridge/api": "npm:0.2.0"
     "@snowbridge/contract-types": "npm:0.2.0"
     ethers: "npm:^6.15.0"
@@ -2461,7 +2461,7 @@ __metadata:
     "@polkadot/types": ">= 16.0 < 17"
     "@polkadot/util": ">= 13"
     "@polkadot/util-crypto": ">= 13"
-  checksum: 10/f18797dab0928241aa10717076491503fb793aac46ecb028e679406c1f35295cd54967a216617c3fbdeb92a56d154e9e7fd4b95d1e4f1619e57ac3ce873c9181
+  checksum: 10/f1b6f652963be07c60d252fc25e24f902d595be92bdcb1fe502b369f5ffaf23294191704a62785cafb1f5fcc272826e6e7f8cb44859804aa7f3e2ca27368277a
   languageName: node
   linkType: hard
 
@@ -19448,7 +19448,7 @@ __metadata:
     "@mui/icons-material": "npm:^5.15.18"
     "@mui/lab": "npm:^5.0.0-alpha.85"
     "@mui/material": "npm:^5.8.3"
-    "@paraspell/sdk-pjs": "npm:^11.7.2"
+    "@paraspell/sdk-pjs": "npm:^11.8.5"
     "@polkadot/api": "npm:^16.4.6"
     "@polkadot/api-augment": "npm:^16.4.6"
     "@polkadot/api-base": "npm:^16.4.6"
