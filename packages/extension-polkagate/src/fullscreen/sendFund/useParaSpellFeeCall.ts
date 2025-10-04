@@ -80,9 +80,11 @@ export default function useParaSpellFeeCall (address: string | undefined, isRead
       return () => {
         cancelled = true;
       };
-    } catch (error) {
+    } catch (error: any) {
       setError('Something went wrong while calculating estimated fee, try again later!');
-      console.log('Something went wrong:', error?.message)
+      console.log('Something went wrong:', error?.message);
+
+      return;
     }
   }, [api, address, senderChainName, genesisHash, isReadyToMakeTx, setError, assetId, token, recipientChain?.text, recipientAddress, amountAsBN]);
 
