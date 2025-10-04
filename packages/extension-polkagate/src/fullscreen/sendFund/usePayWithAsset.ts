@@ -23,8 +23,8 @@ import { normalizeChainName } from './utils';
 function normalizeMultiLocation (location: TLocation): TLocation {
   let { interior, parents } = location;
   const keys: (keyof TJunctions)[] = [
-  'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'X8'
-];
+    'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'X8'
+  ];
 
   // Find the actual Xn array
   let currentEntries: TJunction[] = [];
@@ -51,6 +51,13 @@ function normalizeMultiLocation (location: TLocation): TLocation {
     parents = 0;
   }
 
+  if (!hasLocal && currentEntries.length === 1) {
+    return {
+      interior: { X1: currentEntries[0] },
+      parents
+    };
+  }
+
   // Build X2 with exactly two relevant entries
   const x2: TJunction[] = [];
 
@@ -69,6 +76,19 @@ function normalizeMultiLocation (location: TLocation): TLocation {
     }
   }
 
+  // Validate x2 has correct number of entries
+  if (x2.length === 0) {
+    // Fallback to original location if normalization fails
+    return location;
+  }
+
+  if (x2.length === 1) {
+    return {
+      interior: { X1: x2[0] },
+      parents
+    };
+  }
+
   return {
     interior: {
       X2: x2
@@ -83,15 +103,21 @@ export default function usePayWithAsset (chainName: string | undefined): Omit<TA
       return;
     }
 
-    const normalizedChainName = normalizeChainName(chainName) as TChain;
+    try {
+      const normalizedChainName = normalizeChainName(chainName) as TChain;
 
-    const feeAssets = getFeeAssets(normalizedChainName);
+      const feeAssets = getFeeAssets(normalizedChainName);
 
-    const normalizedFeeAssets = feeAssets.map((a) => ({
-      ...a,
-      location: a.location ? normalizeMultiLocation(a.location) : a.location
-    }));
+      const normalizedFeeAssets = feeAssets.map((a) => ({
+        ...a,
+        location: a.location ? normalizeMultiLocation(a.location) : a.location
+      }));
 
-    return normalizedFeeAssets;
+      return normalizedFeeAssets;
+    } catch (error) {
+      console.error(`Failed to get fee assets for ${chainName}:`, error);
+
+      return undefined;
+    }
   }, [chainName]);
 }
