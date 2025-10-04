@@ -15,13 +15,28 @@ import { toCamelCase } from '.';
 const endpoints = createWsEndpoints();
 
 export interface LogoInfo {
+  color?: string | undefined;
   logo?: string | undefined;
   logoSquare?: string | undefined;
-  color?: string | undefined;
   subLogo?: string;
 }
 
-// info can be a chain name, genesishash or even an external dapp or web site name, but if info is a genesishash we must have the token as well
+/**
+ * Returns logo information (including optional square logo, color, and subLogo)
+ * for a given chain or token based on its genesis hash or name.
+ *
+ * @param info - The genesis hash or chain identifier.
+ * @param token - Optional token symbol to fetch specific asset logo info.
+ * @returns LogoInfo object containing logo details or undefined if not found.
+ *
+ * @example
+ * ```ts
+ * const logo = getLogo2('0x1234...', 'DOT');
+ * if (logo) {
+ *   console.log(logo.logo, logo.color);
+ * }
+ * ```
+ */
 export default function getLogo2 (info: string | undefined | null, token?: string): LogoInfo | undefined {
   if (!info) {
     return;
@@ -35,6 +50,14 @@ export default function getLogo2 (info: string | undefined | null, token?: strin
     const networkMap = getNetworkMap();
 
     chainNameFromGenesisHash = networkMap.get(_info || '');
+
+    if (!chainNameFromGenesisHash) {
+      // check if info  is a chain name and exists. in the map
+      const entry = Array.from(networkMap.entries())
+        .find(([, value]) => value.toLowerCase() === (_info || '').toLowerCase());
+
+      chainNameFromGenesisHash = entry?.[1];
+    }
 
     if (!chainNameFromGenesisHash) {
       return undefined;

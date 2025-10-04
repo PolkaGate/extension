@@ -3,12 +3,15 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
+import type { AnyNumber } from '@polkadot/types-codec/types';
+import type { BN } from '@polkadot/util';
 
-import { getParaId, getRelayChainSymbol, hasSupportForAsset, SUBSTRATE_CHAINS, type TSubstrateChain } from '@paraspell/sdk-pjs';
+import { getParaId, getRelayChainSymbol, hasSupportForAsset, isTLocation, Native, SUBSTRATE_CHAINS, type TCurrencyCore, type TSubstrateChain } from '@paraspell/sdk-pjs';
 
-import { isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
+import { decodeMultiLocation, isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
 import { NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import { isMigratedByChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { isHex } from '@polkadot/util';
 
 export const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 export const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
@@ -83,3 +86,40 @@ export function isNativeAsset (api: ApiPromise, token: string, assetId: number |
 
   return nativeTokens.includes(token);
 }
+
+export function getCurrency (api: ApiPromise, token: string, assetId: number | string): TCurrencyCore {
+  if (isNativeAsset(api, token, assetId)) {
+    return { symbol: Native(token) };
+  }
+
+  if (isHex(assetId)) {
+    const location = decodeMultiLocation(assetId);
+
+    if (isTLocation(location)) {
+      return { location };
+    }
+  }
+
+  return { id: assetId };
+}
+
+export const getLocation = (api: ApiPromise, id: BN): AnyNumber | object | undefined => {
+  const metadata = api.registry.metadata;
+  const assetsPallet = metadata.pallets.filter((a) => a.name.toString() === 'Assets');
+
+   if (assetsPallet?.[0].index === undefined) {
+    console.warn('Assets pallet not found in metadata; cannot build location for asset id', id.toString());
+
+    return undefined;
+  }
+
+const palletIndex = assetsPallet[0].index.toString();
+  // FIX ME: it may not be applicable for all chains
+  const palletInstance = { PalletInstance: palletIndex };
+  const generalIndex = { GeneralIndex: id };
+
+  return {
+    interior: { X2: [palletInstance, generalIndex] },
+    parents: 0
+  };
+};
