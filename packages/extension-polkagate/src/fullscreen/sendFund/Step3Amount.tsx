@@ -108,7 +108,9 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
         const currency = getCurrency(api, token, assetId);
         const mayBeEDasBN = getExistentialDeposit(_senderChainName as TChain, currency);
 
-        maybeED = mayBeEDasBN ? amountToHuman(mayBeEDasBN, decimal) : maybeED;
+        if (mayBeEDasBN && decimal !== undefined) {
+          maybeED = amountToHuman(mayBeEDasBN, decimal);
+        }
       }
 
       return maybeED;
