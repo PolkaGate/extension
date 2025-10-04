@@ -849,5 +849,12 @@
   "Already have accounts": "पहले से खाते हैं",
   "have accounts": "खाते हैं",
   "If you already have accounts, you can import them using your preferred method. For batch imports, you can restore multiple accounts from a file.": "यदि आपके पास पहले से खाते हैं, तो आप उन्हें अपनी पसंदीदा विधि का उपयोग करके आयात कर सकते हैं। बैच आयात के लिए, आप फ़ाइल से कई खातों को पुनर्स्थापित कर सकते हैं।",
-  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your account. Keep it carefully to not lose your assets.": "नया खाता बनाने के लिए आपको 12 शब्दों का एक रिकवरी वाक्यांश दिया जाता है जिसे लिखकर सुरक्षित स्थान पर रखना आवश्यक है। इस रिकवरी वाक्यांश का उपयोग करके आप अपना खाता पुनः प्राप्त कर सकते हैं। इसे सावधानीपूर्वक सुरक्षित रखें ताकि आप अपनी संपत्ति न खोएं।"
+  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your account. Keep it carefully to not lose your assets.": "नया खाता बनाने के लिए आपको 12 शब्दों का एक रिकवरी वाक्यांश दिया जाता है जिसे लिखकर सुरक्षित स्थान पर रखना आवश्यक है। इस रिकवरी वाक्यांश का उपयोग करके आप अपना खाता पुनः प्राप्त कर सकते हैं। इसे सावधानीपूर्वक सुरक्षित रखें ताकि आप अपनी संपत्ति न खोएं।",
+  "This is a watch-only account. Checking if this account has proxy accounts.": "यह केवल देखने वाला खाता है। जांच रहा है कि इस खाते के पास प्रॉक्सी खाते हैं या नहीं।",
+  "Click to reveal — make sure no one is watching!": "प्रकट करने के लिए क्लिक करें — सुनिश्चित करें कि कोई देख नहीं रहा है!",
+  "Unlocks on {{dateString}}": "{{dateString}} को अनलॉक होगा",
+  "Unlock Amount": "अनलॉक राशि",
+  "Unlocking Amount": "अनलॉक हो रही राशि",
+  "Network fee": "नेटवर्क शुल्क",
+  "Cross-chain fee": "क्रॉस-चेन शुल्क"
 }

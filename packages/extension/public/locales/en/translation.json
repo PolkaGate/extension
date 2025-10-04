@@ -809,5 +809,7 @@
   "Click to reveal — make sure no one is watching!": "",
   "Unlocks on {{dateString}}": "",
   "Unlock Amount": "",
-  "Unlocking Amount": ""
+  "Unlocking Amount": "",
+  "Network fee": "",
+  "Cross-chain fee": ""
 }

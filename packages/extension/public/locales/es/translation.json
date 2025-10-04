@@ -850,5 +850,12 @@
   "Already have accounts": "¿Ya tienes cuentas?",
   "have accounts": "tienes cuentas",
   "If you already have accounts, you can import them using your preferred method. For batch imports, you can restore multiple accounts from a file.": "Si ya tienes cuentas, puedes importarlas usando tu método preferido. Para importaciones en lote, puedes restaurar varias cuentas desde un archivo.",
-  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your account. Keep it carefully to not lose your assets.": "Para crear una nueva cuenta se te proporciona una frase de recuperación de 12 palabras que debe registrarse y guardarse en un lugar seguro. La frase de recuperación se puede usar para restaurar tu cuenta. Guárdala con cuidado para no perder tus activos."
+  "In order to create a new account you are given a 12-word recovery phrase which needs to be recorded and saved in a safe place. The recovery phrase can be used to restore your account. Keep it carefully to not lose your assets.": "Para crear una nueva cuenta se te proporciona una frase de recuperación de 12 palabras que debe registrarse y guardarse en un lugar seguro. La frase de recuperación se puede usar para restaurar tu cuenta. Guárdala con cuidado para no perder tus activos.",
+  "This is a watch-only account. Checking if this account has proxy accounts.": "Esta es una cuenta solo de observación. Comprobando si esta cuenta tiene cuentas proxy.",
+  "Click to reveal — make sure no one is watching!": "Haz clic para revelar — ¡asegúrate de que nadie esté mirando!",
+  "Unlocks on {{dateString}}": "Se desbloquea el {{dateString}}",
+  "Unlock Amount": "Cantidad a desbloquear",
+  "Unlocking Amount": "Cantidad en proceso de desbloqueo",
+  "Network fee": "Tarifa de red",
+  "Cross-chain fee": "Tarifa de cadena cruzada"
 }
