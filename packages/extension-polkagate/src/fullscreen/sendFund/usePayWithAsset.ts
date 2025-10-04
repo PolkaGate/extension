@@ -22,8 +22,10 @@ import { normalizeChainName } from './utils';
  */
 function normalizeMultiLocation (location: TLocation): TLocation {
   let { interior, parents } = location;
-
-  const keys = Object.keys({} as TJunctions).filter((k) => k !== 'Here') as (keyof TJunctions)[];
+  const keys: (keyof TJunctions)[] = [
+  'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'X8'
+];
+  console.log('location:', location, keys)
 
   // Find the actual Xn array
   let currentEntries: TJunction[] = [];
