@@ -1,0 +1,100 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import type { NotificationMessageType } from '../types';
+
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
+import React, { Fragment } from 'react';
+
+import { GradientDivider, ScrollingTextBox, TwoToneText } from '@polkadot/extension-polkagate/src/components';
+import { useAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { toShortAddress } from '@polkadot/extension-polkagate/src/util';
+
+import { getNotificationDescription, getNotificationItemTitle, getTimeOfDay, isToday } from '../util';
+
+function ItemDate ({ date }: { date: string; }) {
+  const theme = useTheme();
+  const isTodayDate = isToday(date);
+
+  return (
+    <Typography
+      color={isTodayDate ? theme.palette.text.secondary : theme.palette.menuIcon.hover}
+      sx={{ bgcolor: isTodayDate ? '#FF4FB926' : '#C6AECC26', borderRadius: '9px', p: '2px 4px', width: 'fit-content' }}
+      variant='B-2'
+    >
+      {date}
+    </Typography>
+  );
+}
+
+function TitleTime ({ address, read, time, title }: { address: string | undefined; read: boolean; time: string; title: string; }) {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const account = useAccount(address);
+
+  return (
+    <Stack direction='row' sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+      <Grid container item sx={{ alignItems: 'center', gap: '4px', width: 'fit-content' }}>
+        <Typography color={theme.palette.text.primary} variant='B-2'>
+          {title}
+        </Typography>
+        {!read && <Grid sx={{ bgcolor: theme.palette.menuIcon.hover, borderRadius: '999px', height: '8px', width: '8px' }} />}
+        <ScrollingTextBox
+          text={account?.name ?? toShortAddress(address) ?? t('Unknown')}
+          textStyle={{ ...theme.typography['B-1'] }}
+          width={80}
+        />
+      </Grid>
+      <Typography color='#674394' variant='B-1'>
+        {time}
+      </Typography>
+    </Stack>
+  );
+}
+
+function NotificationItem ({ item }: { item: NotificationMessageType; }) {
+  const theme = useTheme();
+
+  const title = getNotificationItemTitle(item.type, item.referenda);
+  const time = getTimeOfDay(item.payout?.timestamp ?? item.receivedFund?.timestamp ?? Date.now()); //  ?? item.referenda?.timestamp
+  const { text, textInColor } = getNotificationDescription(item);
+
+  return (
+    <Stack direction='row' sx={{ width: '100%' }}>
+      <Stack direction='column'>
+        <TitleTime
+          address={item.forAccount}
+          read={item.read}
+          time={time}
+          title={title}
+        />
+        <TwoToneText
+          color={theme.palette.text.secondary}
+          style={{ color: theme.palette.text.secondary, width: 'fit-content', ...theme.typography['B-4'] }}
+          text={text}
+          textPartInColor={textInColor as string}
+        />
+      </Stack>
+    </Stack>
+  );
+}
+
+function NotificationGroup ({ group: [dateKey, items] }: { group: [string, NotificationMessageType[]]; }) {
+  return (
+    <Stack direction='column' sx={{ bgcolor: '#05091C', borderRadius: '14px', gap: '8px', p: '10px', width: '100%' }}>
+      <ItemDate date={dateKey} />
+      {items.map((item, index) => (
+        <Fragment key={item.extrinsicIndex}>
+          <NotificationItem
+            item={item}
+          />
+          {items.length > index + 1 &&
+            <GradientDivider style={{ mx: '-10px', my: '2px' }} />
+          }
+        </Fragment>
+      ))}
+    </Stack>
+  );
+}
+
+export default NotificationGroup;
