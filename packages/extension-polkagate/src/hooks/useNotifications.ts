@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ReferendaStatus } from '../popup/notification/constant';
 import type { NotificationSettingType } from '../popup/notification/NotificationSettings';
 import type { DropdownOption } from '../util/types';
 
@@ -10,55 +9,13 @@ import { useCallback, useContext, useEffect, useMemo, useReducer, useRef, useSta
 import { AccountContext } from '../components';
 import { getStorage, setStorage } from '../components/Loading';
 import { DEFAULT_NOTIFICATION_SETTING, KUSAMA_NOTIFICATION_CHAIN, MAX_ACCOUNT_COUNT_NOTIFICATION, SUBSCAN_SUPPORTED_CHAINS } from '../popup/notification/constant';
-import { generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, getPayoutsInformation, getReceivedFundsInformation, markMessagesAsRead, type PayoutsProp, type ReceivedFundInformation, type StakingRewardInformation, type TransfersProp, updateReferendas } from '../popup/notification/util';
+import { generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, markMessagesAsRead, updateReferendas } from '../popup/notification/util';
 import { sanitizeChainName } from '../util';
 import { KUSAMA_GENESIS_HASH, STORAGE_KEY } from '../util/constants';
 import { useWorker } from './useWorker';
 import { useGenesisHashOptions, useSelectedChains } from '.';
-
-interface WorkerMessage {
-  functionName: string;
-  message: {
-    type: 'referenda';
-    chainGenesis: string;
-    data: { refId: number; status: ReferendaStatus; }[];
-  }
-}
-
-export interface ReferendaNotificationType {
-  status?: ReferendaStatus;
-  refId?: number;
-  chainName: string;
-}
-
-export interface NotificationMessageType {
-  chain?: DropdownOption;
-  type: 'referenda' | 'stakingReward' | 'receivedFund';
-  payout?: PayoutsProp;
-  referenda?: ReferendaNotificationType;
-  receivedFund?: TransfersProp;
-  forAccount?: string;
-  extrinsicIndex?: string;
-  read: boolean;
-}
-
-export interface NotificationsType {
-  notificationMessages: NotificationMessageType[] | undefined;
-  referendas: ReferendaNotificationType[] | null | undefined;
-  receivedFunds: ReceivedFundInformation[] | null | undefined;
-  stakingRewards: StakingRewardInformation[] | null | undefined;
-  latestLoggedIn: number | undefined;
-  isFirstTime: boolean | undefined;
-}
-
-type NotificationActionType =
-  | { type: 'INITIALIZE'; }
-  | { type: 'CHECK_FIRST_TIME'; }
-  | { type: 'MARK_AS_READ'; }
-  | { type: 'LOAD_FROM_STORAGE'; payload: NotificationsType }
-  | { type: 'SET_REFERENDA'; payload: ReferendaNotificationType[] }
-  | { type: 'SET_RECEIVED_FUNDS'; payload: NotificationsType['receivedFunds'] }
-  | { type: 'SET_STAKING_REWARDS'; payload: NotificationsType['stakingRewards'] };
+import type { NotificationActionType, NotificationsType, WorkerMessage } from '../popup/notification/types';
+import { getPayoutsInformation, getReceivedFundsInformation } from '../popup/notification/helpers';
 
 const initialNotificationState: NotificationsType = {
   isFirstTime: undefined,
@@ -75,9 +32,10 @@ const notificationReducer = (
 ): NotificationsType => {
   switch (action.type) {
     case 'INITIALIZE':
+      // Initialize notifications for the first time
       return {
         isFirstTime: true,
-        latestLoggedIn: Math.floor(Date.now() / 1000), // timestamp must be in seconds not in milliseconds
+        latestLoggedIn: Math.floor(Date.now() / 1000), // timestamp in seconds
         notificationMessages: [],
         receivedFunds: null,
         referendas: null,
@@ -85,9 +43,11 @@ const notificationReducer = (
       };
 
     case 'CHECK_FIRST_TIME':
+      // Mark as first time
       return { ...state, isFirstTime: true };
 
     case 'MARK_AS_READ':
+      // Mark all messages as read
       return { ...state, notificationMessages: markMessagesAsRead(state.notificationMessages ?? []) };
 
     case 'LOAD_FROM_STORAGE':
@@ -134,17 +94,37 @@ enum status {
   FETCHED
 }
 
+/**
+ * React hook for managing notification settings and state.
+ *
+ * This hook handles:
+ * - Loading and saving notification settings from storage.
+ * - Initializing notification state and loading saved notifications.
+ * - Fetching received funds and staking rewards notifications.
+ * - Listening for governance-related notifications via a web worker.
+ * - Marking notifications as read.
+ * - Persisting notifications on window unload.
+ *
+ * @returns An object containing:
+ * - `markAsRead`: A function to mark all notifications as read.
+ * - `notifications`: The current notifications state.
+ *
+ * @remarks
+ * This hook uses several internal flags and refs to avoid duplicate network calls and redundant state updates.
+ */
 export default function useNotifications () {
   const worker = useWorker();
   const selectedChains = useSelectedChains();
   const allChains = useGenesisHashOptions(false);
   const { accounts } = useContext(AccountContext);
 
+  // Refs to avoid duplicate network calls and redundant state updates
   const isGettingReceivedFundRef = useRef<status>(status.NONE); // Flag to avoid duplicate calls of getReceivedFundsInformation
   const isGettingPayoutsRef = useRef<status>(status.NONE); // Flag to avoid duplicate calls of getPayoutsInformation
   const initializedRef = useRef<boolean>(false); // Flag to avoid duplicate initialization
   const isSavingRef = useRef<boolean>(false); // Flag to avoid duplicate save in the storage
 
+  // Memoized list of selected chain options
   const chains = useMemo(() => {
     if (!selectedChains) {
       return undefined;
@@ -159,16 +139,20 @@ export default function useNotifications () {
   const [defaultSettingFlag, setDefaultSettingFlag] = useState<boolean>(false);
   const [notifications, dispatchNotifications] = useReducer(notificationReducer, initialNotificationState);
 
+  // Whether notifications are turned off
   const notificationIsOff = useMemo(() => !settings || settings.enable === false || settings.accounts?.length === 0, [settings]);
 
+  // Mark all notifications as read
   const markAsRead = useCallback(() => {
     dispatchNotifications({ type: 'MARK_AS_READ' });
   }, []);
 
+  // Fetch received funds notifications
   const receivedFunds = useCallback(async () => {
     if (chains && isGettingReceivedFundRef.current === status.NONE && settings?.accounts && settings.receivedFunds) {
       isGettingReceivedFundRef.current = status.FETCHING;
 
+      // Filter supported chains for Subscan
       const filteredSupportedChains = chains.filter(({ text }) => {
         const sanitized = sanitizeChainName(text)?.toLowerCase();
 
@@ -189,6 +173,7 @@ export default function useNotifications () {
     }
   }, [chains, settings?.accounts, settings?.receivedFunds]);
 
+  // Fetch staking rewards notifications
   const payoutsInfo = useCallback(async () => {
     if (isGettingPayoutsRef.current === status.NONE && isGettingReceivedFundRef.current !== status.FETCHING && settings?.accounts && settings.stakingRewards && settings.stakingRewards.length !== 0) {
       isGettingPayoutsRef.current = status.FETCHING;
@@ -203,6 +188,7 @@ export default function useNotifications () {
     }
   }, [settings?.accounts, settings?.stakingRewards]);
 
+  // Load notification settings from storage on mount
   useEffect(() => {
     const getSettings = async () => {
       const savedSettings = await getStorage(STORAGE_KEY.NOTIFICATION_SETTINGS) as NotificationSettingType;
@@ -219,6 +205,7 @@ export default function useNotifications () {
     getSettings().catch(console.error);
   }, []);
 
+  // If no settings, set default settings using current accounts
   useEffect(() => {
     if (!defaultSettingFlag) {
       return;
@@ -228,10 +215,11 @@ export default function useNotifications () {
 
     setSettings({
       ...DEFAULT_NOTIFICATION_SETTING, // accounts is an empty array in the constant file
-      accounts: addresses
+      accounts: addresses // This line fills the empty accounts array with random address from the extension
     });
   }, [accounts, defaultSettingFlag]);
 
+  // Load notifications from storage or initialize if first time
   useEffect(() => {
     if (notificationIsOff || !settings || initializedRef.current) {
       return;
@@ -244,7 +232,7 @@ export default function useNotifications () {
         const savedNotifications = await getStorage(STORAGE_KEY.NOTIFICATIONS) as NotificationsType | undefined;
 
         savedNotifications
-          ? dispatchNotifications({ payload: savedNotifications, type: 'LOAD_FROM_STORAGE' })
+          ? dispatchNotifications({ payload: { ...savedNotifications, latestLoggedIn: 1709643091 }, type: 'LOAD_FROM_STORAGE' })
           : dispatchNotifications({ type: 'INITIALIZE' }); // will happen only for the first time
       } catch (error) {
         console.error('Failed to load saved notifications:', error);
@@ -254,11 +242,13 @@ export default function useNotifications () {
     loadSavedNotifications().catch(console.error);
   }, [notificationIsOff, settings]);
 
+  // Listen for governance-related notifications from the worker
   useEffect(() => {
     if (notificationIsOff || settings?.governance?.length === 0) {
       return;
     }
 
+    // Handle messages from the worker
     const handelMessage = (event: MessageEvent<string>) => {
       try {
         if (!event.data) {
@@ -300,6 +290,7 @@ export default function useNotifications () {
     };
   }, [notificationIsOff, settings?.governance, worker]);
 
+  // Fetch received funds and staking rewards notifications when settings change
   useEffect(() => {
     if (notificationIsOff || !settings) {
       return;
@@ -316,6 +307,7 @@ export default function useNotifications () {
     }
   }, [notificationIsOff, payoutsInfo, receivedFunds, settings]);
 
+  // Save notifications to storage before window unload
   useEffect(() => {
     const handleBeforeUnload = () => {
       const notificationIsInitializing = notifications.isFirstTime && notifications.referendas?.length === 0;
@@ -325,7 +317,7 @@ export default function useNotifications () {
 
         const dataToSave = notifications;
 
-        dataToSave.latestLoggedIn = Math.floor(Date.now() / 1000); // timestamp must be in seconds not in milliseconds
+        dataToSave.latestLoggedIn = Math.floor(Date.now() / 1000); // timestamp in seconds
 
         setStorage(STORAGE_KEY.NOTIFICATIONS, dataToSave)
           .then(() => {

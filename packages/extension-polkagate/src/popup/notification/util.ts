@@ -1,105 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { NotificationMessageType, ReferendaNotificationType } from '../../hooks/useNotifications';
 import type { DropdownOption } from '../../util/types';
+import type { NotificationMessageType, NotificationType, ReceivedFundInformation, ReferendaNotificationType, StakingRewardInformation } from './types';
 
-import getChainName from '@polkadot/extension-polkagate/src/util/getChainName';
-import { selectableNetworks } from '@polkadot/networks';
-
-import { getSubscanChainName, getSubstrateAddress } from '../../util';
-import { postData } from '../../util/api';
-import { BATCH_SIZE, MAX_RETRIES } from './constant';
-
-interface ApiResponse<T> {
-  code: number;
-  message: string;
-  generated_at: number;
-  data: T;
-}
-
-interface Transfer {
-  transfer_id: number;
-  from: string;
-  from_account_display: AccountDisplay;
-  to: string;
-  to_account_display: AccountDisplayWithMerkle;
-  extrinsic_index: string;
-  success: boolean;
-  hash: string;
-  block_num: number;
-  block_timestamp: number;
-  module: string;
-  amount: string;
-  amount_v2: string;
-  current_currency_amount: string;
-  currency_amount: string;
-  fee: string;
-  nonce: number;
-  asset_symbol: string;
-  asset_unique_id: string;
-  asset_type: string;
-  item_id: string | null;
-  event_idx: number;
-  is_lock: boolean;
-}
-
-interface Payout {
-  era: number;
-  stash: string;
-  account: string;
-  validator_stash: string;
-  extrinsic_index: string;
-  amount: string;
-  block_timestamp: number;
-  module_id: string;
-  event_id: string;
-}
-
-interface AccountDisplay {
-  address: string;
-  people: Record<string, unknown>;
-}
-
-interface AccountDisplayWithMerkle extends AccountDisplay {
-  merkle?: {
-    address_type: string;
-    tag_type: string;
-    tag_subtype: string;
-    tag_name: string;
-  };
-}
-
-export interface TransfersProp {
-  from: string,
-  fromAccountDisplay: AccountDisplay,
-  toAccountId: AccountDisplay,
-  date: string,
-  timestamp: number;
-  amount: string,
-  assetSymbol: string
-}
-
-export interface PayoutsProp {
-  era: number;
-  validatorStash: string;
-  amount: string;
-  date: string;
-  decimal: number;
-  timestamp: number;
-}
-
-export interface ReceivedFundInformation {
-  address: string;
-  data: TransfersProp[];
-  network: DropdownOption;
-}
-
-export interface StakingRewardInformation {
-  address: string;
-  data: PayoutsProp[];
-  network: DropdownOption;
-}
+import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 
 export function timestampToDate (timestamp: number | string, format: 'full' | 'short' | 'relative' = 'full'): string {
   // Ensure timestamp is a number and convert if it's a string
@@ -164,257 +69,6 @@ function getRelativeTime (date: Date): string {
 
   return diffInSeconds <= 0 ? 'just now' : `${diffInSeconds} seconds ago`;
 }
-
-// /**
-//  * Reorders the specified suffixes in a chain name:
-//  * - Moves the specified suffixes (if present) to the beginning of the text, separated by a hyphen.
-//  * - Removes "relay chain" and "network" from the chain name, as these are considered invalid suffixes.
-//  *
-//  * @param chainName - The original chain name to be modified.
-//  * @param [suffixes=['assethub']] - An array of suffixes to move and reorder, defaulting to ['assethub'].
-//  * @returns The modified chain name with the specified suffixes reordered.
-//  */
-// const formatChainName = (chainName: string | undefined, suffixes: string[] = ['asset hub']): string => {
-//   // Handle undefined input
-//   if (!chainName) {
-//     return '';
-//   }
-
-//   // Find and remove the invalid suffixes
-//   const sanitized = chainName.toLowerCase().replace(' relay chain', '').replace(' network', '');
-
-//   // Find the matching suffix
-//   const matchedSuffix = suffixes.find((suffix) => sanitized.endsWith(suffix));
-
-//   // Find and remove the suffix
-//   let baseName = sanitized;
-
-//   if (matchedSuffix) {
-//     baseName = sanitized.replace(matchedSuffix, ''); // remove from the end of the string
-//   }
-
-//   // Capitalize the first letter of each part
-//   const formattedParts = [
-//     baseName.replaceAll(' ', ''),
-//     matchedSuffix?.replaceAll(' ', '') ?? ''
-//   ].filter(Boolean);
-
-//   // Join the parts in reverse order
-//   return formattedParts.reverse().join('-');
-// };
-
-const transformTransfers = (address: string, transfers: Transfer[], network: DropdownOption) => {
-  // Initialize the accumulator for the reduce function
-  const initialAccumulator = {
-    address,
-    data: [] as TransfersProp[],
-    network
-  };
-
-  // Sanitize each transfer item and accumulate results
-  const result = transfers.reduce((accumulator, transfer) => {
-    if (getSubstrateAddress(transfer.to) !== address) {
-      return accumulator;
-    }
-
-    const sanitizedTransfer = {
-      amount: transfer.amount,
-      assetSymbol: transfer.asset_symbol,
-      date: timestampToDate(transfer.block_timestamp),
-      from: transfer.from,
-      fromAccountDisplay: transfer.from_account_display,
-      timestamp: transfer.block_timestamp,
-      // module: transfer.module,
-      toAccountId: transfer.to_account_display
-    };
-
-    accumulator.data.push(sanitizedTransfer);
-
-    return accumulator;
-  }, initialAccumulator);
-
-  return result;
-};
-
-const transformPayouts = (address: string, payouts: Payout[], network: DropdownOption) => {
-  // Initialize the accumulator for the reduce function
-  const initialAccumulator = {
-    address,
-    data: [] as PayoutsProp[],
-    network
-  };
-  const decimal = selectableNetworks.find(({ genesisHash }) => (genesisHash[0] as unknown as string) === network.value)?.decimals[0];
-
-  // Sanitize each transfer item and accumulate results
-  const result = payouts.reduce((accumulator, payout) => {
-    const sanitizedTransfer = {
-      amount: payout.amount,
-      date: timestampToDate(payout.block_timestamp),
-      decimal,
-      era: payout.era,
-      timestamp: payout.block_timestamp,
-      validatorStash: payout.validator_stash
-    } as PayoutsProp;
-
-    accumulator.data.push(sanitizedTransfer);
-
-    return accumulator;
-  }, initialAccumulator);
-
-  return result;
-};
-
-/**
- * Fetches transfers information from subscan for the given addresses on the given chains
- * @param addresses - An array of addresses for which payout information fetch
- * @param chains - Name of the blockchain network
- * @returns Array of payouts information
- */
-export const getReceivedFundsInformation = async (addresses: string[], chains: string[]): Promise<ReceivedFundInformation[]> => {
-  const results: ReceivedFundInformation[] = [];
-  const networks = chains.map((value) => {
-    const chainName = getChainName(value);
-
-    return ({ text: getSubscanChainName(chainName), value }) as DropdownOption;
-  });
-
-  // Process each address
-  for (const address of addresses) {
-    // Process network in batches of BATCH_SIZE
-    for (let i = 0; i < networks.length; i += BATCH_SIZE) {
-      // Take a batch of BATCH_SIZE networks (or remaining networks if less than BATCH_SIZE)
-      const networkBatch = networks.slice(i, i + BATCH_SIZE);
-
-      // Create promises for this batch of networks with retry mechanism
-      const batchPromises = networkBatch.map(async (network) => {
-        let lastError: unknown = null;
-
-        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-          try {
-            const receivedInfo = await postData(`https://${network.text}.api.subscan.io/api/v2/scan/transfers`, {
-              address,
-              row: 10
-            }) as ApiResponse<{
-              transfers: Transfer[] | null
-            }>;
-
-            if (receivedInfo.code !== 0) {
-              throw new Error('Not a expected status code');
-            }
-
-            if (!receivedInfo.data.transfers) {
-              return null; // account doesn't have any history
-            }
-
-            return transformTransfers(address, receivedInfo.data.transfers, network);
-          } catch (error) {
-            lastError = error;
-            console.warn(`Attempt ${attempt} failed for ${network.text} and address ${address} (RECEIVED). Retrying...`);
-
-            // Exponential backoff
-            await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
-          }
-        }
-
-        // If all retries fail, log the final error
-        console.error(`(RECEIVED) Failed to fetch data for ${network.text} and address ${address} after ${MAX_RETRIES} attempts`, lastError);
-
-        return null;
-      });
-
-      // Wait for all address requests in this batch
-      const batchResults = await Promise.all(batchPromises);
-
-      // Add non-null results to overall results
-      results.push(...batchResults.filter((result) => result !== null));
-
-      // console.log('results:', results);
-
-      // If not the last batch, wait for 1 second
-      if (i + BATCH_SIZE < addresses.length) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
-    }
-  }
-
-  return results;
-};
-
-/**
- * Fetches payouts information from subscan for the given addresses on the given chains
- * @param addresses - An array of addresses for which payout information fetch
- * @param chainNames - Name of the blockchain network
- * @returns Array of payouts information
- */
-export const getPayoutsInformation = async (addresses: string[], chains: string[]): Promise<StakingRewardInformation[]> => {
-  const results: StakingRewardInformation[] = [];
-  const networks = chains.map((value) => {
-    const chainName = getChainName(value);
-
-    return ({ text: getSubscanChainName(chainName), value }) as DropdownOption;
-  });
-
-  // Process each address
-  for (const address of addresses) {
-    // Process networks in batches of BATCH_SIZE
-    for (let i = 0; i < networks.length; i += BATCH_SIZE) {
-      // Take a batch of BATCH_SIZE networks (or remaining networks if less than BATCH_SIZE)
-      const networkBatch = networks.slice(i, i + BATCH_SIZE);
-
-      // Create promises for this batch of networks with retry mechanism
-      const batchPromises = networkBatch.map(async (network) => {
-        let lastError: unknown = null;
-
-        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-          try {
-            const payoutInfo = await postData(`https://${network.text}.api.subscan.io/api/v2/scan/account/reward_slash`, {
-              address,
-              row: 10
-            }) as ApiResponse<{
-              list: Payout[]
-            }>;
-
-            if (payoutInfo.code !== 0) {
-              throw new Error('Not a expected status code');
-            }
-
-            if (!payoutInfo.data.list) {
-              return null; // account doesn't have any history
-            }
-
-            return transformPayouts(address, payoutInfo.data.list, network);
-          } catch (error) {
-            lastError = error;
-            console.warn(`Attempt ${attempt} failed for ${network.text} and address ${address} (PAYOUT). Retrying...`);
-
-            // Exponential backoff
-            await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
-          }
-        }
-
-        // If all retries fail, log the final error
-        console.error(`(PAYOUT) Failed to fetch data for ${network.text} and address ${address} after ${MAX_RETRIES} attempts`, lastError);
-
-        return null;
-      });
-
-      // Wait for all address requests in this batch
-      const batchResults = await Promise.all(batchPromises);
-
-      // Add non-null results to overall results
-      results.push(...batchResults.filter((result) => result !== null));
-
-      // console.log('results:', results);
-
-      // If not the last batch, wait for 1 second
-      if (i + BATCH_SIZE < addresses.length) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
-    }
-  }
-
-  return results;
-};
 
 /**
  * Generates notifications for new or updated referenda
@@ -515,6 +169,7 @@ export const generateReceivedFundNotifications = (
   latestLoggedIn: number,
   transfers: ReceivedFundInformation[]
 ): NotificationMessageType[] => {
+  console.log('heyyyyyyyyyyy', latestLoggedIn);
   const newMessages: NotificationMessageType[] = [];
   const newReceivedFunds = transfers.map(({ address, data, network }) => {
     const receivedFund = data.find(({ timestamp }) => timestamp >= latestLoggedIn);
@@ -562,105 +217,184 @@ export const updateReferendas = (preciousRefs: ReferendaNotificationType[] | nul
   return (filterOut ?? []).concat(newRefs);
 };
 
-/**
- * Normalize timestamp to milliseconds.
- * Accepts seconds (10-digit) or milliseconds (13-digit) or string numbers.
- */
-function normalizeToMs (ts?: number | string): number {
-  if (ts == null) {
-    return NaN;
-  }
+// Utility to get date string like "15 Dec 2025"
+function getDayKey (timestamp: number): string {
+  const date = new Date(timestamp * 1000); // convert seconds → ms
 
-  const n = typeof ts === 'string' ? Number.parseInt(ts, 10) : ts;
-
-  if (!Number.isFinite(n)) {
-    return NaN;
-  }
-
-  // heuristics: if value is suspiciously small treat as seconds
-  // seconds timestamps are ~1e9..1e10, ms timestamps are ~1e12..
-  return n < 1e12 ? n * 1000 : n;
+  // Format: "15 Dec 2025"
+  return date.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
 }
 
-/**
- * Format a Date (ms) to YYYY-MM-DD (local or UTC).
- */
-function dateKeyFromMs (ms: number): string {
-  const d = new Date(ms);
-
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-
-  return `${y}-${m}-${day}`; // local YYYY-MM-DD
-}
-
-/**
- * Group received funds by day (YYYY-MM-DD).
- *
- * Returns an object where keys are date strings and values are arrays of transfers.
- * Each transfer is enriched with its originating network and address.
- */
-export function groupByDay<
-  T extends { data: K[]; address: string; network: DropdownOption },
-  K extends { timestamp: string | number }
-> (
-  receivedFunds?: T[] | null
-): Record<string, (K & { network: DropdownOption; address: string })[]> {
-  const groups: Record<string, (K & { network: DropdownOption; address: string })[]> = {};
+export function groupNotificationsByDay (
+  notifications: NotificationMessageType[] | undefined
+): Record<string, NotificationMessageType[]> | undefined {
   const seen = new Set(); // to avoid duplicates globally
 
-  if (!Array.isArray(receivedFunds)) {
-    return groups;
+  if (!notifications) {
+    return;
   }
 
-  for (const networkItem of receivedFunds) {
-    if (!Array.isArray(networkItem?.data)) {
-      continue;
+  const grouped = notifications.reduce<Record<string, NotificationMessageType[]>>((acc, item) => {
+    let timestamp: number | undefined;
+    let uniqueKey = '';
+
+    switch (item.type) {
+      case 'stakingReward':
+        timestamp = item.payout?.timestamp;
+        uniqueKey = `${item.read}-${JSON.stringify(item.payout)}`;
+
+        break;
+      case 'receivedFund':
+        timestamp = item.receivedFund?.timestamp;
+        uniqueKey = `${item.read}-${JSON.stringify(item.receivedFund)}`;
+
+        break;
+      // case 'referenda':
+      //   timestamp = item.referenda?.timestamp;
+      //   break;
     }
 
-    for (const item of networkItem.data) {
-      const ms = normalizeToMs(item.timestamp);
+    if (!timestamp || seen.has(uniqueKey)) {
+      return acc;
+    }
 
-      if (!Number.isFinite(ms)) {
-        continue;
+    const dayKey = getDayKey(timestamp);
+
+    if (!acc[dayKey]) {
+      acc[dayKey] = [];
+    }
+
+    acc[dayKey].push(item);
+    seen.add(uniqueKey);
+
+    return acc;
+  }, {});
+
+  const sortedEntries = Object.entries(grouped).sort(([a], [b]) => {
+    // Parse your "15 Dec 2025" strings back into Date objects for sorting
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+
+    return dateB.getTime() - dateA.getTime(); // newest first
+  });
+
+  // Convert sorted entries back into a Record
+  const sortedGrouped: Record<string, NotificationMessageType[]> = Object.fromEntries(sortedEntries);
+
+  return sortedGrouped;
+}
+
+/**
+ * Check if a given date string (formatted as "17 Dec 2024")
+ * represents today's date.
+ *
+ * @param dateString - The date string in format "DD Mon YYYY"
+ * @returns true if the date is today's date, otherwise false
+ */
+export function isToday (dateString: string): boolean {
+  const today = new Date();
+  const todayString = today.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  });
+
+  return dateString === todayString;
+}
+
+/**
+ * Converts a timestamp (in seconds) to a formatted local time string like "10:01 am".
+ *
+ * @param timestamp - The UNIX timestamp in seconds
+ * @returns A formatted time string (e.g., "10:01 am")
+ */
+export function getTimeOfDay (timestamp: number): string {
+  // Convert timestamp from seconds → milliseconds
+  const date = new Date(timestamp * 1000);
+
+  // Format time as "10:01 am" or "9:45 pm"
+  return date.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    hour12: true, // Use 12-hour format with am/pm
+    minute: '2-digit'
+  }).toLowerCase(); // optional: make "AM"/"PM" lowercase
+}
+
+export function getNotificationItemTitle (type: NotificationType, referenda?: ReferendaNotificationType) {
+  const { t } = useTranslation();
+
+  switch (type) {
+    case 'receivedFund':
+      return t('New Fund Received');
+
+    case 'referenda':
+      if (referenda?.status === 'approved') {
+        return t('Referendum approved');
+      } else if (referenda?.status === 'ongoing') {
+        return t('New Referendum');
+      } else if (referenda?.status === 'cancelled') {
+        return t('Referendum Cancelled');
+      } else if (referenda?.status === 'timedOut') {
+        return t('Referendum time outed');
+      } else {
+        return t('Referendum Rejected');
       }
 
-      const signature = JSON.stringify(item);
+    case 'stakingReward':
+      return t('New Reward');
 
-      if (seen.has(signature)) {
-        continue;
-      } // skip duplicate
+    default:
+      return t('Update');
+  }
+}
 
-      seen.add(signature);
+export function getNotificationDescription (item: NotificationMessageType) {
+  const { t } = useTranslation();
+  // const { decimal } = useChainInfo(item.chain?.value, true);
 
-      const key = dateKeyFromMs(ms);
-
-      const enriched = {
-        ...item,
-        address: networkItem.address,
-        network: networkItem.network
+  switch (item.type) {
+    case 'receivedFund':
+      return {
+        text: t('Received 0.1 DOT ($1.23) on {{chainName}}', { replace: { chainName: item.chain?.text ?? '' } }),
+        textInColor: item.extrinsicIndex // TODO
       };
 
-      if (!groups[key]) {
-        groups[key] = [];
+    case 'referenda':
+      if (item.referenda?.status === 'approved') {
+        return {
+          text: t('{{chainName}} referendum {{refId}} has been ended and been approved', { replace: { chainName: item.chain?.text ?? '', refId: item.referenda?.refId } }),
+          textInColor: item.referenda?.refId
+        };
+      } else if (item.referenda?.status === 'ongoing') {
+        return {
+          text: t('{{chainName}} referendum {{refId}} has been created', { replace: { chainName: item.chain?.text ?? '', refId: item.referenda?.refId } }),
+          textInColor: item.referenda?.refId
+        };
+      } else if (item.referenda?.status === 'cancelled') {
+        return {
+          text: t('{{chainName}} referendum {{refId}} has been cancelled', { replace: { chainName: item.chain?.text ?? '', refId: item.referenda?.refId } }),
+          textInColor: item.referenda?.refId
+        };
+      } else if (item.referenda?.status === 'timedOut') {
+        return {
+          text: t('{{chainName}} referendum {{refId}} is timed out', { replace: { chainName: item.chain?.text ?? '', refId: item.referenda?.refId } }),
+          textInColor: item.referenda?.refId
+        };
+      } else {
+        return {
+          text: t('{{chainName}} referendum {{refId}} has been rejected', { replace: { chainName: item.chain?.text ?? '', refId: item.referenda?.refId } }),
+          textInColor: item.referenda?.refId
+        };
       }
 
-      groups[key].push(enriched);
-    }
+    case 'stakingReward':
+      return {
+        text: t('Received 0.1 DOT ($1.23) from {{chainName}} staking', { replace: { chainName: item.chain?.text ?? '' } }),
+        textInColor: item.extrinsicIndex // TODO
+      };
   }
-
-  // Sort items within each group (newest first)
-  for (const k in groups) {
-    groups[k].sort(
-      (a, b) => normalizeToMs(b.timestamp) - normalizeToMs(a.timestamp)
-    );
-  }
-
-  // Sort groups (newest date first)
-  const ordered = Object.fromEntries(
-    Object.entries(groups).sort(([a], [b]) => (a < b ? 1 : a > b ? -1 : 0))
-  );
-
-  return ordered;
 }
