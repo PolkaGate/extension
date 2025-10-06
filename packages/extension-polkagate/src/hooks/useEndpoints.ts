@@ -49,7 +49,7 @@ export function useEndpoints (genesisHash: string | null | undefined): DropdownO
     );
 
     if (!endpoints.length) {
-      return userAddedEndpoint ?? [];
+      return [];
     }
 
     // check if all endpoints belong to same chain
