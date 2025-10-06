@@ -119,7 +119,9 @@ function DisplayBalance ({ api, balance, decimal, decimalPoint, genesisHash, isS
     return FLOATING_POINT_DIGIT;
   }, [adaptiveDecimalPoint, decimalPoint, useAdaptiveDecimalPoint]);
 
-  if (balance === undefined || balance === null || !resolvedDecimal || !resolvedToken) {
+  const isLoading = balance === undefined || balance === null || !resolvedDecimal || !resolvedToken;
+
+  if (isLoading) {
     return (
       <MySkeleton
         bgcolor={isDark ? '#946CC826' : '#99A1C459'}

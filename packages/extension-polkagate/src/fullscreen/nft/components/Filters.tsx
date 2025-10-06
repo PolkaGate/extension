@@ -4,10 +4,10 @@
 import type { FilterAction, FilterSectionProps, FilterState, ItemInformation, SortAction, SortState } from '../utils/types';
 
 import { Stack } from '@mui/material';
+import { selectableNetworks } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useReducer, useState } from 'react';
 
 import { SearchField } from '@polkadot/extension-polkagate/src/components/index';
-import { selectableNetworks } from '@polkadot/networks';
 
 import { usePrices, useTranslation } from '../../../hooks';
 import NftFilter from './NftFilter';

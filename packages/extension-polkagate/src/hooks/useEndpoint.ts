@@ -18,7 +18,7 @@ const DEFAULT_ENDPOINT = {
   timestamp: undefined
 };
 
-export default function useEndpoint(genesisHash: string | null | undefined, _endpoint?: string): EndpointType {
+export default function useEndpoint (genesisHash: string | null | undefined, _endpoint?: string): EndpointType {
   const [endpoint, setEndpoint] = useState<EndpointType>(DEFAULT_ENDPOINT);
 
   // Function to fetch or update the endpoint
