@@ -357,7 +357,7 @@ function AddNewNetwork ({ closePopup }: Props): React.ReactElement {
     }
 
     const key = metadata.genesisHash;
-    const { chain, color, icon, specVersion, tokenDecimals, tokenSymbol } = metadata;
+    const { chain, color, icon, ss58Format, tokenDecimals, tokenSymbol } = metadata;
     const toSaveInfo = {
       [key]: {
         chain,
@@ -366,7 +366,7 @@ function AddNewNetwork ({ closePopup }: Props): React.ReactElement {
         icon,
         name: chain,
         priceId,
-        ss58Format: specVersion,
+        ss58Format,
         tokenDecimal: tokenDecimals,
         tokenSymbol
       } as UserAddedEndpoint
