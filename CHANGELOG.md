@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.11.3](https://github.com/polkagate/extension/compare/v1.11.2...v1.11.3) (2025-10-06)
+
+
+### Bug Fixes
+
+* showing user added endpoints ([#1949](https://github.com/polkagate/extension/issues/1949)) ([752ff4d](https://github.com/polkagate/extension/commit/752ff4dab5cc3eca78b42f97175af90af135ff0b))
+
 ## [1.11.2](https://github.com/polkagate/extension/compare/v1.11.1...v1.11.2) (2025-10-06)
 
 
