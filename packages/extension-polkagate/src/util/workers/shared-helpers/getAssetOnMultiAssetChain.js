@@ -40,8 +40,14 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
     // @ts-ignore
     const [formatted, assetIdRaw] = entry[0].toHuman() ?? [];
 
-    // ensure assetId is a string and remove commas
-    const assetId = assetIdRaw?.toString().replace(/,/g, '');
+    let assetId;
+
+    if (typeof assetIdRaw === 'object') {
+      assetId = JSON.stringify(assetIdRaw);
+    } else {
+      // ensure assetId is a string and remove commas
+      assetId = assetIdRaw?.toString().replace(/,/g, '');
+    }
 
     const storageKey = entry[0].toString();
 
