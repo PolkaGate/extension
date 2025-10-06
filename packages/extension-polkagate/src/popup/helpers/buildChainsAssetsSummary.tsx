@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
+import type { NetworkInfo } from '@polkadot/extension-polkagate/util/chains';
 import type { Prices } from '../../util/types';
 
-import { calcPrice, sanitizeChainName, toTitleCase} from '@polkadot/extension-polkagate/src/util';
-import chains from '@polkadot/extension-polkagate/src/util/chains';
+import { calcPrice, sanitizeChainName, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
 
@@ -19,6 +19,7 @@ export interface AssetDetailType {
 }
 
 export function buildChainsAssetsSummary (
+  chains: NetworkInfo[],
   assets: Record<string, FetchedBalance[]> | null | undefined,
   pricesInCurrency: Prices
 ): AssetDetailType[] | null | undefined {

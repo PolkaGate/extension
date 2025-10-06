@@ -10,7 +10,7 @@ import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { AssetLogo, ChainLogo, FormatPrice } from '../../../components';
-import { useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
+import { useAllChains, useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
 import getLogo2 from '../../../util/getLogo2';
 import { type AssetDetailType, buildChainsAssetsSummary } from '../../helpers/buildChainsAssetsSummary';
 import { TokenBalanceDisplay } from './TokenBalanceDisplay';
@@ -108,6 +108,7 @@ const gridStyle = { display: 'grid', rowGap: '6px', width: 'inherit' };
 function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
+  const allChains = useAllChains();
   const address = useSelectedAccount()?.address;
 
   const assets: Assets = useMemo(() => {
@@ -131,8 +132,8 @@ function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
   }, [accountAssets, selectedChains]);
 
   const summary: Summary = useMemo(() =>
-    buildChainsAssetsSummary(assets, pricesInCurrency)
-    , [assets, pricesInCurrency]);
+    buildChainsAssetsSummary(allChains, assets, pricesInCurrency)
+    , [allChains, assets, pricesInCurrency]);
 
   return (
     <>
