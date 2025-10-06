@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { getStorage } from '../components/Loading';
 import allChains from '../util/chains';
-import { TEST_NETS } from '../util/constants';
+import { STORAGE_KEY, TEST_NETS } from '../util/constants';
 import getChainName from '../util/getChainName';
 import useSelectedChains from './useSelectedChains';
 
@@ -23,7 +23,7 @@ export default function usePriceIds (): priceIdInfo[] | undefined | null {
   const [userAddedPriceIds, setUserAddedPriceIds] = useState<priceIdInfo[]>([]);
 
   useEffect(() => {
-    getStorage('userAddedEndpoint').then((info) => {
+    getStorage(STORAGE_KEY.USER_ADDED_ENDPOINT).then((info) => {
       if (info) {
         const maybePriceIds = Object.entries(info).map(([genesisHash, { priceId }]) => ({
           genesisHash,
