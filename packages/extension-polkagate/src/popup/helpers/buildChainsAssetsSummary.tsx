@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
-import type { NetworkInfo } from '@polkadot/extension-polkagate/util/chains';
 import type { Prices } from '../../util/types';
 
 import { calcPrice, sanitizeChainName, toTitleCase } from '@polkadot/extension-polkagate/src/util';
