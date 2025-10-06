@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.11.2](https://github.com/polkagate/extension/compare/v1.11.1...v1.11.2) (2025-10-06)
+
+
+### Bug Fixes
+
+* handle non-numeric asset IDs in transfer fund flow ([#1944](https://github.com/polkagate/extension/issues/1944)) ([acd9266](https://github.com/polkagate/extension/commit/acd9266abd987a71c39bb0d6dd5e7835e55bf695)), closes [#1943](https://github.com/polkagate/extension/issues/1943)
+
 ## [1.11.1](https://github.com/polkagate/extension/compare/v1.11.0...v1.11.1) (2025-10-04)
 
 
