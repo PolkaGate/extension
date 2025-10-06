@@ -10,7 +10,7 @@ import { GradientDivider, ScrollingTextBox, TwoToneText } from '@polkadot/extens
 import { useAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { toShortAddress } from '@polkadot/extension-polkagate/src/util';
 
-import { getNotificationDescription, getNotificationItemTitle, getTimeOfDay, isToday } from '../util';
+import { getNotificationDescription, getNotificationIcon, getNotificationItemTitle, getTimeOfDay, isToday } from '../util';
 
 function ItemDate ({ date }: { date: string; }) {
   const theme = useTheme();
@@ -42,7 +42,7 @@ function TitleTime ({ address, read, time, title }: { address: string | undefine
         <ScrollingTextBox
           text={account?.name ?? toShortAddress(address) ?? t('Unknown')}
           textStyle={{ ...theme.typography['B-1'] }}
-          width={80}
+          width={75}
         />
       </Grid>
       <Typography color='#674394' variant='B-1'>
@@ -58,10 +58,12 @@ function NotificationItem ({ item }: { item: NotificationMessageType; }) {
   const title = getNotificationItemTitle(item.type, item.referenda);
   const time = getTimeOfDay(item.payout?.timestamp ?? item.receivedFund?.timestamp ?? Date.now()); //  ?? item.referenda?.timestamp
   const { text, textInColor } = getNotificationDescription(item);
+  const { ItemIcon, bgcolor, borderColor, color } = getNotificationIcon(item);
 
   return (
-    <Stack direction='row' sx={{ width: '100%' }}>
-      <Stack direction='column'>
+    <Stack direction='row' sx={{ alignItems: 'center', gap: '6px', width: '100%' }}>
+      <ItemIcon color={color} style={{ backgroundColor: bgcolor, border: '2px solid', borderColor, borderRadius: '999px', height: '32px', padding: '3px', width: '32px' }} variant='Bold' />
+      <Stack direction='column' sx={{ width: 'calc(100% - 32px - 6px)' }}>
         <TitleTime
           address={item.forAccount}
           read={item.read}

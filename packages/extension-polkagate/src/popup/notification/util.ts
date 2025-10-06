@@ -4,7 +4,9 @@
 import type { DropdownOption } from '../../util/types';
 import type { NotificationMessageType, NotificationType, ReceivedFundInformation, ReferendaNotificationType, StakingRewardInformation } from './types';
 
-import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { ArrowCircleDown, ArrowDown3, Award, Receipt2 } from 'iconsax-react';
+
+import { useChainInfo, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 
 export function timestampToDate (timestamp: number | string, format: 'full' | 'short' | 'relative' = 'full'): string {
   // Ensure timestamp is a number and convert if it's a string
@@ -169,7 +171,6 @@ export const generateReceivedFundNotifications = (
   latestLoggedIn: number,
   transfers: ReceivedFundInformation[]
 ): NotificationMessageType[] => {
-  console.log('heyyyyyyyyyyy', latestLoggedIn);
   const newMessages: NotificationMessageType[] = [];
   const newReceivedFunds = transfers.map(({ address, data, network }) => {
     const receivedFund = data.find(({ timestamp }) => timestamp >= latestLoggedIn);
@@ -354,47 +355,67 @@ export function getNotificationItemTitle (type: NotificationType, referenda?: Re
 
 export function getNotificationDescription (item: NotificationMessageType) {
   const { t } = useTranslation();
-  // const { decimal } = useChainInfo(item.chain?.value, true);
+  const { chainName } = useChainInfo(item.chain?.value as string ?? '', true);
 
   switch (item.type) {
     case 'receivedFund':
       return {
-        text: t('Received 0.1 DOT ($1.23) on {{chainName}}', { replace: { chainName: item.chain?.text ?? '' } }),
+        text: t('Received 0.1 DOT ($1.23) on {{chainName}}', { replace: { chainName } }),
         textInColor: item.extrinsicIndex // TODO
       };
 
-    case 'referenda':
-      if (item.referenda?.status === 'approved') {
-        return {
-          text: t('{{chainName}} referendum {{refId}} has been ended and been approved', { replace: { chainName: item.chain?.text ?? '', refId: item.referenda?.refId } }),
-          textInColor: item.referenda?.refId
-        };
-      } else if (item.referenda?.status === 'ongoing') {
-        return {
-          text: t('{{chainName}} referendum {{refId}} has been created', { replace: { chainName: item.chain?.text ?? '', refId: item.referenda?.refId } }),
-          textInColor: item.referenda?.refId
-        };
-      } else if (item.referenda?.status === 'cancelled') {
-        return {
-          text: t('{{chainName}} referendum {{refId}} has been cancelled', { replace: { chainName: item.chain?.text ?? '', refId: item.referenda?.refId } }),
-          textInColor: item.referenda?.refId
-        };
-      } else if (item.referenda?.status === 'timedOut') {
-        return {
-          text: t('{{chainName}} referendum {{refId}} is timed out', { replace: { chainName: item.chain?.text ?? '', refId: item.referenda?.refId } }),
-          textInColor: item.referenda?.refId
-        };
-      } else {
-        return {
-          text: t('{{chainName}} referendum {{refId}} has been rejected', { replace: { chainName: item.chain?.text ?? '', refId: item.referenda?.refId } }),
-          textInColor: item.referenda?.refId
-        };
-      }
+    case 'referenda': {
+      const statusMap: Record<string, string> = {
+        approved: t('{{chainName}} referendum {{refId}} has been approved'),
+        cancelled: t('{{chainName}} referendum {{refId}} has been cancelled'),
+        ongoing: t('{{chainName}} referendum {{refId}} has been created'),
+        rejected: t('{{chainName}} referendum {{refId}} has been rejected'),
+        timedOut: t('{{chainName}} referendum {{refId}} has timed out')
+      };
+
+      const status = item.referenda?.status;
+      const refId = item.referenda?.refId;
+      // Default to "rejected" text if status is missing
+      const textTemplate = statusMap[status ?? 'rejected'];
+
+      return {
+        text: t(textTemplate, {
+          replace: { chainName, refId }
+        }),
+        textInColor: refId
+      };
+    }
 
     case 'stakingReward':
       return {
-        text: t('Received 0.1 DOT ($1.23) from {{chainName}} staking', { replace: { chainName: item.chain?.text ?? '' } }),
+        text: t('Received 0.1 DOT ($1.23) from {{chainName}} staking', { replace: { chainName } }),
         textInColor: item.extrinsicIndex // TODO
       };
+  }
+}
+
+export function getNotificationIcon (item: NotificationMessageType) {
+  switch (item.type) {
+    case 'receivedFund':
+      return { ItemIcon: ArrowDown3, bgcolor: '#06D7F64D', borderColor: '#06D7F680', color: '#06D7F6' };
+
+    case 'referenda': {
+      const neutralStyle = { ItemIcon: Receipt2, bgcolor: '#303045', borderColor: '#222236', color: '#696D7E' };
+
+      const statusMap = {
+        approved: { ItemIcon: Receipt2, bgcolor: '#FF4FB91A', borderColor: '#FF4FB940', color: '#FF4FB9' },
+        cancelled: neutralStyle,
+        ongoing: { ItemIcon: Receipt2, bgcolor: '#82FFA540', borderColor: '#82FFA51A', color: '#82FFA5' },
+        rejected: neutralStyle,
+        timedOut: neutralStyle
+      };
+
+      const status = item.referenda?.status;
+
+      return statusMap[status ?? 'rejected'] ?? neutralStyle;
+    }
+
+    case 'stakingReward':
+      return { ItemIcon: Award, bgcolor: '#277DFF4D', borderColor: '#2A4FA680', color: '#74A4FF' };
   }
 }
