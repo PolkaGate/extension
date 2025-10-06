@@ -317,8 +317,8 @@ export const STORAGE_KEY = {
   SELECTED_CHAINS: 'selectedChains',
   SELECTED_PROFILE: 'profile',
   TEST_NET_ENABLED: 'testnet_enabled',
-  VALIDATORS_INFO: 'validatorsInfo',
   USER_ADDED_ENDPOINT: 'userAddedEndpoint',
+  VALIDATORS_INFO: 'validatorsInfo',
 };
 
 // Function names for asset fetching worker calls
