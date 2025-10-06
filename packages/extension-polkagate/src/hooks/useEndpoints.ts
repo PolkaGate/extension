@@ -57,12 +57,8 @@ export function useEndpoints (genesisHash: string | null | undefined): DropdownO
     endpointOptions.length > 1 &&
       endpointOptions?.unshift(AUTO_MODE);
 
-    if (!endpointOptions?.length && userAddedEndpoint) {
-      return userAddedEndpoint;
-    }
-
     return endpointOptions;
-  }, [genesisHash, userAddedEndpoint]);
+  }, [genesisHash]);
 
-  return endpoints ?? [];
+  return endpoints ?? userAddedEndpoint ?? [];
 }
