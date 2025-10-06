@@ -7,12 +7,13 @@ import React, { useEffect, useState } from 'react';
 
 import { UserAddedChainContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { getStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 export default function UserAddedChainsProvider ({ children }: { children: React.ReactNode }) {
   const [userAddedChainCtx, setUserAddedChainCtx] = useState<UserAddedChains>({});
 
   useEffect((): void => {
-    getStorage('userAddedEndpoint').then((info) => {
+    getStorage(STORAGE_KEY.USER_ADDED_ENDPOINT).then((info) => {
       info && setUserAddedChainCtx(info as UserAddedChains);
     }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps

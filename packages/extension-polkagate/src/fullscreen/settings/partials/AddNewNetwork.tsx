@@ -15,6 +15,7 @@ import { DecisionButtons, MySnackbar, MyTextField, MyTooltip } from '@polkadot/e
 import { updateMetadata } from '@polkadot/extension-polkagate/src/messaging';
 import { convertToHyphenated, isWss, toShortAddress, updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { getPrices } from '@polkadot/extension-polkagate/src/util/api/index';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { metadataFromApi } from '@polkadot/extension-polkagate/src/util/workers/utils/index';
 
 import { useCurrency, useTranslation } from '../../../hooks';
@@ -345,7 +346,7 @@ function AddNewNetwork ({ closePopup }: Props): React.ReactElement {
   }, [endpoint]);
 
   const handleSavings = useCallback(async (toSaveInfo: Record<string, UserAddedEndpoint>) => {
-    await updateStorage('userAddedEndpoint', toSaveInfo).catch(console.error);
+    await updateStorage(STORAGE_KEY.USER_ADDED_ENDPOINT, toSaveInfo).catch(console.error);
     await updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
     setShowSnackbar(true);
   }, [metadata]);

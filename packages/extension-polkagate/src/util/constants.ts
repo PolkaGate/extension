@@ -318,6 +318,7 @@ export const STORAGE_KEY = {
   SELECTED_PROFILE: 'profile',
   TEST_NET_ENABLED: 'testnet_enabled',
   VALIDATORS_INFO: 'validatorsInfo',
+  USER_ADDED_ENDPOINT: 'userAddedEndpoint',
 };
 
 // Function names for asset fetching worker calls
