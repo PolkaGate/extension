@@ -18,7 +18,7 @@ function ItemDate ({ date }: { date: string; }) {
 
   return (
     <Typography
-      color={isTodayDate ? theme.palette.text.secondary : theme.palette.menuIcon.hover}
+      color={isTodayDate ? theme.palette.menuIcon.hover : theme.palette.text.secondary}
       sx={{ bgcolor: isTodayDate ? '#FF4FB926' : '#C6AECC26', borderRadius: '9px', p: '2px 4px', width: 'fit-content' }}
       variant='B-2'
     >
@@ -39,6 +39,7 @@ function TitleTime ({ address, read, time, title }: { address: string | undefine
           {title}
         </Typography>
         <ScrollingTextBox
+          scrollOnHover
           style={{ bgcolor: '#AA83DC26', px: '4px' }}
           text={account?.name ?? toShortAddress(address) ?? t('Unknown')}
           textStyle={{ color: '#AA83DC', ...theme.typography['B-1'] }}

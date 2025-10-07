@@ -7,7 +7,6 @@ import type { ApiResponse, Payout, PayoutsProp, ReceivedFundInformation, Staking
 import { getSubscanChainName, getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
 import { postData } from '@polkadot/extension-polkagate/src/util/api';
 import getChainName from '@polkadot/extension-polkagate/src/util/getChainName';
-import { selectableNetworks } from '@polkadot/networks';
 
 import { BATCH_SIZE, MAX_RETRIES } from './constant';
 import { timestampToDate } from './util';
@@ -52,17 +51,17 @@ const transformPayouts = (address: string, payouts: Payout[], network: DropdownO
     data: [] as PayoutsProp[],
     network
   };
-  const decimal = selectableNetworks.find(({ genesisHash }) => (genesisHash[0] as unknown as string) === network.value)?.decimals[0];
+  // const decimal = selectableNetworks.find(({ genesisHash }) => (genesisHash[0] as unknown as string) === network.value)?.decimals[0];
 
   // Sanitize each transfer item and accumulate results
   const result = payouts.reduce((accumulator, payout) => {
     const sanitizedTransfer = {
       amount: payout.amount,
       date: timestampToDate(payout.block_timestamp),
-      decimal,
+      // decimal,
       era: payout.era,
-      timestamp: payout.block_timestamp,
-      validatorStash: payout.validator_stash
+      timestamp: payout.block_timestamp
+      // validatorStash: payout.validator_stash
     } as PayoutsProp;
 
     accumulator.data.push(sanitizedTransfer);
@@ -176,22 +175,35 @@ export const getPayoutsInformation = async (addresses: string[], chains: string[
 
         for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
           try {
-            const payoutInfo = await postData(`https://${network.text}.api.subscan.io/api/v2/scan/account/reward_slash`, {
+            const soloPayoutInfo = await postData(`https://${network.text}.api.subscan.io/api/v2/scan/account/reward_slash`, {
               address,
+              category: 'Reward',
               row: 10
             }) as ApiResponse<{
               list: Payout[]
             }>;
 
-            if (payoutInfo.code !== 0) {
+            const poolPayoutInfo = await postData(`https://${network.text}.api.subscan.io/api/scan/nomination_pool/rewards`, {
+              address,
+              category: 'Reward',
+              row: 10
+            }) as ApiResponse<{
+              list: Payout[]
+            }>;
+
+            if (poolPayoutInfo.code !== 0 && soloPayoutInfo.code !== 0) {
               throw new Error('Not a expected status code');
             }
 
-            if (!payoutInfo.data.list) {
+            const payoutInfo = [...(soloPayoutInfo?.data?.list ?? []), ...(poolPayoutInfo?.data?.list ?? [])];
+
+            if (!payoutInfo) {
               return null; // account doesn't have any history
             }
 
-            return transformPayouts(address, payoutInfo.data.list, network);
+            console.log('payoutInfo.data.list:', payoutInfo);
+
+            return transformPayouts(address, payoutInfo, network);
           } catch (error) {
             lastError = error;
             console.warn(`Attempt ${attempt} failed for ${network.text} and address ${address} (PAYOUT). Retrying...`);

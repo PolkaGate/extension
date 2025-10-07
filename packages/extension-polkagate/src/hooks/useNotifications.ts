@@ -175,7 +175,7 @@ export default function useNotifications () {
 
   // Fetch staking rewards notifications
   const payoutsInfo = useCallback(async () => {
-    if (isGettingPayoutsRef.current === status.NONE && isGettingReceivedFundRef.current !== status.FETCHING && settings?.accounts && settings.stakingRewards && settings.stakingRewards.length !== 0) {
+    if (isGettingPayoutsRef.current === status.NONE && settings?.accounts && settings.stakingRewards && settings.stakingRewards.length !== 0) {
       isGettingPayoutsRef.current = status.FETCHING;
 
       const payouts = await getPayoutsInformation(settings.accounts, settings.stakingRewards);
