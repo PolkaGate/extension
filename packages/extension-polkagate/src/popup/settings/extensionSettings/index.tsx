@@ -14,15 +14,20 @@ import Main from './Main';
 import ManagePassword from './ManagePassword';
 import TopMenus from './TopMenus';
 
+interface ExtensionSettingsState {
+  from?: string;
+}
+
 function ExtensionSettings (): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const isDark = useIsDark();
   const navigate = useNavigate();
+  const location = useLocation() as unknown as Location & { state?: ExtensionSettingsState };
 
   const fullscreenURL = useMemo(() => pathname === '/settings-extension/chains' ? '/settingsfs/network' : '/settingsfs/', [pathname]);
 
-  const onBack = useCallback(() => navigate('/settings') as void, [navigate]);
+  const onBack = useCallback(() => navigate(location.state?.from ?? '/settings') as void, [location.state?.from, navigate]);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>

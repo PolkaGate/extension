@@ -20,7 +20,7 @@ function ManageNetworks (): React.ReactElement {
 
   const onClick = useCallback(() => {
     isExtension
-      ? navigate('/settings-extension/chains') as void
+      ? navigate('/settings-extension/chains', { state: { from: '/' } }) as void
       : windowOpen('/settingsfs/network').catch(console.error);
   }, [isExtension, navigate]);
 
