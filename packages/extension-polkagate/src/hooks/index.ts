@@ -12,6 +12,7 @@ export { default as useAccountsOrder } from './useAccountsOrder';
 export { default as useActiveEraIndex } from './useActiveEraIndex';
 export { default as useActiveRecoveries } from './useActiveRecoveries';
 export { default as useAlerts } from './useAlerts';
+export { default as useAllChains } from './useAllChains';
 export { default as useAnimateOnce } from './useAnimateOnce';
 export { default as useApi } from './useApi';
 export { default as useAssetsBalances } from './useAssetsBalances';
