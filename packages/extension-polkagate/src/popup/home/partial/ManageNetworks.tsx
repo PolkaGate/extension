@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import { MyTooltip } from '@polkadot/extension-polkagate/src/components';
 import { useIsExtensionPopup, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
-import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 
 function ManageNetworks (): React.ReactElement {
   const theme = useTheme();
@@ -21,7 +20,7 @@ function ManageNetworks (): React.ReactElement {
   const onClick = useCallback(() => {
     isExtension
       ? navigate('/settings-extension/chains', { state: { from: '/' } }) as void
-      : windowOpen('/settingsfs/network').catch(console.error);
+      : navigate('/settingsfs/network') as void;
   }, [isExtension, navigate]);
 
   return (
