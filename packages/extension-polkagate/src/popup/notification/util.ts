@@ -1,10 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable no-template-curly-in-string */
+
 import type { DropdownOption } from '../../util/types';
 import type { NotificationMessageType, NotificationType, ReceivedFundInformation, ReferendaNotificationType, StakingRewardInformation } from './types';
 
-import { ArrowCircleDown, ArrowDown3, Award, Receipt2 } from 'iconsax-react';
+import { ArrowDown3, Award, Receipt2 } from 'iconsax-react';
 
 import { useChainInfo, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 
@@ -325,12 +327,50 @@ export function getTimeOfDay (timestamp: number): string {
   }).toLowerCase(); // optional: make "AM"/"PM" lowercase
 }
 
+/**
+ * Formats a number into a short, human-readable string.
+ * Examples:
+ *  - 0.000123456 → "0.000"
+ *  - 1234.987456 → "1.235k"
+ *  - 12345 → "12.345k"
+ *  - 1234567 → "1.235M"
+ *  - 9876543210 → "9.877B"
+ *
+ * @param value - The number or numeric string to format
+ * @param decimals - Number of decimal places to keep (default = 3)
+ * @returns A formatted string with suffix (k, M, B, T) if applicable
+ */
+export function formatNumber (value: number | string | undefined, decimalPoint = 2): string {
+  if (value === undefined || value === '0') {
+    return '0';
+  }
+
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+
+  if (isNaN(num)) {
+    return '0';
+  }
+
+  const absNum = Math.abs(num);
+
+  if (absNum < 1) {
+    // For very small numbers, keep fixed precision
+    return num.toFixed(decimalPoint);
+  }
+
+  const units = ['', 'k', 'M', 'B', 'T'];
+  const order = Math.min(Math.floor(Math.log10(absNum) / 3), units.length - 1);
+  const scaled = num / Math.pow(10, order * 3);
+
+  return `${scaled.toFixed(decimalPoint)}${units[order]}`;
+}
+
 export function getNotificationItemTitle (type: NotificationType, referenda?: ReferendaNotificationType) {
   const { t } = useTranslation();
 
   switch (type) {
     case 'receivedFund':
-      return t('New Fund Received');
+      return t('Fund Received');
 
     case 'referenda':
       if (referenda?.status === 'approved') {
@@ -346,7 +386,7 @@ export function getNotificationItemTitle (type: NotificationType, referenda?: Re
       }
 
     case 'stakingReward':
-      return t('New Reward');
+      return t('Reward');
 
     default:
       return t('Update');
@@ -358,11 +398,19 @@ export function getNotificationDescription (item: NotificationMessageType) {
   const { chainName } = useChainInfo(item.chain?.value as string ?? '', true);
 
   switch (item.type) {
-    case 'receivedFund':
+    case 'receivedFund': {
+      const assetSymbol = item.receivedFund?.assetSymbol;
+      const assetAmount = formatNumber(item.receivedFund?.amount);
+      const currencyAmount = formatNumber(item.receivedFund?.currencyAmount);
+
+      const amountSection = `${assetAmount} ${assetSymbol} ($${currencyAmount})`;
+
       return {
-        text: t('Received 0.1 DOT ($1.23) on {{chainName}}', { replace: { chainName } }),
-        textInColor: item.extrinsicIndex // TODO
+        // text: t('Received {{assetAmount}} {{assetSymbol}} (${{currencyAmount}}) on {{chainName}}', { replace: { assetAmount, assetSymbol, chainName, currencyAmount } }),
+        text: t('Received {{amountSection}} on {{chainName}}', { replace: { amountSection, chainName } }),
+        textInColor: amountSection
       };
+    }
 
     case 'referenda': {
       const statusMap: Record<string, string> = {

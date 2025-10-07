@@ -64,13 +64,14 @@ interface AccountDisplayWithMerkle extends AccountDisplay {
 }
 
 export interface TransfersProp {
-  from: string,
-  fromAccountDisplay: AccountDisplay,
-  toAccountId: AccountDisplay,
-  date: string,
+  amount: string;
+  assetSymbol: string;
+  currencyAmount: string;
+  date: string;
+  from: string;
+  fromAccountDisplay: AccountDisplay;
+  toAccountId: AccountDisplay;
   timestamp: number;
-  amount: string,
-  assetSymbol: string
 }
 
 export interface PayoutsProp {

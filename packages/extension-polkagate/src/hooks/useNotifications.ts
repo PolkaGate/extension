@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { NotificationSettingType } from '../popup/notification/NotificationSettings';
+import type { NotificationActionType, NotificationsType, WorkerMessage } from '../popup/notification/types';
 import type { DropdownOption } from '../util/types';
 
 import { useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
@@ -9,13 +10,12 @@ import { useCallback, useContext, useEffect, useMemo, useReducer, useRef, useSta
 import { AccountContext } from '../components';
 import { getStorage, setStorage } from '../components/Loading';
 import { DEFAULT_NOTIFICATION_SETTING, KUSAMA_NOTIFICATION_CHAIN, MAX_ACCOUNT_COUNT_NOTIFICATION, SUBSCAN_SUPPORTED_CHAINS } from '../popup/notification/constant';
-import { generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, markMessagesAsRead, updateReferendas } from '../popup/notification/util';
+import { getPayoutsInformation, getReceivedFundsInformation } from '../popup/notification/helpers';
+import { generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, groupNotificationsByDay, markMessagesAsRead, updateReferendas } from '../popup/notification/util';
 import { sanitizeChainName } from '../util';
 import { KUSAMA_GENESIS_HASH, STORAGE_KEY } from '../util/constants';
 import { useWorker } from './useWorker';
 import { useGenesisHashOptions, useSelectedChains } from '.';
-import type { NotificationActionType, NotificationsType, WorkerMessage } from '../popup/notification/types';
-import { getPayoutsInformation, getReceivedFundsInformation } from '../popup/notification/helpers';
 
 const initialNotificationState: NotificationsType = {
   isFirstTime: undefined,
@@ -337,8 +337,11 @@ export default function useNotifications () {
     };
   }, [notifications]);
 
+  const notificationItems = useMemo(() => groupNotificationsByDay(notifications.notificationMessages), [notifications.notificationMessages]);
+
   return {
     markAsRead,
+    notificationItems,
     notifications
   };
 }

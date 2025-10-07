@@ -269,21 +269,22 @@ export const KODADOT_URL = 'https://kodadot.xyz';
 export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
 export enum ExtensionPopups {
-  LANGUAGE,
-  GOVERNANCE,
-  NEW_NETWORK,
-  NONE,
-  PASSWORD,
-  PRIVACY,
-  WARNING,
-  // Account Popups
   DAPPS,
   DERIVE,
   EXPORT,
+  GOVERNANCE,
+  LANGUAGE,
+  NEW_NETWORK,
+  NONE,
+  NOTIFICATION,
+  PASSWORD,
+  PRIVACY,
+  // Account Popups
   IMPORT,
   RECEIVE,
   RENAME,
   REMOVE,
+  WARNING
 }
 
 export const TRANSACTION_FLOW_STEPS = {

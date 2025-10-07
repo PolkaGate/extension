@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid } from '@mui/material';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { BackWithLabel, FadeOnScroll, Motion } from '@polkadot/extension-polkagate/src/components';
@@ -12,19 +12,14 @@ import { HomeMenu, UserDashboardHeader, WhatsNew } from '@polkadot/extension-pol
 import { VelvetBox } from '@polkadot/extension-polkagate/src/style';
 
 import NotificationGroup from './partials/NotificationGroup';
-import { groupNotificationsByDay } from './util';
 
 function Notification () {
   useBackground('default');
 
   const refContainer = useRef(null);
-  const { markAsRead, notifications } = useNotifications();
+  const { notificationItems } = useNotifications();
   const { t } = useTranslation();
   const navigate = useNavigate();
-
-  console.log('notifications:', groupNotificationsByDay(notifications.notificationMessages));
-
-  const notificationItems = useMemo(() => groupNotificationsByDay(notifications.notificationMessages), [notifications.notificationMessages]);
 
   const backHome = useCallback(() => navigate('/') as void, [navigate]);
 

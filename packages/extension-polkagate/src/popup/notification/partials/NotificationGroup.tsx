@@ -34,16 +34,17 @@ function TitleTime ({ address, read, time, title }: { address: string | undefine
 
   return (
     <Stack direction='row' sx={{ alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-      <Grid container item sx={{ alignItems: 'center', gap: '4px', width: 'fit-content' }}>
+      <Grid container item sx={{ alignItems: 'center', gap: '6px', width: 'fit-content' }}>
         <Typography color={theme.palette.text.primary} variant='B-2'>
           {title}
         </Typography>
-        {!read && <Grid sx={{ bgcolor: theme.palette.menuIcon.hover, borderRadius: '999px', height: '8px', width: '8px' }} />}
         <ScrollingTextBox
+          style={{ bgcolor: '#AA83DC26', px: '4px' }}
           text={account?.name ?? toShortAddress(address) ?? t('Unknown')}
-          textStyle={{ ...theme.typography['B-1'] }}
+          textStyle={{ color: '#AA83DC', ...theme.typography['B-1'] }}
           width={75}
         />
+        {!read && <Grid sx={{ bgcolor: theme.palette.menuIcon.hover, borderRadius: '999px', height: '8px', width: '8px' }} />}
       </Grid>
       <Typography color='#674394' variant='B-1'>
         {time}
@@ -71,7 +72,7 @@ function NotificationItem ({ item }: { item: NotificationMessageType; }) {
           title={title}
         />
         <TwoToneText
-          color={theme.palette.text.secondary}
+          color={theme.palette.text.primary}
           style={{ color: theme.palette.text.secondary, width: 'fit-content', ...theme.typography['B-4'] }}
           text={text}
           textPartInColor={textInColor as string}
@@ -86,7 +87,7 @@ function NotificationGroup ({ group: [dateKey, items] }: { group: [string, Notif
     <Stack direction='column' sx={{ bgcolor: '#05091C', borderRadius: '14px', gap: '8px', p: '10px', width: '100%' }}>
       <ItemDate date={dateKey} />
       {items.map((item, index) => (
-        <Fragment key={item.extrinsicIndex}>
+        <Fragment key={`${item.extrinsicIndex} + ${index}`}>
           <NotificationItem
             item={item}
           />

@@ -29,11 +29,11 @@ const transformTransfers = (address: string, transfers: Transfer[], network: Dro
     const sanitizedTransfer = {
       amount: transfer.amount,
       assetSymbol: transfer.asset_symbol,
+      currencyAmount: transfer.currency_amount,
       date: timestampToDate(transfer.block_timestamp),
       from: transfer.from,
       fromAccountDisplay: transfer.from_account_display,
       timestamp: transfer.block_timestamp,
-      // module: transfer.module,
       toAccountId: transfer.to_account_display
     };
 
