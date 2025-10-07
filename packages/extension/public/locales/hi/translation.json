@@ -860,5 +860,6 @@
   "working": "कार्य प्रगति पर",
   "ready": "तैयार",
   "sent": "भेजा गया",
-  "on-chain": "चेन पर"
+  "on-chain": "चेन पर",
+  "Missing tokens? Manage Networks!": "टोकन नहीं दिख रहे? नेटवर्क प्रबंधित करें!"
 }

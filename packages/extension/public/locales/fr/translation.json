@@ -861,5 +861,6 @@
   "working": "en cours",
   "ready": "prêt",
   "sent": "envoyé",
-  "on-chain": "sur la blockchain"
+  "on-chain": "sur la blockchain",
+  "Missing tokens? Manage Networks!": "Des jetons manquants ? Gérer les réseaux !"
 }

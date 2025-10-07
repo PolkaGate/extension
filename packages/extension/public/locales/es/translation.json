@@ -861,5 +861,6 @@
   "working": "en proceso",
   "ready": "listo",
   "sent": "enviado",
-  "on-chain": "en la cadena"
+  "on-chain": "en la cadena",
+  "Missing tokens? Manage Networks!": "¿Faltan tokens? ¡Administra las redes!"
 }
