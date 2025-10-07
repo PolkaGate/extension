@@ -42,7 +42,7 @@ export default function Solo (): React.ReactElement {
   const { genesisHash } = useParams<{ genesisHash: string }>();
 
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
-  const { decimal, token } = useChainInfo(genesisHash, true);
+  const { api, decimal, token } = useChainInfo(genesisHash);
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
   const [review, setReview] = useState<boolean>(false);
@@ -99,11 +99,13 @@ export default function Solo (): React.ReactElement {
               onClick: onUnstake,
               text: t('Unstake')
             },
-            {
-              Icon: Timer1,
-              onClick: onFastUnstake,
-              text: t('Fast Unstake')
-            }]}
+            ...(api?.tx['fastUnstake']?.['registerFastUnstake']
+              ? [{
+                Icon: Timer1,
+                onClick: onFastUnstake,
+                text: t('Fast Unstake')
+              }]
+              : [])]}
             genesisHash={genesisHash as unknown as string}
             staked={staked as unknown as BN}
             style={{ mt: '20px' }}
