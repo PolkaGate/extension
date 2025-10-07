@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.12.0](https://github.com/polkagate/extension/compare/v1.11.3...v1.12.0) (2025-10-07)
+
+
+### Features
+
+* add “Manage Networks” button to account home screen ([a8dce25](https://github.com/polkagate/extension/commit/a8dce25aae624e29a07126b11bc5428cf4ff8fd8))
+
 ## [1.11.3](https://github.com/polkagate/extension/compare/v1.11.2...v1.11.3) (2025-10-06)
 
 
