@@ -51,17 +51,14 @@ const transformPayouts = (address: string, payouts: Payout[], network: DropdownO
     data: [] as PayoutsProp[],
     network
   };
-  // const decimal = selectableNetworks.find(({ genesisHash }) => (genesisHash[0] as unknown as string) === network.value)?.decimals[0];
 
   // Sanitize each transfer item and accumulate results
   const result = payouts.reduce((accumulator, payout) => {
     const sanitizedTransfer = {
       amount: payout.amount,
       date: timestampToDate(payout.block_timestamp),
-      // decimal,
       era: payout.era,
       timestamp: payout.block_timestamp
-      // validatorStash: payout.validator_stash
     } as PayoutsProp;
 
     accumulator.data.push(sanitizedTransfer);
@@ -200,8 +197,6 @@ export const getPayoutsInformation = async (addresses: string[], chains: string[
             if (!payoutInfo) {
               return null; // account doesn't have any history
             }
-
-            console.log('payoutInfo.data.list:', payoutInfo);
 
             return transformPayouts(address, payoutInfo, network);
           } catch (error) {

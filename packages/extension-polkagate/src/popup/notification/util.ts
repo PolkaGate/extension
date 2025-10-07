@@ -3,12 +3,16 @@
 
 /* eslint-disable no-template-curly-in-string */
 
+import type { TFunction } from '@polkagate/apps-config/types';
+import type { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/home/partials/type';
+import type { ChainInfo } from '@polkadot/extension-polkagate/src/hooks/useChainInfo';
+import type { Price } from '@polkadot/extension-polkagate/src/hooks/useTokenPriceBySymbol';
 import type { DropdownOption } from '../../util/types';
 import type { NotificationMessageType, NotificationType, ReceivedFundInformation, ReferendaNotificationType, StakingRewardInformation } from './types';
 
 import { ArrowDown3, Award, Receipt2 } from 'iconsax-react';
 
-import { useChainInfo, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 
 export function timestampToDate (timestamp: number | string, format: 'full' | 'short' | 'relative' = 'full'): string {
   // Ensure timestamp is a number and convert if it's a string
@@ -327,65 +331,75 @@ export function getTimeOfDay (timestamp: number): string {
   }).toLowerCase(); // optional: make "AM"/"PM" lowercase
 }
 
-/**
- * Converts a numeric string with blockchain-style decimals (e.g. "92861564408", 10)
- * into a human-readable decimal string (e.g. "9.2861564408").
- */
-function divideAmountByDecimals (amountStr: string, decimals: number): string {
-  if (typeof amountStr !== 'string' || isNaN(Number(decimals)) || decimals < 0) {
-    return amountStr;
-  }
-
-  amountStr = amountStr.replace(/^0+/, '').padStart(decimals + 1, '0'); // remove leading zeros safely
-
-  const intPart = amountStr.slice(0, -decimals) || '0';
-  const fracPart = amountStr.slice(-decimals).replace(/0+$/, ''); // remove trailing zeros
-
-  return fracPart ? `${intPart}.${fracPart}` : intPart;
-}
+// /**
+//  * Converts a numeric string with blockchain-style decimals (e.g. "92861564408", 10)
+//  * into a human-readable decimal string (e.g. "9.2861564408").
+//  */
+// function divideAmountByDecimals (amountStr: string, decimals: number): string {
+//   if (typeof amountStr !== 'string' || isNaN(Number(decimals)) || decimals < 0) {
+//     return amountStr;
+//   }
+//   amountStr = amountStr.replace(/^0+/, '').padStart(decimals + 1, '0'); // remove leading zeros safely
+//   const intPart = amountStr.slice(0, -decimals) || '0';
+//   const fracPart = amountStr.slice(-decimals).replace(/0+$/, ''); // remove trailing zeros
+//   return fracPart ? `${intPart}.${fracPart}` : intPart;
+// }
 
 /**
- * Formats a number into a short, human-readable string.
+ * Converts a blockchain-style integer (string or number) into a scaled number.
  * Examples:
- *  - 0.000123456 → "0.000"
- *  - 1234.987456 → "1.235k"
- *  - 12345 → "12.345k"
- *  - 1234567 → "1.235M"
- *  - 9876543210 → "9.877B"
+ *  - "92861564408", decimal=10 → 9.2861564408
+ *  - 1234567 → 1234567
+ *  - "123450000000000000000", decimal=18 → 123.45
  *
- * @param value - The number or numeric string to format
- * @param decimals - Number of decimal places to keep (default = 3)
- * @param decimal - (Optional) number of blockchain-style decimals to divide by 10^decimal before formatting
- * @returns A formatted string with suffix (k, M, B, T) if applicable
+ * If the value is extremely large, it safely clamps at Number.MAX_SAFE_INTEGER.
+ *
+ * @param value - numeric string or number
+ * @param decimalPoint - number of decimal digits to keep
+ * @param decimal - blockchain-style decimals (divide by 10^decimal)
+ * @returns numeric result (rounded)
  */
-export function formatNumber (value: number | string | undefined, decimalPoint = 2, decimal = 0): string {
-  if (value === undefined || value === '0') {
-    return '0';
+export function formatNumber (
+  value: number | string | undefined,
+  decimalPoint = 2,
+  decimal = 0
+): number {
+  if (value === undefined || value === null) {
+    return 0;
   }
 
-  let strValue = value.toString();
+  const strValue = value.toString().replace(/,/g, '').trim();
 
+  if (!/^\d+(\.\d+)?$/.test(strValue)) {
+    return 0;
+  }
+
+  let result: number;
+
+  // If blockchain-style decimal division is required
   if (decimal > 0 && /^[0-9]+$/.test(strValue)) {
-    strValue = divideAmountByDecimals(strValue, decimal);
+    // Use BigInt division for safety
+    const bigintVal = BigInt(strValue);
+    const divisor = 10n ** BigInt(decimal);
+
+    // Get decimal as string manually
+    const intPart = bigintVal / divisor;
+    const fracPart = bigintVal % divisor;
+    const fracStr = fracPart.toString().padStart(decimal, '0').slice(0, decimalPoint);
+
+    result = parseFloat(`${intPart}.${fracStr}`);
+  } else {
+    result = parseFloat(strValue);
   }
 
-  const num = parseFloat(strValue);
-
-  if (isNaN(num)) {
-    return '0';
+  if (!isFinite(result)) {
+    return Number.MAX_SAFE_INTEGER;
   }
 
-  const absNum = Math.abs(num);
+  // Round to requested decimal points
+  const rounded = Number(result.toFixed(decimalPoint));
 
-  if (absNum < 1) {
-    return num.toFixed(decimalPoint);
-  }
-
-  const units = ['', 'k', 'M', 'B', 'T'];
-  const order = Math.min(Math.floor(Math.log10(absNum) / 3), units.length - 1);
-  const scaled = num / Math.pow(10, order * 3);
-
-  return `${scaled.toFixed(decimalPoint)}${units[order]}`;
+  return Math.min(rounded, Number.MAX_SAFE_INTEGER);
 }
 
 export function getNotificationItemTitle (type: NotificationType, referenda?: ReferendaNotificationType) {
@@ -416,9 +430,9 @@ export function getNotificationItemTitle (type: NotificationType, referenda?: Re
   }
 }
 
-export function getNotificationDescription (item: NotificationMessageType) {
-  const { t } = useTranslation();
-  const { chainName, decimal, token } = useChainInfo(item.chain?.value as string ?? '', true);
+export function getNotificationDescription (item: NotificationMessageType, t: TFunction, chainInfo: ChainInfo, price: Price, currency: CurrencyItemType | undefined) {
+  const { chainName, decimal, token } = chainInfo;
+  const currencySign = currency?.sign;
 
   switch (item.type) {
     case 'receivedFund': {
@@ -426,7 +440,7 @@ export function getNotificationDescription (item: NotificationMessageType) {
       const assetAmount = formatNumber(item.receivedFund?.amount);
       const currencyAmount = formatNumber(item.receivedFund?.currencyAmount);
 
-      const amountSection = `${assetAmount} ${assetSymbol} ($${currencyAmount})`;
+      const amountSection = `${assetAmount} ${assetSymbol} (${currencySign}${currencyAmount})`;
 
       return {
         text: t('Received {{amountSection}} on {{chainName}}', { replace: { amountSection, chainName } }),
@@ -458,8 +472,9 @@ export function getNotificationDescription (item: NotificationMessageType) {
 
     case 'stakingReward': {
       const assetAmount = formatNumber(item.payout?.amount, 2, decimal);
+      const currencyAmount = formatNumber(assetAmount * (price.price ?? 0));
 
-      const amountSection = `${assetAmount} ${token}`;
+      const amountSection = `${assetAmount} ${token} (${currencySign}${currencyAmount})`;
 
       return {
         text: t('Received {{amountSection}} from {{chainName}} staking', { replace: { amountSection, chainName } }),

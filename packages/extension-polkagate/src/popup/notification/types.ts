@@ -76,10 +76,8 @@ export interface TransfersProp {
 
 export interface PayoutsProp {
   era: number;
-  validatorStash: string;
   amount: string;
   date: string;
-  decimal: number;
   timestamp: number;
 }
 

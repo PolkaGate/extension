@@ -41,7 +41,7 @@ function Notification () {
               />
             ))}
           </VelvetBox>
-          <WhatsNew style={{ columnGap: '5px', paddingBottom: '75px', paddingTop: '24px' }} />
+          <WhatsNew style={{ columnGap: '5px', paddingBottom: '50px', paddingTop: '24px' }} />
         </Container>
         <FadeOnScroll containerRef={refContainer} />
         <HomeMenu />

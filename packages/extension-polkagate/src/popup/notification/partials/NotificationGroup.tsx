@@ -7,7 +7,7 @@ import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { Fragment } from 'react';
 
 import { GradientDivider, ScrollingTextBox, TwoToneText } from '@polkadot/extension-polkagate/src/components';
-import { useAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useAccount, useChainInfo, useCurrency, useTokenPriceBySymbol, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { toShortAddress } from '@polkadot/extension-polkagate/src/util';
 
 import { getNotificationDescription, getNotificationIcon, getNotificationItemTitle, getTimeOfDay, isToday } from '../util';
@@ -56,10 +56,17 @@ function TitleTime ({ address, read, time, title }: { address: string | undefine
 
 function NotificationItem ({ item }: { item: NotificationMessageType; }) {
   const theme = useTheme();
+  const { t } = useTranslation();
+  const currency = useCurrency();
+
+  const genesisHash = item.chain?.value as string ?? '';
+
+  const chainInfo = useChainInfo(genesisHash, true);
+  const price = useTokenPriceBySymbol(chainInfo.token, genesisHash);
 
   const title = getNotificationItemTitle(item.type, item.referenda);
   const time = getTimeOfDay(item.payout?.timestamp ?? item.receivedFund?.timestamp ?? Date.now()); //  ?? item.referenda?.timestamp
-  const { text, textInColor } = getNotificationDescription(item);
+  const { text, textInColor } = getNotificationDescription(item, t, chainInfo, price, currency);
   const { ItemIcon, bgcolor, borderColor, color } = getNotificationIcon(item);
 
   return (

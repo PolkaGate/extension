@@ -14,7 +14,7 @@ const DEFAULT_PRICE = {
   priceDate: undefined
 };
 
-interface Price {
+export interface Price {
   price: number | undefined,
   priceDate: number | undefined;
 }
