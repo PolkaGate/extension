@@ -38,7 +38,7 @@ function ManageNetworks (): React.ReactElement {
           color={isHovered ? '#EAEBF1' : theme.palette.menuIcon.active}
           onClick={onClick}
           size={isExtension ? '22' : '20'}
-          variant='Bold'
+          variant={ isExtension ? 'Bulk' : 'Bold'}
         />
       </div>
     </MyTooltip>
