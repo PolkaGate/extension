@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.12.1](https://github.com/polkagate/extension/compare/v1.12.0...v1.12.1) (2025-10-07)
+
+
+### Bug Fixes
+
+* add workaround to handle missing API endpoints during Kusama partial migration ([#1953](https://github.com/polkagate/extension/issues/1953)) ([8d0d73e](https://github.com/polkagate/extension/commit/8d0d73e61cba989184e0a377731f0ec702a902a0))
+
 # [1.12.0](https://github.com/polkagate/extension/compare/v1.11.3...v1.12.0) (2025-10-07)
 
 
