@@ -37,7 +37,7 @@ function ManageNetworks (): React.ReactElement {
         <Setting4
           color={isHovered ? '#EAEBF1' : theme.palette.menuIcon.active}
           onClick={onClick}
-          size={isExtension ? '26' : '20'}
+          size={isExtension ? '22' : '20'}
           variant='Bold'
         />
       </div>
