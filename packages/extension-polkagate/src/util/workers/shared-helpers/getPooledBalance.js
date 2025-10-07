@@ -22,7 +22,7 @@ export async function getPooledBalance (api, address) {
     return { pooledBalance: BN_ZERO };
   }
 
-  const [bondedPool, metadata, stashIdAccount, myClaimable] = await Promise.all([
+  const [bondedPool, metadata, stashIdAccount, myClaimable = BN_ZERO] = await Promise.all([
     api.query.nominationPools.bondedPools(poolId),
     api.query.nominationPools.metadata(poolId),
     api.derive.staking.account(accounts.stashId),
@@ -33,7 +33,6 @@ export async function getPooledBalance (api, address) {
     ? BN_ZERO
     : (new BN(String(member.points)).mul(new BN(String(stashIdAccount.stakingLedger.active)))).div(new BN(String(bondedPool.unwrap()?.points ?? BN_ONE)));
 
-  const rewards = myClaimable;
   let unlockingValue = BN_ZERO;
 
   member?.unbondingEras?.forEach((value) => {
@@ -48,7 +47,7 @@ export async function getPooledBalance (api, address) {
 
   return {
     poolName,
-    poolReward: rewards.toString(),
+    poolReward: myClaimable.toString(),
     pooledBalance: active.add(unlockingValue).toString()
   };
 }

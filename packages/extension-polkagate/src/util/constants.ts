@@ -115,7 +115,7 @@ export const NFT_CHAINS = [
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
   POLKADOT_GENESIS_HASH,
-  KUSAMA_GENESIS_HASH,
+  STATEMINE_GENESIS_HASH,
   WESTMINT_GENESIS_HASH,
   PASEO_ASSET_HUB_GENESIS_HASH
 ];
