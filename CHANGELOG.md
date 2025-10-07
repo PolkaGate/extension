@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.12.2](https://github.com/polkagate/extension/compare/v1.12.1...v1.12.2) (2025-10-07)
+
+
+### Bug Fixes
+
+* display Fast Unstake button only on chains that support it ([6985706](https://github.com/polkagate/extension/commit/6985706be55f965e5ad8df6d03147f54062bd451))
+
 ## [1.12.1](https://github.com/polkagate/extension/compare/v1.12.0...v1.12.1) (2025-10-07)
 
 
