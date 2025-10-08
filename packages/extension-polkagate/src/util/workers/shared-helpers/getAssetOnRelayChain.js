@@ -3,7 +3,7 @@
 
 import { FETCHING_ASSETS_FUNCTION_NAMES, NATIVE_TOKEN_ASSET_ID, TEST_NETS } from '../../constants';
 import { getPriceIdByChainName } from '../../misc';
-import { balancify, closeWebsockets, newRefNotif } from '../utils';
+import { balancify, closeWebsockets } from '../utils';
 import { getBalances } from './getBalances.js';
 
 /**
@@ -45,8 +45,6 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
         totalBalance: String(totalBalance)
       }];
     });
-
-    await newRefNotif(api, chainName, port);
 
     closeWebsockets(connectionsToBeClosed);
   } catch (error) {
