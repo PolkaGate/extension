@@ -83,6 +83,28 @@ export function mapSystemToRelay (systemGenesisHash: string | undefined | null, 
 }
 
 /**
+ * Maps a given chain's genesis hash to its corresponding system chain (e.g., AssetHub or People chain)
+ * based on its relay chain mapping.
+ *
+ * The function first determines whether the provided genesis hash belongs to a relay or system chain.
+ * If it is a system chain, it maps it back to its relay, then resolves the target system chain
+ * of the specified type for that relay.
+ *
+ * @param genesisHash - The genesis hash of the chain to map.
+ * @param type - The system chain type to resolve (e.g., `'assetHub'` or `'people'`).
+ * @returns The corresponding system chain genesis hash if found, otherwise the original `genesisHash`.
+ */
+export function mapToSystemChain (genesisHash: string | undefined, type: SystemChainsName): string | undefined {
+  if (!genesisHash) {
+    return;
+  }
+
+  const maybeRelay = mapSystemToRelay(genesisHash, false);
+
+  return maybeRelay ? relayToSystemChains[maybeRelay]?.[type] : genesisHash;
+}
+
+/**
  * Maps a assetHub genesis hash to its corresponding relay chain genesis hash if applicable.
  * @param genesisHash - The original genesis hash of the assetHub chain.
  * @returns The relay chain genesis hash if a mapping exists; otherwise, returns the original genesis hash.
