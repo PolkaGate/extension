@@ -83,66 +83,25 @@ export function mapSystemToRelay (systemGenesisHash: string | undefined | null, 
 }
 
 /**
- * Map a provided genesis hash or chain identifier to a system chain name of the requested type.
+ * Maps a given chain's genesis hash to its corresponding system chain (e.g., AssetHub or People chain)
+ * based on its relay chain mapping.
  *
- * The function implements a multi-step resolution strategy:
- * 1. If `genesisHash` is falsy (undefined | null | empty), return `undefined`.
- * 2. If `genesisHash` is recognized as a migrated relay genesis (isMigratedRelay), return the mapped
- *    system chain from `migratedRelaysToSystemChains[genesisHash][type]` if present, otherwise return
- *    the original `genesisHash`.
- * 3. If `genesisHash` already matches a system chain entry for the requested `type` inside
- *    `relayToSystemChains`, return the original `genesisHash` (no remapping needed).
- * 4. Attempt to resolve a relay identifier from the provided value via `mapSystemToRelay(genesisHash, true)`
- *    (migration-aware). If a different relay is found, return the migrated system chain for that relay
- *    and `type` if available, otherwise fall back to the original `genesisHash`.
- * 5. Final fallback: try `mapSystemToRelay(genesisHash, false)` (migration-agnostic). If this yields a
- *    relay different from the input, return the corresponding migrated system chain if present, otherwise
- *    fall back to the original `genesisHash`.
- * 6. If no mapping applies, return the original `genesisHash` (string). If the input was falsy, returns `undefined`.
+ * The function first determines whether the provided genesis hash belongs to a relay or system chain.
+ * If it is a system chain, it maps it back to its relay, then resolves the target system chain
+ * of the specified type for that relay.
  *
- * Remarks:
- * - The function relies on external helpers/structures: `isMigratedRelay`, `relayToSystemChains`,
- *   `mapSystemToRelay`, and `migratedRelaysToSystemChains`.
- * - Returned values are either a mapped system chain name (string), the original input string when no
- *   appropriate mapping is found, or `undefined` for falsy inputs.
- *
- * @param genesisHash - A genesis hash or chain identifier to resolve (may be undefined or null).
- * @param type - The requested SystemChainsName type to map to (determines which system-chain variant to return).
- * @returns The resolved system chain name of the requested type, the original `genesisHash` when no mapping exists,
- *          or `undefined` if the input was falsy.
+ * @param genesisHash - The genesis hash of the chain to map.
+ * @param type - The system chain type to resolve (e.g., `'assetHub'` or `'people'`).
+ * @returns The corresponding system chain genesis hash if found, otherwise the original `genesisHash`.
  */
-export function mapToSystemChain (genesisHash: string | undefined | null, type: SystemChainsName): string | undefined {
+export function mapToSystemChain (genesisHash: string | undefined, type: SystemChainsName): string | undefined {
   if (!genesisHash) {
     return;
   }
 
-  // If the provided value is a migrated relay genesis, map directly.
-  if (isMigratedRelay(genesisHash)) {
-    return migratedRelaysToSystemChains[genesisHash]?.[type] ?? genesisHash;
-  }
+  const maybeRelay = mapSystemToRelay(genesisHash, false);
 
-  // If the provided value is already a system chain of the requested type, return it.
-  for (const [, systemChains] of Object.entries(relayToSystemChains)) {
-    if (systemChains[type] === genesisHash) {
-      return genesisHash;
-    }
-  }
-
-  // Try to resolve a relay from the provided value (handles hub genesis hashes and some names).
-  const relayFromSystem = mapSystemToRelay(genesisHash, true) ?? undefined;
-
-  if (relayFromSystem && relayFromSystem !== genesisHash) {
-    return migratedRelaysToSystemChains[relayFromSystem]?.[type] ?? genesisHash;
-  }
-
-  // Final fallback: attempt mapping without migration check (covers any system chain listed in relayToSystemChains).
-  const relayNoCheck = mapSystemToRelay(genesisHash, false) ?? undefined;
-
-  if (relayNoCheck && relayNoCheck !== genesisHash) {
-    return migratedRelaysToSystemChains[relayNoCheck]?.[type] ?? genesisHash;
-  }
-
-  return genesisHash;
+  return maybeRelay ? relayToSystemChains[maybeRelay]?.[type] : genesisHash;
 }
 
 /**
