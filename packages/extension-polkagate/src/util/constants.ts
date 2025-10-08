@@ -303,6 +303,7 @@ export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 export const STORAGE_KEY = {
   ACCOUNT_SELECTED_CHAIN: 'accountSelectedChain',
   ASSETS: 'migrated-assets1',
+  AUTO_LOCK: 'autoLock',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   HISTORY: 'history',
   ICON_THEME: 'identiconType',

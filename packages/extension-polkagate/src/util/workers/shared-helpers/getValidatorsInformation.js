@@ -4,26 +4,11 @@
 // @ts-nocheck
 import { hexToString } from '@polkadot/util';
 
-import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '../../constants';
 import getChainName from '../../getChainName';
+import { mapToSystemChain } from '../../migrateHubUtils';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
 
 const BATCH_SIZE = 50;
-
-/**
- * Fetches the chain name based on the genesis hash
- * @param {string} genesisHash - The genesis hash of the chain
- * @returns {string} The name of the chain
-*/
-const getPeopleChainName = (genesisHash) => {
-  if (genesisHash === POLKADOT_GENESIS_HASH) {
-    return 'PolkadotPeople';
-  } else if (genesisHash === KUSAMA_GENESIS_HASH) {
-    return 'KusamaPeople';
-  } else {
-    return 'WestendPeople';
-  }
-};
 
 /**
  * Extended version of DeriveStakingQuery which includes identity information
@@ -89,7 +74,10 @@ export default async function getValidatorsInformation (genesisHash, port) {
 
     // Start connect to the People chain endpoints in order to fetch identities
     console.log('Connecting to People chain endpoints...');
-    const peopleChainName = getPeopleChainName(genesisHash);
+
+    const peopleChainGenesisHash = mapToSystemChain(genesisHash, 'people');
+    const peopleChainName = getChainName(peopleChainGenesisHash);
+
     const peopleEndpoints = getChainEndpoints(peopleChainName);
     const { api: peopleApi, connections: peopleConnections } = await fastestEndpoint(peopleEndpoints);
 

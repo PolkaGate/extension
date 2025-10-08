@@ -7,6 +7,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { DropSelect, MyTextField } from '@polkadot/extension-polkagate/src/components';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { setStorage } from '../../../../components/Loading';
 import MySwitch from '../../../../components/MySwitch';
@@ -63,7 +64,7 @@ export default function AutoLockTimer (): React.ReactElement {
       return;
     }
 
-    setStorage('autoLock', toSave).catch(console.error);
+    setStorage(STORAGE_KEY.AUTO_LOCK, toSave).catch(console.error);
   }, [autoLock, delayType, enabled, inputValue]);
 
   return (
