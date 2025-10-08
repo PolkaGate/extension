@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.13.0](https://github.com/polkagate/extension/compare/v1.12.2...v1.13.0) (2025-10-08)
+
+
+### Features
+
+* add Telegram support channel to social links ([4753d85](https://github.com/polkagate/extension/commit/4753d85a484f644e11623cfff1267e16cb6c06d0))
+
 ## [1.12.2](https://github.com/polkagate/extension/compare/v1.12.1...v1.12.2) (2025-10-07)
 
 
