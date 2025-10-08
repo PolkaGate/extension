@@ -7,17 +7,17 @@ import React, { useEffect, useState } from 'react';
 
 import { AccountIconThemeContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { getStorage, watchStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { DEFAULT_ACCOUNT_ICON_THEME, ICON_THEME_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { DEFAULT_ACCOUNT_ICON_THEME, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 export default function AccountIconThemeProvider ({ children }: { children: React.ReactNode }) {
   const [accountIconTheme, setAccountIconTheme] = useState<MyIconTheme>(DEFAULT_ACCOUNT_ICON_THEME);
 
   useEffect(() => {
-    getStorage(ICON_THEME_NAME_IN_STORAGE)
+    getStorage(STORAGE_KEY.ICON_THEME)
       .then((maybeTheme) => setAccountIconTheme((maybeTheme as MyIconTheme | undefined) || DEFAULT_ACCOUNT_ICON_THEME))
       .catch(console.error);
 
-    const unsubscribe = watchStorage(ICON_THEME_NAME_IN_STORAGE, setAccountIconTheme);
+    const unsubscribe = watchStorage(STORAGE_KEY.ICON_THEME, setAccountIconTheme);
 
     return () => {
       unsubscribe();

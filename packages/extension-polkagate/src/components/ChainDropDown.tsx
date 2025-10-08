@@ -9,7 +9,7 @@ import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/use
 import { updateStorage } from '@polkadot/extension-polkagate/src/util/index';
 
 import { useSelectedAccount } from '../hooks';
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '../util/constants';
+import { STORAGE_KEY } from '../util/constants';
 import { DropSelect, GenesisHashOptionsContext } from '.';
 
 const DEFAULT_SELECTED_OPTION: DropdownOption = { text: 'Select a chain', value: '' };
@@ -43,7 +43,7 @@ function ChainDropDown ({ style = {}, withSelectAChainText = true }: Props): Rea
   }, [options, withSelectAChainText]);
 
   const handleSelectedChain = useCallback((value: number | string) => {
-    selectedAccount && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [selectedAccount.address]: value }).then(() => {
+    selectedAccount && updateStorage(STORAGE_KEY.ACCOUNT_SELECTED_CHAIN, { [selectedAccount.address]: value }).then(() => {
       handleSetChain(String(value));
     }).catch(console.error);
   }, [handleSetChain, selectedAccount]);

@@ -10,7 +10,7 @@ import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/use
 import { Version } from '@polkadot/extension-polkagate/src/partials';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util';
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, ExtensionPopups, PRIVACY_POLICY_LINK } from '@polkadot/extension-polkagate/src/util/constants';
+import { ExtensionPopups, PRIVACY_POLICY_LINK,STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
@@ -67,7 +67,7 @@ function MainMenuColumn (): React.ReactElement {
       stakeType = 'solo';
     }
 
-    updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [addressKey]: genesisHashKey })
+    updateStorage(STORAGE_KEY.ACCOUNT_SELECTED_CHAIN, { [addressKey]: genesisHashKey })
       .then(() =>
         navigate(`/fullscreen-stake/${stakeType}/${addressKey}/${genesisHashKey}`) as void
       )

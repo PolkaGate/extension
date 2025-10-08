@@ -11,7 +11,7 @@ import { AccountsStore } from '@polkadot/extension-base/stores';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
-import { PROFILE_TAGS, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { keyring } from '@polkadot/ui-keyring';
 import { objectSpread } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
@@ -111,7 +111,7 @@ export default function ImportSeed (): React.ReactElement {
 
       createAccountSuri(name, password, account.suri, type)
         .then(() => {
-          setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LOCAL).catch(console.error);
+          setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL).catch(console.error);
           switchToOrOpenTab('/', true);
         })
         .catch((error): void => {

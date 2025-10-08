@@ -4,7 +4,7 @@
 import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { isValidGenesis, updateStorage } from '../util';
 import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
@@ -88,7 +88,7 @@ export default function useUpdateAccountSelectedChain (address: string | undefin
       return;
     }
 
-    updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })
+    updateStorage(STORAGE_KEY.ACCOUNT_SELECTED_CHAIN, { [address]: genesisHash })
       .then(handleExit)
       .catch(console.error);
   }, [address, genesisHash, handleExit]);
