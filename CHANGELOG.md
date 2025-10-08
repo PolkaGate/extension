@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.13.1](https://github.com/polkagate/extension/compare/v1.13.0...v1.13.1) (2025-10-08)
+
+
+### Bug Fixes
+
+* resolve nomination identities display issue ([#1955](https://github.com/polkagate/extension/issues/1955)) ([134dd74](https://github.com/polkagate/extension/commit/134dd74b812a6c6ea8246d346f75d17dbc08ef21))
+
 # [1.13.0](https://github.com/polkagate/extension/compare/v1.12.2...v1.13.0) (2025-10-08)
 
 
