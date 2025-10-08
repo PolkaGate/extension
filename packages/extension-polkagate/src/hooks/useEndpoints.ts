@@ -11,7 +11,7 @@ import { sanitizeChainName } from '../util';
 import chains from '../util/chains';
 import { AUTO_MODE } from '../util/constants';
 
-const supportedLC = ['Polkadot', 'Kusama', 'Westend']; // chains with supported light client
+const supportedLC = ['polkadot', 'kusama', 'westend']; // chains with supported light client
 const allEndpoints = createWsEndpoints();
 
 /**
@@ -26,43 +26,57 @@ export function useEndpoints (genesisHash: string | null | undefined): DropdownO
       return [];
     }
 
-    const option = chains?.find((o) => o.genesisHash === genesisHash);
-    const chainName = sanitizeChainName(option?.name);
+    const chainName = chains?.find((o) => o.genesisHash === genesisHash)?.name;
+    const lsChainName = sanitizeChainName(chainName)?.toLowerCase();
 
-    if (!chainName) {
+    if (!lsChainName) {
       return undefined;
     }
 
-    const endpoints = allEndpoints?.filter((e) => e.value &&
-      // Check if e.value matches the pattern 'wss://<any_number>'
-      !/^wss:\/\/\d+$/.test(e.value) &&
-      !e.value.includes('onfinality') && // ignore due to its rate limits
-      (
-        String(e.info)?.toLowerCase() === chainName?.toLowerCase() ||
-        String(e.text)?.toLowerCase()?.includes(chainName?.toLowerCase() ?? '')
-      )
+    let endpoints = allEndpoints?.filter(({ info, text, value }) => {
+      // Check if value matches the pattern 'wss://<any_number>'
+      // and ignore due to its rate limits
+      if (!value || /^wss:\/\/\d+$/.test(value) || value.includes('onfinality')) {
+        return false;
+      }
+
+      const matchesName =
+        String(info)?.toLowerCase() === lsChainName ||
+        String(text)?.toLowerCase()?.includes(lsChainName);
+
+      return matchesName;
+    }
     );
 
-    if (!endpoints) {
-      return undefined;
+    if (!endpoints.length) {
+      return [];
     }
 
-    const hasLightClientSupport = supportedLC.includes(chainName);
+    // check if all endpoints belong to same chain
+    const { genesisHashRelay, paraId } = endpoints[0];
+
+    const areAllSame = endpoints.every((e) => e.paraId === paraId && e.genesisHashRelay === genesisHashRelay);
+
+    if (!areAllSame) {
+      // Fallback: just filter the exact comparison
+      endpoints = endpoints?.filter(({ info }) => String(info)?.toLowerCase() === lsChainName);
+    }
+
+    // map to DropdownOption
     let endpointOptions = endpoints.map((endpoint) => ({ text: endpoint.textBy, value: endpoint.value }));
+
+    const hasLightClientSupport = supportedLC.includes(lsChainName);
 
     if (!hasLightClientSupport) {
       endpointOptions = endpointOptions.filter((o) => String(o.value).startsWith('wss'));
     }
 
-    endpointOptions.length > 1 &&
+    if (endpointOptions.length > 1) {
       endpointOptions?.unshift(AUTO_MODE);
-
-    if (!endpointOptions?.length && userAddedEndpoint) {
-      return userAddedEndpoint;
     }
 
     return endpointOptions;
-  }, [genesisHash, userAddedEndpoint]);
+  }, [genesisHash]);
 
-  return endpoints ?? [];
+  return endpoints ?? userAddedEndpoint ?? [];
 }

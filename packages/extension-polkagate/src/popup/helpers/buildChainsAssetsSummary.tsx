@@ -1,11 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Prices } from '../../util/types';
 
-import { calcPrice, sanitizeChainName, toTitleCase} from '@polkadot/extension-polkagate/src/util';
-import chains from '@polkadot/extension-polkagate/src/util/chains';
+import { calcPrice, sanitizeChainName, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 
 import getLogo2, { type LogoInfo } from '../../util/getLogo2';
 
@@ -19,6 +19,7 @@ export interface AssetDetailType {
 }
 
 export function buildChainsAssetsSummary (
+  chains: NetworkInfo[],
   assets: Record<string, FetchedBalance[]> | null | undefined,
   pricesInCurrency: Prices
 ): AssetDetailType[] | null | undefined {

@@ -115,7 +115,7 @@ export const NFT_CHAINS = [
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
   POLKADOT_GENESIS_HASH,
-  KUSAMA_GENESIS_HASH,
+  STATEMINE_GENESIS_HASH,
   WESTMINT_GENESIS_HASH,
   PASEO_ASSET_HUB_GENESIS_HASH
 ];
@@ -308,7 +308,7 @@ export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000; // 2 minutes
 export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 
 export const STORAGE_KEY = {
-  ASSETS: 'migrated-assets',
+  ASSETS: 'migrated-assets1',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   HISTORY: 'history',
   IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN: 'accountsMigratedToAnyChain',
@@ -320,6 +320,7 @@ export const STORAGE_KEY = {
   SELECTED_CHAINS: 'selectedChains',
   SELECTED_PROFILE: 'profile',
   TEST_NET_ENABLED: 'testnet_enabled',
+  USER_ADDED_ENDPOINT: 'userAddedEndpoint',
   VALIDATORS_INFO: 'validatorsInfo'
 };
 
@@ -329,3 +330,5 @@ export const FETCHING_ASSETS_FUNCTION_NAMES = {
   MULTI_ASSET: 'getAssetOnMultiAssetChain',
   RELAY: 'getAssetOnRelayChain'
 };
+
+export const PROCESSING_TITLE = 'Processing';

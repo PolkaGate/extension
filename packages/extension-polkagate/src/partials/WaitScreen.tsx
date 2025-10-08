@@ -4,21 +4,22 @@
 import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { LoaderGif, Motion } from '../components';
+import { noop } from '@polkadot/util';
+
+import { LoaderGif, Motion, TwoToneText } from '../components';
 import { DraggableModal } from '../fullscreen/components/DraggableModal';
 import { useIsExtensionPopup, useTranslation } from '../hooks';
-import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
+import { PROCESSING_TITLE } from '../util/constants';
 
-interface Props{
+interface Props {
   isModal?: boolean;
-  setFlowStep?: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
 }
 
-function WaitScreen2 ({ isModal, setFlowStep }: Props): React.ReactElement {
+function WaitScreen({ isModal }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 
-  const [text, setText] = useState<string>(t('We are working on your transaction.'));
+  const [text, setText] = useState({ title: t('We are working on your transaction.'), inColor: t('working') });
 
   const handleTxEvent = useCallback((s: CustomEventInit<unknown>) => {
     const event = s.detail;
@@ -28,16 +29,16 @@ function WaitScreen2 ({ isModal, setFlowStep }: Props): React.ReactElement {
 
       switch (state) {
         case ('ready'):
-          setText(t('The transaction is ready.'));
+          setText({ title: t('The transaction is ready.'), inColor: t('ready') });
           break;
         case ('broadcast'):
-          setText(t('The transaction is sent.'));
+          setText({ title: t('The transaction has been sent.'), inColor: t('sent') });
           break;
         case ('inBlock'):
-          setText(t('The transaction is now in Blockchain.'));
+          setText({ title: t('The transaction is now on-chain.'), inColor: t('on-chain') });
           break;
         default:
-          setText(t(`The transaction is in ${state} state`));
+          setText({ title: t(`The transaction is in ${state} state`), inColor: t(`${state}`) });
       }
     }
   }, [t]);
@@ -46,15 +47,14 @@ function WaitScreen2 ({ isModal, setFlowStep }: Props): React.ReactElement {
     window.addEventListener('transactionState', handleTxEvent);
   }, [handleTxEvent]);
 
-  const onClose = useCallback(() => {
-    setFlowStep && setFlowStep(TRANSACTION_FLOW_STEPS.CONFIRMATION);
-  }, [setFlowStep]);
-
   const Content = () => (
     <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : 'transparent', borderRadius: '14px', gap: '12px', justifyContent: 'center', m: '15px', p: '32px' }}>
       <LoaderGif />
       <Typography color='text.primary' variant='B-3'>
-        {text}
+        <TwoToneText
+          text={text.title}
+          textPartInColor={text?.inColor}
+        />
       </Typography>
       <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} pt='6px' variant='B-1' width='80%'>
         {t('Please wait a few seconds and don’t close the {{container}}', { replace: { container: isExtension ? t('extension') : t('window') } })}
@@ -67,10 +67,11 @@ function WaitScreen2 ({ isModal, setFlowStep }: Props): React.ReactElement {
       {isModal
         ? (
           <DraggableModal
-            onClose={onClose}
+            noCloseButton
+            onClose={noop}
             open={true}
             style={{ minHeight: '300px' }}
-            title={t('Processing')}
+            title={t(PROCESSING_TITLE)}
           >
             <Content />
           </DraggableModal>)
@@ -82,4 +83,4 @@ function WaitScreen2 ({ isModal, setFlowStep }: Props): React.ReactElement {
   );
 }
 
-export default React.memo(WaitScreen2);
+export default React.memo(WaitScreen);

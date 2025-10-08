@@ -1,5 +1,61 @@
 # Change Log
 
+# [1.13.0](https://github.com/polkagate/extension/compare/v1.12.2...v1.13.0) (2025-10-08)
+
+
+### Features
+
+* add Telegram support channel to social links ([4753d85](https://github.com/polkagate/extension/commit/4753d85a484f644e11623cfff1267e16cb6c06d0))
+
+## [1.12.2](https://github.com/polkagate/extension/compare/v1.12.1...v1.12.2) (2025-10-07)
+
+
+### Bug Fixes
+
+* display Fast Unstake button only on chains that support it ([6985706](https://github.com/polkagate/extension/commit/6985706be55f965e5ad8df6d03147f54062bd451))
+
+## [1.12.1](https://github.com/polkagate/extension/compare/v1.12.0...v1.12.1) (2025-10-07)
+
+
+### Bug Fixes
+
+* add workaround to handle missing API endpoints during Kusama partial migration ([#1953](https://github.com/polkagate/extension/issues/1953)) ([8d0d73e](https://github.com/polkagate/extension/commit/8d0d73e61cba989184e0a377731f0ec702a902a0))
+
+# [1.12.0](https://github.com/polkagate/extension/compare/v1.11.3...v1.12.0) (2025-10-07)
+
+
+### Features
+
+* add “Manage Networks” button to account home screen ([a8dce25](https://github.com/polkagate/extension/commit/a8dce25aae624e29a07126b11bc5428cf4ff8fd8))
+
+## [1.11.3](https://github.com/polkagate/extension/compare/v1.11.2...v1.11.3) (2025-10-06)
+
+
+### Bug Fixes
+
+* showing user added endpoints ([#1949](https://github.com/polkagate/extension/issues/1949)) ([752ff4d](https://github.com/polkagate/extension/commit/752ff4dab5cc3eca78b42f97175af90af135ff0b))
+
+## [1.11.2](https://github.com/polkagate/extension/compare/v1.11.1...v1.11.2) (2025-10-06)
+
+
+### Bug Fixes
+
+* handle non-numeric asset IDs in transfer fund flow ([#1944](https://github.com/polkagate/extension/issues/1944)) ([acd9266](https://github.com/polkagate/extension/commit/acd9266abd987a71c39bb0d6dd5e7835e55bf695)), closes [#1943](https://github.com/polkagate/extension/issues/1943)
+
+## [1.11.1](https://github.com/polkagate/extension/compare/v1.11.0...v1.11.1) (2025-10-04)
+
+
+### Bug Fixes
+
+* remove duplicate proxy address when account not found in extension ([61b34a6](https://github.com/polkagate/extension/commit/61b34a668d57ef956edca8f8d497ca9f2ec100a0)), closes [#1926](https://github.com/polkagate/extension/issues/1926)
+
+# [1.11.0](https://github.com/polkagate/extension/compare/v1.10.1...v1.11.0) (2025-10-04)
+
+
+### Features
+
+* add support for migrating Kusama hub ([#1932](https://github.com/polkagate/extension/issues/1932)) ([edb2e3a](https://github.com/polkagate/extension/commit/edb2e3ac5aff4f8d4945287c0aa359845acdb5b3))
+
 ## [1.10.1](https://github.com/polkagate/extension/compare/v1.10.0...v1.10.1) (2025-10-04)
 
 

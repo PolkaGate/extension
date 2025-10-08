@@ -3,7 +3,7 @@
 
 import type { Icon } from '@polkadot/networks/types';
 
-import { selectableNetworks } from '@polkadot/networks';
+import { selectableNetworks } from '@polkagate/apps-config';
 
 import { DISABLED_NETWORKS } from './constants';
 

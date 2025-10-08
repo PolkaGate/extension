@@ -45,7 +45,7 @@ interface Props {
   onClick?: () => void;
   returnIdentity?: React.Dispatch<React.SetStateAction<DeriveAccountRegistration | undefined>>;// to return back identity when needed
   showChainLogo?: boolean;
-  showShortAddress?: boolean;
+  showShortAddress?: boolean; // Indicates that a short address should be displayed if the account has no associated name
   showSocial?: boolean;
   socialStyles?: SxProps<Theme> | CSSProperties;
   style?: ExtendedStyle;

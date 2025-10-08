@@ -2407,61 +2407,61 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@paraspell/assets@npm:11.8.5":
-  version: 11.8.5
-  resolution: "@paraspell/assets@npm:11.8.5"
+"@paraspell/assets@npm:11.8.6":
+  version: 11.8.6
+  resolution: "@paraspell/assets@npm:11.8.6"
   dependencies:
-    "@paraspell/sdk-common": "npm:11.8.5"
-  checksum: 10/c43cc030ff7e14c0717a22ece0d36e71e51d3c07431a03c57b342946d7b8fec951a3adc1ffd5e333cc5d328fd04a34e90637b143f3454751728b6478f7484c03
+    "@paraspell/sdk-common": "npm:11.8.6"
+  checksum: 10/f875ad954e9c466b2d27d1f860709201c318029411403f825c96ba199df8396cc5f54faba45246280749c010a48ba224e12b331ea66ef64b58b68518ebca97cc
   languageName: node
   linkType: hard
 
-"@paraspell/pallets@npm:11.8.5":
-  version: 11.8.5
-  resolution: "@paraspell/pallets@npm:11.8.5"
+"@paraspell/pallets@npm:11.8.6":
+  version: 11.8.6
+  resolution: "@paraspell/pallets@npm:11.8.6"
   dependencies:
-    "@paraspell/sdk-common": "npm:11.8.5"
-  checksum: 10/a14fa6ab2b61923328e02e286040c7034dd882dc17057c620b3979e7c6519e2abb9c6c0f3ad51b77947caeacb4ce8ae145ae63aaa6b073662dccbf0d3cd032f6
+    "@paraspell/sdk-common": "npm:11.8.6"
+  checksum: 10/d0f221aa045d0c7254098c3caecfce2f44308cd55ad8bb9fcf97df8a553bbf5c115e591f07e99af536cbc011036cfa5d26bcf56b041c118d35fd991fb53acaaa
   languageName: node
   linkType: hard
 
-"@paraspell/sdk-common@npm:11.8.5":
-  version: 11.8.5
-  resolution: "@paraspell/sdk-common@npm:11.8.5"
-  checksum: 10/0ee30e2fa449a92da21c7ac742dd346d1697339119014ae3fc6a2ab887505e26fe689cf004bf8d33875edbc2da67a660a7518f7b3c1dcef7e4d5e5c54ac3b448
+"@paraspell/sdk-common@npm:11.8.6":
+  version: 11.8.6
+  resolution: "@paraspell/sdk-common@npm:11.8.6"
+  checksum: 10/a2b8e06468cb155cb0d68a3af1552862a21bd5dd472805e0c7380752d2e62c11c1205871281622365e01c447336cbae01503446427494606e28c22cf1ff5b059
   languageName: node
   linkType: hard
 
-"@paraspell/sdk-core@npm:11.8.5":
-  version: 11.8.5
-  resolution: "@paraspell/sdk-core@npm:11.8.5"
+"@paraspell/sdk-core@npm:11.8.6":
+  version: 11.8.6
+  resolution: "@paraspell/sdk-core@npm:11.8.6"
   dependencies:
     "@noble/hashes": "npm:^1.8.0"
-    "@paraspell/assets": "npm:11.8.5"
-    "@paraspell/pallets": "npm:11.8.5"
-    "@paraspell/sdk-common": "npm:11.8.5"
+    "@paraspell/assets": "npm:11.8.6"
+    "@paraspell/pallets": "npm:11.8.6"
+    "@paraspell/sdk-common": "npm:11.8.6"
     "@scure/base": "npm:^2.0.0"
-    viem: "npm:^2.36.0"
-  checksum: 10/a138fe17a7db0122339efb56855b9e87b06a0ffa7aab6ff37246ec94b29df704882fcaa695062b3a09ddca4b2b1ddb34ffc737dc02fd8acca46898642cc5fd67
+    viem: "npm:^2.37.9"
+  checksum: 10/af0bd8acf5a0277a30b8dc93096a167c1b9f4f1bd80277d2922abea233359ad7639d201eddcc1053587ea392053ee764e4ede4e74054547f30abc648ec534221
   languageName: node
   linkType: hard
 
-"@paraspell/sdk-pjs@npm:^11.8.5":
-  version: 11.8.5
-  resolution: "@paraspell/sdk-pjs@npm:11.8.5"
+"@paraspell/sdk-pjs@npm:^11.8.6":
+  version: 11.8.6
+  resolution: "@paraspell/sdk-pjs@npm:11.8.6"
   dependencies:
-    "@paraspell/sdk-core": "npm:11.8.5"
+    "@paraspell/sdk-core": "npm:11.8.6"
     "@snowbridge/api": "npm:0.2.0"
     "@snowbridge/contract-types": "npm:0.2.0"
     ethers: "npm:^6.15.0"
-    viem: "npm:^2.36.0"
+    viem: "npm:^2.37.9"
   peerDependencies:
     "@polkadot/api": ">= 16.0 < 17"
     "@polkadot/api-base": ">= 16.0 < 17"
     "@polkadot/types": ">= 16.0 < 17"
     "@polkadot/util": ">= 13"
     "@polkadot/util-crypto": ">= 13"
-  checksum: 10/f1b6f652963be07c60d252fc25e24f902d595be92bdcb1fe502b369f5ffaf23294191704a62785cafb1f5fcc272826e6e7f8cb44859804aa7f3e2ca27368277a
+  checksum: 10/d013e4c0d5eada4aae6e0baccc253aaf257fee9799962c4af40df36f30ed9f314ae72a7d8b783f72139b430292b6d12def02cb5a9d5ff335f2bb3bd130c79a05
   languageName: node
   linkType: hard
 
@@ -4133,9 +4133,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkagate/apps-config@npm:^0.144.6":
-  version: 0.144.6
-  resolution: "@polkagate/apps-config@npm:0.144.6"
+"@polkagate/apps-config@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "@polkagate/apps-config@npm:1.1.1"
   dependencies:
     "@acala-network/type-definitions": "npm:5.1.2"
     "@bifrost-finance/type-definitions": "npm:1.11.3"
@@ -4182,7 +4182,7 @@ __metadata:
     pontem-types-bundle: "npm:1.0.15"
     rxjs: "npm:^7.8.1"
     tslib: "npm:^2.6.2"
-  checksum: 10/717034489e4d8a47bd66583baac44fa5589f0a6bbdf5d916bc778801aa2302c59f747420dc51a3cc98ce70b4e2c22371f5cdc2f901ed6c800c11dbc53b5304b4
+  checksum: 10/1f40089bf163cc154c0cd3376f23070c9da0f60603729db0c8fa2f84d997f74bc7777ac55f9531d31571646a3c7bdb402a264dbd37565d4fd4a11215ed2f177b
   languageName: node
   linkType: hard
 
@@ -17231,9 +17231,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ox@npm:0.9.3":
-  version: 0.9.3
-  resolution: "ox@npm:0.9.3"
+"ox@npm:0.9.6":
+  version: 0.9.6
+  resolution: "ox@npm:0.9.6"
   dependencies:
     "@adraffy/ens-normalize": "npm:^1.11.0"
     "@noble/ciphers": "npm:^1.3.0"
@@ -17248,7 +17248,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/c485c810d5b1e78fcb89d6f19dbf01ae90ad39d7746593620ccf4bf5ddb799b369dc3b56d625c80b9546ab2eb7231b841b46c4c6776f87926bde07999e0b82be
+  checksum: 10/9fb1a89c710c02366fe2fdda7db4e17474336456d3b80fa24e059b3d269b45e94abfe950d7f52b220abc33cde2b75d03d24f31493382a6bab37ec5aada2bd925
   languageName: node
   linkType: hard
 
@@ -19448,7 +19448,7 @@ __metadata:
     "@mui/icons-material": "npm:^5.15.18"
     "@mui/lab": "npm:^5.0.0-alpha.85"
     "@mui/material": "npm:^5.8.3"
-    "@paraspell/sdk-pjs": "npm:^11.8.5"
+    "@paraspell/sdk-pjs": "npm:^11.8.6"
     "@polkadot/api": "npm:^16.4.6"
     "@polkadot/api-augment": "npm:^16.4.6"
     "@polkadot/api-base": "npm:^16.4.6"
@@ -19464,7 +19464,7 @@ __metadata:
     "@polkadot/types-support": "npm:^16.4.6"
     "@polkadot/util": "npm:^13.5.3"
     "@polkadot/util-crypto": "npm:^13.5.3"
-    "@polkagate/apps-config": "npm:^0.144.6"
+    "@polkagate/apps-config": "npm:^1.1.1"
     "@semantic-release/changelog": "npm:^6.0.3"
     "@semantic-release/commit-analyzer": "npm:^13.0.0"
     "@semantic-release/git": "npm:^10.0.1"
@@ -22258,9 +22258,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.36.0":
-  version: 2.37.6
-  resolution: "viem@npm:2.37.6"
+"viem@npm:^2.37.9":
+  version: 2.38.0
+  resolution: "viem@npm:2.38.0"
   dependencies:
     "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:1.8.0"
@@ -22268,14 +22268,14 @@ __metadata:
     "@scure/bip39": "npm:1.6.0"
     abitype: "npm:1.1.0"
     isows: "npm:1.0.7"
-    ox: "npm:0.9.3"
+    ox: "npm:0.9.6"
     ws: "npm:8.18.3"
   peerDependencies:
     typescript: ">=5.0.4"
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/b17242414c748fc195fb2899100deb21a269a4a8f72b45e5537a7f7117134857b9c4827ef230a33be69363732e63155092dc5e088d6affb3f739f6b3dac0af5e
+  checksum: 10/4262582399059b895471acc6bb1c23866a33a1cdb3aa3c5755bb65746ac2814b1323f1b72f66d0b8b5f6f98ae9843b86acd79dc0f170b7f7ec6469f9842eb0ac
   languageName: node
   linkType: hard
 

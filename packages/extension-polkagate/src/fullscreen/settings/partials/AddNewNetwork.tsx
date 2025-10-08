@@ -15,6 +15,7 @@ import { DecisionButtons, MySnackbar, MyTextField, MyTooltip } from '@polkadot/e
 import { updateMetadata } from '@polkadot/extension-polkagate/src/messaging';
 import { convertToHyphenated, isWss, toShortAddress, updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { getPrices } from '@polkadot/extension-polkagate/src/util/api/index';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { metadataFromApi } from '@polkadot/extension-polkagate/src/util/workers/utils/index';
 
 import { useCurrency, useTranslation } from '../../../hooks';
@@ -149,13 +150,13 @@ function PolkadotJsUrlPicture ({ show }: { show: boolean | undefined }): React.R
 }
 
 function GetPriceId ({ chainName, isCheckingPriceId, price, setCheckingPriceId, setPrice }:
-{
-  chainName: string | undefined;
-  isCheckingPriceId: boolean | undefined;
-  price: number | null | undefined;
-  setCheckingPriceId: React.Dispatch<React.SetStateAction<boolean | undefined>>;
-  setPrice: React.Dispatch<React.SetStateAction<number | null | undefined>>;
-}): React.ReactElement {
+  {
+    chainName: string | undefined;
+    isCheckingPriceId: boolean | undefined;
+    price: number | null | undefined;
+    setCheckingPriceId: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+    setPrice: React.Dispatch<React.SetStateAction<number | null | undefined>>;
+  }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const currency = useCurrency();
@@ -345,7 +346,7 @@ function AddNewNetwork ({ closePopup }: Props): React.ReactElement {
   }, [endpoint]);
 
   const handleSavings = useCallback(async (toSaveInfo: Record<string, UserAddedEndpoint>) => {
-    await updateStorage('userAddedEndpoint', toSaveInfo).catch(console.error);
+    await updateStorage(STORAGE_KEY.USER_ADDED_ENDPOINT, toSaveInfo).catch(console.error);
     await updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
     setShowSnackbar(true);
   }, [metadata]);
@@ -356,13 +357,18 @@ function AddNewNetwork ({ closePopup }: Props): React.ReactElement {
     }
 
     const key = metadata.genesisHash;
-
+    const { chain, color, icon, ss58Format, tokenDecimals, tokenSymbol } = metadata;
     const toSaveInfo = {
       [key]: {
-        chain: metadata.chain,
-        color: metadata.color,
+        chain,
+        color,
         endpoint,
-        priceId
+        icon,
+        name: chain,
+        priceId,
+        ss58Format,
+        tokenDecimal: tokenDecimals,
+        tokenSymbol
       } as UserAddedEndpoint
     };
 
@@ -385,7 +391,7 @@ function AddNewNetwork ({ closePopup }: Props): React.ReactElement {
       onClose={onClose}
       open
       showBackIconAsClose
-      style={{ minHeight: '400px', padding: '20px' }}
+      style={{ minHeight: '400px', padding: '20px 20px 50px' }}
       title={t('Add New Network')}
       width={492}
     >
@@ -425,13 +431,13 @@ function AddNewNetwork ({ closePopup }: Props): React.ReactElement {
             />
           }
           {metadata && !isPriceIdAsChainName && !chainAlreadyExist &&
-          <GetPriceId
-            chainName={metadata?.chain}
-            isCheckingPriceId={isCheckingPriceId}
-            price={price}
-            setCheckingPriceId={setCheckingPriceId}
-            setPrice={setPrice}
-          />
+            <GetPriceId
+              chainName={metadata?.chain}
+              isCheckingPriceId={isCheckingPriceId}
+              price={price}
+              setCheckingPriceId={setCheckingPriceId}
+              setPrice={setPrice}
+            />
           }
           <DecisionButtons
             cancelButton
@@ -442,7 +448,7 @@ function AddNewNetwork ({ closePopup }: Props): React.ReactElement {
             onSecondaryClick={onClose}
             primaryBtnText={t(metadata ? 'Add' : 'Check')}
             secondaryBtnText={t('Cancel')}
-            style={{ bottom: '20px', flexDirection: 'row-reverse', position: 'absolute', width: '90%' }}
+            style={{ bottom: '12px', flexDirection: 'row-reverse', position: 'absolute', width: '90%' }}
           />
         </Stack>
         <MySnackbar

@@ -133,6 +133,7 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
                                 isLast={isLast}
                                 isSelected={account.address === selectedAccount?.address}
                                 maybeSelected={maybeSelected}
+                                onDoubleClick = {_onApply}
                               />
                             </React.Fragment>
                           );

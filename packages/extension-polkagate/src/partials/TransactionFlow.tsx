@@ -12,10 +12,10 @@ import React, { useCallback, useState } from 'react';
 
 import { BackWithLabel, Motion } from '../components';
 import { useBackground, useTransactionData, useTranslation } from '../hooks';
-import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
+import { PROCESSING_TITLE, TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
 import Confirmation2 from './Confirmation2';
 import Review from './Review';
-import { UserDashboardHeader, WaitScreen2 } from '.';
+import { UserDashboardHeader, WaitScreen } from '.';
 
 export interface TransactionFlowProps {
   closeReview: () => void;
@@ -64,7 +64,13 @@ export default function TransactionFlow ({ address, backPathTitle, closeReview, 
           onClick={closeReview}
           stepCounter={stepCounter}
           style={{ pb: 0 }}
-          text={flowStep === TRANSACTION_FLOW_STEPS.REVIEW ? t('Review') : backPathTitle}
+          text={
+            flowStep === TRANSACTION_FLOW_STEPS.REVIEW
+              ? t('Review')
+              : flowStep === TRANSACTION_FLOW_STEPS.WAIT_SCREEN
+                ? t(PROCESSING_TITLE)
+                : backPathTitle
+              }
         />
         {flowStep === TRANSACTION_FLOW_STEPS.REVIEW &&
           <Review
@@ -87,7 +93,7 @@ export default function TransactionFlow ({ address, backPathTitle, closeReview, 
             transactionInformation={txInformation}
           />}
         {flowStep === TRANSACTION_FLOW_STEPS.WAIT_SCREEN &&
-          <WaitScreen2 />
+          <WaitScreen />
         }
         {flowStep === TRANSACTION_FLOW_STEPS.CONFIRMATION && transactionDetail &&
           <Confirmation2
