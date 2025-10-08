@@ -307,7 +307,7 @@ export const STORAGE_KEY = {
   HISTORY: 'history',
   ICON_THEME: 'identiconType',
   IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN: 'accountsMigratedToAnyChain',
-  LOGIN_IFO: 'loginInfo',
+  LOGIN_INFO: 'loginInfo',
   MY_POOL: 'MyPool',
   PRICE_IN_CURRENCIES: 'pricesInCurrencies',
   SELECTED_ACCOUNT: 'selectedAccount',

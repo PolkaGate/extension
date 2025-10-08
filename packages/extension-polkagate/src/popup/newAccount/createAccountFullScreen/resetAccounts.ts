@@ -8,7 +8,7 @@ import { forgetAccount } from '../../../messaging';
 import { LOGIN_STATUS, type LoginInfo } from '../../passwordManagement/types';
 
 export const resetOnForgotPassword = async () => {
-  const info = await getStorage(STORAGE_KEY.LOGIN_IFO) as LoginInfo;
+  const info = await getStorage(STORAGE_KEY.LOGIN_INFO) as LoginInfo;
 
   if (info?.status === LOGIN_STATUS.FORGOT && info?.addressesToForget) {
     return await resetAccounts(info.addressesToForget);
@@ -19,7 +19,7 @@ export const resetOnForgotPassword = async () => {
 
 const resetAccounts = async (addresses: string[]): Promise<boolean> => {
   try {
-    await updateStorage(STORAGE_KEY.LOGIN_IFO, { status: 'reset' });
+    await updateStorage(STORAGE_KEY.LOGIN_INFO, { status: 'reset' });
 
     // Map and execute forgetAccount for each address
     const promises = addresses.map((address) => forgetAccount(address));

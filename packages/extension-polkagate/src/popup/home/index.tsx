@@ -58,7 +58,7 @@ export default function Home (): React.ReactElement {
       keyring.loadAll({ store: new AccountsStore() });
     }).catch(() => null);
 
-    getStorage(STORAGE_KEY.LOGIN_IFO).then((info) => setLoginInfo(info as LoginInfo)).catch(console.error);
+    getStorage(STORAGE_KEY.LOGIN_INFO).then((info) => setLoginInfo(info as LoginInfo)).catch(console.error);
   }, []);
 
   return (

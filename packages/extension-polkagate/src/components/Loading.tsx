@@ -116,11 +116,11 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
         return;
       }
 
-      const info = await getStorage(STORAGE_KEY.LOGIN_IFO) as LoginInfo;
+      const info = await getStorage(STORAGE_KEY.LOGIN_INFO) as LoginInfo;
 
       if (!info?.status) {
         /** To not asking for password setting for the onboarding time */
-        setStorage(STORAGE_KEY.LOGIN_IFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.MAYBE_LATER }).catch(console.error);
+        setStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.MAYBE_LATER }).catch(console.error);
 
         return setExtensionLock(false);
       }
