@@ -6,14 +6,14 @@ import type { FeeInfo } from '../sendFund/types';
 
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/partials/FailSuccessIcon';
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
 import { subscan } from '../../assets/icons';
-import { ActionButton, DisplayBalance, GradientButton, Identity2, NeonButton } from '../../components';
-import { useChainInfo, useCurrency, useIsBlueish, useTokenPriceBySymbol, useTranslation } from '../../hooks';
+import { ActionButton, CurrencyContext, DisplayBalance, GradientButton, Identity2, NeonButton } from '../../components';
+import { useChainInfo, useIsBlueish, useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import StakingActionButton from '../../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../../style';
 import { amountToHuman, countDecimalPlaces, getSubscanChainName, isValidAddress, toShortAddress, toTitleCase } from '../../util';
@@ -36,7 +36,7 @@ interface AmountProps {
 const Amount = ({ amount, assetDecimal, genesisHash, token }: AmountProps) => {
   const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
-  const currency = useCurrency();
+  const { currency } = useContext(CurrencyContext);
 
   const _decimal = assetDecimal ?? nativeAssetDecimal;
   const _token = token ?? nativeToken;
