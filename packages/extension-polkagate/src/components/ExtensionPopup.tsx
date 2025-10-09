@@ -5,7 +5,7 @@ import type { Variant } from '@mui/material/styles/createTypography';
 import type { OverridableStringUnion } from '@mui/types';
 
 import { Box, Container, Dialog, Grid, type SxProps, type Theme, Typography, type TypographyPropsVariantOverrides } from '@mui/material';
-import { ArrowCircleLeft, type Icon } from 'iconsax-react';
+import { ArrowCircleLeft, ArrowCircleRight, type Icon } from 'iconsax-react';
 import React from 'react';
 
 import { useIsBlueish, useTranslation } from '../hooks';
@@ -23,6 +23,7 @@ export interface ExtensionPopupProps {
   iconVariant?: 'Linear' | 'Outline' | 'Broken' | 'Bold' | 'Bulk' | 'TwoTone' | undefined;
   maxHeight?: string;
   onBack?: () => void;
+  onNext?: () => void;
   openMenu: boolean;
   pt?: number;
   px?: number;
@@ -58,7 +59,7 @@ const Gradient = React.memo(function MemoGradient ({ pt, withoutBackground }: { 
   );
 });
 
-function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = false, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
+function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = false, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, onNext, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
@@ -92,7 +93,7 @@ function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = fals
         <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: darkBackground ? '#110F2A' : '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${60 + (pt ?? 18)}px)`, overflow: 'hidden', overflowY: 'auto', position: 'relative', px: `${px ?? 10}px`, width: '100%' }}>
           {withGradientBorder && <GradientBorder />}
           {!!onBack &&
-            <Grid alignItems='center' container item onClick={onBack} sx={{ cursor: 'pointer', left: '15px', position: 'absolute', pt: '15px', zIndex: 2 }}>
+            <Grid alignItems='center' container item onClick={onBack} sx={{ cursor: 'pointer', left: '15px', position: 'absolute', pt: '15px', width: 'fit-content', zIndex: 2 }}>
               <ArrowCircleLeft
                 color='#FF4FB9'
                 size='24'
@@ -101,6 +102,18 @@ function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = fals
               <Typography color='#EAEBF1' ml='4px' variant='B-1'>
                 {t('Back')}
               </Typography>
+            </Grid>
+          }
+          {onNext &&
+            <Grid alignItems='center' container item onClick={onNext} sx={{ cursor: 'pointer', position: 'absolute', right: '15px', pt: '15px', width: 'fit-content', zIndex: 2 }}>
+              <Typography color='#EAEBF1' mr='4px' variant='B-1'>
+                {t('Next')}
+              </Typography>
+              <ArrowCircleRight
+                color='#FF4FB9'
+                size='24'
+                variant='Bulk'
+              />
             </Grid>
           }
           <Grid alignItems='center' columnGap='10px' container direction={titleDirection} item justifyContent={titleAlignment ?? 'center'} p={title || TitleIcon ? '10px' : 0}>
