@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
-import type { Call, ExtrinsicPayload } from '@polkadot/types/interfaces';
+import type { Balance, Call, ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { AnyJson, SignerPayloadJSON } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 
@@ -54,11 +54,58 @@ function decodeMethod (data: string, chain: Chain, specVersion: BN): Decoded {
   return { args, method };
 }
 
+function FeeRow ({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: string }): React.ReactElement<Props> {
+  const { t } = useTranslation();
+  const { decimal } = useChainInfo(genesisHash);
+  const { price } = useTokenPrice(genesisHash);
+
+  return (
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, bottom: '-33px', p: '10px', position: 'relative' }}>
+      <Typography color='#AA83DC' variant='B-1'>
+        {t('Estimated Fee')}
+      </Typography>
+      <Stack alignItems='center' columnGap='5px' direction='row' lineHeight='normal'>
+        <FormatPrice
+          commify
+          decimalColor='#EAEBF1'
+          decimalPoint={4}
+          fontFamily='Inter'
+          fontSize='13px'
+          fontWeight={500}
+          num={fee ? amountToHuman(fee?.muln(price ?? 0), decimal) : undefined}
+          skeletonHeight={21}
+          textColor='#EAEBF1'
+        />
+        <Typography color='#AA83DC' variant='B-1'>
+          {fee?.toHuman()}
+        </Typography>
+      </Stack>
+    </Grid>
+  );
+}
+
+function DappRow ({ url }: { url: string }): React.ReactElement<Props> {
+  const dapp = new URL(url).origin;
+  const faviconUrl = useFavIcon(dapp);
+
+  return (
+    <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: '#05091C80', borderRadius: '14px', height: '34px', pr: '5px', width: 'fit-content' }}>
+      <Avatar
+        src={faviconUrl ?? undefined}
+        sx={{ borderRadius: '8px !important', height: '26px', width: '26px' }}
+        variant='circular'
+      />
+      <Typography color='#BEAAD8' variant='B-1'>
+        {dapp}
+      </Typography>
+    </Grid>
+  );
+}
+
 function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const dapp = new URL(url).origin;
-  const faviconUrl = useFavIcon(dapp);
+
   const chain = useMetadata(genesisHash);
   const { api, chainName, decimal, token } = useChainInfo(genesisHash);
 
@@ -66,7 +113,6 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
 
   const accountAssets = useAccountAssets(substrateAddress);
   const specVersion = useRef(bnToBn(hexSpec)).current;
-  const { price } = useTokenPrice(genesisHash);
 
   const decoded = useMemo(() => chain?.hasMetadata ? decodeMethod(method, chain, specVersion) : { args: null, method: null }, [method, chain, specVersion]);
 
@@ -97,16 +143,9 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
 
   return (
     <Grid container display='block' fontSize='16px' justifyContent='center' justifyItems='center'>
-      <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: '#05091C80', borderRadius: '14px', height: '34px', pr: '5px', width: 'fit-content' }}>
-        <Avatar
-          src={faviconUrl ?? undefined}
-          sx={{ borderRadius: '8px !important', height: '26px', width: '26px' }}
-          variant='circular'
-        />
-        <Typography color='#BEAAD8' variant='B-1'>
-          {dapp}
-        </Typography>
-      </Grid>
+      <DappRow
+        url={url}
+      />
       <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='space-between' sx={{ m: '20px 0 15px' }}>
         <Identity2
           address={address}
@@ -161,27 +200,10 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
         genesisHash={genesisHash}
         setMode={setMode}
       />
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, bottom: '-33px', p: '10px', position: 'relative' }}>
-        <Typography color='#AA83DC' variant='B-1'>
-          {t('Estimated Fee')}
-        </Typography>
-        <Stack alignItems='center' columnGap='5px' direction='row' lineHeight='normal'>
-          <FormatPrice
-            commify
-            decimalColor='#EAEBF1'
-            decimalPoint={4}
-            fontFamily='Inter'
-            fontSize='13px'
-            fontWeight={500}
-            num={fee ? amountToHuman(fee?.muln(price ?? 0), decimal) : undefined}
-            skeletonHeight={21}
-            textColor='#EAEBF1'
-          />
-          <Typography color='#AA83DC' variant='B-1'>
-            {fee?.toHuman()}
-          </Typography>
-        </Stack>
-      </Grid>
+      <FeeRow
+        fee={fee}
+        genesisHash={genesisHash}
+      />
       <DecisionButtons
         direction='vertical'
         onPrimaryClick={onNext}
