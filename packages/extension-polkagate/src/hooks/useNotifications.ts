@@ -1,20 +1,19 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { NotificationSettingType } from '../popup/notification/NotificationSettings';
-import type { NotificationActionType, NotificationsType, WorkerMessage } from '../popup/notification/types';
+import type { NotificationSettingType } from '../popup/notification/hook/useNotificationSettings';
+import type { NotificationActionType, NotificationsType } from '../popup/notification/types';
 import type { DropdownOption } from '../util/types';
 
 import { useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 import { AccountContext } from '../components';
 import { getStorage, setStorage } from '../components/Loading';
-import { DEFAULT_NOTIFICATION_SETTING, KUSAMA_NOTIFICATION_CHAIN, MAX_ACCOUNT_COUNT_NOTIFICATION, SUBSCAN_SUPPORTED_CHAINS } from '../popup/notification/constant';
-import { getPayoutsInformation, getReceivedFundsInformation } from '../popup/notification/helpers';
+import { DEFAULT_NOTIFICATION_SETTING, MAX_ACCOUNT_COUNT_NOTIFICATION, SUBSCAN_SUPPORTED_CHAINS } from '../popup/notification/constant';
+import { getPayoutsInformation, getReceivedFundsInformation, getReferendasInformation } from '../popup/notification/helpers';
 import { generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, groupNotificationsByDay, markMessagesAsRead, updateReferendas } from '../popup/notification/util';
 import { sanitizeChainName } from '../util';
-import { KUSAMA_GENESIS_HASH, STORAGE_KEY } from '../util/constants';
-import { useWorker } from './useWorker';
+import { STORAGE_KEY } from '../util/constants';
 import { useGenesisHashOptions, useSelectedChains } from '.';
 
 const initialNotificationState: NotificationsType = {
@@ -54,16 +53,11 @@ const notificationReducer = (
       return action.payload;
 
     case 'SET_REFERENDA': {
-      const chainName = action.payload[0].chainName;
-      const anyAvailableRefs = state.referendas?.find(({ chainName: network }) => network === chainName);
-
       return {
         ...state,
         isFirstTime: false,
-        notificationMessages: anyAvailableRefs
-          ? [...generateReferendaNotifications(KUSAMA_NOTIFICATION_CHAIN, state.referendas, action.payload), ...(state.notificationMessages ?? [])]
-          : state.notificationMessages,
-        referendas: updateReferendas(state.referendas, action.payload, chainName)
+        notificationMessages: [...generateReferendaNotifications(state.latestLoggedIn ?? Math.floor(Date.now() / 1000), state.referendas, action.payload), ...(state.notificationMessages ?? [])],
+        referendas: updateReferendas(state.referendas, action.payload)
       };
     }
 
@@ -113,7 +107,6 @@ enum status {
  * This hook uses several internal flags and refs to avoid duplicate network calls and redundant state updates.
  */
 export default function useNotifications () {
-  const worker = useWorker();
   const selectedChains = useSelectedChains();
   const allChains = useGenesisHashOptions(false);
   const { accounts } = useContext(AccountContext);
@@ -121,6 +114,7 @@ export default function useNotifications () {
   // Refs to avoid duplicate network calls and redundant state updates
   const isGettingReceivedFundRef = useRef<status>(status.NONE); // Flag to avoid duplicate calls of getReceivedFundsInformation
   const isGettingPayoutsRef = useRef<status>(status.NONE); // Flag to avoid duplicate calls of getPayoutsInformation
+  const isGettingNotificationsRef = useRef<status>(status.NONE); // Flag to avoid duplicate calls of getNotificationsInformation
   const initializedRef = useRef<boolean>(false); // Flag to avoid duplicate initialization
   const isSavingRef = useRef<boolean>(false); // Flag to avoid duplicate save in the storage
 
@@ -188,6 +182,21 @@ export default function useNotifications () {
     }
   }, [settings?.accounts, settings?.stakingRewards]);
 
+  // Fetch referenda notifications
+  const referendasInfo = useCallback(async () => {
+    if (isGettingNotificationsRef.current === status.NONE && settings?.accounts && settings.governance && settings.governance.length !== 0) {
+      isGettingNotificationsRef.current = status.FETCHING;
+
+      const referendas = await getReferendasInformation(settings.governance);
+
+      isGettingNotificationsRef.current = status.FETCHED;
+      dispatchNotifications({
+        payload: referendas,
+        type: 'SET_REFERENDA'
+      });
+    }
+  }, [settings?.accounts, settings?.governance]);
+
   // Load notification settings from storage on mount
   useEffect(() => {
     const getSettings = async () => {
@@ -232,7 +241,7 @@ export default function useNotifications () {
         const savedNotifications = await getStorage(STORAGE_KEY.NOTIFICATIONS) as NotificationsType | undefined;
 
         savedNotifications
-          ? dispatchNotifications({ payload: { ...savedNotifications, latestLoggedIn: 1709643091 }, type: 'LOAD_FROM_STORAGE' })
+          ? dispatchNotifications({ payload: savedNotifications, type: 'LOAD_FROM_STORAGE' })
           : dispatchNotifications({ type: 'INITIALIZE' }); // will happen only for the first time
       } catch (error) {
         console.error('Failed to load saved notifications:', error);
@@ -241,54 +250,6 @@ export default function useNotifications () {
 
     loadSavedNotifications().catch(console.error);
   }, [notificationIsOff, settings]);
-
-  // Listen for governance-related notifications from the worker
-  useEffect(() => {
-    if (notificationIsOff || settings?.governance?.length === 0) {
-      return;
-    }
-
-    // Handle messages from the worker
-    const handelMessage = (event: MessageEvent<string>) => {
-      try {
-        if (!event.data) {
-          return;
-        }
-
-        const parsedMessage = JSON.parse(event.data) as WorkerMessage;
-
-        if (parsedMessage.functionName !== STORAGE_KEY.NOTIFICATIONS) {
-          return;
-        }
-
-        const { message } = parsedMessage;
-
-        if (message.type !== 'referenda') {
-          return;
-        }
-
-        const { chainGenesis, data } = message;
-
-        if (settings?.governance?.find((value) => value === chainGenesis)) {
-          const chainName = chainGenesis === KUSAMA_GENESIS_HASH ? 'kusama' : 'polkadot';
-          const payload = data.map((item) => ({ ...item, chainName }));
-
-          dispatchNotifications({
-            payload,
-            type: 'SET_REFERENDA'
-          });
-        }
-      } catch (error) {
-        console.error('Error processing worker message:', error);
-      }
-    };
-
-    worker.addEventListener('message', handelMessage);
-
-    return () => {
-      worker.removeEventListener('message', handelMessage);
-    };
-  }, [notificationIsOff, settings?.governance, worker]);
 
   // Fetch received funds and staking rewards notifications when settings change
   useEffect(() => {
@@ -304,8 +265,16 @@ export default function useNotifications () {
 
     if (settings.stakingRewards?.length !== 0) {
       payoutsInfo().catch(console.error);
+    } else {
+      isGettingPayoutsRef.current = status.FETCHED;
     }
-  }, [notificationIsOff, payoutsInfo, receivedFunds, settings]);
+
+    if (settings.governance?.length !== 0) {
+      referendasInfo().catch(console.error);
+    } else {
+      isGettingNotificationsRef.current = status.FETCHED;
+    }
+  }, [notificationIsOff, payoutsInfo, receivedFunds, referendasInfo, settings]);
 
   // Save notifications to storage before window unload
   useEffect(() => {
@@ -336,6 +305,15 @@ export default function useNotifications () {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [notifications]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // ✅ This runs only after the component has been mounted for 5 seconds
+      markAsRead();
+    }, 5000);
+
+    return () => clearTimeout(timer); // cleanup if the component unmounts
+  }, [markAsRead]);
 
   const notificationItems = useMemo(() => groupNotificationsByDay(notifications.notificationMessages), [notifications.notificationMessages]);
 

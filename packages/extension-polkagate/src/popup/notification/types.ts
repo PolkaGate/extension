@@ -11,7 +11,7 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-export interface Transfer {
+export interface TransferSubscan {
   transfer_id: number;
   from: string;
   from_account_display: AccountDisplay;
@@ -37,7 +37,7 @@ export interface Transfer {
   is_lock: boolean;
 }
 
-export interface Payout {
+export interface PayoutSubscan {
   era: number;
   stash: string;
   account: string;
@@ -47,6 +47,18 @@ export interface Payout {
   block_timestamp: number;
   module_id: string;
   event_id: string;
+}
+
+export interface ReferendaSubscan {
+  referendum_index: number;
+  created_block_timestamp: number;
+  origins_id: number;
+  origins: string;
+  call_module: string;
+  status: string;
+  latest_block_timestamp: number;
+  account: AccountDisplay;
+  title: string;
 }
 
 interface AccountDisplay {
@@ -81,6 +93,19 @@ export interface PayoutsProp {
   timestamp: number;
 }
 
+export interface ReferendaProp {
+  referendumIndex: number;
+  createdTimestamp: number;
+  chainName: string;
+  originsId: number;
+  origins: string;
+  callModule: string;
+  status: ReferendaStatus;
+  latestTimestamp: number;
+  account: AccountDisplay;
+  title: string;
+}
+
 export interface ReceivedFundInformation {
   address: string;
   data: TransfersProp[];
@@ -93,20 +118,17 @@ export interface StakingRewardInformation {
   network: DropdownOption;
 }
 
-export interface WorkerMessage {
-  functionName: string;
-  message: {
-    type: 'referenda';
-    chainGenesis: string;
-    data: { refId: number; status: ReferendaStatus; }[];
-  }
+export interface ReferendaInformation {
+  data: ReferendaProp[];
+  network: DropdownOption;
 }
 
-export interface ReferendaNotificationType {
-  status?: ReferendaStatus;
-  refId?: number;
-  chainName: string;
-}
+// export interface ReferendaNotificationType {
+//   chainName: string;
+//   latestTimestamp: number;
+//   status?: ReferendaStatus;
+//   referendumIndex?: number;
+// }
 
 export type NotificationType = 'referenda' | 'stakingReward' | 'receivedFund';
 
@@ -114,7 +136,7 @@ export interface NotificationMessageType {
   chain?: DropdownOption;
   type: NotificationType;
   payout?: PayoutsProp;
-  referenda?: ReferendaNotificationType;
+  referenda?: ReferendaProp;
   receivedFund?: TransfersProp;
   forAccount?: string;
   extrinsicIndex?: string;
@@ -123,7 +145,7 @@ export interface NotificationMessageType {
 
 export interface NotificationsType {
   notificationMessages: NotificationMessageType[] | undefined;
-  referendas: ReferendaNotificationType[] | null | undefined;
+  referendas: ReferendaInformation[] | null | undefined;
   receivedFunds: ReceivedFundInformation[] | null | undefined;
   stakingRewards: StakingRewardInformation[] | null | undefined;
   latestLoggedIn: number | undefined;
@@ -135,6 +157,6 @@ export type NotificationActionType =
   | { type: 'CHECK_FIRST_TIME'; }
   | { type: 'MARK_AS_READ'; }
   | { type: 'LOAD_FROM_STORAGE'; payload: NotificationsType }
-  | { type: 'SET_REFERENDA'; payload: ReferendaNotificationType[] }
+  | { type: 'SET_REFERENDA'; payload: ReferendaInformation[] }
   | { type: 'SET_RECEIVED_FUNDS'; payload: NotificationsType['receivedFunds'] }
   | { type: 'SET_STAKING_REWARDS'; payload: NotificationsType['stakingRewards'] };

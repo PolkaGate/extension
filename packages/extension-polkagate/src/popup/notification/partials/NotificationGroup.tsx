@@ -27,7 +27,7 @@ function ItemDate ({ date }: { date: string; }) {
   );
 }
 
-function TitleTime ({ address, read, time, title }: { address: string | undefined; read: boolean; time: string; title: string; }) {
+function TitleTime ({ address, noName, read, time, title }: { address: string | undefined; read: boolean; time: string; title: string; noName: boolean }) {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -38,13 +38,14 @@ function TitleTime ({ address, read, time, title }: { address: string | undefine
         <Typography color={theme.palette.text.primary} variant='B-2'>
           {title}
         </Typography>
-        <ScrollingTextBox
-          scrollOnHover
-          style={{ bgcolor: '#AA83DC26', px: '4px' }}
-          text={account?.name ?? toShortAddress(address) ?? t('Unknown')}
-          textStyle={{ color: '#AA83DC', ...theme.typography['B-1'] }}
-          width={75}
-        />
+        {!noName &&
+          <ScrollingTextBox
+            scrollOnHover
+            style={{ bgcolor: '#AA83DC26', px: '4px' }}
+            text={account?.name ?? toShortAddress(address) ?? t('Unknown')}
+            textStyle={{ color: '#AA83DC', ...theme.typography['B-1'] }}
+            width={75}
+          />}
         {!read && <Grid sx={{ bgcolor: theme.palette.menuIcon.hover, borderRadius: '999px', height: '8px', width: '8px' }} />}
       </Grid>
       <Typography color='#674394' variant='B-1'>
@@ -65,7 +66,7 @@ function NotificationItem ({ item }: { item: NotificationMessageType; }) {
   const price = useTokenPriceBySymbol(chainInfo.token, genesisHash);
 
   const title = getNotificationItemTitle(item.type, item.referenda);
-  const time = getTimeOfDay(item.payout?.timestamp ?? item.receivedFund?.timestamp ?? Date.now()); //  ?? item.referenda?.timestamp
+  const time = getTimeOfDay(item.payout?.timestamp ?? item.receivedFund?.timestamp ?? item.referenda?.latestTimestamp ?? Date.now());
   const { text, textInColor } = getNotificationDescription(item, t, chainInfo, price, currency);
   const { ItemIcon, bgcolor, borderColor, color } = getNotificationIcon(item);
 
@@ -75,6 +76,7 @@ function NotificationItem ({ item }: { item: NotificationMessageType; }) {
       <Stack direction='column' sx={{ width: 'calc(100% - 32px - 6px)' }}>
         <TitleTime
           address={item.forAccount}
+          noName={item.type === 'referenda'}
           read={item.read}
           time={time}
           title={title}
@@ -83,7 +85,7 @@ function NotificationItem ({ item }: { item: NotificationMessageType; }) {
           color={theme.palette.text.primary}
           style={{ color: theme.palette.text.secondary, width: 'fit-content', ...theme.typography['B-4'], textAlign: 'left' }}
           text={text}
-          textPartInColor={textInColor as string}
+          textPartInColor={textInColor}
         />
       </Stack>
     </Stack>

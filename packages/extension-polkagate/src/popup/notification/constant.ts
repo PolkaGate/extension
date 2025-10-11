@@ -3,7 +3,7 @@
 
 import { KUSAMA_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_GENESIS_HASH, WESTEND_GENESIS_HASH } from '../../util/constants';
 
-export type ReferendaStatus = 'ongoing' | 'approved' | 'timedOut' | 'rejected' | 'cancelled';
+export type ReferendaStatus = 'ongoing' | 'approved' | 'timeout' | 'rejected' | 'cancelled';
 
 export const NOTIFICATION_GOVERNANCE_CHAINS = ['kusama', 'polkadot'];
 

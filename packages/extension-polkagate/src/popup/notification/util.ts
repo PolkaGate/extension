@@ -7,8 +7,7 @@ import type { TFunction } from '@polkagate/apps-config/types';
 import type { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/home/partials/type';
 import type { ChainInfo } from '@polkadot/extension-polkagate/src/hooks/useChainInfo';
 import type { Price } from '@polkadot/extension-polkagate/src/hooks/useTokenPriceBySymbol';
-import type { DropdownOption } from '../../util/types';
-import type { NotificationMessageType, NotificationType, ReceivedFundInformation, ReferendaNotificationType, StakingRewardInformation } from './types';
+import type { NotificationMessageType, NotificationType, ReceivedFundInformation, ReferendaInformation, ReferendaProp, StakingRewardInformation } from './types';
 
 import { ArrowDown3, Award, Receipt2 } from 'iconsax-react';
 
@@ -80,54 +79,63 @@ function getRelativeTime (date: Date): string {
 
 /**
  * Generates notifications for new or updated referenda
- * @param chainName - Name of the blockchain network
- * @param previousReferenda - Previous state of referenda
- * @param currentReferenda - Current state of referenda
+ * @param previousRefs - Previous state of referenda (by network)
+ * @param newRefs - Current state of referenda (by network)
  * @returns Array of new notification messages
  */
 export const generateReferendaNotifications = (
-  chain: DropdownOption,
-  previousReferenda: ReferendaNotificationType[] | null | undefined,
-  currentReferenda: ReferendaNotificationType[]
+  latestLoggedIn: number,
+  previousRefs: ReferendaInformation[] | null | undefined,
+  newRefs: ReferendaInformation[]
 ): NotificationMessageType[] => {
   const newMessages: NotificationMessageType[] = [];
 
-  // Find new referenda (not in previous state)
-  const newReferenda = currentReferenda.filter(
-    (current) => !previousReferenda?.some(
-      (previous) => previous.refId === current.refId && previous.chainName === current.chainName
-    )
-  );
+  for (const currentNetworkData of newRefs) {
+    let { data: currentReferenda, network } = currentNetworkData;
 
-  // Find referenda with status changes
-  const updatedReferenda = currentReferenda.filter(
-    (current) => previousReferenda?.some(
-      (previous) =>
-        previous.refId === current.refId &&
-        previous.chainName === current.chainName &&
-        previous.status !== current.status
-    )
-  );
+    currentReferenda = currentReferenda.filter(({ latestTimestamp }) => latestTimestamp >= latestLoggedIn);
 
-  // Generate notifications for new referenda
-  newReferenda.forEach((referenda) => {
-    newMessages.push({
-      chain,
-      read: false,
-      referenda,
-      type: 'referenda'
-    });
-  });
+    const prevNetworkData = previousRefs?.find(
+      (p) => p.network.value === network.value
+    );
 
-  // Generate notifications for referenda with status changes
-  updatedReferenda.forEach((referenda) => {
-    newMessages.push({
-      chain,
-      read: false,
-      referenda,
-      type: 'referenda'
-    });
-  });
+    const previousReferenda = prevNetworkData?.data ?? [];
+
+    // Find new referenda (not in previous state)
+    const newReferenda = currentReferenda.filter((current) =>
+      !previousReferenda.some((prev) => prev.referendumIndex === current.referendumIndex)
+    );
+
+    // Find referenda with status changes
+    const updatedReferenda = currentReferenda.filter(
+      (current) =>
+        previousReferenda.some(
+          (prev) =>
+            prev.referendumIndex === current.referendumIndex &&
+            prev.status !== current.status
+        )
+    );
+
+    // Generate notifications for new referenda
+    for (const ref of newReferenda) {
+      newMessages.push({
+        chain: network,
+        read: false,
+        referenda: ref,
+        type: 'referenda'
+      });
+    }
+
+    // Generate notifications for referenda with status changes
+    for (const ref of updatedReferenda) {
+      newMessages.push({
+        chain: network,
+        read: false,
+        referenda: ref,
+        type: 'referenda'
+      });
+    }
+  }
 
   return newMessages;
 };
@@ -218,10 +226,67 @@ export const markMessagesAsRead = (messages: NotificationMessageType[]) => {
   ));
 };
 
-export const updateReferendas = (preciousRefs: ReferendaNotificationType[] | null | undefined, newRefs: ReferendaNotificationType[], network: string) => {
-  const filterOut = preciousRefs?.filter(({ chainName }) => chainName.toLowerCase() !== network.toLowerCase());
+/**
+ * Merges two arrays of ReferendaInformation without duplicating existing referenda.
+ * - Keeps previous referenda data
+ * - Adds new referenda from the new state
+ * - Preserves per-network separation
+ */
+export const updateReferendas = (preciousRefs: ReferendaInformation[] | null | undefined, newRefs: ReferendaInformation[]) => {
+  if (!preciousRefs) {
+    return newRefs;
+  }
 
-  return (filterOut ?? []).concat(newRefs);
+const resultMap = new Map<string | number, ReferendaInformation>();
+
+  // Copy all previous data
+  for (const prev of preciousRefs) {
+    resultMap.set(prev.network.value, {
+      data: [...prev.data],
+      network: prev.network
+    });
+  }
+
+  // Merge new data
+  for (const current of newRefs) {
+    const existing = resultMap.get(current.network.value);
+
+    if (!existing) {
+      // Entirely new network — just add it
+      resultMap.set(current.network.value, current);
+      continue;
+    }
+
+    const updatedData = [...existing.data];
+    const existingIndexes = new Map(
+      existing.data.map((r) => [r.referendumIndex, r])
+    );
+
+    for (const newRef of current.data) {
+      const existingRef = existingIndexes.get(newRef.referendumIndex);
+
+      if (!existingRef) {
+        // New referendum
+        updatedData.push(newRef);
+      } else if (existingRef.status !== newRef.status) {
+        // Status updated → replace the old one
+        const idx = updatedData.findIndex(
+          (r) => r.referendumIndex === newRef.referendumIndex
+        );
+
+        if (idx !== -1) {
+          updatedData[idx] = newRef;
+        }
+      }
+    }
+
+    resultMap.set(current.network.value, {
+      data: updatedData,
+      network: current.network
+    });
+  }
+
+  return Array.from(resultMap.values());
 };
 
 // Utility to get date string like "15 Dec 2025"
@@ -252,17 +317,20 @@ export function groupNotificationsByDay (
     switch (item.type) {
       case 'stakingReward':
         timestamp = item.payout?.timestamp;
-        uniqueKey = `${item.read}-${JSON.stringify(item.payout)}`;
+        uniqueKey = `${item.read}-${JSON.stringify(item.payout ?? '')}`;
 
         break;
       case 'receivedFund':
         timestamp = item.receivedFund?.timestamp;
-        uniqueKey = `${item.read}-${JSON.stringify(item.receivedFund)}`;
+        uniqueKey = `${item.read}-${JSON.stringify(item.receivedFund ?? '')}`;
 
         break;
-      // case 'referenda':
-      //   timestamp = item.referenda?.timestamp;
-      //   break;
+
+      case 'referenda':
+        timestamp = item.referenda?.latestTimestamp;
+        uniqueKey = `${item.read}-${JSON.stringify(item.referenda ?? '')}`;
+
+        break;
     }
 
     if (!timestamp || seen.has(uniqueKey)) {
@@ -402,25 +470,28 @@ export function formatNumber (
   return Math.min(rounded, Number.MAX_SAFE_INTEGER);
 }
 
-export function getNotificationItemTitle (type: NotificationType, referenda?: ReferendaNotificationType) {
+export function getNotificationItemTitle (type: NotificationType, referenda?: ReferendaProp) {
   const { t } = useTranslation();
 
   switch (type) {
     case 'receivedFund':
       return t('Fund Received');
 
-    case 'referenda':
-      if (referenda?.status === 'approved') {
+    case 'referenda': {
+      const status = referenda?.status ?? '';
+
+      if (['approved', 'executed'].includes(status)) {
         return t('Referendum approved');
-      } else if (referenda?.status === 'ongoing') {
+      } else if (['ongoing', 'decision', 'submitted'].includes(referenda?.status ?? '')) {
         return t('New Referendum');
       } else if (referenda?.status === 'cancelled') {
         return t('Referendum Cancelled');
-      } else if (referenda?.status === 'timedOut') {
+      } else if (referenda?.status === 'timeout') {
         return t('Referendum time outed');
       } else {
         return t('Referendum Rejected');
       }
+    }
 
     case 'stakingReward':
       return t('Reward');
@@ -450,23 +521,26 @@ export function getNotificationDescription (item: NotificationMessageType, t: TF
 
     case 'referenda': {
       const statusMap: Record<string, string> = {
-        approved: t('{{chainName}} referendum {{refId}} has been approved'),
-        cancelled: t('{{chainName}} referendum {{refId}} has been cancelled'),
-        ongoing: t('{{chainName}} referendum {{refId}} has been created'),
-        rejected: t('{{chainName}} referendum {{refId}} has been rejected'),
-        timedOut: t('{{chainName}} referendum {{refId}} has timed out')
+        approved: t('{{chainName}} referendum #{{referendumIndex}} has been approved'),
+        cancelled: t('{{chainName}} referendum #{{referendumIndex}} has been cancelled'),
+        decision: t('{{chainName}} referendum #{{referendumIndex}} has been created'),
+        executed: t('{{chainName}} referendum #{{referendumIndex}} has been executed'),
+        ongoing: t('{{chainName}} referendum #{{referendumIndex}} has been created'),
+        rejected: t('{{chainName}} referendum #{{referendumIndex}} has been rejected'),
+        submitted: t('{{chainName}} referendum #{{referendumIndex}} has been submitted'),
+        timeout: t('{{chainName}} referendum #{{referendumIndex}} has timed out')
       };
 
       const status = item.referenda?.status;
-      const refId = item.referenda?.refId;
+      const referendumIndex = item.referenda?.referendumIndex;
       // Default to "rejected" text if status is missing
       const textTemplate = statusMap[status ?? 'rejected'];
 
       return {
         text: t(textTemplate, {
-          replace: { chainName, refId }
+          replace: { chainName, referendumIndex }
         }),
-        textInColor: refId
+        textInColor: `#${referendumIndex}`
       };
     }
 
@@ -497,7 +571,7 @@ export function getNotificationIcon (item: NotificationMessageType) {
         cancelled: neutralStyle,
         ongoing: { ItemIcon: Receipt2, bgcolor: '#82FFA540', borderColor: '#82FFA51A', color: '#82FFA5' },
         rejected: neutralStyle,
-        timedOut: neutralStyle
+        timeout: neutralStyle
       };
 
       const status = item.referenda?.status;
