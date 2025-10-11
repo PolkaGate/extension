@@ -6,6 +6,8 @@ import type { CurrencyItemType } from '../partials/type';
 import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { CurrencyContext, InputFilter } from '../../../components';
 import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
@@ -36,7 +38,7 @@ function CurrencyList({ anchorEl, setAnchorEl, setCurrencyToShow }: Props): Reac
     setAnchorEl(null);
     setCurrency(currency);
     setCurrencyToShow(currency);
-    setStorage('currency', currency).catch(console.error);
+    setStorage(STORAGE_KEY.CURRENCY, currency).catch(console.error);
   }, [setAnchorEl, setCurrency, setCurrencyToShow]);
 
   const onSearch = useCallback((keyword: string) => {

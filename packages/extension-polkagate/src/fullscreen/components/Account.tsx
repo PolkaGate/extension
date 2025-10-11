@@ -7,7 +7,7 @@ import type { ItemInformation } from '../nft/utils/types';
 
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import NftManager from '@polkadot/extension-polkagate/src/class/nftManager';
@@ -17,8 +17,8 @@ import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, FormatPrice, Identity2, MySkeleton } from '../../components';
-import { useAccountAssets, useAccountSelectedChain, useCurrency, usePrices } from '../../hooks';
+import { AssetLogo, CurrencyContext, FormatPrice, Identity2, MySkeleton } from '../../components';
+import { useAccountAssets, useAccountSelectedChain, usePrices } from '../../hooks';
 import { setStorage } from '../../util';
 
 interface Props {
@@ -32,7 +32,7 @@ interface Props {
 function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, variant = 'B-2' }: Props): React.ReactElement {
   const navigate = useNavigate();
   const pricesInCurrencies = usePrices();
-  const currency = useCurrency();
+  const { currency } = useContext(CurrencyContext);
   const accountAssets = useAccountAssets(account?.address);
   const savedSelectedChain = useAccountSelectedChain(account?.address);
 

@@ -7,13 +7,13 @@ import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Grid, Stack, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { AlignBottom } from 'iconsax-react';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import DailyChange from '@polkadot/extension-polkagate/src/popup/home/partial/DailyChange';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
-import { AssetLogo, FadeOnScrollHorizontal } from '../../components';
-import { useCurrency, usePrices, useTranslation } from '../../hooks';
+import { AssetLogo, CurrencyContext, FadeOnScrollHorizontal } from '../../components';
+import { usePrices, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 
 const ASSET_IN_A_ROW = 4;
@@ -56,7 +56,7 @@ function Move ({ direction, max, setMove }: { direction: Direction, max?: number
 }
 
 const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue }>(({ asset }, ref) => {
-  const currency = useCurrency();
+  const { currency } = useContext(CurrencyContext);
 
   const [hoveredIndex, setHoveredIndex] = useState<boolean>(false);
 

@@ -3,14 +3,15 @@
 
 import { Box, Container, Typography } from '@mui/material';
 import { ArrowDown2 } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
+import { CurrencyContext } from '@polkadot/extension-polkagate/src/components';
 import SelectCurrency from '@polkadot/extension-polkagate/src/popup/home/partial/SelectCurrency';
 
-import { useCurrency, useIsDark } from '../../../hooks';
+import { useIsDark } from '../../../hooks';
 
 function CurrencySelection (): React.ReactElement {
-  const currency = useCurrency();
+  const { currency } = useContext(CurrencyContext);
   const isDark = useIsDark();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);

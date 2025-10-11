@@ -7,18 +7,18 @@ import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/ha
 
 import { Box, Collapse, IconButton, Stack, Typography, useTheme } from '@mui/material';
 import { CloseCircle, Hashtag, ProgrammingArrow, RefreshCircle, Tag2, TickCircle } from 'iconsax-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { endpointUrlPng } from '@polkadot/extension-polkagate/src/assets/img';
-import { DecisionButtons, MySnackbar, MyTextField, MyTooltip } from '@polkadot/extension-polkagate/src/components/index';
+import { CurrencyContext, DecisionButtons, MySnackbar, MyTextField, MyTooltip } from '@polkadot/extension-polkagate/src/components/index';
 import { updateMetadata } from '@polkadot/extension-polkagate/src/messaging';
 import { convertToHyphenated, isWss, toShortAddress, updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { getPrices } from '@polkadot/extension-polkagate/src/util/api/index';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { metadataFromApi } from '@polkadot/extension-polkagate/src/util/workers/utils/index';
 
-import { useCurrency, useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../hooks';
 import allChains from '../../../util/chains';
 import { DraggableModal } from '../../components/DraggableModal';
 
@@ -159,7 +159,7 @@ function GetPriceId ({ chainName, isCheckingPriceId, price, setCheckingPriceId, 
   }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const currency = useCurrency();
+  const { currency } = useContext(CurrencyContext);
 
   const [priceId, setPriceId] = useState<string>();
 
@@ -244,7 +244,7 @@ function GetPriceId ({ chainName, isCheckingPriceId, price, setCheckingPriceId, 
 function AddNewNetwork ({ closePopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const currency = useCurrency();
+  const { currency } = useContext(CurrencyContext);
 
   const [endpoint, setEndpoint] = useState<string>();
   const [isError, setError] = useState<boolean>(false);
