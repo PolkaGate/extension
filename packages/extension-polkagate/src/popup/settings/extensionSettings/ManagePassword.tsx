@@ -17,7 +17,7 @@ import WarningBox from '../partials/WarningBox';
 
 export const isPasswordCorrect = async (password: string, isHashed?: boolean) => {
   const hashedPassword = isHashed ? password : blake2AsHex(password, 256);
-  const info = await getStorage(STORAGE_KEY.LOGIN_IFO) as LoginInfo;
+  const info = await getStorage(STORAGE_KEY.LOGIN_INFO) as LoginInfo;
 
   return info?.hashedPassword === hashedPassword;
 };
@@ -41,7 +41,7 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
   }, [passwordError]);
 
   useEffect(() => {
-    getStorage(STORAGE_KEY.LOGIN_IFO).then((info) => {
+    getStorage(STORAGE_KEY.LOGIN_INFO).then((info) => {
       setAlreadySetPassword((info as LoginInfo).status === LOGIN_STATUS.SET);
     }).catch(console.error);
   }, []);
@@ -64,7 +64,7 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
       return;
     }
 
-    setStorage(STORAGE_KEY.LOGIN_IFO, { hashedPassword: newPassword, lastEdit: Date.now(), lastLoginTime: Date.now(), status: LOGIN_STATUS.JUST_SET })
+    setStorage(STORAGE_KEY.LOGIN_INFO, { hashedPassword: newPassword, lastEdit: Date.now(), lastLoginTime: Date.now(), status: LOGIN_STATUS.JUST_SET })
       .then(() => {
         setPasswordError(false);
         setShowSnackbar(true);

@@ -110,7 +110,7 @@ function Reset (): React.ReactElement {
   const onAction = useContext(ActionContext);
 
   const back = useCallback((): void => {
-    updateStorage(STORAGE_KEY.LOGIN_IFO, { status: LOGIN_STATUS.SET })
+    updateStorage(STORAGE_KEY.LOGIN_INFO, { status: LOGIN_STATUS.SET })
       .finally(() => {
         setExtensionLock(true);
         onAction('/');

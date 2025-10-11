@@ -10,8 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import LedgerErrorMessage from '@polkadot/extension-polkagate/src/popup/signing/ledger/LedgerErrorMessage';
-import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
-import { POLKADOT_SLIP44, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { POLKADOT_SLIP44, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import settings from '@polkadot/ui-settings';
 import { noop } from '@polkadot/util';
@@ -112,7 +111,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
         updateMeta(String(address), metaData)
           .then(() => {
             if (isAdvancedMode) {
-              setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LEDGER).catch(console.error);
+              setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
               switchToOrOpenTab('/', true);
             } else {
               finishedCountRef.current++;
@@ -122,7 +121,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
                 !hasNavigatedRef.current
               ) {
                 hasNavigatedRef.current = true;
-                setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LEDGER)
+                setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER)
                   .then(() => navigate('/'))
                   .catch(console.error);
               }

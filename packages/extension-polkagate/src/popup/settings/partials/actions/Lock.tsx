@@ -27,7 +27,7 @@ export default function Lock ({ isExtension, style }: { isExtension: boolean, st
       return;
     }
 
-    updateStorage(STORAGE_KEY.LOGIN_IFO, { lastLoginTime: Date.now() - autoLockPeriod }).then(() => {
+    updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now() - autoLockPeriod }).then(() => {
       setExtensionLock(true);
       navigate('/') as void;
       lockExtension().catch(console.error);

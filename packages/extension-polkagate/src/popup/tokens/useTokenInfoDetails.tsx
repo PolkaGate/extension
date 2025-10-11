@@ -9,7 +9,7 @@ import { Coin, Lock1 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ZERO, bnMax } from '@polkadot/util';
 
 import { useChainInfo, useFormatted, useIsExtensionPopup, useLockedInReferenda, usePrices, useReservedDetails, useTranslation } from '../../hooks';
@@ -190,7 +190,7 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
   }, [delegatedBalance, lockedReasonLoading, state.data?.items, state.type, reservedReason, reservedReasonLoading, totalLocked]);
 
   useEffect(() => {
-    address && genesisHash && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash }).catch(console.error);
+    address && genesisHash && updateStorage(STORAGE_KEY.ACCOUNT_SELECTED_CHAIN, { [address]: genesisHash }).catch(console.error);
   }, [address, genesisHash]);
 
   const closeMenu = useCallback(() => {

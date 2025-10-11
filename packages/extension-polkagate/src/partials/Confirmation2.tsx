@@ -8,7 +8,7 @@ import { Container, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import Subscan from '../assets/icons/Subscan';
 import { ActionButton, DisplayBalance, NeonButton } from '../components';
@@ -168,7 +168,7 @@ export default function Confirmation2 ({ address, close, genesisHash, noStakingH
   }, [genesisHash, pathname, transactionDetail.extra]);
 
   const goToHistory = useCallback(() => {
-    updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })
+    updateStorage(STORAGE_KEY.ACCOUNT_SELECTED_CHAIN, { [address]: genesisHash })
       .finally(() => navigate('/history') as void)
       .catch(console.error);
   }, [address, genesisHash, navigate]);

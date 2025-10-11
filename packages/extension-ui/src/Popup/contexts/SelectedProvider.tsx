@@ -8,7 +8,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useState } from 're
 
 import { AccountContext, SelectedContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { getAndWatchStorage, getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, PROFILE_TAGS, SELECTED_ACCOUNT_IN_STORAGE, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 interface Props {
   children: React.ReactNode;
@@ -64,21 +64,21 @@ export default function SelectedProvider ({ children }: Props) {
 
   useEffect(() => {
     return getAndWatchStorage(
-      SELECTED_ACCOUNT_IN_STORAGE,
+      STORAGE_KEY.SELECTED_ACCOUNT,
       handleSetAccount
     );
   }, [handleSetAccount]);
 
   useEffect(() => {
     return getAndWatchStorage(
-      SELECTED_PROFILE_NAME_IN_STORAGE,
+      STORAGE_KEY.SELECTED_PROFILE,
       setSelectedProfile
     );
   }, [setSelectedProfile]);
 
   useEffect(() => {
     return getAndWatchStorage(
-      ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE,
+      STORAGE_KEY.ACCOUNT_SELECTED_CHAIN,
       setSelectedChain
     );
   }, [setSelectedChain]);

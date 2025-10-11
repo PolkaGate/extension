@@ -10,7 +10,7 @@ import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/compon
 import usePriceIds from '@polkadot/extension-polkagate/src/hooks/usePriceIds';
 import { getPrices } from '@polkadot/extension-polkagate/src/util/api';
 import { EXTRA_PRICE_IDS } from '@polkadot/extension-polkagate/src/util/api/getPrices';
-import { PRICE_VALIDITY_PERIOD } from '@polkadot/extension-polkagate/src/util/constants';
+import { PRICE_VALIDITY_PERIOD, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 interface Props {
   children: React.ReactNode;
@@ -34,7 +34,7 @@ export default function PricesProvider ({ children }: Props) {
     if (priceIdsInfo && currency?.code && !isFetchingPricesRef.current) {
       isFetchingPricesRef.current = true;
 
-      getStorage('pricesInCurrencies')
+      getStorage(STORAGE_KEY.PRICE_IN_CURRENCIES)
         .then((res) => {
           const savedPricesInCurrencies = (res || {}) as PricesInCurrencies;
           const maybeSavedPriceInCurrentCurrencyCode = savedPricesInCurrencies[currency.code];
@@ -71,7 +71,7 @@ export default function PricesProvider ({ children }: Props) {
 
               setPrices(newPrices);
               savedPricesInCurrencies[currency.code] = newPrices;
-              setStorage('pricesInCurrencies', savedPricesInCurrencies)
+              setStorage(STORAGE_KEY.PRICE_IN_CURRENCIES, savedPricesInCurrencies)
                 .catch(console.error);
             })
             .catch(console.error);

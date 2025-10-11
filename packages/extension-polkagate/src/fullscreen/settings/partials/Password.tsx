@@ -23,7 +23,7 @@ export default function Password(): React.ReactElement {
   const [lastEditDate, setLastEdit] = useState<string>();
 
   useEffect(() => {
-    getStorage(STORAGE_KEY.LOGIN_IFO).then((info) => {
+    getStorage(STORAGE_KEY.LOGIN_INFO).then((info) => {
       const timestamp = (info as unknown as LoginInfo | undefined)?.lastEdit;
 
       if (timestamp) {
