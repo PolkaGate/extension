@@ -8,6 +8,8 @@ import { Stack } from '@mui/material';
 import { UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { sanitizeChainName } from '@polkadot/extension-polkagate/src/util';
+
 import { ExtensionPopup, GradientButton, GradientDivider } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import ChainToggle from './ChainToggle';
@@ -77,7 +79,7 @@ function SelectChain ({ onChains, onClose, open, options, previousState, title }
                 genesis={value}
                 key={value}
                 onSelect={handleSelect}
-                text={text}
+                text={sanitizeChainName(text)}
               />
             );
           })}

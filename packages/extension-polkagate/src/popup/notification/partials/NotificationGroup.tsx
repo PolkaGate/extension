@@ -81,7 +81,7 @@ function NotificationItem ({ item }: { item: NotificationMessageType; }) {
         />
         <TwoToneText
           color={theme.palette.text.primary}
-          style={{ color: theme.palette.text.secondary, width: 'fit-content', ...theme.typography['B-4'] }}
+          style={{ color: theme.palette.text.secondary, width: 'fit-content', ...theme.typography['B-4'], textAlign: 'left' }}
           text={text}
           textPartInColor={textInColor as string}
         />
