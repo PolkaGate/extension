@@ -26,12 +26,14 @@ export const PASEO_NOTIFICATION_CHAIN = { text: 'Paseo Relay Chain', value: PASE
 export const DEFAULT_SUPPORTED_CHAINS = [POLKADOT_NOTIFICATION_CHAIN.value, KUSAMA_NOTIFICATION_CHAIN.value];
 export const SUPPORTED_CHAINS = [POLKADOT_NOTIFICATION_CHAIN, KUSAMA_NOTIFICATION_CHAIN, WESTEND_NOTIFICATION_CHAIN, PASEO_NOTIFICATION_CHAIN];
 
+export const AUTO_MARK_AS_READ_DELAY = 5000; // 5 seconds
+
 export const DEFAULT_NOTIFICATION_SETTING = {
   accounts: [],
-  enable: true,
-  governance: DEFAULT_SUPPORTED_CHAINS,
-  receivedFunds: true,
-  stakingRewards: DEFAULT_SUPPORTED_CHAINS
+  enable: false,
+  governance: [],
+  receivedFunds: false,
+  stakingRewards: []
 };
 
 export const SUPPORTED_GOVERNANCE_NOTIFICATION_CHAIN = SUPPORTED_CHAINS;

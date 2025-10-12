@@ -1,8 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Grid, Stack, type SxProps, type Theme,Typography } from '@mui/material';
-import React, { useCallback, useRef } from 'react';
+import { Container, Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton, BackWithLabel, FadeOnScroll, Motion } from '@polkadot/extension-polkagate/src/components';
@@ -34,9 +34,11 @@ function Notification () {
   useBackground('default');
 
   const refContainer = useRef(null);
-  const { notificationItems, settings } = useNotifications();
+  const { markAsRead, notificationItems, notificationSetting } = useNotifications();
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  useEffect(() => markAsRead(), [markAsRead]);
 
   const openSettings = useCallback(() => navigate('/notification/settings') as void, [navigate]);
   const backHome = useCallback(() => navigate('/') as void, [navigate]);
@@ -58,7 +60,7 @@ function Notification () {
                 key={dateKey}
               />
             ))}
-            {!settings?.enable &&
+            {!notificationSetting.enable &&
               <OffNotificationMessage
                 onClick={openSettings}
               />}

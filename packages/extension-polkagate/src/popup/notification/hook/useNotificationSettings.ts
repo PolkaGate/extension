@@ -1,13 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 
-import { AccountContext } from '@polkadot/extension-polkagate/src/components';
 import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { DEFAULT_NOTIFICATION_SETTING, MAX_ACCOUNT_COUNT_NOTIFICATION } from '../constant';
+import { DEFAULT_NOTIFICATION_SETTING } from '../constant';
 
 export interface NotificationSettingType {
   accounts: string[] | undefined; // substrate addresses
@@ -63,10 +62,7 @@ export enum Popups {
 }
 
 export default function useNotificationSettings () {
-  const { accounts } = useContext(AccountContext);
-
   const [notificationSetting, dispatch] = useReducer(notificationSettingReducer, initialNotificationState);
-  const [defaultFlag, setDefaultFlag] = useState<boolean>(false);
   const [popups, setPopup] = useState<Popups>(Popups.NONE);
 
   const notificationSettingRef = useRef(notificationSetting);
@@ -74,7 +70,7 @@ export default function useNotificationSettings () {
   useEffect(() => {
     // Update the ref whenever notificationSetting changes
     notificationSettingRef.current = notificationSetting;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(notificationSetting)]); // Deep-watch for changes
 
   useEffect(() => {
@@ -83,7 +79,10 @@ export default function useNotificationSettings () {
         const storedSettings = await getStorage(STORAGE_KEY.NOTIFICATION_SETTINGS);
 
         if (!storedSettings) {
-          setDefaultFlag(true);
+          dispatch({
+            payload: DEFAULT_NOTIFICATION_SETTING,
+            type: 'INITIAL'
+          });
 
           return;
         }
@@ -94,29 +93,20 @@ export default function useNotificationSettings () {
         });
       } catch (error) {
         console.error('Failed to load notification settings:', error);
-        setDefaultFlag(true);
+
+        dispatch({
+          payload: DEFAULT_NOTIFICATION_SETTING,
+          type: 'INITIAL'
+        });
       }
     };
 
     loadNotificationSettings().catch(console.error);
   }, []);
 
-  useEffect(() => {
-    if (!defaultFlag) {
-      return;
-    }
-
-    const addresses = accounts.map(({ address }) => address).slice(0, MAX_ACCOUNT_COUNT_NOTIFICATION);
-
-    dispatch({
-      payload: {
-        ...DEFAULT_NOTIFICATION_SETTING, // accounts is an empty array in the constant file
-        accounts: addresses
-      },
-      type: 'INITIAL'
-    });
-    setDefaultFlag(false);
-  }, [accounts, defaultFlag]);
+  const handleChainsChanges = useCallback((setting: NotificationSettingType) => {
+    setStorage(STORAGE_KEY.NOTIFICATION_SETTINGS, setting).catch(console.error);
+  }, []);
 
   useEffect(() => {
     // Apply notification setting changes function that runs on unmount
@@ -125,10 +115,6 @@ export default function useNotificationSettings () {
       handleChainsChanges(notificationSettingRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleChainsChanges = useCallback((setting: NotificationSettingType) => {
-    setStorage(STORAGE_KEY.NOTIFICATION_SETTINGS, setting).catch(console.error);
   }, []);
 
   const toggleNotification = useCallback(() => {

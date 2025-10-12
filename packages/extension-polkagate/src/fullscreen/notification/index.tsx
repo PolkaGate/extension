@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container } from '@mui/material';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useNotifications, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
@@ -20,7 +20,9 @@ function Notification ({ handleClose }: Props) {
   const navigate = useNavigate();
 
   const refContainer = useRef(null);
-  const { notificationItems, settings } = useNotifications();
+  const { markAsRead, notificationItems, notificationSetting } = useNotifications();
+
+  useEffect(() => markAsRead(), [markAsRead]);
 
   const openSettings = useCallback(() => {
     navigate('/settingsfs/account') as void;
@@ -42,7 +44,7 @@ function Notification ({ handleClose }: Props) {
             key={dateKey}
           />
         ))}
-        {!settings?.enable &&
+        {!notificationSetting?.enable &&
           <OffNotificationMessage
             onClick={openSettings}
           />}

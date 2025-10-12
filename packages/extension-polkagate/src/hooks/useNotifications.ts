@@ -1,16 +1,15 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { NotificationSettingType } from '../popup/notification/hook/useNotificationSettings';
 import type { NotificationActionType, NotificationsType } from '../popup/notification/types';
 import type { DropdownOption } from '../util/types';
 
-import { useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 
-import { AccountContext } from '../components';
 import { getStorage, setStorage } from '../components/Loading';
-import { DEFAULT_NOTIFICATION_SETTING, MAX_ACCOUNT_COUNT_NOTIFICATION, SUBSCAN_SUPPORTED_CHAINS } from '../popup/notification/constant';
+import { AUTO_MARK_AS_READ_DELAY, SUBSCAN_SUPPORTED_CHAINS } from '../popup/notification/constant';
 import { getPayoutsInformation, getReceivedFundsInformation, getReferendasInformation } from '../popup/notification/helpers';
+import useNotificationSettings from '../popup/notification/hook/useNotificationSettings';
 import { generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, groupNotificationsByDay, markMessagesAsRead, updateReferendas } from '../popup/notification/util';
 import { sanitizeChainName } from '../util';
 import { STORAGE_KEY } from '../util/constants';
@@ -100,16 +99,19 @@ enum status {
  * - Persisting notifications on window unload.
  *
  * @returns An object containing:
- * - `notificationItems`: The current notifications state.
+ * - `notifications`: The current notifications state.
+ * - `notificationItems`: The current notification messages state.
  * - `settings`: The current notifications settings.
  *
  * @remarks
  * This hook uses several internal flags and refs to avoid duplicate network calls and redundant state updates.
  */
 export default function useNotifications () {
+  const { notificationSetting } = useNotificationSettings();
+  const { accounts, enable: isNotificationEnable, governance: governanceChains, receivedFunds: isReceivedFundsEnable, stakingRewards: stakingRewardChains } = notificationSetting;
+
   const selectedChains = useSelectedChains();
   const allChains = useGenesisHashOptions(false);
-  const { accounts } = useContext(AccountContext);
 
   // Refs to avoid duplicate network calls and redundant state updates
   const isGettingReceivedFundRef = useRef<status>(status.NONE); // Flag to avoid duplicate calls of getReceivedFundsInformation
@@ -129,21 +131,24 @@ export default function useNotifications () {
       .map(({ text, value }) => ({ text, value } as DropdownOption));
   }, [allChains, selectedChains]);
 
-  const [settings, setSettings] = useState<NotificationSettingType | undefined>();
-  const [defaultSettingFlag, setDefaultSettingFlag] = useState<boolean>(false);
   const [notifications, dispatchNotifications] = useReducer(notificationReducer, initialNotificationState);
 
   // Whether notifications are turned off
-  const notificationIsOff = useMemo(() => !settings || settings.enable === false || settings.accounts?.length === 0, [settings]);
+  const notificationIsOff = useMemo(() => isNotificationEnable === false || accounts?.length === 0, [accounts?.length, isNotificationEnable]);
 
   // Mark all notifications as read
   const markAsRead = useCallback(() => {
-    dispatchNotifications({ type: 'MARK_AS_READ' });
+    const timer = setTimeout(() => {
+      // ✅ This runs only after the component has been mounted for 5 seconds
+      dispatchNotifications({ type: 'MARK_AS_READ' });
+    }, AUTO_MARK_AS_READ_DELAY);
+
+    return () => clearTimeout(timer); // return cleanup function if needed
   }, []);
 
   // Fetch received funds notifications
   const receivedFunds = useCallback(async () => {
-    if (chains && isGettingReceivedFundRef.current === status.NONE && settings?.accounts && settings.receivedFunds) {
+    if (chains && isGettingReceivedFundRef.current === status.NONE && accounts && isReceivedFundsEnable) {
       isGettingReceivedFundRef.current = status.FETCHING;
 
       // Filter supported chains for Subscan
@@ -157,7 +162,7 @@ export default function useNotifications () {
         return SUBSCAN_SUPPORTED_CHAINS.find((chainName) => chainName.toLowerCase() === sanitized);
       }).map(({ value }) => value as string);
 
-      const receivedFunds = await getReceivedFundsInformation(settings.accounts, filteredSupportedChains);
+      const receivedFunds = await getReceivedFundsInformation(accounts, filteredSupportedChains);
 
       isGettingReceivedFundRef.current = status.FETCHED;
       dispatchNotifications({
@@ -165,14 +170,14 @@ export default function useNotifications () {
         type: 'SET_RECEIVED_FUNDS'
       });
     }
-  }, [chains, settings?.accounts, settings?.receivedFunds]);
+  }, [accounts, chains, isReceivedFundsEnable]);
 
   // Fetch staking rewards notifications
   const payoutsInfo = useCallback(async () => {
-    if (isGettingPayoutsRef.current === status.NONE && settings?.accounts && settings.stakingRewards && settings.stakingRewards.length !== 0) {
+    if (isGettingPayoutsRef.current === status.NONE && accounts && stakingRewardChains && stakingRewardChains.length !== 0) {
       isGettingPayoutsRef.current = status.FETCHING;
 
-      const payouts = await getPayoutsInformation(settings.accounts, settings.stakingRewards);
+      const payouts = await getPayoutsInformation(accounts, stakingRewardChains);
 
       isGettingPayoutsRef.current = status.FETCHED;
       dispatchNotifications({
@@ -180,14 +185,14 @@ export default function useNotifications () {
         type: 'SET_STAKING_REWARDS'
       });
     }
-  }, [settings?.accounts, settings?.stakingRewards]);
+  }, [accounts, stakingRewardChains]);
 
   // Fetch referenda notifications
   const referendasInfo = useCallback(async () => {
-    if (isGettingNotificationsRef.current === status.NONE && settings?.accounts && settings.governance && settings.governance.length !== 0) {
+    if (isGettingNotificationsRef.current === status.NONE && accounts && governanceChains && governanceChains.length !== 0) {
       isGettingNotificationsRef.current = status.FETCHING;
 
-      const referendas = await getReferendasInformation(settings.governance);
+      const referendas = await getReferendasInformation(governanceChains);
 
       isGettingNotificationsRef.current = status.FETCHED;
       dispatchNotifications({
@@ -195,42 +200,11 @@ export default function useNotifications () {
         type: 'SET_REFERENDA'
       });
     }
-  }, [settings?.accounts, settings?.governance]);
-
-  // Load notification settings from storage on mount
-  useEffect(() => {
-    const getSettings = async () => {
-      const savedSettings = await getStorage(STORAGE_KEY.NOTIFICATION_SETTINGS) as NotificationSettingType;
-
-      if (!savedSettings) {
-        setDefaultSettingFlag(true);
-
-        return;
-      }
-
-      setSettings(savedSettings);
-    };
-
-    getSettings().catch(console.error);
-  }, []);
-
-  // If no settings, set default settings using current accounts
-  useEffect(() => {
-    if (!defaultSettingFlag) {
-      return;
-    }
-
-    const addresses = accounts.map(({ address }) => address).slice(0, MAX_ACCOUNT_COUNT_NOTIFICATION);
-
-    setSettings({
-      ...DEFAULT_NOTIFICATION_SETTING, // accounts is an empty array in the constant file
-      accounts: addresses // This line fills the empty accounts array with random address from the extension
-    });
-  }, [accounts, defaultSettingFlag]);
+  }, [accounts, governanceChains]);
 
   // Load notifications from storage or initialize if first time
   useEffect(() => {
-    if (notificationIsOff || !settings || initializedRef.current) {
+    if (notificationIsOff || initializedRef.current) {
       return;
     }
 
@@ -249,32 +223,32 @@ export default function useNotifications () {
     };
 
     loadSavedNotifications().catch(console.error);
-  }, [notificationIsOff, settings]);
+  }, [notificationIsOff]);
 
   // Fetch received funds and staking rewards notifications when settings change
   useEffect(() => {
-    if (notificationIsOff || !settings) {
+    if (notificationIsOff) {
       return;
     }
 
-    if (settings.receivedFunds) {
+    if (isReceivedFundsEnable) {
       receivedFunds().catch(console.error);
     } else {
       isGettingReceivedFundRef.current = status.FETCHED;
     }
 
-    if (settings.stakingRewards?.length !== 0) {
+    if (stakingRewardChains?.length !== 0) {
       payoutsInfo().catch(console.error);
     } else {
       isGettingPayoutsRef.current = status.FETCHED;
     }
 
-    if (settings.governance?.length !== 0) {
+    if (governanceChains?.length !== 0) {
       referendasInfo().catch(console.error);
     } else {
       isGettingNotificationsRef.current = status.FETCHED;
     }
-  }, [notificationIsOff, payoutsInfo, receivedFunds, referendasInfo, settings]);
+  }, [governanceChains?.length, isReceivedFundsEnable, notificationIsOff, payoutsInfo, receivedFunds, referendasInfo, stakingRewardChains?.length]);
 
   // Save notifications to storage before window unload
   useEffect(() => {
@@ -306,19 +280,21 @@ export default function useNotifications () {
     };
   }, [notifications]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // ✅ This runs only after the component has been mounted for 5 seconds
-      markAsRead();
-    }, 5000);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     // ✅ This runs only after the component has been mounted for 5 seconds
+  //     markAsRead();
+  //   }, 5000);
 
-    return () => clearTimeout(timer); // cleanup if the component unmounts
-  }, [markAsRead]);
+  //   return () => clearTimeout(timer); // cleanup if the component unmounts
+  // }, [markAsRead]);
 
   const notificationItems = useMemo(() => groupNotificationsByDay(notifications.notificationMessages), [notifications.notificationMessages]);
 
   return {
+    markAsRead,
     notificationItems,
-    settings
+    notificationSetting,
+    notifications
   };
 }
