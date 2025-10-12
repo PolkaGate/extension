@@ -7,6 +7,7 @@ import React, { useContext, useEffect, useState } from 'react';
 
 import { AccountContext, AccountsAssetsContext, GenesisHashOptionsContext, UserAddedChainContext, WorkerContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { useNotifications } from '@polkadot/extension-polkagate/src/hooks';
 import useAssetsBalances from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import useNFT from '@polkadot/extension-polkagate/src/hooks/useNFT';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
@@ -16,6 +17,8 @@ export default function AccountAssetProvider ({ children }: { children: React.Re
   const genesisHashOptions = useContext(GenesisHashOptionsContext);
   const userAddedChainCtx = useContext(UserAddedChainContext);
   const worker = useContext(WorkerContext);
+
+  useNotifications(false); // fetches and saves notification in the local storage
 
   const [accountsAssets, setAccountsAssets] = useState<SavedAssets | null | undefined>();
 

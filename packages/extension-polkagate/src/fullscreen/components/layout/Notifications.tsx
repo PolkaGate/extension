@@ -5,16 +5,16 @@
 
 import { Box, Grid } from '@mui/material';
 import { Notification as NotificationIcon } from 'iconsax-react';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
+import { useIsExtensionPopup, useNotifications } from '@polkadot/extension-polkagate/src/hooks';
 import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import Notification from '../../notification';
 
-const NotificationButton = ({ onClick }: { onClick: () => void }) => (
+const NotificationButton = ({ hasNewNotification, onClick }: { hasNewNotification: boolean; onClick: () => void; }) => (
   <Grid alignItems='center' container item justifyContent='center' onClick={onClick}
     sx={{
       '&:hover': { background: '#674394' },
@@ -35,6 +35,7 @@ const NotificationButton = ({ onClick }: { onClick: () => void }) => (
         bgcolor: '#FF4FB9',
         border: '1.5px solid #2D1E4A',
         borderRadius: '50%',
+        display: hasNewNotification ? 'block' : 'none',
         height: '9px',
         position: 'absolute',
         right: '5px',
@@ -57,6 +58,15 @@ function Notifications (): React.ReactElement {
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
+  const { notificationItems } = useNotifications();
+
+  const hasNewNotification = useMemo(() => {
+    if (!notificationItems) {
+      return false;
+    }
+
+    return Object.values(notificationItems).flat().some(({ read }) => read);
+  }, [notificationItems]);
 
   const onClick = useCallback(() => {
     if (isExtension) {
@@ -70,7 +80,10 @@ function Notifications (): React.ReactElement {
 
   return (
     <>
-      <NotificationButton onClick={onClick} />
+      <NotificationButton
+        hasNewNotification={hasNewNotification}
+        onClick={onClick}
+      />
       {extensionPopup === ExtensionPopups.NOTIFICATION &&
         <Notification
           handleClose={extensionPopupCloser}

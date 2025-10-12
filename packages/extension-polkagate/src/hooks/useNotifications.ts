@@ -94,6 +94,8 @@ enum status {
  * - Marking notifications as read.
  * - Persisting notifications on window unload.
  *
+ * @param [justLoadData=true] - If true the hook will only read the local storage and return it (fetching won't happen)
+ *
  * @returns An object containing:
  * - `notifications`: The current notifications state.
  * - `notificationItems`: The current notification messages state.
@@ -102,7 +104,7 @@ enum status {
  * @remarks
  * This hook uses several internal flags and refs to avoid duplicate network calls and redundant state updates.
  */
-export default function useNotifications () {
+export default function useNotifications (justLoadData = true) {
   const { notificationSetting } = useNotificationSettings();
   const { accounts, enable: isNotificationEnable, governance: governanceChains, receivedFunds: isReceivedFundsEnable, stakingRewards: stakingRewardChains } = notificationSetting;
 
@@ -110,11 +112,14 @@ export default function useNotifications () {
   const allChains = useGenesisHashOptions(false);
 
   // Refs to avoid duplicate network calls and redundant state updates
-  const isGettingReceivedFundRef = useRef<status>(status.NONE); // Flag to avoid duplicate calls of getReceivedFundsInformation
-  const isGettingPayoutsRef = useRef<status>(status.NONE); // Flag to avoid duplicate calls of getPayoutsInformation
-  const isGettingNotificationsRef = useRef<status>(status.NONE); // Flag to avoid duplicate calls of getNotificationsInformation
+  const { current: fetchRefs } = useRef({
+    receivedFundsRef: status.NONE, // Flag to avoid duplicate calls of getReceivedFundsInformation
+    referendaRef: status.NONE, // Flag to avoid duplicate calls of getPayoutsInformation
+    stakingRewardsRef: status.NONE // Flag to avoid duplicate calls of getNotificationsInformation
+  });
   const initializedRef = useRef<boolean>(false); // Flag to avoid duplicate initialization
   const isSavingRef = useRef<boolean>(false); // Flag to avoid duplicate save in the storage
+  const saveQueue = useRef<Promise<void>>(Promise.resolve()); // Saving to the local storage queue
 
   // Memoized list of selected chain options
   const chains = useMemo(() => {
@@ -132,6 +137,27 @@ export default function useNotifications () {
   // Whether notifications are turned off
   const notificationIsOff = useMemo(() => isNotificationEnable === false || accounts?.length === 0, [accounts?.length, isNotificationEnable]);
 
+  const saveNotifications = useCallback(() => {
+    // Queue saves to ensure they happen sequentially, not in parallel
+    saveQueue.current = saveQueue.current.then(async () => {
+      if (isSavingRef.current) {
+        return;
+      }
+
+      isSavingRef.current = true;
+      const dataToSave = { ...notifications, latestLoggedIn: Math.floor(Date.now() / 1000) };
+
+      try {
+        await setStorage(STORAGE_KEY.NOTIFICATIONS, dataToSave);
+        // console.log('✅ Notifications saved after fetch completion.');
+      } catch (error) {
+        console.error('❌ Failed to save notifications:', error);
+      } finally {
+        isSavingRef.current = false;
+      }
+    });
+  }, [notifications]);
+
   // Mark all notifications as read
   const markAsRead = useCallback(() => {
     const timer = setTimeout(() => {
@@ -144,8 +170,8 @@ export default function useNotifications () {
 
   // Fetch received funds notifications
   const receivedFundsInfo = useCallback(async () => {
-    if (chains && isGettingReceivedFundRef.current === status.NONE && accounts && isReceivedFundsEnable) {
-      isGettingReceivedFundRef.current = status.FETCHING;
+    if (chains && fetchRefs.receivedFundsRef === status.NONE && accounts && isReceivedFundsEnable) {
+      fetchRefs.receivedFundsRef = status.FETCHING;
 
       // Filter supported chains for Subscan
       const filteredSupportedChains = chains.filter(({ text }) => {
@@ -160,43 +186,49 @@ export default function useNotifications () {
 
       const receivedFunds = await getReceivedFundsInformation(accounts, filteredSupportedChains);
 
-      isGettingReceivedFundRef.current = status.FETCHED;
+      fetchRefs.receivedFundsRef = status.FETCHED;
       dispatchNotifications({
         payload: receivedFunds,
         type: 'SET_RECEIVED_FUNDS'
       });
+
+      saveNotifications();
     }
-  }, [accounts, chains, isReceivedFundsEnable]);
+  }, [accounts, chains, fetchRefs, isReceivedFundsEnable, saveNotifications]);
 
   // Fetch staking rewards notifications
   const payoutsInfo = useCallback(async () => {
-    if (isGettingPayoutsRef.current === status.NONE && accounts && stakingRewardChains && stakingRewardChains.length !== 0) {
-      isGettingPayoutsRef.current = status.FETCHING;
+    if (fetchRefs.stakingRewardsRef === status.NONE && accounts && stakingRewardChains && stakingRewardChains.length !== 0) {
+      fetchRefs.stakingRewardsRef = status.FETCHING;
 
       const payouts = await getPayoutsInformation(accounts, stakingRewardChains);
 
-      isGettingPayoutsRef.current = status.FETCHED;
+      fetchRefs.stakingRewardsRef = status.FETCHED;
       dispatchNotifications({
         payload: payouts,
         type: 'SET_STAKING_REWARDS'
       });
+
+      saveNotifications();
     }
-  }, [accounts, stakingRewardChains]);
+  }, [accounts, fetchRefs, saveNotifications, stakingRewardChains]);
 
   // Fetch referenda notifications
   const referendasInfo = useCallback(async () => {
-    if (isGettingNotificationsRef.current === status.NONE && accounts && governanceChains && governanceChains.length !== 0) {
-      isGettingNotificationsRef.current = status.FETCHING;
+    if (fetchRefs.referendaRef === status.NONE && accounts && governanceChains && governanceChains.length !== 0) {
+      fetchRefs.referendaRef = status.FETCHING;
 
       const referendas = await getReferendasInformation(governanceChains);
 
-      isGettingNotificationsRef.current = status.FETCHED;
+      fetchRefs.referendaRef = status.FETCHED;
       dispatchNotifications({
         payload: referendas,
         type: 'SET_REFERENDA'
       });
+
+      saveNotifications();
     }
-  }, [accounts, governanceChains]);
+  }, [accounts, fetchRefs, governanceChains, saveNotifications]);
 
   // Load notifications from storage or initialize if first time
   useEffect(() => {
@@ -221,9 +253,9 @@ export default function useNotifications () {
     loadSavedNotifications().catch(console.error);
   }, [notificationIsOff]);
 
-  // Fetch received funds and staking rewards notifications when settings change
+  // Fetch received funds, referendas and staking rewards notifications
   useEffect(() => {
-    if (notificationIsOff) {
+    if (notificationIsOff || justLoadData) {
       return;
     }
 
@@ -238,37 +270,7 @@ export default function useNotifications () {
     if (governanceChains?.length !== 0) {
       referendasInfo().catch(console.error);
     }
-  }, [governanceChains?.length, isReceivedFundsEnable, notificationIsOff, payoutsInfo, receivedFundsInfo, referendasInfo, stakingRewardChains?.length]);
-
-  // Save notifications to storage before window unload
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      const notificationIsInitializing = notifications.isFirstTime && notifications.referendas?.length === 0;
-
-      if (!isSavingRef.current && !notificationIsInitializing) {
-        isSavingRef.current = true;
-
-        const dataToSave = notifications;
-
-        dataToSave.latestLoggedIn = Math.floor(Date.now() / 1000); // timestamp in seconds
-
-        setStorage(STORAGE_KEY.NOTIFICATIONS, dataToSave)
-          .then(() => {
-            console.log('Notifications saved successfully on unload.');
-          })
-          .catch((error) => {
-            console.error('Failed to save notifications on unload:', error);
-          });
-      }
-    };
-
-    // Add event listener for the 'beforeunload' event
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [notifications]);
+  }, [governanceChains?.length, isReceivedFundsEnable, justLoadData, notificationIsOff, payoutsInfo, receivedFundsInfo, referendasInfo, stakingRewardChains?.length]);
 
   const notificationItems = useMemo(() => groupNotificationsByDay(notifications.notificationMessages), [notifications.notificationMessages]);
 
