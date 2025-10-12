@@ -291,10 +291,26 @@ export default function useNotifications () {
 
   const notificationItems = useMemo(() => groupNotificationsByDay(notifications.notificationMessages), [notifications.notificationMessages]);
 
+  const isNotificationOff = useMemo(() => !notificationSetting.enable && !notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
+  const isFirstTime = useMemo(() => notificationSetting.enable && notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
+
+  const loading = useMemo(() => {
+    if (isNotificationOff || isFirstTime || (notificationItems && Object.entries(notificationItems).length > 0)) {
+      return false;
+    }
+
+    return true;
+  }, [isFirstTime, isNotificationOff, notificationItems]);
+
   return {
     markAsRead,
     notificationItems,
     notificationSetting,
-    notifications
+    notifications,
+    status: {
+      isFirstTime,
+      isNotificationOff,
+      loading
+    }
   };
 }
