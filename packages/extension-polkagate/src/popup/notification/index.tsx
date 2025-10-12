@@ -12,7 +12,7 @@ import { HomeMenu, UserDashboardHeader, WhatsNew } from '@polkadot/extension-pol
 import { VelvetBox } from '@polkadot/extension-polkagate/src/style';
 
 import NotificationGroup from './partials/NotificationGroup';
-import { ColdStartNotification, NotificationLoading, OffNotificationMessage } from './partials/Partial';
+import { ColdStartNotification, NoNotificationYet, NotificationLoading, OffNotificationMessage } from './partials/Partial';
 
 function Notification () {
   useBackground('default');
@@ -51,6 +51,10 @@ function Notification () {
             {status.isFirstTime &&
               <ColdStartNotification
                 onClick={openSettings}
+              />}
+            {status.noNotificationYet &&
+              <NoNotificationYet
+                onClick={backHome}
               />}
             {status.loading &&
               <NotificationLoading count={5} />}

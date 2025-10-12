@@ -154,7 +154,6 @@ export interface NotificationsType {
 
 export type NotificationActionType =
   | { type: 'INITIALIZE'; }
-  | { type: 'CHECK_FIRST_TIME'; }
   | { type: 'MARK_AS_READ'; }
   | { type: 'LOAD_FROM_STORAGE'; payload: NotificationsType }
   | { type: 'SET_REFERENDA'; payload: ReferendaInformation[] }

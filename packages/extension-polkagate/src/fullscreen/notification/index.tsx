@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { FadeOnScroll } from '@polkadot/extension-polkagate/src/components';
 import { useNotifications, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import NotificationGroup from '@polkadot/extension-polkagate/src/popup/notification/partials/NotificationGroup';
-import { ColdStartNotification, NotificationLoading, OffNotificationMessage } from '@polkadot/extension-polkagate/src/popup/notification/partials/Partial';
+import { ColdStartNotification, NoNotificationYet, NotificationLoading, OffNotificationMessage } from '@polkadot/extension-polkagate/src/popup/notification/partials/Partial';
 
 import { DraggableModal } from '../components/DraggableModal';
 
@@ -58,6 +58,15 @@ function Notification ({ handleClose }: Props) {
           {status.isFirstTime &&
             <ColdStartNotification
               onClick={openSettings}
+              style={{
+                bgcolor: '#05091C',
+                borderRadius: '22px',
+                p: '32px 15px 22px'
+              }}
+            />}
+          {status.noNotificationYet &&
+            <NoNotificationYet
+              onClick={handleClose}
               style={{
                 bgcolor: '#05091C',
                 borderRadius: '22px',

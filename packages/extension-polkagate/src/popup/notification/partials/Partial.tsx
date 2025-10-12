@@ -86,4 +86,21 @@ const NotificationLoading = ({ count = 3 }: { count?: number }) => {
   );
 };
 
-export { ColdStartNotification, NotificationLoading, OffNotificationMessage };
+const NoNotificationYet = ({ onClick, style }: { onClick: () => void; style?: SxProps<Theme>; }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Stack direction='column' sx={{ alignItems: 'center', gap: '16px', p: '32px 10px 15px', width: '100%', ...style }}>
+      <Typography color='text.primary' textAlign='left' variant='B-2' width='100%'>
+        {t('Everything’s calm, you don’t have any notifications yet')}.
+      </Typography>
+      <ActionButton
+        onClick={onClick}
+        style={{ mt: '15px', width: 'fit-content' }}
+        text={t('Good')}
+      />
+    </Stack>
+  );
+};
+
+export { ColdStartNotification, NoNotificationYet, NotificationLoading, OffNotificationMessage };

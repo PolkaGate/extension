@@ -35,14 +35,10 @@ const notificationReducer = (
         isFirstTime: true,
         latestLoggedIn: Math.floor(Date.now() / 1000), // timestamp in seconds
         notificationMessages: [],
-        receivedFunds: null,
-        referendas: null,
-        stakingRewards: null
+        receivedFunds: undefined,
+        referendas: undefined,
+        stakingRewards: undefined
       };
-
-    case 'CHECK_FIRST_TIME':
-      // Mark as first time
-      return { ...state, isFirstTime: true };
 
     case 'MARK_AS_READ':
       // Mark all messages as read
@@ -147,7 +143,7 @@ export default function useNotifications () {
   }, []);
 
   // Fetch received funds notifications
-  const receivedFunds = useCallback(async () => {
+  const receivedFundsInfo = useCallback(async () => {
     if (chains && isGettingReceivedFundRef.current === status.NONE && accounts && isReceivedFundsEnable) {
       isGettingReceivedFundRef.current = status.FETCHING;
 
@@ -232,23 +228,17 @@ export default function useNotifications () {
     }
 
     if (isReceivedFundsEnable) {
-      receivedFunds().catch(console.error);
-    } else {
-      isGettingReceivedFundRef.current = status.FETCHED;
+      receivedFundsInfo().catch(console.error);
     }
 
     if (stakingRewardChains?.length !== 0) {
       payoutsInfo().catch(console.error);
-    } else {
-      isGettingPayoutsRef.current = status.FETCHED;
     }
 
     if (governanceChains?.length !== 0) {
       referendasInfo().catch(console.error);
-    } else {
-      isGettingNotificationsRef.current = status.FETCHED;
     }
-  }, [governanceChains?.length, isReceivedFundsEnable, notificationIsOff, payoutsInfo, receivedFunds, referendasInfo, stakingRewardChains?.length]);
+  }, [governanceChains?.length, isReceivedFundsEnable, notificationIsOff, payoutsInfo, receivedFundsInfo, referendasInfo, stakingRewardChains?.length]);
 
   // Save notifications to storage before window unload
   useEffect(() => {
@@ -284,14 +274,15 @@ export default function useNotifications () {
 
   const isNotificationOff = useMemo(() => !notificationSetting.enable && !notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
   const isFirstTime = useMemo(() => !notificationSetting.enable && notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
+  const noNotificationYet = useMemo(() => notificationSetting.enable && !notifications.isFirstTime && notifications.notificationMessages?.length === 0, [notificationSetting.enable, notifications.isFirstTime, notifications.notificationMessages?.length]);
 
   const loading = useMemo(() => {
-    if (isNotificationOff || isFirstTime || (notificationItems && Object.entries(notificationItems).length > 0)) {
+    if (isNotificationOff || isFirstTime || (notificationItems && Object.entries(notificationItems).length > 0) || noNotificationYet) {
       return false;
     }
 
     return true;
-  }, [isFirstTime, isNotificationOff, notificationItems]);
+  }, [isFirstTime, isNotificationOff, noNotificationYet, notificationItems]);
 
   return {
     markAsRead,
@@ -301,7 +292,8 @@ export default function useNotifications () {
     status: {
       isFirstTime,
       isNotificationOff,
-      loading
+      loading,
+      noNotificationYet
     }
   };
 }

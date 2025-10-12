@@ -329,7 +329,7 @@ export const getReferendasInformation = async (chains: string[]): Promise<Refere
       results.push(result);
     }
 
-    console.log('results:', results);
+    // console.log('results:', results);
   }
 
   return results;
