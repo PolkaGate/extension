@@ -100,8 +100,8 @@ enum status {
  * - Persisting notifications on window unload.
  *
  * @returns An object containing:
- * - `markAsRead`: A function to mark all notifications as read.
- * - `notifications`: The current notifications state.
+ * - `notificationItems`: The current notifications state.
+ * - `settings`: The current notifications settings.
  *
  * @remarks
  * This hook uses several internal flags and refs to avoid duplicate network calls and redundant state updates.
@@ -318,8 +318,7 @@ export default function useNotifications () {
   const notificationItems = useMemo(() => groupNotificationsByDay(notifications.notificationMessages), [notifications.notificationMessages]);
 
   return {
-    markAsRead,
     notificationItems,
-    notifications
+    settings
   };
 }

@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container } from '@mui/material';
-import React, { useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useNotifications, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { OffNotificationMessage } from '@polkadot/extension-polkagate/src/popup/notification';
 import NotificationGroup from '@polkadot/extension-polkagate/src/popup/notification/partials/NotificationGroup';
 
 import { DraggableModal } from '../components/DraggableModal';
@@ -15,9 +17,15 @@ interface Props {
 
 function Notification ({ handleClose }: Props) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const refContainer = useRef(null);
-  const { notificationItems } = useNotifications();
+  const { notificationItems, settings } = useNotifications();
+
+  const openSettings = useCallback(() => {
+    navigate('/settingsfs/account') as void;
+    handleClose();
+  }, [handleClose, navigate]);
 
   return (
     <DraggableModal
@@ -34,6 +42,10 @@ function Notification ({ handleClose }: Props) {
             key={dateKey}
           />
         ))}
+        {!settings?.enable &&
+          <OffNotificationMessage
+            onClick={openSettings}
+          />}
       </Container>
     </DraggableModal>
   );

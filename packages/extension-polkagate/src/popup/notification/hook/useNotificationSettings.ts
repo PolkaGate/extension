@@ -41,7 +41,7 @@ const notificationSettingReducer = (
     case 'INITIAL':
       return action.payload;
     case 'TOGGLE_ENABLE':
-      return { ...state, enable: !state.enable };
+      return { ...state, enable: !state.enable, receivedFunds: state.enable ? false : state.receivedFunds };
     case 'TOGGLE_RECEIVED_FUNDS':
       return { ...state, receivedFunds: !state.receivedFunds };
     case 'SET_GOVERNANCE':
