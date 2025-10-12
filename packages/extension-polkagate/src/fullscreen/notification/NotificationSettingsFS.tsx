@@ -9,7 +9,6 @@ import { ActionCard, MySwitch } from '@polkadot/extension-polkagate/src/componen
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { SUPPORTED_GOVERNANCE_NOTIFICATION_CHAIN, SUPPORTED_STAKING_NOTIFICATION_CHAIN } from '@polkadot/extension-polkagate/src/popup/notification/constant';
 import useNotificationSettings, { type NotificationSettingType, Popups } from '@polkadot/extension-polkagate/src/popup/notification/hook/useNotificationSettings';
-import { noop } from '@polkadot/util';
 
 import { DraggableModal } from '../components/DraggableModal';
 import SelectAccount from './partials/SelectAccount';
@@ -34,14 +33,13 @@ const SettingUI = ({ notificationSetting, openPopup, toggleNotification, toggleR
         iconColor='#FF4FB9'
         iconSize={24}
         iconWithoutTransform
-        onClick={noop}
+        onClick={toggleNotification}
         showColorBall={false}
         style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
         title={t('Enable Notifications')}
       >
         <MySwitch
           checked={notificationSetting.enable}
-          onChange={toggleNotification}
           value={notificationSetting.enable}
         />
       </ActionCard>
@@ -50,14 +48,13 @@ const SettingUI = ({ notificationSetting, openPopup, toggleNotification, toggleR
         iconColor='#FF4FB9'
         iconSize={24}
         iconWithoutTransform
-        onClick={noop}
+        onClick={toggleReceivedFunds}
         showColorBall={false}
         style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
         title={t('Enable Receive Fund')}
       >
         <MySwitch
           checked={notificationSetting.receivedFunds}
-          onChange={toggleReceivedFunds}
           value={notificationSetting.receivedFunds}
         />
       </ActionCard>

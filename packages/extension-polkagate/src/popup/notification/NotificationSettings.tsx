@@ -9,8 +9,6 @@ import { ArrowCircleDown2, BuyCrypto, MedalStar, Notification as NotificationIco
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { noop } from '@polkadot/util';
-
 import { ActionCard, BackWithLabel, Motion, MySwitch } from '../../components';
 import { useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
@@ -60,14 +58,13 @@ export default function NotificationSettings () {
               iconColor='#FF4FB9'
               iconSize={24}
               iconWithoutTransform
-              onClick={noop}
+              onClick={toggleNotification}
               showColorBall={false}
               style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
               title={t('Enable Notifications')}
             >
               <MySwitch
                 checked={notificationSetting.enable}
-                onChange={toggleNotification}
                 value={notificationSetting.enable}
               />
             </ActionCard>
@@ -76,14 +73,13 @@ export default function NotificationSettings () {
               iconColor='#FF4FB9'
               iconSize={24}
               iconWithoutTransform
-              onClick={noop}
+              onClick={toggleReceivedFunds}
               showColorBall={false}
               style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
               title={t('Enable Receive Fund')}
             >
               <MySwitch
                 checked={notificationSetting.receivedFunds}
-                onChange={toggleReceivedFunds}
                 value={notificationSetting.receivedFunds}
               />
             </ActionCard>

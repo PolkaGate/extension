@@ -10,6 +10,7 @@ import { useBackground, useTranslation } from '@polkadot/extension-polkagate/src
 import useNotifications from '@polkadot/extension-polkagate/src/hooks/useNotifications';
 import { HomeMenu, UserDashboardHeader, WhatsNew } from '@polkadot/extension-polkagate/src/partials';
 import { VelvetBox } from '@polkadot/extension-polkagate/src/style';
+import { EXTENSION_NAME } from '@polkadot/extension-polkagate/src/util/constants';
 
 import NotificationGroup from './partials/NotificationGroup';
 
@@ -30,11 +31,35 @@ export const OffNotificationMessage = ({ onClick, style }: { onClick: () => void
   );
 };
 
+export const ColdStartNotification = ({ onClick, style }: { onClick: () => void; style?: SxProps<Theme>; }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Stack direction='column' sx={{ alignItems: 'center', gap: '16px', p: '32px 10px 15px', width: '100%', ...style }}>
+      <Typography color='text.primary' textAlign='left' variant='B-2' width='100%'>
+        {`${t('Introducing notifications')}!`}
+      </Typography>
+      <Typography color='text.secondary' textAlign='left' variant='B-1' width='100%'>
+        {t('{{extensionName}} now has notifications! Important warnings and updates will be delivered to you as notifications, so make sure you don\'t miss any.',
+          { replace: { extensionName: EXTENSION_NAME } })}
+      </Typography>
+      <Typography color='text.primary' textAlign='left' variant='B-1' width='100%'>
+        {t('Fine-tune your notification experience in Settings')}:
+      </Typography>
+      <ActionButton
+        onClick={onClick}
+        style={{ mt: '15px', width: 'fit-content' }}
+        text={t('Enable notifications')}
+      />
+    </Stack>
+  );
+};
+
 function Notification () {
   useBackground('default');
 
   const refContainer = useRef(null);
-  const { markAsRead, notificationItems, notificationSetting } = useNotifications();
+  const { markAsRead, notificationItems, notificationSetting, notifications } = useNotifications();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -60,8 +85,12 @@ function Notification () {
                 key={dateKey}
               />
             ))}
-            {!notificationSetting.enable &&
+            {!notificationSetting.enable && !notifications.isFirstTime &&
               <OffNotificationMessage
+                onClick={openSettings}
+              />}
+            {notifications.isFirstTime &&
+              <ColdStartNotification
                 onClick={openSettings}
               />}
           </VelvetBox>

@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useNotifications, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
-import { OffNotificationMessage } from '@polkadot/extension-polkagate/src/popup/notification';
+import { ColdStartNotification, OffNotificationMessage } from '@polkadot/extension-polkagate/src/popup/notification';
 import NotificationGroup from '@polkadot/extension-polkagate/src/popup/notification/partials/NotificationGroup';
 
 import { DraggableModal } from '../components/DraggableModal';
@@ -20,7 +20,7 @@ function Notification ({ handleClose }: Props) {
   const navigate = useNavigate();
 
   const refContainer = useRef(null);
-  const { markAsRead, notificationItems, notificationSetting } = useNotifications();
+  const { markAsRead, notificationItems, notificationSetting, notifications } = useNotifications();
 
   useEffect(() => markAsRead(), [markAsRead]);
 
@@ -44,10 +44,25 @@ function Notification ({ handleClose }: Props) {
             key={dateKey}
           />
         ))}
-        {!notificationSetting?.enable &&
+        {!notificationSetting.enable && !notifications.isFirstTime &&
           <OffNotificationMessage
             onClick={openSettings}
+            style={{
+              bgcolor: '#05091C',
+              borderRadius: '22px',
+              p: '32px 15px 22px'
+            }}
           />}
+        {notifications.isFirstTime && !notificationSetting.enable &&
+          <ColdStartNotification
+            onClick={openSettings}
+            style={{
+              bgcolor: '#05091C',
+              borderRadius: '22px',
+              p: '32px 15px 22px'
+            }}
+          />
+        }
       </Container>
     </DraggableModal>
   );
