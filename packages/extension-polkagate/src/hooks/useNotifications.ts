@@ -280,19 +280,10 @@ export default function useNotifications () {
     };
   }, [notifications]);
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     // ✅ This runs only after the component has been mounted for 5 seconds
-  //     markAsRead();
-  //   }, 5000);
-
-  //   return () => clearTimeout(timer); // cleanup if the component unmounts
-  // }, [markAsRead]);
-
   const notificationItems = useMemo(() => groupNotificationsByDay(notifications.notificationMessages), [notifications.notificationMessages]);
 
   const isNotificationOff = useMemo(() => !notificationSetting.enable && !notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
-  const isFirstTime = useMemo(() => notificationSetting.enable && notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
+  const isFirstTime = useMemo(() => !notificationSetting.enable && notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
 
   const loading = useMemo(() => {
     if (isNotificationOff || isFirstTime || (notificationItems && Object.entries(notificationItems).length > 0)) {

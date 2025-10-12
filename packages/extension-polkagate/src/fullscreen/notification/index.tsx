@@ -35,7 +35,7 @@ function Notification ({ handleClose }: Props) {
       onClose={handleClose}
       open={true}
       showBackIconAsClose
-      style={{ backgroundColor: '#1B133C', minHeight: '600px', overflow: 'auto', padding: ' 20px 10px 10px' }}
+      style={{ backgroundColor: '#1B133C', height: 'fit-content', minHeight: 'unset', overflow: 'auto', padding: ' 20px 10px' }}
       title={t('Notifications')}
     >
       <>

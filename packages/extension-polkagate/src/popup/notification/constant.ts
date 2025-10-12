@@ -23,7 +23,7 @@ export const KUSAMA_NOTIFICATION_CHAIN = { text: 'Kusama Relay Chain', value: KU
 export const WESTEND_NOTIFICATION_CHAIN = { text: 'Westend Relay Chain', value: WESTEND_GENESIS_HASH };
 export const PASEO_NOTIFICATION_CHAIN = { text: 'Paseo Relay Chain', value: PASEO_GENESIS_HASH };
 
-export const DEFAULT_SUPPORTED_CHAINS = [POLKADOT_NOTIFICATION_CHAIN.value, KUSAMA_NOTIFICATION_CHAIN.value];
+export const SET_UP_SUPPORTED_CHAINS = [POLKADOT_NOTIFICATION_CHAIN.value, KUSAMA_NOTIFICATION_CHAIN.value];
 export const SUPPORTED_CHAINS = [POLKADOT_NOTIFICATION_CHAIN, KUSAMA_NOTIFICATION_CHAIN, WESTEND_NOTIFICATION_CHAIN, PASEO_NOTIFICATION_CHAIN];
 
 export const AUTO_MARK_AS_READ_DELAY = 5000; // 5 seconds
@@ -34,6 +34,14 @@ export const DEFAULT_NOTIFICATION_SETTING = {
   governance: [],
   receivedFunds: false,
   stakingRewards: []
+};
+
+export const SET_UP_NOTIFICATION_SETTING = {
+  accounts: [],
+  enable: true,
+  governance: SET_UP_SUPPORTED_CHAINS,
+  receivedFunds: true,
+  stakingRewards: SET_UP_SUPPORTED_CHAINS
 };
 
 export const SUPPORTED_GOVERNANCE_NOTIFICATION_CHAIN = SUPPORTED_CHAINS;

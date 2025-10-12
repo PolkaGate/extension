@@ -1,12 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react';
 
+import { AccountContext } from '@polkadot/extension-polkagate/src/components';
 import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { DEFAULT_NOTIFICATION_SETTING } from '../constant';
+import { DEFAULT_NOTIFICATION_SETTING, MAX_ACCOUNT_COUNT_NOTIFICATION, SET_UP_NOTIFICATION_SETTING } from '../constant';
 
 export interface NotificationSettingType {
   accounts: string[] | undefined; // substrate addresses
@@ -62,6 +63,7 @@ export enum Popups {
 }
 
 export default function useNotificationSettings () {
+  const { accounts } = useContext(AccountContext);
   const [notificationSetting, dispatch] = useReducer(notificationSettingReducer, initialNotificationState);
   const [popups, setPopup] = useState<Popups>(Popups.NONE);
 
@@ -118,8 +120,24 @@ export default function useNotificationSettings () {
   }, []);
 
   const toggleNotification = useCallback(() => {
+    const isFirstTime = [...(notificationSetting.governance ?? []), ...(notificationSetting.stakingRewards ?? []), ...(notificationSetting.accounts ?? [])].length === 0;
+
+    if (isFirstTime) {
+      const addresses = accounts.map(({ address }) => address).slice(0, MAX_ACCOUNT_COUNT_NOTIFICATION);
+
+      dispatch({
+        payload: {
+          ...SET_UP_NOTIFICATION_SETTING, // accounts is an empty array in the constant file
+          accounts: addresses // This line fills the empty accounts array with random address from the extension
+        },
+        type: 'INITIAL'
+      });
+
+      return;
+    }
+
     dispatch({ type: 'TOGGLE_ENABLE' });
-  }, []);
+  }, [accounts, notificationSetting.accounts, notificationSetting.governance, notificationSetting.stakingRewards]);
 
   const toggleReceivedFunds = useCallback(() => {
     dispatch({ type: 'TOGGLE_RECEIVED_FUNDS' });
