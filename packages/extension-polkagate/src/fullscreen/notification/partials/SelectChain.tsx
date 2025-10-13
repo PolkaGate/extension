@@ -6,7 +6,7 @@ import type { TextValuePair } from '@polkadot/extension-polkagate/src/popup/noti
 import { Stack } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { GradientButton } from '@polkadot/extension-polkagate/src/components';
+import { GradientButton, Motion } from '@polkadot/extension-polkagate/src/components';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import ChainToggle from '@polkadot/extension-polkagate/src/popup/notification/partials/ChainToggle';
 import { sanitizeChainName } from '@polkadot/extension-polkagate/src/util';
@@ -45,7 +45,7 @@ export default function SelectChain ({ onChains, options, previousState }: Props
   }, []);
 
   return (
-    <div style={{ paddingInline: '5px', paddingTop: '12px', position: 'relative', zIndex: 1 }}>
+    <Motion style={{ paddingInline: '5px', paddingTop: '12px', position: 'relative', zIndex: 1 }} variant='slide'>
       <Stack direction='column' sx={{ gap: '16px', height: '430px', maxHeight: '430px', overflowY: 'auto', position: 'relative', px: '6px' }}>
         {options.map(({ text, value }) => {
           const isSelected = selectedChains.includes(value);
@@ -66,6 +66,6 @@ export default function SelectChain ({ onChains, options, previousState }: Props
         style={{ marginTop: '10px' }}
         text={t('Apply')}
       />
-    </div>
+    </Motion>
   );
 }

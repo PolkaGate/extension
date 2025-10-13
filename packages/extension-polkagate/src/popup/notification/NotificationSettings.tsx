@@ -59,6 +59,7 @@ export default function NotificationSettings () {
               iconSize={24}
               iconWithoutTransform
               onClick={toggleNotification}
+              showChevron={false}
               showColorBall={false}
               style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
               title={t('Enable Notifications')}
@@ -74,6 +75,7 @@ export default function NotificationSettings () {
               iconSize={24}
               iconWithoutTransform
               onClick={toggleReceivedFunds}
+              showChevron={false}
               showColorBall={false}
               style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
               title={t('Enable Receive Fund')}

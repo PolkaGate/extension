@@ -21,9 +21,10 @@ interface Props {
   title: string;
   children?: React.ReactNode;
   showColorBall?: boolean;
+  showChevron?: boolean;
 }
 
-function ActionCard ({ Icon, children, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, showColorBall = true, style, title }: Props): React.ReactElement {
+function ActionCard ({ Icon, children, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, showChevron = true, showColorBall = true, style, title }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);
@@ -95,7 +96,7 @@ function ActionCard ({ Icon, children, description, iconColor = '#AA83DC', iconS
           <Typography color={hovered ? '#AA83DC' : theme.palette.text.primary} sx={{ transition: 'all 250ms ease-out' }} variant='B-2'>
             {title}
           </Typography>
-          <ArrowRight2 color={hovered ? '#AA83DC' : theme.palette.text.primary} size='12' style={chevronStyle} />
+          {showChevron && <ArrowRight2 color={hovered ? '#AA83DC' : theme.palette.text.primary} size='12' style={chevronStyle} />}
         </Grid>
         <Typography color={theme.palette.text.secondary} textAlign='left' variant='B-4'>
           {description}

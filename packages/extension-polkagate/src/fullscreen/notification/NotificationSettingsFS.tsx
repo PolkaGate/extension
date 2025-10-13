@@ -34,6 +34,7 @@ const SettingUI = ({ notificationSetting, openPopup, toggleNotification, toggleR
         iconSize={24}
         iconWithoutTransform
         onClick={toggleNotification}
+        showChevron={false}
         showColorBall={false}
         style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
         title={t('Enable Notifications')}
@@ -49,6 +50,7 @@ const SettingUI = ({ notificationSetting, openPopup, toggleNotification, toggleR
         iconSize={24}
         iconWithoutTransform
         onClick={toggleReceivedFunds}
+        showChevron={false}
         showColorBall={false}
         style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
         title={t('Enable Receive Fund')}
@@ -179,7 +181,7 @@ function NotificationSettingsFS ({ handleClose }: Props) {
       onClose={onClose}
       open={true}
       showBackIconAsClose
-      style={{ backgroundColor: '#1B133C', minHeight: '600px', padding: ' 20px 10px 10px' }}
+      style={{ backgroundColor: '#1B133C', minHeight: '600px', overflow: 'clip', padding: ' 20px 10px 10px' }}
       title={title}
     >
       {ui}

@@ -7,7 +7,7 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { MAX_ACCOUNT_COUNT_NOTIFICATION } from '@polkadot/extension-polkagate/src/popup/notification/constant';
 import AccountToggle from '@polkadot/extension-polkagate/src/popup/notification/partials/AccountToggle';
 
-import { AccountContext, GradientButton, GradientDivider } from '../../../components';
+import { AccountContext, GradientButton, GradientDivider, Motion } from '../../../components';
 import { useTranslation } from '../../../hooks';
 
 interface Props {
@@ -55,7 +55,7 @@ function SelectAccount ({ onAccounts, previousState }: Props): React.ReactElemen
   }, [setSelectedAccounts]);
 
   return (
-    <>
+    <Motion variant='slide'>
       <Stack direction='column' sx={{ gap: '12px', position: 'relative', px: '5px', zIndex: 1 }}>
         <Typography color='text.secondary' variant='B-4'>
           {t('Select up to 3 accounts to be notified when account activity')}
@@ -82,7 +82,7 @@ function SelectAccount ({ onAccounts, previousState }: Props): React.ReactElemen
           text={t('Apply')}
         />
       </Stack>
-    </>
+    </Motion>
   );
 }
 
