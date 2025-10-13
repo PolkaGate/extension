@@ -105,7 +105,7 @@ enum status {
  * This hook uses several internal flags and refs to avoid duplicate network calls and redundant state updates.
  */
 export default function useNotifications (justLoadData = true) {
-  const { notificationSetting } = useNotificationSettings();
+  const { notificationSetting } = useNotificationSettings(justLoadData);
   const { accounts, enable: isNotificationEnable, governance: governanceChains, receivedFunds: isReceivedFundsEnable, stakingRewards: stakingRewardChains } = notificationSetting;
 
   const selectedChains = useSelectedChains();

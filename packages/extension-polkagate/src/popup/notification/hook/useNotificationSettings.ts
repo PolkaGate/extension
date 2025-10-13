@@ -4,7 +4,7 @@
 import { useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react';
 
 import { AccountContext } from '@polkadot/extension-polkagate/src/components';
-import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
+import { getStorage, setStorage, watchStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { DEFAULT_NOTIFICATION_SETTING, MAX_ACCOUNT_COUNT_NOTIFICATION, SET_UP_NOTIFICATION_SETTING } from '../constant';
@@ -62,7 +62,7 @@ export enum Popups {
   STAKING_REWARDS
 }
 
-export default function useNotificationSettings () {
+export default function useNotificationSettings (justLoadInfo = false) {
   const { accounts } = useContext(AccountContext);
   const [notificationSetting, dispatch] = useReducer(notificationSettingReducer, initialNotificationState);
   const [popups, setPopup] = useState<Popups>(Popups.NONE);
@@ -106,18 +106,39 @@ export default function useNotificationSettings () {
     loadNotificationSettings().catch(console.error);
   }, []);
 
+  useEffect(() => {
+    if (justLoadInfo) {
+      const unsubscribe = watchStorage(STORAGE_KEY.NOTIFICATION_SETTINGS, (stored: NotificationSettingType) => {
+        dispatch({
+          payload: stored,
+          type: 'INITIAL'
+        });
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+
+    return undefined;
+  }, [justLoadInfo]);
+
   const handleChainsChanges = useCallback((setting: NotificationSettingType) => {
     setStorage(STORAGE_KEY.NOTIFICATION_SETTINGS, setting).catch(console.error);
   }, []);
 
   useEffect(() => {
+    if (justLoadInfo) {
+      return;
+    }
+
     // Apply notification setting changes function that runs on unmount
     return () => {
       console.log('apply notification setting changes function that runs on unmount');
       handleChainsChanges(notificationSettingRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [justLoadInfo]);
 
   const toggleNotification = useCallback(() => {
     const isFirstTime = [...(notificationSetting.governance ?? []), ...(notificationSetting.stakingRewards ?? []), ...(notificationSetting.accounts ?? [])].length === 0;

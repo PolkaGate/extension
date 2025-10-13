@@ -12,6 +12,7 @@ import type { NotificationMessageType, NotificationType, ReceivedFundInformation
 import { ArrowDown3, Award, Receipt2 } from 'iconsax-react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { NOTIFICATION_TIMESTAMP_OFFSET } from './constant';
 
 export function timestampToDate (timestamp: number | string, format: 'full' | 'short' | 'relative' = 'full'): string {
   // Ensure timestamp is a number and convert if it's a string
@@ -93,7 +94,7 @@ export const generateReferendaNotifications = (
   for (const currentNetworkData of newRefs) {
     let { data: currentReferenda, network } = currentNetworkData;
 
-    currentReferenda = currentReferenda.filter(({ latestTimestamp }) => latestTimestamp >= latestLoggedIn);
+    currentReferenda = currentReferenda.filter(({ latestTimestamp }) => latestTimestamp >= latestLoggedIn - NOTIFICATION_TIMESTAMP_OFFSET);
 
     const prevNetworkData = previousRefs?.find(
       (p) => p.network.value === network.value
@@ -151,7 +152,7 @@ export const generateStakingRewardNotifications = (
 ): NotificationMessageType[] => {
   const newMessages: NotificationMessageType[] = [];
   const newPayouts = payouts.map(({ address, data, network }) => {
-    const payout = data.find(({ timestamp }) => timestamp >= latestLoggedIn);
+    const payout = data.find(({ timestamp }) => timestamp >= latestLoggedIn - NOTIFICATION_TIMESTAMP_OFFSET);
 
     return payout
       ? {
@@ -187,7 +188,7 @@ export const generateReceivedFundNotifications = (
 ): NotificationMessageType[] => {
   const newMessages: NotificationMessageType[] = [];
   const newReceivedFunds = transfers.map(({ address, data, network }) => {
-    const receivedFund = data.find(({ timestamp }) => timestamp >= latestLoggedIn);
+    const receivedFund = data.find(({ timestamp }) => timestamp >= latestLoggedIn - NOTIFICATION_TIMESTAMP_OFFSET);
 
     return receivedFund
       ? {

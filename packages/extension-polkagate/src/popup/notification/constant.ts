@@ -15,6 +15,7 @@ export const NOT_READ_BGCOLOR = '#ECF6FE';
 export const READ_BGCOLOR = '#f0e6ea';
 export const MAX_RETRIES = 5;
 export const BATCH_SIZE = 2;
+export const NOTIFICATION_TIMESTAMP_OFFSET = 15 * 60; // 15 minutes in seconds
 
 export const MAX_ACCOUNT_COUNT_NOTIFICATION = 3;
 
