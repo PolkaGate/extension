@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { Like1, Setting2 } from 'iconsax-react';
 import React from 'react';
 
 import { ActionButton, MySkeleton } from '@polkadot/extension-polkagate/src/components';
@@ -17,6 +18,7 @@ const OffNotificationMessage = ({ onClick, style }: { onClick: () => void; style
         {t('You’ve turned off notifications. Enable them anytime to get updates on your accounts, governance, and staking rewards!')}
       </Typography>
       <ActionButton
+        StartIcon={Setting2}
         onClick={onClick}
         style={{ width: 'fit-content' }}
         text={t('Enable notifications')}
@@ -38,9 +40,10 @@ const ColdStartNotification = ({ onClick, style }: { onClick: () => void; style?
           { replace: { extensionName: EXTENSION_NAME } })}
       </Typography>
       <Typography color='text.primary' textAlign='left' variant='B-1' width='100%'>
-        {t('Fine-tune your notification experience in Settings')}:
+        {t('Fine-tune your notification experience in Settings')}
       </Typography>
       <ActionButton
+        StartIcon={Setting2}
         onClick={onClick}
         style={{ mt: '15px', width: 'fit-content' }}
         text={t('Enable notifications')}
@@ -95,6 +98,7 @@ const NoNotificationYet = ({ onClick, style }: { onClick: () => void; style?: Sx
         {t('Everything’s calm, you don’t have any notifications yet')}.
       </Typography>
       <ActionButton
+        EndIcon={Like1}
         onClick={onClick}
         style={{ mt: '15px', width: 'fit-content' }}
         text={t('Good')}
