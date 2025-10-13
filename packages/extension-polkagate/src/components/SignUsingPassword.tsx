@@ -3,7 +3,8 @@
 
 import type { ApiPromise } from '@polkadot/api';
 import type { SignerOptions, SubmittableExtrinsic } from '@polkadot/api/types/submittable';
-import type { ISubmittableResult } from '@polkadot/types/types';
+import type { GenericExtrinsicPayload } from '@polkadot/types';
+import type { ISubmittableResult, SignerPayloadJSON } from '@polkadot/types/types';
 import type { Proxy, TxResult } from '../util/types';
 import type { DecisionButtonProps } from './DecisionButtons';
 
@@ -12,13 +13,12 @@ import { Data } from 'iconsax-react';
 import React, { memo, useCallback, useState } from 'react';
 import { BeatLoader } from 'react-spinners';
 
-import keyring from '@polkadot/ui-keyring';
-
 import { useIsBlueish, useTranslation } from '../hooks';
+import { getSignature } from '../messaging';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
-import { signAndSend } from '../util/api';
+import { submitExtrinsic } from '../util/api';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
-import { DecisionButtons, GradientButton, MyTooltip, PasswordInput } from '.';
+import { DecisionButtons, GradientButton, MyTooltip } from '.';
 
 interface UseProxyProps {
   proxies: Proxy[] | undefined;
@@ -62,9 +62,8 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 export interface SignUsingPasswordProps {
   api: ApiPromise | undefined;
   direction?: 'horizontal' | 'vertical';
-  disabled?:boolean;
+  disabled?: boolean;
   decisionButtonProps?: Partial<DecisionButtonProps>
-  from: string | undefined;
   handleTxResult: (txResult: TxResult) => void;
   onCancel: () => void;
   onUseProxy: (() => void) | undefined;
@@ -73,37 +72,43 @@ export interface SignUsingPasswordProps {
   setFlowStep: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
   signerOption: Partial<SignerOptions> | undefined;
   style?: React.CSSProperties;
-  withCancel: boolean | undefined
+  withCancel: boolean | undefined;
+  signerPayload: SignerPayloadJSON | undefined;
+  payload: GenericExtrinsicPayload | undefined;
 }
 
-function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', disabled, from, handleTxResult, onCancel, onUseProxy, preparedTransaction, proxies, setFlowStep, signerOption, style, withCancel }: SignUsingPasswordProps) {
+function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', disabled, handleTxResult, onCancel, onUseProxy, payload, preparedTransaction, proxies, setFlowStep, signerOption, signerPayload, style, withCancel }: SignUsingPasswordProps) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
-  const [password, setPassword] = useState<string | undefined>(undefined);
   const [hasError, setHasError] = useState<boolean>(false);
   const [isBusy, setBusy] = useState<boolean>(false);
 
-  const onChangePassword = useCallback((pass: string) => {
-    setPassword(pass);
-    setHasError(false);
-  }, []);
-
   const onConfirm = useCallback(async () => {
     try {
-      if (!api || !preparedTransaction || !from) {
+      if (!api || !preparedTransaction || !signerPayload?.address || !payload) {
         return;
       }
 
       setBusy(true);
+      const signature = await getSignature(signerPayload);
 
-      const signer = keyring.getPair(from);
-
-      signer.unlock(password);
+      if (!signature) {
+        throw new Error('account is locked need to login again!');
+      }
 
       setFlowStep(TRANSACTION_FLOW_STEPS.WAIT_SCREEN);
 
-      const txResult = await signAndSend(api, preparedTransaction, signer, from, signerOption);
+      console.log('signerOption:', signerOption);
+
+      // TODO: how use signerOption while using send()
+      const txResult = await submitExtrinsic(
+        signerPayload.address,
+        api,
+        preparedTransaction,
+        payload.toHex(),
+        signature
+      );
 
       setFlowStep(TRANSACTION_FLOW_STEPS.CONFIRMATION);
       setBusy(false);
@@ -113,28 +118,18 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
       setHasError(true);
       setBusy(false);
     }
-  }, [api, from, handleTxResult, password, preparedTransaction, setFlowStep, signerOption]);
+  }, [api, handleTxResult, payload, preparedTransaction, setFlowStep, signerOption, signerPayload]);
 
-  const confirmText = !api ? t('Loading ...') : t('Confirm');
+  const confirmText = !api ? t('Loading ...') : t('Approve');
 
   return (
     <Stack direction='column' sx={{ width: '100%' }}>
-      <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '0 12px 0 5px' }}>
-        <Typography color='text.primary' variant='B-1'>
-          {t('Password')}
-        </Typography>
+      <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', height: '65px', justifyContent: 'end', p: '0 12px 0 5px' }}>
         <UseProxy
           onClick={onUseProxy}
           proxies={proxies}
         />
       </Container>
-      <PasswordInput
-        focused
-        hasError={hasError}
-        onEnterPress={onConfirm}
-        onPassChange={onChangePassword}
-        style={{ margin: '6px 0 30px' }}
-      />
       {withCancel
         ? (
           <DecisionButtons
@@ -145,7 +140,7 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
             onPrimaryClick={onConfirm}
             onSecondaryClick={onCancel}
             primaryBtnText={confirmText}
-            secondaryBtnText={t('Cancel')}
+            secondaryBtnText={t('Reject')}
             style={{ width: '100%' }}
             {...decisionButtonProps}
           />)
@@ -153,7 +148,7 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
           {isBlueish
             ? (
               <StakingActionButton
-                disabled={disabled || !password || hasError}
+                disabled={disabled || hasError}
                 isBusy={isBusy}
                 onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
                 startIcon
@@ -162,7 +157,7 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
               />)
             : (
               <GradientButton
-                disabled={disabled || !password || hasError}
+                disabled={disabled || hasError}
                 isBusy={isBusy}
                 onClick={onConfirm as React.MouseEventHandler<HTMLButtonElement>}
                 style={style}

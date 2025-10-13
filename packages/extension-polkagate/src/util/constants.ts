@@ -223,9 +223,8 @@ export const REGISTRARS_LIST: { addresses: string[]; index: number; name: string
 ];
 
 /** Login Password constants */
-export const AUTO_LOCK_PERIOD_DEFAULT = 30;
-export const NO_PASS_PERIOD = AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000; // in ms, the duration of time we do not ask user for password after a successful login
-export const MAYBE_LATER_PERIOD = 0; // 5 * 60 * 1000; // ms
+export const AUTO_LOCK_PERIOD_DEFAULT = 15; // minutes
+export const ENDPOINT_TIMEOUT = AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000; // in ms, the duration of time where selected endpoints may remain valid
 
 export const FULLSCREEN_WIDTH = '900px';
 export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
@@ -308,6 +307,7 @@ export const STORAGE_KEY = {
   HISTORY: 'history',
   ICON_THEME: 'identiconType',
   IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN: 'accountsMigratedToAnyChain',
+  IS_PASSWORD_MIGRATED: 'passwordMigrated',
   LOGIN_INFO: 'loginInfo',
   MY_POOL: 'MyPool',
   PRICE_IN_CURRENCIES: 'pricesInCurrencies',

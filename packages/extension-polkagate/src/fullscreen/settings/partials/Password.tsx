@@ -8,14 +8,14 @@ import { ArrowDown2, Key } from 'iconsax-react';
 import React, { useEffect, useState } from 'react';
 
 import { getStorage } from '@polkadot/extension-polkagate/src/util';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { useTranslation } from '../../../components/translate';
 import useIsDark from '../../../hooks/useIsDark';
 import { ExtensionPopups, STORAGE_KEY } from '../../../util/constants';
 import SetPassword from './SetPassword';
-import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
-export default function Password(): React.ReactElement {
+export default function Password (): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();

@@ -1,12 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
 import type { AccountJson, AllowedPath, AuthorizeRequest, MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, MetadataRequest, RequestTypes, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSigningIsLocked, ResponseTypes, SeedLengths, SigningRequest, SubscriptionMessageTypes } from '@polkadot/extension-base/background/types';
 import type { Message } from '@polkadot/extension-base/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
+import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
@@ -79,6 +79,26 @@ export async function updateMeta (address: string, meta: string): Promise<boolea
 
 export async function lockExtension (): Promise<boolean> {
   return sendMessage('pri(extension.lock)');
+}
+
+export async function accountsValidate (address: string, password: string): Promise<boolean> {
+  return sendMessage('pri(accounts.validate)', { address, password });
+}
+
+export async function accountsChangePassword (address: string, oldPass: string, newPass: string): Promise<boolean> {
+  return sendMessage('pri(accounts.changePassword)', { address, newPass, oldPass });
+}
+
+export async function getSignature (payload: SignerPayloadJSON): Promise<HexString | null> {
+  return sendMessage('pri(signing.getSignature)', { payload });
+}
+
+export async function unlockAllAccounts (password: string, cacheTime: number): Promise<boolean> {
+  return sendMessage('pri(accounts.unlockAll)', { cacheTime, password });
+}
+
+export async function areAccountsLocksExpired (): Promise<boolean> {
+  return sendMessage('pri(accounts.locksExpired)');
 }
 
 // -------------------------------------
@@ -180,7 +200,7 @@ export async function getMetadata (genesisHash?: string | null, isPartial = fals
         tokenDecimals: 15,
         tokenSymbol: 'Unit',
         types: {}
-      }, isPartial);
+      } as MetadataDef, isPartial);
     }
   }
 

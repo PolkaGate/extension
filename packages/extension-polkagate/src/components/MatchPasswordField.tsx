@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { blake2AsHex } from '@polkadot/util-crypto';
@@ -90,7 +90,7 @@ function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassw
   const handleConfirm = useCallback(() => {
     if (passwordStatus === PASSWORD_STATUS.MATCHED && onSetPassword) {
       try {
-        onSetPassword().catch(console.error);
+        onSetPassword()?.catch(console.error);
       } catch (error) {
         console.error('Error setting password:', error);
       }
@@ -98,7 +98,7 @@ function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassw
   }, [onSetPassword, passwordStatus]);
 
   return (
-    <Container disableGutters sx={style}>
+    <Grid container item sx={style}>
       <PasswordInput
         focused={focused}
         onPassChange={handlePasswordChange}
@@ -110,7 +110,7 @@ function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassw
         onPassChange={handleRepeatPasswordChange}
         title={title2 ?? t('Confirm password')}
       />
-    </Container>
+    </Grid>
   );
 }
 

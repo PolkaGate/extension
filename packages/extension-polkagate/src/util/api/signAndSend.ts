@@ -148,3 +148,57 @@ export async function send (
     });
   });
 }
+
+export async function submitExtrinsic (
+  from: string | AccountId,
+  api: ApiPromise,
+  ptx: SubmittableExtrinsic<'promise', ISubmittableResult>,
+  payload: Uint8Array | ExtrinsicPayloadValue | HexString,
+  signature: HexString
+): Promise<TxResult> {
+  return new Promise((resolve) => {
+    console.log('sending the transaction ...');
+
+    (async () => {
+      const extrinsic = ptx.addSignature(from, signature, payload);
+
+      try {
+        const txHash = await api.rpc.author.submitExtrinsic(extrinsic);
+
+        console.log('Transaction hash: #', txHash.toHex());
+
+        const event = new CustomEvent('transactionState', { detail: { ready: null } });
+
+        window.dispatchEvent(event);
+
+        const unsub = await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
+          const blockHash = header.hash;
+          const signedBlock = await api.rpc.chain.getBlock(blockHash);
+          const extrinsics = signedBlock.block.extrinsics;
+          const match = extrinsics.find((ex) => ex.hash.toHex() === txHash.toHex());
+
+          if (match) {
+            console.log('✅ Included in block', header.number.toNumber());
+            const event = new CustomEvent('transactionState', { detail: { inBlock: null } });
+
+            window.dispatchEvent(event);
+            unsub();
+
+            resolve({
+              block: header.number.toNumber(),
+              failureText: '',
+              fee: '',
+              success: true,
+              txHash: txHash.toHex()
+            });
+          }
+        });
+      } catch (e) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+
+        console.log('❌ submitExtrinsic error:', errorMessage);
+        resolve({ block: 0, failureText: errorMessage, fee: '', success: false, txHash: '' });
+      }
+    })().catch(console.error);
+  });
+}

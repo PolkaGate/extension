@@ -1,7 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
+import { useIsPasswordMigrated } from '../hooks';
+import { areAccountsLocksExpired } from '../messaging';
 
 interface ExtensionLockContextProps {
   isExtensionLocked: boolean;
@@ -21,8 +24,19 @@ export const useExtensionLockContext = (): ExtensionLockContextProps => {
 };
 
 export const ExtensionLockProvider: React.FC<{ children: React.ReactElement }> = ({ children }: any) => {
+  const isPasswordsMigrated = useIsPasswordMigrated();
+
   // Note: extensionLock is initially set to true.
   const [isExtensionLocked, setIsExtensionLocked] = useState(true);
+
+  useEffect(() => {
+    isPasswordsMigrated && areAccountsLocksExpired()
+      .then((res) => {
+        console.info('are all accounts locked? ', res);
+        setIsExtensionLocked(res);
+      })
+      .catch(console.error);
+  }, [isPasswordsMigrated]);
 
   const setExtensionLock = (lock: boolean) => {
     setIsExtensionLocked(lock);

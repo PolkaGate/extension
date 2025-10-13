@@ -4,9 +4,13 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
 import { Box, Container, Grid, Typography } from '@mui/material';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
+import useCheckMasterPassword from '@polkadot/extension-polkagate/src/hooks/useCheckMasterPassword';
+import { unlockAllAccounts, windowOpen } from '@polkadot/extension-polkagate/src/messaging';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { blake2AsHex } from '@polkadot/util-crypto';
 
@@ -15,7 +19,7 @@ import { DecisionButtons, GradientBox, MySwitch, PasswordInput } from '../../com
 import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import { openOrFocusTab } from '../../fullscreen/accountDetails/components/CommonTasks';
-import { useBackground, useIsExtensionPopup, useIsHideNumbers, useTranslation } from '../../hooks';
+import { useAutoLockPeriod, useBackground, useIsExtensionPopup, useIsHideNumbers, useIsPasswordMigrated, useTranslation } from '../../hooks';
 import { Version } from '../../partials';
 import { RedGradient } from '../../style';
 import { isPasswordCorrect } from '../settings/extensionSettings/ManagePassword';
@@ -29,46 +33,88 @@ interface Props {
 
 function Content ({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const isPopup = useIsExtensionPopup();
+  const navigate = useNavigate();
+  const isExtension = useIsExtensionPopup();
+  const isPasswordMigrated = useIsPasswordMigrated();
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
   const { setExtensionLock } = useExtensionLockContext();
+  const autoLockPeriod = useAutoLockPeriod();
 
   const [hashedPassword, setHashedPassword] = useState<string>();
+  const [plainPassword, setPlainPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState(false);
+  const [isUnlocking, setUnlocking] = useState(false);
+
+  const accountsNeedMigration = useCheckMasterPassword(plainPassword);
 
   const onPassChange = useCallback((pass: string | null): void => {
     if (!pass) {
       return setHashedPassword(undefined);
     }
 
+    setPlainPassword(pass);
     setIsPasswordError(false);
     const hashedPassword = blake2AsHex(pass, 256); // Hash the string with a 256-bit output
 
     setHashedPassword(hashedPassword);
   }, []);
 
-  const onUnlock = useCallback(async (): Promise<void> => {
+  useEffect(() => {
+    if (!plainPassword || !autoLockPeriod || !isUnlocking || !accountsNeedMigration) {
+      return;
+    }
+
     try {
-      if (hashedPassword && await isPasswordCorrect(hashedPassword, true)) {
-        await updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET });
-        setHashedPassword(undefined);
-        setExtensionLock(false);
-      } else {
-        setIsPasswordError(true);
-      }
+      (async () => {
+        const isOldPasswordCorrect = hashedPassword && await isPasswordCorrect(hashedPassword, true);
+
+        if (isPasswordMigrated || (isOldPasswordCorrect && accountsNeedMigration?.length === 0)) { // has master password or no need to migrate
+          unlockAllAccounts(plainPassword, autoLockPeriod).then((success) => {
+            if (success) {
+              setExtensionLock(false);
+              setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
+            }
+          }).catch((error) => {
+            console.error(error);
+            setIsPasswordError(true);
+            setUnlocking(false);
+          });
+        } else if (accountsNeedMigration?.length && isOldPasswordCorrect) { // needs migration
+          await updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET });
+          setHashedPassword(undefined);
+          setExtensionLock(false);
+          const path = '/migratePasswords';
+
+          isExtension
+            ? windowOpen(path).catch(console.error)
+            : navigate(path) as void;
+        } else { // not migrated and old password is incorrect
+          setIsPasswordError(true);
+          setUnlocking(false);
+        }
+      })().catch(console.error);
     } catch (e) {
       console.error(e);
+      setUnlocking(false);
     }
-  }, [hashedPassword, setExtensionLock]);
+  }, [accountsNeedMigration, autoLockPeriod, hashedPassword, isExtension, isPasswordMigrated, isUnlocking, navigate, plainPassword, setExtensionLock]);
+
+  const onUnlock = useCallback(() => {
+    if (!plainPassword || autoLockPeriod === undefined || isPasswordMigrated === undefined) {
+      return;
+    }
+
+    setUnlocking(true);
+  }, [autoLockPeriod, isPasswordMigrated, plainPassword]);
 
   const onForgotPassword = useCallback((): void => {
-    if (isPopup) {
+    if (isExtension) {
       return setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION);
     }
 
     setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION_FS);
     openOrFocusTab('/forgot-password', true);
-  }, [isPopup, setStep]);
+  }, [isExtension, setStep]);
 
   return (
     <Grid container item justifyContent='start' sx={{ p: '18px 32px 32px' }}>
@@ -99,6 +145,7 @@ function Content ({ setStep }: Props): React.ReactElement {
         cancelButton
         direction='vertical'
         disabled={!hashedPassword}
+        isBusy={isUnlocking}
         onPrimaryClick={onUnlock}
         onSecondaryClick={onForgotPassword}
         primaryBtnText={t('Unlock')}

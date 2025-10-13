@@ -5,9 +5,10 @@ import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { KeyringPair, KeyringPair$Json, KeyringPair$Meta } from '@polkadot/keyring/types';
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
+import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 // added for plus to import RequestUpdateMeta
-import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestSigninSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 import type State from './State';
 
 import { ALLOWED_PATH, PASSWORD_EXPIRY_MS, START_WITH_PATH } from '@polkadot/extension-base/defaults';
@@ -131,6 +132,18 @@ export default class Extension {
   }
 
   private lockExtension (): boolean {
+    // clear cache and lock all accounts
+    Object.entries(this.#cachedUnlocks).forEach(([address]) => {
+      const pair = keyring.getPair(address);
+
+      if (pair && !pair.isLocked) {
+        pair.lock();
+      }
+
+      this.#cachedUnlocks[address] = 0;
+    });
+
+    // apply to all open tabs
     const currentDomain = chrome.runtime.getURL('/');
 
     chrome.tabs.query({}, function (tabs) {
@@ -384,6 +397,58 @@ export default class Extension {
     };
   }
 
+  private accountsUnlockAll ({ cacheTime, password }: RequestUnlockAllAccounts): boolean {
+    console.log('get message to unlock accounts ...');
+
+    if (!password) {
+      throw new Error('Password needed to unlock the account');
+    }
+
+    const accounts = keyring.getAccounts();
+
+    const localAccounts = accounts.filter(({ meta }) => !meta.isExternal);
+
+    console.log('localAccounts:', localAccounts);
+
+    const res = localAccounts.map(({ address }) => {
+      const pair = keyring.getPair(address);
+
+      if (!pair) {
+        throw new Error('Unable to find pair');
+      }
+
+      if (pair.isLocked) {
+        pair.decodePkcs8(password);
+      }
+
+      this.#cachedUnlocks[address] = Date.now() + cacheTime;
+
+      return true;
+    });
+
+    return res.every((success) => success);
+  }
+
+  private areLocksExpired (): boolean {
+    return Object.entries(this.#cachedUnlocks).every(([, time]) => time < Date.now());
+  }
+
+  private handleRegistry (payload: SignerPayloadJSON): void {
+    // Get the metadata for the genesisHash
+    const currentMetadata = this.metadataGet(payload.genesisHash);
+
+    // set the registry before calling the sign function
+    const signedExtensions = currentMetadata?.signedExtensions?.length
+      ? currentMetadata.signedExtensions
+      : registry.signedExtensions;
+
+    registry.setSignedExtensions(signedExtensions, currentMetadata?.userExtensions);
+
+    if (currentMetadata) {
+      registry.register(currentMetadata?.types);
+    }
+  }
+
   private signingApprovePassword ({ id, password, remainingTime, savePass }: RequestSigningApprovePassword): boolean {
     const queued = this.#state.getSignRequest(id);
 
@@ -417,16 +482,7 @@ export default class Extension {
     const { payload } = request;
 
     if (isJsonPayload(payload)) {
-      // Get the metadata for the genesisHash
-      const currentMetadata = this.#state.knownMetadata.find((meta: MetadataDef) =>
-        meta.genesisHash === payload.genesisHash);
-
-      // set the registry before calling the sign function
-      registry.setSignedExtensions(payload.signedExtensions, currentMetadata?.userExtensions);
-
-      if (currentMetadata) {
-        registry.register(currentMetadata?.types);
-      }
+      this.handleRegistry(payload);
     }
 
     const result = request.sign(registry, pair);
@@ -445,6 +501,27 @@ export default class Extension {
     });
 
     return true;
+  }
+
+  private getSignature ({ payload }: RequestSigninSignature): HexString | null {
+    const { address } = payload;
+
+    if (!payload?.address || !payload.genesisHash) {
+      throw new Error('Invalid payload: missing required fields.');
+    }
+
+    const pair = keyring.getPair(address);
+
+    this.refreshAccountPasswordCache(pair); // check if auto lock duration is expired
+
+    if (pair.isLocked) {
+      return null;
+    }
+
+    this.handleRegistry(payload);
+    const { signature } = registry.createType('ExtrinsicPayload', payload, { version: payload.version }).sign(pair);
+
+    return signature;
   }
 
   private signingApproveSignature ({ id, signature, signedTransaction }: RequestSigningApproveSignature): boolean {
@@ -595,11 +672,22 @@ export default class Extension {
       case 'pri(accounts.create.suri)':
         return this.accountsCreateSuri(request as RequestAccountCreateSuri);
 
-      case 'pri(accounts.updateMeta)': // added for polkagate
+      // ----------------added for polkagate---------------------
+      case 'pri(accounts.updateMeta)':
         return this.accountsUpdateMeta(request as RequestUpdateMeta);
 
-      case 'pri(extension.lock)': // added for polkagate
+      case 'pri(extension.lock)':
         return this.lockExtension();
+
+      case 'pri(signing.getSignature)':
+        return this.getSignature(request as RequestSigninSignature);
+
+      case 'pri(accounts.unlockAll)':
+        return this.accountsUnlockAll(request as RequestUnlockAllAccounts);
+
+      case 'pri(accounts.locksExpired)':
+        return this.areLocksExpired();
+      // -------------------------------------
 
       case 'pri(accounts.changePassword)':
         return this.accountsChangePassword(request as RequestAccountChangePassword);

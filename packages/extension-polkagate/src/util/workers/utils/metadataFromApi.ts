@@ -25,14 +25,18 @@ export function metadataFromApi(api: ApiPromise): { metadata: MetadataDef } {
     color,
     genesisHash: apiGenesisHash,
     icon: getSystemIcon(chainName, api.runtimeVersion.specName.toString()),
-    metaCalls: base64Encode(api.runtimeMetadata.asCallsOnly.toU8a()),
+    knownTypes: api.registry.knownTypes,
+    metaCalls: base64Encode(api.runtimeMetadata.toU8a()),
+    metadataVersion: api.runtimeMetadata.version,
+    signedExtensions: api.registry.signedExtensions,
     specVersion: api.runtimeVersion.specVersion.toNumber(),
     ss58Format: isNumber(api.registry.chainSS58)
       ? api.registry.chainSS58
       : DEFAULT_SS58.toNumber(),
     tokenDecimals: (api.registry.chainDecimals || [DEFAULT_DECIMALS.toNumber()])[0],
     tokenSymbol: (api.registry.chainTokens || formatBalance.getDefaults().unit)[0],
-    types: getSpecTypes(api.registry, chainName, api.runtimeVersion.specName, api.runtimeVersion.specVersion) as Record<string, string | Record<string, string>>
+    types: getSpecTypes(api.registry, chainName, api.runtimeVersion.specName, api.runtimeVersion.specVersion) as Record<string, string | Record<string, string>>,
+    userExtensions: (api.registry as any).userExtensions
   };
 
   return { metadata };

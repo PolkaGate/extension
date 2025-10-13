@@ -102,10 +102,13 @@ export interface RequestSignatures {
   'pri(accounts.create.suri)': [RequestAccountCreateSuri, boolean];
   'pri(accounts.edit)': [RequestAccountEdit, boolean];
 
-  'pri(accounts.updateMeta)': [RequestUpdateMeta, boolean]; // added for polkagate
-  'pri(extension.lock)': [null, boolean]; // added for polkagate
-  'pri(authorize.ignore)': [string, void]; // added for polkagate
-  'pri(metadata.update)': [MetadataDef, boolean]; // added for polkagate
+  // added for polkagate
+  'pri(accounts.updateMeta)': [RequestUpdateMeta, boolean];
+  'pri(extension.lock)': [null, boolean];
+  'pri(authorize.ignore)': [string, void];
+  'pri(metadata.update)': [MetadataDef, boolean];
+  'pri(accounts.unlockAll)': [RequestUnlockAllAccounts, boolean];
+  'pri(accounts.locksExpired)': [null, boolean];
 
   'pri(accounts.export)': [RequestAccountExport, ResponseAccountExport];
   'pri(accounts.batchExport)': [RequestAccountBatchExport, ResponseAccountsExport]
@@ -115,6 +118,7 @@ export interface RequestSignatures {
   'pri(accounts.subscribe)': [RequestAccountSubscribe, boolean, AccountJson[]];
   'pri(accounts.validate)': [RequestAccountValidate, boolean];
   'pri(accounts.changePassword)': [RequestAccountChangePassword, boolean];
+  'pri(signing.getSignature)': [RequestSigninSignature, HexString | null];
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
   'pri(authorize.update)': [RequestUpdateAuthorizedAccounts, void];
   'pri(authorize.list)': [null, ResponseAuthorizeList];
@@ -306,6 +310,10 @@ export interface RequestSigningApprovePassword {
   remainingTime?: number;
 }
 
+export interface RequestSigninSignature {
+  payload: SignerPayloadJSON;
+}
+
 export interface RequestSigningApproveSignature {
   id: string;
   signature: HexString;
@@ -390,6 +398,10 @@ export interface ResponseSeedCreate {
 export interface ResponseSeedValidate {
   address: string;
   suri: string;
+}
+export interface RequestUnlockAllAccounts {
+  password: string;
+  cacheTime: number; // milisec
 }
 
 export interface ResponseAccountExport {

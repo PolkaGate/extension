@@ -3,7 +3,7 @@
 
 import type { EndpointType } from '../util/types';
 
-import { NO_PASS_PERIOD as ENDPOINT_TIMEOUT } from '../util/constants';
+import { ENDPOINT_TIMEOUT } from '../util/constants';
 
 // Define types for saved endpoints and listener function
 type SavedEndpoints = Record<string, Record<string, EndpointType>>;

@@ -814,5 +814,19 @@
   "ready": "",
   "sent": "",
   "on-chain": "",
-  "Missing tokens? Manage Networks!": ""
+  "Missing tokens? Manage Networks!": "",
+  "Set master password": "",
+  "master": "",
+  "Create a master password": "",
+  "Enter {{name}} Password": "",
+  "Something went wrong while migrating password!": "",
+  "Migrate accounts to master password": "",
+  "Migration completed!": "",
+  "Migrate accounts": "",
+  "completed": "",
+  "Set a single master password to unlock and sign for all your local accounts. You’ll no longer need separate passwords per account — making account management simpler and more secure.": "",
+  "You have accounts that still use their old passwords. Enter the current password for each to migrate them to your new master password.": "",
+  "Migrate account {{migrated}} of {{count}}.": "",
+  "account {{migrated}}": "",
+  "All your accounts are now secured with your new master password. Click Done to log in — you’ll only need to enter your password once to unlock and use all accounts.": ""
 }
