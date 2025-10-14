@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { noop } from '@polkadot/util';
@@ -15,9 +15,10 @@ interface Props {
   isModal?: boolean;
 }
 
-function WaitScreen({ isModal }: Props): React.ReactElement {
+function WaitScreen ({ isModal }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
+  const theme = useTheme();
 
   const [text, setText] = useState({ title: t('We are working on your transaction.'), inColor: t('working') });
 
@@ -47,16 +48,19 @@ function WaitScreen({ isModal }: Props): React.ReactElement {
     window.addEventListener('transactionState', handleTxEvent);
   }, [handleTxEvent]);
 
+  const color = isExtension ? theme.palette.text.highlight : theme.palette.primary.main;
+
   const Content = () => (
     <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : 'transparent', borderRadius: '14px', gap: '12px', justifyContent: 'center', m: '15px', p: '32px' }}>
       <LoaderGif />
       <Typography color='text.primary' variant='B-3'>
         <TwoToneText
+          color={color}
           text={text.title}
           textPartInColor={text?.inColor}
         />
       </Typography>
-      <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} pt='6px' variant='B-1' width='80%'>
+      <Typography color={color} pt='6px' variant='B-1' width='80%'>
         {t('Please wait a few seconds and don’t close the {{container}}', { replace: { container: isExtension ? t('extension') : t('window') } })}
       </Typography>
     </Stack>
