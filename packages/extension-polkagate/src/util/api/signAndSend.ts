@@ -167,7 +167,7 @@ export async function submitExtrinsic (
 
         console.log('Transaction hash: #', txHash.toHex());
 
-        const event = new CustomEvent('transactionState', { detail: { ready: null } });
+        const event = new CustomEvent('transactionState', { detail: { broadcast: null } });
 
         window.dispatchEvent(event);
 
