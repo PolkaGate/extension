@@ -8,6 +8,7 @@ import { getSubscanChainName, getSubstrateAddress } from '@polkadot/extension-po
 import { postData } from '@polkadot/extension-polkagate/src/util/api';
 import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import getChainName from '@polkadot/extension-polkagate/src/util/getChainName';
+import { isMigratedRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { BATCH_SIZE, MAX_RETRIES, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM, type ReferendaStatus } from './constant';
 import { timestampToDate } from './util';
@@ -111,10 +112,17 @@ const transformReferendas = (referendas: ReferendaSubscan[], network: DropdownOp
 export const getReceivedFundsInformation = async (addresses: string[], chains: string[]): Promise<ReceivedFundInformation[]> => {
   const results: ReceivedFundInformation[] = [];
   const networks = chains.map((value) => {
+    // If the network is a migrated relay chain then there's no need to fetch received fund information on
+    const isMigrateRelayChain = isMigratedRelay(value);
+
+    if (isMigrateRelayChain) {
+      return undefined;
+    }
+
     const chainName = getChainName(value);
 
     return ({ text: getSubscanChainName(chainName), value }) as DropdownOption;
-  });
+  }).filter((item) => !!item);
 
   // Process each address
   for (const address of addresses) {
