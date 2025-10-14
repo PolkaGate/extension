@@ -469,7 +469,6 @@
   "New Password": "新密码",
   "Confirm Password": "确认密码",
   "Set password": "设置密码",
-  "Enable Auto-Lock": "启用自动锁定",
   "Enable Camera Access": "启用摄像头访问",
   "LANGUAGE": "语言",
   "Enabling testnet chains may cause instability or crashes since they`re meant for testing. Proceed with caution. If issues arise, return here to disable the option.": "启用测试网链可能导致不稳定或崩溃，因为它们仅用于测试。请谨慎操作。如有问题，请返回此处禁用该选项。",

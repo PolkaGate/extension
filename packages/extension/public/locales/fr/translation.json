@@ -471,7 +471,6 @@
   "New Password": "Nouveau mot de passe",
   "Confirm Password": "Confirmer le mot de passe",
   "Set password": "Définir le mot de passe",
-  "Enable Auto-Lock": "Activer le verrouillage automatique",
   "Enable Camera Access": "Activer l'accès à la caméra",
   "LANGUAGE": "LANGUE",
   "Enabling testnet chains may cause instability or crashes since they`re meant for testing. Proceed with caution. If issues arise, return here to disable the option.": "L'activation des chaînes testnet peut provoquer des instabilités ou des plantages car elles sont destinées aux tests. Procédez avec prudence. En cas de problème, revenez ici pour désactiver l'option.",

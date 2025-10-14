@@ -470,7 +470,6 @@
   "New Password": "Nueva contraseña",
   "Confirm Password": "Confirmar contraseña",
   "Set password": "Establecer contraseña",
-  "Enable Auto-Lock": "Habilitar auto-bloqueo",
   "Enable Camera Access": "Habilitar acceso a la cámara",
   "LANGUAGE": "IDIOMA",
   "Enabling testnet chains may cause instability or crashes since they`re meant for testing. Proceed with caution. If issues arise, return here to disable the option.": "Habilitar cadenas de testnet puede causar inestabilidad o fallos ya que están destinadas para pruebas. Procede con precaución. Si surgen problemas, regresa aquí para desactivar la opción.",

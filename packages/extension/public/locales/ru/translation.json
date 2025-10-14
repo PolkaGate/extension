@@ -469,7 +469,6 @@
   "New Password": "Новый пароль",
   "Confirm Password": "Подтвердите пароль",
   "Set password": "Установить пароль",
-  "Enable Auto-Lock": "Включить авто-блокировку",
   "Enable Camera Access": "Разрешить доступ к камере",
   "LANGUAGE": "ЯЗЫК",
   "Enabling testnet chains may cause instability or crashes since they`re meant for testing. Proceed with caution. If issues arise, return here to disable the option.": "Включение тестовых сетей может вызвать нестабильность или сбои, так как они предназначены для тестирования. Действуйте осторожно. В случае проблем вернитесь сюда, чтобы отключить эту опцию.",
