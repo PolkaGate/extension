@@ -29,8 +29,6 @@ export function SetNameAndPassword({ seed }: { seed: string | null }): React.Rea
   const localAccounts = accounts.filter(({ isExternal }) => !isExternal);
   const isFirstLocalAccount = localAccounts.length === 0;
 
-  console.log('isFirstLocalAccount:', isFirstLocalAccount)
-
   const [name, setName] = useState<string | null | undefined>();
   const [password, setPassword] = useState<string>();
   const [isBusy, setIsBusy] = useState<boolean>(false);

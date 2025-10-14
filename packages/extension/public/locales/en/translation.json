@@ -827,5 +827,7 @@
   "You have accounts that still use their old passwords. Enter the current password for each to migrate them to your new master password.": "",
   "Migrate account {{migrated}} of {{count}}.": "",
   "account {{migrated}}": "",
-  "All your accounts are now secured with your new master password. Click Done to log in — you’ll only need to enter your password once to unlock and use all accounts.": ""
+  "All your accounts are now secured with your new master password. Click Done to log in — you’ll only need to enter your password once to unlock and use all accounts.": "",
+  "Adjust Auto-Lock": "",
+  "Password to secure this account": ""
 }
