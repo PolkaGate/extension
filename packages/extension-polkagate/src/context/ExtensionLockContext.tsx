@@ -32,7 +32,6 @@ export const ExtensionLockProvider: React.FC<{ children: React.ReactElement }> =
   useEffect(() => {
     isPasswordsMigrated && areAccountsLocksExpired()
       .then((res) => {
-        console.info('are all accounts locked? ', res);
         setIsExtensionLocked(res);
       })
       .catch(console.error);
