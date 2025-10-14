@@ -10,7 +10,7 @@ import { updateStorage } from '@polkadot/extension-polkagate/src/components/Load
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useExtensionLockContext } from '../../../../context/ExtensionLockContext';
-import { useAutoLockPeriod, useIsDark, useIsLoginEnabled, useTranslation } from '../../../../hooks';
+import { useAutoLockPeriod, useIsDark, useTranslation } from '../../../../hooks';
 import { lockExtension } from '../../../../messaging';
 
 export default function Lock ({ isExtension, style }: { isExtension: boolean, style: SxProps<Theme> }): React.ReactElement {
@@ -19,11 +19,10 @@ export default function Lock ({ isExtension, style }: { isExtension: boolean, st
   const navigate = useNavigate();
   const autoLockPeriod = useAutoLockPeriod();
 
-  const isLoginEnabled = useIsLoginEnabled();
   const { setExtensionLock } = useExtensionLockContext();
 
   const onClick = useCallback((): void => {
-    if (!isLoginEnabled || autoLockPeriod === undefined) {
+    if (autoLockPeriod === undefined) {
       return;
     }
 
@@ -32,17 +31,17 @@ export default function Lock ({ isExtension, style }: { isExtension: boolean, st
       navigate('/') as void;
       lockExtension().catch(console.error);
     }).catch(console.error);
-  }, [autoLockPeriod, isLoginEnabled, navigate, setExtensionLock]);
+  }, [autoLockPeriod, navigate, setExtensionLock]);
 
   return (
     <Grid
       alignItems='center' container item justifyContent='center' justifyItems='center' onClick={onClick}
       sx={{ ...style }}
     >
-      <Unlock color={isLoginEnabled ? isDark ? '#AA83DC' : '#745D8B' : 'grey'} size={18} variant='Bulk' />
+      <Unlock color={isDark ? '#AA83DC' : '#745D8B'} size={18} variant='Bulk' />
       {
         isExtension &&
-        <Typography color={isLoginEnabled ? 'text.primary' : 'grey'} pl='3px' pt='3px' variant='B-4'>
+        <Typography color='text.primary' pl='3px' pt='3px' variant='B-4'>
           {t('Lock')}
         </Typography>
       }

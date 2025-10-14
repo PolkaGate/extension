@@ -47,7 +47,6 @@ export { default as useIsExtensionPopup } from './useIsExtensionPopup';
 export { default as useIsFlying } from './useIsFlying';
 export { default as useIsHideNumbers } from './useIsHideNumbers';
 export { default as useIsHovered } from './useIsHovered';
-export { default as useIsLoginEnabled } from './useIsLoginEnabled';
 export { default as useIsOnline } from './useIsOnline';
 export { default as useIsPasswordMigrated } from './useIsPasswordMigrated';
 export { default as useIsTestnetEnabled } from './useIsTestnetEnabled';
