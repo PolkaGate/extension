@@ -28,15 +28,17 @@ async function getAccountsNeedsMigration (accounts: AccountJson[], password: str
 
 export default function useCheckMasterPassword (pass: string | undefined): AccountJson[] | undefined {
   const { accounts } = useContext(AccountContext);
-  const [accountsNeedsMigration, setAccounts] = useState<AccountJson[]>();
+  const [accountsNeedsMigration, setAccountsNeedMigration] = useState<AccountJson[]>();
 
   useEffect(() => {
     if (!pass) {
       return;
     }
 
+    setAccountsNeedMigration(undefined);
+
     getAccountsNeedsMigration(accounts, pass).then((res) => {
-      setAccounts(res);
+      setAccountsNeedMigration(res);
     }).catch(console.error);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts?.length, pass]);
