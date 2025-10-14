@@ -147,13 +147,20 @@ export default class Extension {
     const currentDomain = chrome.runtime.getURL('/');
 
     chrome.tabs.query({}, function (tabs) {
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let i = 0; i < tabs.length; i++) {
-        const tabParsedUrl = new URL(tabs[i].url!);
+        const { id, url } = tabs[i];
+
+        if (!url || id === undefined) {
+          continue;
+        }
+
+        const tabParsedUrl = new URL(url);
 
         const tabDomain = `${tabParsedUrl?.protocol}//${tabParsedUrl?.hostname}/`;
 
         if (tabDomain === currentDomain) {
-          chrome.tabs.reload(tabs[i].id!).catch(console.error);
+          chrome.tabs.reload(id).catch(console.error);
         }
       }
     });
@@ -210,7 +217,7 @@ export default class Extension {
 
     console.warn('NO TIE ANYMORE IN NEW DESIGN, genesisHash:', genesisHash);
 
-    keyring.saveAccountMeta(pair, { ...pair.meta, genesisHash: null }); //NO TIE ANYMORE IN NEW DESIGN
+    keyring.saveAccountMeta(pair, { ...pair.meta, genesisHash: null }); // NO TIE ANYMORE IN NEW DESIGN
 
     return true;
   }
