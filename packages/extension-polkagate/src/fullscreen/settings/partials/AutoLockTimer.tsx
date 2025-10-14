@@ -75,7 +75,7 @@ export default function AutoLockTimer (): React.ReactElement {
         <MySwitch
           checked={Boolean(autoLock?.enabled)}
           columnGap='8px'
-          label= {t('Enable Auto-Lock')}
+          label= {t('Adjust Auto-Lock')}
           onChange={onSwitchChange}
         />
         <Stack columnGap='4px' direction='row'>

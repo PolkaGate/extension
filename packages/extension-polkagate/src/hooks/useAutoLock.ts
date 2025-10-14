@@ -29,11 +29,7 @@ export default function useAutoLock (): AutoLock | undefined {
 
   useEffect(() => {
     getStorage('autoLock').then((res) => {
-      if (!res) {
-        setAutoLock(DEFAULT_AUTO_LOCK);
-      } else {
-        setAutoLock(res as AutoLock);
-      }
+        setAutoLock(res as AutoLock|undefined ?? DEFAULT_AUTO_LOCK);
     }).catch(console.error);
 
     chrome.storage.onChanged.addListener(function (changes, areaName) {
