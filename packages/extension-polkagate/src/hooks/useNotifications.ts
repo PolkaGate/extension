@@ -137,26 +137,39 @@ export default function useNotifications (justLoadData = true) {
   // Whether notifications are turned off
   const notificationIsOff = useMemo(() => isNotificationEnable === false || accounts?.length === 0, [accounts?.length, isNotificationEnable]);
 
-  const saveNotifications = useCallback(() => {
-    // Queue saves to ensure they happen sequentially, not in parallel
+  useEffect(() => {
+    // Don't save if notifications haven't been initialized yet
+    if (notifications.isFirstTime === undefined) {
+      return;
+    }
+
+    // Don't save if notifications are turned off
+    if (notificationIsOff) {
+      return;
+    }
+
+    // Queue saves to ensure they happen sequentially
     saveQueue.current = saveQueue.current.then(async () => {
       if (isSavingRef.current) {
         return;
       }
 
       isSavingRef.current = true;
-      const dataToSave = { ...notifications, latestLoggedIn: Math.floor(Date.now() / 1000) };
+      const dataToSave = {
+        ...notifications,
+        latestLoggedIn: Math.floor(Date.now() / 1000)
+      };
 
       try {
         await setStorage(STORAGE_KEY.NOTIFICATIONS, dataToSave);
-        // console.log('✅ Notifications saved after fetch completion.');
+        console.log('✅ Notifications saved to storage');
       } catch (error) {
         console.error('❌ Failed to save notifications:', error);
       } finally {
         isSavingRef.current = false;
       }
     });
-  }, [notifications]);
+  }, [notifications, notificationIsOff]);
 
   // Mark all notifications as read
   const markAsRead = useCallback(() => {
@@ -191,10 +204,8 @@ export default function useNotifications (justLoadData = true) {
         payload: receivedFunds,
         type: 'SET_RECEIVED_FUNDS'
       });
-
-      saveNotifications();
     }
-  }, [accounts, chains, fetchRefs, isReceivedFundsEnable, saveNotifications]);
+  }, [accounts, chains, fetchRefs, isReceivedFundsEnable]);
 
   // Fetch staking rewards notifications
   const payoutsInfo = useCallback(async () => {
@@ -208,10 +219,8 @@ export default function useNotifications (justLoadData = true) {
         payload: payouts,
         type: 'SET_STAKING_REWARDS'
       });
-
-      saveNotifications();
     }
-  }, [accounts, fetchRefs, saveNotifications, stakingRewardChains]);
+  }, [accounts, fetchRefs, stakingRewardChains]);
 
   // Fetch referenda notifications
   const referendasInfo = useCallback(async () => {
@@ -225,10 +234,8 @@ export default function useNotifications (justLoadData = true) {
         payload: referendas,
         type: 'SET_REFERENDA'
       });
-
-      saveNotifications();
     }
-  }, [accounts, fetchRefs, governanceChains, saveNotifications]);
+  }, [accounts, fetchRefs, governanceChains]);
 
   // Load notifications from storage or initialize if first time
   useEffect(() => {
