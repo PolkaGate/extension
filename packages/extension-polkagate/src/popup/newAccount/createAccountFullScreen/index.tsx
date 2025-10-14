@@ -3,18 +3,18 @@
 
 import { Stack, Typography, useTheme } from '@mui/material';
 import { User } from 'iconsax-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
-import { DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField } from '../../../components';
+import { AccountContext, DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField, PasswordInput } from '../../../components';
 import { setStorage } from '../../../components/Loading';
 import { OnboardTitle } from '../../../fullscreen/components/index';
 import AdaptiveLayout from '../../../fullscreen/components/layout/AdaptiveLayout';
 import { useTranslation } from '../../../hooks';
-import { createAccountSuri, createSeed } from '../../../messaging';
+import { accountsValidate, createAccountSuri, createSeed } from '../../../messaging';
 import MnemonicSeedDisplay from './components/MnemonicSeedDisplay';
 
 enum STEP {
@@ -22,13 +22,23 @@ enum STEP {
   DETAIL
 }
 
-export function SetNameAndPassword ({ seed }: {seed: string | null}): React.ReactElement {
+export function SetNameAndPassword({ seed }: { seed: string | null }): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { accounts } = useContext(AccountContext);
+  const localAccounts = accounts.filter(({ isExternal }) => !isExternal);
+  const isFirstLocalAccount = localAccounts.length === 0;
+
+  console.log('isFirstLocalAccount:', isFirstLocalAccount)
 
   const [name, setName] = useState<string | null | undefined>();
   const [password, setPassword] = useState<string>();
   const [isBusy, setIsBusy] = useState<boolean>(false);
+  const [isWrongPassword, setWrongPassword] = useState<boolean>(false);
+
+  useEffect(() => {
+    setWrongPassword(false);
+  }, [password]);
 
   const onNameChange = useCallback((enteredName: string) => {
     const trimmedName = enteredName.replace(/^\s+/, '');
@@ -47,8 +57,23 @@ export function SetNameAndPassword ({ seed }: {seed: string | null}): React.Reac
   }, [navigate]);
 
   const onCreate = useCallback(() => {
-    if (name && password && seed) {
-      setIsBusy(true);
+    if (!(name && password && seed)) {
+      return;
+    }
+
+    setIsBusy(true);
+
+    (async () => {
+      if (!isFirstLocalAccount) {
+        const isPasswordCorrect = await accountsValidate(localAccounts[0].address, password);
+
+        if (!isPasswordCorrect) {
+          setWrongPassword(!isPasswordCorrect);
+          setIsBusy(false);
+
+          return;
+        }
+      }
 
       createAccountSuri(name, password, seed, DEFAULT_TYPE)
         .then(() => {
@@ -59,8 +84,8 @@ export function SetNameAndPassword ({ seed }: {seed: string | null}): React.Reac
           setIsBusy(false);
           console.error(error);
         });
-    }
-  }, [name, navigate, password, seed]);
+    })().catch(console.error);
+  }, [isFirstLocalAccount, localAccounts, name, navigate, password, seed]);
 
   return (
     <Motion style={{ width: '370px' }} variant='slide'>
@@ -74,14 +99,25 @@ export function SetNameAndPassword ({ seed }: {seed: string | null}): React.Reac
         style={{ margin: '40px 0 20px' }}
         title={t('Choose a name for this account')}
       />
-      <MatchPasswordField
-        onSetPassword={onSetPassword}
-        setConfirmedPassword={setPassword}
-        spacing='20px'
-        style={{ marginBottom: '20px' }}
-        title1={t('Password for this account')}
-        title2={t('Repeat the password')}
-      />
+      {isFirstLocalAccount
+        ? (<MatchPasswordField
+          onSetPassword={onSetPassword}
+          setConfirmedPassword={setPassword}
+          spacing='20px'
+          style={{ marginBottom: '20px' }}
+          title1={t('Password for this account')}
+          title2={t('Repeat the password')}
+        />
+        )
+        : (<PasswordInput
+          hasError={isWrongPassword}
+          onEnterPress={onCreate}
+          onPassChange={setPassword}
+          style={{ marginBottom: '25px', marginTop: '35px' }}
+          title={t('Password to secure this account')}
+        />
+        )
+      }
       <DecisionButtons
         cancelButton
         direction='horizontal'
@@ -98,10 +134,9 @@ export function SetNameAndPassword ({ seed }: {seed: string | null}): React.Reac
   );
 }
 
-function CreateAccount (): React.ReactElement {
+function CreateAccount(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-
   const [seed, setSeed] = useState<null | string>(null);
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false);
   const [step, setStep] = useState(STEP.SEED);
@@ -160,7 +195,7 @@ function CreateAccount (): React.ReactElement {
           </>
         }
         {step === STEP.DETAIL &&
-         <SetNameAndPassword seed={seed} />
+          <SetNameAndPassword seed={seed} />
         }
       </Stack>
     </AdaptiveLayout>
