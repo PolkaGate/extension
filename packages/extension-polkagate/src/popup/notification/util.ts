@@ -347,11 +347,33 @@ export function groupNotificationsByDay (
     }
 
     acc[dayKey].push(item);
+
     seen.add(uniqueKey);
 
     return acc;
   }, {});
 
+  // Sort items within each day by timestamp (newest first)
+  for (const dayKey in grouped) {
+    grouped[dayKey].sort((a, b) => {
+      const getTimestamp = (item: NotificationMessageType): number => {
+        switch (item.type) {
+          case 'stakingReward':
+            return item.payout?.timestamp ?? 0;
+          case 'receivedFund':
+            return item.receivedFund?.timestamp ?? 0;
+          case 'referenda':
+            return item.referenda?.latestTimestamp ?? 0;
+          default:
+            return 0;
+        }
+      };
+
+      return getTimestamp(b) - getTimestamp(a);
+    });
+  }
+
+   // Sort the day groups themselves (newest first)
   const sortedEntries = Object.entries(grouped).sort(([a], [b]) => {
     // Parse your "15 Dec 2025" strings back into Date objects for sorting
     const dateA = new Date(a);

@@ -65,7 +65,7 @@ function Notifications (): React.ReactElement {
       return false;
     }
 
-    return Object.values(notificationItems).flat().some(({ read }) => read);
+    return Object.values(notificationItems).flat().some(({ read }) => !read);
   }, [notificationItems]);
 
   const onClick = useCallback(() => {
