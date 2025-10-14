@@ -437,6 +437,14 @@ export default class Extension {
   }
 
   private areLocksExpired (): boolean {
+     const accounts = keyring.getAccounts();
+
+    const localAccounts = accounts.filter(({ meta }) => !meta.isExternal);
+
+    if (localAccounts.length === 0) {
+      return false; // if all accounts are external, then no lock expiration from me!
+    }
+
     return Object.entries(this.#cachedUnlocks).every(([, time]) => time < Date.now());
   }
 
