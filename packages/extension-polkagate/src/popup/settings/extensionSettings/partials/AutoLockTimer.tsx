@@ -74,7 +74,7 @@ export default function AutoLockTimer (): React.ReactElement {
       <Grid alignItems='center' columnGap='8px' container justifyContent='flex-start' pt='7px'>
         <MySwitch checked={autoLock?.enabled} onChange={onSwitchChange} />
         <Typography variant='B-1'>
-          {t('Enable Auto-Lock')}
+          {t('Adjust Auto-Lock')}
         </Typography>
       </Grid>
       <Stack columnGap='10px' direction='row' sx={{ alignItems: 'end', mt: '8px' }}>
