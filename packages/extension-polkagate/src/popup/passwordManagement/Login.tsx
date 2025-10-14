@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 
 import { Box, Container, Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
@@ -39,13 +39,14 @@ function Content ({ setStep }: Props): React.ReactElement {
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
   const { setExtensionLock } = useExtensionLockContext();
   const autoLockPeriod = useAutoLockPeriod();
+  const isUnlockingRef = useRef(false);
 
   const [hashedPassword, setHashedPassword] = useState<string>();
   const [plainPassword, setPlainPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [isUnlocking, setUnlocking] = useState(false);
 
-  const accountsNeedMigration = useCheckMasterPassword(plainPassword);
+  const accountsNeedMigration = useCheckMasterPassword((isUnlocking && isPasswordMigrated === false) ? plainPassword : undefined);
 
   const onPassChange = useCallback((pass: string | null): void => {
     if (!pass) {
@@ -60,25 +61,32 @@ function Content ({ setStep }: Props): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    if (!plainPassword || !autoLockPeriod || !isUnlocking || !accountsNeedMigration) {
+    if (
+      !plainPassword ||
+      !autoLockPeriod ||
+      !isUnlocking ||
+      isUnlockingRef.current ||
+      (!accountsNeedMigration && !isPasswordMigrated)
+    ) {
       return;
     }
 
-    try {
-      (async () => {
+    isUnlockingRef.current = true; // 🚧 prevent parallel unlocks
+
+    (async () => {
+      try {
         const isOldPasswordCorrect = hashedPassword && await isPasswordCorrect(hashedPassword, true);
 
         if (isPasswordMigrated || (isOldPasswordCorrect && accountsNeedMigration?.length === 0)) { // has master password or no need to migrate
-          unlockAllAccounts(plainPassword, autoLockPeriod).then((success) => {
-            if (success) {
-              setExtensionLock(false);
-              setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
-            }
-          }).catch((error) => {
-            console.error(error);
+          const success = await unlockAllAccounts(plainPassword, autoLockPeriod);
+
+          if (success) {
+            setExtensionLock(false);
+            setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
+          } else {
+            setExtensionLock(true);
             setIsPasswordError(true);
-            setUnlocking(false);
-          });
+          }
         } else if (accountsNeedMigration?.length && isOldPasswordCorrect) { // needs migration
           await updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET });
           setHashedPassword(undefined);
@@ -90,13 +98,16 @@ function Content ({ setStep }: Props): React.ReactElement {
             : navigate(path) as void;
         } else { // not migrated and old password is incorrect
           setIsPasswordError(true);
-          setUnlocking(false);
         }
-      })().catch(console.error);
-    } catch (e) {
-      console.error(e);
-      setUnlocking(false);
-    }
+      } catch (e) {
+        console.error(e);
+        setIsPasswordError(true);
+      } finally {
+        setUnlocking(false);
+
+        isUnlockingRef.current = false; // ✅ unlock finished
+      }
+    })().catch(console.error);
   }, [accountsNeedMigration, autoLockPeriod, hashedPassword, isExtension, isPasswordMigrated, isUnlocking, navigate, plainPassword, setExtensionLock]);
 
   const onUnlock = useCallback(() => {

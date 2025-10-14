@@ -411,33 +411,39 @@ export default class Extension {
       throw new Error('Password needed to unlock the account');
     }
 
-    const accounts = keyring.getAccounts();
+    try {
+      const accounts = keyring.getAccounts();
 
-    const localAccounts = accounts.filter(({ meta }) => !meta.isExternal);
+      const localAccounts = accounts.filter(({ meta }) => !meta.isExternal);
 
-    console.log('localAccounts:', localAccounts);
+      console.log('localAccounts:', localAccounts);
 
-    const res = localAccounts.map(({ address }) => {
-      const pair = keyring.getPair(address);
+      const res = localAccounts.map(({ address }) => {
+        const pair = keyring.getPair(address);
 
-      if (!pair) {
-        throw new Error('Unable to find pair');
-      }
+        if (!pair) {
+          throw new Error('Unable to find pair');
+        }
 
-      if (pair.isLocked) {
-        pair.decodePkcs8(password);
-      }
+        if (pair.isLocked) {
+          pair.decodePkcs8(password);
+        }
 
-      this.#cachedUnlocks[address] = Date.now() + cacheTime;
+        this.#cachedUnlocks[address] = Date.now() + cacheTime;
 
-      return true;
-    });
+        return true;
+      });
 
-    return res.every((success) => success);
+      return res.every((success) => success);
+    } catch (error) {
+      console.error('accountsUnlockAll failed:', error);
+
+      return false; // return false if any decode fails
+    }
   }
 
   private areLocksExpired (): boolean {
-     const accounts = keyring.getAccounts();
+    const accounts = keyring.getAccounts();
 
     const localAccounts = accounts.filter(({ meta }) => !meta.isExternal);
 

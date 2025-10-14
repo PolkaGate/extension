@@ -22,7 +22,7 @@ enum STEP {
   DETAIL
 }
 
-export function SetNameAndPassword({ seed }: { seed: string | null }): React.ReactElement {
+export function SetNameAndPassword ({ seed }: { seed: string | null }): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { accounts } = useContext(AccountContext);
@@ -105,7 +105,7 @@ export function SetNameAndPassword({ seed }: { seed: string | null }): React.Rea
           style={{ marginBottom: '20px' }}
           title1={t('Password for this account')}
           title2={t('Repeat the password')}
-        />
+           />
         )
         : (<PasswordInput
           hasError={isWrongPassword}
@@ -113,7 +113,7 @@ export function SetNameAndPassword({ seed }: { seed: string | null }): React.Rea
           onPassChange={setPassword}
           style={{ marginBottom: '25px', marginTop: '35px' }}
           title={t('Password to secure this account')}
-        />
+           />
         )
       }
       <DecisionButtons
@@ -132,7 +132,7 @@ export function SetNameAndPassword({ seed }: { seed: string | null }): React.Rea
   );
 }
 
-function CreateAccount(): React.ReactElement {
+function CreateAccount (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [seed, setSeed] = useState<null | string>(null);
