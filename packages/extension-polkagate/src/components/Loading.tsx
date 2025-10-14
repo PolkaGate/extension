@@ -89,7 +89,6 @@ export default function Loading ({ children }: Props): React.ReactElement<Props>
 
   const { isExtensionLocked, setStep, step } = useLoginInfo();
 
-  console.log('step,isExtensionLocked',step,isExtensionLocked)
   const showLoginPages = useMemo(() => {
     const extensionUrl = window.location.hash.replace('#', '');
     const condition = isExtensionLocked || !children || isFlying;

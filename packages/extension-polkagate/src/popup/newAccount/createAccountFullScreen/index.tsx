@@ -43,7 +43,7 @@ export function SetNameAndPassword ({ seed }: {seed: string | null}): React.Reac
   }, []);
 
   const onCancel = useCallback(() => {
-    navigate('/');
+    navigate('/') as void;
   }, [navigate]);
 
   const onCreate = useCallback(() => {
@@ -53,7 +53,7 @@ export function SetNameAndPassword ({ seed }: {seed: string | null}): React.Reac
       createAccountSuri(name, password, seed, DEFAULT_TYPE)
         .then(() => {
           setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL).catch(console.error);
-          navigate('/');
+          navigate('/') as void;
         })
         .catch((error: Error): void => {
           setIsBusy(false);
