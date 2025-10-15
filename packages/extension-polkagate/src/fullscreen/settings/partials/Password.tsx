@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { LoginInfo } from '@polkadot/extension-polkagate/src/popup/passwordManagement/types';
-
 import { Stack, Typography } from '@mui/material';
 import { ArrowDown2, Key } from 'iconsax-react';
 import React, { useEffect, useState } from 'react';
