@@ -4,7 +4,7 @@
 import { Box, Container, Grid, Stack, Typography } from '@mui/material';
 import saveAs from 'file-saver';
 import { Import } from 'iconsax-react';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
@@ -39,8 +39,16 @@ export function ExportAccountsBody ({ address, isExternal, name, onBack }: { add
   const [incorrectPassword, setPasswordIncorrect] = useState<boolean>();
   const [isExportAll, setExportAll] = useState<boolean>(!!isExternal);
 
+  const exportingAccountName = useMemo(() => {
+    if (isExportAll) {
+      return accounts.map(({ name }) => name).join(', ');
+    }
+
+    return name;
+  }, [accounts, isExportAll, name]);
+
   const onExportAll = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-   !isExternal && setExportAll(checked);
+    !isExternal && setExportAll(checked);
   }, [isExternal]);
 
   const onCurrentPasswordChange = useCallback((pass: string | null): void => {
@@ -73,16 +81,19 @@ export function ExportAccountsBody ({ address, isExternal, name, onBack }: { add
     }
   }, [address, accounts, isExportAll, password, setShowSnackbar, setPasswordIncorrect]);
 
-  const content = (
+  const content = useMemo(() => (
     <>
-      <Stack columnGap='15px' direction='column' sx={{ p: isExtension ? '15px' : 0, position:'relative', pt: 0, zIndex: 1 }}>
+      <Stack columnGap='15px' direction='column' sx={{ p: isExtension ? '15px' : 0, position: 'relative', pt: 0, zIndex: 1 }}>
         <Box component='img' src={user as string} sx={{ alignSelf: 'center', width: '76px' }} />
         <Typography color='#BEAAD8' sx={{ lineHeight: '16.8px' }} textAlign='start' variant='B-4'>
           {t('Your account(s) will be encrypted with your password and saved as a JSON file in your browser’s downloads. You can later import them into the extension using the same password.')}
         </Typography>
-        <Grid container item sx={{ my: '10px', position: 'relative' }}>
-          <Stack columnGap='8px' direction='row' justifyContent='end' sx={{ alignItems: 'center', position: 'absolute', right: 0, top: '14px' }}>
-            <Typography color='#AA83DC' variant='B-4'>
+        <Grid container item sx={{ alignItems: 'center', justifyContent: 'space-between', mb: '5px', mt: '15px' }}>
+          <Typography color='text.primary' variant='B-1' width='fit-content'>
+            {t('Account(s)')}
+          </Typography>
+          <Stack direction='row' sx={{ alignItems: 'center', gap: '8px' }}>
+            <Typography color='#AA83DC' variant='B-4' width='fit-content'>
               {t('Export All Accounts')}
             </Typography>
             <MySwitch
@@ -90,19 +101,18 @@ export function ExportAccountsBody ({ address, isExternal, name, onBack }: { add
               onChange={onExportAll}
             />
           </Stack>
-          {address &&
+        </Grid>
+        <Grid container item sx={{ alignItems: 'center', bgcolor: '#1B133C', border: '1px solid #BEAAD833', borderRadius: '12px', height: '44px', mb: '10px', mt: '5px' }}>
+          {address && !isExportAll &&
             <Address2
               address={address}
-              label={t('Account')}
-              labelMarginTop='15px'
-              name={name}
-              style={{
-                bgcolor: '#1B133C',
-                border: '1px solid #BEAAD833',
-                borderRadius: '12px',
-                height: '44px'
-              }}
+              name={exportingAccountName}
+              style={{ backgroundColor: 'none', height: '44px' }}
             />}
+          {isExportAll &&
+            <Typography color='text.secondary' sx={{ maxWidth: '250px', pl: '15px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: 'fit-content' }} variant='B-4'>
+              {exportingAccountName}
+            </Typography>}
         </Grid>
         <PasswordInput
           focused
@@ -110,7 +120,7 @@ export function ExportAccountsBody ({ address, isExternal, name, onBack }: { add
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onEnterPress={onExport}
           onPassChange={onCurrentPasswordChange}
-          style={{ marginBottom: '18px' }}
+          style={{ marginBottom: '15px' }}
           title={isExportAll ? t('Password') : t('Your Password')}
         />
         <GradientButton
@@ -137,7 +147,7 @@ export function ExportAccountsBody ({ address, isExternal, name, onBack }: { add
         />
       </Stack>
     </>
-  );
+  ), [address, exportingAccountName, incorrectPassword, isExportAll, isExtension, isExternal, onBack, onCurrentPasswordChange, onExport, onExportAll, onSnackbarClose, password, showSnackbar, t]);
 
   return (
     <Motion style={{ borderRadius: '14px', margin: isExtension ? '15px 15px 0' : '15px 5px 0', overflow: 'hidden', width: 'auto' }} variant={isExtension ? 'slide' : 'fade'}>
@@ -167,7 +177,7 @@ function Export (): React.ReactElement {
       />
       <ExportAccountsBody
         address={account?.address}
-        isExternal = {account?.isExternal}
+        isExternal={account?.isExternal}
         name={account?.name}
       />
       <HomeMenu />
