@@ -118,6 +118,7 @@ export interface RequestSignatures {
   'pri(accounts.subscribe)': [RequestAccountSubscribe, boolean, AccountJson[]];
   'pri(accounts.validate)': [RequestAccountValidate, boolean];
   'pri(accounts.changePassword)': [RequestAccountChangePassword, boolean];
+  'pri(accounts.changePasswordAll)': [RequestAccountChangePasswordAll, boolean];
   'pri(signing.getSignature)': [RequestSigninSignature, HexString | null];
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
   'pri(authorize.update)': [RequestUpdateAuthorizedAccounts, void];
@@ -228,6 +229,11 @@ export interface RequestAccountCreateHardware {
 
 export interface RequestAccountChangePassword {
   address: string;
+  oldPass: string;
+  newPass: string;
+}
+
+export interface RequestAccountChangePasswordAll {
   oldPass: string;
   newPass: string;
 }

@@ -3,18 +3,19 @@
 
 import { Stack, Typography, useTheme } from '@mui/material';
 import { User } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import useIsPasswordCorrect from '@polkadot/extension-polkagate/src/hooks/useIsPasswordCorrect';
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
-import { AccountContext, DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField, PasswordInput } from '../../../components';
+import { DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField, PasswordInput } from '../../../components';
 import { setStorage } from '../../../components/Loading';
 import { OnboardTitle } from '../../../fullscreen/components/index';
 import AdaptiveLayout from '../../../fullscreen/components/layout/AdaptiveLayout';
 import { useTranslation } from '../../../hooks';
-import { accountsValidate, createAccountSuri, createSeed } from '../../../messaging';
+import { createAccountSuri, createSeed } from '../../../messaging';
 import MnemonicSeedDisplay from './components/MnemonicSeedDisplay';
 
 enum STEP {
@@ -25,14 +26,12 @@ enum STEP {
 export function SetNameAndPassword ({ seed }: { seed: string | null }): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { accounts } = useContext(AccountContext);
-  const localAccounts = accounts.filter(({ isExternal }) => !isExternal);
-  const isFirstLocalAccount = localAccounts.length === 0;
 
   const [name, setName] = useState<string | null | undefined>();
   const [password, setPassword] = useState<string>();
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [isWrongPassword, setWrongPassword] = useState<boolean>(false);
+  const { hasNoLocalAccounts, isPasswordCorrect } = useIsPasswordCorrect(password, isBusy);
 
   useEffect(() => {
     setWrongPassword(false);
@@ -45,45 +44,45 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
     setName(cleanedName);
   }, []);
 
-  const onSetPassword = useCallback(async () => {
-    // Example logic to handle password setting
-    await Promise.resolve(''); // Replace with actual logic if needed
-  }, []);
-
   const onCancel = useCallback(() => {
     navigate('/') as void;
   }, [navigate]);
 
+  const preConditions = name && password && seed;
+
+  useEffect(() => {
+    if (!preConditions || !isBusy || isPasswordCorrect === undefined) {
+      return;
+    }
+
+    if (!hasNoLocalAccounts) {
+      if (!isPasswordCorrect) {
+        setWrongPassword(!isPasswordCorrect);
+        setIsBusy(false);
+
+        return;
+      }
+    }
+
+    createAccountSuri(name, password, seed, DEFAULT_TYPE)
+      .then(() => {
+        setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL).catch(console.error);
+        setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
+        navigate('/') as void;
+      })
+      .catch((error: Error): void => {
+        setIsBusy(false);
+        console.error(error);
+      });
+  }, [hasNoLocalAccounts, isBusy, isPasswordCorrect, name, navigate, password, preConditions, seed]);
+
   const onCreate = useCallback(() => {
-    if (!(name && password && seed)) {
+    if (!preConditions) {
       return;
     }
 
     setIsBusy(true);
-
-    (async () => {
-      if (!isFirstLocalAccount) {
-        const isPasswordCorrect = await accountsValidate(localAccounts[0].address, password);
-
-        if (!isPasswordCorrect) {
-          setWrongPassword(!isPasswordCorrect);
-          setIsBusy(false);
-
-          return;
-        }
-      }
-
-      createAccountSuri(name, password, seed, DEFAULT_TYPE)
-        .then(() => {
-          setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL).catch(console.error);
-          navigate('/') as void;
-        })
-        .catch((error: Error): void => {
-          setIsBusy(false);
-          console.error(error);
-        });
-    })().catch(console.error);
-  }, [isFirstLocalAccount, localAccounts, name, navigate, password, seed]);
+  }, [preConditions]);
 
   return (
     <Motion style={{ width: '370px' }} variant='slide'>
@@ -97,9 +96,10 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
         style={{ margin: '40px 0 20px' }}
         title={t('Choose a name for this account')}
       />
-      {isFirstLocalAccount
+      {hasNoLocalAccounts
         ? (<MatchPasswordField
-          onSetPassword={onSetPassword}
+        //@ts-ignore
+          onSetPassword={onCreate}
           setConfirmedPassword={setPassword}
           spacing='20px'
           style={{ marginBottom: '20px' }}

@@ -12,19 +12,22 @@ import { useNavigate } from 'react-router-dom';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
-import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
-import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
+import { AUTO_LOCK_PERIOD_DEFAULT, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { stringToU8a, u8aToString } from '@polkadot/util';
 import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
 import { ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
 import { useTranslation } from '../../../hooks';
-import { batchRestore, jsonGetAccountInfo, jsonRestore, updateMeta } from '../../../messaging';
+import { batchRestore, jsonGetAccountInfo, jsonRestore, unlockAllAccounts, updateMeta } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
 import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
 
 const acceptedFormats = ['application/json', 'text/plain'].join(', ');
+
+export interface JsonGetAccountInfo extends ResponseJsonGetAccountInfo {
+  isExternal?: boolean;
+}
 
 export default function RestoreJson (): React.ReactElement {
   const { t } = useTranslation();
@@ -33,12 +36,12 @@ export default function RestoreJson (): React.ReactElement {
 
   const [isBusy, setIsBusy] = useState(false);
   const [stepOne, setStep] = useState(true);
-  const [accountsInfo, setAccountsInfo] = useState<ResponseJsonGetAccountInfo[]>([]);
+  const [accountsInfo, setAccountsInfo] = useState<JsonGetAccountInfo[]>([]);
   const [password, setPassword] = useState<string>('');
   const [isFileError, setFileError] = useState(false);
   const [requirePassword, setRequirePassword] = useState(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
-  const [selectedAccountsInfo, setSelectedAccountsInfo] = useState<ResponseJsonGetAccountInfo[]>([]);
+  const [selectedAccountsInfo, setSelectedAccountsInfo] = useState<JsonGetAccountInfo[]>([]);
   const [showCheckbox, setShowCheckbox] = useState<boolean>(false);
 
   // don't use the info from the file directly
@@ -47,7 +50,7 @@ export default function RestoreJson (): React.ReactElement {
 
   const areAllSelected = useMemo(() =>
     selectedAccountsInfo.length === accountsInfo.length
-  , [selectedAccountsInfo.length, accountsInfo.length]);
+    , [selectedAccountsInfo.length, accountsInfo.length]);
 
   const handleCheck = useCallback((_event: boolean, address: string) => {
     const selectedAccount = accountsInfo.find((account) => account.address === address);
@@ -95,8 +98,9 @@ export default function RestoreJson (): React.ReactElement {
       const accounts = json.accounts.map((account) => ({
         address: account.address,
         genesisHash: account.meta.genesisHash,
-        name: account.meta.name
-      } as ResponseJsonGetAccountInfo));
+        isExternal: account.meta.isExternal,
+        name: account.meta.name ?? 'Unknown'
+      } as JsonGetAccountInfo));
 
       setAccountsInfo(accounts);
       setSelectedAccountsInfo(accounts);
@@ -114,8 +118,8 @@ export default function RestoreJson (): React.ReactElement {
 
   const filterAndEncryptFile = useCallback(async (jsonFile: KeyringPairs$Json, selected: string[]) => {
     const decryptedFile = jsonDecrypt(jsonFile, password);
-    const unlockedAccounts = JSON.parse(u8aToString(decryptedFile)) as KeyringPair$Json[];
-    const filteredAccounts = unlockedAccounts.filter(({ address }) => selected.includes(address));
+    const parsedFile = JSON.parse(u8aToString(decryptedFile)) as KeyringPair$Json[];
+    const filteredAccounts = parsedFile.filter(({ address }) => selected.includes(address));
     const fileAsU8a = stringToU8a(JSON.stringify(filteredAccounts));
 
     return jsonEncrypt(fileAsU8a, jsonFile.encoding.content, password) as KeyringPairs$Json;
@@ -163,11 +167,27 @@ export default function RestoreJson (): React.ReactElement {
       console.error(error);
       setIsPasswordError(true);
       hadPasswordError = true;
-    } finally {
-      setIsBusy(false);
-      !hadPasswordError && switchToOrOpenTab('/', true);
     }
-  }, [file, requirePassword, password, handleKeyringPairsJson, handleRegularJson]);
+
+    if (hadPasswordError) {
+       setIsBusy(false);
+
+      return;
+    }
+
+    const hasLocalAccounts = selectedAccountsInfo.filter(({ isExternal }) => !isExternal);
+
+    if (hasLocalAccounts) {
+      const success = await unlockAllAccounts(password, AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000);
+
+      if (success) {
+        setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
+        navigate('/') as void;
+      } else {
+       navigate('/migratePasswords') as void;
+      }
+    }
+  }, [file, requirePassword, password, handleKeyringPairsJson, handleRegularJson, selectedAccountsInfo, navigate]);
 
   const onSelectDeselectAll = useCallback(() => {
     areAllSelected

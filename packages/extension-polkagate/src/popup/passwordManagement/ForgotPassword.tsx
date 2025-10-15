@@ -5,11 +5,11 @@ import { Container, Grid, Typography } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
+import { updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 
 import { BackWithLabel, DecisionButtons, GlowCheckbox, GradientBox } from '../../components';
-import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import { useBackground, useIsExtensionPopup } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
@@ -17,13 +17,12 @@ import { Version } from '../../partials';
 import { RedGradient } from '../../style';
 import { STEPS } from './constants';
 import Header from './Header';
-import { LOGIN_STATUS } from './types';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export function ForgotPasswordContent({ onClose }: { onClose: () => void }): React.ReactElement<Props> {
+export function ForgotPasswordContent ({ onClose }: { onClose: () => void }): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
   const isExtension = useIsExtensionPopup();
@@ -31,7 +30,7 @@ export function ForgotPasswordContent({ onClose }: { onClose: () => void }): Rea
   const [acknowledged, setAcknowledge] = useState<boolean>(false);
 
   const onConfirmForgotPassword = useCallback(() => {
-    updateStorage(STORAGE_KEY.LOGIN_INFO, { status: LOGIN_STATUS.FORGOT }).then(() => {
+    updateStorage(STORAGE_KEY.IS_FORGOTTEN, { status: true }).then(() => {
       setExtensionLock(false);
       !isExtension && switchToOrOpenTab('/reset-wallet', true);
     }).catch(console.error);
@@ -71,7 +70,7 @@ export function ForgotPasswordContent({ onClose }: { onClose: () => void }): Rea
 }
 
 export default function ForgotPassword ({ setStep }: Props): React.ReactElement<Props> {
-  useBackground('drops');
+  useBackground('drops') as void;
 
   const { t } = useTranslation();
 

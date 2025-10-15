@@ -89,6 +89,10 @@ export async function accountsChangePassword (address: string, oldPass: string, 
   return sendMessage('pri(accounts.changePassword)', { address, newPass, oldPass });
 }
 
+export async function accountsChangePasswordAll (oldPass: string, newPass: string): Promise<boolean> {
+  return sendMessage('pri(accounts.changePasswordAll)', { newPass, oldPass });
+}
+
 export async function getSignature (payload: SignerPayloadJSON): Promise<HexString | null> {
   return sendMessage('pri(signing.getSignature)', { payload });
 }

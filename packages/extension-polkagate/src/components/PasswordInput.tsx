@@ -63,7 +63,7 @@ interface Props {
   style?: React.CSSProperties;
   focused?: boolean;
   hasError?: boolean;
-  value?:string;
+  value?: string;
 }
 
 function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPassChange, style, title, value }: Props): React.ReactElement {

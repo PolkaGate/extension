@@ -46,7 +46,7 @@ function Content ({ setStep }: Props): React.ReactElement {
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [isUnlocking, setUnlocking] = useState(false);
 
-  const accountsNeedMigration = useCheckMasterPassword((isUnlocking && isPasswordMigrated === false) ? plainPassword : undefined);
+  const { accountsNeedMigration, hasLocalAccounts } = useCheckMasterPassword((isUnlocking && isPasswordMigrated === false) ? plainPassword : undefined);
 
   const onPassChange = useCallback((pass: string | null): void => {
     if (!pass) {
@@ -75,20 +75,24 @@ function Content ({ setStep }: Props): React.ReactElement {
 
     (async () => {
       try {
-        const isOldPasswordCorrect = hashedPassword && await isPasswordCorrect(hashedPassword, true);
+        const isOldPasswordCorrect = hashedPassword && await isPasswordCorrect(hashedPassword, true); // DEPRECATED, will be removed in future releases
 
         if (isPasswordMigrated || (isOldPasswordCorrect && accountsNeedMigration?.length === 0)) { // has master password or no need to migrate
           const success = await unlockAllAccounts(plainPassword, autoLockPeriod);
 
           if (success) {
             setExtensionLock(false);
-            setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
+            hasLocalAccounts && setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
+            setStorage(STORAGE_KEY.IS_FORGOTTEN, undefined) as unknown as void;
           } else {
             setExtensionLock(true);
             setIsPasswordError(true);
           }
+
+          setPlainPassword(undefined);
         } else if (accountsNeedMigration?.length && isOldPasswordCorrect) { // needs migration
-          await updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET });
+          await updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET }); // DEPRECATED, will be removed in future releases
+          setStorage(STORAGE_KEY.IS_FORGOTTEN, undefined) as unknown as void;
           setHashedPassword(undefined);
           setExtensionLock(false);
           const path = '/migratePasswords';
@@ -108,7 +112,7 @@ function Content ({ setStep }: Props): React.ReactElement {
         isUnlockingRef.current = false; // ✅ unlock finished
       }
     })().catch(console.error);
-  }, [accountsNeedMigration, autoLockPeriod, hashedPassword, isExtension, isPasswordMigrated, isUnlocking, navigate, plainPassword, setExtensionLock]);
+  }, [accountsNeedMigration, autoLockPeriod, hasLocalAccounts, hashedPassword, isExtension, isPasswordMigrated, isUnlocking, navigate, plainPassword, setExtensionLock]);
 
   const onUnlock = useCallback(() => {
     if (!plainPassword || autoLockPeriod === undefined || isPasswordMigrated === undefined) {

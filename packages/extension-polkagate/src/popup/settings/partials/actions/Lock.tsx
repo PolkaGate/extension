@@ -6,9 +6,6 @@ import { Unlock } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { updateStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
-
 import { useExtensionLockContext } from '../../../../context/ExtensionLockContext';
 import { useAutoLockPeriod, useIsDark, useTranslation } from '../../../../hooks';
 import { lockExtension } from '../../../../messaging';
@@ -26,11 +23,9 @@ export default function Lock ({ isExtension, style }: { isExtension: boolean, st
       return;
     }
 
-    updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now() - autoLockPeriod }).then(() => {
-      setExtensionLock(true);
-      navigate('/') as void;
-      lockExtension().catch(console.error);
-    }).catch(console.error);
+    setExtensionLock(true);
+    navigate('/') as void;
+    lockExtension().catch(console.error);
   }, [autoLockPeriod, navigate, setExtensionLock]);
 
   return (

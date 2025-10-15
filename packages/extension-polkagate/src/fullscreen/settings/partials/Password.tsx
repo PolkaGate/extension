@@ -23,11 +23,9 @@ export default function Password (): React.ReactElement {
   const [lastEditDate, setLastEdit] = useState<string>();
 
   useEffect(() => {
-    getStorage(STORAGE_KEY.LOGIN_INFO).then((info) => {
-      const timestamp = (info as unknown as LoginInfo | undefined)?.lastEdit;
-
+    getStorage(STORAGE_KEY.LAST_PASS_CHANGE).then((timestamp) => {
       if (timestamp) {
-        const date = new Date(timestamp);
+        const date = new Date(timestamp as unknown as number);
 
         const day = date.getDate();
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -80,8 +78,8 @@ export default function Password (): React.ReactElement {
         </Stack>
       </Stack>
       <SetPassword
-        openMenu={extensionPopup === ExtensionPopups.PASSWORD}
         onClose={extensionPopupCloser}
+        openMenu={extensionPopup === ExtensionPopups.PASSWORD}
       />
     </>
   );

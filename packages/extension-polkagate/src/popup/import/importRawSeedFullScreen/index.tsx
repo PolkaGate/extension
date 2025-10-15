@@ -16,8 +16,8 @@ import { keyring } from '@polkadot/ui-keyring';
 import { objectSpread } from '@polkadot/util';
 import { cryptoWaitReady } from '@polkadot/util-crypto';
 
-import { DecisionButtons, MatchPasswordField, Motion, MyTextField } from '../../../components';
-import { useMetadata, useTranslation } from '../../../hooks';
+import { DecisionButtons, MatchPasswordField, Motion, MyTextField, PasswordInput } from '../../../components';
+import { useLocalAccounts, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { switchToOrOpenTab } from '../../../util/switchToOrOpenTab';
@@ -38,6 +38,7 @@ enum STEP {
 export default function ImportSeed (): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const localAccounts = useLocalAccounts();
 
   const [isBusy, setIsBusy] = useState(false);
   const [seed, setSeed] = useState<string>('');
@@ -194,14 +195,24 @@ export default function ImportSeed (): React.ReactElement {
               style={{ margin: '20px 0 20px' }}
               title={t('Choose a name for this account')}
             />
-            <MatchPasswordField
-              onSetPassword={(password && name && !error && !!seed) ? onImport : undefined}
-              setConfirmedPassword={setPassword}
-              spacing='20px'
-              style={{ marginBottom: '20px' }}
-              title1={t('Password for this account')}
-              title2={t('Repeat the password')}
-            />
+            {localAccounts?.length === 0
+              ? (<MatchPasswordField
+                onSetPassword={(password && name && !error && !!seed) ? onImport : undefined}
+                setConfirmedPassword={setPassword}
+                spacing='20px'
+                style={{ marginBottom: '20px' }}
+                title1={t('Password for this account')}
+                title2={t('Repeat the password')}
+              />
+              )
+              : (<PasswordInput
+                onEnterPress={onImport}
+                onPassChange={setPassword}
+                style={{ marginBottom: '25px', marginTop: '35px' }}
+                title={t('Password to secure this account')}
+              />
+              )
+            }
             <DecisionButtons
               cancelButton
               direction='horizontal'

@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack, Typography, useTheme } from '@mui/material';
+import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,8 +13,8 @@ import { accountsChangePassword, lockExtension } from '@polkadot/extension-polka
 import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
+import { Lock as LockGif } from '../../assets/gif';
 import { Address, GradientButton, MatchPasswordField, PasswordInput, TwoToneText } from '../../components';
-import { OnboardTitle } from '../../fullscreen/components/index';
 import { useAlerts, useTranslation } from '../../hooks';
 
 enum STEP {
@@ -23,7 +23,7 @@ enum STEP {
   COMPLETED
 }
 
-function MigratePasswords(): React.ReactElement {
+function MigratePasswords (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -32,23 +32,31 @@ function MigratePasswords(): React.ReactElement {
 
   const [step, setStep] = useState(STEP.PASSWORD);
   const [isConfirmingMasterPassword, setConfirmingMasterPassword] = useState(false);
-  const [isMigrating, setMigrating] = useState(false);
+  const [isBusy, setIsBusy] = useState(false);
   const [masterPass, setMasterPass] = useState<string | undefined>('');
   const [currentPassword, setCurrentPass] = useState<string>('');
   const [accountIndexToChangePassword, setAccountIndex] = useState<number>(0);
   const [isIncorrectPassword, setIncorrectPassword] = useState<boolean>();
 
-  const accountsNeedingMigration = useCheckMasterPassword(masterPass);
+  const { accountsNeedMigration } = useCheckMasterPassword(masterPass);
   const accountToMigrate = useMemo(() =>
-    accountsNeedingMigration?.[accountIndexToChangePassword]
+    accountsNeedMigration?.[accountIndexToChangePassword]
     ,
-    [accountIndexToChangePassword, accountsNeedingMigration]);
+    [accountIndexToChangePassword, accountsNeedMigration]);
 
   useEffect((): void => {
-    if (isConfirmingMasterPassword && !!accountsNeedingMigration) {
-      setStep(STEP.MIGRATING);
+    if (!isConfirmingMasterPassword) {
+      return;
     }
-  }, [isConfirmingMasterPassword, accountsNeedingMigration]);
+
+    if (accountsNeedMigration?.length) {
+      return setStep(STEP.MIGRATING);
+    }
+
+    if (accountsNeedMigration?.length === 0) { // shouldn't happen
+      navigate('/') as void;
+    }
+  }, [isConfirmingMasterPassword, accountsNeedMigration, navigate]);
 
   useEffect((): void => {
     setIncorrectPassword(false);
@@ -60,11 +68,13 @@ function MigratePasswords(): React.ReactElement {
 
   const onNext = useCallback(() => {
     if (accountToMigrate && masterPass) {
-      setMigrating(true);
+      setIsBusy(true);
       accountsChangePassword(accountToMigrate.address, currentPassword, masterPass)
         .then((success) => {
           if (success) {
-            if (accountIndexToChangePassword + 1 === accountsNeedingMigration?.length) {
+            if (accountIndexToChangePassword + 1 === accountsNeedMigration?.length) {
+              setIsBusy(false);
+
               return setStep(STEP.COMPLETED);
             }
 
@@ -74,86 +84,92 @@ function MigratePasswords(): React.ReactElement {
             notify(t('Something went wrong while migrating password!'), 'error');
           }
 
-          setMigrating(false);
+          setIsBusy(false);
         }).catch((error) => {
           console.error(error);
           setIncorrectPassword(true);
-          setMigrating(false);
+          setIsBusy(false);
         });
     } else {
-      setMigrating(false);
+      setIsBusy(false);
     }
-  }, [accountIndexToChangePassword, accountToMigrate, accountsNeedingMigration?.length, currentPassword, masterPass, notify, t]);
+  }, [accountIndexToChangePassword, accountToMigrate, accountsNeedMigration?.length, currentPassword, masterPass, notify, t]);
 
   const onDone = useCallback(() => {
-    setMigrating(true);
+    setIsBusy(true);
 
-    lockExtension().then(async (success) => {
-      if (success) {
-        await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true);
-
+    setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true)
+      .then(() => {
         setExtensionLock(true);
         navigate('/') as void;
-        setMigrating(false);
-      }
-    }).catch(console.error);
+        lockExtension().catch(console.error);
+      }).catch(console.error);
   }, [navigate, setExtensionLock]);
 
   return (
-    <OnboardingLayout style={{ maxWidth: '582px' }}>
-      <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ position: 'relative', zIndex: 1 }}>
-        <OnboardTitle
-          label={
-            step === STEP.PASSWORD
-              ? t('Set master password')
-              : step === STEP.MIGRATING
-                ? t('Migrate accounts to master password')
-                : t('Migration completed!')
-          }
-          labelPartInColor={step === STEP.PASSWORD
-            ? t('master')
-            : step === STEP.MIGRATING
-              ? t('Migrate accounts')
-              : t('completed')}
+    <OnboardingLayout childrenStyle={{ justifyContent: 'center', margin: 'auto', width: '440px' }} showBread={false} showLeftColumn={false}>
+      <Grid container item justifyContent='center' sx={{ p: '18px 15px 26px', position: 'relative', zIndex: 1 }}>
+
+        <Box
+          component='img'
+          src={LockGif as string}
+          sx={{ height: '53px', width: '53px' }}
         />
+        <Typography sx={{ lineHeight: '32px', mb: '12px', mt: '20px', width: '100%' }} textTransform='uppercase' variant='H-2'>
+          <TwoToneText
+            text={
+              step === STEP.PASSWORD
+                ? t('Set master password')
+                : step === STEP.MIGRATING
+                  ? t('Migrate accounts to master password')
+                  : t('Migration completed!')
+            }
+            textPartInColor={step === STEP.PASSWORD
+              ? t('master')
+              : step === STEP.MIGRATING
+                ? t('Migrate accounts')
+                : t('completed')}
+          />
+        </Typography>
+        <Typography color={theme.palette.text.secondary} sx={{ m: '20px 0 20px', px: '7px', width: '100%' }} variant='B-4'>
+          {step === STEP.PASSWORD
+            ? t('Set a single master password to unlock and sign for all your local accounts. You’ll no longer need separate passwords per account — making account management simpler and more secure.')
+            : step === STEP.MIGRATING && !!accountsNeedMigration?.length
+              ? t('You have accounts that still use their old passwords. Enter the current password for each to migrate them to your new master password.')
+              : t('All your accounts are now secured with your new master password. Click Done to log in — you’ll only need to enter your password once to unlock and use all accounts.')
+          }
+        </Typography>
         {step === STEP.PASSWORD &&
           <>
-            <Typography color={theme.palette.text.secondary} py='15px' textAlign='left' variant='B-1' width='480px'>
-              {t('Set a single master password to unlock and sign for all your local accounts. You’ll no longer need separate passwords per account — making account management simpler and more secure.')}
-            </Typography>
             <MatchPasswordField
               focused
               // @ts-ignore
               onSetPassword={onContinue}
               setConfirmedPassword={setMasterPass}
-              style={{ justifyContent: 'start', marginTop: '25px', width: '355px' }}
+              style={{ marginBottom: '15px' }}
               title1={t('Create a master password')}
               title2={t('Repeat the password')}
             />
             <GradientButton
               contentPlacement='center'
               disabled={!masterPass}
-              isBusy={isConfirmingMasterPassword && !accountsNeedingMigration}
+              isBusy={isConfirmingMasterPassword && !accountsNeedMigration}
               onClick={onContinue}
               showChevron
               style={{
-                borderRadius: '18px',
                 height: '44px',
-                marginTop: '25px',
-                width: '355px'
+                marginTop: '20px'
               }}
               text={t('Continue')}
             />
           </>
         }
-        {step === STEP.MIGRATING && accountsNeedingMigration?.length &&
+        {step === STEP.MIGRATING && !!accountsNeedMigration?.length &&
           <>
-            <Typography color={theme.palette.text.secondary} py='15px' textAlign='left' variant='B-1'>
-              {t('You have accounts that still use their old passwords. Enter the current password for each to migrate them to your new master password.')}
-            </Typography>
-            <Typography sx={{ mt: '20px' }} textAlign='left' variant='B-1'>
+            <Typography sx={{ mt: '20px', width: '100%' }} textAlign='left' variant='B-1'>
               <TwoToneText
-                text={t('Migrate account {{migrated}} of {{count}}.', { replace: { count: accountsNeedingMigration.length, migrated: accountIndexToChangePassword + 1 } })}
+                color={theme.palette.warning.main}
+                text={t('Migrate account {{migrated}} of {{count}}.', { replace: { count: accountsNeedMigration.length, migrated: accountIndexToChangePassword + 1 } })}
                 textPartInColor={t('account {{migrated}}', { replace: { migrated: accountIndexToChangePassword + 1 } })}
               />
             </Typography>
@@ -169,21 +185,20 @@ function MigratePasswords(): React.ReactElement {
                 <PasswordInput
                   focused
                   hasError={isIncorrectPassword}
+                  onEnterPress={onNext}
                   onPassChange={setCurrentPass}
-                  style={{ margin: '0 0 10px', width: '355px' }}
                   title={t('Enter {{name}} Password', { replace: { name: accountToMigrate.name } })}
                   value={currentPassword}
                 />
                 <GradientButton
                   contentPlacement='center'
                   disabled={!currentPassword || isIncorrectPassword}
-                  isBusy={isMigrating}
+                  isBusy={isBusy}
                   onClick={onNext}
                   showChevron
                   style={{
-                    borderRadius: '18px',
                     height: '44px',
-                    width: '355px'
+                    marginTop: '20px'
                   }}
                   text={t('Next')}
                 />
@@ -193,24 +208,19 @@ function MigratePasswords(): React.ReactElement {
         }
         {step === STEP.COMPLETED &&
           <>
-            <Typography color={theme.palette.text.secondary} py='15px' textAlign='left' variant='B-1'>
-              {t('All your accounts are now secured with your new master password. Click Done to log in — you’ll only need to enter your password once to unlock and use all accounts.')}
-            </Typography>
             <GradientButton
               contentPlacement='center'
-              isBusy={isMigrating}
+              isBusy={isBusy}
               onClick={onDone}
               style={{
-                borderRadius: '18px',
                 height: '44px',
-                marginTop: '20px',
-                width: '355px'
+                marginTop: '20px'
               }}
               text={t('Done')}
             />
           </>
         }
-      </Stack>
+      </Grid>
     </OnboardingLayout>
   );
 }

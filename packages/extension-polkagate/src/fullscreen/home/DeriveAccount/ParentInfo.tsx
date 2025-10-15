@@ -124,7 +124,7 @@ function ParentInfo ({ genesisHash, newParentAddress, onClose, parentAccount, pa
         hasError={isProperParentPassword === false}
         onPassChange={onParentPasswordEnter}
         style={{ marginTop: '30px' }}
-        title={t('Password for {{parentName}}', { replace: { parentName: parentAccount?.name } })}
+        title={t('Password')}
       />
       <MyTextField
         Icon={Hashtag}

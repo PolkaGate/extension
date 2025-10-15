@@ -7,8 +7,8 @@ import React, { useEffect, useState } from 'react';
 
 import { canDerive } from '@polkadot/extension-base/utils';
 import { AccountContext } from '@polkadot/extension-polkagate/src/components/contexts';
+import useIsForgotten from '@polkadot/extension-polkagate/src/hooks/useIsForgotten';
 import { subscribeAccounts, tieAccount } from '@polkadot/extension-polkagate/src/messaging';
-import { LOGIN_STATUS, type LoginInfo } from '@polkadot/extension-polkagate/src/popup/passwordManagement/types';
 import { getStorage, setStorage, updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { buildHierarchy } from '@polkadot/extension-polkagate/src/util/buildHierarchy';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
@@ -27,7 +27,7 @@ function initAccountContext (accounts: AccountJson[]): AccountsContext {
 export default function AccountProvider ({ children }: { children: React.ReactNode }) {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
-  const [loginInfo, setLoginInfo] = useState<LoginInfo>();
+  const isForgotten = useIsForgotten();
 
   useEffect(() => {
     subscribeAccounts(setAccounts).catch(console.log);
@@ -57,36 +57,19 @@ export default function AccountProvider ({ children }: { children: React.ReactNo
   }, [accounts?.length]);
 
   useEffect(() => {
-    const fetchLoginInfo = async () => {
-      chrome.storage.onChanged.addListener(function (changes, areaName) {
-        if (areaName === 'local' && STORAGE_KEY.LOGIN_INFO in changes) {
-          const newValue = changes[STORAGE_KEY.LOGIN_INFO].newValue as LoginInfo;
-
-          setLoginInfo(newValue);
-        }
-      });
-      const info = await getStorage(STORAGE_KEY.LOGIN_INFO) as LoginInfo;
-
-      setLoginInfo(info);
-    };
-
-    fetchLoginInfo().catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    if (!loginInfo) {
+    if (isForgotten === undefined) {
       return;
     }
 
-    if (loginInfo.status !== LOGIN_STATUS.FORGOT) {
+    if (!isForgotten?.status) {
       setAccountCtx(initAccountContext(accounts || []));
-    } else if (loginInfo.status === LOGIN_STATUS.FORGOT) {
+    } else {
       setAccountCtx(initAccountContext([]));
       const addresses = accounts?.map((account) => account.address);
 
-      updateStorage(STORAGE_KEY.LOGIN_INFO, { addressesToForget: addresses }).catch(console.error);
+      updateStorage(STORAGE_KEY.IS_FORGOTTEN, { addressesToForget: addresses }).catch(console.error);
     }
-  }, [accounts, loginInfo]);
+  }, [accounts, isForgotten]);
 
   if (!accounts) {
     return null;

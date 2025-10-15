@@ -5,10 +5,11 @@ import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { KeyringPair, KeyringPair$Json, KeyringPair$Meta } from '@polkadot/keyring/types';
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
+import type { KeyringAddress } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 // added for plus to import RequestUpdateMeta
-import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestSigninSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestSigninSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 import type State from './State';
 
 import { ALLOWED_PATH, PASSWORD_EXPIRY_MS, START_WITH_PATH } from '@polkadot/extension-base/defaults';
@@ -86,6 +87,16 @@ export default class Extension {
     this.applyAddedTime({ pair });
 
     return true;
+  }
+
+  private accountsChangePasswordAll ({ newPass, oldPass }: RequestAccountChangePasswordAll): boolean {
+    const accountsLocal = this.localAccounts();
+
+    const res = accountsLocal.map(({ address }) => {
+      return this.accountsChangePassword({ address, newPass, oldPass });
+    });
+
+    return res.every(Boolean);
   }
 
   private accountsChangePassword ({ address, newPass, oldPass }: RequestAccountChangePassword): boolean {
@@ -179,6 +190,10 @@ export default class Extension {
   }
 
   private accountsForget ({ address }: RequestAccountForget): boolean {
+    if (this.#cachedUnlocks[address]) {
+      delete this.#cachedUnlocks[address];
+    }
+
     keyring.forgetAccount(address);
 
     return true;
@@ -404,21 +419,20 @@ export default class Extension {
     };
   }
 
-  private accountsUnlockAll ({ cacheTime, password }: RequestUnlockAllAccounts): boolean {
-    console.log('get message to unlock accounts ...');
+  private localAccounts (): KeyringAddress[] {
+    const accounts = keyring.getAccounts();
 
+    return accounts.filter(({ meta }) => !meta.isExternal);
+  }
+
+  private accountsUnlockAll ({ cacheTime, password }: RequestUnlockAllAccounts): boolean {
     if (!password) {
       throw new Error('Password needed to unlock the account');
     }
 
     try {
-      const accounts = keyring.getAccounts();
-
-      const localAccounts = accounts.filter(({ meta }) => !meta.isExternal);
-
-      console.log('localAccounts:', localAccounts);
-
-      const res = localAccounts.map(({ address }) => {
+      const accountsLocal = this.localAccounts();
+      const res = accountsLocal.map(({ address }) => {
         const pair = keyring.getPair(address);
 
         if (!pair) {
@@ -443,11 +457,9 @@ export default class Extension {
   }
 
   private areLocksExpired (): boolean {
-    const accounts = keyring.getAccounts();
+    const accountsLocal = this.localAccounts();
 
-    const localAccounts = accounts.filter(({ meta }) => !meta.isExternal);
-
-    if (localAccounts.length === 0) {
+    if (accountsLocal.length === 0) {
       return false; // if all accounts are external, then no lock expiration from me!
     }
 
@@ -708,6 +720,9 @@ export default class Extension {
 
       case 'pri(accounts.locksExpired)':
         return this.areLocksExpired();
+
+      case 'pri(accounts.changePasswordAll)':
+        return this.accountsChangePasswordAll(request as RequestAccountChangePasswordAll);
       // -------------------------------------
 
       case 'pri(accounts.changePassword)':

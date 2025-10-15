@@ -8,17 +8,9 @@ import { useContext, useEffect, useState } from 'react';
 import { AccountContext } from '../components';
 import { accountsValidate } from '../messaging';
 
-async function getAccountsNeedsMigration (accounts: AccountJson[], password: string): Promise<AccountJson[]> {
-  const nonExternalAccount = accounts.filter(({ isExternal }) => !isExternal);
-
-  const results = await Promise.all(nonExternalAccount.map(async (account) => {
-    const { address, isExternal } = account;
-
-    if (isExternal) {
-      return;
-    }
-
-    const isValidPass = await accountsValidate(address, password);
+async function getAccountsNeedsMigration (localAccounts: AccountJson[], password: string): Promise<AccountJson[]> {
+  const results = await Promise.all(localAccounts.map(async (account) => {
+    const isValidPass = await accountsValidate(account.address, password);
 
     return isValidPass ? undefined : account;
   }));
@@ -26,9 +18,14 @@ async function getAccountsNeedsMigration (accounts: AccountJson[], password: str
   return results.filter((a): a is AccountJson => Boolean(a));
 }
 
-export default function useCheckMasterPassword (pass: string | undefined): AccountJson[] | undefined {
+export default function useCheckMasterPassword (pass: string | undefined): {
+    accountsNeedMigration: AccountJson[] | undefined,
+    hasLocalAccounts: boolean
+  } {
   const { accounts } = useContext(AccountContext);
-  const [accountsNeedsMigration, setAccountsNeedMigration] = useState<AccountJson[]>();
+  const localAccounts = accounts.filter(({ isExternal }) => !isExternal);
+
+  const [accountsNeedMigration, setAccountsNeedMigration] = useState<AccountJson[]>();
 
   useEffect(() => {
     if (!pass) {
@@ -37,11 +34,14 @@ export default function useCheckMasterPassword (pass: string | undefined): Accou
 
     setAccountsNeedMigration(undefined);
 
-    getAccountsNeedsMigration(accounts, pass).then((res) => {
+    getAccountsNeedsMigration(localAccounts, pass).then((res) => {
       setAccountsNeedMigration(res);
     }).catch(console.error);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts?.length, pass]);
 
-  return accountsNeedsMigration;
+  return {
+    accountsNeedMigration,
+    hasLocalAccounts: !!localAccounts.length
+  };
 }

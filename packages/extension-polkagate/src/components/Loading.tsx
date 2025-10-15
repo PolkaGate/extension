@@ -1,12 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
-import { useIsFlying, useLoginInfo } from '../hooks';
+import { useExtensionLockContext } from '../context/ExtensionLockContext';
+import { useIsFlying, useLocalAccounts } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
+import useIsForgotten from '../hooks/useIsForgotten';
 import { STEPS } from '../popup/passwordManagement/constants';
-import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
 import ForgotPassword from '../popup/passwordManagement/ForgotPassword';
 import Login from '../popup/passwordManagement/Login';
 import { ALLOWED_URL_ON_RESET_PASSWORD } from '../util/constants';
@@ -86,63 +87,34 @@ export const setStorage = (label: string, data: unknown, stringify = false) => {
 export default function Loading ({ children }: Props): React.ReactElement<Props> {
   const isExtension = useIsExtensionPopup();
   const isFlying = useIsFlying();
+  const { isExtensionLocked } = useExtensionLockContext();
+  const localAccounts = useLocalAccounts();
+  const isForgotten = useIsForgotten();
 
-  const { isExtensionLocked, setStep, step } = useLoginInfo();
+  const [step, setStep] = useState<number>();
 
-  const showLoginPages = useMemo(() => {
-    const extensionUrl = window.location.hash.replace('#', '');
-    const condition = isExtensionLocked || !children || isFlying;
-    const isResettingWallet = step === STEPS.SHOW_LOGIN && ALLOWED_URL_ON_RESET_PASSWORD.includes(extensionUrl);
-
-    if (isExtension) {
-      return condition;
+  useEffect(() => {
+    if (isExtensionLocked) {
+      setStep(STEPS.SHOW_LOGIN);
     }
+  }, [isExtensionLocked]);
 
-    if (isResettingWallet) {
-      return false;
-    }
+  const isResettingWallet = isForgotten?.status || ALLOWED_URL_ON_RESET_PASSWORD.includes(window.location.hash.replace('#', ''));
 
-    return condition;
-  }, [children, isExtensionLocked, isFlying, isExtension, step]);
+  const requiresAuthentication = useMemo(() =>
+    !isResettingWallet &&
+    ((isExtensionLocked && !!localAccounts?.length) || !children || (isFlying && isExtension))
+    , [isExtensionLocked, localAccounts?.length, children, isFlying, isExtension, isResettingWallet]);
 
-  return (
-    <>
-      {
-        showLoginPages
-          ? <>
-            {
-              step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
-              <ForgotPassword
-                setStep={setStep}
-              />
-            }
-            {
-              isFlying && isExtension
-                ? <FlyingLogo />
-                : <>
-                  {
-                    step === STEPS.ASK_TO_SET_PASSWORD &&
-                    <FirstTimeSetPassword
-                      setStep={setStep}
-                    />
-                  }
-                  {
-                    step === STEPS.SET_PASSWORD &&
-                    <FirstTimeSetPassword
-                      setStep={setStep}
-                    />
-                  }
-                  {
-                    step === STEPS.SHOW_LOGIN &&
-                    <Login
-                      setStep={setStep}
-                    />
-                  }
-                </>
-            }
-          </>
-          : children
-      }
-    </>
-  );
+  if (!requiresAuthentication) {
+    return <>{children}</>;
+  }
+
+  if (isFlying && isExtension) {
+    return <FlyingLogo />;
+  }
+
+  return step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION
+    ? <ForgotPassword setStep={setStep} />
+    : <Login setStep={setStep} />;
 }

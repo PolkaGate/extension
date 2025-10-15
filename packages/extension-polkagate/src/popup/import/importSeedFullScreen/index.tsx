@@ -13,8 +13,8 @@ import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/compone
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { objectSpread } from '@polkadot/util';
 
-import { DecisionButtons, MatchPasswordField, Motion, MyTextField } from '../../../components';
-import { useMetadata, useTranslation } from '../../../hooks';
+import { DecisionButtons, MatchPasswordField, Motion, MyTextField, PasswordInput } from '../../../components';
+import { useLocalAccounts, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri, validateSeed } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { switchToOrOpenTab } from '../../../util/switchToOrOpenTab';
@@ -35,6 +35,7 @@ enum STEP {
 export default function ImportSeed (): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const localAccounts = useLocalAccounts();
 
   const [isBusy, setIsBusy] = useState(false);
   const [seed, setSeed] = useState<string>('');
@@ -95,6 +96,7 @@ export default function ImportSeed (): React.ReactElement {
       createAccountSuri(name, password, account.suri, type)
         .then(() => {
           setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL).catch(console.error);
+          setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
           switchToOrOpenTab('/', true);
         })
         .catch((error): void => {
@@ -203,14 +205,24 @@ export default function ImportSeed (): React.ReactElement {
               style={{ margin: '20px 0 20px' }}
               title={t('Choose a name for this account')}
             />
-            <MatchPasswordField
-              onSetPassword={(password && name && !error && !!seed) ? onCreate : undefined}
-              setConfirmedPassword={setPassword}
-              spacing='20px'
-              style={{ marginBottom: '20px' }}
-              title1={t('Password for this account')}
-              title2={t('Repeat the password')}
-            />
+            {localAccounts?.length === 0
+              ? (<MatchPasswordField
+                onSetPassword={(password && name && !error && !!seed) ? onCreate : undefined}
+                setConfirmedPassword={setPassword}
+                spacing='20px'
+                style={{ marginBottom: '20px' }}
+                title1={t('Password for this account')}
+                title2={t('Repeat the password')}
+                 />
+              )
+              : (<PasswordInput
+                onEnterPress={onCreate}
+                onPassChange={setPassword}
+                style={{ marginBottom: '25px', marginTop: '35px' }}
+                title={t('Password to secure this account')}
+                 />
+              )
+            }
             <DecisionButtons
               cancelButton
               direction='horizontal'
