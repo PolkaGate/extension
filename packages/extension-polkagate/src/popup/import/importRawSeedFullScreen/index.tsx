@@ -11,6 +11,7 @@ import { AccountsStore } from '@polkadot/extension-base/stores';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
+import useIsPasswordCorrect from '@polkadot/extension-polkagate/src/hooks/useIsPasswordCorrect';
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { keyring } from '@polkadot/ui-keyring';
 import { objectSpread } from '@polkadot/util';
@@ -50,6 +51,8 @@ export default function ImportSeed (): React.ReactElement {
   const [password, setPassword] = useState<string>();
   const [step, setStep] = useState(STEP.SEED);
 
+  const { isPasswordCorrect } = useIsPasswordCorrect(password, isBusy);
+
   const chain = useMetadata(account?.genesis, true);
 
   useEffect((): void => {
@@ -59,6 +62,10 @@ export default function ImportSeed (): React.ReactElement {
         : DEFAULT_TYPE
     );
   }, [chain]);
+
+  useEffect((): void => {
+    setError(undefined);
+  }, [password]);
 
   useEffect(() => {
     // eslint-disable-next-line no-void
@@ -104,23 +111,37 @@ export default function ImportSeed (): React.ReactElement {
     }
   }, [t, seed, setAccount, type, name, password]);
 
+  useEffect(() => {
+    (async (): Promise<void> => {
+      // this should always be the case
+      if (name && password && account && isBusy && isPasswordCorrect !== undefined) {
+        if (!isPasswordCorrect) {
+          setIsBusy(false);
+
+          return setError('password error');
+        }
+
+        await resetOnForgotPassword();
+
+        createAccountSuri(name, password, account.suri, type)
+          .then(() => {
+            setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL).catch(console.error);
+            switchToOrOpenTab('/', true);
+          })
+          .catch((error): void => {
+            setIsBusy(false);
+            console.error(error);
+          });
+      }
+    })().catch(console.error);
+  }, [account, isBusy, isPasswordCorrect, name, password, type]);
+
   const onImport = useCallback(async (): Promise<void> => {
     // this should always be the case
     if (name && password && account) {
       setIsBusy(true);
-      await resetOnForgotPassword();
-
-      createAccountSuri(name, password, account.suri, type)
-        .then(() => {
-          setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL).catch(console.error);
-          switchToOrOpenTab('/', true);
-        })
-        .catch((error): void => {
-          setIsBusy(false);
-          console.error(error);
-        });
     }
-  }, [account, name, password, type]);
+  }, [account, name, password]);
 
   const onNameChange = useCallback((enteredName: string): void => {
     setName(enteredName ?? null);
@@ -206,6 +227,7 @@ export default function ImportSeed (): React.ReactElement {
               />
               )
               : (<PasswordInput
+                hasError={!!error}
                 onEnterPress={onImport}
                 onPassChange={setPassword}
                 style={{ marginBottom: '25px', marginTop: '35px' }}

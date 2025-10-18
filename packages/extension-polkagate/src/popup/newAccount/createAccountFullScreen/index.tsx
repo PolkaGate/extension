@@ -55,13 +55,11 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
       return;
     }
 
-    if (!hasNoLocalAccounts) {
-      if (!isPasswordCorrect) {
-        setWrongPassword(!isPasswordCorrect);
-        setIsBusy(false);
+    if (!isPasswordCorrect) {
+      setWrongPassword(!isPasswordCorrect);
+      setIsBusy(false);
 
-        return;
-      }
+      return;
     }
 
     createAccountSuri(name, password, seed, DEFAULT_TYPE)
@@ -98,7 +96,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
       />
       {hasNoLocalAccounts
         ? (<MatchPasswordField
-        //@ts-ignore
+          // @ts-ignore
           onSetPassword={onCreate}
           setConfirmedPassword={setPassword}
           spacing='20px'
