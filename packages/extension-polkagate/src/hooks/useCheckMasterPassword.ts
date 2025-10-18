@@ -19,9 +19,9 @@ async function getAccountsNeedsMigration (localAccounts: AccountJson[], password
 }
 
 export default function useCheckMasterPassword (pass: string | undefined): {
-    accountsNeedMigration: AccountJson[] | undefined,
-    hasLocalAccounts: boolean
-  } {
+  accountsNeedMigration: AccountJson[] | undefined,
+  hasLocalAccounts: boolean
+} {
   const { accounts } = useContext(AccountContext);
   const localAccounts = accounts.filter(({ isExternal }) => !isExternal);
 
@@ -34,10 +34,10 @@ export default function useCheckMasterPassword (pass: string | undefined): {
 
     setAccountsNeedMigration(undefined);
 
-    getAccountsNeedsMigration(localAccounts, pass).then((res) => {
-      setAccountsNeedMigration(res);
-    }).catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    getAccountsNeedsMigration(localAccounts, pass)
+      .then(setAccountsNeedMigration)
+      .catch(console.error);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts?.length, pass]);
 
   return {
