@@ -8,16 +8,16 @@ const START_WITH_PATH = [
   '/accountfs/',
   '/derivefs/',
   '/fullscreen-stake/',
-  '/import/',
   '/governance/',
+  '/import/',
   '/manageIdentity/',
+  '/migratePasswords',
   '/nft/',
   '/proxyManagement/',
   '/send/',
   '/settingsfs/',
   '/stake/',
-  '/socialRecovery/',
-  '/migratePasswords'
+  '/socialRecovery/'
 ] as const;
 
 const ROOT_PATH = [
