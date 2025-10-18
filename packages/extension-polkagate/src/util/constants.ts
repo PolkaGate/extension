@@ -227,7 +227,14 @@ export const AUTO_LOCK_PERIOD_DEFAULT = 15; // minutes
 export const ENDPOINT_TIMEOUT = AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000; // in ms, the duration of time where selected endpoints may remain valid
 
 export const FULLSCREEN_WIDTH = '900px';
-export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
+export const ALLOWED_URL_ON_RESET_PASSWORD = [
+  '/account/restore-json',
+  '/account/import-seed',
+  '/account/import-raw-seed',
+  '/forgot-password',
+  '/reset-wallet',
+  '/migratePasswords'
+];
 
 type ProxyTypeIndex = 'GENERAL' | 'GOVERNANCE' | 'NOMINATION_POOLS' | 'SEND_FUND' | 'STAKING';
 
