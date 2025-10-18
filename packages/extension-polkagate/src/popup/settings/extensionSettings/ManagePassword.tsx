@@ -17,6 +17,7 @@ import { useTranslation } from '../../../components/translate';
 import { type LoginInfo } from '../../passwordManagement/types';
 import WarningBox from '../partials/WarningBox';
 
+// DEPRECATED, and will be removed int he future versions
 export const isPasswordCorrect = async (password: string, isHashed?: boolean) => {
   const hashedPassword = isHashed ? password : blake2AsHex(password, 256);
   const info = await getStorage(STORAGE_KEY.LOGIN_INFO) as LoginInfo;
@@ -34,13 +35,21 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
   const [snackbarText, setSnackbarText] = useState('');
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [readyToGo, setReadyToGo] = useState<boolean>(false);
+  const [missionSucceeded, setMissionSucceeded] = useState<boolean>(false);
 
   const { isPasswordCorrect } = useIsPasswordCorrect(oldPass, readyToGo);
 
-  const onClose = useCallback(() => {
+  const onSnackbarClose = useCallback(() => {
     setShowSnackbar(false);
-    !passwordError && window.location.reload();
-  }, [passwordError]);
+
+    if (missionSucceeded) {
+      window.location.hash = '/';
+    }
+
+    if (!passwordError) {
+      window.location.reload();
+    }
+  }, [missionSucceeded, passwordError]);
 
   const onCurrentPasswordChange = useCallback((pass: string | null): void => {
     setPasswordError(false);
@@ -63,11 +72,12 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
 
     setStorage(STORAGE_KEY.LAST_PASS_CHANGE, Date.now()).catch(console.error);
 
-    accountsChangePasswordAll(oldPass, newPass).then((status) => {
+    accountsChangePasswordAll(oldPass, newPass).then((success) => {
       setPasswordError(false);
       setShowSnackbar(true);
-      setSnackbarText(status ? t('Password has been changed!') : t('Something went wrong while changing password!'));
+      setSnackbarText(success ? t('Password has been changed!') : t('Something went wrong while changing password!'));
       setReadyToGo(false);
+      setMissionSucceeded(success);
     }).catch(console.error);
   }, [isPasswordCorrect, newPass, oldPass, readyToGo, t]);
 
@@ -91,7 +101,7 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
             title={t('Current Password')}
           />
           <MatchPasswordField
-          //@ts-ignore
+            // @ts-ignore
             onSetPassword={onSetPassword}
             setConfirmedPassword={setNewPassword}
             title1={t('New Password')}
@@ -116,7 +126,7 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
         </Stack>
         <MySnackbar
           isError={passwordError}
-          onClose={onClose}
+          onClose={onSnackbarClose}
           open={showSnackbar}
           text={snackbarText}
         />
