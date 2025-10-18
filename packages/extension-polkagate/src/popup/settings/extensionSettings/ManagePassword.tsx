@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
 import useIsPasswordCorrect from '@polkadot/extension-polkagate/src/hooks/useIsPasswordCorrect';
@@ -34,10 +34,10 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarText, setSnackbarText] = useState('');
   const [passwordError, setPasswordError] = useState<boolean>(false);
-  const [readyToGo, setReadyToGo] = useState<boolean>(false);
+  const [isBusy, setBusy] = useState<boolean>(false);
   const [missionSucceeded, setMissionSucceeded] = useState<boolean>(false);
 
-  const { isPasswordCorrect } = useIsPasswordCorrect(oldPass, readyToGo);
+  const { validatePasswordAsync } = useIsPasswordCorrect();
 
   const onSnackbarClose = useCallback(() => {
     setShowSnackbar(false);
@@ -56,34 +56,39 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
     setCurrentPassword(pass || '');
   }, []);
 
-  useEffect(() => {
-    if (!readyToGo || isPasswordCorrect === undefined || !newPass) {
+  const onSetPassword = useCallback(async () => {
+    if (!oldPass || !newPass) {
       return;
     }
+
+    setBusy(true);
+
+    const isPasswordCorrect = await validatePasswordAsync(oldPass);
 
     if (!isPasswordCorrect) {
       setPasswordError(true);
       setShowSnackbar(true);
       setSnackbarText(t('Current password is wrong!'));
-      setReadyToGo(false);
+      setBusy(false);
 
       return;
     }
 
-    setStorage(STORAGE_KEY.LAST_PASS_CHANGE, Date.now()).catch(console.error);
+    try {
+      await setStorage(STORAGE_KEY.LAST_PASS_CHANGE, Date.now());
+      const success = await accountsChangePasswordAll(oldPass, newPass);
 
-    accountsChangePasswordAll(oldPass, newPass).then((success) => {
       setPasswordError(false);
       setShowSnackbar(true);
       setSnackbarText(success ? t('Password has been changed!') : t('Something went wrong while changing password!'));
-      setReadyToGo(false);
+      setBusy(false);
       setMissionSucceeded(success);
-    }).catch(console.error);
-  }, [isPasswordCorrect, newPass, oldPass, readyToGo, t]);
-
-  const onSetPassword = useCallback(() => {
-    setReadyToGo(true);
-  }, []);
+    } catch (error) {
+      console.error(error);
+      setBusy(false);
+      setMissionSucceeded(false);
+    }
+  }, [newPass, oldPass, t, validatePasswordAsync]);
 
   return (
     <Motion>
@@ -101,7 +106,6 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
             title={t('Current Password')}
           />
           <MatchPasswordField
-            // @ts-ignore
             onSetPassword={onSetPassword}
             setConfirmedPassword={setNewPassword}
             title1={t('New Password')}
@@ -109,7 +113,7 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
           />
           <GradientButton
             disabled={!oldPass || !newPass}
-            isBusy={readyToGo}
+            isBusy={isBusy}
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onClick={onSetPassword}
             style={{ flex: 'none', height: '44px', marginTop: isExtension ? '15px' : '25px', width: '100%' }}

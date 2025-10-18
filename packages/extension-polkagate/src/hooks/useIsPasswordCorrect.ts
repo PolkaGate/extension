@@ -1,15 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 
 import { AccountContext } from '../components';
 import { accountsValidate } from '../messaging';
 
-export default function useIsPasswordCorrect (password: string | undefined, ready?: boolean) {
+export default function useIsPasswordCorrect () {
   const { accounts } = useContext(AccountContext);
-
-  const [isCorrect, setCorrect] = useState<boolean>();
 
   const localAccounts = useMemo(
     () => accounts.filter(({ isExternal }) => !isExternal),
@@ -19,23 +17,24 @@ export default function useIsPasswordCorrect (password: string | undefined, read
   const firstLocal = localAccounts[0];
   const hasNoLocalAccounts = localAccounts.length === 0;
 
-  useEffect(() => {
-    setCorrect(undefined);
-
-    if (!password || ready === false || !firstLocal) {
-      return;
+  const validatePasswordAsync = useCallback(async (password: string): Promise<boolean> => {
+    if (!firstLocal) {
+      return true;
     }
 
-    accountsValidate(localAccounts[0].address, password).then((status) => {
-      setCorrect(status);
-    }).catch((error) => {
-      console.error(error);
-      setCorrect(false);
-    });
-  }, [firstLocal, localAccounts, password, ready]);
+    try {
+      const isValid = await accountsValidate(firstLocal.address, password);
+
+      return isValid;
+    } catch (error) {
+      console.error('Password validation failed:', error);
+
+      return false;
+    }
+  }, [firstLocal]);
 
   return {
     hasNoLocalAccounts,
-    isPasswordCorrect: hasNoLocalAccounts ? true : isCorrect
+    validatePasswordAsync
   };
 }

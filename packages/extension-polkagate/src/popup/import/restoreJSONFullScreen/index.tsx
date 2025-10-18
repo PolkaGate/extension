@@ -177,7 +177,7 @@ export default function RestoreJson (): React.ReactElement {
 
     const hasLocalAccounts = selectedAccountsInfo.filter(({ isExternal }) => !isExternal);
 
-    if (hasLocalAccounts) {
+    if (hasLocalAccounts.length > 0) {
       const success = await unlockAllAccounts(password, AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000);
 
       if (success) {

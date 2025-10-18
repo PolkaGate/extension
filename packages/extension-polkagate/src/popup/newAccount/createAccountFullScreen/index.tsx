@@ -31,7 +31,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
   const [password, setPassword] = useState<string>();
   const [isBusy, setIsBusy] = useState<boolean>(false);
   const [isWrongPassword, setWrongPassword] = useState<boolean>(false);
-  const { hasNoLocalAccounts, isPasswordCorrect } = useIsPasswordCorrect(password, isBusy);
+  const { hasNoLocalAccounts, validatePasswordAsync } = useIsPasswordCorrect();
 
   useEffect(() => {
     setWrongPassword(false);
@@ -50,10 +50,13 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
 
   const preConditions = name && password && seed;
 
-  useEffect(() => {
-    if (!preConditions || !isBusy || isPasswordCorrect === undefined) {
+  const onCreate = useCallback(async () => {
+    if (!preConditions) {
       return;
     }
+
+    setIsBusy(true);
+    const isPasswordCorrect = await validatePasswordAsync(password);
 
     if (!isPasswordCorrect) {
       setWrongPassword(!isPasswordCorrect);
@@ -72,15 +75,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
         setIsBusy(false);
         console.error(error);
       });
-  }, [hasNoLocalAccounts, isBusy, isPasswordCorrect, name, navigate, password, preConditions, seed]);
-
-  const onCreate = useCallback(() => {
-    if (!preConditions) {
-      return;
-    }
-
-    setIsBusy(true);
-  }, [preConditions]);
+  }, [name, navigate, password, preConditions, seed, validatePasswordAsync]);
 
   return (
     <Motion style={{ width: '370px' }} variant='slide'>
@@ -96,14 +91,13 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
       />
       {hasNoLocalAccounts
         ? (<MatchPasswordField
-          // @ts-ignore
           onSetPassword={onCreate}
           setConfirmedPassword={setPassword}
           spacing='20px'
           style={{ marginBottom: '20px' }}
           title1={t('Password for this account')}
           title2={t('Repeat the password')}
-           />
+        />
         )
         : (<PasswordInput
           hasError={isWrongPassword}
@@ -111,7 +105,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
           onPassChange={setPassword}
           style={{ marginBottom: '25px', marginTop: '35px' }}
           title={t('Password to secure this account')}
-           />
+        />
         )
       }
       <DecisionButtons
@@ -130,7 +124,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
   );
 }
 
-function CreateAccount (): React.ReactElement {
+function CreateAccount(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [seed, setSeed] = useState<null | string>(null);

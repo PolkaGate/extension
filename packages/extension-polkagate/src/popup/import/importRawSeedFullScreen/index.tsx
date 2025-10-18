@@ -50,7 +50,7 @@ export default function ImportSeed (): React.ReactElement {
   const [password, setPassword] = useState<string>();
   const [step, setStep] = useState(STEP.SEED);
 
-  const { isPasswordCorrect } = useIsPasswordCorrect(password, isBusy);
+  const { validatePasswordAsync } = useIsPasswordCorrect();
 
   const chain = useMetadata(account?.genesis, true);
 
@@ -110,37 +110,31 @@ export default function ImportSeed (): React.ReactElement {
     }
   }, [t, seed, setAccount, type, name, password]);
 
-  useEffect(() => {
-    (async (): Promise<void> => {
-      // this should always be the case
-      if (name && password && account && isBusy && isPasswordCorrect !== undefined) {
-        if (!isPasswordCorrect) {
-          setIsBusy(false);
-
-          return setError('password error');
-        }
-
-        await resetOnForgotPassword();
-
-        try {
-          await createAccountSuri(name, password, account.suri, type);
-          await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL);
-          await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true);
-          await navigate('/');
-        } catch (error) {
-          setIsBusy(false);
-          console.error(error);
-        };
-      }
-    })().catch(console.error);
-  }, [account, isBusy, isPasswordCorrect, name, navigate, password, type]);
-
-  const onImport = useCallback(() => {
-    // this should always be the case
+  const onImport = useCallback(async () => {
     if (name && password && account) {
       setIsBusy(true);
+
+      const isPasswordCorrect = await validatePasswordAsync(password);
+
+      if (!isPasswordCorrect) {
+        setIsBusy(false);
+
+        return setError('password error');
+      }
+
+      await resetOnForgotPassword();
+
+      try {
+        await createAccountSuri(name, password, account.suri, type);
+        await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL);
+        await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true);
+        await navigate('/');
+      } catch (error) {
+        setIsBusy(false);
+        console.error(error);
+      }
     }
-  }, [account, name, password]);
+  }, [account, name, navigate, password, type, validatePasswordAsync]);
 
   const onNameChange = useCallback((enteredName: string): void => {
     setName(enteredName ?? null);
