@@ -439,6 +439,10 @@ export default class Extension {
           throw new Error('Unable to find pair');
         }
 
+        if (!pair.isLocked) {
+          pair.lock();
+        }
+
         if (pair.isLocked) {
           pair.decodePkcs8(password);
         }

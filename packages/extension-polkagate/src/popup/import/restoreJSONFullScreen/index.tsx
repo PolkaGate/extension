@@ -6,7 +6,7 @@ import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 
 import { Stack, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
@@ -16,7 +16,7 @@ import { AUTO_LOCK_PERIOD_DEFAULT, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/e
 import { stringToU8a, u8aToString } from '@polkadot/util';
 import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
-import { ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
+import { AccountContext, ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore, unlockAllAccounts, updateMeta } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
@@ -33,6 +33,7 @@ export default function RestoreJson (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
+  const { accounts: maybeExistingAccounts } = useContext(AccountContext);
 
   const [isBusy, setIsBusy] = useState(false);
   const [stepOne, setStep] = useState(true);
@@ -42,31 +43,27 @@ export default function RestoreJson (): React.ReactElement {
   const [requirePassword, setRequirePassword] = useState(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [selectedAccountsInfo, setSelectedAccountsInfo] = useState<JsonGetAccountInfo[]>([]);
-  const [showCheckbox, setShowCheckbox] = useState<boolean>(false);
 
   // don't use the info from the file directly
   // rather use what comes from the background from jsonGetAccountInfo
   const [file, setFile] = useState<KeyringPair$Json | KeyringPairs$Json | undefined>(undefined);
 
-  const areAllSelected = useMemo(() =>
-    selectedAccountsInfo.length === accountsInfo.length
-    , [selectedAccountsInfo.length, accountsInfo.length]);
+  const showCheckbox = accountsInfo.length > 1;
+  const areAllSelected = selectedAccountsInfo.length === accountsInfo.length;
 
   const handleCheck = useCallback((_event: boolean, address: string) => {
-    const selectedAccount = accountsInfo.find((account) => account.address === address);
+    const selectedAccount = accountsInfo.find((a) => a.address === address);
 
     if (!selectedAccount) {
       return;
     }
 
-    const isAlreadySelected = selectedAccountsInfo.some((account) => account.address === address);
-
-    const updatedSelectedAccountsInfo = isAlreadySelected
-      ? selectedAccountsInfo.filter((account) => account.address !== address) // remove an item on deselect
-      : [...selectedAccountsInfo, selectedAccount]; // add an item on select
-
-    setSelectedAccountsInfo(updatedSelectedAccountsInfo);
-  }, [accountsInfo, selectedAccountsInfo, setSelectedAccountsInfo]);
+    setSelectedAccountsInfo((prev) =>
+      prev.some((a) => a.address === address) // if is already selected
+        ? prev.filter((a) => a.address !== address) // remove the item on deselect
+        : [...prev, selectedAccount] // add an item on select
+    );
+  }, [accountsInfo, setSelectedAccountsInfo]);
 
   const passChange = useCallback((pass: string): void => {
     setPassword(pass);
@@ -94,21 +91,22 @@ export default function RestoreJson (): React.ReactElement {
 
     if (isKeyringPairs$Json(json)) {
       setRequirePassword(true);
-      setShowCheckbox(true);
-      const accounts = json.accounts.map((account) => ({
-        address: account.address,
-        genesisHash: account.meta.genesisHash,
-        isExternal: account.meta.isExternal,
-        name: account.meta.name ?? 'Unknown'
+      const accs = json.accounts.map(({ address, meta: { genesisHash, isExternal, name } }) => ({
+        address,
+        genesisHash,
+        isExternal,
+        name: name ?? 'Unknown'
       } as JsonGetAccountInfo));
 
-      setAccountsInfo(accounts);
-      setSelectedAccountsInfo(accounts);
+      setAccountsInfo(accs);
+      setSelectedAccountsInfo(accs);
     } else {
       setRequirePassword(true);
-      setShowCheckbox(false);
       jsonGetAccountInfo(json)
-        .then((accountInfo) => setAccountsInfo((old) => [...old, accountInfo]))
+        .then((accountInfo) => {
+          setSelectedAccountsInfo([accountInfo]);
+          setAccountsInfo([accountInfo]);
+        })
         .catch((e) => {
           setFileError(true);
           console.error(e);
@@ -151,7 +149,6 @@ export default function RestoreJson (): React.ReactElement {
     }
 
     setIsBusy(true);
-    let hadPasswordError = false;
 
     try {
       await resetOnForgotPassword();
@@ -163,37 +160,39 @@ export default function RestoreJson (): React.ReactElement {
       }
 
       await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.ALL);
+
+      // handle master password
+      const localAccountsToUnlock = [
+        ...selectedAccountsInfo,
+        ...maybeExistingAccounts as JsonGetAccountInfo[]
+      ].filter((a, index, self) =>
+        !a.isExternal && self.findIndex((x) => x.address === a.address) === index
+      );
+
+      if (localAccountsToUnlock.length > 0) {
+        const success = await unlockAllAccounts(password, AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000);
+
+        if (success) {
+          setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
+          navigate('/') as void;
+        } else {
+          navigate('/migratePasswords') as void;
+        }
+      }
     } catch (error) {
       console.error(error);
       setIsPasswordError(true);
-      hadPasswordError = true;
+      setIsBusy(false);
     }
-
-    if (hadPasswordError) {
-       setIsBusy(false);
-
-      return;
-    }
-
-    const hasLocalAccounts = selectedAccountsInfo.filter(({ isExternal }) => !isExternal);
-
-    if (hasLocalAccounts.length > 0) {
-      const success = await unlockAllAccounts(password, AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000);
-
-      if (success) {
-        setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
-        navigate('/') as void;
-      } else {
-       navigate('/migratePasswords') as void;
-      }
-    }
-  }, [file, requirePassword, password, handleKeyringPairsJson, handleRegularJson, selectedAccountsInfo, navigate]);
+  }, [file, requirePassword, password, selectedAccountsInfo, maybeExistingAccounts, handleKeyringPairsJson, handleRegularJson, navigate]);
 
   const onSelectDeselectAll = useCallback(() => {
-    areAllSelected
-      ? setSelectedAccountsInfo([]) // deselect all
-      : setSelectedAccountsInfo(accountsInfo); // select all
-  }, [areAllSelected, accountsInfo, setSelectedAccountsInfo]);
+    setSelectedAccountsInfo((prev) =>
+      prev.length === accountsInfo.length
+        ? [] // deselect all
+        : accountsInfo// select all
+    );
+  }, [accountsInfo, setSelectedAccountsInfo]);
 
   const onBack = useCallback(() => {
     setFile(undefined);
