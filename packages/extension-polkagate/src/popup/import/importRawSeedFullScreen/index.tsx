@@ -21,7 +21,6 @@ import { DecisionButtons, MatchPasswordField, Motion, MyTextField, PasswordInput
 import { useLocalAccounts, useMetadata, useTranslation } from '../../../hooks';
 import { createAccountSuri } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
-import { switchToOrOpenTab } from '../../../util/switchToOrOpenTab';
 import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
 import MyPhraseArea from '../importSeedFullScreen/MyPhraseArea';
 
@@ -123,20 +122,20 @@ export default function ImportSeed (): React.ReactElement {
 
         await resetOnForgotPassword();
 
-        createAccountSuri(name, password, account.suri, type)
-          .then(() => {
-            setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL).catch(console.error);
-            switchToOrOpenTab('/', true);
-          })
-          .catch((error): void => {
-            setIsBusy(false);
-            console.error(error);
-          });
+        try {
+          await createAccountSuri(name, password, account.suri, type);
+          await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL);
+          await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true);
+          await navigate('/');
+        } catch (error) {
+          setIsBusy(false);
+          console.error(error);
+        };
       }
     })().catch(console.error);
-  }, [account, isBusy, isPasswordCorrect, name, password, type]);
+  }, [account, isBusy, isPasswordCorrect, name, navigate, password, type]);
 
-  const onImport = useCallback(async (): Promise<void> => {
+  const onImport = useCallback(() => {
     // this should always be the case
     if (name && password && account) {
       setIsBusy(true);
@@ -147,7 +146,7 @@ export default function ImportSeed (): React.ReactElement {
     setName(enteredName ?? null);
   }, []);
 
-  const onCancel = useCallback(() => switchToOrOpenTab('/', true), []);
+  const onCancel = useCallback(() => navigate('/') as void, [navigate]);
   const onContinue = useCallback(() => {
     setStep(STEP.DETAIL);
   }, []);
