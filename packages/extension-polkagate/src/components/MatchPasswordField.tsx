@@ -90,7 +90,7 @@ function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassw
   const handleConfirm = useCallback(() => {
     if (passwordStatus === PASSWORD_STATUS.MATCHED && onSetPassword) {
       try {
-        onSetPassword()?.catch(console.error);
+        onSetPassword();
       } catch (error) {
         console.error('Error setting password:', error);
       }
