@@ -3,7 +3,7 @@
 
 import { MoreVert } from '@mui/icons-material';
 import { ClickAwayListener, Grid, type SxProps, type Theme } from '@mui/material';
-import { ArrowCircleDown2, Data, DocumentDownload, Edit2, LogoutCurve, Setting4 } from 'iconsax-react';
+import { ArrowCircleDown2, Data, DocumentDownload, Edit2, LogoutCurve, Setting3 } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import DropMenuContent from '@polkadot/extension-polkagate/src/components/DropMenuContent';
@@ -94,7 +94,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', isExternal, na
         isLine: true
       },
       {
-        Icon: Setting4,
+        Icon: Setting3,
         pathname: '/accounts',
         text: t('Account Settings'),
         value: `/settings-account/${address}`
