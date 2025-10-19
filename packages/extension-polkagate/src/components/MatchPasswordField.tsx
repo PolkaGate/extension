@@ -10,7 +10,7 @@ import { useTranslation } from '../hooks';
 import { PasswordInput } from '.';
 
 interface Props {
-  onSetPassword?: (() => Promise<void>) | (() => void);
+  onSetPassword?: () => unknown;
   statusSetter?: React.Dispatch<React.SetStateAction<PASSWORD_STATUS | undefined>>;
   hashPassword?: boolean;
   setConfirmedPassword: React.Dispatch<React.SetStateAction<string | undefined>>;
