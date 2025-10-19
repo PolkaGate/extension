@@ -30,7 +30,6 @@ export default function ImportSeed (): React.ReactElement {
 
   const [seed, setSeed] = useState<string>('');
   const [account, setAccount] = useState<AccountInfo | null | undefined>(null);
-  const [address, setAddress] = useState('');
   const [path, setPath] = useState<string | null>(null);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
 
@@ -89,7 +88,6 @@ export default function ImportSeed (): React.ReactElement {
     } else {
       setSeed('');
       setAccount(null);
-      setAddress('');
       setPath(null);
       setShowAdvanced(false);
       setName(undefined);
@@ -192,7 +190,7 @@ export default function ImportSeed (): React.ReactElement {
             <DecisionButtons
               cancelButton
               direction='horizontal'
-              disabled={!password || !name || !address || !account}
+              disabled={!password || !name || !account}
               isBusy={isBusy}
               onPrimaryClick={onCreate}
               onSecondaryClick={onCancel}
