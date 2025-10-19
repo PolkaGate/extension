@@ -65,16 +65,15 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
       return;
     }
 
-    createAccountSuri(name, password, seed, DEFAULT_TYPE)
-      .then(() => {
-        setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL).catch(console.error);
-        setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
-        navigate('/') as void;
-      })
-      .catch((error: Error): void => {
-        setIsBusy(false);
-        console.error(error);
-      });
+    try {
+      await createAccountSuri(name, password, seed, DEFAULT_TYPE);
+      await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL).catch(console.error);
+      await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
+      await navigate('/');
+    } catch (error) {
+      setIsBusy(false);
+      console.error(error);
+    }
   }, [name, navigate, password, preConditions, seed, validatePasswordAsync]);
 
   return (
@@ -97,7 +96,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
           style={{ marginBottom: '20px' }}
           title1={t('Password for this account')}
           title2={t('Repeat the password')}
-        />
+           />
         )
         : (<PasswordInput
           hasError={isWrongPassword}
@@ -105,7 +104,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
           onPassChange={setPassword}
           style={{ marginBottom: '25px', marginTop: '35px' }}
           title={t('Password to secure this account')}
-        />
+           />
         )
       }
       <DecisionButtons
@@ -124,7 +123,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
   );
 }
 
-function CreateAccount(): React.ReactElement {
+function CreateAccount (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const [seed, setSeed] = useState<null | string>(null);
