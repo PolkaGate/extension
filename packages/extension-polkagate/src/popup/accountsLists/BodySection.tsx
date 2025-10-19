@@ -105,7 +105,7 @@ function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConf
       }
       <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: 'calc(100% - 50px)', minHeight: '453px', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
         <VelvetBox childrenStyle={{ borderRadius: '16px', overflow: 'hidden' }} style={{ margin: '5px 0 15px' }}>
-          <Stack ref={refContainer} style={{ maxHeight: '380px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
+          <Stack ref={refContainer} style={{ height: 'max-content', maxHeight: '380px', minHeight: '95px', overflowY: 'auto', position: 'relative', zIndex: 1 }}>
             {Object.keys(filteredCategorizedAccounts).length > 0 && (
               <>
                 {Object.entries(filteredCategorizedAccounts).map(([label, accounts], profileIndex) => {
