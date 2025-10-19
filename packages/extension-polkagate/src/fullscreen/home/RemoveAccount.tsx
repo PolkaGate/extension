@@ -56,13 +56,14 @@ function RemoveAccount ({ address, onClose }: Props): React.ReactElement {
     cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
   }, []);
 
-  const onRemove = useCallback(() => {
+  const onRemove = useCallback(async () => {
     try {
       if (!account || (account?.isExternal && !acknowledged) || (!account?.isExternal && !password)) {
         return;
       }
 
       setIsBusy(true);
+      await new Promise(requestAnimationFrame);
 
       if (!account.isExternal) {
         const signer = keyring.getPair(account.address);

@@ -53,13 +53,14 @@ function RemoveAccount ({ onClose, onRemoved, open }: Props): React.ReactElement
     onRemoved?.();
   }, [handleClose, onRemoved]);
 
-  const onRemove = useCallback(() => {
+  const onRemove = useCallback(async () => {
     try {
       if (!account || (account?.isExternal && !acknowledged) || (!account?.isExternal && !password)) {
         return;
       }
 
       setIsBusy(true);
+      await new Promise(requestAnimationFrame);
 
       if (!account.isExternal) {
         const signer = keyring.getPair(account.address);
