@@ -3,16 +3,13 @@
 
 import { Stack, Typography } from '@mui/material';
 import { User } from 'iconsax-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { AccountsStore } from '@polkadot/extension-base/stores';
-import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
-import keyring from '@polkadot/ui-keyring';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AddressInput, DecisionButtons, MyTextField } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -24,18 +21,12 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function AddWatchOnlyFullScreen(): React.ReactElement {
+export default function AddWatchOnlyFullScreen (): React.ReactElement {
   const { t } = useTranslation();
 
   const [isBusy, setIsBusy] = useState(false);
   const [realAddress, setRealAddress] = useState<string | null | undefined>();
   const [name, setName] = useState<string | null | undefined>();
-
-  useEffect(() => {
-    cryptoWaitReady().then(() => {
-      keyring.loadAll({ store: new AccountsStore() });
-    }).catch(() => null);
-  }, []);
 
   const onAdd = useCallback(() => {
     if (name && realAddress) {
