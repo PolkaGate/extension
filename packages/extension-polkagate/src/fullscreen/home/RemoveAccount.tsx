@@ -138,7 +138,7 @@ function RemoveAccount ({ address, onClose }: Props): React.ReactElement {
               onEnterPress={onRemove}
               onPassChange={onPassChange}
               style={{ marginBottom: '25px', marginTop: '35px' }}
-              title={t('Password for {{accountName}}', { replace: { accountName: account?.name } })}
+              title={t('Password')}
             />)
         }
         <DecisionButtons
