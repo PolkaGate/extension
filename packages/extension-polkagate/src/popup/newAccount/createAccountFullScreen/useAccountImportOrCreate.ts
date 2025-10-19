@@ -72,6 +72,7 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({
       await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL);
       await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true);
       navigate(onSuccessPath) as void;
+      window.location.reload();
     } catch (error) {
       setIsBusy(false);
       console.error(error);
