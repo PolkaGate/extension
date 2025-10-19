@@ -73,7 +73,7 @@ export function AccountsListManagement ({ defaultMode = PROFILE_MODE.NONE, onDon
 
 function AccountsLists (): React.ReactElement {
   return (
-    <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
+    <Grid alignContent='flex-start' container sx={{ height: '100%', overflow: 'hidden', position: 'relative' }}>
       <UserDashboardHeader homeType='default' />
       <AccountsListManagement />
     </Grid>

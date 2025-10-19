@@ -6,11 +6,12 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 import { Box, Container, Stack } from '@mui/material';
 import { AddCircle, Trash } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { AccountContext, ActionButton, ActionContext, FadeOnScroll, GradientButton, MyTooltip } from '../../components';
+import { AccountContext, ActionButton, FadeOnScroll, GradientButton, MyTooltip } from '../../components';
 import { AccountProfileLabel } from '../../fullscreen/components';
 import { useCategorizedAccountsInProfiles, useSelectedAccount, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
@@ -48,7 +49,7 @@ interface Props {
 function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConfirmation }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts: flatAccounts } = useContext(AccountContext);
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
   const refContainer = useRef<HTMLDivElement>(null);
   const selectedAccount = useSelectedAccount();
   const { categorizedAccounts: initialCategorizedAccounts } = useCategorizedAccountsInProfiles();
@@ -64,9 +65,9 @@ function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConf
 
   useEffect(() => {
     if (flatAccounts.length === 0) { // when all accounts/profiles are deleted
-      onAction('/');
+      navigate('/') as void;
     }
-  }, [flatAccounts.length, onAction]);
+  }, [flatAccounts.length, navigate]);
 
   const onCreateClick = useCallback(() => {
     windowOpen('/account/create').catch(console.error);
@@ -103,7 +104,7 @@ function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConf
         <BackDrop setMode={setMode} />
       }
       <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: 'calc(100% - 50px)', minHeight: '453px', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
-        <VelvetBox style={{ margin: '5px 0 15px' }}>
+        <VelvetBox childrenStyle={{ borderRadius: '16px', overflow: 'hidden' }} style={{ margin: '5px 0 15px' }}>
           <Stack ref={refContainer} style={{ maxHeight: '380px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
             {Object.keys(filteredCategorizedAccounts).length > 0 && (
               <>
