@@ -102,7 +102,7 @@ function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConf
       {isProfileDropDownOpen &&
         <BackDrop setMode={setMode} />
       }
-      <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: 'calc(100% - 50px)', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
+      <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: 'calc(100% - 50px)', minHeight: '453px', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
         <VelvetBox style={{ margin: '5px 0 15px' }}>
           <Stack ref={refContainer} style={{ maxHeight: '380px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
             {Object.keys(filteredCategorizedAccounts).length > 0 && (

@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.13.2](https://github.com/polkagate/extension/compare/v1.13.1...v1.13.2) (2025-10-19)
+
+
+### Bug Fixes
+
+* add fallback to redirect unmatched routes to home ([#1967](https://github.com/polkagate/extension/issues/1967)) ([e2062a8](https://github.com/polkagate/extension/commit/e2062a8f19d4dd3629d522138917995f180a41e2))
+
 # [1.13.0](https://github.com/polkagate/extension/compare/v1.12.2...v1.13.0) (2025-10-08)
 
 
