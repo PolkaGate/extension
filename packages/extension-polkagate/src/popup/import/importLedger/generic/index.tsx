@@ -104,7 +104,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
   const name = useCallback((index: number, offset?: number) => offset ? `Ledger ${index}-${offset}` : `Ledger ${index}`, []);
 
   const handleCreateAccount = useCallback((address: string, index: number, offset?: number) => {
-    createAccountHardware(address, 'ledger', index, offset ?? 0, name(index, offset), POLKADOT_GENESIS)
+    createAccountHardware(address, 'ledger', index, offset ?? 0, name(index, offset))
       .then(() => {
         const metaData = JSON.stringify({ isGeneric: true });
 

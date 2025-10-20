@@ -222,7 +222,7 @@ export interface RequestAccountCreateHardware {
   accountIndex: number;
   address: string;
   addressOffset: number;
-  genesisHash: HexString;
+  genesisHash: HexString | null | undefined ;
   hardwareType: string;
   name: string;
 }

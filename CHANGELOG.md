@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.13.3](https://github.com/polkagate/extension/compare/v1.13.2...v1.13.3) (2025-10-20)
+
+
+### Bug Fixes
+
+* allow hardware accounts to appear on all chains by removing genesisHash binding during creation ([ffa3324](https://github.com/polkagate/extension/commit/ffa3324ee61df3a60328637332b15066406d758d))
+
 ## [1.13.2](https://github.com/polkagate/extension/compare/v1.13.1...v1.13.2) (2025-10-19)
 
 

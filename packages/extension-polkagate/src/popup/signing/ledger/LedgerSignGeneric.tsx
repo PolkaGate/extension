@@ -27,8 +27,8 @@ interface Props {
 
 function LedgerSignGeneric ({ account, disabled, error, onCancel, onSignature, payload, setError, style }: Props): React.ReactElement<Props> {
   const { accountIndex, addressOffset, isGeneric } = account;
-  const genesisHash = payload?.genesisHash;
-  const { api } = useChainInfo(genesisHash);
+  const payloadGenesis = payload?.genesisHash;
+  const { api } = useChainInfo(payloadGenesis);
   const metadataProof = useMetadataProof(api, payload);
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
@@ -38,14 +38,14 @@ function LedgerSignGeneric ({ account, disabled, error, onCancel, onSignature, p
       return POLKADOT_SLIP44;
     }
 
-    if (genesisHash) {
-      const ledgerChain = ledgerChains.find(({ genesisHash }) => genesisHash.includes(genesisHash as unknown as HexString));
+    if (payloadGenesis) {
+      const ledgerChain = ledgerChains.find(({ genesisHash }) => genesisHash.includes(payloadGenesis));
 
       return ledgerChain?.slip44 ?? null;
     }
 
     return null;
-  }, [isGeneric, genesisHash]);
+  }, [isGeneric, payloadGenesis]);
 
   const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
 
@@ -64,6 +64,14 @@ function LedgerSignGeneric ({ account, disabled, error, onCancel, onSignature, p
 
   const onSignLedger = useCallback(() => {
     if (!ledger || !payload || !onSignature || !api || !metadataProof) {
+      console.log('LedgerSignGeneric prerequisites:', {
+        api: !!api,
+        ledger: !!ledger,
+        metadataProof: !!metadataProof,
+        onSignature: !!onSignature,
+        payload: !!payload
+      });
+
       return;
     }
 
@@ -80,7 +88,7 @@ function LedgerSignGeneric ({ account, disabled, error, onCancel, onSignature, p
         setError(e.message);
         setIsBusy(false);
       });
-  }, [accountIndex, addressOffset, ledger, onSignature, payload, setError, api, metadataProof]);
+  }, [ledger, payload, onSignature, api, metadataProof, setError, accountIndex, addressOffset]);
 
   return (
     <LedgerButtons

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { GenericExtrinsicPayload, Option } from '@polkadot/types';
+import type { GenericExtrinsicPayload, Option, u16, u32 } from '@polkadot/types';
 import type { OpaqueMetadata } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 
@@ -16,7 +16,7 @@ export interface MetadataProof {
   txMetadata: Uint8Array
 }
 
-export default function useMetadataProof(api: ApiPromise | undefined, payload: SignerPayloadJSON | undefined): MetadataProof | undefined {
+export default function useMetadataProof (api: ApiPromise | undefined, payload: SignerPayloadJSON | undefined): MetadataProof | undefined {
   const [proof, setProof] = useState<MetadataProof>();
 
   const apiGenesisHash = api?.genesisHash.toHex();
@@ -31,12 +31,15 @@ export default function useMetadataProof(api: ApiPromise | undefined, payload: S
         payload.signedExtensions.push('CheckMetadataHash');
       }
 
-      // const versions = await api.call['metadata']['metadataVersions']() as unknown as u32[]; // returns: [14, 15, 4294967295] not on all chains
-      // if (!latestMetadataVersion || latestMetadataVersion.toNumber() < 15) {
-      //   throw new Error('Cant fetch the latest version of the chain metadata');
-      // }
+      let latestMetadataVersion = new BN(15);
 
-      const latestMetadataVersion = new BN(15);
+      const versions = await api.call['metadata']['metadataVersions']() as unknown as u32[]; // may returns: [14, 15, 4294967295] not on all chains
+      const maybeLatestVersion = versions.at(-1);
+
+      if (maybeLatestVersion?.lten(99)) {
+        latestMetadataVersion = new BN(maybeLatestVersion);
+      }
+
       const maybeHexMetadata = await api.call['metadata']['metadataAtVersion']<Option<OpaqueMetadata>>(latestMetadataVersion);
 
       if (maybeHexMetadata.isNone) {
@@ -48,7 +51,7 @@ export default function useMetadataProof(api: ApiPromise | undefined, payload: S
       const merkleizedMetadata = merkleizeMetadata(
         maybeHexMetadata.toHex(),
         {
-          base58Prefix: (api.consts['system']['ss58Prefix'] as any).toNumber(),
+          base58Prefix: (api.consts['system']['ss58Prefix'] as u16).toNumber(),
           decimals: api.registry.chainDecimals[0],
           specName: specName.toString(),
           specVersion: specVersion.toNumber(),
@@ -66,7 +69,7 @@ export default function useMetadataProof(api: ApiPromise | undefined, payload: S
     };
 
     getProof().catch(console.error);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiGenesisHash, payload?.address]);
 
   return proof;
