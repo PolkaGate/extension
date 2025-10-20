@@ -23,19 +23,19 @@ function WaitScreen ({ isModal }: Props): React.ReactElement {
   const [text, setText] = useState({ title: t('We are working on your transaction.'), inColor: t('working') });
 
   const handleTxEvent = useCallback((s: CustomEventInit<unknown>) => {
-    const event = s.detail;
+    const { detail } = s;
 
-    if (event) {
-      const state = Object.keys(event)[0];
+    if (detail) {
+      const state = detail as string;
 
-      switch (state) {
+      switch (state.toLowerCase()) {
         case ('ready'):
           setText({ title: t('The transaction is ready.'), inColor: t('ready') });
           break;
         case ('broadcast'):
           setText({ title: t('The transaction has been sent.'), inColor: t('sent') });
           break;
-        case ('inBlock'):
+        case ('inblock'):
           setText({ title: t('The transaction is now on-chain.'), inColor: t('on-chain') });
           break;
         default:

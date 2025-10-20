@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { SignerOptions, SubmittableExtrinsic } from '@polkadot/api/types/submittable';
-import type { GenericExtrinsicPayload } from '@polkadot/types';
-import type { ISubmittableResult, SignerPayloadJSON } from '@polkadot/types/types';
-import type { Proxy, TxResult } from '../util/types';
+import type { SignerOptions } from '@polkadot/api/types/submittable';
+import type { SignerPayloadJSON } from '@polkadot/types/types';
+import type { HexString } from '@polkadot/util/types';
+import type { Proxy } from '../util/types';
 import type { DecisionButtonProps } from './DecisionButtons';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
@@ -16,8 +16,6 @@ import { BeatLoader } from 'react-spinners';
 import { useIsBlueish, useTranslation } from '../hooks';
 import { getSignature } from '../messaging';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
-import { submitExtrinsic } from '../util/api';
-import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
 import { DecisionButtons, GradientButton, MyTooltip } from '.';
 
 interface UseProxyProps {
@@ -64,20 +62,17 @@ export interface SignUsingPasswordProps {
   direction?: 'horizontal' | 'vertical';
   disabled?: boolean;
   decisionButtonProps?: Partial<DecisionButtonProps>
-  handleTxResult: (txResult: TxResult) => void;
   onCancel: () => void;
+  onSignature: ({ signature }: { signature: HexString; }) => Promise<void>;
   onUseProxy: (() => void) | undefined;
-  preparedTransaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
   proxies: Proxy[] | undefined;
-  setFlowStep: React.Dispatch<React.SetStateAction<TransactionFlowStep>>;
   signerOption: Partial<SignerOptions> | undefined;
   style?: React.CSSProperties;
   withCancel: boolean | undefined;
   signerPayload: SignerPayloadJSON | undefined;
-  payload: GenericExtrinsicPayload | undefined;
 }
 
-function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', disabled, handleTxResult, onCancel, onUseProxy, payload, preparedTransaction, proxies, setFlowStep, signerOption, signerPayload, style, withCancel }: SignUsingPasswordProps) {
+function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', disabled, onCancel, onSignature, onUseProxy, proxies, signerOption, signerPayload, style, withCancel }: SignUsingPasswordProps) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
@@ -86,7 +81,7 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
 
   const onConfirm = useCallback(async () => {
     try {
-      if (!api || !preparedTransaction || !signerPayload?.address || !payload) {
+      if (!signerPayload) {
         return;
       }
 
@@ -94,31 +89,21 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
       const signature = await getSignature(signerPayload);
 
       if (!signature) {
+        // TODO: show login page
         throw new Error('account is locked need to login again!');
       }
 
-      setFlowStep(TRANSACTION_FLOW_STEPS.WAIT_SCREEN);
-
+      // TODO: how use signerOption while using send()
       console.log('signerOption:', signerOption);
 
-      // TODO: how use signerOption while using send()
-      const txResult = await submitExtrinsic(
-        signerPayload.address,
-        api,
-        preparedTransaction,
-        payload.toHex(),
-        signature
-      );
-
-      setFlowStep(TRANSACTION_FLOW_STEPS.CONFIRMATION);
+      await onSignature({ signature });
       setBusy(false);
-      handleTxResult(txResult);
     } catch (e) {
       console.log('error:', e);
       setHasError(true);
       setBusy(false);
     }
-  }, [api, handleTxResult, payload, preparedTransaction, setFlowStep, signerOption, signerPayload]);
+  }, [onSignature, signerOption, signerPayload]);
 
   const confirmText = !api ? t('Loading ...') : t('Approve');
 
