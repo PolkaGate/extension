@@ -2,23 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Collapse, Stack, Typography } from '@mui/material';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { More, User } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
-import useIsPasswordCorrect from '@polkadot/extension-polkagate/src/hooks/useIsPasswordCorrect';
-import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
-import { objectSpread } from '@polkadot/util';
 
 import { DecisionButtons, MatchPasswordField, Motion, MyTextField, PasswordInput } from '../../../components';
-import { useLocalAccounts, useMetadata, useTranslation } from '../../../hooks';
-import { createAccountSuri, validateSeed } from '../../../messaging';
+import { useLocalAccounts, useTranslation } from '../../../hooks';
+import { validateSeed } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
-import { resetOnForgotPassword } from '../../newAccount/createAccountFullScreen/resetAccounts';
+import { STEP } from '../../newAccount/createAccountFullScreen/types';
+import { useAccountImportOrCreate } from '../../newAccount/createAccountFullScreen/useAccountImportOrCreate';
 import MyPhraseArea from './MyPhraseArea';
 
 export interface AccountInfo {
@@ -27,43 +23,27 @@ export interface AccountInfo {
   suri: string;
 }
 
-enum STEP {
-  SEED,
-  DETAIL
-}
-
 export default function ImportSeed (): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const localAccounts = useLocalAccounts();
 
-  const [isBusy, setIsBusy] = useState(false);
   const [seed, setSeed] = useState<string>('');
-  const [error, setError] = useState<string | undefined>();
-  const [account, setAccount] = useState<AccountInfo | null>(null);
-  const [address, setAddress] = useState('');
-  const [type, setType] = useState(DEFAULT_TYPE);
+  const [account, setAccount] = useState<AccountInfo | null | undefined>(null);
   const [path, setPath] = useState<string | null>(null);
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
-  const [name, setName] = useState<string | null | undefined>();
-  const [password, setPassword] = useState<string>();
-  const [step, setStep] = useState(STEP.SEED);
 
-  const { validatePasswordAsync } = useIsPasswordCorrect();
-
-  const chain = useMetadata(account?.genesis, true);
-
-  useEffect((): void => {
-    setType(
-      chain && chain.definition.chainType === 'ethereum'
-        ? 'ethereum'
-        : DEFAULT_TYPE
-    );
-  }, [chain]);
-
-  useEffect((): void => {
-    setError(undefined);
-  }, [password]);
+  const { error,
+    isBusy,
+    name,
+    onConfirm,
+    onValidateSeed,
+    password,
+    setError,
+    setName,
+    setPassword,
+    setStep,
+    step } = useAccountImportOrCreate({ validator: validateSeed });
 
   useEffect(() => {
     if (!seed) {
@@ -75,60 +55,32 @@ export default function ImportSeed (): React.ReactElement {
 
     const suri = `${seed || ''}${path || ''}`;
 
-    validateSeed(suri, type)
-      .then((validatedAccount) => {
-        setError(undefined);
-        setAddress(validatedAccount.address);
-        setAccount(
-          objectSpread<AccountInfo>({}, validatedAccount, { POLKADOT_GENESIS, type })
-        );
-      })
-      .catch(() => {
-        setAddress('');
-        setAccount(null);
-        setError(path
-          ? t('Invalid recovery phrase or derivation path')
-          : t('Invalid recovery phrase')
-        );
-      });
-  }, [t, seed, path, setAccount, type]);
+    onValidateSeed(suri, DEFAULT_TYPE)
+      .then((acc) => setAccount(acc)).catch(console.error);
+  }, [t, seed, path, setAccount, onValidateSeed, setError]);
 
   const onCreate = useCallback(async () => {
-    // this should always be the case
-    if (name && password && account) {
-      setIsBusy(true);
-      const isPasswordCorrect = await validatePasswordAsync(password);
-
-      if (!isPasswordCorrect) {
-        setIsBusy(false);
-
-        return setError('password error');
-      }
-
-      await resetOnForgotPassword();
-
-      try {
-        await createAccountSuri(name, password, account.suri, type);
-        await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL);
-        await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true);
-        await navigate('/');
-      } catch (error) {
-        setIsBusy(false);
-        console.error(error);
-      }
+    if (!account?.suri) {
+      return;
     }
-  }, [account, name, navigate, password, type, validatePasswordAsync]);
+
+    try {
+      await onConfirm(account.suri);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [account, onConfirm]);
 
   const onNameChange = useCallback((enteredName: string): void => {
     setName(enteredName ?? null);
-  }, []);
+  }, [setName]);
 
-  const onCancel = useCallback(() => navigate('/'), [navigate]);
+  const onCancel = useCallback(() => navigate('/') as void, [navigate]);
   const toggleMore = useCallback(() => setShowAdvanced(!showAdvanced), [showAdvanced]);
 
   const onContinue = useCallback(() => {
     setStep(STEP.DETAIL);
-  }, []);
+  }, [setStep]);
 
   const onBack = useCallback(() => {
     if (step === STEP.DETAIL) {
@@ -136,8 +88,6 @@ export default function ImportSeed (): React.ReactElement {
     } else {
       setSeed('');
       setAccount(null);
-      setAddress('');
-      setType(DEFAULT_TYPE);
       setPath(null);
       setShowAdvanced(false);
       setName(undefined);
@@ -145,7 +95,7 @@ export default function ImportSeed (): React.ReactElement {
       setError(undefined);
       navigate('/account/have-wallet') as void;
     }
-  }, [navigate, step]);
+  }, [navigate, setError, setName, setPassword, setStep, step]);
 
   return (
     <AdaptiveLayout style={{ maxWidth: '600px' }}>
@@ -224,7 +174,7 @@ export default function ImportSeed (): React.ReactElement {
                 setConfirmedPassword={setPassword}
                 spacing='20px'
                 style={{ marginBottom: '20px' }}
-                title1={t('Password for this account')}
+                title1={t('Password')}
                 title2={t('Repeat the password')}
               />
               )
@@ -240,7 +190,7 @@ export default function ImportSeed (): React.ReactElement {
             <DecisionButtons
               cancelButton
               direction='horizontal'
-              disabled={!password || !name || !address || !account}
+              disabled={!password || !name || !account}
               isBusy={isBusy}
               onPrimaryClick={onCreate}
               onSecondaryClick={onCancel}

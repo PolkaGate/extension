@@ -6,75 +6,46 @@ import { User } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import useIsPasswordCorrect from '@polkadot/extension-polkagate/src/hooks/useIsPasswordCorrect';
-import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
-import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
-
 import { DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField, PasswordInput } from '../../../components';
-import { setStorage } from '../../../components/Loading';
 import { OnboardTitle } from '../../../fullscreen/components/index';
 import AdaptiveLayout from '../../../fullscreen/components/layout/AdaptiveLayout';
 import { useTranslation } from '../../../hooks';
-import { createAccountSuri, createSeed } from '../../../messaging';
+import { createSeed } from '../../../messaging';
 import MnemonicSeedDisplay from './components/MnemonicSeedDisplay';
-
-enum STEP {
-  SEED,
-  DETAIL
-}
+import { STEP } from './types';
+import { useAccountImportOrCreate } from './useAccountImportOrCreate';
 
 export function SetNameAndPassword ({ seed }: { seed: string | null }): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [name, setName] = useState<string | null | undefined>();
-  const [password, setPassword] = useState<string>();
-  const [isBusy, setIsBusy] = useState<boolean>(false);
-  const [isWrongPassword, setWrongPassword] = useState<boolean>(false);
-  const { hasNoLocalAccounts, validatePasswordAsync } = useIsPasswordCorrect();
-
-  useEffect(() => {
-    setWrongPassword(false);
-  }, [password]);
+  const { error,
+    hasNoLocalAccounts,
+    isBusy,
+    name,
+    onConfirm,
+    password,
+    setName,
+    setPassword } = useAccountImportOrCreate({});
 
   const onNameChange = useCallback((enteredName: string) => {
     const trimmedName = enteredName.replace(/^\s+/, '');
     const cleanedName = trimmedName.replace(/\s{2,}/g, ' ');
 
     setName(cleanedName);
-  }, []);
+  }, [setName]);
 
   const onCancel = useCallback(() => {
     navigate('/') as void;
   }, [navigate]);
 
-  const preConditions = name && password && seed;
-
   const onCreate = useCallback(async () => {
-    if (!preConditions) {
-      return;
-    }
-
-    setIsBusy(true);
-    const isPasswordCorrect = await validatePasswordAsync(password);
-
-    if (!isPasswordCorrect) {
-      setWrongPassword(!isPasswordCorrect);
-      setIsBusy(false);
-
-      return;
-    }
-
     try {
-      await createAccountSuri(name, password, seed, DEFAULT_TYPE);
-      await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL).catch(console.error);
-      await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
-      await navigate('/');
-    } catch (error) {
-      setIsBusy(false);
-      console.error(error);
+      await onConfirm(seed);
+    } catch (e) {
+      console.error(e);
     }
-  }, [name, navigate, password, preConditions, seed, validatePasswordAsync]);
+  }, [seed, onConfirm]);
 
   return (
     <Motion style={{ width: '370px' }} variant='slide'>
@@ -94,12 +65,12 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
           setConfirmedPassword={setPassword}
           spacing='20px'
           style={{ marginBottom: '20px' }}
-          title1={t('Password for this account')}
+          title1={t('Password')}
           title2={t('Repeat the password')}
            />
         )
         : (<PasswordInput
-          hasError={isWrongPassword}
+          hasError={!!error}
           onEnterPress={onCreate}
           onPassChange={setPassword}
           style={{ marginBottom: '25px', marginTop: '35px' }}
@@ -126,6 +97,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
 function CreateAccount (): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+
   const [seed, setSeed] = useState<null | string>(null);
   const [isMnemonicSaved, setIsMnemonicSaved] = useState(false);
   const [step, setStep] = useState(STEP.SEED);
