@@ -273,13 +273,10 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
             api={api}
             direction={direction}
             disabled={disabled}
-            handleTxResult={handleTxResult}
             onCancel={onClose}
+            onSignature={onSignature}
             onUseProxy={selectedProxy ? undefined : toggleSelectProxy}
-            payload={extrinsicPayload}
-            preparedTransaction={preparedTransaction}
             proxies={proxies}
-            setFlowStep={setFlowStep}
             signerOption={signerOption}
             signerPayload={signerPayload}
             withCancel={withCancel}
