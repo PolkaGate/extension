@@ -842,5 +842,7 @@
   "{{chainName}} referendum #{{referendumIndex}} has been rejected": "",
   "{{chainName}} referendum #{{referendumIndex}} has been submitted": "",
   "{{chainName}} referendum #{{referendumIndex}} has timed out": "",
-  "Received {{amountSection}} from {{chainName}} staking": ""
+  "Received {{amountSection}} from {{chainName}} staking": "",
+  "Everything’s calm, you don’t have any notifications yet": "",
+  "Good": ""
 }

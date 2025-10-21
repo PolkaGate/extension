@@ -62,8 +62,8 @@ function Notification () {
           <WhatsNew style={{ columnGap: '5px', paddingBottom: '50px', paddingTop: '24px' }} />
         </Container>
         <FadeOnScroll containerRef={refContainer} />
-        <HomeMenu />
       </Motion>
+      <HomeMenu />
     </Grid>
   );
 }

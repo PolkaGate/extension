@@ -11,8 +11,6 @@ import type { NotificationMessageType, NotificationType, ReceivedFundInformation
 
 import { ArrowDown3, Award, Receipt2 } from 'iconsax-react';
 
-import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
-
 import { NOTIFICATION_TIMESTAMP_OFFSET } from './constant';
 
 export function timestampToDate (timestamp: number | string, format: 'full' | 'short' | 'relative' = 'full'): string {
@@ -240,7 +238,7 @@ export const updateReferendas = (preciousRefs: ReferendaInformation[] | null | u
     return newRefs;
   }
 
-const resultMap = new Map<string | number, ReferendaInformation>();
+  const resultMap = new Map<string | number, ReferendaInformation>();
 
   // Copy all previous data
   for (const prev of preciousRefs) {
@@ -320,18 +318,18 @@ export function groupNotificationsByDay (
     switch (item.type) {
       case 'stakingReward':
         timestamp = item.payout?.timestamp;
-        uniqueKey = `${item.read}-${JSON.stringify(item.payout ?? '')}`;
+        uniqueKey = JSON.stringify(item.payout ?? '');
 
         break;
       case 'receivedFund':
         timestamp = item.receivedFund?.timestamp;
-        uniqueKey = `${item.read}-${JSON.stringify(item.receivedFund ?? '')}`;
+        uniqueKey = JSON.stringify(item.receivedFund ?? '');
 
         break;
 
       case 'referenda':
         timestamp = item.referenda?.latestTimestamp;
-        uniqueKey = `${item.read}-${JSON.stringify(item.referenda ?? '')}`;
+        uniqueKey = JSON.stringify(item.referenda ?? '');
 
         break;
     }
@@ -373,7 +371,7 @@ export function groupNotificationsByDay (
     });
   }
 
-   // Sort the day groups themselves (newest first)
+  // Sort the day groups themselves (newest first)
   const sortedEntries = Object.entries(grouped).sort(([a], [b]) => {
     // Parse your "15 Dec 2025" strings back into Date objects for sorting
     const dateA = new Date(a);
@@ -495,9 +493,7 @@ export function formatNumber (
   return Math.min(rounded, Number.MAX_SAFE_INTEGER);
 }
 
-export function getNotificationItemTitle (type: NotificationType, referenda?: ReferendaProp) {
-  const { t } = useTranslation();
-
+export function getNotificationItemTitle (t: TFunction, type: NotificationType, referenda?: ReferendaProp) {
   switch (type) {
     case 'receivedFund':
       return t('Fund Received');
