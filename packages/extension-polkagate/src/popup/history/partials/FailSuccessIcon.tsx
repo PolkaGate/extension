@@ -31,11 +31,14 @@ export default function FailSuccessIcon ({ children, description, failureText, i
       </Grid>
       {showLabel &&
         <Typography
-          color={isBlueish ? 'text.highlight' : 'primary.main'} padding='8px 5px 0' sx={{
+          color={isBlueish ? 'text.highlight' : 'primary.main'}
+          sx={{
             WebkitBoxOrient: 'vertical',
             WebkitLineClamp: 2,
             display: '-webkit-box',
+            maxWidth: '360px',
             overflow: 'hidden',
+            padding: '8px 5px 0',
             textOverflow: 'ellipsis'
           }}
           textTransform='capitalize'
