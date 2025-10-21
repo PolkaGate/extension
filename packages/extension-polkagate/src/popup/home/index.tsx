@@ -5,10 +5,7 @@ import { Grid } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import semver from 'semver';
 
-import { AccountsStore } from '@polkadot/extension-base/stores';
 import useIsForgotten from '@polkadot/extension-polkagate/src/hooks/useIsForgotten';
-import keyring from '@polkadot/ui-keyring';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { AccountContext, FadeOnScroll, Motion } from '../../components';
 import { useBackground, useManifest, useMerkleScience } from '../../hooks';
@@ -50,12 +47,6 @@ export default function Home (): React.ReactElement {
       console.error('Error while checking version:', error);
     }
   }, [manifest?.version]);
-
-  useEffect(() => {
-    cryptoWaitReady().then(() => {
-      keyring.loadAll({ store: new AccountsStore() });
-    }).catch(() => null);
-  }, []);
 
   return (
     <Motion>

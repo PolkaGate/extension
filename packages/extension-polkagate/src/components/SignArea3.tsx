@@ -14,10 +14,7 @@ import { Grid, useTheme } from '@mui/material';
 import { Data, Lock, ScanBarcode } from 'iconsax-react';
 import React, { memo, type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AccountsStore } from '@polkadot/extension-base/stores';
-import keyring from '@polkadot/ui-keyring';
 import { noop } from '@polkadot/util';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useAccount, useAccountDisplay, useChainInfo, useFormatted, useProxies, useTranslation } from '../hooks';
 import { getSubstrateAddress } from '../util';
@@ -86,10 +83,6 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
   const showUseProxy = useMemo(() => !account?.isHardware && !account?.isQR && account?.isExternal && !selectedProxy, [account, selectedProxy]);
   const showQrSign = useMemo(() => account?.isQR, [account]);
   const noPrivateKeyAccount = useMemo(() => account?.isExternal || account?.isHardware || account?.isQR, [account]);
-
-  useEffect(() => {
-    cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
-  }, []);
 
   const preparedTransaction = useMemo((): SubmittableExtrinsic<'promise', ISubmittableResult> | undefined => {
     if (!transaction || !api) {

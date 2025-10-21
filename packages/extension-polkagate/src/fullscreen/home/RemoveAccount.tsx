@@ -4,13 +4,10 @@
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
 import { Box, Grid, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AccountsStore } from '@polkadot/extension-base/stores';
-import { forgetAccount } from '@polkadot/extension-polkagate/src/messaging';
-import keyring from '@polkadot/ui-keyring';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
+import { forgetAccount, validateAccount } from '@polkadot/extension-polkagate/src/messaging';
 
 import { info } from '../../assets/gif';
 import { Address2, DecisionButtons, GlowCheckbox, PasswordInput } from '../../components';
@@ -52,10 +49,6 @@ function RemoveAccount ({ address, onClose }: Props): React.ReactElement {
     onClose();
   }, [navigate, onClose]);
 
-  useEffect(() => {
-    cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
-  }, []);
-
   const onRemove = useCallback(async () => {
     try {
       if (!account || (account?.isExternal && !acknowledged) || (!account?.isExternal && !password)) {
@@ -65,10 +58,12 @@ function RemoveAccount ({ address, onClose }: Props): React.ReactElement {
       setIsBusy(true);
       await new Promise(requestAnimationFrame);
 
-      if (!account.isExternal) {
-        const signer = keyring.getPair(account.address);
+      if (!account.isExternal && password) {
+          const isUnlockable = await validateAccount(account.address, password);
 
-        signer.unlock(password);
+          if (!isUnlockable) {
+            throw new Error('Password incorrect!');
+          }
       }
 
       forgetAccount(account.address)
