@@ -7,6 +7,8 @@ export type ReferendaStatus = 'ongoing' | 'approved' | 'timeout' | 'rejected' | 
 
 export const NOTIFICATION_GOVERNANCE_CHAINS = ['kusama', 'polkadot'];
 
+export const RECEIVED_FUNDS_THRESHOLD = 15;
+export const RECEIVED_REWARDS_THRESHOLD = 10;
 export const REFERENDA_COUNT_TO_TRACK_DOT = 50;
 export const REFERENDA_COUNT_TO_TRACK_KSM = 10;
 export const REFERENDA_STATUS = ['ongoing', 'approved', 'timedOut', 'rejected', 'cancelled'];

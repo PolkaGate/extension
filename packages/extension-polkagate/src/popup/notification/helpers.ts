@@ -10,7 +10,7 @@ import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '@polkadot/extension-
 import getChainName from '@polkadot/extension-polkagate/src/util/getChainName';
 import { isMigratedRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
-import { BATCH_SIZE, MAX_RETRIES, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM, type ReferendaStatus } from './constant';
+import { BATCH_SIZE, MAX_RETRIES, RECEIVED_FUNDS_THRESHOLD, RECEIVED_REWARDS_THRESHOLD, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM, type ReferendaStatus } from './constant';
 import { timestampToDate } from './util';
 
 const transformTransfers = (address: string, transfers: TransferSubscan[], network: DropdownOption) => {
@@ -139,7 +139,7 @@ export const getReceivedFundsInformation = async (addresses: string[], chains: s
           try {
             const receivedInfo = await postData(`https://${network.text}.api.subscan.io/api/v2/scan/transfers`, {
               address,
-              row: 10
+              row: RECEIVED_FUNDS_THRESHOLD
             }) as ApiResponse<{
               transfers: TransferSubscan[] | null
             }>;
@@ -216,7 +216,7 @@ export const getPayoutsInformation = async (addresses: string[], chains: string[
             const soloPayoutInfo = await postData(`https://${network.text}.api.subscan.io/api/v2/scan/account/reward_slash`, {
               address,
               category: 'Reward',
-              row: 10
+              row: RECEIVED_REWARDS_THRESHOLD
             }) as ApiResponse<{
               list: PayoutSubscan[]
             }>;
@@ -224,7 +224,7 @@ export const getPayoutsInformation = async (addresses: string[], chains: string[
             const poolPayoutInfo = await postData(`https://${network.text}.api.subscan.io/api/scan/nomination_pool/rewards`, {
               address,
               category: 'Reward',
-              row: 10
+              row: RECEIVED_REWARDS_THRESHOLD
             }) as ApiResponse<{
               list: PayoutSubscan[]
             }>;
