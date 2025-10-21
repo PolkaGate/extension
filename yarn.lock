@@ -1558,6 +1558,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lottiefiles/dotlottie-react@npm:^0.17.5":
+  version: 0.17.5
+  resolution: "@lottiefiles/dotlottie-react@npm:0.17.5"
+  dependencies:
+    "@lottiefiles/dotlottie-web": "npm:0.54.1"
+  peerDependencies:
+    react: ^17 || ^18 || ^19
+  checksum: 10/01677524497b02a5a08330071944e2c2872a2fc45857849a7294609eccd47c4d956cedc626d9f28ee6a3356da5fa91dc49f12ae09f1e36cdbc7cb219b5c1f8ef
+  languageName: node
+  linkType: hard
+
+"@lottiefiles/dotlottie-web@npm:0.54.1":
+  version: 0.54.1
+  resolution: "@lottiefiles/dotlottie-web@npm:0.54.1"
+  checksum: 10/4992f6802ad1752e3643685c0d2aa8cf6ae10f65763676e7f75e3ddd700141aae5e949d9d6755fb7d37d29770d545e29e7c16ab8c8a2d1d6112c01b14a04e46e
+  languageName: node
+  linkType: hard
+
 "@mangata-finance/type-definitions@npm:^2.1.2":
   version: 2.1.2
   resolution: "@mangata-finance/type-definitions@npm:2.1.2"
@@ -19485,6 +19503,7 @@ __metadata:
     "@dnd-kit/utilities": "npm:^3.2.2"
     "@emotion/react": "npm:^11.9.0"
     "@emotion/styled": "npm:^11.8.1"
+    "@lottiefiles/dotlottie-react": "npm:^0.17.5"
     "@mui/icons-material": "npm:^5.15.18"
     "@mui/lab": "npm:^5.0.0-alpha.85"
     "@mui/material": "npm:^5.8.3"

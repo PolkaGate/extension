@@ -54,6 +54,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
+    "@lottiefiles/dotlottie-react": "^0.17.5",
     "@mui/icons-material": "^5.15.18",
     "@mui/lab": "^5.0.0-alpha.85",
     "@mui/material": "^5.8.3",
