@@ -206,18 +206,19 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
 
       const _token = token || api.registry.chainTokens[0];
       const decimal = api.registry.chainDecimals[0];
+      const { block = 0, failureText, success, txHash = '' } = txResult;
 
       const info = {
-        block: txResult?.block || 0,
+        block,
         chain,
         date: Date.now(),
         decimal, // in cross chain transfer this will be the sending chain decimal
-        failureText: txResult?.failureText,
+        failureText,
         from: { address: String(formatted), name: senderName },
-        success: txResult?.success,
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         token: _token,
-        txHash: txResult?.txHash || ''
+        txHash
       };
 
       setTxInfo({ ...info, api, chain } as TxInfo);

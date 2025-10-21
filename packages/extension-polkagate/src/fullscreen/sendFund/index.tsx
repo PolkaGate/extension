@@ -133,9 +133,8 @@ export default function SendFund (): React.ReactElement {
       description: t('Amount'),
       extra: {
         from: formatted,
-        to: inputs?.recipientAddress,
-        // eslint-disable-next-line sort-keys
-        recipientNetwork: inputs?.recipientChain?.text
+        recipientNetwork: inputs?.recipientChain?.text,
+        to: inputs?.recipientAddress
       },
       ...txInfo,
       fee: inputs?.feeInfo,
