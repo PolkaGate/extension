@@ -50,7 +50,7 @@ function Content ({ setStep }: Props): React.ReactElement {
   const onUnlock = useCallback(async (): Promise<void> => {
     try {
       if (hashedPassword && await isPasswordCorrect(hashedPassword, true)) {
-        await updateStorage(STORAGE_KEY.LOGIN_IFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET });
+        await updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET });
         setHashedPassword(undefined);
         setExtensionLock(false);
       } else {

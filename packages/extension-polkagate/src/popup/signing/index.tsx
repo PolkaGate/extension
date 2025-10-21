@@ -104,6 +104,14 @@ export default function Signing (): React.ReactElement {
       });
   }, [navigate, setError, request?.id]);
 
+  const onNext = useCallback(() => {
+    setMode((pre) => ({
+      ...pre,
+      title: t('Your Signature'),
+      type: SIGN_POPUP_MODE.SIGN
+    }));
+  }, [setMode, t]);
+
   return request
     ? <ExtensionPopup
       TitleIcon={mode.Icon}
@@ -111,6 +119,7 @@ export default function Signing (): React.ReactElement {
       iconSize={24}
       maxHeight='calc(100% - 75px)'
       onBack={[SIGN_POPUP_MODE.DETAIL, SIGN_POPUP_MODE.SIGN].includes(mode.type) ? onBack : undefined}
+      onNext={SIGN_POPUP_MODE.DETAIL === mode.type ? onNext : undefined}
       openMenu={true}
       pt={10}
       style={{ '> div#container div#boxContainer': { height: 'calc(100% - 75px)' } }}
@@ -119,7 +128,6 @@ export default function Signing (): React.ReactElement {
       >
       {mode.type === SIGN_POPUP_MODE.DETAIL &&
         <ExtrinsicDetail
-          account={request.account}
           mode={mode}
           request={request.request}
         />

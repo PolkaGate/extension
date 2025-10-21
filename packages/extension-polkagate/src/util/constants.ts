@@ -297,23 +297,21 @@ export type TransactionFlowStep = typeof TRANSACTION_FLOW_STEPS[keyof typeof TRA
 
 export const DEFAULT_ACCOUNT_ICON_THEME = 'polkasoul';
 
-// data names in local storage
-export const ICON_THEME_NAME_IN_STORAGE = 'identiconType';
-export const SELECTED_ACCOUNT_IN_STORAGE = 'selectedAccount';
-export const SELECTED_PROFILE_NAME_IN_STORAGE = 'profile';
-export const ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE = 'accountSelectedChain';
-
 export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000; // 2 minutes
 
 export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 
 export const STORAGE_KEY = {
+  ACCOUNT_SELECTED_CHAIN: 'accountSelectedChain',
   ASSETS: 'migrated-assets1',
+  CURRENCY: 'currency',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   HISTORY: 'history',
+  ICON_THEME: 'identiconType',
   IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN: 'accountsMigratedToAnyChain',
-  LOGIN_IFO: 'loginInfo',
+  LOGIN_INFO: 'loginInfo',
   MY_POOL: 'MyPool',
+  PRICE_IN_CURRENCIES: 'pricesInCurrencies',
   NOTIFICATIONS: 'notifications',
   NOTIFICATION_SETTINGS: 'notificationSetting',
   SELECTED_ACCOUNT: 'selectedAccount',

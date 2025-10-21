@@ -34,7 +34,7 @@ function Content ({ isFullscreen, setStep }: Props): React.ReactElement {
       return;
     }
 
-    await setStorage(STORAGE_KEY.LOGIN_IFO, { hashedPassword: password, lastEdit: Date.now(), lastLoginTime: Date.now(), status: LOGIN_STATUS.JUST_SET });
+    await setStorage(STORAGE_KEY.LOGIN_INFO, { hashedPassword: password, lastEdit: Date.now(), lastLoginTime: Date.now(), status: LOGIN_STATUS.JUST_SET });
     setExtensionLock(true);
     setStep(STEPS.SHOW_LOGIN);
   }, [password, setExtensionLock, setStep]);

@@ -3,13 +3,15 @@
 
 import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { Share } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 
-import { useCurrency, useIsDark } from '../../../hooks';
+import { CurrencyContext } from '@polkadot/extension-polkagate/src/components';
+
+import { useIsDark } from '../../../hooks';
 import SelectCurrency from './SelectCurrency';
 
 function Currency () {
-  const currency = useCurrency();
+  const { currency } = useContext(CurrencyContext);
   const isDark = useIsDark();
 
   const containerStyle: SxProps<Theme> = {

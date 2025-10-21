@@ -7,7 +7,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import { ArrowCircleLeft, ArrowCircleRight } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
 import { setStorage } from '../../util';
@@ -25,7 +25,7 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountJson[]
   const isSelected = selectedProfile === label;
 
   const onClick = useCallback(() => {
-    setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, label).catch(console.error);
+    setStorage(STORAGE_KEY.SELECTED_PROFILE, label).catch(console.error);
   }, [label]);
 
   return (

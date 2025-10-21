@@ -13,7 +13,7 @@ import { ChainLogo, CryptoFiatBalance } from '../../../components';
 import { useChainInfo } from '../../../hooks';
 import { StakingBadge, TestnetBadge } from '../../../popup/staking/StakingPositions';
 import { amountToHuman, updateStorage } from '../../../util';
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, TEST_NETS } from '../../../util/constants';
+import { STORAGE_KEY, TEST_NETS } from '../../../util/constants';
 
 interface TokenInfoProps {
   genesisHash: string;
@@ -103,7 +103,7 @@ function PositionItem ({ balance, decimal, genesisHash, isSelected, price, token
       return;
     }
 
-    updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })
+    updateStorage(STORAGE_KEY.ACCOUNT_SELECTED_CHAIN, { [address]: genesisHash })
       .then(() => navigate('/fullscreen-stake/' + type + '/' + address + '/' + genesisHash) as void)
       .catch(console.error);
   }, [genesisHash, navigate, address, type]);

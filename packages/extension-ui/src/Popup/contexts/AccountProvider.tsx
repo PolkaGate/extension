@@ -59,13 +59,13 @@ export default function AccountProvider ({ children }: { children: React.ReactNo
   useEffect(() => {
     const fetchLoginInfo = async () => {
       chrome.storage.onChanged.addListener(function (changes, areaName) {
-        if (areaName === 'local' && STORAGE_KEY.LOGIN_IFO in changes) {
-          const newValue = changes[STORAGE_KEY.LOGIN_IFO].newValue as LoginInfo;
+        if (areaName === 'local' && STORAGE_KEY.LOGIN_INFO in changes) {
+          const newValue = changes[STORAGE_KEY.LOGIN_INFO].newValue as LoginInfo;
 
           setLoginInfo(newValue);
         }
       });
-      const info = await getStorage(STORAGE_KEY.LOGIN_IFO) as LoginInfo;
+      const info = await getStorage(STORAGE_KEY.LOGIN_INFO) as LoginInfo;
 
       setLoginInfo(info);
     };
@@ -84,7 +84,7 @@ export default function AccountProvider ({ children }: { children: React.ReactNo
       setAccountCtx(initAccountContext([]));
       const addresses = accounts?.map((account) => account.address);
 
-      updateStorage(STORAGE_KEY.LOGIN_IFO, { addressesToForget: addresses }).catch(console.error);
+      updateStorage(STORAGE_KEY.LOGIN_INFO, { addressesToForget: addresses }).catch(console.error);
     }
   }, [accounts, loginInfo]);
 

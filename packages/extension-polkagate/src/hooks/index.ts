@@ -26,7 +26,6 @@ export { default as useCanPayFee } from './useCanPayFee';
 export { default as useCanPayFeeAndDeposit } from './useCanPayFeeAndDeposit';
 export { default as useCategorizedAccountsInProfiles } from './useCategorizedAccountsInProfiles';
 export { default as useChainInfo } from './useChainInfo';
-export { default as useCurrency } from './useCurrency';
 export { default as useCurrentBlockNumber } from './useCurrentBlockNumber';
 export { default as useCurrentEraIndex } from './useCurrentEraIndex';
 export { default as useEndpoint } from './useEndpoint';

@@ -31,7 +31,7 @@ export function ForgotPasswordContent({ onClose }: { onClose: () => void }): Rea
   const [acknowledged, setAcknowledge] = useState<boolean>(false);
 
   const onConfirmForgotPassword = useCallback(() => {
-    updateStorage(STORAGE_KEY.LOGIN_IFO, { status: LOGIN_STATUS.FORGOT }).then(() => {
+    updateStorage(STORAGE_KEY.LOGIN_INFO, { status: LOGIN_STATUS.FORGOT }).then(() => {
       setExtensionLock(false);
       !isExtension && switchToOrOpenTab('/reset-wallet', true);
     }).catch(console.error);

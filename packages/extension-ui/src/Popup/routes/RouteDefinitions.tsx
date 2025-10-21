@@ -4,7 +4,7 @@
 import type { TabProps } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 
 import React, { lazy, useEffect, useMemo } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
 import { PHISHING_PAGE_REDIRECT } from '@polkadot/extension-base/defaults';
 import Onboarding from '@polkadot/extension-polkagate/src/fullscreen/onboarding';
@@ -108,7 +108,7 @@ const ALL_ROUTES: RouteConfig[] = [
   ...NFT_ROUTES
 ];
 
-export default function AppRoutes () {
+export default function AppRoutes() {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -136,6 +136,8 @@ export default function AppRoutes () {
   return (
     <Routes>
       {routeComponents}
+      {/* Catch-all fallback for unknown routes */}
+      <Route element={<Navigate replace to='/' />} path='*' />
     </Routes>
   );
 }

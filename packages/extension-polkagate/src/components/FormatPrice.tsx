@@ -4,13 +4,14 @@
 import type { BN } from '@polkadot/util';
 
 import { Fade, Grid, Stack, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import CountUp from 'react-countup';
 
 import { HideNumberShape1, HideNumberShape2 } from '../fullscreen/home/HideNumberShapes';
-import { useCurrency, useIsHideNumbers } from '../hooks';
+import { useIsHideNumbers } from '../hooks';
 import { amountToHuman, getDecimal } from '../util';
 import { ASSETS_AS_CURRENCY_LIST } from '../util/currencyList';
+import { CurrencyContext } from './contexts';
 import Dots, { type DotsVariant } from './Dots';
 import MySkeleton from './MySkeleton';
 
@@ -97,7 +98,7 @@ export function formatDecimalWithCommas (_number: number | string, decimalDigit 
 }
 
 function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimals, dotStyle, fontFamily, fontSize, fontWeight, formattedFrom, height, ignoreHide, lineHeight = 1, mt = '0px', num, onHideShape, price, sign, skeletonHeight = 15, style = {}, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
-  const currency = useCurrency();
+  const { currency } = useContext(CurrencyContext);
   const theme = useTheme();
   const { isHideNumbers } = useIsHideNumbers();
 

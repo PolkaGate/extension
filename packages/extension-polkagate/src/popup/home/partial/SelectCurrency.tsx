@@ -10,6 +10,8 @@ import * as flags from 'country-flag-icons/string/3x2';
 import { BuyCrypto, Coin1, Hashtag } from 'iconsax-react';
 import React, { Fragment, memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { CurrencyContext, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
 import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
@@ -206,7 +208,7 @@ function Content ({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateA
   const applyLanguageChange = useCallback(() => {
     if (selectedCurrency) {
       setCurrency(selectedCurrency);
-      setStorage('currency', selectedCurrency).then(() => {
+      setStorage(STORAGE_KEY.CURRENCY, selectedCurrency).then(() => {
         setOpenMenu(false);
       }).catch(console.error);
     }

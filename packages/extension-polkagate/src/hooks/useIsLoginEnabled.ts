@@ -12,7 +12,7 @@ export default function useIsLoginEnabled (): boolean | undefined {
   const [isLoginEnabled, setIsLoginEnabled] = useState<boolean>();
 
   useEffect(() => {
-    getStorage(STORAGE_KEY.LOGIN_IFO).then((info) => {
+    getStorage(STORAGE_KEY.LOGIN_INFO).then((info) => {
       setIsLoginEnabled((info as LoginInfo)?.status === 'set');
     }).catch(console.error);
   }, []);

@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { CurrencyContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { getStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { watchStorage } from '@polkadot/extension-polkagate/src/util';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { USD_CURRENCY } from '@polkadot/extension-polkagate/src/util/currencyList';
 
 interface CurrencyProviderProps {
@@ -18,11 +19,11 @@ export default function CurrencyProvider ({ children }: CurrencyProviderProps) {
   const [currency, setCurrency] = useState<CurrencyItemType>();
 
   useEffect(() => {
-    getStorage('currency').then((res) => {
+    getStorage(STORAGE_KEY.CURRENCY).then((res) => {
       setCurrency(res as CurrencyItemType || USD_CURRENCY);
     }).catch(console.error);
 
-    const unsubscribe = watchStorage('currency', setCurrency);
+    const unsubscribe = watchStorage(STORAGE_KEY.CURRENCY, setCurrency);
 
     return () => {
       unsubscribe();

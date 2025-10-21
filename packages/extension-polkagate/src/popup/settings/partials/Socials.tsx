@@ -39,9 +39,9 @@ export default function Socials ({ buttonSize, columnGap = '8px', iconSize = 18,
       }
       <Grid columnGap={columnGap} container item sx={{ flexWrap: 'nowrap', width: 'fit-content' }}>
         <SocialIcon Icon={<YoutubeIcon color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={buttonSize} />
-        <SocialIcon Icon={<XIcon color={theme.palette.icon.secondary} width={`${iconSize - 3}px`} />} bgColor={bgColor} link='https://x.com/polkagate' size={buttonSize} />
-        <SocialIcon Icon={<Telegram color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://t.me/polkagate' size={buttonSize} />
+        <SocialIcon Icon={<XIcon color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://x.com/polkagate' size={buttonSize} />
         <SocialIcon Icon={<Github color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://github.com/PolkaGate/' size={buttonSize} />
+        <SocialIcon Icon={<Telegram color={theme.palette.icon.secondary} width={`${iconSize + 10}px`} />} bgColor={bgColor} link='https://t.me/polkagate' size={buttonSize} />
         {!short &&
           <>
             <SocialIcon Icon={<Email color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='mailto:support@polkagate.xyz' size={buttonSize} />

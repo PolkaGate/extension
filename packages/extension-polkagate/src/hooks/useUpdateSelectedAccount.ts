@@ -5,7 +5,7 @@ import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { isValidAddress, isValidGenesis, setStorage } from '../util';
-import { SELECTED_ACCOUNT_IN_STORAGE } from '../util/constants';
+import { STORAGE_KEY } from '../util/constants';
 import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
 import useAccountSelectedChain from './useAccountSelectedChain';
 import useStakingPositions from './useStakingPositions';
@@ -16,7 +16,7 @@ import useStakingPositions from './useStakingPositions';
  * when the selected account changes.
  *
  * Responsibilities:
- * - Persists the selected account address into `SELECTED_ACCOUNT_IN_STORAGE`.
+ * - Persists the selected account address into `STORAGE_KEY.SELECTED_ACCOUNT`.
  * - Optionally updates the browser URL with the new address and chain info.
  * - Handles staking path logic, ensuring correct genesis hash and staking type.
  * - Calls `onClose` callback after updating, if provided.
@@ -98,7 +98,7 @@ export default function useUpdateSelectedAccount (address: string | undefined, c
       return;
     }
 
-    setStorage(SELECTED_ACCOUNT_IN_STORAGE, address)
+    setStorage(STORAGE_KEY.SELECTED_ACCOUNT, address)
       .finally(() => handleExit())
       .catch(console.error);
   }, [address, handleExit]);
