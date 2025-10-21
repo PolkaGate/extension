@@ -1,11 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { lockLottie, masterKey, migratePassword } from '@polkadot/extension-polkagate/src/assets/animations';
 import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
 import useCheckMasterPassword from '@polkadot/extension-polkagate/src/hooks/useCheckMasterPassword';
@@ -13,7 +15,6 @@ import { accountsChangePassword, lockExtension } from '@polkadot/extension-polka
 import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { Lock as LockGif } from '../../assets/gif';
 import { Address, GradientButton, MatchPasswordField, PasswordInput, TwoToneText } from '../../components';
 import { useAlerts, useTranslation } from '../../hooks';
 
@@ -109,12 +110,12 @@ function MigratePasswords (): React.ReactElement {
   return (
     <OnboardingLayout childrenStyle={{ justifyContent: 'center', margin: 'auto', width: '440px' }} showBread={false} showLeftColumn={false}>
       <Grid container item justifyContent='center' sx={{ p: '18px 15px 26px', position: 'relative', zIndex: 1 }}>
-
-        <Box
-          component='img'
-          src={LockGif as string}
-          sx={{ height: '53px', width: '53px' }}
-        />
+        {step === STEP.PASSWORD
+          ? <DotLottieReact autoplay loop src={masterKey} style={{ height: '150px', width: '150px' }} />
+          : step === STEP.MIGRATING
+            ? <DotLottieReact autoplay loop src={migratePassword} style={{ height: '150px', width: '150px' }} />
+            : <DotLottieReact autoplay src={lockLottie} style={{ height: '130px', width: '130px' }} />
+        }
         <Typography sx={{ lineHeight: '32px', mb: '12px', mt: '20px', width: '100%' }} textTransform='uppercase' variant='H-2'>
           <TwoToneText
             text={
