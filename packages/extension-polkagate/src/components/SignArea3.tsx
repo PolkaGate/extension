@@ -100,7 +100,7 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
     try {
       const _payload = {
         address: from,
-        // assetId: null, // fee asset Id, singerOption?.assetId
+        assetId: signerOption?.assetId,
         blockHash: lastHeader.hash,
         blockNumber: api.registry.createType('BlockNumber', lastHeader.number.toNumber()),
         era: api.registry.createType('ExtrinsicEra', { current: lastHeader.number.toNumber(), period: 64 }),
@@ -132,7 +132,7 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
 
       return undefined;
     }
-  }, [api, from, lastHeader, rawNonce, preparedTransaction]);
+  }, [api, preparedTransaction, lastHeader, rawNonce, from, signerOption?.assetId]);
 
   const extrinsicPayload = useMemo(() => {
     if (!api || !signerPayload) {
