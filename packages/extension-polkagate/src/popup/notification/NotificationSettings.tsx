@@ -5,7 +5,7 @@
 /* eslint-disable react/jsx-no-bind */
 
 import { Grid, Stack, Typography } from '@mui/material';
-import { ArrowCircleDown2, BuyCrypto, MedalStar, Notification as NotificationIcon, UserOctagon } from 'iconsax-react';
+import { ArrowCircleDown2, BuyCrypto, Notification as NotificationIcon, Record, UserOctagon } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -99,7 +99,7 @@ export default function NotificationSettings () {
               </Typography>
             </ActionCard>
             <ActionCard
-              Icon={MedalStar}
+              Icon={Record}
               iconColor='#FF4FB9'
               iconSize={24}
               iconWithoutTransform
@@ -117,8 +117,8 @@ export default function NotificationSettings () {
               title={t('Staking Rewards')}
             />
           </Stack>
-          <HomeMenu />
         </Motion>
+        <HomeMenu />
       </Grid>
       <SelectAccount
         onAccounts={setAccounts}

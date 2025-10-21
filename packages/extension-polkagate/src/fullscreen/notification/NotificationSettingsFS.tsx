@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { ArrowCircleDown2, BuyCrypto, MedalStar, Notification as NotificationIcon, UserOctagon } from 'iconsax-react';
+import { ArrowCircleDown2, BuyCrypto, Notification as NotificationIcon, Record, UserOctagon } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
 import { ActionCard, MySwitch } from '@polkadot/extension-polkagate/src/components';
@@ -74,7 +74,7 @@ const SettingUI = ({ notificationSetting, openPopup, toggleNotification, toggleR
         </Typography>
       </ActionCard>
       <ActionCard
-        Icon={MedalStar}
+        Icon={Record}
         iconColor='#FF4FB9'
         iconSize={24}
         iconWithoutTransform
