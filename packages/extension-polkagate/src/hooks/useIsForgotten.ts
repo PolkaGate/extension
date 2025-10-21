@@ -9,12 +9,15 @@ import { getStorage, watchStorage } from '../util';
 import { STORAGE_KEY } from '../util/constants';
 
 export default function useIsForgotten (): ForgottenInfo | undefined | null {
-   const [isForgotten, setIsForgotten] = useState<ForgottenInfo | null>();
+  const [isForgotten, setIsForgotten] = useState<ForgottenInfo | null>();
 
-     useEffect(() => {
-         watchStorage(STORAGE_KEY.IS_FORGOTTEN, setIsForgotten);
-         getStorage(STORAGE_KEY.IS_FORGOTTEN).then((state) => setIsForgotten(state as ForgottenInfo ?? null)).catch(console.error);
-     }, []);
+  useEffect(() => {
+    watchStorage(STORAGE_KEY.IS_FORGOTTEN, setIsForgotten);
 
-     return isForgotten;
+    getStorage(STORAGE_KEY.IS_FORGOTTEN)
+      .then((state) => setIsForgotten(state as ForgottenInfo ?? null))
+      .catch(console.error);
+  }, []);
+
+  return isForgotten;
 }

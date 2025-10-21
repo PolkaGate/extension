@@ -144,7 +144,6 @@ function MigratePasswords (): React.ReactElement {
           <>
             <MatchPasswordField
               focused
-              // @ts-ignore
               onSetPassword={onContinue}
               setConfirmedPassword={setMasterPass}
               style={{ marginBottom: '15px' }}

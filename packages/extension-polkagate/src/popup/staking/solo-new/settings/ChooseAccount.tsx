@@ -58,7 +58,7 @@ const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, se
 
             return (
               <Fragment key={index}>
-                <Container disableGutters key={address} onClick={handleSelect(formatted)} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Container disableGutters onClick={handleSelect(formatted)} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Identity2
                     address={address}
                     addressStyle={{ color: isBlueish ? '#809ACB' : 'primary.main' }}

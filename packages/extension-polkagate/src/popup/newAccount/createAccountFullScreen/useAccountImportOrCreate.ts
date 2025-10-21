@@ -6,6 +6,7 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useIsPasswordCorrect from '@polkadot/extension-polkagate/src/hooks/useIsPasswordCorrect';
 import { createAccountSuri } from '@polkadot/extension-polkagate/src/messaging';
 import { setStorage } from '@polkadot/extension-polkagate/src/util';
@@ -15,11 +16,10 @@ import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType
 import { resetOnForgotPassword } from './resetAccounts';
 import { type AccountInfo, STEP } from './types';
 
-export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({
-  onSuccessPath = '/',
-  validator
-}: { onSuccessPath?: string; validator?: (suri: string, type?: KeypairType) => Promise<T> }) {
+export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo> ({ onSuccessPath = '/',
+  validator }: { onSuccessPath?: string; validator?: (suri: string, type?: KeypairType) => Promise<T> }) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { hasNoLocalAccounts, validatePasswordAsync } = useIsPasswordCorrect();
 
   const [isBusy, setIsBusy] = useState(false);
@@ -59,7 +59,7 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({
     const isPasswordCorrect = await validatePasswordAsync(password);
 
     if (!isPasswordCorrect) {
-      setError('Password incorrect');
+      setError(t(' Incorrect password'));
       setIsBusy(false);
 
       return;
@@ -71,13 +71,29 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({
       await createAccountSuri(name, password, seed, type || DEFAULT_TYPE);
       await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL);
       await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true);
+
+       const created = await createAccountSuri(name, password, seed, type || DEFAULT_TYPE);
+
+      if (!created) {
+        setIsBusy(false);
+
+        return setError(t('Failed to create account'));
+      }
+
+      const okProfile = await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL);
+      const okMigrated = await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true);
+
+      if (!okProfile || !okMigrated) {
+        console.warn('Failed to persist profile or migration flag');
+      }
+
       navigate(onSuccessPath) as void;
       window.location.reload();
     } catch (error) {
       setIsBusy(false);
       console.error(error);
     }
-  }, [name, password, validatePasswordAsync, navigate, onSuccessPath]);
+  }, [name, password, validatePasswordAsync, t, navigate, onSuccessPath]);
 
   return {
     error,

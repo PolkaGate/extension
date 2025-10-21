@@ -50,7 +50,7 @@ const AccountsListToSelect = ({ genesisHash, handleClose, openMenu, selectedAcco
 
             return (
               <div key={address}>
-                <Container disableGutters key={address} onClick={handleSelect(address)} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Container disableGutters onClick={handleSelect(address)} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Identity2
                     address={address}
                     addressStyle={{ color: theme.palette.primary.main }}

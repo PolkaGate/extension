@@ -22,7 +22,7 @@ import { type AccountInfo, STEP } from '../../newAccount/createAccountFullScreen
 import { useAccountImportOrCreate } from '../../newAccount/createAccountFullScreen/useAccountImportOrCreate';
 import MyPhraseArea from '../importSeedFullScreen/MyPhraseArea';
 
-export default function ImportSeed (): React.ReactElement {
+export default function ImportRawSeed (): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const localAccounts = useLocalAccounts();
@@ -76,7 +76,7 @@ export default function ImportSeed (): React.ReactElement {
     onValidateSeed(seed)
       .then((validatedAccount) => {
         if (validatedAccount) {
-          setAccount(validatedAccount); // store the validated account
+          setAccount(validatedAccount);
           setAddress(validatedAccount.address);
         } else {
           setAccount(null);

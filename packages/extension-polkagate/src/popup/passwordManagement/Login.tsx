@@ -50,7 +50,10 @@ function Content ({ setStep }: Props): React.ReactElement {
 
   const onPassChange = useCallback((pass: string | null): void => {
     if (!pass) {
-      return setHashedPassword(undefined);
+      setPlainPassword(undefined);
+      setHashedPassword(undefined);
+
+      return;
     }
 
     setPlainPassword(pass);
@@ -124,7 +127,9 @@ function Content ({ setStep }: Props): React.ReactElement {
 
   const onForgotPassword = useCallback((): void => {
     if (isExtension) {
-      return setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION);
+      setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION);
+
+      return;
     }
 
     setStep(STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION_FS);

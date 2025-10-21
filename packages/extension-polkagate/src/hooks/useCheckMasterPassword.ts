@@ -3,10 +3,10 @@
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { AccountContext } from '../components';
 import { accountsValidate } from '../messaging';
+import useLocalAccounts from './useLocalAccounts';
 
 async function getAccountsNeedsMigration (localAccounts: AccountJson[], password: string): Promise<AccountJson[]> {
   const results = await Promise.all(localAccounts.map(async (account) => {
@@ -22,8 +22,7 @@ export default function useCheckMasterPassword (pass: string | undefined): {
   accountsNeedMigration: AccountJson[] | undefined,
   hasLocalAccounts: boolean
 } {
-  const { accounts } = useContext(AccountContext);
-  const localAccounts = accounts.filter(({ isExternal }) => !isExternal);
+  const localAccounts = useLocalAccounts();
 
   const [accountsNeedMigration, setAccountsNeedMigration] = useState<AccountJson[]>();
 
@@ -38,7 +37,7 @@ export default function useCheckMasterPassword (pass: string | undefined): {
       .then(setAccountsNeedMigration)
       .catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accounts?.length, pass]);
+  }, [localAccounts?.length, pass]);
 
   return {
     accountsNeedMigration,

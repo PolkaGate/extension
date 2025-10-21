@@ -119,7 +119,7 @@ export interface RequestSignatures {
   'pri(accounts.validate)': [RequestAccountValidate, boolean];
   'pri(accounts.changePassword)': [RequestAccountChangePassword, boolean];
   'pri(accounts.changePasswordAll)': [RequestAccountChangePasswordAll, boolean];
-  'pri(signing.getSignature)': [RequestSigninSignature, HexString | null];
+  'pri(signing.getSignature)': [RequestSigningSignature, HexString | null];
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
   'pri(authorize.update)': [RequestUpdateAuthorizedAccounts, void];
   'pri(authorize.list)': [null, ResponseAuthorizeList];
@@ -316,7 +316,7 @@ export interface RequestSigningApprovePassword {
   remainingTime?: number;
 }
 
-export interface RequestSigninSignature {
+export interface RequestSigningSignature {
   payload: SignerPayloadJSON;
 }
 
@@ -357,6 +357,12 @@ export interface RequestUpdateMeta {
   address: string;
   meta: string;
 }
+
+export interface RequestUnlockAllAccounts {
+  password: string;
+  cacheTime: number; // milliseconds
+}
+
 // Responses
 
 export type ResponseTypes = {
@@ -404,10 +410,6 @@ export interface ResponseSeedCreate {
 export interface ResponseSeedValidate {
   address: string;
   suri: string;
-}
-export interface RequestUnlockAllAccounts {
-  password: string;
-  cacheTime: number; // milisec
 }
 
 export interface ResponseAccountExport {
