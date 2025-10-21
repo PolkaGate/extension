@@ -151,27 +151,18 @@ export const generateStakingRewardNotifications = (
 ): NotificationMessageType[] => {
   const newMessages: NotificationMessageType[] = [];
 
-  const newPayouts = payouts.map(({ address, data, network }) => {
-    const payout = data.find(({ timestamp }) => timestamp >= (latestLoggedIn - NOTIFICATION_TIMESTAMP_OFFSET));
-
-    return payout
-      ? {
-        address,
-        network,
-        payout
-      }
-      : undefined;
-  }).filter((item) => !!item);
-
-  // Generate notifications for new payouts
-  newPayouts.forEach(({ address, network, payout }) => {
-    newMessages.push({
-      chain: network,
-      forAccount: address,
-      payout,
-      read: false,
-      type: 'stakingReward'
-    });
+  payouts.forEach(({ address, data, network }) => {
+    data
+      .filter(({ timestamp }) => timestamp >= latestLoggedIn)
+      .forEach((payout) => {
+        newMessages.push({
+          chain: network,
+          forAccount: address,
+          payout,
+          read: false,
+          type: 'stakingReward'
+        });
+      });
   });
 
   return newMessages;
@@ -187,27 +178,19 @@ export const generateReceivedFundNotifications = (
   transfers: ReceivedFundInformation[]
 ): NotificationMessageType[] => {
   const newMessages: NotificationMessageType[] = [];
-  const newReceivedFunds = transfers.map(({ address, data, network }) => {
-    const receivedFund = data.find(({ timestamp }) => timestamp >= (latestLoggedIn - NOTIFICATION_TIMESTAMP_OFFSET));
 
-    return receivedFund
-      ? {
-        address,
-        network,
-        receivedFund
-      }
-      : undefined;
-  }).filter((item) => !!item);
-
-  // Generate notifications for new payouts
-  newReceivedFunds.forEach(({ address, network, receivedFund }) => {
-    newMessages.push({
-      chain: network,
-      forAccount: address,
-      read: false,
-      receivedFund,
-      type: 'receivedFund'
-    });
+  transfers.forEach(({ address, data, network }) => {
+    data
+      .filter(({ timestamp }) => timestamp >= latestLoggedIn)
+      .forEach((receivedFund) => {
+        newMessages.push({
+          chain: network,
+          forAccount: address,
+          read: false,
+          receivedFund,
+          type: 'receivedFund'
+        });
+      });
   });
 
   return newMessages;

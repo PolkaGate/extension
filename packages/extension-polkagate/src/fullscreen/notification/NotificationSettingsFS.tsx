@@ -53,7 +53,7 @@ const SettingUI = ({ notificationSetting, openPopup, toggleNotification, toggleR
         showChevron={false}
         showColorBall={false}
         style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
-        title={t('Enable Receive Fund')}
+        title={t('Enable Received Funds')}
       >
         <MySwitch
           checked={notificationSetting.receivedFunds}
