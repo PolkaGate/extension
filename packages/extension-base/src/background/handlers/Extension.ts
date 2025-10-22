@@ -47,8 +47,6 @@ function isJsonPayload (value: SignerPayloadJSON | SignerPayloadRaw): value is S
   return (value as SignerPayloadJSON).genesisHash !== undefined;
 }
 
-const EXPIRY_CHECK_INTERVAL = 15_000;
-
 export default class Extension {
   #unlockExpiry: number | null = null;
   #expiryTimeout?: ReturnType<typeof setTimeout>;
@@ -185,24 +183,23 @@ export default class Extension {
   }
 
   private lockExtension (): boolean {
-    // clear cache and lock all accounts
-    for (const [address] of Object.entries(this.#cachedUnlocks)) {
+    for (const [address] of Object.entries(this.localAccounts())) {
       let pair;
 
       try {
         pair = keyring.getPair(address);
       } catch (e) {
         console.info('SomeThing went wrong to get the pair!', e);
-        delete this.#cachedUnlocks[address];
         continue;
       }
 
       if (pair && !pair.isLocked) {
         pair.lock();
       }
-    });
+    }
 
     this.clearUnlockExpiry();
+
     // apply to all open tabs
     const currentDomain = chrome.runtime.getURL('/');
 
