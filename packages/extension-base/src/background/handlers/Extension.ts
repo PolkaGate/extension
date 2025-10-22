@@ -199,6 +199,16 @@ export default class Extension {
     return true;
   }
 
+  private accountsForgetAll (): boolean {
+    const accounts = keyring.getAccounts();
+
+    accounts.forEach(({ address }) => {
+      this.accountsForget({ address });
+    });
+
+    return true;
+  }
+
   private refreshAccountPasswordCache (pair: KeyringPair): number {
     const { address } = pair;
 
@@ -727,6 +737,9 @@ export default class Extension {
 
       case 'pri(accounts.changePasswordAll)':
         return this.accountsChangePasswordAll(request as RequestAccountChangePasswordAll);
+
+      case 'pri(accounts.forgetAll)':
+        return this.accountsForgetAll();
       // -------------------------------------
 
       case 'pri(accounts.changePassword)':

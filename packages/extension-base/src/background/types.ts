@@ -109,6 +109,7 @@ export interface RequestSignatures {
   'pri(metadata.update)': [MetadataDef, boolean];
   'pri(accounts.unlockAll)': [RequestUnlockAllAccounts, boolean];
   'pri(accounts.locksExpired)': [null, boolean];
+  'pri(accounts.forgetAll)': [null, boolean];
 
   'pri(accounts.export)': [RequestAccountExport, ResponseAccountExport];
   'pri(accounts.batchExport)': [RequestAccountBatchExport, ResponseAccountsExport]
