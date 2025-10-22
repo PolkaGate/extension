@@ -5,6 +5,7 @@ import { Container, Grid, Typography } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
+import { forgetAccountsAll } from '@polkadot/extension-polkagate/src/messaging';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
@@ -28,12 +29,16 @@ export function ForgotPasswordContent ({ onClose }: { onClose: () => void }): Re
   const isExtension = useIsExtensionPopup();
 
   const [acknowledged, setAcknowledge] = useState<boolean>(false);
+  const [isBusy, setBusy] = useState<boolean>(false);
 
-  const onConfirmForgotPassword = useCallback(() => {
-    updateStorage(STORAGE_KEY.IS_FORGOTTEN, { status: true }).then(() => {
-      setExtensionLock(false);
-      !isExtension && switchToOrOpenTab('/reset-wallet', true);
-    }).catch(console.error);
+  const onConfirmForgotPassword = useCallback(async () => {
+    setBusy(true);
+    await updateStorage(STORAGE_KEY.IS_FORGOTTEN, { status: true });
+    await forgetAccountsAll();
+    setExtensionLock(false);
+    setBusy(false);
+
+    !isExtension && switchToOrOpenTab('/reset-wallet', true);
   }, [isExtension, setExtensionLock]);
 
   const toggleAcknowledge = useCallback((state: boolean) => {
@@ -60,6 +65,7 @@ export function ForgotPasswordContent ({ onClose }: { onClose: () => void }): Re
         direction={isExtension ? 'horizontal' : 'vertical'}
         disabled={!acknowledged}
         divider={isExtension}
+        isBusy={isBusy}
         onPrimaryClick={onConfirmForgotPassword}
         onSecondaryClick={onClose}
         primaryBtnText={t('Next')}

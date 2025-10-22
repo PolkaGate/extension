@@ -186,10 +186,16 @@ export default class Extension {
 
   private lockExtension (): boolean {
     // clear cache and lock all accounts
-    const accountsLocal = this.localAccounts();
+    for (const [address] of Object.entries(this.#cachedUnlocks)) {
+      let pair;
 
-    accountsLocal.forEach(({ address }) => {
-      const pair = keyring.getPair(address);
+      try {
+        pair = keyring.getPair(address);
+      } catch (e) {
+        console.info('SomeThing went wrong to get the pair!', e);
+        delete this.#cachedUnlocks[address];
+        continue;
+      }
 
       if (pair && !pair.isLocked) {
         pair.lock();
@@ -234,6 +240,16 @@ export default class Extension {
 
   private accountsForget ({ address }: RequestAccountForget): boolean {
     keyring.forgetAccount(address);
+
+    return true;
+  }
+
+  private accountsForgetAll (): boolean {
+    const accounts = keyring.getAccounts();
+
+    accounts.forEach(({ address }) => {
+      this.accountsForget({ address });
+    });
 
     return true;
   }
@@ -747,6 +763,9 @@ export default class Extension {
 
       case 'pri(accounts.changePasswordAll)':
         return this.accountsChangePasswordAll(request as RequestAccountChangePasswordAll);
+
+      case 'pri(accounts.forgetAll)':
+        return this.accountsForgetAll();
       // -------------------------------------
 
       case 'pri(accounts.changePassword)':

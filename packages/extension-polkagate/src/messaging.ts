@@ -105,7 +105,11 @@ export async function areAccountsLocksExpired (): Promise<boolean> {
   return sendMessage('pri(accounts.locksExpired)');
 }
 
+export async function forgetAccountsAll (): Promise<boolean> {
+  return sendMessage('pri(accounts.forgetAll)');
+}
 // -------------------------------------
+
 export async function showAccount (address: string, isShowing: boolean): Promise<boolean> {
   return sendMessage('pri(accounts.show)', { address, isShowing });
 }
