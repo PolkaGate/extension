@@ -6,3 +6,4 @@
 export { default as lockLottie } from './lock.lottie';
 export { default as masterKey } from './masterKey.lottie';
 export { default as migratePassword } from './migratePassword.lottie';
+export { default as sendingLottie } from './sending.lottie';

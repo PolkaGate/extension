@@ -1,12 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { LoaderGif, Motion, TwoToneText } from '../components';
+import { sendingLottie } from '../assets/animations';
+import { Motion, TwoToneText } from '../components';
 import { DraggableModal } from '../fullscreen/components/DraggableModal';
 import { useIsExtensionPopup, useTranslation } from '../hooks';
 import { PROCESSING_TITLE } from '../util/constants';
@@ -51,8 +53,8 @@ function WaitScreen ({ isModal }: Props): React.ReactElement {
   const color = isExtension ? theme.palette.text.highlight : theme.palette.primary.main;
 
   const Content = () => (
-    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : 'transparent', borderRadius: '14px', gap: '12px', justifyContent: 'center', m: '15px', p: '32px' }}>
-      <LoaderGif />
+    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : 'transparent', borderRadius: '14px', gap: '12px', justifyContent: 'center', m: '0 15px 15px', p: '0 32px 32px' }}>
+      <DotLottieReact autoplay loop src={sendingLottie} style={{ height: 'auto', width: '300px' }} />
       <Typography color='text.primary' variant='B-3'>
         <TwoToneText
           color={color}
