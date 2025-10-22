@@ -144,15 +144,23 @@ export default class Extension {
 
   private lockExtension (): boolean {
     // clear cache and lock all accounts
-    Object.entries(this.#cachedUnlocks).forEach(([address]) => {
-      const pair = keyring.getPair(address);
+    for (const [address] of Object.entries(this.#cachedUnlocks)) {
+      let pair;
+
+      try {
+        pair = keyring.getPair(address);
+      } catch (e) {
+        console.info('SomeThing went wrong to get the pair!', e);
+        delete this.#cachedUnlocks[address];
+        continue;
+      }
 
       if (pair && !pair.isLocked) {
         pair.lock();
       }
 
       this.#cachedUnlocks[address] = 0;
-    });
+    }
 
     // apply to all open tabs
     const currentDomain = chrome.runtime.getURL('/');
