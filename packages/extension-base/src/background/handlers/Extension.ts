@@ -49,6 +49,8 @@ function isJsonPayload (value: SignerPayloadJSON | SignerPayloadRaw): value is S
   return (value as SignerPayloadJSON).genesisHash !== undefined;
 }
 
+const EXPIRY_CHECK_INTERVAL = 15_000;
+
 export default class Extension {
   readonly #cachedUnlocks: CachedUnlocks;
 
@@ -57,6 +59,26 @@ export default class Extension {
   constructor (state: State) {
     this.#cachedUnlocks = {};
     this.#state = state;
+
+    // start interval to check expired locks
+    let lockMessageSent = false;
+
+    setInterval(() => {
+      const expired = this.areLocksExpired();
+
+      if (expired && !lockMessageSent) {
+        chrome.runtime.sendMessage({ type: 'LOCKED_ACCOUNTS_EXPIRED' })
+          .then(() => {
+            lockMessageSent = true;
+            console.log('Message sent');
+          })
+          .catch((err) => console.error(err));
+      }
+
+      if (!expired && lockMessageSent) {
+        lockMessageSent = false;
+      }
+    }, EXPIRY_CHECK_INTERVAL);
   }
 
   private applyAddedTime ({ pair }: ApplyAddedTime): void {
