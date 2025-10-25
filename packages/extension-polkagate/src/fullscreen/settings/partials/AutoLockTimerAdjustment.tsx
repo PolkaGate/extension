@@ -24,7 +24,7 @@ export default function AutoLockTimerAdjustment (): React.ReactElement {
     onSwitchChange } = useAdjustAutoLockTimer();
 
   return (
-    <Stack alignItems='left' direction='column' sx={{ width: '100%' }}>
+    <Stack alignItems='flex-start' direction='column' sx={{ width: '100%' }}>
       <Typography
         color={isExtension ? 'label.secondary' : 'text.primary'}
         fontSize={isExtension ? undefined : '22px'}
@@ -33,7 +33,7 @@ export default function AutoLockTimerAdjustment (): React.ReactElement {
       >
         {t('Auto-Lock Timer')}
       </Typography>
-      <Stack columnGap={isExtension ? 0 : '30px'} direction={isExtension ? 'column' : 'row'} rowGap={isExtension ? '8px' : 0} sx={{ alignItems: isExtension ? 'left' : 'center', justifyContent: 'space-between', mt: isExtension ? '7px' : 0 }}>
+      <Stack columnGap={isExtension ? 0 : '30px'} direction={isExtension ? 'column' : 'row'} rowGap={isExtension ? '8px' : 0} sx={{ alignItems: isExtension ? 'flex-start' : 'center', justifyContent: 'space-between', mt: isExtension ? '7px' : 0 }}>
         <MySwitch
           checked={Boolean(autoLock?.enabled)}
           columnGap='8px'
