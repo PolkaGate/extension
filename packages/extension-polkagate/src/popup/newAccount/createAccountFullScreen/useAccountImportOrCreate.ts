@@ -68,10 +68,6 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo> ({
     try {
       await resetOnForgotPassword();
 
-      await createAccountSuri(name, password, seed, type || DEFAULT_TYPE);
-      await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL);
-      await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true);
-
        const created = await createAccountSuri(name, password, seed, type || DEFAULT_TYPE);
 
       if (!created) {
