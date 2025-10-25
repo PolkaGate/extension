@@ -109,7 +109,9 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     const rq = requestedQueue.current[genesisHash];
 
     if (rq) {
-      requestedQueue.current[genesisHash] = rq.filter((e) => e !== endpoint);
+      const filtered = rq.filter((e) => e !== endpoint);
+
+      filtered.length ? (requestedQueue.current[genesisHash] = filtered) : delete requestedQueue.current[genesisHash];
     }
   }, []);
 
@@ -175,9 +177,9 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
   }, [handleNewApi, resolvePendingConnections]);
 
   const requestApiConnection = useCallback((genesisHash: string, endpoint: EndpointType | undefined, endpoints: DropdownOption[]) => {
-      const endpointValue = endpoint?.endpoint;
+    const endpointValue = endpoint?.endpoint;
 
-      if (!endpointValue || !endpointManager) {
+    if (!endpointValue || !endpointManager) {
       return;
     }
 
