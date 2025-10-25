@@ -80,7 +80,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     apisRef.current = apis;
   }, [apis]);
 
-  const updateEndpoint = useCallback((chainKey: string, selectedEndpoint: string, cbFunction?: () => void) => {
+  const updateEndpoint = useCallback((genesisHash: string, selectedEndpoint: string, cbFunction?: () => void) => {
     try {
       const newEndpoint = {
         checkForNewOne: false,
@@ -89,7 +89,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
         timestamp: Date.now()
       };
 
-      endpointManager.set(chainKey, newEndpoint);
+      endpointManager.set(genesisHash, newEndpoint);
       cbFunction?.();
     } catch (error) {
       console.error(error);
