@@ -251,10 +251,6 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     return promise;
   }, [requestApiConnection]);
 
-    console.log('requestedQueue.current:',requestedQueue.current)
-    console.log('pendingConnections.current:',pendingConnections.current)
-    console.log('apisRef.current.current:',apisRef.current)
-
   return (
     <APIContext.Provider value={{ apis, getApi }}>
       {children}
