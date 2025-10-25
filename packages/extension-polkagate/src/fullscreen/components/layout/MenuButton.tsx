@@ -8,6 +8,7 @@ import React, { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
+import { ShineEffect } from '@polkadot/extension-polkagate/src/partials';
 
 interface Props {
   Icon: Icon;
@@ -78,6 +79,7 @@ function MenuButton ({ Icon, onClick, path, style = { marginBottom: '8px' }, tex
         }}
         />
       }
+      <ShineEffect active={isSelected} />
     </Stack>
   );
 }
