@@ -8,7 +8,7 @@ import { AUTO_LOCK_PERIOD_DEFAULT, STORAGE_KEY } from '../util/constants';
 
 export type AutoLockDelayType = 'min' | 'hour' | 'day';
 
-interface AutoLock {
+export interface AutoLock {
   enabled: boolean;
   delay: {
     value: number;
