@@ -97,12 +97,19 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
   }, []);
 
   // Resolve all pending promises for this genesisHash
-  const resolvePendingConnections = useCallback((genesisHash: string, api: ApiPromise | undefined) => {
+  const resolvePendingConnections = useCallback((genesisHash: string, api: ApiPromise | undefined, endpoint: string | undefined) => {
     const pending = pendingConnections.current[genesisHash];
 
     if (pending) {
       pending.forEach(({ resolve }) => resolve(api));
       delete pendingConnections.current[genesisHash];
+    }
+
+    // Clear request mark for this endpoint
+    const rq = requestedQueue.current[genesisHash];
+
+    if (rq) {
+      requestedQueue.current[genesisHash] = rq.filter((e) => e !== endpoint);
     }
   }, []);
 
@@ -130,7 +137,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     });
 
     // Resolve all waiting promises
-    resolvePendingConnections(genesisHash, api);
+    resolvePendingConnections(genesisHash, api, endpoint);
   }, [resolvePendingConnections]);
 
   const handleAutoMode = useCallback(async (genesisHash: string, endpoints: DropdownOption[]) => {
@@ -146,7 +153,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     const { api, selectedEndpoint } = await fastestConnection(wssEndpoints);
 
     if (!api || !selectedEndpoint) {
-      resolvePendingConnections(genesisHash, undefined);
+      resolvePendingConnections(genesisHash, undefined, selectedEndpoint);
 
       return;
     }
@@ -163,7 +170,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     } catch (error) {
       console.error('Connection error:', error);
       // Resolve pending with undefined on error
-      resolvePendingConnections(genesisHash, undefined);
+      resolvePendingConnections(genesisHash, undefined, endpointToConnect);
     }
   }, [handleNewApi, resolvePendingConnections]);
 
