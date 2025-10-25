@@ -30,6 +30,18 @@ export const ExtensionLockProvider: React.FC<{ children: React.ReactElement }> =
   const [isExtensionLocked, setIsExtensionLocked] = useState(true);
 
   useEffect(() => {
+    const handleLockExpiredMessage = (msg: any) => {
+      if (msg.type === 'LOCKED_ACCOUNTS_EXPIRED') {
+             window.location.reload();
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(handleLockExpiredMessage);
+
+    return () => chrome.runtime.onMessage.removeListener(handleLockExpiredMessage);
+  }, []);
+
+  useEffect(() => {
     isPasswordsMigrated && areAccountsLocksExpired()
       .then((res) => {
         setIsExtensionLocked(res);

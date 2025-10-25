@@ -12,7 +12,7 @@ import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 import type State from './State';
 
-import { ALLOWED_PATH, PASSWORD_EXPIRY_MS, START_WITH_PATH } from '@polkadot/extension-base/defaults';
+import { ALLOWED_PATH, START_WITH_PATH } from '@polkadot/extension-base/defaults';
 import { TypeRegistry } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
 import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
@@ -21,8 +21,6 @@ import { keyExtractSuri, mnemonicGenerate, mnemonicValidate } from '@polkadot/ut
 
 import { withErrorLog } from './helpers';
 import { createSubscription, unsubscribe } from './subscriptions';
-
-type CachedUnlocks = Record<string, number>;
 
 const SEED_DEFAULT_LENGTH = 12;
 const SEED_LENGTHS = [12, 15, 18, 21, 24];
@@ -50,13 +48,55 @@ function isJsonPayload (value: SignerPayloadJSON | SignerPayloadRaw): value is S
 }
 
 export default class Extension {
-  readonly #cachedUnlocks: CachedUnlocks;
+  #unlockExpiry: number | null = null;
+  #expiryTimeout?: ReturnType<typeof setTimeout>;
+  #lockMessageSent = false;
 
   readonly #state: State;
 
   constructor (state: State) {
-    this.#cachedUnlocks = {};
     this.#state = state;
+    this.scheduleExpiryCheck();
+  }
+
+  private notifyLockExpired (): void {
+    chrome.runtime.sendMessage({ type: 'LOCKED_ACCOUNTS_EXPIRED' }).catch(console.error);
+  }
+
+  private scheduleExpiryCheck (): void {
+    if (this.#expiryTimeout) {
+      clearTimeout(this.#expiryTimeout);
+    }
+
+    if (!this.#unlockExpiry) {
+      return;
+    }
+
+    const now = Date.now();
+    const delay = Math.max(this.#unlockExpiry - now, 0);
+
+    this.#expiryTimeout = setTimeout(() => {
+      if (!this.#lockMessageSent && this.#unlockExpiry && this.#unlockExpiry <= Date.now()) {
+        this.lockExtension(); // locks accounts immediately
+        this.notifyLockExpired();
+        this.#lockMessageSent = true;
+      }
+    }, delay);
+  }
+
+  public setUnlockExpiry (expiryTime: number): void {
+    this.#unlockExpiry = expiryTime;
+    this.#lockMessageSent = false;
+    this.scheduleExpiryCheck();
+  }
+
+  public clearUnlockExpiry (): void {
+    this.#unlockExpiry = null;
+    this.#lockMessageSent = false;
+
+    if (this.#expiryTimeout) {
+      clearTimeout(this.#expiryTimeout);
+    }
   }
 
   private applyAddedTime ({ pair }: ApplyAddedTime): void {
@@ -143,24 +183,22 @@ export default class Extension {
   }
 
   private lockExtension (): boolean {
-    // clear cache and lock all accounts
-    for (const [address] of Object.entries(this.#cachedUnlocks)) {
+    for (const [address] of Object.entries(this.localAccounts())) {
       let pair;
 
       try {
         pair = keyring.getPair(address);
       } catch (e) {
         console.info('SomeThing went wrong to get the pair!', e);
-        delete this.#cachedUnlocks[address];
         continue;
       }
 
       if (pair && !pair.isLocked) {
         pair.lock();
       }
-
-      this.#cachedUnlocks[address] = 0;
     }
+
+    this.clearUnlockExpiry();
 
     // apply to all open tabs
     const currentDomain = chrome.runtime.getURL('/');
@@ -198,10 +236,6 @@ export default class Extension {
   }
 
   private accountsForget ({ address }: RequestAccountForget): boolean {
-    if (this.#cachedUnlocks[address]) {
-      delete this.#cachedUnlocks[address];
-    }
-
     keyring.forgetAccount(address);
 
     return true;
@@ -218,13 +252,11 @@ export default class Extension {
   }
 
   private refreshAccountPasswordCache (pair: KeyringPair): number {
-    const { address } = pair;
-
-    const savedExpiry = this.#cachedUnlocks[address] || 0;
+    const savedExpiry = this.#unlockExpiry || 0;
     const remainingTime = savedExpiry - Date.now();
 
     if (remainingTime < 0) {
-      this.#cachedUnlocks[address] = 0;
+      this.clearUnlockExpiry();
       pair.lock();
 
       return 0;
@@ -450,7 +482,8 @@ export default class Extension {
 
     try {
       const accountsLocal = this.localAccounts();
-      const res = accountsLocal.map(({ address }) => {
+
+      for (const { address } of accountsLocal) {
         const pair = keyring.getPair(address);
 
         if (!pair) {
@@ -464,13 +497,12 @@ export default class Extension {
         if (pair.isLocked) {
           pair.decodePkcs8(password);
         }
+      }
 
-        this.#cachedUnlocks[address] = Date.now() + cacheTime;
+      // Set a single expiry timestamp for all accounts
+      this.setUnlockExpiry(Date.now() + cacheTime);
 
-        return true;
-      });
-
-      return res.every((success) => success);
+      return true;
     } catch (error) {
       console.error('accountsUnlockAll failed:', error);
 
@@ -479,13 +511,7 @@ export default class Extension {
   }
 
   private areLocksExpired (): boolean {
-    const accountsLocal = this.localAccounts();
-
-    if (accountsLocal.length === 0) {
-      return false; // if all accounts are external, then no lock expiration from me!
-    }
-
-    return Object.entries(this.#cachedUnlocks).every(([, time]) => time < Date.now());
+    return this.#unlockExpiry === null || this.#unlockExpiry < Date.now();
   }
 
   private handleRegistry (payload: SignerPayloadJSON): void {
@@ -512,11 +538,6 @@ export default class Extension {
     const { reject, request, resolve } = queued;
     const pair = keyring.getPair(queued.account.address);
 
-    // unlike queued.account.address the following
-    // address is encoded with the default prefix
-    // which what is used for password caching mapping
-    const { address } = pair;
-
     if (!pair) {
       reject(new Error('Unable to find pair'));
 
@@ -542,13 +563,7 @@ export default class Extension {
 
     const result = request.sign(registry, pair);
 
-    if (savePass) {
-      const cacheTime = remainingTime || PASSWORD_EXPIRY_MS;
-
-      this.#cachedUnlocks[address] = Date.now() + cacheTime;
-    } else {
-      pair.lock();
-    }
+    console.info('Save pass is deprecated:', remainingTime, savePass);
 
     resolve({
       id,
