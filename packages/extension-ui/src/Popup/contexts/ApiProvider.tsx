@@ -67,10 +67,10 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
   const requestedQueue = useRef<Record<string, string[]>>({});
   // Store pending promises for each genesisHash
   const pendingConnections = useRef<
-    Record<string, {
+    Record<string, Record<string, {
       promise: Promise<ApiPromise | undefined>;
       resolve(api: ApiPromise | undefined): void;
-    }[]>
+    }>>
   >({});
 
   const apisRef = useRef<APIs>({});
@@ -98,11 +98,16 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
 
   // Resolve all pending promises for this genesisHash
   const resolvePendingConnections = useCallback((genesisHash: string, api: ApiPromise | undefined, endpoint: string | undefined) => {
-    const pending = pendingConnections.current[genesisHash];
+    const pending = endpoint && pendingConnections.current[genesisHash][endpoint];
 
     if (pending) {
-      pending.forEach(({ resolve }) => resolve(api));
-      delete pendingConnections.current[genesisHash];
+      pending.resolve(api);
+      delete pendingConnections.current[genesisHash][endpoint];
+
+      // If there are no more pending endpoints for this genesisHash, remove the empty object
+      if (pendingConnections.current[genesisHash] && Object.keys(pendingConnections.current[genesisHash]).length === 0) {
+        delete pendingConnections.current[genesisHash];
+      }
     }
 
     // Clear request mark for this endpoint
@@ -139,7 +144,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     });
 
     // Resolve all waiting promises
-    resolvePendingConnections(genesisHash, api, endpoint);
+    resolvePendingConnections(genesisHash, api, onAutoMode ? AUTO_MODE.value : endpoint);
   }, [resolvePendingConnections]);
 
   const handleAutoMode = useCallback(async (genesisHash: string, endpoints: DropdownOption[]) => {
@@ -216,7 +221,9 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
       endpointManager.set(genesisHash, endpoint);
     }
 
-    if (!endpoint) {
+    const endpointValue = endpoint.endpoint;
+
+    if (!endpoint || !endpointValue) {
       console.warn('No endpoint found for', genesisHash);
 
       return Promise.resolve(undefined);
@@ -224,21 +231,20 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
 
     // Check if API already exists and is connected
     const apiList = apisRef.current[genesisHash];
-    const availableApi = apiList?.find(({ api }) => api?.isConnected);
+    const availableApi = apiList?.find(({ api, endpoint }) => api?.isConnected && endpoint === endpointValue);
 
     if (availableApi?.api) {
       return Promise.resolve(availableApi.api);
     }
 
-    // TODO: maybe different endpoint is pending! needs more check
     // Check if connection is already pending
-    if (pendingConnections.current[genesisHash]?.length > 0) {
+    if (pendingConnections.current[genesisHash]?.[endpointValue]) {
       // Return existing promise
-      return pendingConnections.current[genesisHash][0].promise;
+      return pendingConnections.current[genesisHash][endpointValue].promise;
     }
 
     // Create new promise for this connection
-    // initialize resolvePromise with a noop so it's always defined for the push below,
+    // initialize resolvePromise with a noop so it's always defined for assignment below,
     // then overwrite it synchronously inside the Promise executor.
     let resolvePromise: (api: ApiPromise | undefined) => void = () => undefined;
     const promise = new Promise<ApiPromise | undefined>((resolve) => {
@@ -246,13 +252,13 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     });
 
     if (!pendingConnections.current[genesisHash]) {
-      pendingConnections.current[genesisHash] = [];
+      pendingConnections.current[genesisHash] = {};
     }
 
-    pendingConnections.current[genesisHash].push({
+    pendingConnections.current[genesisHash][endpointValue] = {
       promise,
       resolve: resolvePromise
-    });
+    };
 
     // Start connection
     requestApiConnection(genesisHash, endpoint, endpoints);
