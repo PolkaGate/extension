@@ -241,7 +241,9 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     }
 
     // Create new promise for this connection
-    let resolvePromise: (api: ApiPromise | undefined) => void;
+    // initialize resolvePromise with a noop so it's always defined for the push below,
+    // then overwrite it synchronously inside the Promise executor.
+    let resolvePromise: (api: ApiPromise | undefined) => void = () => undefined;
     const promise = new Promise<ApiPromise | undefined>((resolve) => {
       resolvePromise = resolve;
     });
