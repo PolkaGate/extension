@@ -11,7 +11,7 @@ const ENDPOINTS_NAME_IN_STORAGE = 'endpoints2';
 type SavedEndpoints = Record<string, EndpointType>;
 type Listener = (genesisHash: string, endpoint: EndpointType) => void;
 
-export default class endpointManager2 {
+export default class EndpointManager2 {
   // Store endpoints and listeners
   private endpoints: SavedEndpoints = {};
   private listeners = new Set<Listener>();

@@ -812,7 +812,7 @@ export type APIs = Record<string, ApiPropsNew[] | undefined>;
 
 export interface APIsContext {
   apis: APIs;
-  setIt: (apis: APIs) => void;
+  getApi: (genesisHash: string | null | undefined, endpoints: DropdownOption[]) => Promise<ApiPromise | undefined>;
 }
 
 export interface LatestRefs {
