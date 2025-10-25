@@ -59,7 +59,7 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo> ({
     const isPasswordCorrect = await validatePasswordAsync(password);
 
     if (!isPasswordCorrect) {
-      setError(t(' Incorrect password'));
+      setError(t('Incorrect password'));
       setIsBusy(false);
 
       return;
