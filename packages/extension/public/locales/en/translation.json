@@ -177,7 +177,6 @@
   "Need Help": "",
   "Derive Account": "",
   "Export Account": "",
-  "Password for this account": "",
   "From": "",
   "To": "",
   "There is no sufficient transferable balance!": "",
@@ -366,12 +365,9 @@
   "Account index {{index}}": "",
   "Address offset {{index}}": "",
   "No chain selected": "",
-  "The raw seed is invalid. It should be 66 characters long and start with 0x": "",
   "Enter your account's raw seed to seamlessly import it into the extension wallet, giving you quick and secure access to your assets and transactions.": "",
   "Raw seed starting with 0x": "",
   "Continue": "",
-  "Invalid recovery phrase or derivation path": "",
-  "Invalid recovery phrase": "",
   "Enter your account's recovery phrase (mnemonic seed) to seamlessly import it into the extension wallet, giving you quick and secure access to your assets and transactions.": "",
   "Existing 12 or 24-word recovery phrase": "",
   "To import a specific account, use a derivation path like //0, //1, etc.": "",
@@ -504,7 +500,6 @@
   "Currently, you do not have any accounts. Begin by creating your first account or importing existing accounts to get started.": "",
   "An error occurred": "",
   "Back to home": "",
-  "Password for {{accountName}}": "",
   "origin": "",
   "action": "",
   "Remove access": "",
@@ -824,5 +819,7 @@
   "Adjust Auto-Lock": "",
   "Password to secure this account": "",
   "Something went wrong while changing password!": "",
-  "This child account will be created from your parent account. Give it a name.": ""
+  "This child account will be created from your parent account. Give it a name.": "",
+  "Incorrect password": "",
+  "Failed to create account": ""
 }
