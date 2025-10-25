@@ -5,11 +5,11 @@ import type { EndpointType } from '../util/types';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import EndpointManager2 from '../class/endpointManager2';
+import EndpointManager from '../class/endpointManager';
 import { AUTO_MODE_DEFAULT_ENDPOINT } from '../util/constants';
 
 // Create a singleton EndpointManager
-const endpointManager = new EndpointManager2();
+const endpointManager = new EndpointManager();
 
 const DEFAULT_ENDPOINT = {
   checkForNewOne: undefined,

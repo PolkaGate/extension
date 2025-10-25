@@ -6,7 +6,7 @@ import type { APIs, DropdownOption, EndpointType } from '@polkadot/extension-pol
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import EndpointManager from '@polkadot/extension-polkagate/src/class/endpointManager2';
+import EndpointManager from '@polkadot/extension-polkagate/src/class/endpointManager';
 import { APIContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { fastestConnection } from '@polkadot/extension-polkagate/src/util';
 import { AUTO_MODE, AUTO_MODE_DEFAULT_ENDPOINT } from '@polkadot/extension-polkagate/src/util/constants';
@@ -30,7 +30,7 @@ const endpointManager = new EndpointManager();
  *
  * - Tracks pending connection resolvers per genesis hash so all awaiting callers are resolved once a connection completes.
  *
- * - Initializes an EndpointManager2 instance asynchronously on mount and exposes it via internal state.
+ * - Initializes an EndpointManager instance asynchronously on mount and exposes it via internal state.
  *
  * - Supports "auto" mode endpoints (determined by `isAutoMode`) where the best/wss endpoint is chosen via `fastestConnection`.
  *   - When auto mode is requested and no auto-mode ApiPromise exists for the genesis hash, it triggers `handleAutoMode`
@@ -47,9 +47,9 @@ const endpointManager = new EndpointManager();
  * - Uses refs (`apisRef`, `requestedQueue`, `pendingConnections`) to safely read/write mutable data in async callbacks
  *   without causing excessive re-renders or stale closures.
  *
- * - Uses `useEffect` to synchronize the `apisRef` with state and to initialize the EndpointManager2 singleton.
+ * - Uses `useEffect` to synchronize the `apisRef` with state and to initialize the EndpointManager singleton.
  *
- * - All public-facing asynchronous operations (like `getApi`) depend on the EndpointManager2 being initialized;
+ * - All public-facing asynchronous operations (like `getApi`) depend on the EndpointManager being initialized;
  *   callers receive `undefined` if the manager isn't ready or the genesisHash is falsy.
  *
  * Notes and caveats:
@@ -62,9 +62,6 @@ const endpointManager = new EndpointManager();
  *   identical connections.
  */
 export default function ApiProvider ({ children }: { children: React.ReactNode }) {
-  // const [genesis, setGenesis] = useState<string | undefined>(undefined);
-  // const endpoints = useEndpoints(genesis);
-
   const [apis, setApis] = useState<APIs>({});
 
   const requestedQueue = useRef<Record<string, string[]>>({});

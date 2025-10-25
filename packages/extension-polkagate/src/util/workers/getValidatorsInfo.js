@@ -1,24 +1,31 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
-/* eslint-disable header/header */
 
-// @ts-nocheck
+import getApi from '../getApi';
 
-import getApi from '../getApi.ts';
-
-async function getAllValidators(endpoint) {
+/**
+ * @param {string} endpoint
+ */
+async function getAllValidators (endpoint) {
   console.log('getting validators info from ', endpoint);
 
   try {
     const api = await getApi(endpoint);
 
+    if (!api) {
+      console.error(' Something went wrong wile setting a connection.');
+
+      return;
+    }
+
+    const infoProps = { withController: true, withDestination: true, withExposure: true, withLedger: true, withNominations: true, withPrefs: true };
+
     const at = await api.rpc.chain.getFinalizedHead();
     const apiAt = await api.at(at);
     const [elected, waiting, currentEra] = await Promise.all([
-      api.derive.staking.electedInfo({ withController: true, withDestination: true, withExposure: true, withPrefs: true, withNominations: true, withLedger: true }),
-      api.derive.staking.waitingInfo({ withController: true, withDestination: true, withExposure: true, withPrefs: true, withNominations: true, withLedger: true }),
-      apiAt.query.staking.currentEra()
+      api.derive.staking.electedInfo(infoProps),
+      api.derive.staking.waitingInfo(infoProps),
+      apiAt.query['staking']['currentEra']()
     ]);
     const nextElectedInfo = elected.info.filter((e) =>
       elected.nextElected.find((n) =>
@@ -40,8 +47,9 @@ async function getAllValidators(endpoint) {
 onmessage = (e) => {
   const { endpoint } = e.data;
 
-  // eslint-disable-next-line no-void
-  void getAllValidators(endpoint).then((info) => {
-    postMessage(info);
-  });
+  getAllValidators(endpoint)
+    .then((info) => {
+      postMessage(info);
+    })
+    .catch(console.error);
 };
