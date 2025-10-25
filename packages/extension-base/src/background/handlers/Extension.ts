@@ -183,7 +183,7 @@ export default class Extension {
   }
 
   private lockExtension (): boolean {
-    for (const [address] of Object.entries(this.localAccounts())) {
+    for (const { address } of this.localAccounts()) {
       let pair;
 
       try {
