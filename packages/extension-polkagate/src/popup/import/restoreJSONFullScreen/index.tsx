@@ -17,7 +17,7 @@ import { stringToU8a, u8aToString } from '@polkadot/util';
 import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
 import { AccountContext, ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useAlerts, useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore, unlockAllAccounts, updateMeta } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
@@ -34,6 +34,7 @@ export default function RestoreJson (): React.ReactElement {
   const theme = useTheme();
   const navigate = useNavigate();
   const { accounts: maybeExistingAccounts } = useContext(AccountContext);
+  const { notify } = useAlerts();
 
   const [isBusy, setIsBusy] = useState(false);
   const [stepOne, setStep] = useState(true);
@@ -151,7 +152,15 @@ export default function RestoreJson (): React.ReactElement {
     setIsBusy(true);
 
     try {
-      await resetOnForgotPassword();
+      const resetOk = await resetOnForgotPassword();
+
+      if (!resetOk) {
+         setIsBusy(false);
+
+         notify(t('Failed to reset accounts'), 'error');
+
+         return;
+       }
 
       if (isKeyringPairs$Json(file)) {
         await handleKeyringPairsJson(file);
@@ -184,7 +193,7 @@ export default function RestoreJson (): React.ReactElement {
       setIsPasswordError(true);
       setIsBusy(false);
     }
-  }, [file, requirePassword, password, selectedAccountsInfo, maybeExistingAccounts, handleKeyringPairsJson, handleRegularJson, navigate]);
+  }, [file, requirePassword, password, selectedAccountsInfo, maybeExistingAccounts, notify, t, handleKeyringPairsJson, handleRegularJson, navigate]);
 
   const onSelectDeselectAll = useCallback(() => {
     setSelectedAccountsInfo((prev) =>

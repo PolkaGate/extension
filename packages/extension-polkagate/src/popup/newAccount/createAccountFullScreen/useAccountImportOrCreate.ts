@@ -66,7 +66,13 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo> ({
     }
 
     try {
-      await resetOnForgotPassword();
+      const resetOk = await resetOnForgotPassword();
+
+      if (!resetOk) {
+         setIsBusy(false);
+
+         return setError(t('Failed to reset accounts'));
+       }
 
        const created = await createAccountSuri(name, password, seed, type || DEFAULT_TYPE);
 
