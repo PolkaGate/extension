@@ -120,8 +120,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
 
       toSaveApi.push({
         api,
-        endpoint,
-        isRequested: false
+        endpoint
       });
 
       return {
@@ -169,31 +168,29 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
   }, [handleNewApi, resolvePendingConnections]);
 
   const requestApiConnection = useCallback((genesisHash: string, endpoint: EndpointType | undefined, endpoints: DropdownOption[]) => {
-    if (!endpoint?.endpoint || !endpointManager) {
+      const endpointValue = endpoint?.endpoint;
+
+      if (!endpointValue || !endpointManager) {
       return;
     }
 
-    const isAlreadyRequested = requestedQueue.current[genesisHash]?.includes(endpoint.endpoint);
+    const isAlreadyRequested = requestedQueue.current[genesisHash]?.includes(endpointValue);
 
     if (isAlreadyRequested) {
       return;
     }
 
     // Mark as requested
-    if (!requestedQueue.current[genesisHash]) {
-      requestedQueue.current[genesisHash] = [];
-    }
+    (requestedQueue.current[genesisHash] ??= []).push(endpointValue);
 
-    requestedQueue.current[genesisHash].push(endpoint.endpoint);
-
-    if (isAutoMode(endpoint.endpoint)) {
+    if (isAutoMode(endpointValue)) {
       handleAutoMode(genesisHash, endpoints).catch(console.error);
 
       return;
     }
 
-    if (endpoint.endpoint.startsWith('wss')) {
-      connectToEndpoint(genesisHash, endpoint.endpoint).catch(console.error);
+    if (endpointValue.startsWith('wss')) {
+      connectToEndpoint(genesisHash, endpointValue).catch(console.error);
     }
   }, [connectToEndpoint, handleAutoMode]);
 
@@ -253,6 +250,10 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
 
     return promise;
   }, [requestApiConnection]);
+
+    console.log('requestedQueue.current:',requestedQueue.current)
+    console.log('pendingConnections.current:',pendingConnections.current)
+    console.log('apisRef.current.current:',apisRef.current)
 
   return (
     <APIContext.Provider value={{ apis, getApi }}>

@@ -805,7 +805,6 @@ export interface ApiProps extends ApiState {
 export interface ApiPropsNew {
   api?: ApiPromise;
   endpoint: string;
-  isRequested: boolean;
 }
 
 export type APIs = Record<string, ApiPropsNew[] | undefined>;
