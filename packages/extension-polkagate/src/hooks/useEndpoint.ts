@@ -41,7 +41,7 @@ export default function useEndpoint (genesisHash: string | null | undefined, _en
 
       // If an endpoint already saved or it should be on auto mode, then save the Auto Mode endpoint in the storage
       if (!savedEndpoint || endpointManager.shouldBeOnAutoMode(savedEndpoint)) {
-        endpointManager.set(genesisHash, AUTO_MODE_DEFAULT_ENDPOINT);
+        endpointManager.set(genesisHash, { ...AUTO_MODE_DEFAULT_ENDPOINT, timestamp: Date.now() });
       }
     }
 

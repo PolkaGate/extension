@@ -158,7 +158,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     updateEndpoint(genesisHash, selectedEndpoint, () => handleNewApi(api, selectedEndpoint, true));
   }, [handleNewApi, updateEndpoint, resolvePendingConnections]);
 
-  const connectToEndpoint = useCallback(async (endpointToConnect: string) => {
+  const connectToEndpoint = useCallback(async (genesisHash: string, endpointToConnect: string) => {
     try {
       const wsProvider = new WsProvider(endpointToConnect);
       const newApi = await ApiPromise.create({ provider: wsProvider });
@@ -167,13 +167,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     } catch (error) {
       console.error('Connection error:', error);
       // Resolve pending with undefined on error
-      const genesisHash = Object.keys(pendingConnections.current).find((key) =>
-        pendingConnections.current[key].length > 0
-      );
-
-      if (genesisHash) {
-        resolvePendingConnections(genesisHash, undefined);
-      }
+      resolvePendingConnections(genesisHash, undefined);
     }
   }, [handleNewApi, resolvePendingConnections]);
 
@@ -202,7 +196,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     }
 
     if (endpoint.endpoint.startsWith('wss')) {
-      connectToEndpoint(endpoint.endpoint).catch(console.error);
+      connectToEndpoint(genesisHash, endpoint.endpoint).catch(console.error);
     }
   }, [connectToEndpoint, handleAutoMode]);
 
@@ -214,9 +208,9 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     let endpoint = endpointManager.get(genesisHash);
 
     if (!endpoint) {
-      endpoint = AUTO_MODE_DEFAULT_ENDPOINT;
+      endpoint = { ...AUTO_MODE_DEFAULT_ENDPOINT, timestamp: Date.now() };
 
-      endpointManager.set(genesisHash, AUTO_MODE_DEFAULT_ENDPOINT);
+      endpointManager.set(genesisHash, endpoint);
     }
 
     if (!endpoint) {
