@@ -8,7 +8,6 @@ interface ShineEffectProps {
   duration?: number; // ms (default: 1200)
   interval?: number; // ms (default: 6000)
   active?: boolean;
-  borderRadius?: number | string;
 }
 
 const shineKeyframes = keyframes`
