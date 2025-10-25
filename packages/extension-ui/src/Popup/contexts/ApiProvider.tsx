@@ -9,6 +9,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 import EndpointManager from '@polkadot/extension-polkagate/src/class/endpointManager';
 import { APIContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { fastestConnection } from '@polkadot/extension-polkagate/src/util';
+import LCConnector from '@polkadot/extension-polkagate/src/util/api/lightClient-connect';
 import { AUTO_MODE, AUTO_MODE_DEFAULT_ENDPOINT } from '@polkadot/extension-polkagate/src/util/constants';
 
 const isAutoMode = (e: string) => e === AUTO_MODE.value;
@@ -148,13 +149,6 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
   }, [resolvePendingConnections]);
 
   const handleAutoMode = useCallback(async (genesisHash: string, endpoints: DropdownOption[]) => {
-    const apisForGenesis = apisRef.current[genesisHash];
-    const autoModeExists = apisForGenesis?.some(({ endpoint }) => isAutoMode(endpoint));
-
-    if (autoModeExists) {
-      return;
-    }
-
     const wssEndpoints = endpoints.filter(({ value }) => String(value).startsWith('wss'));
 
     const { api, selectedEndpoint } = await fastestConnection(wssEndpoints);
@@ -181,6 +175,18 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     }
   }, [handleNewApi, resolvePendingConnections]);
 
+  const connectToLightClient = useCallback(async (genesisHash: string, endpointToConnect: string) => {
+    try {
+      const newApi = await LCConnector(endpointToConnect);
+
+      handleNewApi(newApi, endpointToConnect);
+    } catch (error) {
+      console.error('Connection error:', error);
+      // Resolve pending with undefined on error
+      resolvePendingConnections(genesisHash, undefined, endpointToConnect);
+    }
+  }, [handleNewApi, resolvePendingConnections]);
+
   const requestApiConnection = useCallback((genesisHash: string, endpoint: EndpointType | undefined, endpoints: DropdownOption[]) => {
     const endpointValue = endpoint?.endpoint;
 
@@ -197,16 +203,23 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     // Mark as requested
     (requestedQueue.current[genesisHash] ??= []).push(endpointValue);
 
+    // If in auto mode find the fastest endpoint
     if (isAutoMode(endpointValue)) {
       handleAutoMode(genesisHash, endpoints).catch(console.error);
 
       return;
     }
 
+    // Connect to a WebSocket endpoint
     if (endpointValue.startsWith('wss')) {
       connectToEndpoint(genesisHash, endpointValue).catch(console.error);
     }
-  }, [connectToEndpoint, handleAutoMode]);
+
+    // Connect to a light client endpoint if provided
+    if (endpointValue.startsWith('light')) {
+      connectToLightClient(genesisHash, endpointValue).catch(console.error);
+    }
+  }, [connectToEndpoint, connectToLightClient, handleAutoMode]);
 
   const getApi = useCallback(async (genesisHash: string | null | undefined, endpoints: DropdownOption[]): Promise<ApiPromise | undefined> => {
     if (!genesisHash) {
@@ -231,10 +244,10 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
 
     // Check if API already exists and is connected
     const apiList = apisRef.current[genesisHash];
-    const availableApi = apiList?.find(({ api, endpoint }) => api?.isConnected && endpoint === endpointValue);
+    const availableApi = apiList?.find(({ api, endpoint }) => api?.isConnected && endpoint === endpointValue)?.api;
 
-    if (availableApi?.api) {
-      return Promise.resolve(availableApi.api);
+    if (availableApi) {
+      return Promise.resolve(availableApi);
     }
 
     // Check if connection is already pending
@@ -247,6 +260,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     // initialize resolvePromise with a noop so it's always defined for assignment below,
     // then overwrite it synchronously inside the Promise executor.
     let resolvePromise: (api: ApiPromise | undefined) => void = () => undefined;
+
     const promise = new Promise<ApiPromise | undefined>((resolve) => {
       resolvePromise = resolve;
     });
