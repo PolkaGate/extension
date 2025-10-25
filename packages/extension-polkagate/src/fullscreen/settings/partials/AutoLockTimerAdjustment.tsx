@@ -44,7 +44,7 @@ export default function AutoLockTimerAdjustment (): React.ReactElement {
           <MyTextField
             disabled={!autoLock?.enabled}
             inputType='number'
-            inputValue={inputValue ?? autoLock?.delay?.value ?? AUTO_LOCK_PERIOD_DEFAULT}
+            inputValue={inputValue || autoLock?.delay?.value || AUTO_LOCK_PERIOD_DEFAULT}
             maxLength={4}
             onTextChange={onDelayValueChange}
             placeholder='00'

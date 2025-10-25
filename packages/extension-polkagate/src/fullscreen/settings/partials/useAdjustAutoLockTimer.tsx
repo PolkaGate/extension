@@ -11,13 +11,16 @@ import { AUTO_LOCK_PERIOD_DEFAULT, STORAGE_KEY } from '@polkadot/extension-polka
 import { setStorage } from '../../../components/Loading';
 import useAutoLock from '../../../hooks/useAutoLock';
 
+// enforce a minimum auto-lock time; 0 would lock forever
+const INPUT_MIN_VALUE = '1';
+
 export default function useAdjustAutoLockTimer (): {
-    autoLock: AutoLock | undefined;
-    delayType: AutoLockDelayType | undefined;
-    inputValue: number | undefined;
-    onDelayTypeChange: (value: number | string) => void;
-    onDelayValueChange: (value: string) => void;
-    onSwitchChange: (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
+  autoLock: AutoLock | undefined;
+  delayType: AutoLockDelayType | undefined;
+  inputValue: number | undefined;
+  onDelayTypeChange: (value: number | string) => void;
+  onDelayValueChange: (value: string) => void;
+  onSwitchChange: (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
 } {
   const autoLock = useAutoLock();
 
@@ -26,7 +29,7 @@ export default function useAdjustAutoLockTimer (): {
   const [delayType, setDelayType] = useState<AutoLockDelayType | undefined>();
 
   const onDelayValueChange = useCallback((value: string) => {
-    setInputValue(parseFloat(value || '1'));
+    setInputValue(parseFloat(value || INPUT_MIN_VALUE));
   }, []);
 
   const onDelayTypeChange = useCallback((value: number | string) => {
@@ -42,7 +45,7 @@ export default function useAdjustAutoLockTimer (): {
       return;
     }
 
-    // to initiate with saved data
+    // initialize state using saved data
     setInputValue(autoLock.delay.value);
     setEnabled(autoLock.enabled);
     setDelayType(autoLock.delay.type);
@@ -52,7 +55,7 @@ export default function useAdjustAutoLockTimer (): {
     const toSave = {
       delay: {
         type: delayType || autoLock?.delay.type || 'min',
-        value: Number(inputValue ?? autoLock?.delay.value ?? AUTO_LOCK_PERIOD_DEFAULT)
+        value: Number(inputValue || autoLock?.delay.value || AUTO_LOCK_PERIOD_DEFAULT)
       },
       enabled: enabled ?? autoLock?.enabled ?? false
     };
