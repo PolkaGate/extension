@@ -251,11 +251,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
       resolvePromise = resolve;
     });
 
-    if (!pendingConnections.current[genesisHash]) {
-      pendingConnections.current[genesisHash] = {};
-    }
-
-    pendingConnections.current[genesisHash][endpointValue] = {
+    (pendingConnections.current[genesisHash] ??= {})[endpointValue] = {
       promise,
       resolve: resolvePromise
     };
