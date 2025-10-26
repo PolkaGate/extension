@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 
-import { getStorage, watchStorage } from '../util';
+import { getAndWatchStorage } from '../util';
 import { AUTO_LOCK_PERIOD_DEFAULT, STORAGE_KEY } from '../util/constants';
 
 export type AutoLockDelayType = 'min' | 'hour' | 'day';
@@ -28,11 +28,9 @@ export default function useAutoLock (): AutoLock | undefined {
   const [autoLock, setAutoLock] = useState<AutoLock>();
 
   useEffect(() => {
-    getStorage(STORAGE_KEY.AUTO_LOCK).then((res) => {
-      setAutoLock(res as AutoLock | undefined ?? DEFAULT_AUTO_LOCK);
-    }).catch(console.error);
+    const unsubscribe = getAndWatchStorage(STORAGE_KEY.AUTO_LOCK, setAutoLock, false, DEFAULT_AUTO_LOCK);
 
-    watchStorage(STORAGE_KEY.AUTO_LOCK, setAutoLock);
+    return () => unsubscribe();
   }, []);
 
   return autoLock;

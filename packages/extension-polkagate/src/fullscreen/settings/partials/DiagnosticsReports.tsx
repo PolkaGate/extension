@@ -16,7 +16,9 @@ export default function DiagnosticsReports (): React.ReactElement {
   const [isDisabled, setDisabled] = useState(false);
 
   useEffect(() => {
-    getAndWatchStorage(STORAGE_KEY.DISABLE_DIAGNOSTIC_REPORTS, setDisabled);
+    const unsubscribe = getAndWatchStorage(STORAGE_KEY.DISABLE_DIAGNOSTIC_REPORTS, setDisabled);
+
+    return () => unsubscribe();
   }, []);
 
   const onDisableReports = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
