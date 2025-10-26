@@ -242,7 +242,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
     }
   }, [priceData]);
 
-  const _onClose = useCallback(() => () => onClose(undefined), [onClose]);
+  const _onClose = useCallback(() => onClose(undefined), [onClose]);
 
   return (
     <DraggableModal
