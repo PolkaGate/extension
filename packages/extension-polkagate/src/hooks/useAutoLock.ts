@@ -3,12 +3,12 @@
 
 import { useEffect, useState } from 'react';
 
-import { getStorage } from '../util';
-import { AUTO_LOCK_PERIOD_DEFAULT } from '../util/constants';
+import { getAndWatchStorage } from '../util';
+import { AUTO_LOCK_PERIOD_DEFAULT, STORAGE_KEY } from '../util/constants';
 
 export type AutoLockDelayType = 'min' | 'hour' | 'day';
 
-interface AutoLock {
+export interface AutoLock {
   enabled: boolean;
   delay: {
     value: number;
@@ -28,21 +28,9 @@ export default function useAutoLock (): AutoLock | undefined {
   const [autoLock, setAutoLock] = useState<AutoLock>();
 
   useEffect(() => {
-    getStorage('autoLock').then((res) => {
-      if (!res) {
-        setAutoLock(DEFAULT_AUTO_LOCK);
-      } else {
-        setAutoLock(res as AutoLock);
-      }
-    }).catch(console.error);
+    const unsubscribe = getAndWatchStorage(STORAGE_KEY.AUTO_LOCK, setAutoLock, false, DEFAULT_AUTO_LOCK);
 
-    chrome.storage.onChanged.addListener(function (changes, areaName) {
-      if (areaName === 'local' && 'autoLock' in changes) {
-        const newValue = changes['autoLock'].newValue as AutoLock;
-
-        setAutoLock(newValue);
-      }
-    });
+    return () => unsubscribe();
   }, []);
 
   return autoLock;

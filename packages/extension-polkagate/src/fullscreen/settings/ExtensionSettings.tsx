@@ -8,7 +8,7 @@ import { Motion } from '../../components';
 import { VelvetBox } from '../../style';
 import AccountIcon from './partials/AccountIcon';
 import Appearance from './partials/Appearance';
-import AutoLockTimer from './partials/AutoLockTimer';
+import AutoLockTimerAdjustment from './partials/AutoLockTimerAdjustment';
 import DappRequests from './partials/DappRequests';
 import DiagnosticsReports from './partials/DiagnosticsReports';
 import EnableCamera from './partials/EnableCamera';
@@ -34,7 +34,7 @@ function ExtensionSettings (): React.ReactElement {
             <AccountIcon />
             <DappRequests />
             <Appearance />
-            <AutoLockTimer />
+            <AutoLockTimerAdjustment />
           </Stack>
         </Stack>
       </VelvetBox>

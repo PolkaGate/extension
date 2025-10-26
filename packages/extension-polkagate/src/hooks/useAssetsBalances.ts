@@ -35,7 +35,7 @@ const FUNCTIONS = Object.values(FETCHING_ASSETS_FUNCTION_NAMES);
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort): SavedAssets | undefined | null {
+export default function useAssetsBalances (accounts: AccountJson[] | null, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort, isExtensionLocked?: boolean): SavedAssets | undefined | null {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
@@ -44,7 +44,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, genes
   const workerCallsCount = useRef<number>(0);
 
   /** to limit calling of this heavy call on just home and account details */
-  const shouldFetchAssets = pathname === '/' || pathname.startsWith('/accountfs');
+  const shouldFetchAssets = !isExtensionLocked && (pathname === '/' || pathname.startsWith('/accountfs'));
 
   /** We need to trigger address change when a new address is added, without affecting other account fields. Therefore, we use the length of the accounts array as a dependency. */
   // eslint-disable-next-line react-hooks/exhaustive-deps

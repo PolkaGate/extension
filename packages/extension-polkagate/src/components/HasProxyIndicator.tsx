@@ -7,7 +7,7 @@ import { Data } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useChainInfo, useProxies, useSelectedAccount, useTranslation } from '../hooks';
+import { useProxies, useSelectedAccount, useTranslation } from '../hooks';
 import { KUSAMA_GENESIS_HASH, WESTEND_GENESIS_HASH } from '../util/constants';
 import MyTooltip from './MyTooltip';
 
@@ -19,14 +19,11 @@ interface Props {
 function HasProxyIndicator ({ style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
-  const { api: westendApi } = useChainInfo(WESTEND_GENESIS_HASH);
-  const { api: kusamaApi } = useChainInfo(KUSAMA_GENESIS_HASH);
-  const { api: polkadotApi } = useChainInfo(POLKADOT_GENESIS);
   const navigate = useNavigate();
 
-  const westendProxies = useProxies(westendApi, account?.address);
-  const kusamaProxies = useProxies(kusamaApi, account?.address);
-  const polkadotProxies = useProxies(polkadotApi, account?.address);
+  const westendProxies = useProxies(WESTEND_GENESIS_HASH, account?.address);
+  const kusamaProxies = useProxies(KUSAMA_GENESIS_HASH, account?.address);
+  const polkadotProxies = useProxies(POLKADOT_GENESIS, account?.address);
 
   const [hasProxy, setHasProxy] = useState(
     {

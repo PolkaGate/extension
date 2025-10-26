@@ -12,6 +12,7 @@ const enum STATUS {
   WELCOME,
   ALREADY_HAVE_A_WALLET,
   CREATE_A_NEW_WALLET,
+  MIGRATE_PASSWORDS,
   OTHERS
 }
 
@@ -31,21 +32,23 @@ function Bread (): React.ReactElement {
         return STATUS.CREATE_A_NEW_WALLET;
       case '/account/have-wallet':
         return STATUS.ALREADY_HAVE_A_WALLET;
+      case '/migratePasswords':
+        return STATUS.MIGRATE_PASSWORDS;
       default:
         return STATUS.OTHERS;
     }
   }, [pathname]);
 
   const onWelcomeClick = useCallback(() => {
-    status !== STATUS.WELCOME && navigate('/onboarding');
+   ![STATUS.WELCOME, STATUS.MIGRATE_PASSWORDS].includes(status) && navigate('/onboarding') as void;
   }, [navigate, status]);
 
   const onHaveWalletClick = useCallback(() => {
-    status !== STATUS.ALREADY_HAVE_A_WALLET && navigate('/account/have-wallet');
+    status !== STATUS.ALREADY_HAVE_A_WALLET && navigate('/account/have-wallet') as void;
   }, [navigate, status]);
 
   const onCreateClick = useCallback(() => {
-    status !== STATUS.CREATE_A_NEW_WALLET && navigate('/account/create');
+    status !== STATUS.CREATE_A_NEW_WALLET && navigate('/account/create')as void;
   }, [navigate, status]);
 
   const pathToHuman = useMemo(() => {
@@ -67,11 +70,13 @@ function Bread (): React.ReactElement {
     }
   }, [pathname, t]);
 
+  const welcomeColor = [STATUS.WELCOME, STATUS.MIGRATE_PASSWORDS].includes(status) ? DISABLED_LINK_COLOR : ENABLED_LINK_COLOR;
+
   return (
     <Grid columnGap='30px' container item sx={{ height: '50px', m: '8px 0 0 155px ' }}>
       <Stack columnGap='5px' direction='row' onClick={onWelcomeClick} sx={{ cursor: status === STATUS.WELCOME ? 'default' : 'pointer' }}>
-        <UserOctagon color={status === STATUS.WELCOME ? DISABLED_LINK_COLOR : ENABLED_LINK_COLOR} size='18' variant='Bold' />
-        <Typography color={status === STATUS.WELCOME ? DISABLED_LINK_COLOR : ENABLED_LINK_COLOR} fontSize='14px' variant='B-1'>
+        <UserOctagon color={welcomeColor} size='18' variant='Bold' />
+        <Typography color={welcomeColor} fontSize='14px' variant='B-1'>
           {t('Welcome')}
         </Typography>
       </Stack>

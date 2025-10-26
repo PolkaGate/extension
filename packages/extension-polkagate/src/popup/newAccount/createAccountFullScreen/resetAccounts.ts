@@ -5,12 +5,12 @@ import { getStorage, updateStorage } from '@polkadot/extension-polkagate/src/uti
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { forgetAccount } from '../../../messaging';
-import { LOGIN_STATUS, type LoginInfo } from '../../passwordManagement/types';
+import { type ForgottenInfo } from '../../passwordManagement/types';
 
 export const resetOnForgotPassword = async () => {
-  const info = await getStorage(STORAGE_KEY.LOGIN_INFO) as LoginInfo;
+  const info = await getStorage(STORAGE_KEY.IS_FORGOTTEN) as ForgottenInfo;
 
-  if (info?.status === LOGIN_STATUS.FORGOT && info?.addressesToForget) {
+  if (info?.status && info?.addressesToForget) {
     return await resetAccounts(info.addressesToForget);
   }
 
@@ -19,7 +19,7 @@ export const resetOnForgotPassword = async () => {
 
 const resetAccounts = async (addresses: string[]): Promise<boolean> => {
   try {
-    await updateStorage(STORAGE_KEY.LOGIN_INFO, { status: 'reset' });
+    await updateStorage(STORAGE_KEY.IS_FORGOTTEN, { status: false });
 
     // Map and execute forgetAccount for each address
     const promises = addresses.map((address) => forgetAccount(address));
