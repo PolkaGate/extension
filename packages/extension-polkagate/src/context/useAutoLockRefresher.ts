@@ -20,6 +20,22 @@ function throttle<F extends (...args: unknown[]) => void>(func: F, limit: number
 
 const AUTO_LOCK_THROTTLE_INTERVAL_MS = 10_000;
 
+/**
+ * React hook that automatically refreshes the unlock expiry time
+ * to prevent the extension from auto-locking while the user is active.
+ *
+ * It listens for common user interaction events (e.g. mouse movement, key press)
+ * and periodically updates the unlock expiry via messaging to the background script.
+ *
+ * @remarks
+ * The expiry refresh is throttled to avoid excessive messaging.
+ *
+ * @example
+ * // Automatically refresh lock expiry based on user activity
+ * useAutoLockRefresher();
+ *
+ * @see {@link useAutoLockPeriod} for retrieving the configured auto-lock duration.
+ */
 export default function useAutoLockRefresher () {
   const autoLockPeriod = useAutoLockPeriod();
 
