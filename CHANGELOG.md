@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.14.0](https://github.com/polkagate/extension/compare/v1.13.3...v1.14.0) (2025-10-26)
+
+
+### Features
+
+* add master password ([#1963](https://github.com/polkagate/extension/issues/1963)) ([d15ccfa](https://github.com/polkagate/extension/commit/d15ccfa489ea2152beb7c622ffc5653e31c4c314)), closes [#1969](https://github.com/polkagate/extension/issues/1969) [#1970](https://github.com/polkagate/extension/issues/1970) [#1973](https://github.com/polkagate/extension/issues/1973) [#1977](https://github.com/polkagate/extension/issues/1977) [#1978](https://github.com/polkagate/extension/issues/1978) [#1980](https://github.com/polkagate/extension/issues/1980) [#1982](https://github.com/polkagate/extension/issues/1982) [#1979](https://github.com/polkagate/extension/issues/1979) [#1986](https://github.com/polkagate/extension/issues/1986)
+
 ## [1.13.3](https://github.com/polkagate/extension/compare/v1.13.2...v1.13.3) (2025-10-20)
 
 
