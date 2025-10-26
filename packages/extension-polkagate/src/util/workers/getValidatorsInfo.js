@@ -13,9 +13,9 @@ async function getAllValidators (endpoint) {
     const api = await getApi(endpoint);
 
     if (!api) {
-      console.error(' Something went wrong wile setting a connection.');
+      console.error(' Something went wrong while setting a connection.');
 
-      return;
+      return null;
     }
 
     const infoProps = { withController: true, withDestination: true, withExposure: true, withLedger: true, withNominations: true, withPrefs: true };
