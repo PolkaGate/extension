@@ -8,10 +8,7 @@ import { ArrowLeft } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { AccountsStore } from '@polkadot/extension-base/stores';
 import { PROXY_TYPE, TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '@polkadot/extension-polkagate/src/util/constants';
-import keyring from '@polkadot/ui-keyring';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { DecisionButtons, SignArea3 } from '../../components';
 import { useCanPayFeeAndDeposit, useFormatted, useTeleport, useTranslation } from '../../hooks';
@@ -107,9 +104,6 @@ export default function SendFund (): React.ReactElement {
     setFlowStep(TRANSACTION_FLOW_STEPS.REVIEW);
     setShowProxySelection(false);
   }, [address, genesisHash]);
-  useEffect(() => {
-    cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
-  }, []);
 
   const onNext = useCallback(() => {
     setInputStep((prevStep) => prevStep + 1);
@@ -139,9 +133,8 @@ export default function SendFund (): React.ReactElement {
       description: t('Amount'),
       extra: {
         from: formatted,
-        to: inputs?.recipientAddress,
-        // eslint-disable-next-line sort-keys
-        recipientNetwork: inputs?.recipientChain?.text
+        recipientNetwork: inputs?.recipientChain?.text,
+        to: inputs?.recipientAddress
       },
       ...txInfo,
       fee: inputs?.feeInfo,

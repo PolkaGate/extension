@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
+import { Grid, IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
 import { Check, Eye, EyeSlash } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -63,9 +63,10 @@ interface Props {
   style?: React.CSSProperties;
   focused?: boolean;
   hasError?: boolean;
+  value?: string;
 }
 
-function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPassChange, style, title }: Props): React.ReactElement {
+function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPassChange, style, title, value }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
@@ -93,7 +94,7 @@ function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPas
     : '#8F97B8', [isBlueish, isDark, theme.palette.text.highlight]);
 
   return (
-    <Container disableGutters sx={style}>
+    <Grid container item sx={style}>
       {title &&
         <Typography display='block' height='20px' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '92%' }} textAlign='left' variant='B-1' width='100%'>
           {title}
@@ -108,6 +109,7 @@ function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPas
                 edge='end'
                 onClick={handleClickShowPassword}
                 sx={{ bgcolor: isDark ? isBlueish ? '#222442' : '#2D1E4A' : '#FFFFFF', borderRadius: '8px' }}
+                tabIndex={-1}
               >
                 {showPassword
                   ? <EyeSlash color={commonColor} size='20' variant='Bulk' />
@@ -138,13 +140,14 @@ function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPas
         placeholder={t('Password')}
         theme={theme}
         type={showPassword ? 'text' : 'password'}
+        value={value}
       />
       {hasError &&
         <Typography color='#FF4FB9' sx={{ display: 'flex', height: '6px' }} variant='B-1'>
           {t('Wrong password.')}
         </Typography>
       }
-    </Container>
+    </Grid>
   );
 }
 

@@ -39,8 +39,10 @@ function ShortAddress ({ address, charsCount = SHORT_ADDRESS_CHARACTERS, clipped
 
     const offset = showCopy ? 55 : 25;
 
-    (cRef.current && cRef.current.offsetWidth < (pRef?.current?.offsetWidth ?? 0) - offset) && setCharactersCount(charactersCount + 1);
-  }, [charsCount, clipped, showCopy, cRef.current?.offsetWidth, pRef.current?.offsetWidth, charactersCount]);
+    if (cRef.current && cRef.current.offsetWidth < (pRef?.current?.offsetWidth ?? 0) - offset) {
+      setCharactersCount((prev) => prev + 1);
+    }
+  }, [charsCount, clipped, showCopy, cRef.current?.offsetWidth, pRef.current?.offsetWidth]);
 
   return (
     <Grid alignItems='center' container justifyContent='center' ref={pRef} sx={{ ...style }} width='100%'>

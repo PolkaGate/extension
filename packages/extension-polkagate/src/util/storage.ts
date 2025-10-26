@@ -53,10 +53,25 @@ export const watchStorage = (label: string, setChanges: (value: any) => void, pa
   };
 };
 
-export const getAndWatchStorage = (key: string, setter: (value: any) => void, parse = false): (() => void) => {
-  getStorage(key, parse)
-    .then((value) => setter(value as any))
-    .catch(console.error);
+export const getAndWatchStorage = <T = unknown>(
+  key: string,
+  setter: (value: T) => void,
+  parse = false,
+  defaultValue?: T
+): (() => void) => {
+    getStorage(key, parse)
+    .then((value) => {
+      const useDefault =
+        value === undefined ||
+        value === null ||
+        (parse && Object.keys(value as object).length === 0);
+
+      setter((useDefault ? defaultValue : value) as T);
+    })
+    .catch((e) => {
+      console.error(`getAndWatchStorage error for ${key}:`, e);
+      setter(defaultValue as T);
+    });
 
   return watchStorage(key, setter, parse);
 };

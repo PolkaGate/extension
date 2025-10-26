@@ -19,18 +19,22 @@ const definitions = new Map<string, MetadataDef>(
 
 const expanded = new Map<string, Chain>();
 
-export function metadataExpand(definition: MetadataDef, isPartial = false): Chain {
+export function metadataExpand (definition: MetadataDef, isPartial = false): Chain {
   const cached = expanded.get(definition.genesisHash);
 
   if (cached && cached.specVersion === definition.specVersion) {
     return cached;
   }
 
-  const { chain, genesisHash, icon, metaCalls, specVersion, ss58Format, tokenDecimals, tokenSymbol, types, userExtensions } = definition;
+  const { chain, genesisHash, icon, metaCalls, signedExtensions, specVersion, ss58Format, tokenDecimals, tokenSymbol, types, userExtensions } = definition;
   const registry = new TypeRegistry();
 
   if (!isPartial) {
     registry.register(types);
+
+    if (definition.knownTypes) {
+      registry.setKnownTypes(definition.knownTypes);
+    }
   }
 
   registry.setChainProperties(registry.createType('ChainProperties', {
@@ -42,7 +46,9 @@ export function metadataExpand(definition: MetadataDef, isPartial = false): Chai
   const hasMetadata = !!metaCalls && !isPartial;
 
   if (hasMetadata) {
-    registry.setMetadata(new Metadata(registry, base64Decode(metaCalls)), undefined, userExtensions);
+    const metadata = new Metadata(registry, base64Decode(metaCalls));
+
+    registry.setMetadata(metadata, signedExtensions, userExtensions || {});
   }
 
   const isUnknown = genesisHash === '0x';

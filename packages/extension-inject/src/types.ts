@@ -6,6 +6,7 @@ import type { ProviderInterface } from '@polkadot/rpc-provider/types';
 import type { ExtDef } from '@polkadot/types/extrinsic/signedExtensions/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
+import type { RegisteredTypes } from '@polkadot/types/types';
 
 // eslint-disable-next-line no-undef
 type This = typeof globalThis;
@@ -68,6 +69,8 @@ export interface MetadataDef extends MetadataDefBase {
   tokenSymbol: string;
   types: Record<string, Record<string, string> | string>;
   metaCalls?: string;
+  knownTypes?: RegisteredTypes;
+  signedExtensions?: string[];
   userExtensions?: ExtDef;
 }
 

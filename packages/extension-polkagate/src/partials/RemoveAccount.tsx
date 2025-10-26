@@ -7,11 +7,9 @@ import { Container, Stack } from '@mui/material';
 import { LogoutCurve } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
-import keyring from '@polkadot/ui-keyring';
-
 import { Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } from '../components';
 import { useSelectedAccount, useTranslation } from '../hooks';
-import { forgetAccount } from '../messaging';
+import { forgetAccount, validateAccount } from '../messaging';
 import WarningBox from '../popup/settings/partials/WarningBox';
 import { SharePopup } from '.';
 
@@ -53,18 +51,21 @@ function RemoveAccount ({ onClose, onRemoved, open }: Props): React.ReactElement
     onRemoved?.();
   }, [handleClose, onRemoved]);
 
-  const onRemove = useCallback(() => {
+  const onRemove = useCallback(async () => {
     try {
       if (!account || (account?.isExternal && !acknowledged) || (!account?.isExternal && !password)) {
         return;
       }
 
       setIsBusy(true);
+      await new Promise(requestAnimationFrame);
 
-      if (!account.isExternal) {
-        const signer = keyring.getPair(account.address);
+      if (!account.isExternal && password) {
+        const isUnlockable = await validateAccount(account.address, password);
 
-        signer.unlock(password);
+        if (!isUnlockable) {
+          throw new Error('Password incorrect!');
+        }
       }
 
       forgetAccount(account.address)

@@ -13,7 +13,7 @@ import { noop } from '@polkadot/util';
 const AccountContext = React.createContext<AccountsContext>({ accounts: [], hierarchy: [], master: undefined });
 const AccountsAssetsContext = React.createContext<AccountsAssetsContextType>({ accountsAssets: undefined, setAccountsAssets: noop });
 const ActionContext = React.createContext<(to?: string) => void>(noop);
-const APIContext = React.createContext<APIsContext>({ apis: {}, setIt: noop });
+const APIContext = React.createContext<APIsContext>({ apis: {}, getApi: () => Promise.resolve(undefined) });
 const AlertContext = React.createContext<AlertContextType>({ alerts: [], setAlerts: noop });
 const AuthorizeReqContext = React.createContext<AuthorizeRequest[]>([]);
 const CurrencyContext = React.createContext<CurrencyContextType>({ currency: undefined, setCurrency: noop });

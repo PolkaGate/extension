@@ -6,7 +6,6 @@
 export enum STEPS {
   // steps used in loading page
   ASK_TO_SET_PASSWORD,
-  SET_PASSWORD,
   MAYBE_LATER,
   NO_LOGIN,
   SHOW_LOGIN,
