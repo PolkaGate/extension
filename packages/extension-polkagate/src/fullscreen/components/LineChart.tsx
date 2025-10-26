@@ -9,7 +9,10 @@ import { CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
+import { useAlerts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+
 import { DraggableModal } from './DraggableModal';
+import { Typography } from '@mui/material';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, TimeScale);
 
@@ -25,23 +28,48 @@ interface TokenChartProps {
   intervalSec?: number; // update interval
 }
 
+const fetchWithTimeout = (url: string, timeout = 10000) => {
+  const controller = new AbortController();
+  const signal = controller.signal;
+
+  return new Promise<Response>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      controller.abort();
+      reject(new Error(`Request timeout after ${timeout}ms`));
+    }, timeout);
+
+    fetch(url, { signal })
+      .then((res) => {
+        clearTimeout(timer);
+        resolve(res);
+      })
+      .catch((err) => {
+        clearTimeout(timer);
+        reject(err);
+      });
+  });
+};
+
 const TokenChart: React.FC<TokenChartProps> = ({ coinId,
   intervalSec = 60,
   onClose,
   vsCurrency = 'usd' }) => {
-  const [priceData, setPriceData] = useState<PricePoint[]>([]);
-  const intervalRef = useRef<number | null>(null);
+  const { t } = useTranslation();
   const chartRef = useRef<ChartJS<'line'>>(null);
+  const { notify } = useAlerts();
+
+  const [priceData, setPriceData] = useState<PricePoint[]>([]);
 
   const fetchPriceData = useCallback(async () => {
     try {
-      const res = await fetch(
-        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vsCurrency}&ids=${coinId?.toLowerCase()}&sparkline=true`
+      const res = await fetchWithTimeout(
+        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vsCurrency}&ids=${coinId.toLowerCase()}&sparkline=true`
       );
+
       const data = await res.json();
 
       if (!data) {
-        console.error('no data fetched!');
+        notify(t('Something went wrong while fetching token data!'), 'info');
 
         return;
       }
@@ -62,44 +90,49 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
       );
 
       setPriceData(prices);
-    } catch (err) {
-      console.error('Failed to fetch price data:', err);
+    } catch (err: unknown) {
+      const isTimeOut = err instanceof Error && err.message.includes('timeout');
+
+      const message =
+        isTimeOut
+          ? t('Fetching token data timed out. Please try again.')
+          : t('Something went wrong while fetching token data!');
+
+      notify(message, isTimeOut ? 'warning' : 'error');
     }
-  }, [coinId, vsCurrency]);
+  }, [coinId, notify, t, vsCurrency]);
 
   useEffect(() => {
     fetchPriceData().catch(console.error);
-    intervalRef.current = window.setInterval(fetchPriceData, intervalSec * 1000);
+    const id = window.setInterval(fetchPriceData, intervalSec * 1000);
 
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      clearInterval(id);
     };
   }, [coinId, fetchPriceData, intervalSec, vsCurrency]);
 
-const chartData = {
-  datasets: [
-    {
-      backgroundColor: 'rgba(76, 175, 80, 0.2)', // optional fill
-      borderColor: '#4caf50', // default, overridden by segment
-      data: priceData.map((p) => p.value),
-      fill: true,
-      label: `${coinId.toUpperCase()} Price (${vsCurrency.toUpperCase()})`,
-      pointRadius: 0,
-      segment: {
-        borderColor: (ctx: { p0: { parsed: { y: number; }; }; p1: { parsed: { y: number; }; }; }) => {
-          const current = ctx.p0.parsed.y;
-          const next = ctx.p1.parsed.y;
+  const chartData = React.useMemo(() => ({
+    datasets: [
+      {
+        backgroundColor: 'rgba(76, 175, 80, 0.2)', // optional fill
+        borderColor: '#4caf50', // default, overridden by segment
+        data: priceData.map((p) => p.value),
+        fill: true,
+        label: `${coinId.toUpperCase()} Price (${vsCurrency.toUpperCase()})`,
+        pointRadius: 0,
+        segment: {
+          borderColor: (ctx: { p0: { parsed: { y: number; }; }; p1: { parsed: { y: number; }; }; }) => {
+            const current = ctx.p0.parsed.y;
+            const next = ctx.p1.parsed.y;
 
-          return next >= current ? '#4caf50' : '#FF3864';
-        }
-      },
-      tension: 0.2
-    }
-  ],
-  labels: priceData.map((p) => new Date(p.time))
-};
+            return next >= current ? '#4caf50' : '#FF3864';
+          }
+        },
+        tension: 0.2
+      }
+    ],
+    labels: priceData.map((p) => new Date(p.time))
+  }), [coinId, priceData, vsCurrency]);
 
   const options: ChartOptions<'line'> = {
     interaction: { intersect: false, mode: 'nearest' },
@@ -132,24 +165,31 @@ const chartData = {
   };
 
   useEffect(() => {
-    if (!chartRef.current || priceData.length === 0) {
- return;
-}
-
     const chart = chartRef.current;
-    const maxIndex = priceData.reduce((maxIdx, point, idx, arr) => point.value > arr[maxIdx].value ? idx : maxIdx, 0);
 
-    // Set active tooltip on max price point
-    chart.tooltip?.setActiveElements(
-      [
-        {
-          datasetIndex: 0,
-          index: maxIndex
-        }
-      ],
-      { x: chart.scales['x'].getPixelForValue(maxIndex), y: chart.scales['y'].getPixelForValue(priceData[maxIndex].value) }
+    if (!chart || priceData.length === 0) {
+      return;
+    }
+
+    const maxIndex = priceData.reduce((maxIdx, point, idx, arr) =>
+      point.value > arr[maxIdx].value ? idx : maxIdx, 0
     );
-    chart.update();
+
+    if (chart.tooltip && chart.scales['x'] && chart.scales['y']) {
+      chart.tooltip.setActiveElements(
+        [
+          {
+            datasetIndex: 0,
+            index: maxIndex
+          }
+        ],
+        {
+          x: chart.scales['x'].getPixelForValue(maxIndex),
+          y: chart.scales['y'].getPixelForValue(priceData[maxIndex].value)
+        }
+      );
+      chart.update();
+    }
   }, [priceData]);
 
   return (
@@ -157,10 +197,13 @@ const chartData = {
       onClose={() => onClose(undefined)}
       open={true}
       showBackIconAsClose
-      style={{ minHeight: '400px', padding: '20px', width: '677px' }}
+      style={{ minHeight: '400px', padding: '20px 20px 6px', width: '677px' }}
       title={`${coinId.toUpperCase()} Price`}
     >
       <Line data={chartData} options={options} ref={chartRef} />
+      <Typography sx={{ color: 'text.disabled', display: 'block', pr: '16px', textAlign: 'right', width: '100%' }} variant='S-2'>
+        {t('powered by CoinGecko')}
+      </Typography>
     </DraggableModal>
   );
 };
