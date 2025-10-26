@@ -5,18 +5,16 @@ import type { ForgottenInfo } from '../popup/passwordManagement/types';
 
 import { useEffect, useState } from 'react';
 
-import { getStorage, watchStorage } from '../util';
+import { getAndWatchStorage } from '../util';
 import { STORAGE_KEY } from '../util/constants';
 
 export default function useIsForgotten (): ForgottenInfo | undefined | null {
   const [isForgotten, setIsForgotten] = useState<ForgottenInfo | null>();
 
   useEffect(() => {
-    watchStorage(STORAGE_KEY.IS_FORGOTTEN, setIsForgotten);
+  const unsubscribe = getAndWatchStorage(STORAGE_KEY.IS_FORGOTTEN, setIsForgotten, false, null);
 
-    getStorage(STORAGE_KEY.IS_FORGOTTEN)
-      .then((state) => setIsForgotten(state as ForgottenInfo ?? null))
-      .catch(console.error);
+  return () => unsubscribe();
   }, []);
 
   return isForgotten;
