@@ -45,7 +45,6 @@ export default function useAutoLockRefresher () {
     }
 
     const sendExpiry = throttle(() => {
-      console.info('sending expiry ...');
       setUnlockExpiry(Date.now() + autoLockPeriod).catch(console.error);
     }, AUTO_LOCK_THROTTLE_INTERVAL_MS);
 
