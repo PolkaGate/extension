@@ -1,14 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-// @ts-nocheck
-
-/* eslint-disable header/header */
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
 import LCConnector from './api/lightClient-connect';
 
-async function getApi(endpoint: string): Promise<ApiPromise | undefined> {
+async function getApi (endpoint: string): Promise<ApiPromise | undefined> {
   if (endpoint.startsWith('wss')) {
     const wsProvider = new WsProvider(endpoint);
 

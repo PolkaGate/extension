@@ -270,6 +270,13 @@ export const AUTO_MODE = {
   value: 'AutoMode'
 };
 
+export const AUTO_MODE_DEFAULT_ENDPOINT = {
+  checkForNewOne: false,
+  endpoint: AUTO_MODE.value,
+  isAuto: true,
+  timestamp: Date.now()
+};
+
 export const KODADOT_URL = 'https://kodadot.xyz';
 
 export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
