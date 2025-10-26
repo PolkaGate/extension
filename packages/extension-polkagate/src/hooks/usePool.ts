@@ -105,7 +105,7 @@ export default function usePool (address: string | undefined, genesisHash: strin
 
   useEffect(() => {
     if (!formatted || !id) {
-      !id && console.log('The getPool is calling to get the pool for a specific address on a specific network, which the other useEffect will handle it!');
+      !id && console.log('waiting to get poo info ...');
 
       return;
     }

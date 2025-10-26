@@ -6,7 +6,6 @@
  * this hook returns a proxied proxies in non formatted style
  * */
 
-import type { ApiPromise } from '@polkadot/api';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 // @ts-ignore
 import type { PalletProxyProxyDefinition } from '@polkadot/types/lookup';
@@ -17,8 +16,11 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util';
+import { useChainInfo } from '.';
 
-export default function useProxies (api: ApiPromise | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined {
+export default function useProxies (genesisHash: string | null | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined {
+  const { api } = useChainInfo(genesisHash);
+
   const [proxies, setProxies] = useState<Proxy[] | undefined>();
   const [proxiesWithAvailability, setProxiesWithAvailability] = useState<Proxy[] | undefined>();
   const { accounts } = useContext(AccountContext);

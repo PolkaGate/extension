@@ -19,15 +19,15 @@ function HomePageFullScreen (): React.ReactElement {
   const navigate = useNavigate();
 
   const { notify } = useAlerts();
-  const { accounts: accountsInExtension } = useContext(AccountContext);
+  const { accounts } = useContext(AccountContext);
 
   useEffect(() => {
-    if (accountsInExtension && accountsInExtension?.length === 0) {
+    if (accounts?.length === 0) {
       notify(t('No accounts found!'), 'info');
 
       navigate('/onboarding') as void;
     }
-  }, [accountsInExtension, notify, navigate, t]);
+  }, [accounts, notify, navigate, t]);
 
   return (
     <HomeLayout>

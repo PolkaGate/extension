@@ -5,25 +5,20 @@ import { Grid } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import semver from 'semver';
 
-import { AccountsStore } from '@polkadot/extension-base/stores';
-import { getStorage } from '@polkadot/extension-polkagate/src/util';
-import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
-import keyring from '@polkadot/ui-keyring';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
+import useIsForgotten from '@polkadot/extension-polkagate/src/hooks/useIsForgotten';
 
 import { AccountContext, FadeOnScroll, Motion } from '../../components';
 import { useBackground, useManifest, useMerkleScience } from '../../hooks';
 import { UserDashboardHeader, WhatsNew } from '../../partials';
 import HomeMenu from '../../partials/HomeMenu';
 import Reset from '../passwordManagement/Reset';
-import { LOGIN_STATUS, type LoginInfo } from '../passwordManagement/types';
 import Welcome from '../welcome';
 import AssetsBox from './partial/AssetsBox';
 import Portfolio from './partial/Portfolio';
 import ChangeLog from './ChangeLog';
 
 export default function Home (): React.ReactElement {
-  useBackground('default');
+  useBackground('default') as void;
 
   const manifest = useManifest();
   const { hierarchy } = useContext(AccountContext);
@@ -32,7 +27,7 @@ export default function Home (): React.ReactElement {
   useMerkleScience(undefined, undefined, true); // to download the data file
 
   const [show, setShowAlert] = useState<boolean>(false);
-  const [loginInfo, setLoginInfo] = useState<LoginInfo>();
+  const isForgotten = useIsForgotten();
 
   useEffect(() => {
     if (!manifest?.version) {
@@ -53,14 +48,6 @@ export default function Home (): React.ReactElement {
     }
   }, [manifest?.version]);
 
-  useEffect(() => {
-    cryptoWaitReady().then(() => {
-      keyring.loadAll({ store: new AccountsStore() });
-    }).catch(() => null);
-
-    getStorage(STORAGE_KEY.LOGIN_INFO).then((info) => setLoginInfo(info as LoginInfo)).catch(console.error);
-  }, []);
-
   return (
     <Motion>
       {show &&
@@ -71,7 +58,7 @@ export default function Home (): React.ReactElement {
         />
       }
       {hierarchy.length === 0
-        ? loginInfo?.status === LOGIN_STATUS.FORGOT
+        ? isForgotten?.status
           ? <Reset />
           : <Welcome />
         : <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>

@@ -19,3 +19,8 @@ export interface LoginInfo {
   hashedPassword?: string;
   addressesToForget?: string[];
 }
+
+export interface ForgottenInfo{
+  status: boolean | undefined;
+  addressesToForget?: string[];
+}

@@ -15,9 +15,9 @@
   },
   "sideEffects": false,
   "type": "module",
-  "version": "1.13.3",
+  "version": "1.13.1",
   "dependencies": {
-    "@polkadot/api": "^16.4.6",
+    "@polkadot/api": "^16.4.8",
     "@polkadot/extension-base": "^0.47.5",
     "@polkadot/extension-inject": "^0.47.5",
     "@polkadot/extension-ui": "^0.47.5",

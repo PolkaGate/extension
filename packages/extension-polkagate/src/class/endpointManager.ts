@@ -3,7 +3,7 @@
 
 import type { EndpointType } from '../util/types';
 
-import { NO_PASS_PERIOD as ENDPOINT_TIMEOUT } from '../util/constants';
+import { ENDPOINT_TIMEOUT } from '../util/constants';
 
 const ENDPOINTS_NAME_IN_STORAGE = 'endpoints2';
 

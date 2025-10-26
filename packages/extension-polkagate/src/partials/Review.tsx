@@ -278,6 +278,7 @@ export default function Review ({ amount, closeReview, genesisHash, pool, proxyT
         setTxInfo={setTxInfo}
         showProxySelection={showProxySelection}
         transaction={transaction}
+        withCancel
       />
     </Stack>
   );
