@@ -108,6 +108,10 @@ export async function areAccountsLocksExpired (): Promise<boolean> {
 export async function forgetAccountsAll (): Promise<boolean> {
   return sendMessage('pri(accounts.forgetAll)');
 }
+
+export async function setUnlockExpiry (expiryTime: number): Promise<void> {
+  return sendMessage('pri(accounts.setUnlockExpiry)', { expiryTime });
+}
 // -------------------------------------
 
 export async function showAccount (address: string, isShowing: boolean): Promise<boolean> {
