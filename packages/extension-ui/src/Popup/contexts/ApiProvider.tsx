@@ -129,10 +129,6 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
 
       toSaveApi = toSaveApi.filter((sApi) => sApi.endpoint !== endpoint);
 
-      if (onAutoMode) {
-        toSaveApi = toSaveApi.filter((sApi) => !isAutoMode(sApi.endpoint));
-      }
-
       toSaveApi.push({
         api,
         endpoint
@@ -154,7 +150,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     const { api, selectedEndpoint } = await fastestConnection(wssEndpoints);
 
     if (!api || !selectedEndpoint) {
-      resolvePendingConnections(genesisHash, undefined, selectedEndpoint);
+      resolvePendingConnections(genesisHash, undefined, AUTO_MODE.value);
 
       return;
     }
