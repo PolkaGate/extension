@@ -29,12 +29,12 @@ function ShineEffect ({ active = true, duration = 1200, interval = 6000 }: Shine
     };
 
     runShine(); // Optional: run once immediately
-    const intervalId = setInterval(runShine, interval);
+    const intervalId = setInterval(runShine, interval + duration);
 
     return () => clearInterval(intervalId);
   }, [active, duration, interval]);
 
-  if (!shine) {
+  if (!shine || !active) {
     return null;
   }
 
@@ -42,7 +42,7 @@ function ShineEffect ({ active = true, duration = 1200, interval = 6000 }: Shine
     <Box
       sx={{
         animation: `${shineKeyframes} ${duration}ms ease-in-out forwards`,
-        background: 'linear-gradient(0deg, transparent 0%, rgba(255,255,255,0.1) 30%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.1) 70%, transparent 100%)',
+        background: 'linear-gradient(0deg, transparent 0%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 60%, transparent 100%)',
         bottom: '0',
         filter: 'blur(8px)',
         height: '100%',

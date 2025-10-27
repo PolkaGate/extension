@@ -126,7 +126,7 @@ function MainMenuColumn (): React.ReactElement {
         path='/historyfs'
         text={t('History')}
       />
-      <Stack direction='column' rowGap='20px' sx={{ pt: '190px' }}>
+      <Stack direction='column' rowGap='20px' sx={{ pt: '180px' }}>
         <Grid container item justifyContent='start' width='fit-content'>
           <Version style={{ padding: 0, textAlign: 'left', width: '20%' }} variant='B-5' />
           <NeedHelp style={{ columnGap: '4px', marginLeft: '10px' }} />

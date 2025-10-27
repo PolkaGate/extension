@@ -4,7 +4,7 @@
 import type { Icon } from 'iconsax-react';
 
 import { Box, Stack, Typography } from '@mui/material';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
@@ -18,13 +18,21 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function MenuButton ({ Icon, onClick, path, style = { marginBottom: '8px' }, text }: Props): React.ReactElement {
+function MenuButton ({ Icon, onClick, path, style = { marginBottom: '12px' }, text }: Props): React.ReactElement {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { isHovered, ref } = useIsHovered();
 
   const getFirstSegment = (p: string | undefined) => p?.split('/')[1];
   const isSelected = getFirstSegment(path) === getFirstSegment(pathname);
+
+  const shineDuration = useMemo(() => {
+    if (isSelected) {
+      return 5000;
+    }
+
+    return 800;
+  }, [isSelected]);
 
   const _onClick = useCallback(() => {
     if (onClick) {
@@ -43,22 +51,21 @@ function MenuButton ({ Icon, onClick, path, style = { marginBottom: '8px' }, tex
       ref={ref}
       sx={{
         ...(isSelected && {
-          backdropFilter: 'blur(20px)',
           background: '#2D1E4A80',
-          boxShadow: '0px 0px 24px 8px #4E2B7259 inset'
+          boxShadow: '0px 0px 6px 4px #4E2B7259'
         }),
         '&:hover': {
-          backdropFilter: 'blur(20px)',
           background: '#2D1E4A80',
-          boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
-          transition: 'all 250ms ease-out'
+          boxShadow: '0px 0px 6px 4px #4E2B7259'
         },
+        backdropFilter: 'blur(20px)',
         borderRadius: '16px',
         cursor: 'pointer',
         height: '44px',
         overflow: 'hidden',
         paddingLeft: '30px',
         position: 'relative',
+        transition: 'all 250ms ease-out',
         width: '100%',
         ...style
       }}
@@ -79,7 +86,7 @@ function MenuButton ({ Icon, onClick, path, style = { marginBottom: '8px' }, tex
         }}
         />
       }
-      <ShineEffect active={isSelected} />
+      <ShineEffect active={isSelected || isHovered} duration={shineDuration} />
     </Stack>
   );
 }
