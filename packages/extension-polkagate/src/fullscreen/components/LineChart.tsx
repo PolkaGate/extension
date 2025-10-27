@@ -264,7 +264,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
       onClose={_onClose}
       open={true}
       showBackIconAsClose
-      style={{ minHeight: '400px', padding: '20px 20px 6px', width: '677px' }}
+      style={{ left: (window.innerWidth - 677) / 2, minHeight: '400px', padding: '20px 20px 6px', width: '677px' }}
       title={`${coinId.toUpperCase()} Price — Last 7 Days`}
     >
       <>
