@@ -143,6 +143,8 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
       const sparkLinePrices = data[0].sparkline_in_7d?.price as number[];
 
       if (!sparkLinePrices) {
+         notify(t('Sparkline data not available for this token.'), 'info');
+
         return;
       }
 
