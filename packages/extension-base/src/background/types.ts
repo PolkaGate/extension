@@ -110,6 +110,7 @@ export interface RequestSignatures {
   'pri(accounts.unlockAll)': [RequestUnlockAllAccounts, boolean];
   'pri(accounts.locksExpired)': [null, boolean];
   'pri(accounts.forgetAll)': [null, boolean];
+  'pri(accounts.setUnlockExpiry)': [RequestAccountsSetUnlockExpiry, void];
 
   'pri(accounts.export)': [RequestAccountExport, ResponseAccountExport];
   'pri(accounts.batchExport)': [RequestAccountBatchExport, ResponseAccountsExport]
@@ -237,6 +238,10 @@ export interface RequestAccountChangePassword {
 export interface RequestAccountChangePasswordAll {
   oldPass: string;
   newPass: string;
+}
+
+export interface RequestAccountsSetUnlockExpiry {
+  expiryTime: number; // in millisec
 }
 
 export interface RequestAccountEdit {
