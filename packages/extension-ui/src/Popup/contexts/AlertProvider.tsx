@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 
 import { AlertContext } from '@polkadot/extension-polkagate/src/components/contexts';
 
-export default function AlertProvider({ children }: { children: React.ReactNode }) {
+export default function AlertProvider ({ children }: { children: React.ReactNode }) {
   const [alerts, setAlerts] = useState<AlertType[]>([]);
 
   return (
