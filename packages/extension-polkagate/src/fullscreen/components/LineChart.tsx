@@ -124,13 +124,13 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
 
       const data = await res.json();
 
-      if (!data) {
+       if (!data || !Array.isArray(data) || data.length === 0) {
         notify(t('Something went wrong while fetching token data!'), 'info');
 
         return;
       }
 
-      const sparkLinePrices = data[0]?.sparkline_in_7d?.price as number[];
+      const sparkLinePrices = data[0].sparkline_in_7d?.price as number[];
 
       if (!sparkLinePrices) {
         return;
