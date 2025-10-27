@@ -821,5 +821,6 @@
   "Something went wrong while changing password!": "",
   "This child account will be created from your parent account. Give it a name.": "",
   "Incorrect password": "",
-  "Failed to create account": ""
+  "Failed to create account": "",
+  "Failed to reset accounts": ""
 }
