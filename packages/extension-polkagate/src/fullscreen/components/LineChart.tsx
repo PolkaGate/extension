@@ -143,7 +143,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
       const sparkLinePrices = data[0].sparkline_in_7d?.price as number[];
 
       if (!sparkLinePrices) {
-         notify(t('Sparkline data not available for this token.'), 'info');
+        notify(t('Sparkline data not available for this token.'), 'info');
 
         return;
       }
@@ -242,18 +242,16 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
       point.value > arr[maxIdx].value ? idx : maxIdx, 0
     );
 
-    if (chart.tooltip && chart.scales['x'] && chart.scales['y']) {
+    if (chart.tooltip) {
+      const el = chart.getDatasetMeta(0).data[maxIndex];
+
+      if (!el) {
+        return;
+      }
+
       chart.tooltip.setActiveElements(
-        [
-          {
-            datasetIndex: 0,
-            index: maxIndex
-          }
-        ],
-        {
-          x: chart.scales['x'].getPixelForValue(maxIndex),
-          y: chart.scales['y'].getPixelForValue(priceData[maxIndex].value)
-        }
+        [{ datasetIndex: 0, index: maxIndex }],
+        { x: (el as any).x, y: (el as any).y }
       );
       chart.update();
     }
