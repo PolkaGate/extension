@@ -3,7 +3,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { useIsPasswordMigrated } from '../hooks';
+import { useIsPasswordMigrated, useLocalAccounts } from '../hooks';
 import { areAccountsLocksExpired } from '../messaging';
 
 interface ExtensionLockContextProps {
@@ -25,9 +25,21 @@ export const useExtensionLockContext = (): ExtensionLockContextProps => {
 
 export const ExtensionLockProvider: React.FC<{ children: React.ReactElement }> = ({ children }: any) => {
   const isPasswordsMigrated = useIsPasswordMigrated();
+  const localAccounts = useLocalAccounts();
 
   // Note: extensionLock is initially set to true.
   const [isExtensionLocked, setIsExtensionLocked] = useState(true);
+
+  useEffect(() => {
+   if (!localAccounts) {
+    return;
+   }
+
+   // unlock extension if there is no local accounts
+   if (localAccounts.length === 0) {
+    setIsExtensionLocked(false);
+   }
+  }, [localAccounts]);
 
   useEffect(() => {
     const handleLockExpiredMessage = (msg: any) => {
