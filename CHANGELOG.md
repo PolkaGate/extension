@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.15.0](https://github.com/polkagate/extension/compare/v1.14.0...v1.15.0) (2025-10-27)
+
+
+### Features
+
+* add token chart to trending assets section ([#1987](https://github.com/polkagate/extension/issues/1987)) ([2feee91](https://github.com/polkagate/extension/commit/2feee91215d7bc97eee64f4221afc8431c60a73a)), closes [#1989](https://github.com/polkagate/extension/issues/1989)
+
 # [1.14.0](https://github.com/polkagate/extension/compare/v1.13.3...v1.14.0) (2025-10-26)
 
 

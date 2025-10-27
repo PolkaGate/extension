@@ -8798,6 +8798,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chartjs-adapter-date-fns@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "chartjs-adapter-date-fns@npm:3.0.0"
+  peerDependencies:
+    chart.js: ">=2.8.0"
+    date-fns: ">=2.0.0"
+  checksum: 10/29a104882f865e5c674a4edc0a60a5e0cce1fad470ed133d218bd717069a5089475139df4016a976a18b07633b068cc6a31f8b6332f1d8b2d1987913eac475be
+  languageName: node
+  linkType: hard
+
 "cheerio-select@npm:^2.1.0":
   version: 2.1.0
   resolution: "cheerio-select@npm:2.1.0"
@@ -9830,6 +9840,13 @@ __metadata:
     es-errors: "npm:^1.3.0"
     is-data-view: "npm:^1.0.1"
   checksum: 10/fa3bdfa0968bea6711ee50375094b39f561bce3f15f9e558df59de9c25f0bdd4cddc002d9c1d70ac7772ebd36854a7e22d1761e7302a934e6f1c2263bcf44aa2
+  languageName: node
+  linkType: hard
+
+"date-fns@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "date-fns@npm:4.1.0"
+  checksum: 10/d5f6e9de5bbc52310f786099e18609289ed5e30af60a71e0646784c8185ddd1d0eebcf7c96b7faaaefc4a8366f3a3a4244d099b6d0866ee2bec80d1361e64342
   languageName: node
   linkType: hard
 
@@ -18569,7 +18586,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-chartjs-2@npm:^5.2.0":
+"react-chartjs-2@npm:^5.3.0":
   version: 5.3.0
   resolution: "react-chartjs-2@npm:5.3.0"
   peerDependencies:
@@ -19542,8 +19559,10 @@ __metadata:
     better-react-spinkit: "npm:^2.0.4"
     chance: "npm:^1.1.11"
     chart.js: "npm:^4.2.1"
+    chartjs-adapter-date-fns: "npm:^3.0.0"
     country-flag-icons: "npm:^1.5.9"
     css-loader: "npm:^6.7.3"
+    date-fns: "npm:^4.1.0"
     dotenv-webpack: "npm:^8.0.1"
     framer-motion: "npm:^11.11.13"
     husky: "npm:^9.1.5"
@@ -19556,7 +19575,7 @@ __metadata:
     pinst: "npm:^3.0.0"
     polkadot-api: "npm:^1.13.0"
     qrcode.react: "npm:^3.0.2"
-    react-chartjs-2: "npm:^5.2.0"
+    react-chartjs-2: "npm:^5.3.0"
     react-countup: "npm:^6.5.3"
     react-json-to-table: "npm:^0.1.7"
     react-markdown: "npm:^8.0.7"

@@ -9,7 +9,7 @@ import type { KeyringAddress } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 // added for plus to import RequestUpdateMeta
-import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountsSetUnlockExpiry, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 import type State from './State';
 
 import { ALLOWED_PATH, START_WITH_PATH } from '@polkadot/extension-base/defaults';
@@ -84,13 +84,13 @@ export default class Extension {
     }, delay);
   }
 
-  public setUnlockExpiry (expiryTime: number): void {
+  private setUnlockExpiry ({ expiryTime }: RequestAccountsSetUnlockExpiry): void {
     this.#unlockExpiry = expiryTime;
     this.#lockMessageSent = false;
     this.scheduleExpiryCheck();
   }
 
-  public clearUnlockExpiry (): void {
+  private clearUnlockExpiry (): void {
     this.#unlockExpiry = null;
     this.#lockMessageSent = false;
 
@@ -500,7 +500,7 @@ export default class Extension {
       }
 
       // Set a single expiry timestamp for all accounts
-      this.setUnlockExpiry(Date.now() + cacheTime);
+      this.setUnlockExpiry({ expiryTime: Date.now() + cacheTime });
 
       return true;
     } catch (error) {
@@ -763,6 +763,9 @@ export default class Extension {
 
       case 'pri(accounts.forgetAll)':
         return this.accountsForgetAll();
+
+        case 'pri(accounts.setUnlockExpiry)':
+        return this.setUnlockExpiry(request as RequestAccountsSetUnlockExpiry);
       // -------------------------------------
 
       case 'pri(accounts.changePassword)':
