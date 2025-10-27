@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.15.1](https://github.com/polkagate/extension/compare/v1.15.0...v1.15.1) (2025-10-27)
+
+
+### Bug Fixes
+
+* resolve width issue in extension mode for NoPrivateKeySigningButton ([#1993](https://github.com/polkagate/extension/issues/1993)) ([0210c7c](https://github.com/polkagate/extension/commit/0210c7cc1af462b0f6ee3e55120521e17e006fab))
+
 # [1.15.0](https://github.com/polkagate/extension/compare/v1.14.0...v1.15.0) (2025-10-27)
 
 
