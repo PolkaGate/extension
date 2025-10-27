@@ -40,6 +40,7 @@ const NoPrivateKeySigningButton = ({ alertText, buttonText, decisionButtonProps,
           cancelButton
           direction={direction}
           disabled={isDisabled}
+          flexibleWidth
           onPrimaryClick={onClick}
           onSecondaryClick={onDismiss}
           primaryBtnText={buttonText}
