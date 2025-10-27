@@ -122,9 +122,19 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
         `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vsCurrency}&ids=${coinId.toLowerCase()}&sparkline=true`
       );
 
+      if (!res.ok) {
+        if (res.status === 429) {
+          notify(t('Rate limited by CoinGecko. Please try again shortly.'), 'warning');
+        } else {
+          notify(t(`Failed to fetch token data (status ${res.status}).`), 'error');
+        }
+
+        return;
+      }
+
       const data = await res.json();
 
-       if (!data || !Array.isArray(data) || data.length === 0) {
+      if (!data || !Array.isArray(data) || data.length === 0) {
         notify(t('Something went wrong while fetching token data!'), 'info');
 
         return;
