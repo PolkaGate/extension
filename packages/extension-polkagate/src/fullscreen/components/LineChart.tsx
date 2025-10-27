@@ -5,7 +5,7 @@ import 'chartjs-adapter-date-fns';
 
 import type { ChartOptions, Plugin } from 'chart.js';
 
-import { Typography } from '@mui/material';
+import { Typography, useTheme } from '@mui/material';
 import { CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement, TimeScale, Tooltip } from 'chart.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Line } from 'react-chartjs-2';
@@ -51,7 +51,6 @@ const fetchWithTimeout = (url: string, timeout = 10000) => {
 };
 
 const gradientFillPlugin: Plugin<'line'> = {
-  id: 'gradientFillPlugin',
   beforeDatasetsDraw (chart) {
     const { chartArea: { bottom, top }, ctx } = chart;
 
@@ -102,13 +101,15 @@ const gradientFillPlugin: Plugin<'line'> = {
     ctx.fillStyle = gradient;
     ctx.fill();
     ctx.restore();
-  }
+  },
+  id: 'gradientFillPlugin'
 };
 
 const TokenChart: React.FC<TokenChartProps> = ({ coinId,
   intervalSec = 60,
   onClose,
   vsCurrency = 'usd' }) => {
+  const theme = useTheme();
   const { t } = useTranslation();
   const chartRef = useRef<ChartJS<'line'>>(null);
   const { notify } = useAlerts();
@@ -200,16 +201,20 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
             // Show only the day and month
             return new Date(value).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
           },
+          color: theme.palette.text.highlight,
+          font: { family: 'Inter', size: 11, weight: 400 },
           maxTicksLimit: 7, // force exactly 7 labels
           source: 'auto' // calculates tick positions automatically
-
         },
         time: { tooltipFormat: 'pp', unit: 'day' },
-        title: { display: true, text: 'Date' },
+        title: { color: theme.palette.text.secondary, display: true, font: { family: 'Inter', size: 12, weight: 400 }, text: 'Date' },
         type: 'time' as const
       },
       y: {
-        title: { display: true, text: `Price (${vsCurrency.toUpperCase()})` }
+        ticks: {
+          color: theme.palette.text.highlight
+        },
+        title: { color: theme.palette.text.secondary, display: true, font: { family: 'Inter', size: 12, weight: 400 }, text: `Price (${vsCurrency.toUpperCase()})` }
       }
     }
   };
