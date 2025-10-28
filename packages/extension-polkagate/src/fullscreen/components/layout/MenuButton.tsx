@@ -79,7 +79,7 @@ function MenuButton ({ Icon, onClick, path, style = { marginBottom: '8px' }, tex
         }}
         />
       }
-      <ShineEffect active={isSelected} />
+    {isHovered &&  <ShineEffect active={isHovered} />}
     </Stack>
   );
 }
