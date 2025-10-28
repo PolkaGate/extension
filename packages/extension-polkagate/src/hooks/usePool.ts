@@ -104,7 +104,7 @@ export default function usePool (address: string | undefined, genesisHash: strin
 
   useEffect(() => {
     if (!formatted || !id) {
-      !id && console.log('waiting to get poo info ...');
+      !id && console.log('waiting to get pool info ...');
 
       return;
     }
