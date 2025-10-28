@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 
 import { canDerive } from '@polkadot/extension-base/utils';
 import { AccountContext } from '@polkadot/extension-polkagate/src/components/contexts';
+import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 import useIsForgotten from '@polkadot/extension-polkagate/src/hooks/useIsForgotten';
 import { subscribeAccounts, tieAccount } from '@polkadot/extension-polkagate/src/messaging';
 import { getStorage, setStorage, updateStorage } from '@polkadot/extension-polkagate/src/util';
@@ -28,6 +29,7 @@ export default function AccountProvider ({ children }: { children: React.ReactNo
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const isForgotten = useIsForgotten();
+  const { setExtensionLock } = useExtensionLockContext();
 
   useEffect(() => {
     subscribeAccounts(setAccounts).catch(console.log);
@@ -38,6 +40,14 @@ export default function AccountProvider ({ children }: { children: React.ReactNo
       return;
     }
 
+    // unlock extension if all existing accounts are external
+    const hasLocalAccount = accounts.some(({ isExternal }) => !isExternal);
+
+    if (!hasLocalAccount) {
+      setExtensionLock(false);
+    }
+
+    // TODO: this needs to be removed on future releases
     // eslint-disable-next-line no-void
     void (async () => {
       try {

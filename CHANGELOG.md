@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.15.2](https://github.com/polkagate/extension/compare/v1.15.1...v1.15.2) (2025-10-28)
+
+
+### Bug Fixes
+
+* update balances correctly when only watch-only accounts are in the extension ([#1991](https://github.com/polkagate/extension/issues/1991)) ([d5c26fa](https://github.com/polkagate/extension/commit/d5c26fae6327d02ae14bd32ba79c06e5b5f879ac))
+
 ## [1.15.1](https://github.com/polkagate/extension/compare/v1.15.0...v1.15.1) (2025-10-27)
 
 
