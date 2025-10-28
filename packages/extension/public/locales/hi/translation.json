@@ -876,5 +876,10 @@
   "Something went wrong while changing password!": "पासवर्ड बदलने में कुछ गड़बड़ हुई!",
   "This child account will be created from your parent account. Give it a name.": "यह चाइल्ड खाता आपके पैरेंट खाते से बनाया जाएगा। इसे एक नाम दें।",
   "Incorrect password": "गलत पासवर्ड",
-  "Failed to create account": "खाता बनाने में विफल"
+  "Failed to create account": "खाता बनाने में विफल",
+  "Rate limited by CoinGecko. Please try again shortly.": "CoinGecko द्वारा दर सीमित। कृपया थोड़ी देर में पुनः प्रयास करें।",
+  "Something went wrong while fetching token data!": "टोकन डेटा लाने में कुछ गलत हो गया!",
+  "Sparkline data not available for this token.": "इस टोकन के लिए स्पार्कलाइन डेटा उपलब्ध नहीं है।",
+  "Fetching token data timed out. Please try again.": "टोकन डेटा लाने में समय समाप्त हो गया। कृपया पुनः प्रयास करें।",
+  "powered by CoinGecko": "CoinGecko द्वारा संचालित"
 }

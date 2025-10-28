@@ -869,5 +869,10 @@
   "Something went wrong while changing password!": "更改密码时出错！",
   "This child account will be created from your parent account. Give it a name.": "此子账户将从您的主账户创建，请为其命名。",
   "Incorrect password": "密码错误",
-  "Failed to create account": "创建账户失败"
+  "Failed to create account": "创建账户失败",
+  "Rate limited by CoinGecko. Please try again shortly.": "CoinGecko 限流，请稍后再试。",
+  "Something went wrong while fetching token data!": "获取代币数据时出现错误！",
+  "Sparkline data not available for this token.": "此代币的微图数据不可用。",
+  "Fetching token data timed out. Please try again.": "获取代币数据超时，请重试。",
+  "powered by CoinGecko": "由 CoinGecko 提供支持"
 }

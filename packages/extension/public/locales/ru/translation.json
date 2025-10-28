@@ -875,5 +875,10 @@
   "Something went wrong while changing password!": "Произошла ошибка при смене пароля!",
   "This child account will be created from your parent account. Give it a name.": "Эта дочерняя учетная запись будет создана из вашей основной. Укажите имя.",
   "Incorrect password": "Неверный пароль",
-  "Failed to create account": "Не удалось создать учетную запись"
+  "Failed to create account": "Не удалось создать учетную запись",
+  "Rate limited by CoinGecko. Please try again shortly.": "Ограничено CoinGecko. Пожалуйста, попробуйте снова через некоторое время.",
+  "Something went wrong while fetching token data!": "Что-то пошло не так при получении данных токена!",
+  "Sparkline data not available for this token.": "Данные Sparkline недоступны для этого токена.",
+  "Fetching token data timed out. Please try again.": "Истекло время ожидания получения данных токена. Пожалуйста, попробуйте снова.",
+  "powered by CoinGecko": "работает на CoinGecko"
 }

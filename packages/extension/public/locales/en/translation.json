@@ -822,5 +822,10 @@
   "This child account will be created from your parent account. Give it a name.": "",
   "Incorrect password": "",
   "Failed to create account": "",
-  "Failed to reset accounts": ""
+  "Failed to reset accounts": "",
+  "Rate limited by CoinGecko. Please try again shortly.": "",
+  "Something went wrong while fetching token data!": "",
+  "Sparkline data not available for this token.": "",
+  "Fetching token data timed out. Please try again.": "",
+  "powered by CoinGecko": ""
 }
