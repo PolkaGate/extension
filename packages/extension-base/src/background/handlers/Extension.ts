@@ -64,6 +64,12 @@ export default class Extension {
   }
 
   private scheduleExpiryCheck (): void {
+    const accountsLocal = this.localAccounts();
+
+    if (accountsLocal.length === 0) {
+      return;
+    }
+
     if (this.#expiryTimeout) {
       clearTimeout(this.#expiryTimeout);
     }
@@ -511,6 +517,12 @@ export default class Extension {
   }
 
   private areLocksExpired (): boolean {
+    const accountsLocal = this.localAccounts();
+
+    if (accountsLocal.length === 0) {
+      return false; // no lock when has only external accounts
+    }
+
     return this.#unlockExpiry === null || this.#unlockExpiry < Date.now();
   }
 
@@ -764,7 +776,7 @@ export default class Extension {
       case 'pri(accounts.forgetAll)':
         return this.accountsForgetAll();
 
-        case 'pri(accounts.setUnlockExpiry)':
+      case 'pri(accounts.setUnlockExpiry)':
         return this.setUnlockExpiry(request as RequestAccountsSetUnlockExpiry);
       // -------------------------------------
 
