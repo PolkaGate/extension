@@ -14,11 +14,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { amountToMachine, decodeMultiLocation, isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
-import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
+import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ONE, BN_ZERO, isFunction } from '@polkadot/util';
 
 import { useChainInfo } from '../../hooks';
-import { INVALID_PARA_ID, isOnSameChain, XCM_LOC } from './utils';
+import { INVALID_PARA_ID, XCM_LOC } from './utils';
 
 /** This hook is DEPRECATED */
 
@@ -144,32 +144,6 @@ export default function useLimitedFeeCall (address: string | undefined, assetId:
       { Unlimited: null }
     ];
   }, [api, assetToTransfer, teleportState, isCrossChain, recipientParaId, amountAsBN, recipientAddress]);
-
-  const transaction = useMemo(() => {
-    // we only use these parts to support testnets otherwise we use paraSpell to form the transaction
-    if (!genesisHash || !assetToTransfer || recipientAddress === undefined || !amountAsBN || amountAsBN.isZero() || !call) {
-      return;
-    }
-
-    const isTestNet = TEST_NETS.includes(genesisHash);
-    const _isOnSameChain = isOnSameChain(senderChainName, inputs?.recipientChain?.text);
-
-    if (!isTestNet && !_isOnSameChain) {
-      return;
-    }
-
-    const params = (isCrossChain
-      ? crossChainParams
-      : isNonNativeToken
-        ? ['currencies', 'tokens'].includes(onChainCall?.section || '')
-          ? [recipientAddress, assetToTransfer.currencyId, amountAsBN] // this is for transferring on mutliasset chains
-          : [parsedAssetId, recipientAddress, amountAsBN] // this is for transferring on asset hubs
-        : transferType === 'All'
-          ? [recipientAddress, false] // transferAll with keepalive = false
-          : [recipientAddress, amountAsBN]) as unknown[];
-
-    return params && call(...params);
-  }, [genesisHash, assetToTransfer, recipientAddress, amountAsBN, call, senderChainName, inputs?.recipientChain?.text, isCrossChain, crossChainParams, isNonNativeToken, onChainCall?.section, parsedAssetId, transferType]);
 
   const calculateFee = useCallback((_amount: Balance | BN, setFeeCall: React.Dispatch<React.SetStateAction<Balance | undefined>>) => {
     /** to set Maximum fee which will be used to estimate and show max transferable amount */
