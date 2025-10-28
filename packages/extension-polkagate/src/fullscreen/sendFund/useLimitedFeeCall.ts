@@ -23,15 +23,14 @@ import { INVALID_PARA_ID, isOnSameChain, XCM_LOC } from './utils';
 /** This hook is DEPRECATED */
 
 // This hook is used to estimate fees and prepare the transaction for sending funds for testnets mostly and non xcm transfers on other chains since paraspell does not support transfer all as well
-export default function useLimitedFeeCall (address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, inputs: Inputs | undefined, genesisHash: string | undefined, teleportState: Teleport, transferType: string) {
+export default function useLimitedFeeCall (address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, inputs: Inputs | undefined, genesisHash: string | undefined, teleportState: Teleport) {
   const { api, chainName: senderChainName } = useChainInfo(genesisHash);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [estimatedCrossChainFee, setEstimatedCrossChainFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
 
-  const decimal = inputs?.decimal;
-  const recipientAddress = inputs?.recipientAddress;
+  const { decimal, recipientAddress, transferType } = inputs || {};
 
   const transferableBalance = useMemo(() => getValue('transferable', assetToTransfer), [assetToTransfer]);
   const isForeignAsset = assetId ? assetId.startsWith('0x') : undefined;

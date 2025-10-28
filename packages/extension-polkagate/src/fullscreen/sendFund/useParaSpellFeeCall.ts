@@ -27,7 +27,8 @@ export default function useParaSpellFeeCall (address: string | undefined, isRead
     assetId,
     recipientAddress,
     recipientChain,
-    token } = inputs ?? {};
+    token,
+    transferType } = inputs ?? {};
 
   useEffect(() => {
     const _recipientChainName = recipientChain?.text;
@@ -45,11 +46,14 @@ export default function useParaSpellFeeCall (address: string | undefined, isRead
     // const nativeToken = api.registry.chainTokens[0];
     // const feeAssetId = inputs?.feeInfo?.assetId;
     // const feeCurrency = feeAssetId ? { location: feeAssetId } : { symbol: Native(nativeToken) };
+
+    const amount = transferType === 'All' ? 'ALL' : amountAsBN.toString();
+
     try {
       const builder = Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
         .from(fromChain as TSubstrateChain)
         .to(toChain as TDestination)
-        .currency({ amount: amountAsBN.toString(), ...currency })
+        .currency({ amount, ...currency })
         // .feeAsset(feeCurrency) // - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
         .address(recipientAddress)
         .senderAddress(address);

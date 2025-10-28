@@ -13,6 +13,8 @@ export interface ParaspellFees {
   destinationFee: TXcmFeeBase & { balanceAfter: bigint | UnableToComputeError; };
 }
 
+export type TransferType = 'All' | 'Normal';
+
 export interface Inputs {
   amount?: string | undefined;
   amountAsBN?: BN | undefined;
@@ -28,6 +30,7 @@ export interface Inputs {
   recipientChain?: DropdownOption | undefined; // NOTE: value cold be genesishash or para id!
   recipientGenesisHashOrParaId?: string | undefined;
   token?: string;
+  transferType?: TransferType
 }
 
 export interface FeeAssetInfo {
