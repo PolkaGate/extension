@@ -89,8 +89,7 @@ export default function SendFund (): React.ReactElement {
       paraSpellTransaction: undefined,
       recipientAddress: undefined,
       recipientChain: undefined,
-      recipientGenesisHashOrParaId: undefined,
-      transaction: undefined
+      recipientGenesisHashOrParaId: undefined
     };
 
     // Reset the entire send flow on sender/network change
@@ -116,8 +115,6 @@ export default function SendFund (): React.ReactElement {
   const onCloseModal = useCallback(() => {
     navigate(`/accountfs/${address}/${genesisHash}/${assetId}`) as void;
   }, [address, assetId, genesisHash, navigate]);
-
-  const inputTransaction = inputs?.paraSpellTransaction ?? inputs?.transaction;
 
   const buttonDisable = useMemo(() =>
     (inputStep === INPUT_STEPS.SENDER && !inputs?.token) ||
@@ -220,7 +217,7 @@ export default function SendFund (): React.ReactElement {
             <SignArea3
               address={address}
               direction='horizontal'
-              disabled={!inputTransaction}
+              disabled={!inputs?.paraSpellTransaction}
               extraProps={{
                 decisionButtonProps: {
                   primaryButtonProps: { style: { width: '148%' } },
@@ -243,7 +240,7 @@ export default function SendFund (): React.ReactElement {
               showProxySelection={showProxySelection}
               signerOption={inputs?.feeInfo?.assetId ? { assetId: inputs.feeInfo.assetId } : undefined}
               style={{ position: 'unset', width: '73%' }}
-              transaction={inputTransaction}
+              transaction={inputs?.paraSpellTransaction}
               withCancel
             />
           </div>

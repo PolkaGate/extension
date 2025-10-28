@@ -1,8 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { FetchedBalance, TransferType } from '@polkadot/extension-polkagate/src/util/types';
+import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { BN } from '@polkadot/util';
+import type { TransferType } from './types';
 
 import { useMemo } from 'react';
 

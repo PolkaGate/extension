@@ -29,10 +29,11 @@ interface LockExpiredMessage { type: 'LOCKED_ACCOUNTS_EXPIRED' }
 export const ExtensionLockProvider: React.FC<{ children: React.ReactElement }> = ({ children }: any) => {
   const isPasswordsMigrated = useIsPasswordMigrated();
 
-  useAutoLockRefresher();
-
+  
   // Note: extensionLock is initially set to true.
   const [isExtensionLocked, setIsExtensionLocked] = useState(true);
+
+  useAutoLockRefresher(isExtensionLocked);
 
   useEffect(() => {
      isPasswordsMigrated && areAccountsLocksExpired()
