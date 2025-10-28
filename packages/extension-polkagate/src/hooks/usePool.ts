@@ -1,15 +1,14 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
+//@ts-nocheck
 
 import type { MyPoolInfo } from '../util/types';
 
 import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect, useState } from 'react';
 
 import { FetchingContext, WorkerContext } from '../components';
-import { getStorage, setStorage } from '../util';
-import { isHexToBn } from '../util';
+import { getStorage, isHexToBn, setStorage } from '../util';
 import { STORAGE_KEY } from '../util/constants';
 import useFormatted from './useFormatted';
 
@@ -79,7 +78,7 @@ export default function usePool (address: string | undefined, genesisHash: strin
         receivedMessage.stashIdAccount.stakingLedger.active = isHexToBn(receivedMessage.stashIdAccount.stakingLedger.active).toString();
         receivedMessage.stashIdAccount.stakingLedger.total = isHexToBn(receivedMessage.stashIdAccount.stakingLedger.total).toString();
 
-        console.log('** My pool info from worker is:', receivedMessage);
+        console.log('** My pool:', receivedMessage.metadata);
 
         // save my pool to local storage
         // if id is available there is no reason to save the pool information in the "MyPool" storage!
@@ -149,8 +148,6 @@ export default function usePool (address: string | undefined, genesisHash: strin
 
   useEffect(() => {
     if (refresh && setRefresh) {
-      console.log('refreshing ...');
-
       fetchPoolInformation();
 
       setRefresh(false);
@@ -164,8 +161,6 @@ export default function usePool (address: string | undefined, genesisHash: strin
 
     /** load pool from storage */
     getStorage(STORAGE_KEY.MY_POOL).then((res) => {
-      console.log('MyPools in local storage:', res);
-
       let myPool: MyPoolInfo | null | undefined;
 
       if (res && typeof res === 'object' && formatted) {
