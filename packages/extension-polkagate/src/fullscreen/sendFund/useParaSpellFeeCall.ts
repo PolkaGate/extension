@@ -88,9 +88,10 @@ export default function useParaSpellFeeCall (address: string | undefined, isRead
       setError('Something went wrong while calculating estimated fee, try again later!');
       console.log('Something went wrong:', error?.message);
 
+      // eslint-disable-next-line no-useless-return
       return;
     }
-  }, [api, address, senderChainName, genesisHash, isReadyToMakeTx, setError, assetId, token, recipientChain?.text, recipientAddress, amountAsBN]);
+  }, [address, amountAsBN, api, assetId, isReadyToMakeTx, recipientChain?.text, recipientAddress, senderChainName, setError, token, transferType]);
 
   return {
     isCrossChain,
