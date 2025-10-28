@@ -222,6 +222,5 @@ export default function useLimitedFeeCall (address: string | undefined, assetId:
   return {
     maxFee,
     totalFee: estimatedFee ? estimatedFee.add(estimatedCrossChainFee || BN_ZERO) : undefined,
-    transaction
   };
 }
