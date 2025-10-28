@@ -160,7 +160,9 @@ export async function send (
       }
     };
 
-    extrinsic.send(onResult)
+    const rebuiltExtrinsic = api.tx(extrinsic.toHex());
+
+    rebuiltExtrinsic.send(onResult)
       .then((u) => {
         unsub = u;
       })
