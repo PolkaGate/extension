@@ -14,6 +14,7 @@ import { getUserAddedPriceId } from '@polkadot/extension-polkagate/src/fullscree
 import { DEFAULT_PRICE, type Price } from '@polkadot/extension-polkagate/src/hooks/useTokenPriceBySymbol';
 import { getPriceIdByChainName, sanitizeChainName, toCamelCase } from '@polkadot/extension-polkagate/src/util';
 import chains from '@polkadot/extension-polkagate/src/util/chains';
+import { NOTIFICATION_TIMESTAMP_OFFSET } from './constant';
 
 export function timestampToDate (timestamp: number | string): string {
   // Ensure timestamp is a number and convert if it's a string
@@ -48,7 +49,7 @@ export const generateReferendaNotifications = (
   for (const currentNetworkData of newRefs) {
     let { data: currentReferenda, network } = currentNetworkData;
 
-    currentReferenda = currentReferenda.filter(({ latestTimestamp }) => latestTimestamp >= latestLoggedIn);
+    currentReferenda = currentReferenda.filter(({ latestTimestamp }) => latestTimestamp >= (latestLoggedIn + NOTIFICATION_TIMESTAMP_OFFSET));
 
     for (const referenda of currentReferenda) {
       newMessages.push({
@@ -73,7 +74,7 @@ export const generateStakingRewardNotifications = (
 
   payouts.forEach(({ address, data, network }) => {
     data
-      .filter(({ timestamp }) => timestamp >= latestLoggedIn)
+      .filter(({ timestamp }) => timestamp >= (latestLoggedIn + NOTIFICATION_TIMESTAMP_OFFSET))
       .forEach((payout) => {
         newMessages.push({
           chain: network,
@@ -98,7 +99,7 @@ export const generateReceivedFundNotifications = (
 
   transfers.forEach(({ address, data, network }) => {
     data
-      .filter(({ timestamp }) => timestamp >= latestLoggedIn)
+      .filter(({ timestamp }) => timestamp >= (latestLoggedIn + NOTIFICATION_TIMESTAMP_OFFSET))
       .forEach((receivedFund) => {
         newMessages.push({
           chain: network,
