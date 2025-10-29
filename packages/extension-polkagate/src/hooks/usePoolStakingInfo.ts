@@ -32,7 +32,7 @@ const getUnstakingAmount = async (api: ApiPromise | undefined, pool: MyPoolInfo 
     return undefined;
   }
 
-  const { currentEra, eraLength, eraProgress } = await getEraInfo(api);
+  const { blockTime, currentEra, eraLength, eraProgress } = await getEraInfo(api);
 
   const toBeReleased = [];
   let unlockingAmount;
@@ -51,7 +51,7 @@ const getUnstakingAmount = async (api: ApiPromise | undefined, pool: MyPoolInfo 
         } else {
           unlockingAmount = unlockingAmount.add(amount);
 
-          const date = getReleaseDate(remainingEras, eraLength, eraProgress);
+          const date = getReleaseDate(remainingEras, eraLength, eraProgress, blockTime);
 
           toBeReleased.push({ amount, date });
         }

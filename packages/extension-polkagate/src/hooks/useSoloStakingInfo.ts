@@ -23,6 +23,7 @@ import useStakingConsts from './useStakingConsts';
 import useStakingRewardDestinationAddress from './useStakingRewardDestinationAddress';
 
 export interface SessionIfo {
+  blockTime: number; // usually 6 sec
   eraLength: number; // Length of an era in blocks
   eraProgress: number; // Current progress within the era
   currentEra: number; // Current era number
@@ -64,7 +65,7 @@ const getUnstakingAmount = async (api: ApiPromise | undefined, stakingAccount: A
     return undefined;
   }
 
-  const { currentEra, eraLength, eraProgress } = await getEraInfo(api);
+  const { blockTime, currentEra, eraLength, eraProgress } = await getEraInfo(api);
 
   const toBeReleased = [];
   let unlockingAmount;
@@ -78,7 +79,7 @@ const getUnstakingAmount = async (api: ApiPromise | undefined, stakingAccount: A
           const amount = toBN(value);
 
           unlockingAmount = unlockingAmount.add(amount);
-          const date = getReleaseDate(remainingEras, eraLength, eraProgress);
+          const date = getReleaseDate(remainingEras, eraLength, eraProgress, blockTime);
 
           toBeReleased.push({ amount, date });
         }

@@ -3,9 +3,9 @@
 
 import type { BN } from '@polkadot/util';
 
-export const getReleaseDate = (remainingEras: BN, eraLength: number, eraProgress: number): number => {
+export const getReleaseDate = (remainingEras: BN, eraLength: number, eraProgress: number, blockTime: number): number => {
   // Calculate release time in seconds, then convert to milliseconds for timestamp
-  const secToBeReleased = (Number(remainingEras.subn(1)) * eraLength + (eraLength - eraProgress)) * 6;
+  const secToBeReleased = (Number(remainingEras.subn(1)) * eraLength + (eraLength - eraProgress)) * blockTime;
 
   return Date.now() + (secToBeReleased * 1000);
 };
