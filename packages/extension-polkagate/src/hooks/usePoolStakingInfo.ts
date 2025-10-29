@@ -3,13 +3,17 @@
 
 import type React from 'react';
 import type { ApiPromise } from '@polkadot/api';
+import type { BN } from '@polkadot/util';
 import type { BalancesInfo, MyPoolInfo, PoolStakingConsts, StakingConsts } from '../util/types';
-import type { SessionIfo, UnstakingType } from './useSoloStakingInfo';
+import type { UnstakingType } from './useSoloStakingInfo';
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { BN, BN_ZERO, bnMax } from '@polkadot/util';
+import { BN_ZERO, bnMax } from '@polkadot/util';
 
+import { toBN } from '../util';
+import { getEraInfo } from './utils/getEraInfo';
+import { getReleaseDate } from './utils/getReleaseDate';
 import useBalances from './useBalances';
 import useChainInfo from './useChainInfo';
 import usePool from './usePool';
@@ -28,34 +32,28 @@ const getUnstakingAmount = async (api: ApiPromise | undefined, pool: MyPoolInfo 
     return undefined;
   }
 
-  const sessionProgress = await api.derive.session.progress();
-  const sessionInfo = {
-    currentEra: Number(sessionProgress.currentEra),
-    eraLength: Number(sessionProgress.eraLength),
-    eraProgress: Number(sessionProgress.eraProgress)
-  } as SessionIfo;
+  const { currentEra, eraLength, eraProgress } = await getEraInfo(api);
 
   const toBeReleased = [];
   let unlockingAmount;
   let redeemAmount = BN_ZERO;
 
-  if (sessionInfo) {
+  if (currentEra) {
     unlockingAmount = BN_ZERO;
 
     if (pool?.member?.unbondingEras) { // if pool is fetched but account belongs to no pool then pool === null
-      for (const [era, unbondingPoint] of Object.entries(pool.member?.unbondingEras)) {
-        const remainingEras = Number(era) - sessionInfo.currentEra;
+      for (const [era, value] of Object.entries(pool.member?.unbondingEras)) {
+        const remainingEras = toBN(era).subn(currentEra);
+        const amount = toBN(value);
 
-        if (remainingEras < 0) {
-          redeemAmount = redeemAmount.add(new BN(unbondingPoint as string));
+        if (remainingEras.ltn(0)) {
+          redeemAmount = redeemAmount.add(amount);
         } else {
-          const amount = new BN(unbondingPoint as string);
-
           unlockingAmount = unlockingAmount.add(amount);
 
-          const secToBeReleased = (remainingEras * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
+          const date = getReleaseDate(remainingEras, eraLength, eraProgress);
 
-          toBeReleased.push({ amount, date: Date.now() + (secToBeReleased * 1000) });
+          toBeReleased.push({ amount, date });
         }
       }
     }

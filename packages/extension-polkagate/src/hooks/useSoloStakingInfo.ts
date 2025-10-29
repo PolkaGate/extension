@@ -11,7 +11,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { getStorage, isHexToBn, setStorage } from '../util';
+import { getStorage, isHexToBn, setStorage, toBN } from '../util';
+import { getEraInfo } from './utils/getEraInfo';
+import { getReleaseDate } from './utils/getReleaseDate';
 import useBalances from './useBalances';
 import useChainInfo from './useChainInfo';
 import useCurrentEraIndex from './useCurrentEraIndex';
@@ -62,29 +64,23 @@ const getUnstakingAmount = async (api: ApiPromise | undefined, stakingAccount: A
     return undefined;
   }
 
-  const sessionProgress = await api.derive.session.progress();
-  const sessionInfo = {
-    currentEra: Number(sessionProgress.currentEra),
-    eraLength: Number(sessionProgress.eraLength),
-    eraProgress: Number(sessionProgress.eraProgress)
-  } as SessionIfo;
+  const { currentEra, eraLength, eraProgress } = await getEraInfo(api);
 
   const toBeReleased = [];
   let unlockingAmount;
 
-  if (sessionInfo) {
+  if (currentEra) {
     unlockingAmount = BN_ZERO;
 
     if (stakingAccount.unlocking) {
       for (const [_, { remainingEras, value }] of Object.entries(stakingAccount.unlocking)) {
         if (remainingEras.gtn(0)) {
-          const amount = isHexToBn(value as unknown as string);
+          const amount = toBN(value);
 
           unlockingAmount = unlockingAmount.add(amount);
-          // Calculate release time in seconds, then convert to milliseconds for timestamp
-          const secToBeReleased = (Number(remainingEras.subn(1)) * sessionInfo.eraLength + (sessionInfo.eraLength - sessionInfo.eraProgress)) * 6;
+          const date = getReleaseDate(remainingEras, eraLength, eraProgress);
 
-          toBeReleased.push({ amount, date: Date.now() + (secToBeReleased * 1000) });
+          toBeReleased.push({ amount, date });
         }
       }
     }
@@ -93,7 +89,7 @@ const getUnstakingAmount = async (api: ApiPromise | undefined, stakingAccount: A
   return { toBeReleased, unlockingAmount };
 };
 
-function reviveSoloStakingInfoBNs(info: SavedSoloStakingInfo): SavedSoloStakingInfo {
+function reviveSoloStakingInfoBNs (info: SavedSoloStakingInfo): SavedSoloStakingInfo {
   return {
     ...info,
     availableBalanceToStake: info.availableBalanceToStake ? isHexToBn(info.availableBalanceToStake as unknown as string) : undefined,
