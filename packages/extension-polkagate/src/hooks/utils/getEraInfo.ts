@@ -12,10 +12,11 @@ export const getEraInfo = async (api: ApiPromise): Promise<SessionIfo> => {
   const { api: relayChainApi } = await fastestApi(relayGenesisHash);
 
   const relaySessionProgress = await relayChainApi.derive.session.progress();
-  const { currentIndex, eraLength, sessionLength, sessionProgress, sessionsPerEra } = relaySessionProgress;
-  const eraProgress = Number(currentIndex) % (Number(sessionsPerEra)) - 1 + Number(sessionProgress) / Number(sessionLength);
-
   const currentEra = await api.query['staking']['currentEra']();
+
+  const { currentIndex, eraLength, sessionLength, sessionProgress, sessionsPerEra } = relaySessionProgress;
+  const currentEraSessionIndex = Number(currentIndex) % (Number(sessionsPerEra)) - 1;
+  const eraProgress = Math.max(0, currentEraSessionIndex) * Number(sessionLength) + Number(sessionProgress);
 
   return {
     currentEra: Number(currentEra),
