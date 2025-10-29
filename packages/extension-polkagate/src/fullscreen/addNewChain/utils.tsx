@@ -52,7 +52,7 @@ export function useUserAddedPriceId (_genesisHash: string | undefined): string |
   }, [_genesisHash, endpoints]);
 }
 
-export function getUserAddedPriceId (_genesisHash: string | undefined, endpoints: Record<`0x${string}`, UserAddedEndpoint> | undefined): string | undefined {
+export function getUserAddedPriceId (_genesisHash: string | undefined, endpoints: Record<HexString, UserAddedEndpoint> | undefined): string | undefined {
   if (!endpoints) {
     return;
   }

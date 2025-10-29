@@ -6,8 +6,7 @@
 import type { TFunction } from '@polkagate/apps-config/types';
 import type { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/home/partials/type';
 import type { Prices, UserAddedEndpoint } from '@polkadot/extension-polkagate/src/util/types';
-import type { ReferendaStatus } from './constant';
-import type { NotificationMessage, NotificationMessageInformation, NotificationMessageType, NotificationType, ReceivedFundInformation, ReferendaInformation, ReferendaProp, StakingRewardInformation } from './types';
+import type { NotificationMessage, NotificationMessageInformation, NotificationMessageType, NotificationType, ReceivedFundInformation, ReferendaInformation, ReferendaProp, ReferendaStatus, StakingRewardInformation } from './types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
 
@@ -38,14 +37,10 @@ export function timestampToDate (timestamp: number | string): string {
 }
 
 /**
- * Generates notifications for new or updated referenda
- * @param previousRefs - Previous state of referenda (by network)
- * @param newRefs - Current state of referenda (by network)
- * @returns Array of new notification messages
+ * Generate notification messages for referenda that occurred since the user's last login.
  */
 export const generateReferendaNotifications = (
   latestLoggedIn: number,
-  // previousRefs: ReferendaInformation[] | null | undefined,
   newRefs: ReferendaInformation[]
 ): NotificationMessageType[] => {
   const newMessages: NotificationMessageType[] = [];
@@ -68,9 +63,7 @@ export const generateReferendaNotifications = (
 };
 
 /**
- * Generates notifications for new staking rewards
- * @param currentReferenda - Current state of referenda
- * @returns Array of new notification messages
+ * Generate notification messages for received staking reward payouts that occurred since the user's last login.
  */
 export const generateStakingRewardNotifications = (
   latestLoggedIn: number,
@@ -95,9 +88,7 @@ export const generateStakingRewardNotifications = (
 };
 
 /**
- * Generates notifications for new staking rewards
- * @param currentReferenda - Current state of referenda
- * @returns Array of new notification messages
+ * Generate notification messages for received funds that occurred since the user's last login.
  */
 export const generateReceivedFundNotifications = (
   latestLoggedIn: number,
@@ -123,8 +114,6 @@ export const generateReceivedFundNotifications = (
 
 /**
  * Marks messages as read
- * @param messages - Notification messages
- * @returns Array of new notification messages
  */
 export const markMessagesAsRead = (messages: NotificationMessageInformation[]) => {
   return messages.map((message) => (
@@ -135,74 +124,10 @@ export const markMessagesAsRead = (messages: NotificationMessageInformation[]) =
   ));
 };
 
-/**
- * Merges two arrays of ReferendaInformation without duplicating existing referenda.
- * - Keeps previous referenda data
- * - Adds new referenda from the new state
- * - Preserves per-network separation
- */
-export const updateReferendas = (preciousRefs: ReferendaInformation[] | null | undefined, newRefs: ReferendaInformation[]) => {
-  if (!preciousRefs) {
-    return newRefs;
-  }
-
-  const resultMap = new Map<string | number, ReferendaInformation>();
-
-  // Copy all previous data
-  for (const prev of preciousRefs) {
-    resultMap.set(prev.network.value, {
-      data: [...prev.data],
-      network: prev.network
-    });
-  }
-
-  // Merge new data
-  for (const current of newRefs) {
-    const existing = resultMap.get(current.network.value);
-
-    if (!existing) {
-      // Entirely new network — just add it
-      resultMap.set(current.network.value, current);
-      continue;
-    }
-
-    const updatedData = [...existing.data];
-    const existingIndexes = new Map(
-      existing.data.map((r) => [r.referendumIndex, r])
-    );
-
-    for (const newRef of current.data) {
-      const existingRef = existingIndexes.get(newRef.referendumIndex);
-
-      if (!existingRef) {
-        // New referendum
-        updatedData.push(newRef);
-      } else if (existingRef.status !== newRef.status) {
-        // Status updated → replace the old one
-        const idx = updatedData.findIndex(
-          (r) => r.referendumIndex === newRef.referendumIndex
-        );
-
-        if (idx !== -1) {
-          updatedData[idx] = newRef;
-        }
-      }
-    }
-
-    resultMap.set(current.network.value, {
-      data: updatedData,
-      network: current.network
-    });
-  }
-
-  return Array.from(resultMap.values());
-};
-
 // Utility to get date string like "15 Dec 2025"
 function getDayKey (timestamp: number): string {
   const date = new Date(timestamp * 1000); // convert seconds → ms
 
-  // Format: "15 Dec 2025"
   return date.toLocaleDateString('en-GB', {
     day: '2-digit',
     month: 'short',
@@ -210,20 +135,20 @@ function getDayKey (timestamp: number): string {
   });
 }
 
+/**
+ * Groups notifications by day and sorts both the groups and their items by timestamp.
+ */
 export function groupNotificationsByDay (
   notifications: NotificationMessageInformation[] | undefined
 ): Record<string, NotificationMessageInformation[]> | undefined {
-  const seen = new Set(); // to avoid duplicates globally
-
   if (!notifications) {
     return;
   }
 
   const grouped = notifications.reduce<Record<string, NotificationMessageInformation[]>>((acc, item) => {
     const timestamp = item.message.detail.timestamp;
-    const uniqueKey = item.message.detail.itemKey;
 
-    if (!timestamp || seen.has(uniqueKey)) {
+    if (!timestamp) {
       return acc;
     }
 
@@ -234,8 +159,6 @@ export function groupNotificationsByDay (
     }
 
     acc[dayKey].push(item);
-
-    seen.add(uniqueKey);
 
     return acc;
   }, {});
@@ -252,7 +175,6 @@ export function groupNotificationsByDay (
 
   // Sort the day groups themselves (newest first)
   const sortedEntries = Object.entries(grouped).sort(([a], [b]) => {
-    // Parse your "15 Dec 2025" strings back into Date objects for sorting
     const dateA = new Date(a);
     const dateB = new Date(b);
 
@@ -266,11 +188,7 @@ export function groupNotificationsByDay (
 }
 
 /**
- * Check if a given date string (formatted as "17 Dec 2024")
- * represents today's date.
- *
- * @param dateString - The date string in format "DD Mon YYYY"
- * @returns true if the date is today's date, otherwise false
+ * Check if a given date string (formatted as "17 Dec 2024") represents today's date.
  */
 export function isToday (dateString: string): boolean {
   const today = new Date();
@@ -285,20 +203,16 @@ export function isToday (dateString: string): boolean {
 
 /**
  * Converts a timestamp (in seconds) to a formatted local time string like "10:01 am".
- *
- * @param timestamp - The UNIX timestamp in seconds
- * @returns A formatted time string (e.g., "10:01 am")
  */
 export function getTimeOfDay (timestamp: number): string {
   // Convert timestamp from seconds → milliseconds
   const date = new Date(timestamp * 1000);
 
-  // Format time as "10:01 am" or "9:45 pm"
   return date.toLocaleTimeString('en-US', {
     hour: '2-digit',
-    hour12: true, // Use 12-hour format with am/pm
+    hour12: true,
     minute: '2-digit'
-  }).toLowerCase(); // optional: make "AM"/"PM" lowercase
+  }).toLowerCase();
 }
 
 /**
@@ -366,14 +280,16 @@ export function getNotificationItemTitle (t: TFunction, type: NotificationType, 
     case 'referenda': {
       const status = referenda?.status ?? '';
 
-      if (['approved', 'executed'].includes(status)) {
-        return t('Referendum approved');
+      if (['approved', 'executed', 'confirm'].includes(status)) {
+        return t('Referendum executed');
       } else if (['ongoing', 'decision', 'submitted'].includes(referenda?.status ?? '')) {
         return t('New Referendum');
       } else if (referenda?.status === 'cancelled') {
         return t('Referendum Cancelled');
       } else if (referenda?.status === 'timeout') {
         return t('Referendum time outed');
+      } else if (referenda?.status === 'executedfailed') {
+        return t('Referendum executed but failed');
       } else {
         return t('Referendum Rejected');
       }
@@ -451,12 +367,19 @@ export function getNotificationIcon (type: NotificationType, referendaStatus: Re
 
     case 'referenda': {
       const neutralStyle = { bgcolor: '#303045', borderColor: '#222236', color: '#696D7E', itemIcon: 'Receipt2' };
+      const executedStyle = { bgcolor: '#FF4FB91A', borderColor: '#FF4FB940', color: '#FF4FB9', itemIcon: 'Receipt2' };
+      const decisionStyle = { bgcolor: '#82FFA540', borderColor: '#82FFA51A', color: '#82FFA5', itemIcon: 'Receipt2' };
 
-      const statusMap = {
-        approved: { bgcolor: '#FF4FB91A', borderColor: '#FF4FB940', color: '#FF4FB9', itemIcon: 'Receipt2' },
+      const statusMap: Record<ReferendaStatus, { bgcolor: string; borderColor: string; color: string; itemIcon: string; }> = {
+        approved: executedStyle,
         cancelled: neutralStyle,
-        ongoing: { bgcolor: '#82FFA540', borderColor: '#82FFA51A', color: '#82FFA5', itemIcon: 'Receipt2' },
+        confirm: executedStyle,
+        decision: decisionStyle,
+        executed: executedStyle,
+        executedfailed: neutralStyle,
+        ongoing: decisionStyle,
         rejected: neutralStyle,
+        submitted: decisionStyle,
         timeout: neutralStyle
       };
 
@@ -518,7 +441,8 @@ export const getChainInfo = (genesisHash: string): ChainInfoShort => {
 };
 
 export const getNotificationMessages = (item: NotificationMessageType, chainInfo: ChainInfoShort, currency: CurrencyItemType | undefined, price: Price, t: TFunction): NotificationMessage => {
-  const timestamp = item.payout?.timestamp ?? item.receivedFund?.timestamp ?? item.referenda?.latestTimestamp ?? Date.now();
+  const fallbackTimestamp = Math.floor(Date.now() / 1000);
+  const timestamp = item.payout?.timestamp ?? item.receivedFund?.timestamp ?? item.referenda?.latestTimestamp ?? fallbackTimestamp;
   const index = item.payout?.index ?? item.receivedFund?.index ?? item.referenda?.index ?? 0;
 
   const title = getNotificationItemTitle(t, item.type, item.referenda);

@@ -116,8 +116,8 @@ export default function useNotifications (justLoadData = true) {
 
   const [notifications, dispatchNotifications] = useReducer(notificationReducer, initialNotificationState);
 
-  // const latestLoggedIn = useMemo(() => notifications?.latestLoggedIn ?? Math.floor(Date.now() / 1000), [notifications?.latestLoggedIn]);
-  const latestLoggedIn = 1760566665; // 1761566665
+  const fallbackTimestamp = Math.floor(Date.now() / 1000);
+  const latestLoggedIn = useMemo(() => notifications?.latestLoggedIn ?? fallbackTimestamp, [fallbackTimestamp, notifications?.latestLoggedIn]);
   // Whether notifications are turned off
   const notificationIsOff = useMemo(() => isNotificationEnable === false || accounts?.length === 0, [accounts?.length, isNotificationEnable]);
 
@@ -229,7 +229,7 @@ export default function useNotifications (justLoadData = true) {
       fetchRefs.referendaRef = status.FETCHED;
       dispatchNotifications({ payload: notificationMessages, type: 'SET_MESSAGES' });
     }
-  }, [accounts, currency, fetchRefs, governanceChains, prices, t, useAddedEndpoints]);
+  }, [accounts, currency, fetchRefs, governanceChains, latestLoggedIn, prices, t, useAddedEndpoints]);
 
   // Load notifications from storage or initialize if first time
   useEffect(() => {

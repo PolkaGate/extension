@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
-import type { ApiResponse, PayoutsProp, PayoutSubscan, ReceivedFundInformation, ReferendaInformation, ReferendaProp, ReferendaSubscan, StakingRewardInformation, TransfersProp, TransferSubscan } from './types';
+import type { ApiResponse, PayoutsProp, PayoutSubscan, ReceivedFundInformation, ReferendaInformation, ReferendaProp, ReferendaStatus, ReferendaSubscan, StakingRewardInformation, TransfersProp, TransferSubscan } from './types';
 
 import { getSubscanChainName, getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
 import { postData } from '@polkadot/extension-polkagate/src/util/api';
@@ -10,7 +10,7 @@ import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '@polkadot/extension-
 import getChainName from '@polkadot/extension-polkagate/src/util/getChainName';
 import { isMigratedRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
-import { MAX_RETRIES, RECEIVED_FUNDS_THRESHOLD, RECEIVED_REWARDS_THRESHOLD, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM, type ReferendaStatus } from './constant';
+import { MAX_RETRIES, RECEIVED_FUNDS_THRESHOLD, RECEIVED_REWARDS_THRESHOLD, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM } from './constant';
 import { timestampToDate } from './util';
 
 const transformTransfers = (address: string, transfers: TransferSubscan[], network: DropdownOption) => {

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
-import type { ReferendaStatus } from './constant';
 
 export interface ApiResponse<T> {
   code: number;
@@ -94,6 +93,8 @@ export interface PayoutsProp {
   index: number | string | undefined;
   timestamp: number;
 }
+
+export type ReferendaStatus = 'approved' | 'cancelled' | 'decision' | 'executed' | 'ongoing' | 'rejected' | 'submitted' | 'timeout' | 'confirm' | 'executedfailed';
 
 export interface ReferendaProp {
   referendumIndex: number;

@@ -1,10 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { KUSAMA_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_GENESIS_HASH, WESTEND_GENESIS_HASH } from '../../util/constants';
 import type { NotificationsType } from './types';
 
-export type ReferendaStatus = 'ongoing' | 'approved' | 'timeout' | 'rejected' | 'cancelled';
+import { KUSAMA_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_GENESIS_HASH, WESTEND_GENESIS_HASH } from '../../util/constants';
 
 export const NOTIFICATION_GOVERNANCE_CHAINS = ['kusama', 'polkadot'];
 
