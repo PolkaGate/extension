@@ -1,17 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountId32 } from '@polkadot/types/interfaces';
-//@ts-ignore
-import type { SpStakingExposurePage } from '@polkadot/types/lookup';
 import type { SoloStakingInfo } from '../../../../hooks/useSoloStakingInfo';
 
 import { Collapse, Stack } from '@mui/material';
 import { Menu, Star1, Timer } from 'iconsax-react';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-
-import useNominatedValidatorsInfo from '@polkadot/extension-polkagate/src/hooks/useNominatedValidatorsInfo';
 
 import { FadeOnScroll, GradientButton, Motion } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
@@ -20,7 +15,8 @@ import TableToolbar from '../../partials/TableToolbar';
 import { LabelBar } from './partials/LabelBar';
 import Line from './partials/Line';
 import { Validators } from './partials/Validators';
-import { getFilterValidators, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from './util';
+import useNominatedValidatorsStatus from './useNominatedValidatorsStatus';
+import { VALIDATORS_SORTED_BY } from './util';
 import { UndefinedItem } from './ValidatorItem';
 
 interface Props {
@@ -33,42 +29,19 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
   const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
   const navigate = useNavigate();
 
-  const [sortConfig, setSortConfig] = React.useState<string>(VALIDATORS_SORTED_BY.DEFAULT);
-  const [search, setSearch] = React.useState<string>('');
+  const { active,
+    elected,
+    isLoaded,
+    isLoading,
+    isNominated,
+    nonElected,
+    setSearch,
+    setSortConfig,
+    sortConfig } = useNominatedValidatorsStatus(stakingInfo);
   const [notElectedCollapse, setNotElectedCollapse] = React.useState<boolean>(false);
   const [electedCollapse, setElectedCollapse] = React.useState<boolean>(true);
 
-  const isNominated = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length > 0, [stakingInfo?.stakingAccount?.nominators]);
-
-  const { nominatedValidatorsInformation } = useNominatedValidatorsInfo(stakingInfo);
-
-  const filteredValidators = useMemo(() => getFilterValidators(nominatedValidatorsInformation, search), [nominatedValidatorsInformation, search]);
-  const sortedAndFilteredValidators = useMemo(() => getSortAndFilterValidators(filteredValidators, sortConfig), [filteredValidators, sortConfig]);
-
-  const isLoading = useMemo(() => (stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined), [nominatedValidatorsInformation, stakingInfo?.stakingAccount]);
-  const isLoaded = useMemo(() => sortedAndFilteredValidators && sortedAndFilteredValidators.length > 0, [sortedAndFilteredValidators]);
-
-  const { active, elected, nonElected } = useMemo(() => {
-    const elected: typeof nominatedValidatorsInformation = [];
-    const active: typeof nominatedValidatorsInformation = [];
-    const nonElected: typeof nominatedValidatorsInformation = [];
-
-    sortedAndFilteredValidators?.forEach((info) => {
-      const others = (info.exposurePaged as unknown as SpStakingExposurePage | undefined)?.others;
-
-      if (others?.length) {
-        const isActive = others?.find(({ who }: { who: AccountId32 }) => who.toString() === stakingInfo?.stakingAccount?.accountId?.toString());
-
-        isActive ? active.push(info) : elected.push(info);
-      } else {
-        nonElected.push(info);
-      }
-    });
-
-    return { active, elected, nonElected };
-  }, [sortedAndFilteredValidators, stakingInfo?.stakingAccount?.accountId]);
-
-  const onSearch = useCallback((input: string) => setSearch(input), []);
+  const onSearch = useCallback((input: string) => setSearch(input), [setSearch]);
   const openValidatorManagement = useCallback(() => navigate('/fullscreen-stake/solo/manage-validator/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
 
   return (
