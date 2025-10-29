@@ -5,15 +5,18 @@
 
 import type { TFunction } from '@polkagate/apps-config/types';
 import type { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/home/partials/type';
-import type { ChainInfo } from '@polkadot/extension-polkagate/src/hooks/useChainInfo';
-import type { Price } from '@polkadot/extension-polkagate/src/hooks/useTokenPriceBySymbol';
-import type { NotificationMessageType, NotificationType, ReceivedFundInformation, ReferendaInformation, ReferendaProp, StakingRewardInformation } from './types';
+import type { Prices, UserAddedEndpoint } from '@polkadot/extension-polkagate/src/util/types';
+import type { ReferendaStatus } from './constant';
+import type { NotificationMessage, NotificationMessageInformation, NotificationMessageType, NotificationType, ReceivedFundInformation, ReferendaInformation, ReferendaProp, StakingRewardInformation } from './types';
 
-import { ArrowDown3, Award, Receipt2 } from 'iconsax-react';
+import { createAssets } from '@polkagate/apps-config/assets';
 
-import { NOTIFICATION_TIMESTAMP_OFFSET } from './constant';
+import { getUserAddedPriceId } from '@polkadot/extension-polkagate/src/fullscreen/addNewChain/utils';
+import { DEFAULT_PRICE, type Price } from '@polkadot/extension-polkagate/src/hooks/useTokenPriceBySymbol';
+import { getPriceIdByChainName, sanitizeChainName, toCamelCase } from '@polkadot/extension-polkagate/src/util';
+import chains from '@polkadot/extension-polkagate/src/util/chains';
 
-export function timestampToDate (timestamp: number | string, format: 'full' | 'short' | 'relative' = 'full'): string {
+export function timestampToDate (timestamp: number | string): string {
   // Ensure timestamp is a number and convert if it's a string
   const timestampNum = Number(timestamp);
 
@@ -25,56 +28,13 @@ export function timestampToDate (timestamp: number | string, format: 'full' | 's
   // Create a Date object (multiply by 1000 if it's a Unix timestamp in seconds)
   const date = new Date(timestampNum * 1000);
 
-  // Different formatting options
-  switch (format) {
-    case 'full':
-      return date.toLocaleString('en-US', {
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        month: 'long',
-        second: '2-digit'
-      });
-
-    case 'short':
-      return date.toLocaleString('en-US', {
-        day: 'numeric',
-        month: 'short'
-      });
-
-    case 'relative':
-      return getRelativeTime(date);
-
-    default:
-      return date.toLocaleString();
-  }
-}
-
-// Helper function to get relative time
-function getRelativeTime (date: Date): string {
-  const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-  const units = [
-    { name: 'year', seconds: 31536000 },
-    { name: 'month', seconds: 2592000 },
-    { name: 'week', seconds: 604800 },
-    { name: 'day', seconds: 86400 },
-    { name: 'hour', seconds: 3600 },
-    { name: 'minute', seconds: 60 }
-  ];
-
-  for (const unit of units) {
-    const value = Math.floor(diffInSeconds / unit.seconds);
-
-    if (value >= 1) {
-      return value === 1
-        ? `1 ${unit.name} ago`
-        : `${value} ${unit.name}s ago`;
-    }
-  }
-
-  return diffInSeconds <= 0 ? 'just now' : `${diffInSeconds} seconds ago`;
+  return date.toLocaleString('en-US', {
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    month: 'long',
+    second: '2-digit'
+  });
 }
 
 /**
@@ -85,7 +45,7 @@ function getRelativeTime (date: Date): string {
  */
 export const generateReferendaNotifications = (
   latestLoggedIn: number,
-  previousRefs: ReferendaInformation[] | null | undefined,
+  // previousRefs: ReferendaInformation[] | null | undefined,
   newRefs: ReferendaInformation[]
 ): NotificationMessageType[] => {
   const newMessages: NotificationMessageType[] = [];
@@ -93,45 +53,12 @@ export const generateReferendaNotifications = (
   for (const currentNetworkData of newRefs) {
     let { data: currentReferenda, network } = currentNetworkData;
 
-    currentReferenda = currentReferenda.filter(({ latestTimestamp }) => latestTimestamp >= (latestLoggedIn - NOTIFICATION_TIMESTAMP_OFFSET));
+    currentReferenda = currentReferenda.filter(({ latestTimestamp }) => latestTimestamp >= latestLoggedIn);
 
-    const prevNetworkData = previousRefs?.find(
-      (p) => p.network.value === network.value
-    );
-
-    const previousReferenda = prevNetworkData?.data ?? [];
-
-    // Find new referenda (not in previous state)
-    const newReferenda = currentReferenda.filter((current) =>
-      !previousReferenda.some((prev) => prev.referendumIndex === current.referendumIndex)
-    );
-
-    // Find referenda with status changes
-    const updatedReferenda = currentReferenda.filter(
-      (current) =>
-        previousReferenda.some(
-          (prev) =>
-            prev.referendumIndex === current.referendumIndex &&
-            prev.status !== current.status
-        )
-    );
-
-    // Generate notifications for new referenda
-    for (const ref of newReferenda) {
+    for (const referenda of currentReferenda) {
       newMessages.push({
         chain: network,
-        read: false,
-        referenda: ref,
-        type: 'referenda'
-      });
-    }
-
-    // Generate notifications for referenda with status changes
-    for (const ref of updatedReferenda) {
-      newMessages.push({
-        chain: network,
-        read: false,
-        referenda: ref,
+        referenda,
         type: 'referenda'
       });
     }
@@ -159,7 +86,6 @@ export const generateStakingRewardNotifications = (
           chain: network,
           forAccount: address,
           payout,
-          read: false,
           type: 'stakingReward'
         });
       });
@@ -186,7 +112,6 @@ export const generateReceivedFundNotifications = (
         newMessages.push({
           chain: network,
           forAccount: address,
-          read: false,
           receivedFund,
           type: 'receivedFund'
         });
@@ -201,7 +126,7 @@ export const generateReceivedFundNotifications = (
  * @param messages - Notification messages
  * @returns Array of new notification messages
  */
-export const markMessagesAsRead = (messages: NotificationMessageType[]) => {
+export const markMessagesAsRead = (messages: NotificationMessageInformation[]) => {
   return messages.map((message) => (
     {
       ...message,
@@ -286,36 +211,17 @@ function getDayKey (timestamp: number): string {
 }
 
 export function groupNotificationsByDay (
-  notifications: NotificationMessageType[] | undefined
-): Record<string, NotificationMessageType[]> | undefined {
+  notifications: NotificationMessageInformation[] | undefined
+): Record<string, NotificationMessageInformation[]> | undefined {
   const seen = new Set(); // to avoid duplicates globally
 
   if (!notifications) {
     return;
   }
 
-  const grouped = notifications.reduce<Record<string, NotificationMessageType[]>>((acc, item) => {
-    let timestamp: number | undefined;
-    let uniqueKey = '';
-
-    switch (item.type) {
-      case 'stakingReward':
-        timestamp = item.payout?.timestamp;
-        uniqueKey = JSON.stringify(item.payout ?? '');
-
-        break;
-      case 'receivedFund':
-        timestamp = item.receivedFund?.timestamp;
-        uniqueKey = JSON.stringify(item.receivedFund ?? '');
-
-        break;
-
-      case 'referenda':
-        timestamp = item.referenda?.latestTimestamp;
-        uniqueKey = JSON.stringify(item.referenda ?? '');
-
-        break;
-    }
+  const grouped = notifications.reduce<Record<string, NotificationMessageInformation[]>>((acc, item) => {
+    const timestamp = item.message.detail.timestamp;
+    const uniqueKey = item.message.detail.itemKey;
 
     if (!timestamp || seen.has(uniqueKey)) {
       return acc;
@@ -337,20 +243,10 @@ export function groupNotificationsByDay (
   // Sort items within each day by timestamp (newest first)
   for (const dayKey in grouped) {
     grouped[dayKey].sort((a, b) => {
-      const getTimestamp = (item: NotificationMessageType): number => {
-        switch (item.type) {
-          case 'stakingReward':
-            return item.payout?.timestamp ?? 0;
-          case 'receivedFund':
-            return item.receivedFund?.timestamp ?? 0;
-          case 'referenda':
-            return item.referenda?.latestTimestamp ?? 0;
-          default:
-            return 0;
-        }
-      };
+      const timeA = a.message.detail.timestamp;
+      const timeB = b.message.detail.timestamp;
 
-      return getTimestamp(b) - getTimestamp(a);
+      return timeB - timeA;
     });
   }
 
@@ -364,7 +260,7 @@ export function groupNotificationsByDay (
   });
 
   // Convert sorted entries back into a Record
-  const sortedGrouped: Record<string, NotificationMessageType[]> = Object.fromEntries(sortedEntries);
+  const sortedGrouped: Record<string, NotificationMessageInformation[]> = Object.fromEntries(sortedEntries);
 
   return sortedGrouped;
 }
@@ -404,20 +300,6 @@ export function getTimeOfDay (timestamp: number): string {
     minute: '2-digit'
   }).toLowerCase(); // optional: make "AM"/"PM" lowercase
 }
-
-// /**
-//  * Converts a numeric string with blockchain-style decimals (e.g. "92861564408", 10)
-//  * into a human-readable decimal string (e.g. "9.2861564408").
-//  */
-// function divideAmountByDecimals (amountStr: string, decimals: number): string {
-//   if (typeof amountStr !== 'string' || isNaN(Number(decimals)) || decimals < 0) {
-//     return amountStr;
-//   }
-//   amountStr = amountStr.replace(/^0+/, '').padStart(decimals + 1, '0'); // remove leading zeros safely
-//   const intPart = amountStr.slice(0, -decimals) || '0';
-//   const fracPart = amountStr.slice(-decimals).replace(/0+$/, ''); // remove trailing zeros
-//   return fracPart ? `${intPart}.${fracPart}` : intPart;
-// }
 
 /**
  * Converts a blockchain-style integer (string or number) into a scaled number.
@@ -505,7 +387,7 @@ export function getNotificationItemTitle (t: TFunction, type: NotificationType, 
   }
 }
 
-export function getNotificationDescription (item: NotificationMessageType, t: TFunction, chainInfo: ChainInfo, price: Price, currency: CurrencyItemType | undefined) {
+export function getNotificationDescription (item: NotificationMessageType, t: TFunction, chainInfo: ChainInfoShort, price: Price, currency: CurrencyItemType | undefined) {
   const { chainName, decimal, token } = chainInfo;
   const currencySign = currency?.sign;
 
@@ -562,28 +444,117 @@ export function getNotificationDescription (item: NotificationMessageType, t: TF
   }
 }
 
-export function getNotificationIcon (item: NotificationMessageType) {
-  switch (item.type) {
+export function getNotificationIcon (type: NotificationType, referendaStatus: ReferendaStatus | undefined) {
+  switch (type) {
     case 'receivedFund':
-      return { ItemIcon: ArrowDown3, bgcolor: '#06D7F64D', borderColor: '#06D7F680', color: '#06D7F6' };
+      return { bgcolor: '#06D7F64D', borderColor: '#06D7F680', color: '#06D7F6', itemIcon: 'ArrowDown3' };
 
     case 'referenda': {
-      const neutralStyle = { ItemIcon: Receipt2, bgcolor: '#303045', borderColor: '#222236', color: '#696D7E' };
+      const neutralStyle = { bgcolor: '#303045', borderColor: '#222236', color: '#696D7E', itemIcon: 'Receipt2' };
 
       const statusMap = {
-        approved: { ItemIcon: Receipt2, bgcolor: '#FF4FB91A', borderColor: '#FF4FB940', color: '#FF4FB9' },
+        approved: { bgcolor: '#FF4FB91A', borderColor: '#FF4FB940', color: '#FF4FB9', itemIcon: 'Receipt2' },
         cancelled: neutralStyle,
-        ongoing: { ItemIcon: Receipt2, bgcolor: '#82FFA540', borderColor: '#82FFA51A', color: '#82FFA5' },
+        ongoing: { bgcolor: '#82FFA540', borderColor: '#82FFA51A', color: '#82FFA5', itemIcon: 'Receipt2' },
         rejected: neutralStyle,
         timeout: neutralStyle
       };
 
-      const status = item.referenda?.status;
-
-      return statusMap[status ?? 'rejected'] ?? neutralStyle;
+      return statusMap[referendaStatus ?? 'rejected'] ?? neutralStyle;
     }
 
     case 'stakingReward':
-      return { ItemIcon: Award, bgcolor: '#277DFF4D', borderColor: '#2A4FA680', color: '#74A4FF' };
+      return { bgcolor: '#277DFF4D', borderColor: '#2A4FA680', color: '#74A4FF', itemIcon: 'Award' };
   }
 }
+
+const assetsChains = createAssets();
+
+/**
+ *  @description retrieve the price of a token from local storage PRICES
+ * @param address : accounts substrate address
+ * @param assetId : asset id on multi asset chains
+ * @param assetChainName : chain name to fetch asset id price from
+ * @returns price : price of the token which the address is already switched to
+ */
+export function getTokenPriceBySymbol (tokenSymbol: string | undefined, chainName: string | undefined, genesisHash: string | undefined, pricesInCurrencies: Prices | null | undefined, endpoints: Record<`0x${string}`, UserAddedEndpoint> | undefined): Price {
+  const userAddedPriceId = getUserAddedPriceId(genesisHash, endpoints);
+  const maybeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];
+
+  if (!chainName || !pricesInCurrencies || !tokenSymbol || !genesisHash) {
+    return DEFAULT_PRICE;
+  }
+
+  // FixMe, on second fetch of asset id its type will get string which is weird!!
+  const maybeAssetInfo = maybeAssetsOnMultiAssetChains?.find(({ symbol }) => symbol.toLowerCase() === tokenSymbol.toLowerCase()) ?? undefined;
+
+  const priceId = maybeAssetInfo?.priceId || userAddedPriceId || getPriceIdByChainName(chainName);
+
+  const maybePriceValue = priceId ? pricesInCurrencies.prices?.[priceId]?.value || 0 : 0;
+
+  return {
+    price: maybePriceValue,
+    priceDate: pricesInCurrencies.date
+  };
+}
+
+interface ChainInfoShort {
+  chainName: string | undefined;
+  decimal: number | undefined;
+  token: string | undefined;
+}
+
+export const getChainInfo = (genesisHash: string): ChainInfoShort => {
+  const chainInfo = chains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
+  const chainName = sanitizeChainName(chainInfo?.chain, true);
+  const decimal = chainInfo?.tokenDecimal;
+  const token = chainInfo?.tokenSymbol;
+
+  return {
+    chainName,
+    decimal,
+    token
+  };
+};
+
+export const getNotificationMessages = (item: NotificationMessageType, chainInfo: ChainInfoShort, currency: CurrencyItemType | undefined, price: Price, t: TFunction): NotificationMessage => {
+  const timestamp = item.payout?.timestamp ?? item.receivedFund?.timestamp ?? item.referenda?.latestTimestamp ?? Date.now();
+  const index = item.payout?.index ?? item.receivedFund?.index ?? item.referenda?.index ?? 0;
+
+  const title = getNotificationItemTitle(t, item.type, item.referenda);
+  const time = getTimeOfDay(timestamp);
+  const description = getNotificationDescription(item, t, chainInfo, price, currency);
+  const iconInfo = getNotificationIcon(item.type, item.referenda?.status);
+
+  const itemKey = `${item.type} - ${item.chain?.value} - ${index} - ${timestamp}`;
+
+  return {
+    detail: {
+      description,
+      iconInfo,
+      itemKey,
+      time,
+      timestamp,
+      title
+    },
+    info: {
+      chain: item.chain,
+      forAccount: item.forAccount,
+      type: item.type
+    }
+  };
+};
+
+export const filterMessages = (pervMessages: NotificationMessageInformation[] | undefined, newMessages: NotificationMessage[] | undefined) => {
+  if (!pervMessages?.length || !newMessages?.length) {
+    return newMessages?.map((item) => ({ message: item, read: false })) ?? [];
+  }
+
+  const pervMessagesSet = new Set(pervMessages.map(({ message }) => message.detail.itemKey));
+
+  const filteredMessages = newMessages
+    .filter(({ detail }) => !pervMessagesSet.has(detail.itemKey))
+    .map((item) => ({ message: item, read: false }));
+
+  return pervMessages.concat(filteredMessages);
+};

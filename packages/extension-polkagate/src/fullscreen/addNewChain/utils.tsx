@@ -51,3 +51,11 @@ export function useUserAddedPriceId (_genesisHash: string | undefined): string |
     return Object.entries(endpoints).find(([genesisHash]) => _genesisHash === genesisHash)?.[1].priceId;
   }, [_genesisHash, endpoints]);
 }
+
+export function getUserAddedPriceId (_genesisHash: string | undefined, endpoints: Record<`0x${string}`, UserAddedEndpoint> | undefined): string | undefined {
+  if (!endpoints) {
+    return;
+  }
+
+  return Object.entries(endpoints).find(([genesisHash]) => _genesisHash === genesisHash)?.[1].priceId;
+}

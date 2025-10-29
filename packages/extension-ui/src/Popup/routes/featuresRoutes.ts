@@ -46,7 +46,7 @@ export const FEATURE_ROUTES: RouteConfig[] = [
   },
   {
     Component: Notification,
-    path: '/notification/',
+    path: '/notification',
     trigger: 'notification'
   },
   {

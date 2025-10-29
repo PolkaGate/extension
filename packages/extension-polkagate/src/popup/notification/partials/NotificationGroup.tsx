@@ -1,16 +1,17 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { NotificationMessageType } from '../types';
+import type { NotificationMessageInformation } from '../types';
 
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
-import React, { Fragment, useContext } from 'react';
+import * as Icons from 'iconsax-react';
+import React, { Fragment } from 'react';
 
-import { CurrencyContext, GradientDivider, ScrollingTextBox, TwoToneText } from '@polkadot/extension-polkagate/src/components';
-import { useAccount, useChainInfo, useTokenPriceBySymbol, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { GradientDivider, ScrollingTextBox, TwoToneText } from '@polkadot/extension-polkagate/src/components';
+import { useAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { toShortAddress } from '@polkadot/extension-polkagate/src/util';
 
-import { getNotificationDescription, getNotificationIcon, getNotificationItemTitle, getTimeOfDay, isToday } from '../util';
+import { isToday } from '../util';
 
 function ItemDate ({ date }: { date: string; }) {
   const theme = useTheme();
@@ -55,28 +56,25 @@ function TitleTime ({ address, noName, read, time, title }: { address: string | 
   );
 }
 
-function NotificationItem ({ item }: { item: NotificationMessageType; }) {
+function NotificationItem ({ item }: { item: NotificationMessageInformation; }) {
   const theme = useTheme();
-  const { t } = useTranslation();
-  const { currency } = useContext(CurrencyContext);
 
-  const genesisHash = item.chain?.value as string ?? '';
+  const title = item.message.detail.title;
+  const time = item.message.detail.time;
+  const forAccount = item.message.info.forAccount;
+  const messageType = item.message.info.type;
+  const { text, textInColor } = item.message.detail.description;
+  const { bgcolor, borderColor, color, itemIcon } = item.message.detail.iconInfo;
 
-  const chainInfo = useChainInfo(genesisHash, true);
-  const price = useTokenPriceBySymbol(chainInfo.token, genesisHash);
-
-  const title = getNotificationItemTitle(t, item.type, item.referenda);
-  const time = getTimeOfDay(item.payout?.timestamp ?? item.receivedFund?.timestamp ?? item.referenda?.latestTimestamp ?? Date.now());
-  const { text, textInColor } = getNotificationDescription(item, t, chainInfo, price, currency);
-  const { ItemIcon, bgcolor, borderColor, color } = getNotificationIcon(item);
+  const ItemIcon = Icons[itemIcon as keyof typeof Icons];
 
   return (
     <Stack direction='row' sx={{ alignItems: 'center', gap: '6px', width: '100%' }}>
       <ItemIcon color={color} style={{ backgroundColor: bgcolor, border: '2px solid', borderColor, borderRadius: '999px', height: '32px', padding: '3px', width: '32px' }} variant='Bold' />
       <Stack direction='column' sx={{ width: 'calc(100% - 32px - 6px)' }}>
         <TitleTime
-          address={item.forAccount}
-          noName={item.type === 'referenda'}
+          address={forAccount}
+          noName={messageType === 'referenda'}
           read={item.read}
           time={time}
           title={title}
@@ -92,12 +90,12 @@ function NotificationItem ({ item }: { item: NotificationMessageType; }) {
   );
 }
 
-function NotificationGroup ({ group: [dateKey, items] }: { group: [string, NotificationMessageType[]]; }) {
+function NotificationGroup ({ group: [dateKey, items] }: { group: [string, NotificationMessageInformation[]]; }) {
   return (
     <Stack direction='column' sx={{ bgcolor: '#05091C', borderRadius: '14px', gap: '8px', p: '10px', width: '100%' }}>
       <ItemDate date={dateKey} />
       {items.map((item, index) => (
-        <Fragment key={`${item.extrinsicIndex} + ${index}`}>
+        <Fragment key={item.message.detail.itemKey}>
           <NotificationItem
             item={item}
           />

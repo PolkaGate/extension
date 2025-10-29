@@ -82,6 +82,7 @@ export interface TransfersProp {
   date: string;
   from: string;
   fromAccountDisplay: AccountDisplay;
+  index: number | string | undefined;
   toAccountId: AccountDisplay;
   timestamp: number;
 }
@@ -90,6 +91,7 @@ export interface PayoutsProp {
   era: number;
   amount: string;
   date: string;
+  index: number | string | undefined;
   timestamp: number;
 }
 
@@ -97,6 +99,7 @@ export interface ReferendaProp {
   referendumIndex: number;
   createdTimestamp: number;
   chainName: string;
+  index: number | undefined;
   originsId: number;
   origins: string;
   callModule: string;
@@ -123,31 +126,19 @@ export interface ReferendaInformation {
   network: DropdownOption;
 }
 
-// export interface ReferendaNotificationType {
-//   chainName: string;
-//   latestTimestamp: number;
-//   status?: ReferendaStatus;
-//   referendumIndex?: number;
-// }
-
 export type NotificationType = 'referenda' | 'stakingReward' | 'receivedFund';
 
 export interface NotificationMessageType {
   chain?: DropdownOption;
   type: NotificationType;
+  forAccount?: string;
   payout?: PayoutsProp;
   referenda?: ReferendaProp;
   receivedFund?: TransfersProp;
-  forAccount?: string;
-  extrinsicIndex?: string;
-  read: boolean;
 }
 
 export interface NotificationsType {
-  notificationMessages: NotificationMessageType[] | undefined;
-  referendas: ReferendaInformation[] | null | undefined;
-  receivedFunds: ReceivedFundInformation[] | null | undefined;
-  stakingRewards: StakingRewardInformation[] | null | undefined;
+  notificationMessages: NotificationMessageInformation[] | undefined;
   latestLoggedIn: number | undefined;
   isFirstTime: boolean | undefined;
 }
@@ -156,6 +147,35 @@ export type NotificationActionType =
   | { type: 'INITIALIZE'; }
   | { type: 'MARK_AS_READ'; }
   | { type: 'LOAD_FROM_STORAGE'; payload: NotificationsType }
-  | { type: 'SET_REFERENDA'; payload: ReferendaInformation[] }
-  | { type: 'SET_RECEIVED_FUNDS'; payload: NotificationsType['receivedFunds'] }
-  | { type: 'SET_STAKING_REWARDS'; payload: NotificationsType['stakingRewards'] };
+  | { type: 'SET_MESSAGES'; payload: NotificationMessage[] };
+
+export interface NotificationMessageDetail {
+  description: {
+    text: string;
+    textInColor: string;
+  };
+  iconInfo: {
+    itemIcon: string;
+    bgcolor: string;
+    borderColor: string;
+    color: string;
+  },
+  itemKey: string;
+  time: string;
+  timestamp: number;
+  title: string;
+}
+
+export interface NotificationMessage {
+  detail: NotificationMessageDetail,
+  info: {
+    chain?: DropdownOption;
+    type: NotificationType;
+    forAccount?: string;
+  }
+}
+
+export interface NotificationMessageInformation {
+  message: NotificationMessage,
+  read: boolean;
+}

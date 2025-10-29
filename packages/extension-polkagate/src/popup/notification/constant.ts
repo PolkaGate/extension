@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { KUSAMA_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_GENESIS_HASH, WESTEND_GENESIS_HASH } from '../../util/constants';
+import type { NotificationsType } from './types';
 
 export type ReferendaStatus = 'ongoing' | 'approved' | 'timeout' | 'rejected' | 'cancelled';
 
@@ -17,7 +18,7 @@ export const NOT_READ_BGCOLOR = '#ECF6FE';
 export const READ_BGCOLOR = '#f0e6ea';
 export const MAX_RETRIES = 5;
 export const BATCH_SIZE = 2;
-export const NOTIFICATION_TIMESTAMP_OFFSET = 15 * 60; // 15 minutes in seconds
+export const NOTIFICATION_TIMESTAMP_OFFSET = 30 * 60; // 30 minutes in seconds
 
 export const MAX_ACCOUNT_COUNT_NOTIFICATION = 3;
 
@@ -37,6 +38,12 @@ export const DEFAULT_NOTIFICATION_SETTING = {
   governance: [],
   receivedFunds: false,
   stakingRewards: []
+};
+
+export const initialNotificationState: NotificationsType = {
+  isFirstTime: undefined,
+  latestLoggedIn: undefined,
+  notificationMessages: undefined
 };
 
 export const SET_UP_NOTIFICATION_SETTING = {
