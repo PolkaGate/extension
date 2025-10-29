@@ -43,6 +43,8 @@ export default function useChainInfo (genesisHash: string | null | undefined, no
   const chain = useMetadata(genesisHash, true);
   const api = useApi(noApi ? undefined : genesisHash);
 
+  const sameApiOrigin = useMemo(() => api && api.genesisHash.toHex() === genesisHash, [api?.genesisHash, genesisHash]);
+
   return useMemo(() => {
     const chainInfo = chains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
     const chainName = sanitizeChainName(chainInfo?.chain ?? chain?.name, true);
@@ -62,12 +64,12 @@ export default function useChainInfo (genesisHash: string | null | undefined, no
     }
 
     return {
-      api,
+      api: sameApiOrigin ? api : undefined,
       chain,
       chainName,
       decimal: decimal ?? chain?.tokenDecimals,
       displayName,
       token: token ?? chain?.tokenSymbol
     };
-  }, [api, chain, genesisHash]);
+  }, [api, chain, genesisHash, sameApiOrigin]);
 }

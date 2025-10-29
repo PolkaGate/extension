@@ -2,23 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
-import type { ApiPromise } from '@polkadot/api';
 import type { BN } from '@polkadot/util';
 import type { BalancesInfo, MyPoolInfo, PoolStakingConsts, StakingConsts } from '../util/types';
-import type { UnstakingType } from './useSoloStakingInfo';
+import type { SessionIfo, UnstakingType } from './useSoloStakingInfo';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { BN_ZERO, bnMax } from '@polkadot/util';
 
 import { toBN } from '../util';
-import { getEraInfo } from './utils/getEraInfo';
 import { getReleaseDate } from './utils/getReleaseDate';
 import useBalances from './useBalances';
-import useChainInfo from './useChainInfo';
 import usePool from './usePool';
 import usePoolConst from './usePoolConst';
 import useStakingConsts from './useStakingConsts';
+import { useEraInfo } from '.';
 
 /**
  * Calculates unstaking amounts and their respective release dates
@@ -27,12 +25,12 @@ import useStakingConsts from './useStakingConsts';
  * @param stakingAccount - User's staking account information
  * @returns Unstaking information including total and scheduled releases
  */
-const getUnstakingAmount = async (api: ApiPromise | undefined, pool: MyPoolInfo | null): Promise<UnstakingType | undefined> => {
-  if (!api || !pool) {
+const getUnstakingAmount = (pool: MyPoolInfo | null, eraInfo: SessionIfo | undefined): UnstakingType | undefined => {
+  if (!eraInfo || !pool) {
     return undefined;
   }
 
-  const { blockTime, currentEra, eraLength, eraProgress } = await getEraInfo(api);
+  const { blockTime, currentEra, eraLength, eraProgress } = eraInfo;
 
   const toBeReleased = [];
   let unlockingAmount;
@@ -95,29 +93,26 @@ export interface PoolStakingInfo {
  * @returns Consolidated staking information including available balance, rewards, and more
  */
 export default function usePoolStakingInfo (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): PoolStakingInfo {
-  const { api } = useChainInfo(genesisHash);
   const balances = useBalances(address, genesisHash, refresh, setRefresh);
   const pool = usePool(address, genesisHash, undefined, refresh, setRefresh);
   const poolStakingConsts = usePoolConst(genesisHash);
   const stakingConsts = useStakingConsts(genesisHash);
+  const eraInfo = useEraInfo(genesisHash);
 
   const [sessionInfo, setSessionInfo] = useState<UnstakingType | undefined>(undefined);
 
-  // Fetch session and unstaking information
-  const fetchSessionInfo = useCallback(async () => {
-    if (pool === undefined) {
+  // Update and fetch session info whenever dependencies change
+  useEffect(() => {
+    if (pool === undefined || !eraInfo) {
+      setSessionInfo(undefined);
+
       return;
     }
 
-    const info = await getUnstakingAmount(api, pool);
+    const info = getUnstakingAmount(pool, eraInfo);
 
     setSessionInfo(info);
-  }, [api, pool]);
-
-  // Update session info whenever dependencies change
-  useEffect(() => {
-    fetchSessionInfo().catch(console.error);
-  }, [fetchSessionInfo, pool]);
+  }, [eraInfo, pool]);
 
   const availableBalanceToStake = getAvailableToStake(balances);
 
