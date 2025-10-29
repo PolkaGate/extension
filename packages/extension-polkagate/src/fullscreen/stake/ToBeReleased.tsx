@@ -24,6 +24,7 @@ export default function ToBeReleased ({ genesisHash, onClose, onRestake, toBeRel
 
   return (
     <DraggableModal
+      closeOnAnyWhereClick
       maxHeight={475}
       minHeight={475}
       onClose={onClose}

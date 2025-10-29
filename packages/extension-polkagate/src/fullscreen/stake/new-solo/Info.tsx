@@ -34,6 +34,7 @@ export default function Info ({ genesisHash, onClose, stakingInfo }: Props): Rea
 
   return (
     <DraggableModal
+      closeOnAnyWhereClick
       minHeight='auto'
       onClose={onClose}
       open
