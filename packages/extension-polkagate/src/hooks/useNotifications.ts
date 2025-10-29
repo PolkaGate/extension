@@ -21,18 +21,20 @@ const notificationReducer = (
   state: NotificationsType,
   action: NotificationActionType
 ): NotificationsType => {
+  const latestLoggedIn = Math.floor(Date.now() / 1000); // timestamp in seconds
+
   switch (action.type) {
     case 'INITIALIZE':
       // Initialize notifications for the first time
       return {
         isFirstTime: true,
-        latestLoggedIn: Math.floor(Date.now() / 1000), // timestamp in seconds
+        latestLoggedIn,
         notificationMessages: []
       };
 
     case 'MARK_AS_READ':
-      // Mark all messages as read
-      return { ...state, notificationMessages: markMessagesAsRead(state.notificationMessages ?? []) };
+      // Mark all messages as read and update the latestLoggedIn time
+      return { ...state, latestLoggedIn, notificationMessages: markMessagesAsRead(state.notificationMessages ?? []) };
 
     case 'LOAD_FROM_STORAGE':
       return action.payload;
@@ -116,7 +118,7 @@ export default function useNotifications (justLoadData = true) {
 
   const [notifications, dispatchNotifications] = useReducer(notificationReducer, initialNotificationState);
 
-  const fallbackTimestamp = Math.floor(Date.now() / 1000);
+  const fallbackTimestamp = Math.floor(Date.now() / 1000); // timestamp in seconds
   const latestLoggedIn = useMemo(() => notifications?.latestLoggedIn ?? fallbackTimestamp, [fallbackTimestamp, notifications?.latestLoggedIn]);
   // Whether notifications are turned off
   const notificationIsOff = useMemo(() => isNotificationEnable === false || accounts?.length === 0, [accounts?.length, isNotificationEnable]);
@@ -139,10 +141,7 @@ export default function useNotifications (justLoadData = true) {
       }
 
       isSavingRef.current = true;
-      const dataToSave = {
-        ...notifications,
-        latestLoggedIn: Math.floor(Date.now() / 1000)
-      };
+      const dataToSave = { ...notifications };
 
       try {
         await setStorage(STORAGE_KEY.NOTIFICATIONS, dataToSave);
