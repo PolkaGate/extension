@@ -78,7 +78,7 @@ const getUnstakingAmount = (stakingAccount: AccountStakingInfo | null | undefine
           const amount = toBN(value);
 
           unlockingAmount = unlockingAmount.add(amount);
-          const date = getReleaseDate(remainingEras, eraLength, eraProgress, blockTime);
+          const date = getReleaseDate(remainingEras.clone(), eraLength, eraProgress, blockTime);
 
           toBeReleased.push({ amount, date });
         }
@@ -89,7 +89,7 @@ const getUnstakingAmount = (stakingAccount: AccountStakingInfo | null | undefine
   return { toBeReleased, unlockingAmount };
 };
 
-function reviveSoloStakingInfoBNs(info: SavedSoloStakingInfo): SavedSoloStakingInfo {
+function reviveSoloStakingInfoBNs (info: SavedSoloStakingInfo): SavedSoloStakingInfo {
   return {
     ...info,
     availableBalanceToStake: info.availableBalanceToStake ? isHexToBn(info.availableBalanceToStake as unknown as string) : undefined,
