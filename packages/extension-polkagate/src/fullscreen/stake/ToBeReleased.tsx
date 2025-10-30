@@ -37,17 +37,17 @@ export default function ToBeReleased ({ genesisHash, onClose, onRestake, toBeRel
           <Typography color='text.highlight' fontFamily='Inter' fontSize='11px' fontWeight={600} sx={{ letterSpacing: '1px', mb: '25px', textTransform: 'uppercase', width: 'fit-content' }}>
             {t('To be released')}
           </Typography>
-          {toBeReleased?.map((info, index) => {
+          {toBeReleased?.map(({ amount, date }, index) => {
             const noDivider = toBeReleased.length === index + 1;
 
             return (
               <React.Fragment key={index}>
                 <Grid alignItems='center' container item justifyContent='space-between' key={index} sx={{ bgcolor: '#05091C', borderRadius: '12px', mb: '4px', p: '10px' }}>
                   <Typography color='text.highlight' variant='B-1' width='fit-content'>
-                    {formatTimestamp(info.date, ['month', 'day', 'hours', 'minutes', 'ampm'])}
+                    {formatTimestamp(date, ['month', 'day', 'hours', 'minutes', 'ampm'])}
                   </Typography>
                   <DisplayBalance
-                    balance={info.amount}
+                    balance={amount}
                     decimal={decimal}
                     decimalPoint={2}
                     style={{
