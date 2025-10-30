@@ -44,7 +44,7 @@ const getUnstakingAmount = (pool: MyPoolInfo | null, eraInfo: SessionIfo | undef
         const remainingEras = toBN(era).subn(currentEra);
         const amount = toBN(value);
 
-        if (remainingEras.ltn(0)) {
+        if (remainingEras.lten(0)) {
           redeemAmount = redeemAmount.add(amount);
         } else {
           unlockingAmount = unlockingAmount.add(amount);
