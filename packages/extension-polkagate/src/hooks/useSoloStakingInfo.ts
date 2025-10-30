@@ -21,11 +21,11 @@ import useStakingConsts from './useStakingConsts';
 import useStakingRewardDestinationAddress from './useStakingRewardDestinationAddress';
 import { useEraInfo } from '.';
 
-export interface SessionIfo {
+export interface EraInfo {
   blockTime: number; // usually 6 sec
   eraLength: number; // Length of an era in blocks
   eraProgress: number; // Current progress within the era
-  currentEra: number; // Current era number
+  activeEra: number; // Active era number
 }
 
 export interface DateAmount {
@@ -59,17 +59,17 @@ interface SavedSoloStakingInfo extends SoloStakingInfo {
  * @param stakingAccount - User's staking account information
  * @returns Unstaking information including total and scheduled releases
  */
-const getUnstakingAmount = (stakingAccount: AccountStakingInfo | null | undefined, eraInfo: SessionIfo | undefined): UnstakingType | undefined => {
+const getUnstakingAmount = (stakingAccount: AccountStakingInfo | null | undefined, eraInfo: EraInfo | undefined): UnstakingType | undefined => {
   if (!eraInfo || !stakingAccount) {
     return undefined;
   }
 
-  const { blockTime, currentEra, eraLength, eraProgress } = eraInfo;
+  const { activeEra, blockTime, eraLength, eraProgress } = eraInfo;
 
   const toBeReleased = [];
   let unlockingAmount;
 
-  if (currentEra) {
+  if (activeEra) {
     unlockingAmount = BN_ZERO;
 
     if (stakingAccount.unlocking) {
