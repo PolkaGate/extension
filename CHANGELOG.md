@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.15.4](https://github.com/polkagate/extension/compare/v1.15.3...v1.15.4) (2025-10-30)
+
+
+### Bug Fixes
+
+* adjust unlocking token release display timing ([35d405b](https://github.com/polkagate/extension/commit/35d405bb3cdcb0c15215a9323716211c12082eea))
+
 ## [1.15.3](https://github.com/polkagate/extension/compare/v1.15.2...v1.15.3) (2025-10-30)
 
 
