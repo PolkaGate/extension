@@ -104,12 +104,10 @@ const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: Staki
       {staked === undefined
         ? <Stack direction='column'>
           <MySkeleton
-            bgcolor={isDark ? '#946CC840' : '#99A1C440'}
             style={{ margin: '4px 0' }}
             width={48}
           />
           <MySkeleton
-            bgcolor={isDark ? '#946CC840' : '#99A1C440'}
             style={{ margin: '4px 0' }}
             width={77}
           />
