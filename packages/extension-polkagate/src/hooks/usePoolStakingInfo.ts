@@ -49,7 +49,7 @@ const getUnstakingAmount = (pool: MyPoolInfo | null, eraInfo: SessionIfo | undef
         } else {
           unlockingAmount = unlockingAmount.add(amount);
 
-          const date = getReleaseDate(remainingEras, eraLength, eraProgress, blockTime);
+          const date = getReleaseDate(remainingEras.clone(), eraLength, eraProgress, blockTime);
 
           toBeReleased.push({ amount, date });
         }
