@@ -6,7 +6,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { AccountStakingInfo, StakingConsts } from '../util/types';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
