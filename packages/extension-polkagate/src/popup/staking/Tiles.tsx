@@ -71,7 +71,7 @@ function Tiles ({ address, asset, genesisHash, onClaimReward, onExpand, onRestak
               {
                 Icon: Timer,
                 onClick: onClaimReward,
-                text: t('Pending Rewards')
+                text: type === 'pool' ? t('Unclaimed Rewards') : t('Pending Rewards')
               }
             ]}
             cryptoAmount={rewards}

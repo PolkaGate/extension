@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.15.3](https://github.com/polkagate/extension/compare/v1.15.2...v1.15.3) (2025-10-30)
+
+
+### Bug Fixes
+
+* correct release dates for unstaking amounts after Hub migration ([#1999](https://github.com/polkagate/extension/issues/1999)) ([7c4094d](https://github.com/polkagate/extension/commit/7c4094d2d54cab8e753a78c280dd6dc0c3cec658)), closes [#2000](https://github.com/polkagate/extension/issues/2000)
+
 ## [1.15.2](https://github.com/polkagate/extension/compare/v1.15.1...v1.15.2) (2025-10-28)
 
 

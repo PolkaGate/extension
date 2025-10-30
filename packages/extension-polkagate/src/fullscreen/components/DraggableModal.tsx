@@ -25,9 +25,10 @@ export interface DraggableModalProps {
   RightItem?: React.ReactNode;
   rightItemStyle?: React.CSSProperties;
   noCloseButton?: boolean;
+  closeOnAnyWhereClick?: boolean;
 }
 
-export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, children, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noCloseButton, noDivider, onClose, open, rightItemStyle, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
+export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, children, closeOnAnyWhereClick = false, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noCloseButton, noDivider, onClose, open, rightItemStyle, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
@@ -45,12 +46,12 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
   }, []);
 
   const _onClose = useCallback((_event: unknown, reason: string) => {
-    if (reason && reason === 'backdropClick') {
+    if (reason && reason === 'backdropClick' && closeOnAnyWhereClick === false) {
       return;
     }
 
     onClose();
-  }, [onClose]);
+  }, [closeOnAnyWhereClick, onClose]);
 
   const handleMouseMove = useCallback((e: { clientX: number; clientY: number; }) => {
     if (isDragging && draggable) {

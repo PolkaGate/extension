@@ -109,7 +109,7 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
 }
 
 function AddressComponent ({ address, chainName, onCopy }: AddressComponentProp) {
-    const { isHovered, ref } = useIsHovered();
+  const { isHovered, ref } = useIsHovered();
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
@@ -167,6 +167,7 @@ function Receive ({ address, closePopup, onClose, setAddress }: Props): React.Re
 
   return (
     <DraggableModal
+      closeOnAnyWhereClick
       onClose={_onClose}
       open
       showBackIconAsClose
