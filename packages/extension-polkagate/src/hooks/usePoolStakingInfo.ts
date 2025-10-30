@@ -4,7 +4,7 @@
 import type React from 'react';
 import type { BN } from '@polkadot/util';
 import type { BalancesInfo, MyPoolInfo, PoolStakingConsts, StakingConsts } from '../util/types';
-import type { SessionIfo, UnstakingType } from './useSoloStakingInfo';
+import type { EraInfo, UnstakingType } from './useSoloStakingInfo';
 
 import { useMemo } from 'react';
 
@@ -25,26 +25,26 @@ import { useEraInfo } from '.';
  * @param stakingAccount - User's staking account information
  * @returns Unstaking information including total and scheduled releases
  */
-const getUnstakingAmount = (pool: MyPoolInfo | null, eraInfo: SessionIfo | undefined): UnstakingType | undefined => {
+const getUnstakingAmount = (pool: MyPoolInfo | null, eraInfo: EraInfo | undefined): UnstakingType | undefined => {
   if (!eraInfo || !pool) {
     return undefined;
   }
 
-  const { blockTime, currentEra, eraLength, eraProgress } = eraInfo;
+  const { activeEra, blockTime, eraLength, eraProgress } = eraInfo;
 
   const toBeReleased = [];
   let unlockingAmount;
   let redeemAmount = BN_ZERO;
 
-  if (currentEra) {
+  if (activeEra) {
     unlockingAmount = BN_ZERO;
 
     if (pool?.member?.unbondingEras) { // if pool is fetched but account belongs to no pool then pool === null
       for (const [era, value] of Object.entries(pool.member?.unbondingEras)) {
-        const remainingEras = toBN(era).subn(currentEra);
+        const remainingEras = toBN(era).subn(activeEra);
         const amount = toBN(value);
 
-        if (remainingEras.lten(0)) {
+        if (remainingEras.ltn(0)) {
           redeemAmount = redeemAmount.add(amount);
         } else {
           unlockingAmount = unlockingAmount.add(amount);
