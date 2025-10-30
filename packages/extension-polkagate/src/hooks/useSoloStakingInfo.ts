@@ -190,7 +190,6 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
       const info = getUnstakingAmount(stakingAccount, eraInfo);
 
       setSessionInfo(info);
-      // needsStorageUpdate.current = true;
     }
   }, [eraInfo, sessionInfo, stakingAccount]);
 
@@ -269,7 +268,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
   // which also changes the token value.
   useEffect(() => {
     if (selectedPositionFlag.current && genesisHash && selectedPositionFlag.current !== genesisHash) {
-      console.log('[useSoloStakingInfo] Resetting staking state due to token mismatch');
+      console.log('[useSoloStakingInfo] Resetting staking state due to chain mismatch');
       fetchingFlag.current = true;
       setSoloStakingInfoStorage(undefined);
       setSoloStakingInfo(undefined);
