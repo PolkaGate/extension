@@ -5,6 +5,8 @@ import { Stack } from '@mui/material';
 import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
+
 import { AccountContext } from '../../components';
 import { useAlerts, useTranslation } from '../../hooks';
 import HomeLayout from '../components/layout';
@@ -20,14 +22,15 @@ function HomePageFullScreen (): React.ReactElement {
 
   const { notify } = useAlerts();
   const { accounts } = useContext(AccountContext);
+  const { isExtensionLocked } = useExtensionLockContext();
 
   useEffect(() => {
-    if (accounts?.length === 0) {
+    if (isExtensionLocked === false && accounts?.length === 0) {
       notify(t('No accounts found!'), 'info');
 
       navigate('/onboarding') as void;
     }
-  }, [accounts, notify, navigate, t]);
+  }, [accounts, notify, navigate, t, isExtensionLocked]);
 
   return (
     <HomeLayout>
