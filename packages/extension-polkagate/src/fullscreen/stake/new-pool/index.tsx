@@ -55,15 +55,17 @@ export default function PoolFullScreen (): React.ReactElement {
       };
     }
 
-    const staked = isHexToBn(stakingInfo.pool?.member?.points as string | undefined ?? '0');
-    const redeemable = stakingInfo.sessionInfo?.redeemAmount;
-    const toBeReleased = stakingInfo.sessionInfo?.toBeReleased;
-    const unlockingAmount = stakingInfo.sessionInfo?.unlockingAmount;
-    const myClaimable = isHexToBn(stakingInfo.pool?.myClaimable as string | undefined ?? '0');
-    const availableBalanceToStake = stakingInfo.availableBalanceToStake;
+    const { redeemAmount: redeemable, toBeReleased, unlockingAmount } = stakingInfo.sessionInfo || {};
 
-    return { availableBalanceToStake, myClaimable, redeemable, staked, toBeReleased, unlockingAmount };
-  }, [notStaked, stakingInfo.availableBalanceToStake, stakingInfo.pool?.member?.points, stakingInfo.pool?.myClaimable, stakingInfo.sessionInfo?.redeemAmount, stakingInfo.sessionInfo?.toBeReleased, stakingInfo.sessionInfo?.unlockingAmount]);
+    return {
+      availableBalanceToStake: stakingInfo.availableBalanceToStake,
+      myClaimable: isHexToBn(stakingInfo.pool?.myClaimable as string | undefined ?? '0'),
+      redeemable,
+      staked: isHexToBn(stakingInfo.pool?.member?.points as string | undefined ?? '0'),
+      toBeReleased,
+      unlockingAmount
+    };
+  }, [notStaked, stakingInfo.availableBalanceToStake, stakingInfo.pool?.member?.points, stakingInfo.pool?.myClaimable, stakingInfo.sessionInfo]);
 
   return (
     <>
