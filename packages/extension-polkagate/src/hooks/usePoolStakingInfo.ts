@@ -6,7 +6,7 @@ import type { BN } from '@polkadot/util';
 import type { BalancesInfo, MyPoolInfo, PoolStakingConsts, StakingConsts } from '../util/types';
 import type { SessionIfo, UnstakingType } from './useSoloStakingInfo';
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 import { BN_ZERO, bnMax } from '@polkadot/util';
 
@@ -99,19 +99,12 @@ export default function usePoolStakingInfo (address: string | undefined, genesis
   const stakingConsts = useStakingConsts(genesisHash);
   const eraInfo = useEraInfo(genesisHash);
 
-  const [sessionInfo, setSessionInfo] = useState<UnstakingType | undefined>(undefined);
-
-  // Update and fetch session info whenever dependencies change
-  useEffect(() => {
+  const sessionInfo = useMemo(() => {
     if (pool === undefined || !eraInfo) {
-      setSessionInfo(undefined);
-
-      return;
+      return undefined;
     }
 
-    const info = getUnstakingAmount(pool, eraInfo);
-
-    setSessionInfo(info);
+    return getUnstakingAmount(pool, eraInfo);
   }, [eraInfo, pool]);
 
   const availableBalanceToStake = getAvailableToStake(balances);
