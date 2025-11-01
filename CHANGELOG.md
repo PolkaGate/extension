@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.15.5](https://github.com/polkagate/extension/compare/v1.15.4...v1.15.5) (2025-11-01)
+
+
+### Bug Fixes
+
+* avoid onboarding redirect when extension is locked and accounts are not yet loaded ([#2003](https://github.com/polkagate/extension/issues/2003)) ([3285aa7](https://github.com/polkagate/extension/commit/3285aa752b8cb0df43ef30fc6437595aa04ecf83))
+
 ## [1.15.4](https://github.com/polkagate/extension/compare/v1.15.3...v1.15.4) (2025-10-30)
 
 
