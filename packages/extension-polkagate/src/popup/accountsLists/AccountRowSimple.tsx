@@ -54,10 +54,10 @@ function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettin
   return (
     <motion.div
       animate={{ opacity: 1, y: 0 }}
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 5 }}
       transition={{ duration: 0.4 }}
     >
-      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: isLast ? '0 0 14px 14px' : 0, minHeight: '40px', mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? 0 : '2px', mx: '1px', width: '100%' }}>
+      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: isLast ? '0 0 14px 14px' : 0, minHeight: '40px', mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? 0 : '2px', px: '1px', width: '100%' }}>
         <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ borderRadius: '12px', m: '5px 8px 5px 15px', minHeight: '36px', width: '100%' }}>
           {
             isSelected && !isInSettingMode &&
