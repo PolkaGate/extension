@@ -486,9 +486,7 @@ export default class Extension {
         pair.lock();
       }
 
-      if (pair.isLocked) {
-        pair.decodePkcs8(password);
-      }
+      pair.decodePkcs8(password);
 
       return pair;
     } catch (error) {
