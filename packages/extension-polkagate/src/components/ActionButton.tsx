@@ -11,8 +11,43 @@ import { noop } from '@polkadot/util';
 import { useIsDark, useIsExtensionPopup, useIsHovered } from '../hooks';
 import TwoToneText from './TwoToneText';
 
+interface IconElementProp {
+  iconVariant?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
+  iconVariantOnHover?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
+  IconName: Icon | undefined;
+  disabled?: boolean;
+  isBlueish?: boolean;
+  iconSize?: number;
+  iconAlwaysBold?: boolean;
+  hovered: boolean;
+}
+
+const IconElement = ({ IconName, disabled, hovered, iconAlwaysBold, iconSize, iconVariant, iconVariantOnHover, isBlueish }: IconElementProp) => {
+  const theme = useTheme();
+
+  return (IconName
+    ? (
+      <IconName
+        color={
+          disabled
+            ? '#BEAAD84D'
+            : isBlueish
+              ? theme.palette.text.highlight
+              : theme.palette.primary.main
+        }
+        size={iconSize}
+        variant={
+          (iconAlwaysBold ?? hovered)
+            ? iconVariantOnHover ?? 'Bold'
+            : iconVariant ?? 'Bulk'
+        }
+      />)
+    : undefined);
+};
+
 export interface ActionButtonProps {
   StartIcon?: Icon;
+  EndIcon?: Icon;
   iconVariant?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
   iconVariantOnHover?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
   contentPlacement?: 'start' | 'center' | 'end';
@@ -27,7 +62,7 @@ export interface ActionButtonProps {
   variant?: 'text' | 'contained' | 'outlined';
 }
 
-export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBlueish, isBusy, onClick, style, text, variant }: ActionButtonProps): React.ReactElement<ActionButtonProps> {
+export default function ActionButton ({ EndIcon, StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBlueish, isBusy, onClick, style, text, variant }: ActionButtonProps): React.ReactElement<ActionButtonProps> {
   const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);
@@ -66,6 +101,16 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
     }
   };
 
+  const EndIconStyle = {
+    '& .MuiButton-endIcon': {
+      marginLeft: '10px',
+      marginRight: 0
+    },
+    '& .MuiButton-endIcon svg': {
+      color: disabled ? '#BEAAD84D' : '#BEAAD8'
+    }
+  };
+
   const renderText = useMemo(() => {
     if (typeof text === 'string') {
       return <span style={{ color: disabled ? '#BEAAD84D' : isDark ? isBlueish ? '#809ACB' : '#BEAAD8' : '#745D8B', whiteSpace: 'nowrap', ...ButtonFontStyle }}>
@@ -88,32 +133,37 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
   return (
     <Button
       disabled={disabled || isBusy}
+      endIcon={
+        <IconElement
+          IconName={EndIcon}
+          disabled={disabled}
+          hovered={hovered}
+          iconAlwaysBold={iconAlwaysBold}
+          iconSize={iconSize}
+          iconVariant={iconVariant}
+          iconVariantOnHover={iconVariantOnHover}
+          isBlueish={isBlueish}
+        />}
       onClick={onClick ?? noop}
       ref={containerRef}
-      startIcon={StartIcon
-        ? (
-          <StartIcon
-            color={
-              disabled
-                ? '#BEAAD84D'
-                : isBlueish
-                  ? theme.palette.text.highlight
-                  : theme.palette.primary.main
-            }
-            size={iconSize}
-            variant={
-              (iconAlwaysBold ?? hovered)
-                ? iconVariantOnHover ?? 'Bold'
-                : iconVariant ?? 'Bulk'
-            }
-          />)
-        : undefined}
+      startIcon={
+        <IconElement
+          IconName={StartIcon}
+          disabled={disabled}
+          hovered={hovered}
+          iconAlwaysBold={iconAlwaysBold}
+          iconSize={iconSize}
+          iconVariant={iconVariant}
+          iconVariantOnHover={iconVariantOnHover}
+          isBlueish={isBlueish}
+        />}
       sx={{
         '&.Mui-disabled': {
           backgroundColor: '#2D1E4A4D'
         },
         ...GeneralButtonStyle,
         ...StartIconStyle,
+        ...EndIconStyle,
         ...style
       }}
       variant={variant}

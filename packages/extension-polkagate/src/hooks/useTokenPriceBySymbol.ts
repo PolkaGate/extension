@@ -9,12 +9,12 @@ import { getPriceIdByChainName, toCamelCase } from '../util';
 import useChainInfo from './useChainInfo';
 import usePrices from './usePrices';
 
-const DEFAULT_PRICE = {
+export const DEFAULT_PRICE = {
   price: undefined,
   priceDate: undefined
 };
 
-interface Price {
+export interface Price {
   price: number | undefined,
   priceDate: number | undefined;
 }
