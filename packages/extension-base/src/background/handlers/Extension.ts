@@ -130,9 +130,9 @@ export default class Extension {
   private accountsCreateSuri ({ genesisHash, name, password, suri, type }: RequestAccountCreateSuri): boolean {
     const { pair } = keyring.addUri(getSuri(suri, type), password, { genesisHash, name }, type);
 
-    const isUnlocked = this.unlockPair({ address: pair.address, password });
+    const unlockedPair = this.unlockPair({ address: pair.address, password });
 
-    assert(isUnlocked, 'Unable to create account');
+    assert(unlockedPair, 'Unable to create account');
 
     this.applyAddedTime({ pair });
 
@@ -507,9 +507,9 @@ export default class Extension {
       const accountsLocal = this.localAccounts();
 
       for (const { address } of accountsLocal) {
-        const isUnlocked = this.unlockPair({ address, password });
+        const unlockedPair = this.unlockPair({ address, password });
 
-        assert(isUnlocked, 'Unable to unlock pair');
+        assert(unlockedPair, 'Unable to unlock pair');
       }
 
       // Set a single expiry timestamp for all accounts
