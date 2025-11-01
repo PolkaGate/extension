@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.16.0](https://github.com/polkagate/extension/compare/v1.15.5...v1.16.0) (2025-11-01)
+
+
+### Features
+
+* add support for migrating polkadot hub ([#1995](https://github.com/polkagate/extension/issues/1995)) ([4dfc70b](https://github.com/polkagate/extension/commit/4dfc70b04af6d59a610ce62b1f2e377aa119a862))
+
 ## [1.15.5](https://github.com/polkagate/extension/compare/v1.15.4...v1.15.5) (2025-11-01)
 
 
