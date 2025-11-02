@@ -12,7 +12,7 @@ import { BackWithLabel, Motion } from '../../../components';
 import { useBackground, useChainInfo, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import { updateStorage } from '../../../util';
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, PROXY_TYPE } from '../../../util/constants';
+import { STORAGE_KEY, PROXY_TYPE } from '../../../util/constants';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingMenu from '../partial/StakingMenu';
 import StakingPortfolio from '../partial/StakingPortfolio';
@@ -42,7 +42,7 @@ export default function Solo (): React.ReactElement {
   const { genesisHash } = useParams<{ genesisHash: string }>();
 
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
-  const { decimal, token } = useChainInfo(genesisHash, true);
+  const { api, decimal, token } = useChainInfo(genesisHash);
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
   const [review, setReview] = useState<boolean>(false);
@@ -53,7 +53,7 @@ export default function Solo (): React.ReactElement {
     tx } = useWithdrawSolo(address, genesisHash, review);
 
   useEffect(() => {
-    address && genesisHash && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash }).catch(console.error);
+    address && genesisHash && updateStorage(STORAGE_KEY.ACCOUNT_SELECTED_CHAIN, { [address]: genesisHash }).catch(console.error);
   }, [genesisHash, address]);
 
   const staked = useMemo(() => stakingInfo.stakingAccount?.stakingLedger.active, [stakingInfo.stakingAccount?.stakingLedger.active]);
@@ -99,11 +99,13 @@ export default function Solo (): React.ReactElement {
               onClick: onUnstake,
               text: t('Unstake')
             },
-            {
-              Icon: Timer1,
-              onClick: onFastUnstake,
-              text: t('Fast Unstake')
-            }]}
+            ...(api?.tx['fastUnstake']?.['registerFastUnstake']
+              ? [{
+                Icon: Timer1,
+                onClick: onFastUnstake,
+                text: t('Fast Unstake')
+              }]
+              : [])]}
             genesisHash={genesisHash as unknown as string}
             staked={staked as unknown as BN}
             style={{ mt: '20px' }}

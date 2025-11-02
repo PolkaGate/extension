@@ -135,7 +135,7 @@ function HomeMenu (): React.ReactElement {
       default:
         navigate(`/${input}`, { state: { previousUrl: page } }) as void;
     }
-  }, [account, assetId, lastSelectedAccountGenesisHash, navigate, page]);
+  }, [account, assetId, extensionPopupOpener, lastSelectedAccountGenesisHash, navigate, page]);
 
   const selectionLineStyle = useMemo(() => ({
     background: 'linear-gradient(263.83deg, transparent 9.75%, #FF4FB9 52.71%, transparent 95.13%)',

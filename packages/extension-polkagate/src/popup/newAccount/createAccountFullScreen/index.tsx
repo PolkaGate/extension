@@ -8,62 +8,63 @@ import { User } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { PROFILE_TAGS, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
-import { DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField, TwoToneText } from '../../../components';
-import { setStorage } from '../../../components/Loading';
+import { DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField, PasswordInput } from '../../../components';
 import { OnboardTitle } from '../../../fullscreen/components/index';
 import AdaptiveLayout from '../../../fullscreen/components/layout/AdaptiveLayout';
 import { useTranslation } from '../../../hooks';
-import { createAccountSuri, createSeed } from '../../../messaging';
+import { createSeed } from '../../../messaging';
 import MnemonicSeedDisplay from './components/MnemonicSeedDisplay';
-import ModeSwitch from './ModeSwitch';
+import { STEP } from './types';
+import { useAccountImportOrCreate } from './useAccountImportOrCreate';
 
-enum STEP {
-  SEED,
-  DETAIL
-}
-
-export function SetNameAndPassword ({ accountType, seed }: { accountType: KeypairType, seed: string | null }): React.ReactElement {
+export function SetNameAndPassword ({ seed }: { seed: string | null }): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [name, setName] = useState<string | null | undefined>();
-  const [password, setPassword] = useState<string>();
-  const [isBusy, setIsBusy] = useState<boolean>(false);
+  const { error,
+    hasNoLocalAccounts,
+    isBusy,
+    name,
+    onConfirm,
+    password,
+    setName,
+    setPassword } = useAccountImportOrCreate({});
 
   const onNameChange = useCallback((enteredName: string) => {
     const trimmedName = enteredName.replace(/^\s+/, '');
     const cleanedName = trimmedName.replace(/\s{2,}/g, ' ');
 
     setName(cleanedName);
-  }, []);
-
-  const onSetPassword = useCallback(async () => {
-    // Example logic to handle password setting
-    await Promise.resolve(''); // Replace with actual logic if needed
-  }, []);
+  }, [setName]);
 
   const onCancel = useCallback(() => {
     navigate('/') as void;
   }, [navigate]);
 
-  const onCreate = useCallback(() => {
-    if (name && password && seed) {
-      setIsBusy(true);
+  // const onCreate = useCallback(() => {
+  //   if (name && password && seed) {
+  //     setIsBusy(true);
 
-      createAccountSuri(name, password, seed, accountType)
-        .then(() => {
-          setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LOCAL).catch(console.error);
-          navigate('/') as void;
-        })
-        .catch((error: Error): void => {
-          setIsBusy(false);
-          console.error(error);
-        });
+  //     createAccountSuri(name, password, seed, accountType)
+  //       .then(() => {
+  //         setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LOCAL).catch(console.error);
+  //         navigate('/') as void;
+  //       })
+  //       .catch((error: Error): void => {
+  //         setIsBusy(false);
+  //         console.error(error);
+  //       });
+  //   }
+  // }, [accountType, name, navigate, password, seed]);
+  const onCreate = useCallback(async () => {
+    try {
+      await onConfirm(seed);
+    } catch (e) {
+      console.error(e);
     }
-  }, [accountType, name, navigate, password, seed]);
+  }, [seed, onConfirm]);
 
   return (
     <Motion style={{ width: '370px' }} variant='slide'>
@@ -77,14 +78,25 @@ export function SetNameAndPassword ({ accountType, seed }: { accountType: Keypai
         style={{ margin: '40px 0 20px' }}
         title={t('Choose a name for this account')}
       />
-      <MatchPasswordField
-        onSetPassword={onSetPassword}
-        setConfirmedPassword={setPassword}
-        spacing='20px'
-        style={{ marginBottom: '20px' }}
-        title1={t('Password for this account')}
-        title2={t('Repeat the password')}
-      />
+      {hasNoLocalAccounts
+        ? (<MatchPasswordField
+          onSetPassword={onCreate}
+          setConfirmedPassword={setPassword}
+          spacing='20px'
+          style={{ marginBottom: '20px' }}
+          title1={t('Password')}
+          title2={t('Repeat the password')}
+           />
+        )
+        : (<PasswordInput
+          hasError={!!error}
+          onEnterPress={onCreate}
+          onPassChange={setPassword}
+          style={{ marginBottom: '25px', marginTop: '35px' }}
+          title={t('Password to secure this account')}
+           />
+        )
+      }
       <DecisionButtons
         cancelButton
         direction='horizontal'
@@ -175,7 +187,7 @@ function CreateAccount (): React.ReactElement {
         }
         {step === STEP.DETAIL &&
           <SetNameAndPassword
-          accountType={accountType}
+          // accountType={accountType}
           seed={seed}
           />
         }

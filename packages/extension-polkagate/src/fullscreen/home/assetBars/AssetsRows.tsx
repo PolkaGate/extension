@@ -4,12 +4,12 @@
 import type { AssetsWithUiAndPrice } from './types';
 
 import { Container, LinearProgress, linearProgressClasses, Stack, styled, Typography } from '@mui/material';
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
-import { AssetLogo, FadeOnScroll, FormatPrice } from '../../../components';
-import { useCurrency, useTranslation } from '../../../hooks';
+import { AssetLogo, CurrencyContext, FadeOnScroll, FormatPrice } from '../../../components';
+import { useTranslation } from '../../../hooks';
 import { normalizePercent, truncateToMaxYDecimals } from './helpers';
 
 interface BarColorProps {
@@ -48,7 +48,7 @@ const WIDTHS = {
 
 function AssetsRows ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.ReactElement {
   const { t } = useTranslation();
-  const currency = useCurrency();
+  const { currency } = useContext(CurrencyContext);
   const refContainer = useRef<HTMLDivElement>(null);
 
   return (

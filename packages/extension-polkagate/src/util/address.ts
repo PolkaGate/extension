@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { TLocationValue } from '@paraspell/sdk-pjs';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
@@ -75,7 +76,7 @@ export function toShortAddress (address?: string | AccountId, count = SHORT_ADDR
   return `${address.slice(0, count)}...${address.slice(-1 * count)}`;
 }
 
-export const encodeMultiLocation = (multiLocation: unknown) => {
+export const encodeLocation = (multiLocation: unknown) => {
   try {
     const jsonString = JSON.stringify(multiLocation);
     const u8aArray = stringToU8a(jsonString);
@@ -122,7 +123,7 @@ export const decodeMultiLocation = (hexString: HexString) => {
     return hexString;
   }
 
-  return decodeHexValues(decodedMultiLocation);
+  return decodeHexValues(decodedMultiLocation) as TLocationValue;
 };
 
 export const addressToChain = (address: string) => {

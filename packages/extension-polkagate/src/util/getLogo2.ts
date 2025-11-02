@@ -7,8 +7,8 @@ import { TokenETH } from '@web3icons/react';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 
-import { sanitizeChainName } from './chain';
 import { EVM_CHAINS_GENESISHASH, TOKEN_MAP } from './evmUtils/constantsEth';
+import { sanitizeChainName } from './chain';
 import getChainName from './getChainName';
 import getNetworkMap from './getNetworkMap';
 import { isMigratedHub, mapRelayToSystemGenesisIfMigrated, mapSystemToRelay } from './migrateHubUtils';
@@ -17,9 +17,9 @@ import { toCamelCase } from '.';
 const endpoints = createWsEndpoints();
 
 export interface LogoInfo {
+  color?: string | undefined;
   logo?: string | undefined;
   logoSquare?: string | undefined;
-  color?: string | undefined;
   subLogo?: string;
 }
 
@@ -43,7 +43,7 @@ export function colorFromString(input: string): string {
   return `hsl(${hue}, 100%, 50%)`;
 }
 
-function getEthereumLogos(lcInfo: string, token?: string): LogoInfo | undefined {
+function getEthereumLogos (lcInfo: string, token?: string): LogoInfo | undefined {
   const iconComponent =
     lcInfo === 'ethereum' || token === 'ETH'
       ? TokenETH
@@ -84,6 +84,14 @@ export default function getLogo2(info: string | undefined | null, token?: string
     const networkMap = getNetworkMap();
 
     chainNameFromGenesisHash = networkMap.get(_info || '');
+
+    if (!chainNameFromGenesisHash) {
+      // check if info  is a chain name and exists. in the map
+      const entry = Array.from(networkMap.entries())
+        .find(([, value]) => value.toLowerCase() === (_info || '').toLowerCase());
+
+      chainNameFromGenesisHash = entry?.[1];
+    }
 
     if (!chainNameFromGenesisHash) {
       return undefined;

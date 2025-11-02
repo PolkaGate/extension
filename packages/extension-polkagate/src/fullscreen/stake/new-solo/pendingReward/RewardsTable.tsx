@@ -6,7 +6,7 @@ import type { ExpandedRewards } from '../../type';
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { Fragment, useCallback, useMemo, useRef } from 'react';
 
-import { AssetLogo, FadeOnScroll, FormatBalance2, GlowCheckbox, Identity2, MySkeleton } from '../../../../components';
+import { AssetLogo, DisplayBalance, FadeOnScroll, GlowCheckbox, Identity2, MySkeleton } from '../../../../components';
 import { useChainInfo, useTranslation } from '../../../../hooks';
 import getLogo2 from '../../../../util/getLogo2';
 import { timeDiffSummary } from './timeDiffSummary';
@@ -120,18 +120,17 @@ export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect
                     />
                   </Grid>
                   <Grid item sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px' }}>
-                    <FormatBalance2
-                      decimalPoint={4}
-                      decimals={[decimal ?? 0]}
+                    <DisplayBalance
+                      balance={value}
+                      decimal={decimal}
                       style={{
                         color: theme.palette.text.primary,
                         ...theme.typography['B-2'],
                         textAlign: 'left',
                         width: 'max-content'
                       }}
+                      token={token}
                       tokenColor='#AA83DC'
-                      tokens={[token ?? '']}
-                      value={value}
                       withCurrency={false}
                     />
                     <AssetLogo assetSize='16px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} token={token} />

@@ -7,14 +7,14 @@ import type { ISubmittableResult } from '@polkadot/types/types';
 import type { TransactionFlowStep } from '../util/constants';
 import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
 
-import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Container, Grid, Stack, type SxProps, type Theme,Typography, useTheme } from '@mui/material';
 import { type Icon as IconType, InfoCircle } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
 import { type BN, isBn, noop } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 
-import { AssetLogo, FormatBalance2, GradientDivider, Identity2, MySkeleton, MyTooltip, SignArea3 } from '../components';
+import { AssetLogo, DisplayBalance, GradientDivider, Identity2, MySkeleton, MyTooltip, SignArea3 } from '../components';
 import RestakeRewardToggler from '../fullscreen/stake/new-pool/claimReward/partials/RestakeRewardToggler';
 import { RewardHeaderAmount } from '../fullscreen/stake/new-pool/claimReward/partials/Review';
 import { useChainInfo, useFormatted, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
@@ -136,18 +136,14 @@ export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decim
           {content
             ? isBn(content)
               ? (
-                <FormatBalance2
-                  decimalPoint={4}
-                  decimals={[decimal ?? 0]}
+                <DisplayBalance
+                  balance={content}
+                  decimal={decimal}
                   style={{
                     color: '#ffffff',
-                    fontFamily: 'Inter',
-                    fontSize: '13px',
-                    fontWeight: 500,
                     width: 'max-content'
                   }}
-                  tokens={[token ?? '']}
-                  value={content}
+                  token={token}
                 />)
               : isAddress(content)
                 ? (
@@ -195,9 +191,10 @@ export interface ReviewProps {
   restakeReward?: boolean;
   setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
   reviewHeader?: React.ReactNode;
+  style?: SxProps<Theme>
 }
 
-export default function Review ({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review ({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, style = {}, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
@@ -207,7 +204,7 @@ export default function Review ({ amount, closeReview, genesisHash, pool, proxyT
   const fsStyle = isExtension ? {} : { bgcolor: '#05091C', borderRadius: '14px', gap: '7px', padding: '15px 15px 8px' };
 
   return (
-    <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%', zIndex: 1 }}>
+    <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%', zIndex: 1, ...style }}>
       {reviewHeader}
       {!showAccountBox && setRestakeReward && restakeReward !== undefined &&
         <RewardHeaderAmount
@@ -281,6 +278,7 @@ export default function Review ({ amount, closeReview, genesisHash, pool, proxyT
         setTxInfo={setTxInfo}
         showProxySelection={showProxySelection}
         transaction={transaction}
+        withCancel
       />
     </Stack>
   );

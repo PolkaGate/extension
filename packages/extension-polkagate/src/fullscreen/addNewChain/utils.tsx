@@ -24,7 +24,7 @@ export function useUserAddedEndpoint (genesis: string | null | undefined): Dropd
 
     const maybeEndpoint = Object.entries(endpoints).find(([genesisHash]) => genesis === genesisHash);
 
-    return maybeEndpoint ? [{ text: 'endpoint', value: maybeEndpoint[1].endpoint }] : undefined;
+    return maybeEndpoint ? [{ text: maybeEndpoint[1].chain, value: maybeEndpoint[1].endpoint }] : undefined;
   }, [endpoints, genesis]);
 }
 

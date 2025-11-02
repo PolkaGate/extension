@@ -102,10 +102,15 @@ export interface RequestSignatures {
   'pri(accounts.create.suri)': [RequestAccountCreateSuri, boolean];
   'pri(accounts.edit)': [RequestAccountEdit, boolean];
 
-  'pri(accounts.updateMeta)': [RequestUpdateMeta, boolean]; // added for polkagate
-  'pri(extension.lock)': [null, boolean]; // added for polkagate
-  'pri(authorize.ignore)': [string, void]; // added for polkagate
-  'pri(metadata.update)': [MetadataDef, boolean]; // added for polkagate
+  // added for polkagate
+  'pri(accounts.updateMeta)': [RequestUpdateMeta, boolean];
+  'pri(extension.lock)': [null, boolean];
+  'pri(authorize.ignore)': [string, void];
+  'pri(metadata.update)': [MetadataDef, boolean];
+  'pri(accounts.unlockAll)': [RequestUnlockAllAccounts, boolean];
+  'pri(accounts.locksExpired)': [null, boolean];
+  'pri(accounts.forgetAll)': [null, boolean];
+  'pri(accounts.setUnlockExpiry)': [RequestAccountsSetUnlockExpiry, void];
 
   'pri(accounts.export)': [RequestAccountExport, ResponseAccountExport];
   'pri(accounts.batchExport)': [RequestAccountBatchExport, ResponseAccountsExport]
@@ -115,6 +120,8 @@ export interface RequestSignatures {
   'pri(accounts.subscribe)': [RequestAccountSubscribe, boolean, AccountJson[]];
   'pri(accounts.validate)': [RequestAccountValidate, boolean];
   'pri(accounts.changePassword)': [RequestAccountChangePassword, boolean];
+  'pri(accounts.changePasswordAll)': [RequestAccountChangePasswordAll, boolean];
+  'pri(signing.getSignature)': [RequestSigningSignature, HexString | null];
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
   'pri(authorize.update)': [RequestUpdateAuthorizedAccounts, void];
   'pri(authorize.list)': [null, ResponseAuthorizeList];
@@ -218,7 +225,7 @@ export interface RequestAccountCreateHardware {
   accountIndex: number;
   address: string;
   addressOffset: number;
-  genesisHash: HexString;
+  genesisHash: HexString | null | undefined ;
   hardwareType: string;
   name: string;
 }
@@ -227,6 +234,15 @@ export interface RequestAccountChangePassword {
   address: string;
   oldPass: string;
   newPass: string;
+}
+
+export interface RequestAccountChangePasswordAll {
+  oldPass: string;
+  newPass: string;
+}
+
+export interface RequestAccountsSetUnlockExpiry {
+  expiryTime: number; // in millisec
 }
 
 export interface RequestAccountEdit {
@@ -307,6 +323,10 @@ export interface RequestSigningApprovePassword {
   remainingTime?: number;
 }
 
+export interface RequestSigningSignature {
+  payload: SignerPayloadJSON;
+}
+
 export interface RequestSigningApproveSignature {
   id: string;
   signature: HexString;
@@ -344,6 +364,12 @@ export interface RequestUpdateMeta {
   address: string;
   meta: string;
 }
+
+export interface RequestUnlockAllAccounts {
+  password: string;
+  cacheTime: number; // milliseconds
+}
+
 // Responses
 
 export type ResponseTypes = {

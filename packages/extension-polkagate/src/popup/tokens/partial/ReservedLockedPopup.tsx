@@ -2,18 +2,20 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
+import type { UnlockType } from '../useTokenInfoDetails';
 
 import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CallMerge as CallMergeIcon } from '@mui/icons-material';
-import { Container, Grid, Typography } from '@mui/material';
-import { Bezier, Data, type Icon, Image, LikeDislike, Paperclip2, People, ProfileCircle, Record, Sagittarius, Shield, UsdCoin } from 'iconsax-react';
-import React, { useMemo } from 'react';
+import { Container, Grid, IconButton, Stack, styled, Typography, useTheme } from '@mui/material';
+import { Bezier, Data, type Icon, Image, LikeDislike, Paperclip2, People, ProfileCircle, Record, Sagittarius, Shield, Unlock, UsdCoin } from 'iconsax-react';
+import React, { memo, useMemo } from 'react';
 
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials/index';
+import { BEAT_ANIMATION } from '@polkadot/extension-polkagate/src/partials/UnableToPayFee';
 import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 
-import { GradientButton, GradientDivider } from '../../../components';
+import { GradientButton, GradientDivider, TwoToneText } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useTranslation } from '../../../hooks';
@@ -75,8 +77,47 @@ const reasonIcon = (reason: string): React.ReactNode => {
   }
 };
 
-function Item ({ amount, decimal, noDivider, price, reason, token }: { amount: BN, decimal: number, noDivider: boolean, price: number, token: string, reason: string }) {
+const ReasonAndDescription = ({ description, inColorPart, reason }: { reason: string; description?: string | null; inColorPart?: string | null; }) => {
+  const theme = useTheme();
+
+  return (
+    <Stack sx={{ alignItems: 'flex-start', width: 'fit-content' }}>
+      <Typography color='text.primary' textTransform='capitalize' variant='B-2' width='fit-content'>
+        {reason}
+      </Typography>
+      {description &&
+        <TwoToneText
+          color='#674394'
+          style={{ color: theme.palette.text.secondary, ...theme.typography['B-5'] }}
+          text={description}
+          textPartInColor={inColorPart || undefined}
+        />}
+    </Stack>
+  );
+};
+
+interface ItemProps {
+  amount: BN;
+  decimal: number;
+  noDivider: boolean;
+  price: number;
+  token: string;
+  reason: string;
+  unlockTracks: UnlockType | undefined;
+}
+
+const BeatUnlockIcon = styled(Unlock, {
+  shouldForwardProp: (prop) => prop !== 'beat'
+})<{ beat?: boolean }>(({ beat }) => ({
+  animation: beat ? `${BEAT_ANIMATION} 0.8s infinite` : 'none',
+  display: 'inline-block',
+  transformOrigin: 'center'
+}));
+
+function Item ({ amount, decimal, noDivider, price, reason, token, unlockTracks }: ItemProps) {
   const totalBalance = useMemo(() => calcPrice(price, amount, decimal), [amount, decimal, price]);
+
+  const isGovernance = useMemo(() => reason.toLocaleLowerCase().includes('gov'), [reason]);
 
   return (
     <>
@@ -85,9 +126,18 @@ function Item ({ amount, decimal, noDivider, price, reason, token }: { amount: B
           {reasonIcon(reason)}
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-between' xs>
-          <Typography color='text.primary' textTransform='capitalize' variant='B-2' width='fit-content'>
-            {reason}
-          </Typography>
+          <Grid alignItems='center' container gap='4px' item width='fit-content'>
+            <ReasonAndDescription
+              description={unlockTracks?.lockedTooltip}
+              inColorPart={unlockTracks?.unlockDate}
+              reason={reason}
+            />
+            {isGovernance && unlockTracks &&
+              <IconButton disabled={unlockTracks.isDisable} onClick={unlockTracks.openLocked} sx={{ p: '4px' }}>
+                <BeatUnlockIcon beat={!unlockTracks.isDisable} color={unlockTracks.isDisable ? '#2d1e4aff' : '#AA83DC'} size='20' variant='Bold' />
+              </IconButton>
+            }
+          </Grid>
           <Grid container direction='column' item width='fit-content'>
             <ColumnAmounts
               cryptoAmount={amount}
@@ -116,6 +166,7 @@ interface Props {
   decimal: number | undefined;
   price: number;
   token: string | undefined;
+  unlockTracks: UnlockType | undefined;
 }
 
 interface ContentProps {
@@ -125,14 +176,18 @@ interface ContentProps {
   price: number;
   style?: React.CSSProperties;
   token: string | undefined;
+  unlockTracks: UnlockType | undefined;
 }
 
-function Content ({ decimal, handleClose, items, price, style = {}, token }: ContentProps) {
+function Content ({ decimal, handleClose, items, price, style = {}, token, unlockTracks }: ContentProps) {
   const { t } = useTranslation();
 
-  const stillLoading = Object.entries(items).some(([_, amount]) => amount === undefined);
-  const reasonsToShow = Object.entries(items).filter(([_, amount]) => amount !== undefined) as [string, BN][];
-  const noReasons = stillLoading === false && reasonsToShow.length === 0;
+  const { reasonsToShow, stillLoading } = useMemo(() => ({
+    reasonsToShow: Object.entries(items).filter(([_, amount]) => amount !== undefined) as [string, BN][],
+    stillLoading: Object.entries(items).some(([_, amount]) => amount === undefined)
+  }), [items]);
+
+  const noReasons = useMemo(() => (stillLoading === false && reasonsToShow.length === 0), [reasonsToShow.length, stillLoading]);
 
   return (
     <>
@@ -149,6 +204,7 @@ function Content ({ decimal, handleClose, items, price, style = {}, token }: Con
               price={price}
               reason={reason}
               token={token ?? ''}
+              unlockTracks={unlockTracks}
             />
           );
         })}
@@ -180,7 +236,7 @@ function Content ({ decimal, handleClose, items, price, style = {}, token }: Con
   );
 }
 
-export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token }: Props) {
+function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token, unlockTracks }: Props) {
   return (
     <SharePopup
       modalProps={{
@@ -215,7 +271,10 @@ export default function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, 
         items={items}
         price={price}
         token={token}
+        unlockTracks={unlockTracks}
       />
     </SharePopup>
   );
 }
+
+export default memo(ReservedLockedPopup);

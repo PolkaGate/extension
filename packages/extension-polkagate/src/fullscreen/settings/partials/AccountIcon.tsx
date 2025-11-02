@@ -6,10 +6,9 @@ import type { MyIconTheme } from '@polkadot/extension-polkagate/src/util/types';
 import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { watchStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { PolkaGateIdenticon } from '@polkadot/extension-polkagate/src/style/index';
-import { DEFAULT_ACCOUNT_ICON_THEME, DEMO_ACCOUNT, ICON_THEME_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
-import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util/index';
+import { DEFAULT_ACCOUNT_ICON_THEME, DEMO_ACCOUNT, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { getAndWatchStorage, setStorage } from '@polkadot/extension-polkagate/src/util/index';
 
 import { useTranslation } from '../../../components/translate';
 
@@ -22,7 +21,7 @@ export interface ItemProps{
 
 function Item ({ address, iconTheme, label, selectedTheme }: ItemProps): React.ReactElement {
   const onClick = useCallback(() => {
-    setStorage(ICON_THEME_NAME_IN_STORAGE, iconTheme).catch(console.error);
+    setStorage(STORAGE_KEY.ICON_THEME, iconTheme).catch(console.error);
   }, [iconTheme]);
 
   const isSelected = selectedTheme === iconTheme;
@@ -76,12 +75,9 @@ export default function AccountIcon (): React.ReactElement {
   const [selectedTheme, setSelectedTheme] = useState<MyIconTheme>();
 
   useEffect(() => {
-    getStorage(ICON_THEME_NAME_IN_STORAGE).then((iTheme) => setSelectedTheme(iTheme as MyIconTheme | undefined ?? DEFAULT_ACCOUNT_ICON_THEME)).catch(console.error);
-    const unsubscribe = watchStorage(ICON_THEME_NAME_IN_STORAGE, setSelectedTheme);
+    const unsubscribe = getAndWatchStorage(STORAGE_KEY.ICON_THEME, setSelectedTheme, false, DEFAULT_ACCOUNT_ICON_THEME);
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   return (

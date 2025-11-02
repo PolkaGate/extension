@@ -5,13 +5,13 @@ import type { TransactionDetail } from '../../../util/types';
 
 import { Avatar, Container, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useContext, useMemo } from 'react';
 
 import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/partials/FailSuccessIcon';
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
-import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } from '../../../components';
-import { useChainInfo, useCurrency, useRouteRefresh, useStakingConsts, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
+import { ActionButton, CurrencyContext, DisplayBalance, GradientButton, Identity2, NeonButton } from '../../../components';
+import { useChainInfo, useRouteRefresh, useStakingConsts, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
 import { amountToHuman, countDecimalPlaces, getSubscanChainName, isValidAddress, toShortAddress, toTitleCase } from '../../../util';
 
@@ -27,7 +27,7 @@ export const Amount = memo(function MemoAmount ({ amount, differentValueColor, g
   const { decimal, token: nativeToken } = useChainInfo(genesisHash, true);
   const _token = token ?? nativeToken;
   const price = useTokenPriceBySymbol(token, genesisHash);
-  const currency = useCurrency();
+  const { currency } = useContext(CurrencyContext);
 
   const textColor = useMemo(() => isExtension ? 'text.highlight' : 'text.secondary', [isExtension]);
 
@@ -189,18 +189,14 @@ const Detail = ({ genesisHash, transactionDetail }: DetailProps) => {
                       ? toShortAddress(String(content as string), 6)
                       : isBalance
                         ? (
-                          <FormatBalance2
-                            decimalPoint={4}
-                            decimals={[decimal ?? 0]}
+                          <DisplayBalance
+                            balance={content as string}
+                            decimal={decimal}
                             style={{
                               color: theme.palette.primary.main,
-                              fontFamily: 'Inter',
-                              fontSize: '13px',
-                              fontWeight: 500,
                               width: 'max-content'
                             }}
-                            tokens={[token ?? '']}
-                            value={content as string}
+                            token={token}
                           />)
                         : isDate
                           ? new Date(content as string).toLocaleString('en-US', { day: 'numeric', hour: 'numeric', hour12: true, minute: '2-digit', month: 'short', second: '2-digit', weekday: 'short', year: 'numeric' })
@@ -305,7 +301,7 @@ export default function Confirmation ({ address, backToHome, genesisHash, goToHi
       />
       <Buttons
         address={address}
-        backToHome={handleHome}
+        backToHome={backToHome ? handleHome : undefined}
         genesisHash={genesisHash}
         goToHistory={goToHistory}
       />

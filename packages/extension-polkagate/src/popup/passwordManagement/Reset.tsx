@@ -3,21 +3,21 @@
 
 import { Box, Container, Grid, Stack, Typography } from '@mui/material';
 import { Check, DocumentText } from 'iconsax-react';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 import CreationButton from '@polkadot/extension-polkagate/src/fullscreen/haveWallet/CreationButton';
+import { updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 
 import { Lock } from '../../assets/gif';
-import { ActionButton, ActionCard, ActionContext, BackWithLabel } from '../../components';
-import { updateStorage } from '../../components/Loading';
+import { ActionButton, ActionCard, BackWithLabel } from '../../components';
 import { useBackground, useIsExtensionPopup, useTranslation } from '../../hooks';
 import { lockExtension, windowOpen } from '../../messaging';
 import { Version } from '../../partials';
 import Header from './Header';
-import { LOGIN_STATUS } from './types';
 
 export function ResetContent (): React.ReactElement {
   const isExtension = useIsExtensionPopup();
@@ -104,20 +104,20 @@ export function ResetContent (): React.ReactElement {
 }
 
 function Reset (): React.ReactElement {
-  useBackground('drops');
+  useBackground('drops') as void;
   const { setExtensionLock } = useExtensionLockContext();
 
-  const onAction = useContext(ActionContext);
+  const navigate = useNavigate();
 
   const back = useCallback((): void => {
-    updateStorage(STORAGE_KEY.LOGIN_IFO, { status: LOGIN_STATUS.SET })
+    updateStorage(STORAGE_KEY.IS_FORGOTTEN, { status: false })
       .finally(() => {
         setExtensionLock(true);
-        onAction('/');
+        navigate('/') as void;
         lockExtension().catch(console.error);
       })
       .catch(console.error);
-  }, [onAction, setExtensionLock]);
+  }, [navigate, setExtensionLock]);
 
   return (
     <Container disableGutters sx={{ position: 'relative' }}>

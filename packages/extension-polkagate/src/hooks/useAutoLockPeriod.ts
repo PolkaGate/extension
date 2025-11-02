@@ -14,6 +14,19 @@ const DELAY_TYPE = {
 
 const MINUTE_IN_MILLI_SECONDS = 60 * 1000;
 
+/**
+ * Custom hook to calculate the auto-lock period for the extension in milliseconds.
+ *
+ * - Returns the default auto-lock period if auto-lock is disabled.
+ * - Returns the calculated period based on the user's selected delay if enabled.
+ * - Returns `undefined` if the auto-lock settings are not available.
+ *
+ * @returns {number | undefined} Auto-lock period in milliseconds, or `undefined` if not available.
+ *
+ * @example
+ * const lockPeriod = useAutoLockPeriod();
+ * console.log(`Extension will auto-lock in ${lockPeriod} ms`);
+ */
 export default function useAutoLockPeriod (): number | undefined {
   const autoLock = useAutoLock();
 

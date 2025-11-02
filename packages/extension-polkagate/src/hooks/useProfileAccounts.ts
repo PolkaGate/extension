@@ -5,9 +5,9 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { PROFILE_TAGS, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { getStorage, watchStorage } from '../components/Loading';
+import { getAndWatchStorage } from '../util';
 import useTranslation from './useTranslation';
 
 /**
@@ -23,18 +23,9 @@ export default function useProfileAccounts (initialAccountList: AccountJson[] | 
       return setProfile(profile);
     }
 
-    getStorage(SELECTED_PROFILE_NAME_IN_STORAGE).then((res) => {
-      setProfile(res as string || t('All'));
-    }).catch((error) => {
-      setProfile(t('All'));
-      console.error('Error while reading profile from storage', error);
-    });
+  const unsubscribe = getAndWatchStorage(STORAGE_KEY.SELECTED_PROFILE, setProfile, false, t('All'));
 
-    const unsubscribe = watchStorage(SELECTED_PROFILE_NAME_IN_STORAGE, setProfile);
-
-    return () => {
-      unsubscribe();
-    };
+  return () => unsubscribe();
   }, [profile, t]);
 
   const profileAccounts = useMemo(() => {

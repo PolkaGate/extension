@@ -7,7 +7,7 @@ import { Container, Grid, Typography } from '@mui/material';
 import { LockSlash } from 'iconsax-react';
 import React from 'react';
 
-import { ExtensionPopup, FormatBalance2, GradientDivider } from '../../../components';
+import { DisplayBalance, ExtensionPopup, GradientDivider } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { formatTimestamp } from '../../../util';
 import StakingActionButton from './StakingActionButton';
@@ -57,9 +57,10 @@ export default function ToBeReleased ({ decimal, handleClose, onRestake, openMen
                 <Typography color='text.highlight' variant='B-1' width='fit-content'>
                   {formatTimestamp(info.date, ['month', 'day', 'hours', 'minutes', 'ampm'])}
                 </Typography>
-                <FormatBalance2
+                <DisplayBalance
+                  balance={info.amount}
+                  decimal={decimal}
                   decimalPoint={2}
-                  decimals={[decimal]}
                   style={{
                     color: '#ffffff',
                     fontFamily: 'Inter',
@@ -67,8 +68,7 @@ export default function ToBeReleased ({ decimal, handleClose, onRestake, openMen
                     fontWeight: 500,
                     width: 'max-content'
                   }}
-                  tokens={[token]}
-                  value={info.amount}
+                  token={token}
                 />
               </Grid>
               {!noDivider && <GradientDivider style={{ my: '4px' }} />}

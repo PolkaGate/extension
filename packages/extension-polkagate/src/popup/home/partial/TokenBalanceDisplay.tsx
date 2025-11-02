@@ -6,7 +6,7 @@ import type { BN } from '@polkadot/util';
 import { Grid, useTheme } from '@mui/material';
 import React, { } from 'react';
 
-import { FormatBalance2, FormatPrice } from '../../../components';
+import { DisplayBalance, FormatPrice } from '../../../components';
 
 export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, totalBalancePrice }: { decimal?: number, totalBalanceBN: BN, totalBalancePrice: number, token?: string }) {
   const theme = useTheme();
@@ -25,17 +25,15 @@ export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, 
         skeletonHeight={14}
         width='fit-content'
       />
-      <FormatBalance2
+      <DisplayBalance
+        balance={totalBalanceBN}
+        decimal={decimal}
         decimalPoint={2}
-        decimals={[decimal]}
         style={{
           color: balanceColor,
-          fontSize: '12px',
-          fontWeight: 500,
           lineHeight: '10px'
         }}
-        tokens={[token]}
-        value={totalBalanceBN}
+        token={token}
       />
     </Grid>
   );

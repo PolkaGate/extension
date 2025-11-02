@@ -805,14 +805,13 @@ export interface ApiProps extends ApiState {
 export interface ApiPropsNew {
   api?: ApiPromise;
   endpoint: string;
-  isRequested: boolean;
 }
 
 export type APIs = Record<string, ApiPropsNew[] | undefined>;
 
 export interface APIsContext {
   apis: APIs;
-  setIt: (apis: APIs) => void;
+  getApi: (genesisHash: string | null | undefined, endpoints: DropdownOption[]) => Promise<ApiPromise | undefined>;
 }
 
 export interface LatestRefs {
@@ -879,8 +878,6 @@ export interface DropdownOption {
   value: string | number;
 }
 
-export type TransferType = 'All' | 'Max' | 'Normal';
-
 export interface CanPayFee { isAbleToPay: boolean | undefined, statement: number, warning: string | undefined }
 
 export interface ProxiedAccounts {
@@ -922,6 +919,7 @@ export interface FetchedBalance {
   frozenFee?: BN,
   frozenMisc?: BN,
   genesisHash: string,
+  isNative?: boolean;
   lockedBalance?: BN,
   poolName?: string,
   priceId: string,

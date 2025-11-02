@@ -10,6 +10,8 @@ import * as flags from 'country-flag-icons/string/3x2';
 import { BuyCrypto, Coin1, Hashtag } from 'iconsax-react';
 import React, { Fragment, memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { CurrencyContext, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
 import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
@@ -24,6 +26,7 @@ interface Props {
 interface CurrencyOptionProps {
   handleCurrencySelect: (currency: CurrencyItemType) => () => void;
   selectedCurrency: CurrencyItemType | undefined;
+  onDoubleClick?: () => void
 }
 
 interface CurrencyListProps extends CurrencyOptionProps {
@@ -67,7 +70,7 @@ const CategoryHeader = ({ type }: { type: 'crypto' | 'fiat' }) => {
   );
 };
 
-const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = false, selectedCurrency, type }: CurrencyListProps) => {
+const CurrencyList = memo(function CL ({ currencyList, handleCurrencySelect, noLastDivider = false, onDoubleClick, selectedCurrency, type }: CurrencyListProps) {
   const flagSVG = useCallback((currency: CurrencyItemType) => {
     const countryCode = currency.code.slice(0, 2).toUpperCase();
 
@@ -99,33 +102,37 @@ const CurrencyList = ({ currencyList, handleCurrencySelect, noLastDivider = fals
   return (
     <>
       <CategoryHeader type={type} />
-      {currencyList.map((currency, index) => (
-        <Fragment key={index}>
-          <ListItem className={selectedCurrency === currency ? 'selected' : ''} container item key={currency.code} onClick={handleCurrencySelect(currency)}>
-            <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-              <Box
-                component='img'
-                src={flagSVG(currency)}
-                sx={{ borderRadius: '5px', height: '18px', width: '18px' }}
+      {currencyList.map((currency, index) => {
+        const isSelected = selectedCurrency?.code === currency.code;
+
+        return (
+          <Fragment key={index}>
+            <ListItem className={isSelected ? 'selected' : ''} container item key={currency.code} onClick={handleCurrencySelect(currency)} onDoubleClick={onDoubleClick}>
+              <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
+                <Box
+                  component='img'
+                  src={flagSVG(currency)}
+                  sx={{ borderRadius: '5px', height: '18px', width: '18px' }}
+                />
+                <Typography color='text.primary' variant='B-2'>
+                  {currency.country} - {currency.sign}
+                </Typography>
+              </Grid>
+              <GlowCheck
+                show={isSelected}
               />
-              <Typography color='text.primary' variant='B-2'>
-                {currency.country} - {currency.sign}
-              </Typography>
-            </Grid>
-            <GlowCheck
-              show={selectedCurrency === currency}
-            />
-          </ListItem>
-          {(!noLastDivider || index !== currencyList.length - 1) &&
-            <GradientDivider style={{ my: '3px' }} />
-          }
-        </Fragment>
-      ))}
+            </ListItem>
+            {(!noLastDivider || index !== currencyList.length - 1) &&
+              <GradientDivider style={{ my: '3px' }} />
+            }
+          </Fragment>
+        );
+      })}
     </>
   );
-};
+});
 
-const CurrencyOptions = memo(function LanguageOptions({ handleCurrencySelect, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
+const CurrencyOptions = memo(function CO ({ handleCurrencySelect, onDoubleClick, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [searchedCurrencies, setSearchedCurrencies] = useState<CurrencyItemType[]>();
@@ -165,6 +172,7 @@ const CurrencyOptions = memo(function LanguageOptions({ handleCurrencySelect, se
         <CurrencyList
           currencyList={cryptos}
           handleCurrencySelect={handleCurrencySelect}
+          onDoubleClick={onDoubleClick}
           selectedCurrency={selectedCurrency}
           type='crypto'
         />
@@ -172,6 +180,7 @@ const CurrencyOptions = memo(function LanguageOptions({ handleCurrencySelect, se
           currencyList={fiats}
           handleCurrencySelect={handleCurrencySelect}
           noLastDivider
+          onDoubleClick={onDoubleClick}
           selectedCurrency={selectedCurrency}
           type='fiat'
         />
@@ -184,7 +193,7 @@ const CurrencyOptions = memo(function LanguageOptions({ handleCurrencySelect, se
   );
 });
 
-function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAction<boolean>> }): React.ReactElement {
+function Content ({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAction<boolean>> }): React.ReactElement {
   const { t } = useTranslation();
   const { currency, setCurrency } = useContext(CurrencyContext);
 
@@ -194,14 +203,12 @@ function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAc
     !selectedCurrency && currency && setSelectedCurrency(currency);
   }, [currency, selectedCurrency]);
 
-  const handleCurrencySelect = useCallback((currency: CurrencyItemType) => () => {
-    setSelectedCurrency(currency);
-  }, []);
+  const handleCurrencySelect = useCallback((currency: CurrencyItemType) => () => setSelectedCurrency(currency), []);
 
   const applyLanguageChange = useCallback(() => {
     if (selectedCurrency) {
       setCurrency(selectedCurrency);
-      setStorage('currency', selectedCurrency).then(() => {
+      setStorage(STORAGE_KEY.CURRENCY, selectedCurrency).then(() => {
         setOpenMenu(false);
       }).catch(console.error);
     }
@@ -211,6 +218,7 @@ function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAc
     <Grid container item justifyContent='center' sx={{ position: 'relative', py: '1px', zIndex: 1 }}>
       <CurrencyOptions
         handleCurrencySelect={handleCurrencySelect}
+        onDoubleClick={applyLanguageChange}
         selectedCurrency={selectedCurrency}
       />
       <GradientButton
@@ -221,7 +229,6 @@ function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAc
           bottom: '6px',
           height: '44px',
           position: 'absolute',
-          width: '345px',
           zIndex: 10
         }}
         text={t('Apply')}
@@ -230,15 +237,15 @@ function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAc
   );
 }
 
-function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
+function SelectCurrency ({ openMenu, setOpenMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const handleClose = useCallback(() => setOpenMenu(false), [setOpenMenu]);
 
   return (
     <SharePopup
-      onClose={handleClose}
       modalProps={{ showBackIconAsClose: true }}
+      onClose={handleClose}
       open={openMenu}
       popupProps={{
         TitleIcon: Hashtag,

@@ -10,7 +10,7 @@ import Home from '.';
 function ManageHome (): React.ReactElement {
   const onExtension = useIsExtensionPopup();
 
-   return onExtension ? <Home /> : <HomePageFullScreen />;
+  return onExtension ? <Home /> : <HomePageFullScreen />;
 }
 
 export default React.memo(ManageHome);

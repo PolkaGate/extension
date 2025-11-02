@@ -6,7 +6,7 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { Badge } from '../../../../assets/gif';
-import { BackWithLabel, DecisionButtons, FormatBalance2, GradientDivider, Motion } from '../../../../components';
+import { BackWithLabel, DecisionButtons, DisplayBalance, GradientDivider, Motion } from '../../../../components';
 import { useBackground, useChainInfo, usePendingRewardsSolo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import { PROXY_TYPE } from '../../../../util/constants';
@@ -22,8 +22,7 @@ export default function PendingReward () {
   const address = useSelectedAccount()?.address;
   const { api, decimal, token } = useChainInfo(genesisHash);
 
-  const { adaptiveDecimalPoint,
-    eraToDate,
+  const { eraToDate,
     expandedRewards,
     onSelect,
     onSelectAll,
@@ -81,7 +80,6 @@ export default function PendingReward () {
               onSelectAll={onSelectAll}
             />
             <RewardsTable
-              adaptiveDecimalPoint={adaptiveDecimalPoint}
               eraToDate={eraToDate}
               expandedRewards={expandedRewards}
               genesisHash={genesisHash}
@@ -101,17 +99,17 @@ export default function PendingReward () {
                 <Typography color='text.highlight' variant='B-4'>
                   {t('Total')}:
                 </Typography>
-                <FormatBalance2
-                  decimalPoint={adaptiveDecimalPoint}
-                  decimals={[decimal ?? 0]}
+                <DisplayBalance
+                  balance={totalSelectedPending}
+                  decimal={decimal}
                   style={{
                     color: theme.palette.text.primary,
                     ...theme.typography['B-2'],
                     textAlign: 'right',
                     width: 'max-content'
                   }}
-                  tokens={[token ?? '']}
-                  value={totalSelectedPending}
+                  token={token}
+                  useAdaptiveDecimalPoint
                 />
               </Container>
             </Container>

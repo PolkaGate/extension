@@ -1,12 +1,12 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
 import type { AccountJson, AllowedPath, AuthorizeRequest, MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, MetadataRequest, RequestTypes, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSigningIsLocked, ResponseTypes, SeedLengths, SigningRequest, SubscriptionMessageTypes } from '@polkadot/extension-base/background/types';
 import type { Message } from '@polkadot/extension-base/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
+import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
@@ -81,7 +81,39 @@ export async function lockExtension (): Promise<boolean> {
   return sendMessage('pri(extension.lock)');
 }
 
+export async function accountsValidate (address: string, password: string): Promise<boolean> {
+  return sendMessage('pri(accounts.validate)', { address, password });
+}
+
+export async function accountsChangePassword (address: string, oldPass: string, newPass: string): Promise<boolean> {
+  return sendMessage('pri(accounts.changePassword)', { address, newPass, oldPass });
+}
+
+export async function accountsChangePasswordAll (oldPass: string, newPass: string): Promise<boolean> {
+  return sendMessage('pri(accounts.changePasswordAll)', { newPass, oldPass });
+}
+
+export async function getSignature (payload: SignerPayloadJSON): Promise<HexString | null> {
+  return sendMessage('pri(signing.getSignature)', { payload });
+}
+
+export async function unlockAllAccounts (password: string, cacheTime: number): Promise<boolean> {
+  return sendMessage('pri(accounts.unlockAll)', { cacheTime, password });
+}
+
+export async function areAccountsLocksExpired (): Promise<boolean> {
+  return sendMessage('pri(accounts.locksExpired)');
+}
+
+export async function forgetAccountsAll (): Promise<boolean> {
+  return sendMessage('pri(accounts.forgetAll)');
+}
+
+export async function setUnlockExpiry (expiryTime: number): Promise<void> {
+  return sendMessage('pri(accounts.setUnlockExpiry)', { expiryTime });
+}
 // -------------------------------------
+
 export async function showAccount (address: string, isShowing: boolean): Promise<boolean> {
   return sendMessage('pri(accounts.show)', { address, isShowing });
 }
@@ -138,7 +170,7 @@ export async function createAccountExternal (name: string, address: string, gene
   return sendMessage('pri(accounts.create.external)', { address, genesisHash, name, type });
 }
 
-export async function createAccountHardware (address: string, hardwareType: string, accountIndex: number, addressOffset: number, name: string, genesisHash: HexString): Promise<boolean> {
+export async function createAccountHardware (address: string, hardwareType: string, accountIndex: number, addressOffset: number, name: string, genesisHash?: HexString): Promise<boolean> {
   return sendMessage('pri(accounts.create.hardware)', { accountIndex, address, addressOffset, genesisHash, hardwareType, name });
 }
 
@@ -180,7 +212,7 @@ export async function getMetadata (genesisHash?: string | null, isPartial = fals
         tokenDecimals: 15,
         tokenSymbol: 'Unit',
         types: {}
-      }, isPartial);
+      } as MetadataDef, isPartial);
     }
   }
 

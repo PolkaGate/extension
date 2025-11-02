@@ -4,7 +4,7 @@
 import React, { lazy, memo, Suspense, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util/storage';
 
 import { Motion } from '../../../components';
@@ -32,7 +32,7 @@ function RightColumn (): React.ReactElement {
   , [accountAssets, genesisHash, paramAssetId]);
 
   useEffect(() => {
-    address && genesisHash && updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash }).catch(console.error);
+    address && genesisHash && updateStorage(STORAGE_KEY.ACCOUNT_SELECTED_CHAIN, { [address]: genesisHash }).catch(console.error);
   }, [address, genesisHash]);
 
   return (

@@ -1,21 +1,19 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { LoginInfo } from '@polkadot/extension-polkagate/src/popup/passwordManagement/types';
-
 import { Stack, Typography } from '@mui/material';
 import { ArrowDown2, Key } from 'iconsax-react';
 import React, { useEffect, useState } from 'react';
 
 import { getStorage } from '@polkadot/extension-polkagate/src/util';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { useTranslation } from '../../../components/translate';
 import useIsDark from '../../../hooks/useIsDark';
 import { ExtensionPopups, STORAGE_KEY } from '../../../util/constants';
 import SetPassword from './SetPassword';
-import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
-export default function Password(): React.ReactElement {
+export default function Password (): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
@@ -23,11 +21,9 @@ export default function Password(): React.ReactElement {
   const [lastEditDate, setLastEdit] = useState<string>();
 
   useEffect(() => {
-    getStorage(STORAGE_KEY.LOGIN_IFO).then((info) => {
-      const timestamp = (info as unknown as LoginInfo | undefined)?.lastEdit;
-
+    getStorage(STORAGE_KEY.LAST_PASS_CHANGE).then((timestamp) => {
       if (timestamp) {
-        const date = new Date(timestamp);
+        const date = new Date(timestamp as unknown as number);
 
         const day = date.getDate();
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -80,8 +76,8 @@ export default function Password(): React.ReactElement {
         </Stack>
       </Stack>
       <SetPassword
-        openMenu={extensionPopup === ExtensionPopups.PASSWORD}
         onClose={extensionPopupCloser}
+        openMenu={extensionPopup === ExtensionPopups.PASSWORD}
       />
     </>
   );

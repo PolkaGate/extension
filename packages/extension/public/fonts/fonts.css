@@ -7,66 +7,6 @@
        url('./ErasDemiITC.ttf') format('truetype'), /* Safari, Android, iOS */
 }
 
-/* RobotoThin - latin */
-@font-face {
-  font-family: 'Roboto';
-  font-weight: 100;
-  font-style: normal;
-  src: url('./Roboto-Thin.ttf'); /* IE9 Compat Modes */
-  src: local(''),
-       url('./Roboto-Thin.ttf') format('truetype'), /* Safari, Android, iOS */
-}
-
-/* RobotoLight - latin */
-@font-face {
-  font-family: 'Roboto';
-  font-weight: 300;
-  font-style: normal;
-  src: url('./Roboto-Light.ttf'); /* IE9 Compat Modes */
-  src: local(''),
-       url('./Roboto-Light.ttf') format('truetype'), /* Safari, Android, iOS */
-}
-
-/* RobotoRegular - latin */
-@font-face {
-  font-family: 'Roboto';
-  font-weight: 400;
-  font-style: normal;
-  src: url('./Roboto-Regular.ttf'); /* IE9 Compat Modes */
-  src: local(''),
-       url('./Roboto-Regular.ttf') format('truetype'), /* Safari, Android, iOS */
-}
-
-/* RobotoMedium - latin */
-@font-face {
-  font-family: 'Roboto';
-  font-weight: 500;
-  font-style: normal;
-  src: url('./Roboto-Medium.ttf'); /* IE9 Compat Modes */
-  src: local(''),
-       url('./Roboto-Medium.ttf') format('truetype'), /* Safari, Android, iOS */
-}
-
-/* RobotoBold - latin */
-@font-face {
-  font-family: 'Roboto';
-  font-weight: 700;
-  font-style: normal;
-  src: url('./Roboto-Bold.ttf'); /* IE9 Compat Modes */
-  src: local(''),
-       url('./Roboto-Bold.ttf') format('truetype'), /* Safari, Android, iOS */
-}
-
-/* RobotoBlack - latin */
-@font-face {
-  font-family: 'Roboto';
-  font-weight: 900;
-  font-style: normal;
-  src: url('./Roboto-Black.ttf'); /* IE9 Compat Modes */
-  src: local(''),
-       url('./Roboto-Black.ttf') format('truetype'), /* Safari, Android, iOS */
-}
-
 /* OdibeeSans-Regular */
 @font-face {
   font-family: 'OdibeeSans';

@@ -7,7 +7,7 @@ import { ExpandMore } from '@mui/icons-material';
 import { Box, ClickAwayListener, Grid, Popover, Stack, styled, type SxProps, type Theme, Typography } from '@mui/material';
 import React, { useCallback, useMemo, useRef } from 'react';
 
-import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import useProfileInfo from '../../fullscreen/home/useProfileInfo';
 import { useAccountsOrder, useIsHovered, useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
@@ -43,7 +43,7 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountJson[]
   const isSelected = selectedProfile === label;
 
   const onClick = useCallback(() => {
-    setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, label).catch(console.error);
+    setStorage(STORAGE_KEY.SELECTED_PROFILE, label).catch(console.error);
   }, [label]);
 
   return (

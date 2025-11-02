@@ -5,7 +5,7 @@ import type React from 'react';
 
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 
-import EndpointManager2 from '../../../class/endpointManager2';
+import EndpointManager from '../../../class/endpointManager';
 import { useEndpoint, useEndpoints, useIsExtensionPopup } from '../../../hooks';
 import CalculateNodeDelay from '../../../util/calculateNodeDelay';
 import { AUTO_MODE } from '../../../util/constants';
@@ -60,7 +60,7 @@ function reducer (state: State, action: Action): State {
   }
 }
 
-const endpointManager = new EndpointManager2();
+const endpointManager = new EndpointManager();
 
 export default function useEndpointsSetting (genesisHash: string | undefined, isEnabled: boolean, onEnableChain?: (value: string, checked: boolean) => void, onClose?: () => void) {
   const isExtension = useIsExtensionPopup();

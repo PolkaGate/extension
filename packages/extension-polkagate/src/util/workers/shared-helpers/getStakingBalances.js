@@ -13,7 +13,7 @@ export async function getStakingBalances (address, api) {
       let soloTotal = BN_ZERO;
       let pooled;
 
-      if (api.query['nominationPools'] && api.call?.['nominationPoolsApi']) {
+      if (api.query['nominationPools']) {
         pooled = await getPooledBalance(api, address);
       }
 

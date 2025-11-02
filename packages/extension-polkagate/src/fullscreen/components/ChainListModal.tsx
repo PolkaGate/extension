@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable react/jsx-first-prop-new-line */
+
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 
 import { Container, Grid, Stack, Typography } from '@mui/material';
@@ -105,12 +107,13 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
     return chainsOptions.filter(({ text }) => text.toLowerCase().includes(keyword));
   }, [searchKeyword, chainsOptions]);
 
-  const onItemClick = useCallback((text: string, value: string) => {
+  const onItemClick = useCallback((text: string, value: string) => () => {
     setMayBeSelected({ text, value });
   }, []);
 
   return (
     <DraggableModal
+      closeOnAnyWhereClick
       onClose={_handleClose}
       open={open}
       showBackIconAsClose
@@ -124,20 +127,15 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
           placeholder={t('🔍 Search networks')}
         />
         <VelvetBox style={{ margin: '5px 0 15px' }}>
-          <Stack ref={refContainer} style={{ maxHeight: '388px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
+          <Stack ref={refContainer} style={{ gap: '4px', maxHeight: '388px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
             {filteredChainsToList.map(({ text, value }, index) => {
               const normalizedChainName = isMigratedHub(String(value)) ? text.replace('Asset Hub', '') : text.replace('Relay Chain', '');
 
               return (
-                <Grid
-                  alignItems='center'
-                  // eslint-disable-next-line react/jsx-no-bind
-                  container item justifyContent='space-between' key={index} onClick={() => onItemClick(text, String(value))} sx={{
-                    '&:hover': { bgcolor: '#6743944D' },
-                    borderRadius: '12px',
-                    lineHeight: '55px',
-                    px: '7px'
-                  }}
+                <Grid alignItems='center' container item justifyContent='space-between' key={index}
+                  onClick={onItemClick(text, String(value))}
+                  onDoubleClick={onApply}
+                  sx={{ '&:hover': { bgcolor: '#6743944D' }, borderRadius: '12px', cursor: 'pointer', p: '10px 7px' }}
                 >
                   <Stack alignItems='center' direction='row'>
                     <ChainLogo chainName={text} genesisHash={value as string} size={24} />

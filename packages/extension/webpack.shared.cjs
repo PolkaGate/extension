@@ -43,6 +43,10 @@ module.exports = (entry, alias = {}) => ({
         }
       },
       {
+        test: /\.lottie$/i,
+        type: 'asset/resource'
+      },
+      {
         test: /\.css$/, // added for polkagate
         use: ['style-loader', 'css-loader']
       },

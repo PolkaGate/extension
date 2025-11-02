@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountJson, RequestSign } from '@polkadot/extension-base/background/types';
+import type { RequestSign } from '@polkadot/extension-base/background/types';
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { ModeData } from './types';
@@ -12,7 +12,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { TypeRegistry } from '@polkadot/types';
 import { formatNumber } from '@polkadot/util';
 
-import { ShowBalance } from '../../components';
+import { DisplayBalance } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
 import { toBN, toTitleCase } from '../../util';
 
@@ -22,12 +22,12 @@ interface Data {
 }
 
 interface Props {
-  account: AccountJson;
   request: RequestSign;
   mode: ModeData;
 }
 
 const registry = new TypeRegistry();
+const STYLE = { '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, p: '10px', position: 'relative' };
 
 function ExtrinsicDetail ({ mode: { data }, request }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
@@ -60,7 +60,7 @@ function ExtrinsicDetail ({ mode: { data }, request }: Props): React.ReactElemen
     return String(rawText).split(regex).map((part, index) => {
       if (index % 2 === 1) {
         return (
-          <span key={index} style={{ color: '#82FFA5', fontFamily: 'JetBrainsMono', fontWeight: '500', fontSize: '11px' }}>
+          <span key={index} style={{ color: '#82FFA5', fontFamily: 'JetBrainsMono', fontSize: '11px', fontWeight: '500' }}>
             {part}
           </span>
         );
@@ -72,21 +72,19 @@ function ExtrinsicDetail ({ mode: { data }, request }: Props): React.ReactElemen
 
   return (
     <Grid container display='block' fontSize='16px' height='440px' justifyContent='center' justifyItems='center'>
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, position: 'relative', p: '10px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={STYLE}>
         <Typography color='#BEAAD8' fontSize='13px' variant='B-1'>
           {t('Tip')}
         </Typography>
-        <Typography color='#EAEBF1' fontSize='13px' variant='B-1'>
-          <ShowBalance
-            balance={toBN(payload?.tip ?? 0)}
-            decimal={decimal}
-            decimalPoint={3}
-            token={token}
-            withCurrency
-          />
-        </Typography>
+        <DisplayBalance
+          balance={toBN(payload?.tip ?? 0)}
+          decimal={decimal}
+          decimalPoint={3}
+          style={{ color: '#EAEBF1' }}
+          token={token}
+        />
       </Grid>
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, position: 'relative', p: '10px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={STYLE}>
         <Typography color='#BEAAD8' fontSize='13px' variant='B-1'>
           {t('Nonce')}
         </Typography>
@@ -94,7 +92,7 @@ function ExtrinsicDetail ({ mode: { data }, request }: Props): React.ReactElemen
           {formatNumber(payload?.nonce ?? 0)}
         </Typography>
       </Grid>
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, position: 'relative', p: '10px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={STYLE}>
         <Typography color='#BEAAD8' fontSize='13px' variant='B-1'>
           {t('Pallet')}
         </Typography>
@@ -131,7 +129,7 @@ function ExtrinsicDetail ({ mode: { data }, request }: Props): React.ReactElemen
                         ? <pre style={{ margin: 0 }}>
                           {JSON.stringify(value, null, 2)} {/* Format the object value */}
                         </pre>
-                        : ` ${value}` // If it's a primitive, display it directly
+                        : ` ${value as string}` // If it's a primitive, display it directly
                       }
                     </Typography>
                   </Stack>

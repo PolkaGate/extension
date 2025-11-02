@@ -6,7 +6,7 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
 import type { Header } from '@polkadot/types/interfaces';
 // @ts-ignore
 import type { FrameSystemAccountInfo } from '@polkadot/types/lookup';
-import type { ISubmittableResult, SignerPayloadJSON } from '@polkadot/types/types';
+import type { ISubmittableResult } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
@@ -14,10 +14,7 @@ import { Grid, useTheme } from '@mui/material';
 import { Data, Lock, ScanBarcode } from 'iconsax-react';
 import React, { memo, type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AccountsStore } from '@polkadot/extension-base/stores';
-import keyring from '@polkadot/ui-keyring';
 import { noop } from '@polkadot/util';
-import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { useAccount, useAccountDisplay, useChainInfo, useFormatted, useProxies, useTranslation } from '../hooks';
 import { getSubstrateAddress } from '../util';
@@ -73,7 +70,7 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
   const formatted = useFormatted(address, genesisHash);
 
   const senderName = useAccountDisplay(address, genesisHash);
-  const proxies = useProxies(api, formatted);
+  const proxies = useProxies(genesisHash, formatted);
 
   const [showQR, setShowQR] = useState<boolean>(false);
   const [lastHeader, setLastHeader] = useState<Header>();
@@ -86,10 +83,6 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
   const showUseProxy = useMemo(() => !account?.isHardware && !account?.isQR && account?.isExternal && !selectedProxy, [account, selectedProxy]);
   const showQrSign = useMemo(() => account?.isQR, [account]);
   const noPrivateKeyAccount = useMemo(() => account?.isExternal || account?.isHardware || account?.isQR, [account]);
-
-  useEffect(() => {
-    cryptoWaitReady().then(() => keyring.loadAll({ store: new AccountsStore() })).catch(() => null);
-  }, []);
 
   const preparedTransaction = useMemo((): SubmittableExtrinsic<'promise', ISubmittableResult> | undefined => {
     if (!transaction || !api) {
@@ -107,12 +100,14 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
     try {
       const _payload = {
         address: from,
-        blockHash: lastHeader.hash.toHex(),
-        blockNumber: api.registry.createType('BlockNumber', lastHeader.number.toNumber()).toHex(),
-        era: api.registry.createType('ExtrinsicEra', { current: lastHeader.number.toNumber(), period: 64 }).toHex(),
-        genesisHash: api.genesisHash.toHex(),
-        method: api.createType('Call', preparedTransaction).toHex(), // TODO: DOES SUPPORT nested calls, batches , ...
-        nonce: api.registry.createType('Compact<Index>', rawNonce).toHex(),
+        assetId: signerOption?.assetId,
+        blockHash: lastHeader.hash,
+        blockNumber: api.registry.createType('BlockNumber', lastHeader.number.toNumber()),
+        era: api.registry.createType('ExtrinsicEra', { current: lastHeader.number.toNumber(), period: 64 }),
+        genesisHash: api.genesisHash,
+        method: api.createType('Call', preparedTransaction), // TODO: DOES SUPPORT nested calls, batches , ...
+        nonce: api.registry.createType('Compact<Index>', rawNonce),
+        runtimeVersion: api.runtimeVersion,
         signedExtensions: [
           'CheckNonZeroSender',
           'CheckSpecVersion',
@@ -123,21 +118,23 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
           'CheckWeight',
           'ChargeTransactionPayment'
         ],
-        specVersion: api.runtimeVersion.specVersion.toHex(),
-        tip: api.registry.createType('Compact<Balance>', 0).toHex(),
-        transactionVersion: api.runtimeVersion.transactionVersion.toHex(),
+        tip: 0,
         version: preparedTransaction.version
       };
 
-      return _payload as SignerPayloadJSON;
+      const raw = api.registry.createType('SignerPayload', _payload, {
+        version: _payload.version
+      });
+
+      return raw.toPayload();
     } catch (error) {
       console.error('Something went wrong when making payload:', error);
 
       return undefined;
     }
-  }, [api, from, lastHeader, rawNonce, preparedTransaction]);
+  }, [api, preparedTransaction, lastHeader, rawNonce, from, signerOption?.assetId]);
 
-  const payload = useMemo(() => {
+  const extrinsicPayload = useMemo(() => {
     if (!api || !signerPayload) {
       return;
     }
@@ -209,18 +206,19 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
 
       const _token = token || api.registry.chainTokens[0];
       const decimal = api.registry.chainDecimals[0];
+      const { block = 0, failureText, success, txHash = '' } = txResult;
 
       const info = {
-        block: txResult?.block || 0,
+        block,
         chain,
         date: Date.now(),
         decimal, // in cross chain transfer this will be the sending chain decimal
-        failureText: txResult?.failureText,
+        failureText,
         from: { address: String(formatted), name: senderName },
-        success: txResult?.success,
+        success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
         token: _token,
-        txHash: txResult?.txHash || ''
+        txHash
       };
 
       setTxInfo({ ...info, api, chain } as TxInfo);
@@ -230,18 +228,18 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
   }, [api, chain, formatted, selectedProxyAddress, selectedProxyName, senderName, setTxInfo, token]);
 
   const onSignature = useCallback(async ({ signature }: { signature: HexString }) => {
-    if (!api || !payload || !signature || !preparedTransaction || !from) {
+    if (!api || !extrinsicPayload || !signature || !preparedTransaction || !from) {
       return;
     }
 
     setFlowStep(TRANSACTION_FLOW_STEPS.WAIT_SCREEN);
 
-    const txResult = await send(from, api, preparedTransaction, payload.toHex(), signature);
+    const txResult = await send(from, api, preparedTransaction, extrinsicPayload.toHex(), signature);
 
     setFlowStep(TRANSACTION_FLOW_STEPS.CONFIRMATION);
 
     handleTxResult(txResult);
-  }, [api, from, handleTxResult, payload, preparedTransaction, setFlowStep]);
+  }, [api, from, handleTxResult, extrinsicPayload, preparedTransaction, setFlowStep]);
 
   return (
     <>
@@ -263,7 +261,7 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
             handleTxResult={handleTxResult}
             onSecondaryClick={onClose}
             onSignature={onSignature}
-            payload={payload}
+            payload={extrinsicPayload}
             preparedTransaction={preparedTransaction}
             setFlowStep={setFlowStep}
             signerPayload={signerPayload}
@@ -276,14 +274,11 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
             api={api}
             direction={direction}
             disabled={disabled}
-            from={from}
-            handleTxResult={handleTxResult}
             onCancel={onClose}
+            onSignature={onSignature}
             onUseProxy={selectedProxy ? undefined : toggleSelectProxy}
-            preparedTransaction={preparedTransaction}
             proxies={proxies}
-            setFlowStep={setFlowStep}
-            signerOption={signerOption}
+            signerPayload={signerPayload}
             withCancel={withCancel}
           />
         }
@@ -301,7 +296,7 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
         handleClose={toggleQrScan}
         onSignature={onSignature as ({ signature }: { signature: `0x${string}`; }) => void}
         openMenu={showQR}
-        payload={payload}
+        payload={extrinsicPayload}
         signerPayload={signerPayload}
         {...signUsingQRProps}
       />

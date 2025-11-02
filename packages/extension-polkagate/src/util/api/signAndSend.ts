@@ -5,146 +5,170 @@ import type { ApiPromise } from '@polkadot/api';
 import type { SignerOptions } from '@polkadot/api/submittable/types';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { KeyringPair } from '@polkadot/keyring/types';
-import type { AccountId } from '@polkadot/types/interfaces';
+import type { Vec } from '@polkadot/types';
+import type { SignedBlock } from '@polkadot/types/interfaces';
+// @ts-ignore
+import type { FrameSystemEventRecord } from '@polkadot/types/lookup';
 import type { ExtrinsicPayloadValue, ISubmittableResult } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 import type { TxResult } from '../types';
 
+async function getAppliedFee (api: ApiPromise, signedBlock: SignedBlock, txHashHex: HexString): Promise<string | undefined> {
+  const apiAt = await api.at(signedBlock.block.hash);
+  const allEvents = await apiAt.query['system']['events']() as Vec<FrameSystemEventRecord>;
+
+  let fee: string | undefined;
+
+  try {
+    const txIndex = signedBlock.block.extrinsics.findIndex((ex) => ex.hash.toHex() === txHashHex);
+
+    if (txIndex >= 0) {
+      allEvents
+        .filter(({ phase }) => phase.isApplyExtrinsic && phase.asApplyExtrinsic.eq(txIndex))
+        .forEach(({ event }) => {
+          if (event.section === 'transactionPayment' && event.method === 'TransactionFeePaid') {
+            fee = event.data[1].toString();
+          }
+        });
+    }
+  } catch (e) {
+    console.log('Something went wrong while getting actual paid fee:', e);
+
+    return fee;
+  }
+
+  return fee;
+}
+
+export async function handleResult (
+  api: ApiPromise,
+  resolve: (value: TxResult | PromiseLike<TxResult>) => void,
+  result: ISubmittableResult
+): Promise<void> {
+  let success = true;
+  let failureText = '';
+  const event = new CustomEvent('transactionState', { detail: result.status.type });
+
+  window.dispatchEvent(event);
+  console.log('📝 Result:', result);
+
+  try {
+    if (result.dispatchError) {
+      if (result.dispatchError.isModule) {
+        // for module errors, we have the section indexed, lookup
+        const decoded = api.registry.findMetaError(result.dispatchError.asModule);
+        const { docs, name, section } = decoded;
+
+        success = false;
+        failureText = `${docs.join(' ')}`;
+
+        console.log(`dispatchError module: ${section}.${name}: ${docs.join(' ')}`);
+      } else {
+        success = false;
+        failureText = `${result.dispatchError.toString()}`;
+      }
+    }
+  } catch (error) {
+    success = false;
+    const maybeErrorText = result?.dispatchError?.toString() || 'unknown error';
+
+    failureText = `${maybeErrorText}`;
+    console.error(error);
+  }
+
+  try {
+    const { isCompleted, isError, status, txHash } = result;
+    const { isDropped, isFinalityTimeout, isFinalized, isInBlock, isInvalid, isUsurped, type } = status;
+
+    if (isFinalized || isInBlock) {
+      const hash = isFinalized ? result.status.asFinalized : result.status.asInBlock;
+
+      const signedBlock = await api.rpc.chain.getBlock(hash);
+      const blockNumber = signedBlock.block.header.number;
+
+      const fee = await getAppliedFee(api, signedBlock, txHash.toHex());
+
+      resolve({ block: Number(blockNumber), failureText, fee, success, txHash: txHash.toString() });
+
+      return;
+    }
+
+    if (isCompleted && isError) {
+      resolve({ block: 0, failureText: failureText || `unknown error (${type})`, fee: '', success: false, txHash: '' });
+
+      return;
+    }
+
+    if (isInvalid || isDropped || isUsurped || isFinalityTimeout) {
+      resolve({ block: 0, failureText: failureText || status.type, fee: '', success: false, txHash: txHash?.toString() || '' });
+    }
+  } catch (e) {
+    failureText = e instanceof Error ? e.message : String(e);
+
+    console.log('❌ Dispatch error', failureText);
+    resolve({ block: 0, failureText, fee: '', success: false, txHash: '' });
+  }
+}
+
 export async function signAndSend (
   api: ApiPromise,
-  submittable: SubmittableExtrinsic<'promise', ISubmittableResult>,
-  _signer: KeyringPair,
-  sender: string,
+  extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
+  pair: KeyringPair,
   options?: Partial<SignerOptions>
 ): Promise<TxResult> {
   return new Promise((resolve) => {
-    console.log('signing and sending a tx ...', sender);
+    console.log('signing and sending a tx ...');
 
-    // eslint-disable-next-line no-void
-    void submittable.signAndSend(_signer, options ?? {}, async (result) => {
-      let success = true;
-      let failureText = '';
-      const parsedRes = JSON.parse(JSON.stringify(result));
-      const event = new CustomEvent('transactionState', { detail: parsedRes.status });
-
-      window.dispatchEvent(event);
-      console.log(parsedRes);
-
-      try {
-        if (result.dispatchError) {
-          if (result.dispatchError.isModule) {
-            // for module errors, we have the section indexed, lookup
-            const decoded = api.registry.findMetaError(result.dispatchError.asModule);
-            const { docs, name, section } = decoded;
-
-            success = false;
-            failureText = `${docs.join(' ')}`;
-
-            console.log(`dispatchError module: ${section}.${name}: ${docs.join(' ')}`);
-          } else {
-            success = false;
-            failureText = `${result.dispatchError.toString()}`;
-          }
-        }
-      } catch (error) {
-        success = false;
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const maybeErrorText = result?.dispatchError?.toString() || 'unknown error';
-
-        failureText = `${maybeErrorText}`;
-        console.log(error);
-      }
-
-      try {
-        if (result.status.isFinalized || result.status.isInBlock) {
-          console.log('Tx. Status: ', result.status);
-          const hash = result.status.isFinalized ? result.status.asFinalized : result.status.asInBlock;
-
-          const signedBlock = await api.rpc.chain.getBlock(hash);
-          const blockNumber = signedBlock.block.header.number;
-          const txHash = result.txHash.toString();
-
-          // FIXME: Do we need to get applied fee from blockchain
-          // search for the hash of the extrinsic in the block
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          // signedBlock.block.extrinsics.forEach(async (ex) => {
-          //   if (ex.isSigned) {
-          //     if (String(ex.signer) == senderAddress) {
-          /** since the api is replaced hence needs more effort to calculate the */
-          // const queryInfo = await api.call.transactionPaymentApi.queryInfo(ex.toHex(), signedBlock.block.hash);
-
-          const fee = undefined; // queryInfo.partialFee.toString();
-
-          resolve({ block: Number(blockNumber), failureText, fee, success, txHash });
-          //     }
-          //   }
-          // });
-        }
-      } catch (e) {
-        resolve({ block: 0, failureText: String(e), fee: '', success: false, txHash: '' });
-      }
+    extrinsic.signAndSend(pair, options ?? {}, async (result) => {
+      await handleResult(api, resolve, result);
     }).catch((e) => {
-      console.log('catch error', e);
+      console.log('⚠️ Catch error', e);
       resolve({ block: 0, failureText: String(e), fee: '', success: false, txHash: '' });
     });
   });
 }
 
 export async function send (
-  from: string | AccountId,
+  from: string,
   api: ApiPromise,
-  ptx: SubmittableExtrinsic<'promise', ISubmittableResult>,
+  extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
   payload: Uint8Array | ExtrinsicPayloadValue | HexString,
   signature: HexString
 ): Promise<TxResult> {
   return new Promise((resolve) => {
     console.log('sending the transaction ...');
 
-    ptx.addSignature(from, signature, payload);
+    extrinsic.addSignature(from, signature, payload);
 
-    // eslint-disable-next-line no-void
-    void ptx.send(async (result) => {
-      let success = true;
-      let failureText = '';
-      const parsedRes = JSON.parse(JSON.stringify(result));
-      const event = new CustomEvent('transactionState', { detail: parsedRes.status });
+    let unsub: (() => void) | undefined;
 
-      window.dispatchEvent(event);
-      console.log(parsedRes);
+    const onResult = async (result: ISubmittableResult) => {
+      const { status } = result;
 
-      if (result.dispatchError) {
-        if (result.dispatchError.isModule) {
-          // for module errors, we have the section indexed, lookup
-          const decoded = api.registry.findMetaError(result.dispatchError.asModule);
-          const { docs, name, section } = decoded;
+      await handleResult(api, resolve, result);
 
-          success = false;
-          failureText = `${docs.join(' ')}`;
-
-          console.log(`dispatchError module: ${section}.${name}: ${docs.join(' ')}`);
-        } else {
-          // Other, CannotLookup, BadOrigin, no extra info
-          console.log(`dispatchError other reason: ${result.dispatchError.toString()}`);
-        }
+      if (
+        status.isInBlock ||
+        status.isFinalized ||
+        status.isInvalid ||
+        status.isDropped ||
+        status.isUsurped ||
+        // status.isRetracted ||
+        status.isFinalityTimeout
+      ) {
+        unsub?.();
       }
+    };
 
-      if (result.status.isFinalized || result.status.isInBlock) {
-        console.log('Tx. Status: ', result.status);
-        const hash = result.status.isFinalized ? result.status.asFinalized : result.status.asInBlock;
+    const rebuiltExtrinsic = api.tx(extrinsic.toHex());
 
-        const signedBlock = await api.rpc.chain.getBlock(hash);
-        const blockNumber = signedBlock.block.header.number;
-        const txHash = result.txHash.toString();
-
-        const fee = undefined;
-
-        resolve({ block: Number(blockNumber), failureText, fee, success, txHash });
-      }
-    }).catch((e: unknown) => {
-      const errorMessage = e instanceof Error ? e.message : String(e);
-
-      console.log('catch error', errorMessage);
-      resolve({ block: 0, failureText: errorMessage, fee: '', success: false, txHash: '' });
-    });
+    rebuiltExtrinsic.send(onResult)
+      .then((u) => {
+        unsub = u;
+      })
+      .catch((e) => {
+        console.log('⚠️ Catch error', e);
+        resolve({ block: 0, failureText: String(e), fee: '', success: false, txHash: '' });
+      });
   });
 }

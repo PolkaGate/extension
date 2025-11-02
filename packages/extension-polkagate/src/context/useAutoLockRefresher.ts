@@ -1,0 +1,59 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import { useEffect } from 'react';
+
+import { useAutoLockPeriod } from '@polkadot/extension-polkagate/src/hooks';
+import { setUnlockExpiry } from '@polkadot/extension-polkagate/src/messaging';
+
+function throttle<F extends (...args: unknown[]) => void>(func: F, limit: number) {
+  let inThrottle = false;
+
+  return (...args: Parameters<F>) => {
+    if (!inThrottle) {
+      func(...args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
+}
+
+const AUTO_LOCK_THROTTLE_INTERVAL_MS = 10_000;
+
+/**
+ * React hook that automatically refreshes the unlock expiry time
+ * to prevent the extension from auto-locking while the user is active.
+ *
+ * It listens for common user interaction events (e.g. mouse movement, key press)
+ * and periodically updates the unlock expiry via messaging to the background script.
+ *
+ * @remarks
+ * The expiry refresh is throttled to avoid excessive messaging.
+ *
+ * @example
+ * // Automatically refresh lock expiry based on user activity
+ * useAutoLockRefresher();
+ *
+ * @see {@link useAutoLockPeriod} for retrieving the configured auto-lock duration.
+ */
+export default function useAutoLockRefresher (isLocked: boolean) {
+  const autoLockPeriod = useAutoLockPeriod();
+
+ useEffect(() => {
+    if (!autoLockPeriod || isLocked) {
+      return;
+    }
+
+    const sendExpiry = throttle(() => {
+      setUnlockExpiry(Date.now() + autoLockPeriod).catch(console.error);
+    }, AUTO_LOCK_THROTTLE_INTERVAL_MS);
+
+    const events = ['mousemove', 'keydown', 'mousedown', 'touchstart'] as const;
+
+    events.forEach((e) => window.addEventListener(e, sendExpiry));
+
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, sendExpiry));
+    };
+  }, [autoLockPeriod, isLocked]);
+}

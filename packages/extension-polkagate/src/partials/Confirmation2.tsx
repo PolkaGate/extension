@@ -8,10 +8,10 @@ import { Container, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import Subscan from '../assets/icons/Subscan';
-import { ActionButton, FormatBalance2, NeonButton } from '../components';
+import { ActionButton, DisplayBalance, NeonButton } from '../components';
 import { useChainInfo, useIsBlueish, useTranslation } from '../hooks';
 import FailSuccessIcon from '../popup/history/partials/FailSuccessIcon';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
@@ -108,18 +108,14 @@ const ConfirmationDetail = ({ genesisHash, transactionDetail }: SubProps) => {
                       ? toShortAddress(String(content), 6)
                       : (isFee || isAmount)
                         ? (
-                          <FormatBalance2
-                            decimalPoint={4}
-                            decimals={[decimal ?? 0]}
+                          <DisplayBalance
+                            balance={content as string}
+                            decimal={decimal}
                             style={{
                               color: theme.palette.text.highlight,
-                              fontFamily: 'Inter',
-                              fontSize: '13px',
-                              fontWeight: 500,
                               width: 'max-content'
                             }}
-                            tokens={[token ?? '']}
-                            value={content as string}
+                            token={token}
                           />)
                         : content as string
                   }
@@ -139,9 +135,10 @@ interface Props {
   transactionDetail: TransactionDetail;
   genesisHash: string | undefined;
   close?: () => void
+  noStakingHomeButton?: boolean;
 }
 
-export default function Confirmation2 ({ address, close, genesisHash, transactionDetail }: Props) {
+export default function Confirmation2 ({ address, close, genesisHash, noStakingHomeButton = false, transactionDetail }: Props) {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
   const navigate = useNavigate();
@@ -172,7 +169,7 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
   }, [genesisHash, pathname, transactionDetail.extra]);
 
   const goToHistory = useCallback(() => {
-    updateStorage(ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE, { [address]: genesisHash })
+    updateStorage(STORAGE_KEY.ACCOUNT_SELECTED_CHAIN, { [address]: genesisHash })
       .finally(() => navigate('/history') as void)
       .catch(console.error);
   }, [address, genesisHash, navigate]);
@@ -204,17 +201,18 @@ export default function Confirmation2 ({ address, close, genesisHash, transactio
           }}
           text={t('History')}
         />
-        <ActionButton
-          contentPlacement='center'
-          isBlueish
-          onClick={backToStakingHome}
-          style={{
-            height: '44px',
-            width: '345px'
-          }}
-          text={t('Staking Home')}
-          variant='text'
-        />
+        {!noStakingHomeButton &&
+          <ActionButton
+            contentPlacement='center'
+            isBlueish
+            onClick={backToStakingHome}
+            style={{
+              height: '44px',
+              width: '345px'
+            }}
+            text={t('Staking Home')}
+            variant='text'
+          />}
         <StakingActionButton
           onClick={goToExplorer}
           startIcon={

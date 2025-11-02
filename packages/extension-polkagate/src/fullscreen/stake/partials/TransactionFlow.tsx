@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SxProps, Theme } from '@mui/material';
 import type { SubmittableExtrinsic } from '@polkadot/api-base/types/submittable';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { FullScreenTransactionFlow } from '../../../fullscreen/stake/util/utils';
@@ -10,7 +11,7 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useTransactionData } from '../../../hooks';
-import { WaitScreen2 } from '../../../partials';
+import { WaitScreen } from '../../../partials';
 import Review, { type Content } from '../../../partials/Review';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../../../util/constants';
 import Confirmation from './StakingConfirmation';
@@ -33,9 +34,10 @@ interface Props {
   transactionInformation: Content[];
   extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
   reviewHeader?: React.ReactNode;
+  reviewStyle?: SxProps<Theme>;
 }
 
-function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, flowStep, genesisHash, onClose, pool, proxyTypeFilter, reviewHeader, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
+function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, flowStep, genesisHash, onClose, pool, proxyTypeFilter, reviewHeader, reviewStyle, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
   const navigate = useNavigate();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
 
@@ -59,13 +61,14 @@ function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, f
           setTxInfo={setTxInfo}
           showAccountBox={showAccountBox}
           showProxySelection={showProxySelection}
+          style={reviewStyle}
           transaction={transaction}
           transactionInformation={txInformation}
         />
       }
       {
         flowStep === TRANSACTION_FLOW_STEPS.WAIT_SCREEN &&
-        <WaitScreen2 />
+        <WaitScreen />
       }
       {
         flowStep === TRANSACTION_FLOW_STEPS.CONFIRMATION && transactionDetail &&

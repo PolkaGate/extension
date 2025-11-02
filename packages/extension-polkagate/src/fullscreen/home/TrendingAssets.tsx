@@ -7,14 +7,15 @@ import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Grid, Stack, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { AlignBottom } from 'iconsax-react';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import DailyChange from '@polkadot/extension-polkagate/src/popup/home/partial/DailyChange';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
-import { AssetLogo, FadeOnScrollHorizontal } from '../../components';
-import { useCurrency, usePrices, useTranslation } from '../../hooks';
+import { AssetLogo, CurrencyContext, FadeOnScrollHorizontal } from '../../components';
+import { usePrices, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
+import TokenChart from '../components/LineChart';
 
 const ASSET_IN_A_ROW = 4;
 
@@ -55,10 +56,14 @@ function Move ({ direction, max, setMove }: { direction: Direction, max?: number
   );
 }
 
-const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue }>(({ asset }, ref) => {
-  const currency = useCurrency();
+const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue, onClick: React.Dispatch<React.SetStateAction<string | undefined>> }>(({ asset, onClick }, ref) => {
+  const { currency } = useContext(CurrencyContext);
 
   const [hoveredIndex, setHoveredIndex] = useState<boolean>(false);
+
+  const _onClick = useCallback(() => {
+    onClick(asset.symbol);
+  }, [asset.symbol, onClick]);
 
   const onMouseEnter = useCallback(() => {
     setHoveredIndex(true);
@@ -73,12 +78,14 @@ const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue }>(({ asset }
   return (
     <Stack
       direction='column'
+      onClick={_onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       ref={ref}
       sx={{
         bgcolor: hoveredIndex ? '#2D1E4A' : '#05091C',
         borderRadius: '14px',
+        cursor: 'pointer',
         minWidth: '122px',
         mr: '5px',
         p: '15px',
@@ -114,11 +121,20 @@ Asset.displayName = 'Asset';
 function TrendingAssets (): React.ReactElement {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices();
+  const { currency } = useContext(CurrencyContext);
+
   const cardRefs = useRef<HTMLDivElement[]>([]);
   const refContainer = useRef<HTMLDivElement>(null);
 
   const [cardWidths, setCardWidths] = useState<number[]>([]);
   const [indexMove, setMove] = useState(0);
+  const [chartToken, setChartToken] = useState<string>();
+
+  const chartPriceId = useMemo(() => {
+    const found = pricesInCurrencies?.prices && Object.entries(pricesInCurrencies?.prices).find(([, info]) => info.symbol === chartToken);
+
+    return found?.[0];
+  }, [chartToken, pricesInCurrencies?.prices]);
 
   const trendingAssets = useMemo(() => {
     const prices = pricesInCurrencies?.prices;
@@ -165,6 +181,7 @@ function TrendingAssets (): React.ReactElement {
                 <Asset
                   asset={asset}
                   key={index}
+                  onClick={setChartToken}
                   // eslint-disable-next-line react/jsx-no-bind
                   ref={(el) => {
                     if (el) {
@@ -177,6 +194,13 @@ function TrendingAssets (): React.ReactElement {
         </motion.div>
         <FadeOnScrollHorizontal containerRef={refContainer} style={{ height: refContainer.current?.offsetHeight }} width='130px' />
       </Stack>
+      {chartPriceId && currency?.code &&
+        <TokenChart
+          coinId={chartPriceId}
+          onClose={setChartToken}
+          // vsCurrency={currency.code} no clue why does not work
+        />
+      }
     </VelvetBox>
   );
 }

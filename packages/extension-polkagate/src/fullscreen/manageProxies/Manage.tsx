@@ -10,10 +10,9 @@ import { Stack, Typography } from '@mui/material';
 import { AddCircle, Firstline } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { FLOATING_POINT_DIGIT } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ZERO } from '@polkadot/util';
 
-import { ChainLogo, GradientButton, ShowBalance, ShowBalance4 } from '../../components';
+import { ChainLogo, DisplayBalance, GradientButton } from '../../components';
 import { useTranslation } from '../../hooks';
 import { SelectionStatus } from '../stake/partials/FooterControls';
 import ProxyList from './components/ProxyList';
@@ -134,29 +133,24 @@ export default function Manage ({ api, chain, decimal, depositedValue, isDisable
             {t('Deposit')}
           </Typography>
           <ChainLogo genesisHash={chain?.genesisHash} size={18} />
-          <Typography color='#EAEBF1' variant='B-1'>
-            {decimal && token &&
-              <ShowBalance4
-                balance={proxyItems === undefined ? undefined : depositedValue ?? newDepositValue ?? BN_ZERO}
-                decimalPoint={FLOATING_POINT_DIGIT}
-                genesisHash={chain?.genesisHash}
-                skeletonStyle={{ backgroundColor: '#946CC840' }}
-              />}
-          </Typography>
+          <DisplayBalance
+            balance={proxyItems === undefined ? undefined : depositedValue ?? newDepositValue ?? BN_ZERO}
+            decimal={decimal}
+            skeletonStyle={{ backgroundColor: '#946CC840' }}
+            style={{ color: '#EAEBF1' }}
+            token={token}
+          />
           {newDepositValue && depositedValue &&
             <Stack columnGap='3px' direction='row' sx={{ bgcolor: '#C6AECC26', borderRadius: '10px', px: '5px' }}>
               <Typography color='primary.main' variant='B-1'>
                 {newDepositValue && !newDepositValue.isZero() && (newDepositValue.gt(depositedValue) ? '+' : '-')}
               </Typography>
-              <Typography color='primary.main' variant='B-1'>
-                <ShowBalance
-                  balance={newDepositValue && newDepositValue.isZero() ? BN_ZERO : newDepositValue.sub(depositedValue).abs()}
-                  decimal={decimal}
-                  decimalPoint={4}
-                  height={22}
-                  token={token}
-                />
-              </Typography>
+              <DisplayBalance
+                balance={newDepositValue && newDepositValue.isZero() ? BN_ZERO : newDepositValue.sub(depositedValue).abs()}
+                decimal={decimal}
+                style={{ color: 'primary.main' }}
+                token={token}
+              />
             </Stack>
           }
         </Stack>

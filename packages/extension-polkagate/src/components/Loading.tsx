@@ -1,18 +1,16 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
-import { useAutoLockPeriod } from '../hooks';
+import { useIsFlying, useLocalAccounts } from '../hooks';
 import useIsExtensionPopup from '../hooks/useIsExtensionPopup';
+import useIsForgotten from '../hooks/useIsForgotten';
 import { STEPS } from '../popup/passwordManagement/constants';
-import FirstTimeSetPassword from '../popup/passwordManagement/FirstTimeSetPassword';
 import ForgotPassword from '../popup/passwordManagement/ForgotPassword';
 import Login from '../popup/passwordManagement/Login';
-import { LOGIN_STATUS, type LoginInfo } from '../popup/passwordManagement/types';
-import { ALLOWED_URL_ON_RESET_PASSWORD, MAYBE_LATER_PERIOD, STORAGE_KEY } from '../util/constants';
+import { ALLOWED_URL_ON_RESET_PASSWORD } from '../util/constants';
 import FlyingLogo from './FlyingLogo';
 
 interface Props {
@@ -86,150 +84,37 @@ export const setStorage = (label: string, data: unknown, stringify = false) => {
   });
 };
 
-const MAX_WAITING_TIME = 1500; // ms
-
 export default function Loading ({ children }: Props): React.ReactElement<Props> {
-  const autoLockPeriod = useAutoLockPeriod();
   const isExtension = useIsExtensionPopup();
+  const isFlying = useIsFlying();
+  const { isExtensionLocked } = useExtensionLockContext();
+  const localAccounts = useLocalAccounts();
+  const isForgotten = useIsForgotten();
 
-  const { isExtensionLocked, setExtensionLock } = useExtensionLockContext();
-  const [isFlying, setIsFlying] = useState(true);
   const [step, setStep] = useState<number>();
 
   useEffect(() => {
-    const loadingTimeout = setTimeout(() => {
-      setIsFlying(false);
-    }, MAX_WAITING_TIME);
-
-    return () => {
-      clearTimeout(loadingTimeout);
-    };
-  }, []);
-
-  useEffect(() => {
-    !isExtension && setIsFlying(false);
-  }, [isExtension]);
-
-  useEffect(() => {
-    const handleInitLoginInfo = async () => {
-      if (autoLockPeriod === undefined) {
-        return;
-      }
-
-      const info = await getStorage(STORAGE_KEY.LOGIN_IFO) as LoginInfo;
-
-      if (!info?.status) {
-        /** To not asking for password setting for the onboarding time */
-        setStorage(STORAGE_KEY.LOGIN_IFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.MAYBE_LATER }).catch(console.error);
-
-        return setExtensionLock(false);
-      }
-
-      if (info?.status === LOGIN_STATUS.RESET) {
-        return setStep(STEPS.ASK_TO_SET_PASSWORD);
-      }
-
-      if (info.status === LOGIN_STATUS.MAYBE_LATER) {
-        if (info.lastLoginTime && Date.now() > (info.lastLoginTime + MAYBE_LATER_PERIOD)) {
-          setStep(STEPS.ASK_TO_SET_PASSWORD);
-        } else {
-          setStep(STEPS.MAYBE_LATER);
-          setExtensionLock(false);
-        }
-
-        return;
-      }
-
-      if (info.status === LOGIN_STATUS.NO_LOGIN) {
-        setStep(STEPS.NO_LOGIN);
-
-        return setExtensionLock(false);
-      }
-
-      if (info.status === LOGIN_STATUS.JUST_SET) {
-        return setStep(STEPS.SHOW_LOGIN);
-      }
-
-      if (info.status === LOGIN_STATUS.SET) {
-        const isLoginPeriodExpired = info.lastLoginTime && (Date.now() > (info.lastLoginTime + autoLockPeriod));
-
-        if (isLoginPeriodExpired) {
-          setStep(STEPS.SHOW_LOGIN);
-        } else {
-          setStep(STEPS.IN_NO_LOGIN_PERIOD);
-          setExtensionLock(false);
-        }
-
-        return;
-      }
-
-      if (info.status === LOGIN_STATUS.FORGOT) {
-        setStep(STEPS.SHOW_LOGIN);
-      }
-    };
-
-    handleInitLoginInfo().catch(console.error);
-  }, [autoLockPeriod, setExtensionLock]);
-
-  useEffect(() => {
-    if (step === STEPS.IN_NO_LOGIN_PERIOD && isExtensionLocked) {
-      // The extension has been locked by the user through the settings menu.
+    if (isExtensionLocked) {
       setStep(STEPS.SHOW_LOGIN);
     }
-  }, [isExtensionLocked, step]);
+  }, [isExtensionLocked]);
 
-  const showLoginPage = useMemo(() => {
-    const extensionUrl = window.location.hash.replace('#', '');
+  const isResettingWallet = isForgotten?.status || ALLOWED_URL_ON_RESET_PASSWORD.includes(window.location.hash.replace('#', ''));
 
-    const condition = isExtensionLocked || !children || isFlying;
+  const requiresAuthentication = useMemo(() =>
+    !isResettingWallet &&
+    ((isExtensionLocked && !!localAccounts?.length) || !children || (isFlying && isExtension))
+    , [isExtensionLocked, localAccounts?.length, children, isFlying, isExtension, isResettingWallet]);
 
-    return isExtension
-      ? condition
-      : step === STEPS.SHOW_LOGIN && ALLOWED_URL_ON_RESET_PASSWORD.includes(extensionUrl)
-        ? false
-        : condition;
-  }, [children, isExtensionLocked, isFlying, isExtension, step]);
+  if (!requiresAuthentication) {
+    return <>{children}</>;
+  }
 
-  return (
-    <>
-      {
-        showLoginPage
-          ? <Grid container item>
-            {
-              step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION &&
-              <ForgotPassword
-                setStep={setStep}
-              />
-            }
-            <Grid container item>
-              {
-                isFlying && isExtension
-                  ? <FlyingLogo />
-                  : <>
-                    {
-                      step === STEPS.ASK_TO_SET_PASSWORD &&
-                      <FirstTimeSetPassword
-                        setStep={setStep}
-                      />
-                    }
-                    {
-                      step === STEPS.SET_PASSWORD &&
-                      <FirstTimeSetPassword
-                        setStep={setStep}
-                      />
-                    }
-                    {
-                      step !== undefined && [STEPS.SHOW_LOGIN].includes(step) &&
-                      <Login
-                        setStep={setStep}
-                      />
-                    }
-                  </>
-              }
-            </Grid>
-          </Grid>
-          : children
-      }
-    </>
-  );
+  if (isFlying && isExtension) {
+    return <FlyingLogo />;
+  }
+
+  return step === STEPS.SHOW_DELETE_ACCOUNT_CONFIRMATION
+    ? <ForgotPassword setStep={setStep} />
+    : <Login setStep={setStep} />;
 }

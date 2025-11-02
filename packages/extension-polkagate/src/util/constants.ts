@@ -37,7 +37,7 @@ export const MAX_HISTORY_RECORD_TO_SHOW = 40;
 export const MAX_AMOUNT_LENGTH = 15;
 export const TIME_TO_SHAKE_ICON = 5000;// msec
 
-export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
+export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'KusamaAssetHub', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
 export const TOKENS_WITH_BLACK_LOGO = ['BILL', 'BILLCOIN', 'CFG', 'INTR', 'KSM', 'PEN', 'ZTG'];
 export const CHAINS_ON_POLKAHOLIC = ['Pendulum', 'Pendulum chain', 'Amplitude', 'Amplitude chain'];
 export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet', 'Stafi', 'Peaq Network', 'Genshiro Network'];
@@ -106,7 +106,7 @@ export const GOVERNANCE_CHAINS = [
   'interlay',
   'centrifuge',
   'phala',
-  'basilik'
+  'basilisk'
 ];
 
 export const SOCIAL_RECOVERY_CHAINS = [
@@ -121,10 +121,7 @@ export const NFT_CHAINS = [
 
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
-  POLKADOT_GENESIS_HASH,
-  KUSAMA_GENESIS_HASH,
-  WESTMINT_GENESIS_HASH,
-  PASEO_ASSET_HUB_GENESIS_HASH
+  ...ASSET_HUBS
 ];
 
 export const PEOPLE_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'PolkadotPeople', 'KusamaPeople', 'WestendPeople'];
@@ -230,12 +227,18 @@ export const REGISTRARS_LIST: { addresses: string[]; index: number; name: string
 ];
 
 /** Login Password constants */
-export const AUTO_LOCK_PERIOD_DEFAULT = 30;
-export const NO_PASS_PERIOD = AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000; // in ms, the duration of time we do not ask user for password after a successful login
-export const MAYBE_LATER_PERIOD = 0; // 5 * 60 * 1000; // ms
+export const AUTO_LOCK_PERIOD_DEFAULT = 15; // minutes
+export const ENDPOINT_TIMEOUT = AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000; // in ms, the duration of time where selected endpoints may remain valid
 
 export const FULLSCREEN_WIDTH = '900px';
-export const ALLOWED_URL_ON_RESET_PASSWORD = ['/account/restore-json', '/account/import-seed', '/account/import-raw-seed', '/forgot-password', '/reset-wallet'];
+export const ALLOWED_URL_ON_RESET_PASSWORD = [
+  '/account/restore-json',
+  '/account/import-seed',
+  '/account/import-raw-seed',
+  '/forgot-password',
+  '/reset-wallet',
+  '/migratePasswords'
+];
 
 type ProxyTypeIndex = 'GENERAL' | 'GOVERNANCE' | 'NOMINATION_POOLS' | 'SEND_FUND' | 'STAKING';
 
@@ -271,6 +274,13 @@ export const AUTO_MODE = {
   value: 'AutoMode'
 };
 
+export const AUTO_MODE_DEFAULT_ENDPOINT = {
+  checkForNewOne: false,
+  endpoint: AUTO_MODE.value,
+  isAuto: true,
+  timestamp: Date.now()
+};
+
 export const KODADOT_URL = 'https://kodadot.xyz';
 
 export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
@@ -303,27 +313,30 @@ export type TransactionFlowStep = typeof TRANSACTION_FLOW_STEPS[keyof typeof TRA
 
 export const DEFAULT_ACCOUNT_ICON_THEME = 'polkasoul';
 
-// data names in local storage
-export const ICON_THEME_NAME_IN_STORAGE = 'identiconType';
-export const SELECTED_ACCOUNT_IN_STORAGE = 'selectedAccount';
-export const SELECTED_PROFILE_NAME_IN_STORAGE = 'profile';
-export const ACCOUNT_SELECTED_CHAIN_NAME_IN_STORAGE = 'accountSelectedChain';
-
 export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000; // 2 minutes
 
 export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 
 export const STORAGE_KEY = {
-  ASSETS: 'migrated-assets',
+  ACCOUNT_SELECTED_CHAIN: 'accountSelectedChain',
+  ASSETS: 'migratedAssets',
+  AUTO_LOCK: 'autoLock',
+  CURRENCY: 'currency',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   HISTORY: 'history',
+  ICON_THEME: 'identiconType',
   IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN: 'accountsMigratedToAnyChain',
-  LOGIN_IFO: 'loginInfo',
+  IS_FORGOTTEN: 'isForgotten',
+  IS_PASSWORD_MIGRATED: 'passwordMigrated',
+  LAST_PASS_CHANGE: 'lastPasswordChange',
+  LOGIN_INFO: 'loginInfo',
   MY_POOL: 'MyPool',
+  PRICE_IN_CURRENCIES: 'pricesInCurrencies',
   SELECTED_ACCOUNT: 'selectedAccount',
   SELECTED_CHAINS: 'selectedChains',
   SELECTED_PROFILE: 'profile',
   TEST_NET_ENABLED: 'testnet_enabled',
+  USER_ADDED_ENDPOINT: 'userAddedEndpoint',
   VALIDATORS_INFO: 'validatorsInfo',
 };
 
@@ -334,3 +347,5 @@ export const FETCHING_ASSETS_FUNCTION_NAMES = {
   MULTI_ASSET: 'getAssetOnMultiAssetChain',
   RELAY: 'getAssetOnRelayChain'
 };
+
+export const PROCESSING_TITLE = 'Processing';

@@ -6,14 +6,14 @@ import type { FeeInfo } from '../sendFund/types';
 
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/partials/FailSuccessIcon';
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
 import { subscan } from '../../assets/icons';
-import { ActionButton, FormatBalance2, GradientButton, Identity2, NeonButton } from '../../components';
-import { useChainInfo, useCurrency, useIsBlueish, useTokenPriceBySymbol, useTranslation } from '../../hooks';
+import { ActionButton, CurrencyContext, DisplayBalance, GradientButton, Identity2, NeonButton } from '../../components';
+import { useChainInfo, useIsBlueish, useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import StakingActionButton from '../../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../../style';
 import { amountToHuman, countDecimalPlaces, getSubscanChainName, isValidAddress, toShortAddress, toTitleCase } from '../../util';
@@ -36,7 +36,7 @@ interface AmountProps {
 const Amount = ({ amount, assetDecimal, genesisHash, token }: AmountProps) => {
   const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
-  const currency = useCurrency();
+  const { currency } = useContext(CurrencyContext);
 
   const _decimal = assetDecimal ?? nativeAssetDecimal;
   const _token = token ?? nativeToken;
@@ -132,7 +132,6 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
                     genesisHash={genesisHash}
                     nameStyle={{ paddingBottom: '7px', textAlign: 'center' }}
                     noIdenticon
-                    showShortAddress
                     style={{ maxWidth: '170px', overflow: 'hidden', padding: '10px 0 18px', textOverflow: 'ellipsis', variant: 'B-3' }}
                     withShortAddress
                     />
@@ -228,26 +227,22 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                       ? toShortAddress(String(content), 6)
                       : isBalance
                         ? (
-                          <FormatBalance2
-                            decimalPoint={4}
-                            decimals={[(isFee && typeof content === 'object' && 'decimal' in (content as any)
-                              ? (content as FeeInfo).decimal
-                              : isFee ? nativeAssetDecimal : _decimal) ?? 0]}
-                            style={{
-                              color: isBlueish ? theme.palette.text.highlight : theme.palette.primary.main,
-                              fontFamily: 'Inter',
-                              fontSize: '13px',
-                              fontWeight: 500,
-                              width: 'max-content'
-                            }}
-                            tokens={[(isFee && typeof content === 'object' && 'token' in (content as any)
-                              ? (content as FeeInfo).token
-                              : isFee ? nativeToken : _token) ?? '']}
-                            value={
+                          <DisplayBalance
+                            balance={
                               isFee && typeof content === 'object' && 'fee' in (content as any)
                                 ? (content as FeeInfo).fee
                                 : (content as string)
                             }
+                            decimal={(isFee && typeof content === 'object' && 'decimal' in (content as any)
+                              ? (content as FeeInfo).decimal
+                              : isFee ? nativeAssetDecimal : _decimal) ?? 0}
+                            style={{
+                              color: isBlueish ? theme.palette.text.highlight : theme.palette.primary.main,
+                              width: 'max-content'
+                            }}
+                            token={(isFee && typeof content === 'object' && 'token' in (content as any)
+                              ? (content as FeeInfo).token
+                              : isFee ? nativeToken : _token) ?? ''}
                           />)
                         : isDate
                           ? new Date(content as number).toLocaleString('en-US', { day: 'numeric', hour: 'numeric', hour12: true, minute: '2-digit', month: 'short', second: '2-digit', weekday: 'short', year: 'numeric' })

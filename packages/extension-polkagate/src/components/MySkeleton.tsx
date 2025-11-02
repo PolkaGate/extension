@@ -1,13 +1,13 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Skeleton, type SkeletonProps, useTheme } from '@mui/material';
-import React, { } from 'react';
+import { Skeleton, type SkeletonProps, type SxProps, type Theme, useTheme } from '@mui/material';
+import React from 'react';
 
 interface Props {
   bgcolor?: string;
   height?: number;
-  style?: React.CSSProperties;
+  style?: React.CSSProperties | SxProps<Theme>;
   animation?: SkeletonProps['animation'];
   variant?: SkeletonProps['variant'];
   width?: number;

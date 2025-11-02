@@ -1,5 +1,145 @@
 # Change Log
 
+# [1.16.0](https://github.com/polkagate/extension/compare/v1.15.5...v1.16.0) (2025-11-01)
+
+
+### Features
+
+* add support for migrating polkadot hub ([#1995](https://github.com/polkagate/extension/issues/1995)) ([4dfc70b](https://github.com/polkagate/extension/commit/4dfc70b04af6d59a610ce62b1f2e377aa119a862))
+
+## [1.15.5](https://github.com/polkagate/extension/compare/v1.15.4...v1.15.5) (2025-11-01)
+
+
+### Bug Fixes
+
+* avoid onboarding redirect when extension is locked and accounts are not yet loaded ([#2003](https://github.com/polkagate/extension/issues/2003)) ([3285aa7](https://github.com/polkagate/extension/commit/3285aa752b8cb0df43ef30fc6437595aa04ecf83))
+
+## [1.15.4](https://github.com/polkagate/extension/compare/v1.15.3...v1.15.4) (2025-10-30)
+
+
+### Bug Fixes
+
+* adjust unlocking token release display timing ([35d405b](https://github.com/polkagate/extension/commit/35d405bb3cdcb0c15215a9323716211c12082eea))
+
+## [1.15.3](https://github.com/polkagate/extension/compare/v1.15.2...v1.15.3) (2025-10-30)
+
+
+### Bug Fixes
+
+* correct release dates for unstaking amounts after Hub migration ([#1999](https://github.com/polkagate/extension/issues/1999)) ([7c4094d](https://github.com/polkagate/extension/commit/7c4094d2d54cab8e753a78c280dd6dc0c3cec658)), closes [#2000](https://github.com/polkagate/extension/issues/2000)
+
+## [1.15.2](https://github.com/polkagate/extension/compare/v1.15.1...v1.15.2) (2025-10-28)
+
+
+### Bug Fixes
+
+* update balances correctly when only watch-only accounts are in the extension ([#1991](https://github.com/polkagate/extension/issues/1991)) ([d5c26fa](https://github.com/polkagate/extension/commit/d5c26fae6327d02ae14bd32ba79c06e5b5f879ac))
+
+## [1.15.1](https://github.com/polkagate/extension/compare/v1.15.0...v1.15.1) (2025-10-27)
+
+
+### Bug Fixes
+
+* resolve width issue in extension mode for NoPrivateKeySigningButton ([#1993](https://github.com/polkagate/extension/issues/1993)) ([0210c7c](https://github.com/polkagate/extension/commit/0210c7cc1af462b0f6ee3e55120521e17e006fab))
+
+# [1.15.0](https://github.com/polkagate/extension/compare/v1.14.0...v1.15.0) (2025-10-27)
+
+
+### Features
+
+* add token chart to trending assets section ([#1987](https://github.com/polkagate/extension/issues/1987)) ([2feee91](https://github.com/polkagate/extension/commit/2feee91215d7bc97eee64f4221afc8431c60a73a)), closes [#1989](https://github.com/polkagate/extension/issues/1989)
+
+# [1.14.0](https://github.com/polkagate/extension/compare/v1.13.3...v1.14.0) (2025-10-26)
+
+
+### Features
+
+* add master password ([#1963](https://github.com/polkagate/extension/issues/1963)) ([d15ccfa](https://github.com/polkagate/extension/commit/d15ccfa489ea2152beb7c622ffc5653e31c4c314)), closes [#1969](https://github.com/polkagate/extension/issues/1969) [#1970](https://github.com/polkagate/extension/issues/1970) [#1973](https://github.com/polkagate/extension/issues/1973) [#1977](https://github.com/polkagate/extension/issues/1977) [#1978](https://github.com/polkagate/extension/issues/1978) [#1980](https://github.com/polkagate/extension/issues/1980) [#1982](https://github.com/polkagate/extension/issues/1982) [#1979](https://github.com/polkagate/extension/issues/1979) [#1986](https://github.com/polkagate/extension/issues/1986)
+
+## [1.13.3](https://github.com/polkagate/extension/compare/v1.13.2...v1.13.3) (2025-10-20)
+
+
+### Bug Fixes
+
+* allow hardware accounts to appear on all chains by removing genesisHash binding during creation ([ffa3324](https://github.com/polkagate/extension/commit/ffa3324ee61df3a60328637332b15066406d758d))
+
+## [1.13.2](https://github.com/polkagate/extension/compare/v1.13.1...v1.13.2) (2025-10-19)
+
+
+### Bug Fixes
+
+* add fallback to redirect unmatched routes to home ([#1967](https://github.com/polkagate/extension/issues/1967)) ([e2062a8](https://github.com/polkagate/extension/commit/e2062a8f19d4dd3629d522138917995f180a41e2))
+
+# [1.13.0](https://github.com/polkagate/extension/compare/v1.12.2...v1.13.0) (2025-10-08)
+
+
+### Features
+
+* add Telegram support channel to social links ([4753d85](https://github.com/polkagate/extension/commit/4753d85a484f644e11623cfff1267e16cb6c06d0))
+
+## [1.12.2](https://github.com/polkagate/extension/compare/v1.12.1...v1.12.2) (2025-10-07)
+
+
+### Bug Fixes
+
+* display Fast Unstake button only on chains that support it ([6985706](https://github.com/polkagate/extension/commit/6985706be55f965e5ad8df6d03147f54062bd451))
+
+## [1.12.1](https://github.com/polkagate/extension/compare/v1.12.0...v1.12.1) (2025-10-07)
+
+
+### Bug Fixes
+
+* add workaround to handle missing API endpoints during Kusama partial migration ([#1953](https://github.com/polkagate/extension/issues/1953)) ([8d0d73e](https://github.com/polkagate/extension/commit/8d0d73e61cba989184e0a377731f0ec702a902a0))
+
+# [1.12.0](https://github.com/polkagate/extension/compare/v1.11.3...v1.12.0) (2025-10-07)
+
+
+### Features
+
+* add “Manage Networks” button to account home screen ([a8dce25](https://github.com/polkagate/extension/commit/a8dce25aae624e29a07126b11bc5428cf4ff8fd8))
+
+## [1.11.3](https://github.com/polkagate/extension/compare/v1.11.2...v1.11.3) (2025-10-06)
+
+
+### Bug Fixes
+
+* showing user added endpoints ([#1949](https://github.com/polkagate/extension/issues/1949)) ([752ff4d](https://github.com/polkagate/extension/commit/752ff4dab5cc3eca78b42f97175af90af135ff0b))
+
+## [1.11.2](https://github.com/polkagate/extension/compare/v1.11.1...v1.11.2) (2025-10-06)
+
+
+### Bug Fixes
+
+* handle non-numeric asset IDs in transfer fund flow ([#1944](https://github.com/polkagate/extension/issues/1944)) ([acd9266](https://github.com/polkagate/extension/commit/acd9266abd987a71c39bb0d6dd5e7835e55bf695)), closes [#1943](https://github.com/polkagate/extension/issues/1943)
+
+## [1.11.1](https://github.com/polkagate/extension/compare/v1.11.0...v1.11.1) (2025-10-04)
+
+
+### Bug Fixes
+
+* remove duplicate proxy address when account not found in extension ([61b34a6](https://github.com/polkagate/extension/commit/61b34a668d57ef956edca8f8d497ca9f2ec100a0)), closes [#1926](https://github.com/polkagate/extension/issues/1926)
+
+# [1.11.0](https://github.com/polkagate/extension/compare/v1.10.1...v1.11.0) (2025-10-04)
+
+
+### Features
+
+* add support for migrating Kusama hub ([#1932](https://github.com/polkagate/extension/issues/1932)) ([edb2e3a](https://github.com/polkagate/extension/commit/edb2e3ac5aff4f8d4945287c0aa359845acdb5b3))
+
+## [1.10.1](https://github.com/polkagate/extension/compare/v1.10.0...v1.10.1) (2025-10-04)
+
+
+### Bug Fixes
+
+* handle cross-chain fee calculation issue ([#1928](https://github.com/polkagate/extension/issues/1928)) ([8b06a92](https://github.com/polkagate/extension/commit/8b06a92e8e47f31b1ab0c779b59077e107e0e779))
+
+# [1.10.0](https://github.com/polkagate/extension/compare/v1.9.7...v1.10.0) (2025-09-30)
+
+
+### Features
+
+* add governance unlock feature showing remaining time if not yet unlockable ([13bc064](https://github.com/polkagate/extension/commit/13bc064ba6fb6fd9cd65f2c02c232e2c6448e42a))
+
 ## [1.9.7](https://github.com/polkagate/extension/compare/v1.9.6...v1.9.7) (2025-09-23)
 
 

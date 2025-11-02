@@ -103,7 +103,7 @@ export default function useWorkerAssetListener (
 
         const _assets: Record<string, FetchedBalance[]> = {};
 
-        if (functionName === 'getAssetOnRelayChain') {
+        if (functionName === FETCHING_ASSETS_FUNCTION_NAMES.RELAY) {
           Object.keys(results).forEach((address) => {
             _assets[address] = [
               {

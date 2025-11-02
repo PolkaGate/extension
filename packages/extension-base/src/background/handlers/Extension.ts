@@ -5,12 +5,14 @@ import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { KeyringPair, KeyringPair$Json, KeyringPair$Meta } from '@polkadot/keyring/types';
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
+import type { KeyringAddress } from '@polkadot/ui-keyring/types';
+import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 // added for plus to import RequestUpdateMeta
-import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountsSetUnlockExpiry, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 import type State from './State';
 
-import { ALLOWED_PATH, PASSWORD_EXPIRY_MS, START_WITH_PATH } from '@polkadot/extension-base/defaults';
+import { ALLOWED_PATH, START_WITH_PATH } from '@polkadot/extension-base/defaults';
 import { TypeRegistry } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
 import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
@@ -19,8 +21,6 @@ import { keyExtractSuri, mnemonicGenerate, mnemonicValidate } from '@polkadot/ut
 
 import { withErrorLog } from './helpers';
 import { createSubscription, unsubscribe } from './subscriptions';
-
-type CachedUnlocks = Record<string, number>;
 
 const SEED_DEFAULT_LENGTH = 12;
 const SEED_LENGTHS = [12, 15, 18, 21, 24];
@@ -48,13 +48,61 @@ function isJsonPayload (value: SignerPayloadJSON | SignerPayloadRaw): value is S
 }
 
 export default class Extension {
-  readonly #cachedUnlocks: CachedUnlocks;
+  #unlockExpiry: number | null = null;
+  #expiryTimeout?: ReturnType<typeof setTimeout>;
+  #lockMessageSent = false;
 
   readonly #state: State;
 
   constructor (state: State) {
-    this.#cachedUnlocks = {};
     this.#state = state;
+    this.scheduleExpiryCheck();
+  }
+
+  private notifyLockExpired (): void {
+    chrome.runtime.sendMessage({ type: 'LOCKED_ACCOUNTS_EXPIRED' }).catch(console.error);
+  }
+
+  private scheduleExpiryCheck (): void {
+    const accountsLocal = this.localAccounts();
+
+    if (accountsLocal.length === 0) {
+      return;
+    }
+
+    if (this.#expiryTimeout) {
+      clearTimeout(this.#expiryTimeout);
+    }
+
+    if (!this.#unlockExpiry) {
+      return;
+    }
+
+    const now = Date.now();
+    const delay = Math.max(this.#unlockExpiry - now, 0);
+
+    this.#expiryTimeout = setTimeout(() => {
+      if (!this.#lockMessageSent && this.#unlockExpiry && this.#unlockExpiry <= Date.now()) {
+        this.lockExtension(); // locks accounts immediately
+        this.notifyLockExpired();
+        this.#lockMessageSent = true;
+      }
+    }, delay);
+  }
+
+  private setUnlockExpiry ({ expiryTime }: RequestAccountsSetUnlockExpiry): void {
+    this.#unlockExpiry = expiryTime;
+    this.#lockMessageSent = false;
+    this.scheduleExpiryCheck();
+  }
+
+  private clearUnlockExpiry (): void {
+    this.#unlockExpiry = null;
+    this.#lockMessageSent = false;
+
+    if (this.#expiryTimeout) {
+      clearTimeout(this.#expiryTimeout);
+    }
   }
 
   private applyAddedTime ({ pair }: ApplyAddedTime): void {
@@ -82,26 +130,29 @@ export default class Extension {
   private accountsCreateSuri ({ genesisHash, name, password, suri, type }: RequestAccountCreateSuri): boolean {
     const { pair } = keyring.addUri(getSuri(suri, type), password, { genesisHash, name }, type);
 
+    const unlockedPair = this.unlockPair({ address: pair.address, password });
+
+    assert(unlockedPair, 'Unable to create account');
+
     this.applyAddedTime({ pair });
 
     return true;
   }
 
+  private accountsChangePasswordAll ({ newPass, oldPass }: RequestAccountChangePasswordAll): boolean {
+    const accountsLocal = this.localAccounts();
+
+    const res = accountsLocal.map(({ address }) => {
+      return this.accountsChangePassword({ address, newPass, oldPass });
+    });
+
+    return res.every(Boolean);
+  }
+
   private accountsChangePassword ({ address, newPass, oldPass }: RequestAccountChangePassword): boolean {
-    const pair = keyring.getPair(address);
+    const pair = this.unlockPair({ address, password: oldPass });
 
-    assert(pair, 'Unable to find pair');
-
-    try {
-      if (!pair.isLocked) {
-        pair.lock();
-      }
-
-      pair.decodePkcs8(oldPass);
-    } catch (error) {
-      throw new Error('oldPass is invalid');
-    }
-
+    assert(pair, 'oldPass is invalid');
     keyring.encryptAccount(pair, newPass);
 
     return true;
@@ -131,16 +182,41 @@ export default class Extension {
   }
 
   private lockExtension (): boolean {
+    for (const { address } of this.localAccounts()) {
+      let pair;
+
+      try {
+        pair = keyring.getPair(address);
+      } catch (e) {
+        console.info('SomeThing went wrong to get the pair!', e);
+        continue;
+      }
+
+      if (pair && !pair.isLocked) {
+        pair.lock();
+      }
+    }
+
+    this.clearUnlockExpiry();
+
+    // apply to all open tabs
     const currentDomain = chrome.runtime.getURL('/');
 
     chrome.tabs.query({}, function (tabs) {
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let i = 0; i < tabs.length; i++) {
-        const tabParsedUrl = new URL(tabs[i].url!);
+        const { id, url } = tabs[i];
+
+        if (!url || id === undefined) {
+          continue;
+        }
+
+        const tabParsedUrl = new URL(url);
 
         const tabDomain = `${tabParsedUrl?.protocol}//${tabParsedUrl?.hostname}/`;
 
         if (tabDomain === currentDomain) {
-          chrome.tabs.reload(tabs[i].id!).catch(console.error);
+          withErrorLog(() => chrome.tabs.reload(id));
         }
       }
     });
@@ -164,14 +240,22 @@ export default class Extension {
     return true;
   }
 
-  private refreshAccountPasswordCache (pair: KeyringPair): number {
-    const { address } = pair;
+  private accountsForgetAll (): boolean {
+    const accounts = keyring.getAccounts();
 
-    const savedExpiry = this.#cachedUnlocks[address] || 0;
+    accounts.forEach(({ address }) => {
+      this.accountsForget({ address });
+    });
+
+    return true;
+  }
+
+  private refreshAccountPasswordCache (pair: KeyringPair): number {
+    const savedExpiry = this.#unlockExpiry || 0;
     const remainingTime = savedExpiry - Date.now();
 
     if (remainingTime < 0) {
-      this.#cachedUnlocks[address] = 0;
+      this.clearUnlockExpiry();
       pair.lock();
 
       return 0;
@@ -197,7 +281,7 @@ export default class Extension {
 
     console.warn('NO TIE ANYMORE IN NEW DESIGN, genesisHash:', genesisHash);
 
-    keyring.saveAccountMeta(pair, { ...pair.meta, genesisHash: null }); //NO TIE ANYMORE IN NEW DESIGN
+    keyring.saveAccountMeta(pair, { ...pair.meta, genesisHash: null }); // NO TIE ANYMORE IN NEW DESIGN
 
     return true;
   }
@@ -384,6 +468,85 @@ export default class Extension {
     };
   }
 
+  private localAccounts (): KeyringAddress[] {
+    const accounts = keyring.getAccounts();
+
+    return accounts.filter(({ meta }) => !meta.isExternal);
+  }
+
+  private unlockPair ({ address, password }: { address: string, password: string | undefined }): KeyringPair | null {
+    assert(password, 'Password needed to unlock the account');
+
+    try {
+      const pair = keyring.getPair(address);
+
+      assert(pair, 'Unable to find pair');
+
+      if (!pair.isLocked) {
+        pair.lock();
+      }
+
+      pair.decodePkcs8(password);
+
+      return pair;
+    } catch (error) {
+      console.error('pair unlock failed:', error);
+
+      return null;
+    }
+  }
+
+  private accountsUnlockAll ({ cacheTime, password }: RequestUnlockAllAccounts): boolean {
+    if (!password) {
+      throw new Error('Password needed to unlock the account');
+    }
+
+    try {
+      const accountsLocal = this.localAccounts();
+
+      for (const { address } of accountsLocal) {
+        const unlockedPair = this.unlockPair({ address, password });
+
+        assert(unlockedPair, 'Unable to unlock pair');
+      }
+
+      // Set a single expiry timestamp for all accounts
+      this.setUnlockExpiry({ expiryTime: Date.now() + cacheTime });
+
+      return true;
+    } catch (error) {
+      console.error('accountsUnlockAll failed:', error);
+
+      return false; // return false if any decode fails
+    }
+  }
+
+  private areLocksExpired (): boolean {
+    const accountsLocal = this.localAccounts();
+
+    if (accountsLocal.length === 0) {
+      return false; // no lock when has only external accounts
+    }
+
+    return this.#unlockExpiry === null || this.#unlockExpiry < Date.now();
+  }
+
+  private handleRegistry (payload: SignerPayloadJSON): void {
+    // Get the metadata for the genesisHash
+    const currentMetadata = this.metadataGet(payload.genesisHash);
+
+    // set the registry before calling the sign function
+    const signedExtensions = currentMetadata?.signedExtensions?.length
+      ? currentMetadata.signedExtensions
+      : registry.signedExtensions;
+
+    registry.setSignedExtensions(signedExtensions, currentMetadata?.userExtensions);
+
+    if (currentMetadata) {
+      registry.register(currentMetadata?.types);
+    }
+  }
+
   private signingApprovePassword ({ id, password, remainingTime, savePass }: RequestSigningApprovePassword): boolean {
     const queued = this.#state.getSignRequest(id);
 
@@ -391,11 +554,6 @@ export default class Extension {
 
     const { reject, request, resolve } = queued;
     const pair = keyring.getPair(queued.account.address);
-
-    // unlike queued.account.address the following
-    // address is encoded with the default prefix
-    // which what is used for password caching mapping
-    const { address } = pair;
 
     if (!pair) {
       reject(new Error('Unable to find pair'));
@@ -417,27 +575,12 @@ export default class Extension {
     const { payload } = request;
 
     if (isJsonPayload(payload)) {
-      // Get the metadata for the genesisHash
-      const currentMetadata = this.#state.knownMetadata.find((meta: MetadataDef) =>
-        meta.genesisHash === payload.genesisHash);
-
-      // set the registry before calling the sign function
-      registry.setSignedExtensions(payload.signedExtensions, currentMetadata?.userExtensions);
-
-      if (currentMetadata) {
-        registry.register(currentMetadata?.types);
-      }
+      this.handleRegistry(payload);
     }
 
     const result = request.sign(registry, pair);
 
-    if (savePass) {
-      const cacheTime = remainingTime || PASSWORD_EXPIRY_MS;
-
-      this.#cachedUnlocks[address] = Date.now() + cacheTime;
-    } else {
-      pair.lock();
-    }
+    console.info('Save pass is deprecated:', remainingTime, savePass);
 
     resolve({
       id,
@@ -445,6 +588,27 @@ export default class Extension {
     });
 
     return true;
+  }
+
+  private getSignature ({ payload }: RequestSigningSignature): HexString | null {
+    if (!payload?.address || !payload.genesisHash) {
+      throw new Error('Invalid payload: missing required fields.');
+    }
+
+    const { address } = payload;
+
+    const pair = keyring.getPair(address);
+
+    this.refreshAccountPasswordCache(pair); // check if auto lock duration is expired
+
+    if (pair.isLocked) {
+      return null;
+    }
+
+    this.handleRegistry(payload);
+    const { signature } = registry.createType('ExtrinsicPayload', payload, { version: payload.version }).sign(pair);
+
+    return signature;
   }
 
   private signingApproveSignature ({ id, signature, signedTransaction }: RequestSigningApproveSignature): boolean {
@@ -595,11 +759,31 @@ export default class Extension {
       case 'pri(accounts.create.suri)':
         return this.accountsCreateSuri(request as RequestAccountCreateSuri);
 
-      case 'pri(accounts.updateMeta)': // added for polkagate
+      // ----------------added for polkagate---------------------
+      case 'pri(accounts.updateMeta)':
         return this.accountsUpdateMeta(request as RequestUpdateMeta);
 
-      case 'pri(extension.lock)': // added for polkagate
+      case 'pri(extension.lock)':
         return this.lockExtension();
+
+      case 'pri(signing.getSignature)':
+        return this.getSignature(request as RequestSigningSignature);
+
+      case 'pri(accounts.unlockAll)':
+        return this.accountsUnlockAll(request as RequestUnlockAllAccounts);
+
+      case 'pri(accounts.locksExpired)':
+        return this.areLocksExpired();
+
+      case 'pri(accounts.changePasswordAll)':
+        return this.accountsChangePasswordAll(request as RequestAccountChangePasswordAll);
+
+      case 'pri(accounts.forgetAll)':
+        return this.accountsForgetAll();
+
+      case 'pri(accounts.setUnlockExpiry)':
+        return this.setUnlockExpiry(request as RequestAccountsSetUnlockExpiry);
+      // -------------------------------------
 
       case 'pri(accounts.changePassword)':
         return this.accountsChangePassword(request as RequestAccountChangePassword);

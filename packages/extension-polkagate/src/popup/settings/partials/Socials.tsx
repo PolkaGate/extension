@@ -5,7 +5,7 @@ import { Grid, type SxProps, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { useIsDark, useIsExtensionPopup } from '../../../hooks';
-import { Discord, Docs, Email, Github, Web, XIcon, YoutubeIcon } from '../icons';
+import { Docs, Email, Github, Telegram, Web, XIcon, YoutubeIcon } from '../icons';
 import SocialIcon from './SocialIcon';
 
 interface Props {
@@ -25,7 +25,7 @@ export default function Socials ({ buttonSize, columnGap = '8px', iconSize = 18,
   const bgColor = short && !isDark ? '#CCD2EA' : undefined;
 
   return (
-    <Grid container direction='column' item sx={{ alignItems:'center', ...style }}>
+    <Grid container direction='column' item sx={{ alignItems: 'center', ...style }}>
       {label &&
         <Typography
           color={isExtension ? 'label.secondary' : 'text.primary'}
@@ -37,11 +37,11 @@ export default function Socials ({ buttonSize, columnGap = '8px', iconSize = 18,
           {label}
         </Typography>
       }
-      <Grid columnGap={columnGap} container item sx={{ flexWrap:'nowrap', width: 'fit-content' }}>
+      <Grid columnGap={columnGap} container item sx={{ flexWrap: 'nowrap', width: 'fit-content' }}>
         <SocialIcon Icon={<YoutubeIcon color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={buttonSize} />
-        <SocialIcon Icon={<XIcon color={theme.palette.icon.secondary} width={`${iconSize - 3}px`} />} bgColor={bgColor} link='https://x.com/polkagate' size={buttonSize} />
-        <SocialIcon Icon={<Discord color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://discord.gg/gsUrreJh' size={buttonSize} />
+        <SocialIcon Icon={<XIcon color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://x.com/polkagate' size={buttonSize} />
         <SocialIcon Icon={<Github color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://github.com/PolkaGate/' size={buttonSize} />
+        <SocialIcon Icon={<Telegram color={theme.palette.icon.secondary} width={`${iconSize + 10}px`} />} bgColor={bgColor} link='https://t.me/polkagate' size={buttonSize} />
         {!short &&
           <>
             <SocialIcon Icon={<Email color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='mailto:support@polkagate.xyz' size={buttonSize} />

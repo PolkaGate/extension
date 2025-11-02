@@ -3,17 +3,15 @@
 
 import { Stack, Typography } from '@mui/material';
 import { User } from 'iconsax-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { AccountsStore } from '@polkadot/extension-base/stores';
-import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
-import { PROFILE_TAGS, SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
+import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
-import keyring from '@polkadot/ui-keyring';
-import { cryptoWaitReady, isEthereumAddress } from '@polkadot/util-crypto';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { AddressInput, DecisionButtons, MyTextField } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -32,12 +30,6 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
   const [realAddress, setRealAddress] = useState<string | null | undefined>();
   const [name, setName] = useState<string | null | undefined>();
 
-  useEffect(() => {
-    cryptoWaitReady().then(() => {
-      keyring.loadAll({ store: new AccountsStore() });
-    }).catch(() => null);
-  }, []);
-
   const onAdd = useCallback(() => {
     if (name && realAddress) {
       setIsBusy(true);
@@ -46,7 +38,7 @@ export default function AddWatchOnlyFullScreen (): React.ReactElement {
 
       createAccountExternal(name, realAddress, undefined, type)
         .then(() => {
-          setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.WATCH_ONLY).catch(console.error);
+          setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.WATCH_ONLY).catch(console.error);
         })
         .finally(() =>
           switchToOrOpenTab('/', true)

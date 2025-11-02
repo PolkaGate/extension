@@ -6,7 +6,7 @@ import { AddCircle, Convertshape2, Wallet } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { SELECTED_PROFILE_NAME_IN_STORAGE } from '@polkadot/extension-polkagate/src/util/constants';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { handWave } from '../../assets/gif';
 import { ActionButton, GradientButton } from '../../components';
@@ -44,7 +44,7 @@ function Onboarding (): React.ReactElement {
   const onExploreDemo = useCallback((): void => {
     createAccountExternal('Demo account', DEMO_ACCOUNT, undefined)
       .then(() => {
-        setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.WATCH_ONLY).catch(console.error);
+        setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.WATCH_ONLY).catch(console.error);
         navigate('/') as void;
       })
       .catch((error: Error) => {

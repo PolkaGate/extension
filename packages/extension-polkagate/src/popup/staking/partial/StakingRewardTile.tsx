@@ -12,7 +12,7 @@ import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Thunder } from '../../../assets/gif';
-import { FormatBalance2, FormatPrice, MySkeleton } from '../../../components';
+import { DisplayBalance, FormatPrice, MySkeleton } from '../../../components';
 import { useChainInfo, usePrices, useStakingRewardsChart, useTokenPrice, useTranslation } from '../../../hooks';
 import { Background } from '../../../style';
 import { ColumnAmounts } from '../../tokens/partial/ColumnAmounts';
@@ -199,18 +199,14 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
                 <MySkeleton style={{ maxWidth: '75px', width: '100%' }} />
               )
               : (
-                <FormatBalance2
-                  decimalPoint={4}
-                  decimals={[decimal ?? 0]}
+                <DisplayBalance
+                  balance={totalRewardFiat}
+                  decimal={decimal}
                   style={{
                     color: theme.palette.text.highlight,
-                    fontFamily: 'Inter',
-                    fontSize: '12px',
-                    fontWeight: 500,
                     width: 'max-content'
                   }}
-                  tokens={[token ?? '']}
-                  value={totalRewardFiat}
+                  token={token}
                 />)}
           </Grid>
         </Stack>

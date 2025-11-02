@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid } from '@mui/material';
+import { Grid, Stack } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -14,6 +14,7 @@ import { VelvetBox } from '../../../style';
 import AssetLoading from './AssetLoading';
 import AssetTabs from './AssetTabs';
 import ChainsAssetsBox from './ChainsAssetsBox';
+import ManageNetworks from './ManageNetworks';
 import NFTBox from './NFTBox';
 import TokensAssetsBox from './TokensAssetsBox';
 
@@ -135,7 +136,10 @@ function AssetsBox ({ loadingItemsCount }: { loadingItemsCount?: number }): Reac
 
   return (
     <>
-      <AssetTabs setTab={setTab} tab={tab} />
+      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ width: isExtension ? '90%' : '96%' }}>
+        <AssetTabs setTab={setTab} tab={tab} />
+        <ManageNetworks />
+      </Stack>
       <VelvetBox style={{ margin: isExtension ? '0 15px' : 0, minHeight: '70px', padding: isExtension ? '4px' : 0 }}>
         {renderContent(loadingItemsCount)}
       </VelvetBox>

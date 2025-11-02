@@ -1,3 +1,3 @@
-# @polkadot/extension
+# @polkaGate/extension
 
-A signing extension
+A Polkadot eco. Wallet/Extension

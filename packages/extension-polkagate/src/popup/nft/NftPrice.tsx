@@ -8,11 +8,11 @@ import React, { memo, useMemo } from 'react';
 
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
-import { AssetLogo, ShowBalance } from '../../components';
+import { AssetLogo, DisplayBalance } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
 import { amountToMachine } from '../../util';
 
-function NftPrice ({ nft, style = {} }: { nft: ItemInformation, style?: SxProps }) {
+function NftPrice({ nft, style = {} }: { nft: ItemInformation, style?: SxProps }) {
   const { t } = useTranslation();
   const { genesisHash, price } = nft;
   const { decimal, token } = useChainInfo(genesisHash, true);
@@ -28,15 +28,13 @@ function NftPrice ({ nft, style = {} }: { nft: ItemInformation, style?: SxProps 
       {price &&
         <Stack alignItems='center' columnGap='2px' direction='row'>
           <AssetLogo assetSize='12px' baseTokenSize='24px' genesisHash={genesisHash} logo={logoInfo?.logo} />
-          <Typography textAlign='left' variant='B-1'>
-            <ShowBalance
-              balance={priceAsBN}
-              decimal={decimal}
-              decimalPoint={3}
-              token={token}
-              withCurrency={false}
-            />
-          </Typography>
+          <DisplayBalance
+            balance={priceAsBN}
+            decimal={decimal}
+            decimalPoint={3}
+            token={token}
+            withCurrency={false}
+          />
         </Stack>
       }
       {notListed &&

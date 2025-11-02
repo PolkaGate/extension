@@ -32,7 +32,6 @@ export default function useRouteRefresh (onRefresh?: () => void): () => void {
     const timestamp = state?.refreshTime;
 
     if (timestamp && Date.now() <= (timestamp + OFFSET)) {
-      console.log('Refreshed!');
       onRefresh?.();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -175,6 +175,7 @@ function Receive ({ address, closePopup, onClose, setAddress }: Props): React.Re
 
   return (
     <DraggableModal
+      closeOnAnyWhereClick
       onClose={_onClose}
       open
       showBackIconAsClose

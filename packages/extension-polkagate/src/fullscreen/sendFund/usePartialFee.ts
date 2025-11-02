@@ -17,7 +17,7 @@ export default function usePartialFee (
 ): BN | undefined | null {
   const [partialFee, setPartialFee] = useState<BN | null>();
 
-  const inputTransaction = inputs?.paraSpellTransaction ?? inputs?.transaction;
+  const inputTransaction = inputs?.paraSpellTransaction;
 
   useEffect((): void => {
     assetId && api && formatted && inputTransaction && inputTransaction.hasPaymentInfo &&
@@ -50,9 +50,9 @@ export default function usePartialFee (
                 true
               );
 
-              if (!result) {
+              if (!result?.toString()) { // FixMe: conversion not works always!!
                 console.error('No conversion result received');
-                setPartialFee(null);
+                setPartialFee(info.partialFee);
 
                 return;
               }
