@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.16.1](https://github.com/polkagate/extension/compare/v1.16.0...v1.16.1) (2025-11-04)
+
+
+### Bug Fixes
+
+* correct Hindi and Russian translation entries ([1766fa6](https://github.com/polkagate/extension/commit/1766fa6ff2b8ce49b890f640ed3f85129e5fcca6))
+
 # [1.16.0](https://github.com/polkagate/extension/compare/v1.15.5...v1.16.0) (2025-11-01)
 
 
