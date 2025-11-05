@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { Stack, Typography, useTheme } from '@mui/material';
+import { Fade, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { noop } from '@polkadot/util';
@@ -55,13 +55,15 @@ function WaitScreen ({ isModal }: Props): React.ReactElement {
   const Content = () => (
     <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : 'transparent', borderRadius: '14px', gap: '12px', justifyContent: 'center', m: '0 15px 15px', p: '0 32px 32px' }}>
       <DotLottieReact autoplay loop src={sendingLottie} style={{ height: 'auto', width: '300px' }} />
-      <Typography color='text.primary' variant='B-3'>
-        <TwoToneText
-          color={color}
-          text={text.title}
-          textPartInColor={text?.inColor}
-        />
-      </Typography>
+      <Fade in={true} timeout={1000}>
+        <Typography color='text.primary' variant='B-3'>
+          <TwoToneText
+            color={color}
+            text={text.title}
+            textPartInColor={text?.inColor}
+          />
+        </Typography>
+      </Fade>
       <Typography color={color} pt='6px' variant='B-1' width='80%'>
         {t('Please wait a few seconds and don’t close the {{container}}', { replace: { container: isExtension ? t('extension') : t('window') } })}
       </Typography>
