@@ -7,14 +7,12 @@ import type { ISubmittableResult } from '@polkadot/types/types';
 import type { FullScreenTransactionFlow } from '../../../fullscreen/stake/util/utils';
 import type { ExtraDetailConfirmationPage, PoolInfo, Proxy, ProxyTypes, TxInfo } from '../../../util/types';
 
-import React, { useCallback, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 
 import { useTransactionData } from '../../../hooks';
-import { WaitScreen } from '../../../partials';
+import { Confirmation, WaitScreen } from '../../../partials';
 import Review, { type Content } from '../../../partials/Review';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../../../util/constants';
-import Confirmation from './StakingConfirmation';
 
 interface Props {
   address: string | undefined;
@@ -38,12 +36,9 @@ interface Props {
 }
 
 function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, flowStep, genesisHash, onClose, pool, proxyTypeFilter, reviewHeader, reviewStyle, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
-  const navigate = useNavigate();
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
 
   const { transactionDetail, txInformation } = useTransactionData(address, genesisHash, selectedProxy?.delegate, txInfo, transactionInformation, extraDetailConfirmationPage);
-
-  const goToHistory = useCallback(() => navigate('/historyfs') as void, [navigate]);
 
   return (
     <>
@@ -76,7 +71,6 @@ function TransactionFlow ({ address, closeReview, extraDetailConfirmationPage, f
           address={address ?? ''}
           backToHome={onClose}
           genesisHash={genesisHash}
-          goToHistory={goToHistory}
           transactionDetail={transactionDetail}
         />
       }

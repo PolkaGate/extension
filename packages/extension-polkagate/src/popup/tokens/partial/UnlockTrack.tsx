@@ -27,18 +27,18 @@ const UnlockEx = ({ address, amount, closeModal, genesisHash, transaction, trans
     backPathTitle: t('Unlock Amount'),
     closeReview: closeModal,
     genesisHash: genesisHash ?? '',
-    noStakingHomeButton: true,
     proxyTypeFilter: PROXY_TYPE.GOVERNANCE,
     review: true,
     reviewHeader:
-      <RewardHeaderAmount
-        amount={amount}
-        genesisHash={genesisHash}
-        style={{ bgcolor: '#110F2A', borderRadius: '14px', p: '34px 24px' }}
-        title={t('Unlocking Amount')}
-        token={token}
-      />,
+    <RewardHeaderAmount
+    amount={amount}
+    genesisHash={genesisHash}
+    style={{ bgcolor: '#110F2A', borderRadius: '14px', p: '34px 24px' }}
+    title={t('Unlocking Amount')}
+    token={token}
+    />,
     showAccountBox: false,
+    showStakingHome: false,
     stepCounter: { currentStep: 1, totalSteps: 1 },
     transactionInformation,
     tx: transaction

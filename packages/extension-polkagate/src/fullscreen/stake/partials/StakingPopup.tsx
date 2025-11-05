@@ -73,7 +73,7 @@ export default function StakingPopup ({ _onClose, address, children, extraDetail
             }}
           />
       }
-      maxHeight={maxHeight ?? 605}
+      maxHeight={maxHeight ?? 700}
       minHeight={ flowStep === FULLSCREEN_STAKING_TX_FLOW.WAIT_SCREEN ? 270 : minHeight ?? 605}
       noCloseButton={showCloseIcon === undefined}
       {...rest}

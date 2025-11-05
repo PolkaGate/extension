@@ -1,82 +1,27 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { TransactionDetail } from '../../util/types';
-import type { FeeInfo } from '../sendFund/types';
+import type { FeeInfo } from '../fullscreen/sendFund/types';
+import type { TransactionDetail } from '../util/types';
 
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/partials/FailSuccessIcon';
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
-import { subscan } from '../../assets/icons';
-import { ActionButton, CurrencyContext, DisplayBalance, GradientButton, Identity2, NeonButton } from '../../components';
-import { useChainInfo, useIsBlueish, useTokenPriceBySymbol, useTranslation } from '../../hooks';
-import StakingActionButton from '../../popup/staking/partial/StakingActionButton';
-import { GlowBox, GradientDivider, VelvetBox } from '../../style';
-import { amountToHuman, countDecimalPlaces, getSubscanChainName, isValidAddress, toShortAddress, toTitleCase } from '../../util';
-import { DraggableModal } from '../components/DraggableModal';
-
-const SubScanIcon = ({ size = '13px' }: { size?: string }) => (
-  <Avatar
-    src={subscan as string}
-    sx={{ height: size, width: size, zIndex: 2 }}
-  />
-);
-
-interface AmountProps {
-  amount: string | undefined;
-  genesisHash: string | undefined;
-  assetDecimal: number | undefined;
-  token: string | undefined;
-}
-
-const Amount = ({ amount, assetDecimal, genesisHash, token }: AmountProps) => {
-  const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
-
-  const { currency } = useContext(CurrencyContext);
-
-  const _decimal = assetDecimal ?? nativeAssetDecimal;
-  const _token = token ?? nativeToken;
-  const price = useTokenPriceBySymbol(_token, genesisHash);
-
-  const amountInHuman = amountToHuman((amount ?? '0'), _decimal);
-
-  const value = ((price.price ?? 0) * parseFloat(amountInHuman)).toFixed(2);
-  const [integerPart, decimalPart] = amountInHuman.split('.');
-
-  const decimalToShow = useMemo(() => {
-    if (decimalPart) {
-      const countDecimal = countDecimalPlaces(Number('0.' + decimalPart));
-      const toCut = countDecimal > 4 ? 4 : countDecimal;
-
-      return `.${decimalPart.slice(0, toCut)}`;
-    } else {
-      return '.00';
-    }
-  }, [decimalPart]);
-
-  return (
-    <Stack alignItems='center' direction='column' py='4px'>
-      <Stack alignItems='flex-end' direction='row'>
-        <Typography color='text.primary' lineHeight='normal' variant='H-1'>
-          {integerPart}
-        </Typography>
-        <Typography color='text.secondary' variant='H-3'>
-          {decimalToShow}
-        </Typography>
-        <Typography color='text.secondary' pl='3px' variant='H-3'>
-          {_token}
-        </Typography>
-      </Stack>
-      <Typography color='text.secondary' pl='3px' variant='B-4'>
-        {currency?.sign}{value}
-      </Typography>
-    </Stack>
-  );
-};
+import Subscan from '../assets/icons/Subscan';
+import { ActionButton, DisplayBalance, GradientButton, Identity2, NeonButton } from '../components';
+import { DraggableModal } from '../fullscreen/components/DraggableModal';
+import { useChainInfo, useIsBlueish, useIsExtensionPopup, useRouteRefresh, useStakingConsts, useTranslation } from '../hooks';
+import StakingActionButton from '../popup/staking/partial/StakingActionButton';
+import { GlowBox, GradientDivider, VelvetBox } from '../style';
+import { getSubscanChainName, isValidAddress, toShortAddress, toTitleCase, updateStorage } from '../util';
+import { STORAGE_KEY } from '../util/constants';
+import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
+import DisplayAmount from './DisplayAmount';
 
 interface ProxyAccountsProps {
   accounts: string[];
@@ -101,21 +46,47 @@ const ProxyAccounts = ({ accounts, genesisHash }: ProxyAccountsProps) => {
   );
 };
 
+const ValidatorsConfirm = ({ genesisHash, nominators }: { genesisHash: string | undefined; nominators: string[] }) => {
+  const { t } = useTranslation();
+  const stakingConst = useStakingConsts(genesisHash);
+
+  return (
+    <Stack alignItems='flex-end' direction='row' pb='30px' pt='12px'>
+      <Typography color='text.primary' lineHeight='normal' variant='H-1'>
+        {nominators.length}
+      </Typography>
+      <Typography color='#AA83DC' variant='H-3'>
+        {`/ ${stakingConst?.maxNominations ?? 16}`}
+      </Typography>
+      <Typography color='text.secondary' pl='3px' variant='H-3'>
+        {t('nominated')}
+      </Typography>
+    </Stack>
+  );
+};
+
 interface HeaderProps {
   genesisHash: string | undefined;
+  isBlueish: boolean;
   transactionDetail: TransactionDetail;
 }
 
-const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
-  const { accounts, amount, assetDecimal, description, failureText, success, token } = transactionDetail;
+const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
+  const { accounts, amount, assetDecimal, description, failureText, nominators, success, token } = transactionDetail;
 
   return (
-    <GlowBox style={{ m: 0, width: '100%' }}>
+    <GlowBox isBlueish={isBlueish} style={{ m: 0, width: '100%' }}>
       <FailSuccessIcon
         description={description}
         failureText={failureText}
         success={success}
       >
+        {nominators &&
+          <ValidatorsConfirm
+            genesisHash={genesisHash}
+            nominators={nominators}
+          />
+        }
         {
           accounts && genesisHash
             ? <>
@@ -137,12 +108,13 @@ const Header = ({ genesisHash, transactionDetail }: HeaderProps) => {
                     />
               }
             </>
-            : <Amount
+            : amount &&
+            <DisplayAmount
               amount={amount}
               assetDecimal={assetDecimal}
               genesisHash={genesisHash}
               token={token}
-              />
+            />
         }
       </FailSuccessIcon>
     </GlowBox>
@@ -198,7 +170,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
 
   return (
     <VelvetBox>
-      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', justifyContent: 'center', p: '12px 18px' }}>
+      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', justifyContent: 'center', maxHeight: '260px', overflow: 'auto', p: '12px 18px' }}>
         {entriesToRender.map(([key, content], index) => {
           const withDivider = entriesToRender.length > index + 1;
           const { color, isAddress, isBalance, isBlock, isDate, isFee, isFromAddress, isHash } = getContentTypeAndColor(key, content);
@@ -283,17 +255,19 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: 
     chrome.tabs.create({ url }).catch(console.error);
   }, [address, chainName]);
 
+  const btnStyle = {
+    height: '44px',
+    width: '100%'
+  };
+
   return (
-    <Stack alignItems='center' direction='column' sx={{ gap: '8px', zIndex: 1 }}>
+    <Stack direction='column' sx={{ alignItems: 'center', gap: '8px', left: 0, mt: '2px', width: '100%' }}>
       {
         goToHistory &&
         <NeonButton
           contentPlacement='center'
           onClick={goToHistory}
-          style={{
-            height: '44px',
-            width: '345px'
-          }}
+          style={btnStyle}
           text={t('History')}
         />
       }
@@ -301,19 +275,23 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: 
         backToHome &&
         <ActionButton
           contentPlacement='center'
+          isBlueish={isBlueish}
           onClick={backToHome}
-          style={{
-            height: '44px',
-            width: '345px'
-          }}
-          text={t('Staking Home')}
+          style={btnStyle}
+          text={t('Back to Home')}
           variant='text'
         />
       }
       {isBlueish
         ? <StakingActionButton
           onClick={goToExplorer}
-          startIcon={<SubScanIcon />}
+          startIcon={
+            <Subscan
+              color='#ffffff'
+              height={13}
+              width={13}
+            />}
+          style={{ width: '100%' }}
           text={t('View on Explorer')}
           />
         : <GradientButton
@@ -325,7 +303,7 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: 
               variant='square'
             />
           }
-          style={{ bottom: '17px', position: 'absolute', width: '384px', zIndex: 1 }}
+          style={{ ...btnStyle, zIndex: 2 }}
           text={t('View on Explorer')}
           />
       }
@@ -333,30 +311,79 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: 
   );
 }
 
-interface Props {
+interface ContentProps {
   address: string;
   backToHome?: () => void;
   genesisHash: string | undefined;
-  goToHistory?: () => void;
-  isModal?: boolean;
-  onCloseModal?: () => void;
+  showHistoryButton?: boolean;
+  onClose?: () => void;
+  showStakingHome?: boolean;
   showDate?: boolean;
   transactionDetail: TransactionDetail;
 }
 
-export default function Confirmation ({ address, backToHome, genesisHash, goToHistory, isModal, onCloseModal, showDate, transactionDetail }: Props) {
+function Content ({ address, backToHome, genesisHash, onClose, showDate, showHistoryButton, showStakingHome, transactionDetail }: ContentProps) {
   const isBlueish = useIsBlueish();
-  const { t } = useTranslation();
+  const isExtension = useIsExtensionPopup();
+  const navigate = useNavigate();
+  const refresh = useRouteRefresh();
+  const { pathname } = useLocation();
 
-  const [openModal, setOpenModal] = useState(true);
-  const _onCloseModal = useCallback(() => {
-    setOpenModal(false);
-  }, []);
+  const stakingPath = useMemo(() =>
+    pathname.startsWith('/pool/')
+      ? 'pool'
+      : pathname.startsWith('/solo/')
+        ? 'solo'
+        : pathname.includes('easyStake')
+          ? transactionDetail.extra?.['easyStakingType']
+          : undefined
+    , [pathname, transactionDetail.extra]);
 
-  const Content = () => (
-    <Stack direction='column' sx={{ gap: '8px', p: '15px 0', zIndex: 1 }}>
+  const { redirectPath, redirectToSamePath } = useMemo(() => {
+    if (!genesisHash) {
+      return {
+        redirectPath: '',
+        redirectToSamePath: false
+      };
+    }
+
+    const stakingGenesisHash = mapRelayToSystemGenesisIfMigrated(genesisHash);
+    const redirectPath = `/${stakingPath}/${stakingGenesisHash}`;
+
+    return {
+      redirectPath,
+      redirectToSamePath: pathname === redirectPath
+    };
+  }, [genesisHash, pathname, stakingPath]);
+
+  const backToStakingHome = useCallback(() => {
+    onClose && redirectToSamePath
+      ? onClose()
+      : navigate(redirectPath, { replace: true }) as void;
+  }
+    , [onClose, navigate, redirectPath, redirectToSamePath]);
+
+  const handleHome = useCallback(() => {
+    backToHome?.();
+
+    if (stakingPath && showStakingHome) {
+      backToStakingHome();
+    }
+
+    redirectToSamePath && refresh();
+  }, [backToHome, backToStakingHome, redirectToSamePath, refresh, showStakingHome, stakingPath]);
+
+  const goToHistory = useCallback(() => {
+    updateStorage(STORAGE_KEY.ACCOUNT_SELECTED_CHAIN, { [address]: genesisHash })
+      .finally(() => navigate(isExtension ? '/history' : '/historyfs') as void)
+      .catch(console.error);
+  }, [address, genesisHash, isExtension, navigate]);
+
+  return (
+    <Stack direction='column' sx={{ gap: '8px', p: '15px 15px 0', zIndex: 1 }}>
       <Header
         genesisHash={genesisHash}
+        isBlueish={isBlueish}
         transactionDetail={transactionDetail}
       />
       <Detail
@@ -367,28 +394,62 @@ export default function Confirmation ({ address, backToHome, genesisHash, goToHi
       />
       <Buttons
         address={address}
-        backToHome={backToHome}
+        backToHome={(backToHome || showStakingHome) ? handleHome : undefined}
         genesisHash={genesisHash}
-        goToHistory={goToHistory}
+        goToHistory={showHistoryButton ? goToHistory : undefined}
         isBlueish={isBlueish}
       />
     </Stack>
   );
+}
+
+interface Props {
+  address: string;
+  backToHome?: () => void;
+  genesisHash: string | undefined;
+  showHistoryButton?: boolean;
+  isModal?: boolean;
+  onClose?: () => void;
+  showStakingHome?: boolean;
+  showDate?: boolean;
+  transactionDetail: TransactionDetail;
+}
+
+export default function Confirmation ({ address, backToHome, genesisHash, isModal, onClose, showDate, showHistoryButton = true, showStakingHome = true, transactionDetail }: Props) {
+  const { t } = useTranslation();
+
+  const [openModal, setOpenModal] = useState(true);
+  const _onCloseModal = useCallback(() => {
+    setOpenModal(false);
+  }, []);
+
+  const contentProps = {
+    address,
+    backToHome,
+    genesisHash,
+    onClose,
+    showDate,
+    showHistoryButton,
+    showStakingHome,
+    transactionDetail
+  };
 
   return (
     <>
       {isModal
-        ? <DraggableModal
-          noDivider
-          onClose={onCloseModal ?? _onCloseModal}
-          open={openModal}
-          showBackIconAsClose
-          style={{ backgroundColor: '#1B133C', minHeight: '615px', padding: '20px 9px 10px' }}
-          title={transactionDetail.success ? t('Completed') : t('Failed')}
+        ? (
+          <DraggableModal
+            noDivider
+            onClose={onClose ?? _onCloseModal}
+            open={openModal}
+            showBackIconAsClose
+            style={{ backgroundColor: '#1B133C', minHeight: '625px', padding: '20px 9px 10px' }}
+            title={transactionDetail.success ? t('Completed') : t('Failed')}
           >
-          <Content />
-        </DraggableModal>
-        : <Content />
+            <Content {...contentProps} />
+          </DraggableModal>
+        )
+        : <Content {...contentProps} />
       }
     </>
   );

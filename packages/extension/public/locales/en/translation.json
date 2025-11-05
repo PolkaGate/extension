@@ -469,7 +469,6 @@
   "Sort by": "",
   "Ids": "",
   "Members": "",
-  "Staking Home": "",
   "My Accounts": "",
   "Validators": "",
   "Own": "",
@@ -515,10 +514,6 @@
   "Object info": "",
   "Show": "",
   "Any status": "",
-  "block": "",
-  "hash": "",
-  "amount": "",
-  "fee": "",
   "Change": "",
   "Not enough amount to stake more.": "",
   "It is more than the available balance to stake.": "",
@@ -826,5 +821,6 @@
   "Something went wrong while fetching token data!": "",
   "Sparkline data not available for this token.": "",
   "Fetching token data timed out. Please try again.": "",
-  "powered by CoinGecko": ""
+  "powered by CoinGecko": "",
+  "Back to Home": ""
 }
