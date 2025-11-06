@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useMemo } from 'react';
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 interface Props {
   address: string;
@@ -147,53 +148,55 @@ const PolkaSoul = ({ address, size = 32, style = {} }: Props) => {
   }, [size, params]);
 
   return (
-    <div style={{ alignItems: 'center', display: 'flex', height: `${size}px`, justifyContent: 'center', width: `${size}px`, ...style }}>
-      <svg className='rounded-full' height={size} viewBox={`0 0 ${size} ${size}`} width={size}>
-        <defs>
-          <radialGradient id={`bg-${params.hue}`}>
-            <stop offset='0%' stopColor={`hsl(${params.hue}, 30%, 80%)`} />
-            <stop offset='100%' stopColor={`hsl(${params.hue}, 60%, 40%)`} />
-          </radialGradient>
-          <filter id='softBlur'>
-            <feGaussianBlur in='SourceGraphic' stdDeviation='0.7' />
-          </filter>
-          <filter id='softGlow'>
-            <feGaussianBlur in='SourceGraphic' result='blur' stdDeviation='2.5' />
-            <feComposite in='SourceGraphic' in2='blur' operator='over' />
-          </filter>
-          {Array.from({ length: params.numShapes }, (_, i) => (
-            <filter id={`softShadow${i}`} key={`shadow-${i}`}>
-              <feGaussianBlur in='SourceAlpha' stdDeviation={1 + i * 0.2} />
-              <feOffset dx={0.5 + i * 0.1} dy={0.5 + i * 0.1} />
-              <feComponentTransfer>
-                <feFuncA slope={0.3 + i * 0.05} type='linear' />
-              </feComponentTransfer>
-              <feMerge>
-                <feMergeNode />
-                <feMergeNode in='SourceGraphic' />
-              </feMerge>
+    <div style={{ alignItems: 'center', cursor: 'copy', display: 'flex', height: `${size}px`, justifyContent: 'center', width: `${size}px`, ...style }}>
+      <CopyToClipboard text={String(address)}>
+        <svg className='rounded-full' height={size} viewBox={`0 0 ${size} ${size}`} width={size}>
+          <defs>
+            <radialGradient id={`bg-${params.hue}`}>
+              <stop offset='0%' stopColor={`hsl(${params.hue}, 30%, 80%)`} />
+              <stop offset='100%' stopColor={`hsl(${params.hue}, 60%, 40%)`} />
+            </radialGradient>
+            <filter id='softBlur'>
+              <feGaussianBlur in='SourceGraphic' stdDeviation='0.7' />
             </filter>
-          ))}
-        </defs>
-        <defs>
-          <linearGradient id='gradient' x1='0%' x2='100%' y1='0%' y2='100%'>
-            <stop offset='0%' style={{ stopColor: `hsl(${params.hue}, 70%, 20%)`, stopOpacity: 0.2 }} />
-            <stop offset='50%' style={{ stopColor: `hsl(${(params.hue + 60) % 360}, 80%, 50%)`, stopOpacity: 0.3 }} />
-            <stop offset='100%' style={{ stopColor: `hsl(${(params.hue + 180) % 360}, 70%, 20%)`, stopOpacity: 0.2 }} />
-          </linearGradient>
-        </defs>
-        <circle cx={size / 2} cy={size / 2} fill='url(#gradient)' r={size / 2} />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          fill='none'
-          filter='url(#softGlow)'
-          r={size / 2 - 1}
-          stroke='url(#gradient)'
-          strokeWidth='2'
-        />
-        {paths}
-      </svg>
+            <filter id='softGlow'>
+              <feGaussianBlur in='SourceGraphic' result='blur' stdDeviation='2.5' />
+              <feComposite in='SourceGraphic' in2='blur' operator='over' />
+            </filter>
+            {Array.from({ length: params.numShapes }, (_, i) => (
+              <filter id={`softShadow${i}`} key={`shadow-${i}`}>
+                <feGaussianBlur in='SourceAlpha' stdDeviation={1 + i * 0.2} />
+                <feOffset dx={0.5 + i * 0.1} dy={0.5 + i * 0.1} />
+                <feComponentTransfer>
+                  <feFuncA slope={0.3 + i * 0.05} type='linear' />
+                </feComponentTransfer>
+                <feMerge>
+                  <feMergeNode />
+                  <feMergeNode in='SourceGraphic' />
+                </feMerge>
+              </filter>
+            ))}
+          </defs>
+          <defs>
+            <linearGradient id='gradient' x1='0%' x2='100%' y1='0%' y2='100%'>
+              <stop offset='0%' style={{ stopColor: `hsl(${params.hue}, 70%, 20%)`, stopOpacity: 0.2 }} />
+              <stop offset='50%' style={{ stopColor: `hsl(${(params.hue + 60) % 360}, 80%, 50%)`, stopOpacity: 0.3 }} />
+              <stop offset='100%' style={{ stopColor: `hsl(${(params.hue + 180) % 360}, 70%, 20%)`, stopOpacity: 0.2 }} />
+            </linearGradient>
+          </defs>
+          <circle cx={size / 2} cy={size / 2} fill='url(#gradient)' r={size / 2} />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            fill='none'
+            filter='url(#softGlow)'
+            r={size / 2 - 1}
+            stroke='url(#gradient)'
+            strokeWidth='2'
+          />
+          {paths}
+        </svg>
+      </CopyToClipboard>
     </div>
   );
 };
