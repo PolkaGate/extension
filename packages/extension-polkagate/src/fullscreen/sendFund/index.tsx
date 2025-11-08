@@ -137,8 +137,8 @@ export default function SendFund (): React.ReactElement {
       description: t('Amount'),
       extra: {
         from: formatted,
-        recipientNetwork: inputs?.recipientChain?.text,
-        to: inputs?.recipientAddress
+        to: inputs?.recipientAddress,
+        recipientNetwork: inputs?.recipientChain?.text
       },
       ...txInfo,
       fee: inputs?.feeInfo,

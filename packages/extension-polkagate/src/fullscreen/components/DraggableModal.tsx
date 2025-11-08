@@ -81,9 +81,11 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
     cursor: draggable
       ? isDragging ? 'grabbing' : 'grab'
       : 'default',
+    height: 'auto',
     left: modalPosition.x,
     maxHeight: `${maxHeight}px`,
     minHeight: typeof minHeight === 'number' ? `${minHeight}px` : minHeight,
+    overflowY: 'auto',
     padding: '20px 0 20px',
     position: 'absolute',
     top: modalPosition.y,
