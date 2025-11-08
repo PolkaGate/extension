@@ -937,12 +937,13 @@ export interface FetchedBalance {
   votingBalance?: BN
 }
 
-export interface PositionInfo extends FetchedBalance, Chain {
+export interface PositionInfo extends Partial<FetchedBalance>, Partial<Chain> {
   chainName: string;
+  decimal: number,
+  tokenSymbol: string,
   genesisHash: string;
   rate?: number;
   suggestedValidators?: string[];
-  // You can add additional properties here if needed
 }
 
 export type RewardDestinationType = 'Others' | 'Staked' | undefined;

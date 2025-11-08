@@ -91,7 +91,7 @@ interface Props {
 }
 
 function EarningItem ({ info, popupOpener, setSelectedPosition }: Props) {
-  const { availableBalance, decimal, freeBalance, genesisHash, rate, token } = info;
+  const { availableBalance, decimal, freeBalance, genesisHash, rate, tokenSymbol } = info;
   const isTestNet = useMemo(() => TEST_NETS.includes(genesisHash), [genesisHash]);
 
   const onStake = useCallback(() => {
@@ -103,7 +103,7 @@ function EarningItem ({ info, popupOpener, setSelectedPosition }: Props) {
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', gap: '40px', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
       <TokenInfo genesisHash={genesisHash} />
-      <Available balance={freeBalance || availableBalance || BN_ZERO} decimal={decimal} token={token} />
+      <Available balance={freeBalance || availableBalance || BN_ZERO} decimal={decimal} token={tokenSymbol} />
       <ChainIdentifier genesisHash={genesisHash} />
       <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
       <YieldBadge rate={rate} />
