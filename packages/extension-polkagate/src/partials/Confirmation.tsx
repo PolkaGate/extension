@@ -325,11 +325,12 @@ interface ContentProps {
 }
 
 function Content ({ address, backToHome, backToHomeText, genesisHash, onClose, showDate, showHistoryButton, showStakingHome, transactionDetail }: ContentProps) {
+  const { t } = useTranslation();
+  const { pathname } = useLocation();
   const isBlueish = useIsBlueish();
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
   const refresh = useRouteRefresh();
-  const { pathname } = useLocation();
 
   const stakingPath = useMemo(() =>
     pathname.startsWith('/pool/')
@@ -381,6 +382,8 @@ function Content ({ address, backToHome, backToHomeText, genesisHash, onClose, s
       .catch(console.error);
   }, [address, genesisHash, isExtension, navigate]);
 
+  const _backToHomeText = (pathname.startsWith('/fullscreen-stake/') || stakingPath) ? t('Staking Home') : backToHomeText;
+
   return (
     <Stack direction='column' sx={{ gap: '8px', p: '15px 15px 0', zIndex: 1 }}>
       <Header
@@ -397,7 +400,7 @@ function Content ({ address, backToHome, backToHomeText, genesisHash, onClose, s
       <Buttons
         address={address}
         backToHome={(backToHome || showStakingHome) ? handleHome : undefined}
-        backToHomeText={backToHomeText}
+        backToHomeText={ _backToHomeText}
         genesisHash={genesisHash}
         goToHistory={showHistoryButton ? goToHistory : undefined}
         isBlueish={isBlueish}
