@@ -237,13 +237,14 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
 
 interface ButtonsProps {
   address: string;
-  isBlueish: boolean;
+  backToHome?: () => void;
+  backToHomeText?: string;
   genesisHash: string | undefined;
   goToHistory?: () => void;
-  backToHome?: () => void;
+  isBlueish: boolean;
 }
 
-function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: ButtonsProps) {
+function Buttons ({ address, backToHome, backToHomeText, genesisHash, goToHistory, isBlueish }: ButtonsProps) {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
 
@@ -278,7 +279,7 @@ function Buttons ({ address, backToHome, genesisHash, goToHistory, isBlueish }: 
           isBlueish={isBlueish}
           onClick={backToHome}
           style={btnStyle}
-          text={t('Back to Home')}
+          text={backToHomeText || t('Back to Home')}
           variant='text'
         />
       }
@@ -322,7 +323,7 @@ interface ContentProps {
   transactionDetail: TransactionDetail;
 }
 
-function Content ({ address, backToHome, genesisHash, onClose, showDate, showHistoryButton, showStakingHome, transactionDetail }: ContentProps) {
+function Content ({ address, backToHome, backToHomeText, genesisHash, onClose, showDate, showHistoryButton, showStakingHome, transactionDetail }: ContentProps) {
   const isBlueish = useIsBlueish();
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
@@ -395,6 +396,7 @@ function Content ({ address, backToHome, genesisHash, onClose, showDate, showHis
       <Buttons
         address={address}
         backToHome={(backToHome || showStakingHome) ? handleHome : undefined}
+        backToHomeText={backToHomeText}
         genesisHash={genesisHash}
         goToHistory={showHistoryButton ? goToHistory : undefined}
         isBlueish={isBlueish}
@@ -406,6 +408,7 @@ function Content ({ address, backToHome, genesisHash, onClose, showDate, showHis
 interface Props {
   address: string;
   backToHome?: () => void;
+  backToHomeText?: string;
   genesisHash: string | undefined;
   showHistoryButton?: boolean;
   isModal?: boolean;
@@ -415,7 +418,7 @@ interface Props {
   transactionDetail: TransactionDetail;
 }
 
-export default function Confirmation ({ address, backToHome, genesisHash, isModal, onClose, showDate, showHistoryButton = true, showStakingHome = true, transactionDetail }: Props) {
+export default function Confirmation ({ address, backToHome, backToHomeText, genesisHash, isModal, onClose, showDate, showHistoryButton = true, showStakingHome = true, transactionDetail }: Props) {
   const { t } = useTranslation();
 
   const [openModal, setOpenModal] = useState(true);
@@ -426,6 +429,7 @@ export default function Confirmation ({ address, backToHome, genesisHash, isModa
   const contentProps = {
     address,
     backToHome,
+    backToHomeText,
     genesisHash,
     onClose,
     showDate,

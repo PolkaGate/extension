@@ -116,12 +116,12 @@ export default function SendFund (): React.ReactElement {
   }, []);
 
   const onCloseModal = useCallback(() => {
-    navigate(`/accountfs/${address}/${genesisHash}/${assetId}`) as void;
-  }, [address, assetId, genesisHash, navigate]);
-
-  const backToHome = useCallback(() => {
     onReset();
   }, [onReset]);
+
+  const backToHome = useCallback(() => {
+    navigate(`/accountfs/${address}/${genesisHash}/${assetId}`) as void;
+  }, [address, assetId, genesisHash, navigate]);
 
   const buttonDisable = useMemo(() =>
     (inputStep === INPUT_STEPS.SENDER && !inputs?.token) ||
@@ -264,6 +264,7 @@ export default function SendFund (): React.ReactElement {
         <Confirmation
           address={address ?? ''}
           backToHome={backToHome}
+          backToHomeText={t('Back to Account')}
           genesisHash={genesisHash}
           isModal
           onClose={onCloseModal}
