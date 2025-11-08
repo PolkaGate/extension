@@ -69,7 +69,7 @@ function Content ({ isModal }: Props) {
   return (
     <Motion
       onAnimationComplete={onAnimationComplete}
-      variant={isModal ? undefined : 'slide'}
+      variant={isModal ? 'fade' : 'slide'}
     >
       <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : 'transparent', borderRadius: '14px', gap: '12px', justifyContent: 'center', m: '0 15px 15px', p: '0 32px 32px' }}>
         <DotLottieReact
