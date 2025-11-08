@@ -880,5 +880,6 @@
   "Something went wrong while fetching token data!": "¡Algo salió mal al obtener los datos del token!",
   "Sparkline data not available for this token.": "Datos de Sparkline no disponibles para este token.",
   "Fetching token data timed out. Please try again.": "Tiempo de espera agotado al obtener los datos del token. Por favor, inténtalo de nuevo.",
-  "powered by CoinGecko": "desarrollado por CoinGecko"
+  "powered by CoinGecko": "desarrollado por CoinGecko",
+  "Address copied!": "¡Dirección copiada!"
 }

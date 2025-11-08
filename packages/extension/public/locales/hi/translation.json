@@ -879,5 +879,6 @@
   "Something went wrong while fetching token data!": "टोकन डेटा लाने में कुछ गलत हो गया!",
   "Sparkline data not available for this token.": "इस टोकन के लिए स्पार्कलाइन डेटा उपलब्ध नहीं है।",
   "Fetching token data timed out. Please try again.": "टोकन डेटा लाने में समय समाप्त हो गया। कृपया पुनः प्रयास करें।",
-  "powered by CoinGecko": "CoinGecko द्वारा संचालित"
+  "powered by CoinGecko": "CoinGecko द्वारा संचालित",
+  "Address copied!": "पता कॉपी हो गया!"
 }

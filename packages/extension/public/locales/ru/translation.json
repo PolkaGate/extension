@@ -879,5 +879,6 @@
   "Something went wrong while fetching token data!": "Что-то пошло не так при получении данных токена!",
   "Sparkline data not available for this token.": "Данные Sparkline недоступны для этого токена.",
   "Fetching token data timed out. Please try again.": "Истекло время ожидания получения данных токена. Пожалуйста, попробуйте снова.",
-  "powered by CoinGecko": "работает на CoinGecko"
+  "powered by CoinGecko": "работает на CoinGecko",
+  "Address copied!": "Адрес скопирован!"
 }

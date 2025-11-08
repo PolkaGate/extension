@@ -873,5 +873,6 @@
   "Something went wrong while fetching token data!": "获取代币数据时出现错误！",
   "Sparkline data not available for this token.": "此代币的微图数据不可用。",
   "Fetching token data timed out. Please try again.": "获取代币数据超时，请重试。",
-  "powered by CoinGecko": "由 CoinGecko 提供支持"
+  "powered by CoinGecko": "由 CoinGecko 提供支持",
+  "Address copied!": "地址已复制！"
 }
