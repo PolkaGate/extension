@@ -799,7 +799,6 @@
   "Earning Positions": "Positions de gain",
   "Nominations": "Nominations",
   "My Positions": "Mes positions",
-  "Loading nominations": "Chargement des nominations",
   "🔍 Search accounts": "🔍 Rechercher des comptes",
   "🔍 Search networks": "🔍 Rechercher des réseaux",
   "🔍 Search Token": "🔍 Rechercher un token",
@@ -876,5 +875,11 @@
   "Something went wrong while changing password!": "Une erreur est survenue lors du changement du mot de passe !",
   "This child account will be created from your parent account. Give it a name.": "Ce compte enfant sera créé à partir de votre compte parent. Donnez-lui un nom.",
   "Incorrect password": "Mot de passe incorrect",
-  "Failed to create account": "Échec de la création du compte"
+  "Failed to create account": "Échec de la création du compte",
+  "Rate limited by CoinGecko. Please try again shortly.": "Limité par CoinGecko. Veuillez réessayer sous peu.",
+  "Something went wrong while fetching token data!": "Une erreur s'est produite lors de la récupération des données du token !",
+  "Sparkline data not available for this token.": "Les données Sparkline ne sont pas disponibles pour ce token.",
+  "Fetching token data timed out. Please try again.": "La récupération des données du token a expiré. Veuillez réessayer.",
+  "powered by CoinGecko": "alimenté par CoinGecko",
+  "Address copied!": "Adresse copiée !"
 }

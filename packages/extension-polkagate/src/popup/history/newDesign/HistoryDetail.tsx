@@ -312,6 +312,7 @@ function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React
             </Container>
           </Dialog>
           : <DraggableModal
+            closeOnAnyWhereClick
             noDivider
             onClose={handleClose}
             open={!!historyItem}

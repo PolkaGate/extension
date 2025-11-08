@@ -30,6 +30,7 @@ export { default as useCurrentBlockNumber } from './useCurrentBlockNumber';
 export { default as useCurrentEraIndex } from './useCurrentEraIndex';
 export { default as useEndpoint } from './useEndpoint';
 export { useEndpoints } from './useEndpoints';
+export { default as useEraInfo } from './useEraInfo';
 export { default as useEstimatedFee } from './useEstimatedFee';
 export { default as useFavIcon } from './useFavIcon';
 export { default as useFormatted } from './useFormatted';

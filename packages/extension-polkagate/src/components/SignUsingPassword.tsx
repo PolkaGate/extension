@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { SignerOptions } from '@polkadot/api/types/submittable';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 import type { Proxy } from '../util/types';
@@ -66,13 +65,12 @@ export interface SignUsingPasswordProps {
   onSignature: ({ signature }: { signature: HexString; }) => Promise<void>;
   onUseProxy: (() => void) | undefined;
   proxies: Proxy[] | undefined;
-  signerOption: Partial<SignerOptions> | undefined;
   style?: React.CSSProperties;
   withCancel: boolean | undefined;
   signerPayload: SignerPayloadJSON | undefined;
 }
 
-function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', disabled, onCancel, onSignature, onUseProxy, proxies, signerOption, signerPayload, style, withCancel }: SignUsingPasswordProps) {
+function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', disabled, onCancel, onSignature, onUseProxy, proxies, signerPayload, style, withCancel }: SignUsingPasswordProps) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
@@ -93,9 +91,6 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
         throw new Error('account is locked need to login again!');
       }
 
-      // TODO: how use signerOption while using send()
-      console.log('signerOption:', signerOption);
-
       await onSignature({ signature });
       setBusy(false);
     } catch (e) {
@@ -103,7 +98,7 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
       setHasError(true);
       setBusy(false);
     }
-  }, [onSignature, signerOption, signerPayload]);
+  }, [onSignature, signerPayload]);
 
   const confirmText = !api ? t('Loading ...') : t('Approve');
 

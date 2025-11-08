@@ -36,11 +36,11 @@ const AUTO_LOCK_THROTTLE_INTERVAL_MS = 10_000;
  *
  * @see {@link useAutoLockPeriod} for retrieving the configured auto-lock duration.
  */
-export default function useAutoLockRefresher () {
+export default function useAutoLockRefresher (isLocked: boolean) {
   const autoLockPeriod = useAutoLockPeriod();
 
-  useEffect(() => {
-    if (!autoLockPeriod) {
+ useEffect(() => {
+    if (!autoLockPeriod || isLocked) {
       return;
     }
 
@@ -55,5 +55,5 @@ export default function useAutoLockRefresher () {
     return () => {
       events.forEach((e) => window.removeEventListener(e, sendExpiry));
     };
-  }, [autoLockPeriod]);
+  }, [autoLockPeriod, isLocked]);
 }

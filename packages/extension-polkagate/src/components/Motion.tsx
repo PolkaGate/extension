@@ -33,14 +33,16 @@ interface Props {
   style?: MotionStyle;
   children: React.ReactNode;
   variant?: keyof typeof variants;
+  onAnimationComplete?: () => void;
 }
 
-export default function Motion ({ children, style, variant = 'fade' }: Props) {
+export default function Motion ({ children, onAnimationComplete, style, variant = 'fade' }: Props) {
   return (
     <motion.div
       animate='animate'
       exit='exit'
       initial='initial'
+      onAnimationComplete={onAnimationComplete}
       style={{ width: '100%', ...style }}
       variants={variants[variant]}
     >

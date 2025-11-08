@@ -14,9 +14,8 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { SelectedProxy } from '../../components';
 import { useEstimatedFee, useTranslation } from '../../hooks';
-import { WaitScreen } from '../../partials';
+import { Confirmation, WaitScreen } from '../../partials';
 import { DraggableModal } from '../components/DraggableModal';
-import Confirmation from './Confirmation';
 import { STEPS } from './consts';
 import Review from './Review';
 import { type ProxyFlowStep } from './types';
@@ -190,11 +189,16 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
           }}
         />
       }
+      noCloseButton={step === STEPS.WAIT_SCREEN}
       noDivider
       onClose={handleClose}
       open={true}
       showBackIconAsClose
-      style={{ backgroundColor: '#1B133C', minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${540 + extraHeight}px`, padding: '20px 15px 10px' }}
+      style={{
+        backgroundColor: '#1B133C',
+         minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${555 + extraHeight}px`,
+         padding: '20px 15px 10px'
+        }}
       title={
         [STEPS.REVIEW, STEPS.SIGN_QR].includes(step)
           ? t('Review')
@@ -229,7 +233,9 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
           step === STEPS.CONFIRMATION && transactionDetail &&
           <Confirmation
             address={address ?? ''}
+            backToHome={handleClose}
             genesisHash={genesisHash}
+            showHistoryButton={false}
             transactionDetail={transactionDetail}
           />
         }

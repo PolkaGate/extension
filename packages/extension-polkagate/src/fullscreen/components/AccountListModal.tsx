@@ -91,6 +91,7 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
 
   return (
     <DraggableModal
+      closeOnAnyWhereClick
       onClose={_handleClose}
       open={open}
       showBackIconAsClose

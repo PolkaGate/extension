@@ -278,7 +278,6 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
             onSignature={onSignature}
             onUseProxy={selectedProxy ? undefined : toggleSelectProxy}
             proxies={proxies}
-            signerOption={signerOption}
             signerPayload={signerPayload}
             withCancel={withCancel}
           />

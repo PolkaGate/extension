@@ -12,10 +12,9 @@ import { PROXY_TYPE, TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '@p
 
 import { DecisionButtons, SignArea3 } from '../../components';
 import { useCanPayFeeAndDeposit, useFormatted, useTeleport, useTranslation } from '../../hooks';
-import { WaitScreen } from '../../partials';
+import { Confirmation, WaitScreen } from '../../partials';
 import { toBN } from '../../util';
 import HomeLayout from '../components/layout';
-import Confirmation from '../manageProxies/Confirmation';
 import StepsRow, { INPUT_STEPS } from './partials/StepsRow';
 import Step1Sender from './Step1Sender';
 import Step2Recipient from './Step2Recipient';
@@ -76,11 +75,7 @@ export default function SendFund (): React.ReactElement {
     }));
   }, [paraSpellTransaction, setInputs]);
 
-  useEffect(() => {
-    if (!address || !genesisHash) {
-      return;
-    }
-
+  const onReset = useCallback(() => {
     const RESET_INPUTS: Partial<Inputs> = {
       amount: undefined,
       amountAsBN: undefined,
@@ -89,8 +84,7 @@ export default function SendFund (): React.ReactElement {
       paraSpellTransaction: undefined,
       recipientAddress: undefined,
       recipientChain: undefined,
-      recipientGenesisHashOrParaId: undefined,
-      transaction: undefined
+      recipientGenesisHashOrParaId: undefined
     };
 
     // Reset the entire send flow on sender/network change
@@ -103,7 +97,15 @@ export default function SendFund (): React.ReactElement {
     setTxInfo(undefined);
     setFlowStep(TRANSACTION_FLOW_STEPS.REVIEW);
     setShowProxySelection(false);
-  }, [address, genesisHash]);
+  }, []);
+
+  useEffect(() => {
+    if (!address || !genesisHash) {
+      return;
+    }
+
+    onReset();
+  }, [address, genesisHash, onReset]);
 
   const onNext = useCallback(() => {
     setInputStep((prevStep) => prevStep + 1);
@@ -114,15 +116,17 @@ export default function SendFund (): React.ReactElement {
   }, []);
 
   const onCloseModal = useCallback(() => {
+    onReset();
+  }, [onReset]);
+
+  const backToHome = useCallback(() => {
     navigate(`/accountfs/${address}/${genesisHash}/${assetId}`) as void;
   }, [address, assetId, genesisHash, navigate]);
-
-  const inputTransaction = inputs?.paraSpellTransaction ?? inputs?.transaction;
 
   const buttonDisable = useMemo(() =>
     (inputStep === INPUT_STEPS.SENDER && !inputs?.token) ||
     (inputStep === INPUT_STEPS.RECIPIENT && (!inputs?.recipientAddress || inputs?.recipientChain === undefined)) ||
-     (inputStep === INPUT_STEPS.AMOUNT && !inputs?.amount)
+    (inputStep === INPUT_STEPS.AMOUNT && !inputs?.amount)
     ,
     [inputStep, inputs]);
 
@@ -220,7 +224,7 @@ export default function SendFund (): React.ReactElement {
             <SignArea3
               address={address}
               direction='horizontal'
-              disabled={!inputTransaction}
+              disabled={!inputs?.paraSpellTransaction}
               extraProps={{
                 decisionButtonProps: {
                   primaryButtonProps: { style: { width: '148%' } },
@@ -243,7 +247,7 @@ export default function SendFund (): React.ReactElement {
               showProxySelection={showProxySelection}
               signerOption={inputs?.feeInfo?.assetId ? { assetId: inputs.feeInfo.assetId } : undefined}
               style={{ position: 'unset', width: '73%' }}
-              transaction={inputTransaction}
+              transaction={inputs?.paraSpellTransaction}
               withCancel
             />
           </div>
@@ -259,10 +263,12 @@ export default function SendFund (): React.ReactElement {
         flowStep === TRANSACTION_FLOW_STEPS.CONFIRMATION &&
         <Confirmation
           address={address ?? ''}
+          backToHome={backToHome}
+          backToHomeText={t('Back to Account')}
           genesisHash={genesisHash}
           isModal
-          onCloseModal={onCloseModal}
-          showDate
+          onClose={onCloseModal}
+          showHistoryButton={false}
           transactionDetail={transactionDetail}
         />
       }

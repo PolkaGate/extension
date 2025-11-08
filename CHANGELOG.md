@@ -1,5 +1,47 @@
 # Change Log
 
+## [1.16.1](https://github.com/polkagate/extension/compare/v1.16.0...v1.16.1) (2025-11-04)
+
+
+### Bug Fixes
+
+* correct Hindi and Russian translation entries ([1766fa6](https://github.com/polkagate/extension/commit/1766fa6ff2b8ce49b890f640ed3f85129e5fcca6))
+
+# [1.16.0](https://github.com/polkagate/extension/compare/v1.15.5...v1.16.0) (2025-11-01)
+
+
+### Features
+
+* add support for migrating polkadot hub ([#1995](https://github.com/polkagate/extension/issues/1995)) ([4dfc70b](https://github.com/polkagate/extension/commit/4dfc70b04af6d59a610ce62b1f2e377aa119a862))
+
+## [1.15.5](https://github.com/polkagate/extension/compare/v1.15.4...v1.15.5) (2025-11-01)
+
+
+### Bug Fixes
+
+* avoid onboarding redirect when extension is locked and accounts are not yet loaded ([#2003](https://github.com/polkagate/extension/issues/2003)) ([3285aa7](https://github.com/polkagate/extension/commit/3285aa752b8cb0df43ef30fc6437595aa04ecf83))
+
+## [1.15.4](https://github.com/polkagate/extension/compare/v1.15.3...v1.15.4) (2025-10-30)
+
+
+### Bug Fixes
+
+* adjust unlocking token release display timing ([35d405b](https://github.com/polkagate/extension/commit/35d405bb3cdcb0c15215a9323716211c12082eea))
+
+## [1.15.3](https://github.com/polkagate/extension/compare/v1.15.2...v1.15.3) (2025-10-30)
+
+
+### Bug Fixes
+
+* correct release dates for unstaking amounts after Hub migration ([#1999](https://github.com/polkagate/extension/issues/1999)) ([7c4094d](https://github.com/polkagate/extension/commit/7c4094d2d54cab8e753a78c280dd6dc0c3cec658)), closes [#2000](https://github.com/polkagate/extension/issues/2000)
+
+## [1.15.2](https://github.com/polkagate/extension/compare/v1.15.1...v1.15.2) (2025-10-28)
+
+
+### Bug Fixes
+
+* update balances correctly when only watch-only accounts are in the extension ([#1991](https://github.com/polkagate/extension/issues/1991)) ([d5c26fa](https://github.com/polkagate/extension/commit/d5c26fae6327d02ae14bd32ba79c06e5b5f879ac))
+
 ## [1.15.1](https://github.com/polkagate/extension/compare/v1.15.0...v1.15.1) (2025-10-27)
 
 

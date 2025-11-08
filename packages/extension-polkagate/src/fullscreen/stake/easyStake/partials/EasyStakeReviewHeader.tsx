@@ -4,8 +4,9 @@
 import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
+import { DisplayAmount } from '@polkadot/extension-polkagate/src/partials';
+
 import { useTranslation } from '../../../../hooks';
-import { Amount } from '../../partials/StakingConfirmation';
 
 interface Props {
   amount: string | undefined;
@@ -25,7 +26,7 @@ export default function EasyStakeReviewHeader ({ amount, genesisHash, isExtensio
       <Typography color={color} variant='B-2'>
         {t('Start Staking')}
       </Typography>
-      <Amount
+      <DisplayAmount
         amount={amount}
         differentValueColor={color}
         genesisHash={genesisHash}

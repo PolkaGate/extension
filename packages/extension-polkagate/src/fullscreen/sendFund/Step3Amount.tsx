@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
-import type { TransferType } from '@polkadot/extension-polkagate/src/util/types';
 import type { Inputs } from './types';
 
 import { Box, Stack, Typography } from '@mui/material';
@@ -40,15 +39,14 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
 
   const [error, setError] = useState<string | undefined>();
   const [amount, setAmount] = useState<string | undefined>(inputs?.amount);
-  const [transferType, setTransferType] = useState<TransferType>('Normal');
   const assetToTransfer = useMemo(() => accountAssets?.find((asset) => asset.genesisHash === genesisHash && String(asset.assetId) === assetId), [accountAssets, assetId, genesisHash]);
   const transferableBalance = useMemo(() => getValue('transferable', assetToTransfer), [assetToTransfer]);
   const logoInfo = useMemo(() => getLogo2(genesisHash, assetToTransfer?.token), [assetToTransfer?.token, genesisHash]);
   const isNativeToken = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
   const amountAsBN = useMemo(() => decimal ? amountToMachine(amount, decimal) : undefined, [amount, decimal]);
 
-  const { maxFee } = useLimitedFeeCall(address, assetId, assetToTransfer, inputs, genesisHash, teleportState, transferType);
-  const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, transferType, new BN(inputs?.fee?.originFee?.fee || 0));
+  const { maxFee } = useLimitedFeeCall(address, assetId, assetToTransfer, inputs, genesisHash, teleportState);
+  const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, inputs?.transferType ?? 'Normal', new BN(inputs?.fee?.originFee?.fee || 0));
 
   useEffect(() => {
     amountAsBN && setInputs((prevInputs) => ({
@@ -68,11 +66,12 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
     const allAmount = canNotTransfer ? '0' : amountToHuman(transferableBalance.sub(_maxFee).toString(), decimal);
 
     setError(undefined);
-    setTransferType('All');
+
     setAmount(allAmount);
     setInputs((prevInputs) => ({
       ...(prevInputs || {}),
-      amount: allAmount
+      amount: allAmount,
+      transferType: 'All'
     }));
   }, [assetToTransfer, decimal, isNativeToken, maxFee, setInputs, t, transferableBalance]);
 
@@ -88,12 +87,12 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
       return setError(t('Amount will exceed transferable balance!'));
     }
 
-    setTransferType('Normal');
     setError(undefined);
     setAmount(value);
     setInputs((prevInputs) => ({
       ...(prevInputs || {}),
-      amount: value
+      amount: value,
+      transferType: 'Normal'
     }));
   }, [assetToTransfer, decimal, setInputs, t, transferableBalance]);
 
@@ -126,7 +125,8 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
     setAmount(ED);
     setInputs((prevInputs) => ({
       ...(prevInputs || {}),
-      amount: ED
+      amount: ED,
+      transferType: 'Normal'
     }));
   }, [ED, setInputs]);
 

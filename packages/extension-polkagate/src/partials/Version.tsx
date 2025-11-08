@@ -17,7 +17,7 @@ interface Props {
   textColor?: string;
 }
 
-function Version({ isBlueish, shortLabel = true, showLabel = true, style = {}, textColor, variant = 'B-1' }: Props): React.ReactElement {
+function Version ({ isBlueish, shortLabel = true, showLabel = true, style = {}, textColor, variant = 'B-1' }: Props): React.ReactElement {
   const version = useManifest()?.version;
   const { t } = useTranslation();
 

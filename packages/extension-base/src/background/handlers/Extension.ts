@@ -64,6 +64,12 @@ export default class Extension {
   }
 
   private scheduleExpiryCheck (): void {
+    const accountsLocal = this.localAccounts();
+
+    if (accountsLocal.length === 0) {
+      return;
+    }
+
     if (this.#expiryTimeout) {
       clearTimeout(this.#expiryTimeout);
     }
@@ -124,6 +130,10 @@ export default class Extension {
   private accountsCreateSuri ({ genesisHash, name, password, suri, type }: RequestAccountCreateSuri): boolean {
     const { pair } = keyring.addUri(getSuri(suri, type), password, { genesisHash, name }, type);
 
+    const unlockedPair = this.unlockPair({ address: pair.address, password });
+
+    assert(unlockedPair, 'Unable to create account');
+
     this.applyAddedTime({ pair });
 
     return true;
@@ -140,20 +150,9 @@ export default class Extension {
   }
 
   private accountsChangePassword ({ address, newPass, oldPass }: RequestAccountChangePassword): boolean {
-    const pair = keyring.getPair(address);
+    const pair = this.unlockPair({ address, password: oldPass });
 
-    assert(pair, 'Unable to find pair');
-
-    try {
-      if (!pair.isLocked) {
-        pair.lock();
-      }
-
-      pair.decodePkcs8(oldPass);
-    } catch (error) {
-      throw new Error('oldPass is invalid');
-    }
-
+    assert(pair, 'oldPass is invalid');
     keyring.encryptAccount(pair, newPass);
 
     return true;
@@ -475,6 +474,28 @@ export default class Extension {
     return accounts.filter(({ meta }) => !meta.isExternal);
   }
 
+  private unlockPair ({ address, password }: { address: string, password: string | undefined }): KeyringPair | null {
+    assert(password, 'Password needed to unlock the account');
+
+    try {
+      const pair = keyring.getPair(address);
+
+      assert(pair, 'Unable to find pair');
+
+      if (!pair.isLocked) {
+        pair.lock();
+      }
+
+      pair.decodePkcs8(password);
+
+      return pair;
+    } catch (error) {
+      console.error('pair unlock failed:', error);
+
+      return null;
+    }
+  }
+
   private accountsUnlockAll ({ cacheTime, password }: RequestUnlockAllAccounts): boolean {
     if (!password) {
       throw new Error('Password needed to unlock the account');
@@ -484,19 +505,9 @@ export default class Extension {
       const accountsLocal = this.localAccounts();
 
       for (const { address } of accountsLocal) {
-        const pair = keyring.getPair(address);
+        const unlockedPair = this.unlockPair({ address, password });
 
-        if (!pair) {
-          throw new Error('Unable to find pair');
-        }
-
-        if (!pair.isLocked) {
-          pair.lock();
-        }
-
-        if (pair.isLocked) {
-          pair.decodePkcs8(password);
-        }
+        assert(unlockedPair, 'Unable to unlock pair');
       }
 
       // Set a single expiry timestamp for all accounts
@@ -511,6 +522,12 @@ export default class Extension {
   }
 
   private areLocksExpired (): boolean {
+    const accountsLocal = this.localAccounts();
+
+    if (accountsLocal.length === 0) {
+      return false; // no lock when has only external accounts
+    }
+
     return this.#unlockExpiry === null || this.#unlockExpiry < Date.now();
   }
 
@@ -764,7 +781,7 @@ export default class Extension {
       case 'pri(accounts.forgetAll)':
         return this.accountsForgetAll();
 
-        case 'pri(accounts.setUnlockExpiry)':
+      case 'pri(accounts.setUnlockExpiry)':
         return this.setUnlockExpiry(request as RequestAccountsSetUnlockExpiry);
       // -------------------------------------
 

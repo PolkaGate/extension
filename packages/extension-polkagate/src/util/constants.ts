@@ -114,10 +114,7 @@ export const NFT_CHAINS = [
 
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
-  POLKADOT_GENESIS_HASH,
-  STATEMINE_GENESIS_HASH,
-  WESTMINT_GENESIS_HASH,
-  PASEO_ASSET_HUB_GENESIS_HASH
+  ...ASSET_HUBS
 ];
 
 export const PEOPLE_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'PolkadotPeople', 'KusamaPeople', 'WestendPeople'];
@@ -316,7 +313,7 @@ export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 
 export const STORAGE_KEY = {
   ACCOUNT_SELECTED_CHAIN: 'accountSelectedChain',
-  ASSETS: 'migrated-assets1',
+  ASSETS: 'migratedAssets',
   AUTO_LOCK: 'autoLock',
   CURRENCY: 'currency',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',

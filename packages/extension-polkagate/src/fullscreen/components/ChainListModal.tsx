@@ -113,6 +113,7 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
 
   return (
     <DraggableModal
+      closeOnAnyWhereClick
       onClose={_handleClose}
       open={open}
       showBackIconAsClose

@@ -261,6 +261,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
 
   return (
     <DraggableModal
+      closeOnAnyWhereClick
       onClose={_onClose}
       open={true}
       showBackIconAsClose

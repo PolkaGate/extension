@@ -370,13 +370,13 @@ export default function ChangeLog ({ newVersion, openMenu, setShowAlert }: Props
             sx={{ height: '235px', left: 0, position: 'absolute', right: 0, top: 0, width: '100%' }}
           />
         }
-        <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
+        <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px' sx={{ flexWrap: 'nowrap' }}>
           <Box
             component='img'
             src={logoTransparent as string}
             sx={{ height: '30px', width: '30px' }}
           />
-          <Typography color='#fff' textTransform='uppercase' variant='H-2'>
+          <Typography color='#fff' sx={{ whiteSpace: 'nowrap' }} textTransform='uppercase' variant='H-2'>
             {t('change log')}
           </Typography>
         </Grid>
