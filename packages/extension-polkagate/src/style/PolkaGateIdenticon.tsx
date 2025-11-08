@@ -3,11 +3,12 @@
 
 import type { IconTheme as BaseIconTheme } from '@polkadot/react-identicon/types';
 
-import React, { useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 
 import Icon from '@polkadot/react-identicon';
 
 import { AccountIconThemeContext } from '../components';
+import { useAlerts, useTranslation } from '../hooks';
 import PolkaSoul from './PolkaSoul';
 
 type IconTheme = BaseIconTheme | 'polkasoul';
@@ -21,15 +22,22 @@ interface Props {
   prefix?: number;
   size: number;
   style?: React.CSSProperties;
+  withNotify?: boolean;
 }
 
-function PolkaGateIdenticon ({ address, iconTheme, onCopy, prefix, size, style = {} }: Props) {
+function PolkaGateIdenticon ({ address, iconTheme, onCopy, prefix, size, style = {}, withNotify = true }: Props) {
   const { accountIconTheme } = useContext(AccountIconThemeContext);
+  const { t } = useTranslation();
+  const { notify } = useAlerts();
 
   const _theme = (iconTheme ?? accountIconTheme) as IconTheme | undefined;
 
+  const onClick = useCallback(() => {
+    withNotify && notify(t('Address copied!'), 'info');
+  }, [notify, t, withNotify]);
+
   return (
-    <span style={{ height: `${size}px`, width: `${size}px`, ...style }}>
+    <span onClick={onClick} style={{ cursor: withNotify ? 'copy' : 'default', height: `${size}px`, width: `${size}px`, ...style }}>
       {!_theme || _theme === 'polkasoul'
         ? (
           <PolkaSoul
@@ -42,6 +50,7 @@ function PolkaGateIdenticon ({ address, iconTheme, onCopy, prefix, size, style =
             onCopy={onCopy}
             prefix={prefix}
             size={size}
+            style={{ cursor: withNotify ? 'copy' : 'default'}}
             theme={_theme}
             value={address}
           />)
