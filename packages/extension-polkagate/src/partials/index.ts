@@ -1,7 +1,9 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+export { default as Confirmation } from './Confirmation';
 export { default as ConnectedDapp } from './ConnectedDapp';
+export { default as DisplayAmount } from './DisplayAmount';
 export { default as EditDappAccess } from './EditDappAccess';
 export { default as FullscreenModeButton } from './FullscreenModeButton';
 export { default as HomeMenu } from './HomeMenu';

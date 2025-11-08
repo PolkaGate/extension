@@ -1,6 +1,8 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { DotLottie } from '@lottiefiles/dotlottie-react';
+
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Fade, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -17,12 +19,26 @@ interface Props {
   isModal?: boolean;
 }
 
-function WaitScreen ({ isModal }: Props): React.ReactElement {
+function Content ({ isModal }: Props) {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
   const theme = useTheme();
 
-  const [text, setText] = useState({ title: t('We are working on your transaction.'), inColor: t('working') });
+  const [text, setText] = useState({ highlightText: t('working'), title: t('We are working on your transaction.') });
+  const [lottiePlay, setLottiePlay] = useState(false);
+  const [dotLottie, setDotLottie] = useState<DotLottie | null>(null);
+
+  const color = isExtension ? theme.palette.text.highlight : theme.palette.primary.main;
+
+  const onAnimationComplete = useCallback(() => {
+    setLottiePlay(true);
+  }, []);
+
+  useEffect(() => {
+  if (lottiePlay && dotLottie) {
+    dotLottie.play();
+  }
+  }, [dotLottie, lottiePlay]);
 
   const handleTxEvent = useCallback((s: CustomEventInit<unknown>) => {
     const { detail } = s;
@@ -32,16 +48,16 @@ function WaitScreen ({ isModal }: Props): React.ReactElement {
 
       switch (state.toLowerCase()) {
         case ('ready'):
-          setText({ title: t('The transaction is ready.'), inColor: t('ready') });
+          setText({ highlightText: t('ready'), title: t('The transaction is ready.') });
           break;
         case ('broadcast'):
-          setText({ title: t('The transaction has been sent.'), inColor: t('sent') });
+          setText({ highlightText: t('sent'), title: t('The transaction has been sent.') });
           break;
         case ('inblock'):
-          setText({ title: t('The transaction is now on-chain.'), inColor: t('on-chain') });
+          setText({ highlightText: t('on-chain'), title: t('The transaction is now on-chain.') });
           break;
         default:
-          setText({ title: t(`The transaction is in ${state} state`), inColor: t(`${state}`) });
+          setText({ highlightText: t(`${state}`), title: t(`The transaction is in ${state} state`) });
       }
     }
   }, [t]);
@@ -50,25 +66,38 @@ function WaitScreen ({ isModal }: Props): React.ReactElement {
     window.addEventListener('transactionState', handleTxEvent);
   }, [handleTxEvent]);
 
-  const color = isExtension ? theme.palette.text.highlight : theme.palette.primary.main;
-
-  const Content = () => (
-    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : 'transparent', borderRadius: '14px', gap: '12px', justifyContent: 'center', m: '0 15px 15px', p: '0 32px 32px' }}>
-      <DotLottieReact autoplay loop src={sendingLottie} style={{ height: 'auto', width: '300px' }} />
-      <Fade in={true} timeout={1000}>
-        <Typography color='text.primary' variant='B-3'>
-          <TwoToneText
-            color={color}
-            text={text.title}
-            textPartInColor={text?.inColor}
-          />
+  return (
+    <Motion
+      onAnimationComplete={onAnimationComplete}
+      variant={isModal ? 'fade' : 'slide'}
+    >
+      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : 'transparent', borderRadius: '14px', gap: '12px', justifyContent: 'center', m: '0 15px 15px', p: '0 32px 32px' }}>
+        <DotLottieReact
+          autoplay={false}
+          dotLottieRefCallback={setDotLottie}
+          loop
+          src={sendingLottie}
+          style={{ height: 'auto', width: '300px' }}
+        />
+        <Fade in={true} timeout={1000}>
+          <Typography color='text.primary' variant='B-3'>
+            <TwoToneText
+              color={color}
+              text={text.title}
+              textPartInColor={text?.highlightText}
+            />
+          </Typography>
+        </Fade>
+        <Typography color={color} pt='6px' variant='B-1' width='80%'>
+          {t('Please wait a few seconds and don’t close the {{container}}', { replace: { container: isExtension ? t('extension') : t('window') } })}
         </Typography>
-      </Fade>
-      <Typography color={color} pt='6px' variant='B-1' width='80%'>
-        {t('Please wait a few seconds and don’t close the {{container}}', { replace: { container: isExtension ? t('extension') : t('window') } })}
-      </Typography>
-    </Stack>
+      </Stack>
+    </Motion>
   );
+}
+
+function WaitScreen ({ isModal }: Props): React.ReactElement {
+  const { t } = useTranslation();
 
   return (
     <>
@@ -81,11 +110,9 @@ function WaitScreen ({ isModal }: Props): React.ReactElement {
             style={{ minHeight: '300px' }}
             title={t(PROCESSING_TITLE)}
           >
-            <Content />
+            <Content isModal />
           </DraggableModal>)
-        : <Motion variant='slide'>
-          <Content />
-        </Motion>
+        : <Content />
       }
     </>
   );

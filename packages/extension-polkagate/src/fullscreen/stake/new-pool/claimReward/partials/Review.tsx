@@ -4,10 +4,11 @@
 import { Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
+import { DisplayAmount } from '@polkadot/extension-polkagate/src/partials';
+
 import { SignArea3 } from '../../../../../components';
 import { useChainInfo, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../../../hooks';
 import { ContentItem, type ReviewProps } from '../../../../../partials/Review';
-import { Amount } from '../../../partials/StakingConfirmation';
 import RestakeRewardToggler, { type RestakeRewardTogglerProps } from './RestakeRewardToggler';
 
 interface RewardHeaderAmountProps {
@@ -28,7 +29,7 @@ export const RewardHeaderAmount = ({ amount, genesisHash, style = {}, title, tok
       <Typography color={isExtension ? theme.palette.text.highlight : '#AA83DC'} variant='B-2'>
         {title || t('Claim Rewards')}
       </Typography>
-      <Amount
+      <DisplayAmount
         amount={amount}
         differentValueColor={isExtension ? theme.palette.text.highlight : '#AA83DC'}
         genesisHash={genesisHash}
