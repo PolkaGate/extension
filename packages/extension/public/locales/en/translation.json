@@ -822,5 +822,6 @@
   "Sparkline data not available for this token.": "",
   "Fetching token data timed out. Please try again.": "",
   "powered by CoinGecko": "",
-  "Back to Home": ""
+  "Back to Home": "",
+  "Back to Account": ""
 }

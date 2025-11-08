@@ -315,6 +315,7 @@ function Buttons ({ address, backToHome, backToHomeText, genesisHash, goToHistor
 interface ContentProps {
   address: string;
   backToHome?: () => void;
+  backToHomeText?: string;
   genesisHash: string | undefined;
   showHistoryButton?: boolean;
   onClose?: () => void;
