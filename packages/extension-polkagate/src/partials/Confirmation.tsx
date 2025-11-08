@@ -343,7 +343,7 @@ function Content ({ address, backToHome, backToHomeText, genesisHash, onClose, s
     , [pathname, transactionDetail.extra]);
 
   const { redirectPath, redirectToSamePath } = useMemo(() => {
-    if (!genesisHash) {
+    if (!genesisHash || !stakingPath) {
       return {
         redirectPath: '',
         redirectToSamePath: false
