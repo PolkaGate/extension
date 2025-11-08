@@ -148,7 +148,7 @@ const PolkaSoul = ({ address, size = 32, style = {} }: Props) => {
   }, [size, params]);
 
   return (
-    <div style={{ alignItems: 'center', cursor: 'copy', display: 'flex', height: `${size}px`, justifyContent: 'center', width: `${size}px`, ...style }}>
+    <div style={{ alignItems: 'center', display: 'flex', height: `${size}px`, justifyContent: 'center', width: `${size}px`, ...style }}>
       <CopyToClipboard text={String(address)}>
         <svg className='rounded-full' height={size} viewBox={`0 0 ${size} ${size}`} width={size}>
           <defs>
