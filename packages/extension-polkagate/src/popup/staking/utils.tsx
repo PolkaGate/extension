@@ -36,6 +36,7 @@ export function getEarningOptions (accountAssets: FetchedBalance[] | null | unde
 
     return {
       ...chain,
+      decimal: chain.tokenDecimal,
       ...asset,
       chainName: sanitizeChainName(chain.name || '') ?? 'Unknown'
     } as unknown as PositionInfo;
