@@ -1,8 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable @typescript-eslint/no-misused-promises */
-
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -63,7 +61,43 @@ function Content ({ setStep }: Props): React.ReactElement {
     setHashedPassword(hashedPassword);
   }, []);
 
-  useEffect(() => {
+  const canUnlockDirectly = useCallback((isOldPasswordCorrect: boolean, oldPasswordExists: boolean) => {
+    const haveUnifiedPassword = hasLocalAccounts && accountsNeedMigration?.length === 0;
+    const sharedPasswordNoLoginSet = haveUnifiedPassword && !oldPasswordExists;
+
+    return isPasswordMigrated ||
+      (isOldPasswordCorrect && accountsNeedMigration?.length === 0) ||
+      sharedPasswordNoLoginSet;
+  }, [accountsNeedMigration?.length, hasLocalAccounts, isPasswordMigrated]);
+
+  const handleDirectUnlock = useCallback(async (password: string, period: number) => {
+    const success = await unlockAllAccounts(password, period);
+
+    if (success) {
+      setExtensionLock(false);
+      hasLocalAccounts && setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
+      setStorage(STORAGE_KEY.IS_FORGOTTEN, undefined) as unknown as void;
+    } else {
+      setExtensionLock(true);
+      setIsPasswordError(true);
+    }
+
+    setPlainPassword(undefined);
+  }, [hasLocalAccounts, setExtensionLock]);
+
+  const handlePasswordMigration = useCallback(async () => {
+    await updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET }); // DEPRECATED, will be removed in future releases
+    setStorage(STORAGE_KEY.IS_FORGOTTEN, undefined) as unknown as void;
+    setHashedPassword(undefined);
+    setExtensionLock(false);
+    const path = '/migratePasswords';
+
+    isExtension
+      ? windowOpen(path).catch(console.error)
+      : navigate(path) as void;
+  }, [isExtension, navigate, setExtensionLock]);
+
+  const tryUnlock = useCallback(async () => {
     if (
       !plainPassword ||
       !autoLockPeriod ||
@@ -76,47 +110,37 @@ function Content ({ setStep }: Props): React.ReactElement {
 
     isUnlockingRef.current = true; // 🚧 prevent parallel unlocks
 
-    (async () => {
-      try {
-        const hasOldStyleLoginPassword = (await getStorage(STORAGE_KEY.LOGIN_INFO) as LoginInfo)?.hashedPassword;
-        const isOldPasswordCorrect = hashedPassword && await isPasswordCorrect(hashedPassword, true); // DEPRECATED, will be removed in future releases
+    try {
+      const oldPasswordExists = !!(await getStorage(STORAGE_KEY.LOGIN_INFO) as LoginInfo)?.hashedPassword;
+      const isOldPasswordCorrect = hashedPassword ? await isPasswordCorrect(hashedPassword, true) : false; // DEPRECATED, will be removed in future releases
 
-        if (isPasswordMigrated || (isOldPasswordCorrect && accountsNeedMigration?.length === 0)) { // has master password or no need to migrate
-          const success = await unlockAllAccounts(plainPassword, autoLockPeriod);
+      const canUnlock = canUnlockDirectly(isOldPasswordCorrect, oldPasswordExists);
 
-          if (success) {
-            setExtensionLock(false);
-            hasLocalAccounts && setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
-            setStorage(STORAGE_KEY.IS_FORGOTTEN, undefined) as unknown as void;
-          } else {
-            setExtensionLock(true);
-            setIsPasswordError(true);
-          }
-
-          setPlainPassword(undefined);
-        } else if (accountsNeedMigration?.length && (isOldPasswordCorrect || !hasOldStyleLoginPassword)) { // needs migration
-          await updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET }); // DEPRECATED, will be removed in future releases
-          setStorage(STORAGE_KEY.IS_FORGOTTEN, undefined) as unknown as void;
-          setHashedPassword(undefined);
-          setExtensionLock(false);
-          const path = '/migratePasswords';
-
-          isExtension
-            ? windowOpen(path).catch(console.error)
-            : navigate(path) as void;
-        } else { // not migrated and old password is incorrect
-          setIsPasswordError(true);
-        }
-      } catch (e) {
-        console.error(e);
-        setIsPasswordError(true);
-      } finally {
-        setUnlocking(false);
-
-        isUnlockingRef.current = false; // ✅ unlock finished
+      if (canUnlock) {
+        return handleDirectUnlock(plainPassword, autoLockPeriod);
       }
-    })().catch(console.error);
-  }, [accountsNeedMigration, autoLockPeriod, hasLocalAccounts, hashedPassword, isExtension, isPasswordMigrated, isUnlocking, navigate, plainPassword, setExtensionLock]);
+
+      const needsPasswordMigration = accountsNeedMigration?.length && (isOldPasswordCorrect || !oldPasswordExists);
+
+      if (needsPasswordMigration) {
+        return handlePasswordMigration();
+      }
+
+      // not migrated and old password exist but it is incorrect
+      setIsPasswordError(true);
+    } catch (e) {
+      console.error(e);
+      setIsPasswordError(true);
+    } finally {
+      setUnlocking(false);
+
+      isUnlockingRef.current = false; // ✅ unlock finished
+    }
+  }, [accountsNeedMigration, autoLockPeriod, canUnlockDirectly, handleDirectUnlock, handlePasswordMigration, hashedPassword, isPasswordMigrated, isUnlocking, plainPassword]);
+
+  useEffect(() => {
+    tryUnlock() as unknown as void;
+  }, [tryUnlock]);
 
   const onUnlock = useCallback(() => {
     if (!plainPassword || autoLockPeriod === undefined || isPasswordMigrated === undefined) {
