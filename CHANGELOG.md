@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.16.2](https://github.com/polkagate/extension/compare/v1.16.1...v1.16.2) (2025-11-10)
+
+
+### Bug Fixes
+
+* force password migration when no legacy password is present ([#2019](https://github.com/polkagate/extension/issues/2019)) ([01b7d45](https://github.com/polkagate/extension/commit/01b7d459c63869904b9ae74e7aa4b19e8ed84fe4))
+
 ## [1.16.1](https://github.com/polkagate/extension/compare/v1.16.0...v1.16.1) (2025-11-04)
 
 
