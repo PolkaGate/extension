@@ -17,7 +17,7 @@ import { getStakingBalances } from './getStakingBalances';
  */
 export async function getBalances (chainName, addresses, userAddedEndpoints, port) {
   const chainEndpoints = getChainEndpoints(chainName, userAddedEndpoints);
-  const { api, connections } = await fastestEndpoint(chainEndpoints);
+  const { api, webSocket } = await fastestEndpoint(chainEndpoints);
 
   if (api.isConnected && api.derive.balances) {
     const { metadata } = metadataFromApi(api);
@@ -49,7 +49,7 @@ export async function getBalances (chainName, addresses, userAddedEndpoints, por
       };
     });
 
-    return { api, balanceInfo: await Promise.all(requests), connectionsToBeClosed: connections };
+    return { api, balanceInfo: await Promise.all(requests), connectionToBeClosed: webSocket };
   }
 
   return undefined;

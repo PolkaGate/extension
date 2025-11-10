@@ -12,10 +12,5 @@ export async function fastestApi (genesisHash) {
   const chainName = getChainName(genesisHash);
   const endpoints = getChainEndpoints(chainName ?? '');
 
-  const { api, connections } = await fastestEndpoint(endpoints);
-
-  return {
-    api,
-    connections
-  };
+  return await fastestEndpoint(endpoints);
 }

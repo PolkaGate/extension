@@ -6,7 +6,7 @@ import { hexToString } from '@polkadot/util';
 
 import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '../../constants';
 import getChainName from '../../getChainName';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
+import { fastestEndpoint, getChainEndpoints } from '../utils';
 
 const BATCH_SIZE = 50;
 
@@ -72,7 +72,7 @@ export default async function getValidatorsInformation (genesisHash, port) {
   const endpoints = getChainEndpoints(chainName);
 
   try {
-    const { api, connections } = await fastestEndpoint(endpoints);
+    const { api, webSocket } = await fastestEndpoint(endpoints);
 
     console.log('getting validators information on ' + chainName);
 
@@ -84,14 +84,14 @@ export default async function getValidatorsInformation (genesisHash, port) {
 
     console.log('electedInfo, waitingInfo, currentEra fetched successfully');
 
-    // Close the initial connections to the relay chain
-    closeWebsockets(connections);
+    // Close the initial connection to the relay chain
+    webSocket.disconnect().catch(console.error);
 
     // Start connect to the People chain endpoints in order to fetch identities
     console.log('Connecting to People chain endpoints...');
     const peopleChainName = getPeopleChainName(genesisHash);
     const peopleEndpoints = getChainEndpoints(peopleChainName);
-    const { api: peopleApi, connections: peopleConnections } = await fastestEndpoint(peopleEndpoints);
+    const { api: peopleApi, webSocket: peopleWebSocket } = await fastestEndpoint(peopleEndpoints);
 
     // Keep elected and waiting validators separate
     const electedValidatorsInfo = electedInfo.info;
@@ -136,7 +136,7 @@ export default async function getValidatorsInformation (genesisHash, port) {
     await processSubIdentities(peopleApi, waitingMayHaveSubId, waitingValidatorsInformation, waitingAccountSubInfo);
     await processParentIdentities(peopleApi, waitingAccountSubInfo, waitingValidatorsInformation);
 
-    closeWebsockets(peopleConnections);
+    peopleWebSocket.disconnect().catch(console.error);
 
     const results = {
       eraIndex: Number(currentEra?.toString() || '0'),
