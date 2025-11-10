@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
 import useCheckMasterPassword from '@polkadot/extension-polkagate/src/hooks/useCheckMasterPassword';
 import { unlockAllAccounts, windowOpen } from '@polkadot/extension-polkagate/src/messaging';
-import { setStorage } from '@polkadot/extension-polkagate/src/util';
+import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { blake2AsHex } from '@polkadot/util-crypto';
 
@@ -25,7 +25,7 @@ import { RedGradient } from '../../style';
 import { isPasswordCorrect } from '../settings/extensionSettings/ManagePassword';
 import { STEPS } from './constants';
 import Header from './Header';
-import { LOGIN_STATUS } from './types';
+import { LOGIN_STATUS, type LoginInfo } from './types';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
@@ -78,6 +78,7 @@ function Content ({ setStep }: Props): React.ReactElement {
 
     (async () => {
       try {
+        const hasOldStyleLoginPassword = (await getStorage(STORAGE_KEY.LOGIN_INFO) as LoginInfo)?.hashedPassword;
         const isOldPasswordCorrect = hashedPassword && await isPasswordCorrect(hashedPassword, true); // DEPRECATED, will be removed in future releases
 
         if (isPasswordMigrated || (isOldPasswordCorrect && accountsNeedMigration?.length === 0)) { // has master password or no need to migrate
@@ -93,7 +94,7 @@ function Content ({ setStep }: Props): React.ReactElement {
           }
 
           setPlainPassword(undefined);
-        } else if (accountsNeedMigration?.length && isOldPasswordCorrect) { // needs migration
+        } else if (accountsNeedMigration?.length && (isOldPasswordCorrect || !hasOldStyleLoginPassword)) { // needs migration
           await updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET }); // DEPRECATED, will be removed in future releases
           setStorage(STORAGE_KEY.IS_FORGOTTEN, undefined) as unknown as void;
           setHashedPassword(undefined);
