@@ -825,5 +825,8 @@
   "Back to Home": "",
   "Back to Account": "",
   "Staking Home": "",
-  "Address copied!": ""
+  "Address copied!": "",
+  "Increase stake": "",
+  "Decrease stake": "",
+  "Entire balance": ""
 }

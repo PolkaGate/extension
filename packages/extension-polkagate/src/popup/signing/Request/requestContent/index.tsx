@@ -1,10 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-no-bind */
-/* eslint-disable padding-line-between-statements */
-/* eslint-disable no-fallthrough */
-
 import type { Call } from '@polkadot/types/interfaces';
 import type { AnyJson } from '@polkadot/types/types';
 
@@ -15,7 +11,10 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from '../../../../components/translate';
 import { toTitleCase } from '../../../../util';
 import { type ModeData, SIGN_POPUP_MODE } from '../../types';
+import Bond from './Bond';
 import Transfer from './Transfer';
+import TransferAll from './TransferAll';
+import Unbond from './Unbond';
 
 interface Decoded {
   args: AnyJson | null;
@@ -39,7 +38,6 @@ function ShowTransactionSummary ({ genesisHash, info }: ShowTransactionSummaryPr
   switch (action) {
     case 'balances_transfer':
     case 'balances_transferKeepAlive':
-    // case 'balances_transferAll':
     {
       const amount = String(info?.args[1]);
       const to = String(info?.args[0]);
@@ -49,6 +47,40 @@ function ShowTransactionSummary ({ genesisHash, info }: ShowTransactionSummaryPr
         amount={amount}
         genesisHash={genesisHash}
         to={to}
+        />
+      );
+    }
+
+    case 'balances_transferAll':
+    {
+      const to = String(info?.args[0]);
+
+      return (
+        <TransferAll
+        genesisHash={genesisHash}
+        to={to}
+        />
+      );
+    }
+
+    case 'staking_bondExtra': {
+      const amount = String(info?.args[0]);
+
+      return (
+        <Bond
+        amount={amount}
+        genesisHash={genesisHash}
+        />
+      );
+    }
+
+    case 'staking_unbond': {
+      const amount = String(info?.args[0]);
+
+      return (
+        <Unbond
+        amount={amount}
+        genesisHash={genesisHash}
         />
       );
     }
