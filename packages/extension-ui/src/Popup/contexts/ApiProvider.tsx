@@ -159,15 +159,31 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
   }, [handleNewApi, updateEndpoint, resolvePendingConnections]);
 
   const connectToEndpoint = useCallback(async (genesisHash: string, endpointToConnect: string) => {
+    let wsProvider;
+
     try {
-      const wsProvider = new WsProvider(endpointToConnect);
-      const newApi = await ApiPromise.create({ provider: wsProvider });
+      wsProvider = new WsProvider(endpointToConnect);
+
+      const newApi = await ApiPromise.create({ provider: wsProvider, throwOnConnect: true }); // throwOnConnect will throw error if the connection failed
 
       handleNewApi(newApi, endpointToConnect);
     } catch (error) {
       console.error('Connection error:', error);
+      await wsProvider?.disconnect();
+
       // Resolve pending with undefined on error
       resolvePendingConnections(genesisHash, undefined, endpointToConnect);
+
+      let endpoint = endpointManager.get(genesisHash);
+
+      // Throw an error only when the endpoint is in auto mode, to trigger a fallback API connection.
+      if (endpoint?.isAuto) {
+        endpoint = { ...AUTO_MODE_DEFAULT_ENDPOINT, timestamp: Date.now() };
+
+        endpointManager.set(genesisHash, endpoint);
+
+        throw error;
+      }
     }
   }, [handleNewApi, resolvePendingConnections]);
 
@@ -183,7 +199,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     }
   }, [handleNewApi, resolvePendingConnections]);
 
-  const requestApiConnection = useCallback((genesisHash: string, endpoint: EndpointType | undefined, endpoints: DropdownOption[]) => {
+  const requestApiConnection = useCallback(async (genesisHash: string, endpoint: EndpointType | undefined, endpoints: DropdownOption[]) => {
     const endpointValue = endpoint?.endpoint;
 
     if (!endpointValue || !endpointManager) {
@@ -201,19 +217,17 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
 
     // If in auto mode find the fastest endpoint
     if (isAutoMode(endpointValue)) {
-      handleAutoMode(genesisHash, endpoints).catch(console.error);
-
-      return;
+      await handleAutoMode(genesisHash, endpoints);
     }
 
     // Connect to a WebSocket endpoint
     if (endpointValue.startsWith('wss')) {
-      connectToEndpoint(genesisHash, endpointValue).catch(console.error);
+      await connectToEndpoint(genesisHash, endpointValue);
     }
 
     // Connect to a light client endpoint if provided
     if (endpointValue.startsWith('light')) {
-      connectToLightClient(genesisHash, endpointValue).catch(console.error);
+      await connectToLightClient(genesisHash, endpointValue);
     }
   }, [connectToEndpoint, connectToLightClient, handleAutoMode]);
 
@@ -266,10 +280,17 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
       resolve: resolvePromise
     };
 
-    // Start connection
-    requestApiConnection(genesisHash, endpoint, endpoints);
+    try {
+      // Start connection
+      await requestApiConnection(genesisHash, endpoint, endpoints);
 
-    return promise;
+      return promise;
+    } catch (error) {
+      console.error(`Connection failed for ${endpointValue}`, error);
+
+      // Retry with auto mode
+      return getApi(genesisHash, endpoints);
+    }
   }, [requestApiConnection]);
 
   return (
