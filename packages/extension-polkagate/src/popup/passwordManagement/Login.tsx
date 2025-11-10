@@ -117,13 +117,17 @@ function Content ({ setStep }: Props): React.ReactElement {
       const canUnlock = canUnlockDirectly(isOldPasswordCorrect, oldPasswordExists);
 
       if (canUnlock) {
-        return handleDirectUnlock(plainPassword, autoLockPeriod);
+        await handleDirectUnlock(plainPassword, autoLockPeriod);
+
+        return;
       }
 
       const needsPasswordMigration = accountsNeedMigration?.length && (isOldPasswordCorrect || !oldPasswordExists);
 
       if (needsPasswordMigration) {
-        return handlePasswordMigration();
+        await handlePasswordMigration();
+
+        return;
       }
 
       // not migrated and old password exist but it is incorrect
@@ -189,7 +193,7 @@ function Content ({ setStep }: Props): React.ReactElement {
       <DecisionButtons
         cancelButton
         direction='vertical'
-        disabled={!hashedPassword}
+        disabled={!hashedPassword || isUnlocking}
         isBusy={isUnlocking}
         onPrimaryClick={onUnlock}
         onSecondaryClick={onForgotPassword}
