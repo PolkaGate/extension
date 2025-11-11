@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.16.3](https://github.com/polkagate/extension/compare/v1.16.2...v1.16.3) (2025-11-11)
+
+
+### Bug Fixes
+
+* resolve misdisplayed unlock date in reserved reasons section ([#2023](https://github.com/polkagate/extension/issues/2023)) ([88b9007](https://github.com/polkagate/extension/commit/88b90079587a9d4784822fc8c9d03928678fb412))
+
 ## [1.16.2](https://github.com/polkagate/extension/compare/v1.16.1...v1.16.2) (2025-11-10)
 
 
