@@ -13,7 +13,7 @@ import LCConnector from '@polkadot/extension-polkagate/src/util/api/lightClient-
 import { AUTO_MODE, AUTO_MODE_DEFAULT_ENDPOINT } from '@polkadot/extension-polkagate/src/util/constants';
 
 const isAutoMode = (e: string) => e === AUTO_MODE.value;
-
+const MAX_RETRIES = 3;
 const endpointManager = new EndpointManager();
 
 /**
@@ -169,7 +169,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
       handleNewApi(newApi, endpointToConnect);
     } catch (error) {
       console.error('Connection error:', error);
-      await wsProvider?.disconnect();
+      wsProvider?.disconnect().catch(console.error);
 
       // Resolve pending with undefined on error
       resolvePendingConnections(genesisHash, undefined, endpointToConnect);
@@ -218,6 +218,8 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     // If in auto mode find the fastest endpoint
     if (isAutoMode(endpointValue)) {
       await handleAutoMode(genesisHash, endpoints);
+
+      return;
     }
 
     // Connect to a WebSocket endpoint
@@ -231,7 +233,7 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     }
   }, [connectToEndpoint, connectToLightClient, handleAutoMode]);
 
-  const getApi = useCallback(async (genesisHash: string | null | undefined, endpoints: DropdownOption[]): Promise<ApiPromise | undefined> => {
+  const getApi = useCallback(async (genesisHash: string | null | undefined, endpoints: DropdownOption[], retryCount = 0): Promise<ApiPromise | undefined> => {
     if (!genesisHash) {
       return Promise.resolve(undefined);
     }
@@ -288,8 +290,22 @@ export default function ApiProvider ({ children }: { children: React.ReactNode }
     } catch (error) {
       console.error(`Connection failed for ${endpointValue}`, error);
 
-      // Retry with auto mode
-      return getApi(genesisHash, endpoints);
+      // Retry with exponential backoff
+      if (retryCount < MAX_RETRIES) {
+        const delay = 500 * Math.pow(2, retryCount); // 500ms, 1000ms, 2000ms...
+
+        console.warn(
+          `Retrying connection for ${endpointValue} (attempt ${retryCount + 1}/${MAX_RETRIES}) after ${delay}ms`
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, delay));
+
+        return getApi(genesisHash, endpoints, retryCount + 1);
+      }
+
+      console.error(`❌ Max retry attempts reached for ${endpointValue}`);
+
+      return Promise.resolve(undefined);
     }
   }, [requestApiConnection]);
 
