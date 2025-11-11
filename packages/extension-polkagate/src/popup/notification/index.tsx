@@ -22,6 +22,8 @@ function Notification () {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const { isFirstTime, isNotificationOff, loading, noNotificationYet } = status;
+
   useEffect(() => markAsRead(), [markAsRead]);
 
   const openSettings = useCallback(() => navigate('/notification/settings') as void, [navigate]);
@@ -44,19 +46,19 @@ function Notification () {
                 key={dateKey}
               />
             ))}
-            {status.isNotificationOff &&
+            {isNotificationOff &&
               <OffNotificationMessage
                 onClick={openSettings}
               />}
-            {status.isFirstTime &&
+            {isFirstTime &&
               <ColdStartNotification
                 onClick={openSettings}
               />}
-            {status.noNotificationYet &&
+            {noNotificationYet &&
               <NoNotificationYet
                 onClick={backHome}
               />}
-            {status.loading &&
+            {loading &&
               <NotificationLoading count={5} />}
           </VelvetBox>
           <WhatsNew style={{ columnGap: '5px', paddingBottom: '50px', paddingTop: '24px' }} />

@@ -47,10 +47,16 @@ const notificationReducer = (
   }
 };
 
-enum status {
+enum Status {
   NONE,
   FETCHING,
   FETCHED
+}
+
+interface FetchState {
+  receivedFunds: Status;
+  referenda: Status;
+  stakingRewards: Status;
 }
 
 /**
@@ -86,12 +92,12 @@ export default function useNotifications (justLoadData = true) {
   const selectedChains = useSelectedChains();
   const allChains = useGenesisHashOptions(false);
 
-  // Refs to avoid duplicate network calls and redundant state updates
-  const { current: fetchRefs } = useRef({
-    receivedFundsRef: status.NONE, // Flag to avoid duplicate calls of getReceivedFundsInformation
-    referendaRef: status.NONE, // Flag to avoid duplicate calls of getPayoutsInformation
-    stakingRewardsRef: status.NONE // Flag to avoid duplicate calls of getNotificationsInformation
-  });
+  // fetchState to avoid duplicate network calls and redundant state updates
+  const [fetchState, setFetchState] = useReducer(
+    (state: FetchState, updates: Partial<FetchState>) => ({ ...state, ...updates }),
+    { receivedFunds: Status.NONE, referenda: Status.NONE, stakingRewards: Status.NONE }
+  );
+
   const initializedRef = useRef<boolean>(false); // Flag to avoid duplicate initialization
   const isSavingRef = useRef<boolean>(false); // Flag to avoid duplicate save in the storage
   const saveQueue = useRef<Promise<void>>(Promise.resolve()); // Saving to the local storage queue
@@ -166,8 +172,8 @@ export default function useNotifications (justLoadData = true) {
 
   // Fetch received funds notifications
   const receivedFundsInfo = useCallback(async () => {
-    if (chains && fetchRefs.receivedFundsRef === status.NONE && accounts && isReceivedFundsEnable) {
-      fetchRefs.receivedFundsRef = status.FETCHING;
+    if (chains && fetchState.receivedFunds === Status.NONE && accounts && isReceivedFundsEnable) {
+      setFetchState({ receivedFunds: Status.FETCHING });
       const notificationMessages: NotificationMessage[] = [];
 
       for (const chain of chains) {
@@ -181,15 +187,15 @@ export default function useNotifications (justLoadData = true) {
         notificationMessages.push(...messages);
       }
 
-      fetchRefs.receivedFundsRef = status.FETCHED;
+      setFetchState({ receivedFunds: Status.FETCHED });
       dispatchNotifications({ payload: notificationMessages, type: 'SET_MESSAGES' });
     }
-  }, [accounts, chains, currency, fetchRefs, isReceivedFundsEnable, latestLoggedIn, prices, t, useAddedEndpoints]);
+  }, [accounts, chains, currency, fetchState.receivedFunds, isReceivedFundsEnable, latestLoggedIn, prices, t, useAddedEndpoints]);
 
   // Fetch staking rewards notifications
   const payoutsInfo = useCallback(async () => {
-    if (fetchRefs.stakingRewardsRef === status.NONE && accounts && stakingRewardChains && stakingRewardChains.length !== 0) {
-      fetchRefs.stakingRewardsRef = status.FETCHING;
+    if (fetchState.stakingRewards === Status.NONE && accounts && stakingRewardChains && stakingRewardChains.length !== 0) {
+      setFetchState({ stakingRewards: Status.FETCHING });
       const notificationMessages: NotificationMessage[] = [];
 
       for (const chain of stakingRewardChains) {
@@ -203,15 +209,16 @@ export default function useNotifications (justLoadData = true) {
         notificationMessages.push(...messages);
       }
 
-      fetchRefs.stakingRewardsRef = status.FETCHED;
+      setFetchState({ stakingRewards: Status.FETCHED });
       dispatchNotifications({ payload: notificationMessages, type: 'SET_MESSAGES' });
     }
-  }, [accounts, currency, fetchRefs, latestLoggedIn, prices, stakingRewardChains, t, useAddedEndpoints]);
+  }, [accounts, currency, fetchState.stakingRewards, latestLoggedIn, prices, stakingRewardChains, t, useAddedEndpoints]);
 
   // Fetch referenda notifications
   const referendasInfo = useCallback(async () => {
-    if (fetchRefs.referendaRef === status.NONE && accounts && governanceChains && governanceChains.length !== 0) {
-      fetchRefs.referendaRef = status.FETCHING;
+    if (fetchState.referenda === Status.NONE && accounts && governanceChains && governanceChains.length !== 0) {
+      setFetchState({ referenda: Status.FETCHING });
+
       const notificationMessages: NotificationMessage[] = [];
 
       for (const chain of governanceChains) {
@@ -225,10 +232,10 @@ export default function useNotifications (justLoadData = true) {
         notificationMessages.push(...messages);
       }
 
-      fetchRefs.referendaRef = status.FETCHED;
+      setFetchState({ referenda: Status.FETCHED });
       dispatchNotifications({ payload: notificationMessages, type: 'SET_MESSAGES' });
     }
-  }, [accounts, currency, fetchRefs, governanceChains, latestLoggedIn, prices, t, useAddedEndpoints]);
+  }, [accounts, currency, fetchState.referenda, governanceChains, latestLoggedIn, prices, t, useAddedEndpoints]);
 
   // Load notifications from storage or initialize if first time
   useEffect(() => {
@@ -286,24 +293,31 @@ export default function useNotifications (justLoadData = true) {
   const isFirstTime = useMemo(() => !notificationSetting.enable && notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
   const noNotificationYet = useMemo(() => notificationSetting.enable && !notifications.isFirstTime && notifications.notificationMessages?.length === 0, [notificationSetting.enable, notifications.isFirstTime, notifications.notificationMessages?.length]);
 
+  const isAllFetched = useMemo(
+    () => Object.values(fetchState).every((s) => s === Status.FETCHED),
+    [fetchState]
+  );
+
   const loading = useMemo(() => {
-    if (isNotificationOff || isFirstTime || (notificationItems && Object.entries(notificationItems).length > 0) || noNotificationYet) {
+    if (isNotificationOff || isFirstTime || (notificationItems && Object.entries(notificationItems).length > 0) || noNotificationYet || isAllFetched) {
       return false;
     }
 
     return true;
-  }, [isFirstTime, isNotificationOff, noNotificationYet, notificationItems]);
+  }, [isAllFetched, isFirstTime, isNotificationOff, noNotificationYet, notificationItems]);
+
+  const status = useMemo(() => ({
+    isFirstTime,
+    isNotificationOff,
+    loading,
+    noNotificationYet
+  }), [isFirstTime, isNotificationOff, loading, noNotificationYet]);
 
   return {
     markAsRead,
     notificationItems,
     notificationSetting,
     notifications,
-    status: {
-      isFirstTime,
-      isNotificationOff,
-      loading,
-      noNotificationYet
-    }
+    status
   };
 }
