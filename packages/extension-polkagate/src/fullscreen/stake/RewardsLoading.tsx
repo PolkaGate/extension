@@ -80,7 +80,7 @@ function Chart () {
   );
 }
 
-export default function RewardsLoading () {
+function RewardsLoading () {
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
       <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: '#1B133C', borderRadius: '18px', width: '533px' }}>
@@ -93,3 +93,5 @@ export default function RewardsLoading () {
     </Container>
   );
 }
+
+export default React.memo(RewardsLoading);
