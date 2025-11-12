@@ -115,7 +115,7 @@ export default function Signing (): React.ReactElement {
 
   return request
     ? <SharePopup
-      modalStyle={{ minHeight: '550px', position: 'relative' }}
+      modalStyle={{ minHeight: '550px',  padding: '10px', position: 'relative', width: 360 }}
       onClose={onCancel}
       open
       popupProps={{
