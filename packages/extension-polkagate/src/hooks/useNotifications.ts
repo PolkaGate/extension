@@ -124,7 +124,7 @@ export default function useNotifications (justLoadData = true) {
 
   const [notifications, dispatchNotifications] = useReducer(notificationReducer, initialNotificationState);
 
-  const fallbackTimestamp = Math.floor(Date.now() / 1000); // timestamp in seconds
+  const fallbackTimestamp = useMemo(() => (Math.floor(Date.now() / 1000)), []); // timestamp in seconds
   const latestLoggedIn = useMemo(() => notifications?.latestLoggedIn ?? fallbackTimestamp, [fallbackTimestamp, notifications?.latestLoggedIn]);
   // Whether notifications are turned off
   const notificationIsOff = useMemo(() => isNotificationEnable === false || accounts?.length === 0, [accounts?.length, isNotificationEnable]);
@@ -292,8 +292,6 @@ export default function useNotifications (justLoadData = true) {
   const isNotificationOff = useMemo(() => !notificationSetting.enable && !notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
   const isFirstTime = useMemo(() => !notificationSetting.enable && notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
   const noNotificationYet = useMemo(() => notificationSetting.enable && !isFirstTime && notifications.notificationMessages?.length === 0, [isFirstTime, notificationSetting.enable, notifications.notificationMessages?.length]);
-
-  justLoadData && console.log('notifications ::::', notifications);
 
   const loading = useMemo(() => {
     if (isNotificationOff || isFirstTime || notificationItems || noNotificationYet) {
