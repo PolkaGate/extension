@@ -14,7 +14,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { BackWithLabel, ChainLogo, DisplayBalance, FadeOnScroll, Motion, SearchField } from '../../components';
 import { useAccountAssets, useBackground, useIsDark, useIsTestnetEnabled, useSelectedAccount, useTranslation } from '../../hooks';
-import { HomeMenu, UserDashboardHeader } from '../../partials';
+import { HomeMenu, NothingFound, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 import { fetchStaking } from '../../util/fetchStaking';
 import StakingInfo from './stakingInfo';
@@ -128,7 +128,7 @@ export default function EarningOptions (): React.ReactElement {
                           {t('up to')}
                         </Typography>
                         <Typography color='#82FFA5' sx={{ lineHeight: '17px' }} variant='B-2'>
-                          {info.rate }%
+                          {info.rate}%
                         </Typography>
                         <Typography color='#EAEBF1' fontSize='10px' sx={{ lineHeight: '10px' }} variant='S-2'>
                           {t('per year')}
@@ -138,6 +138,11 @@ export default function EarningOptions (): React.ReactElement {
                   </Grid>
                 );
               })}
+              <NothingFound
+                show={earningItems?.length === 0}
+                style={{ pb: '50px' }}
+                text={t('Token Not Found')}
+              />
               <FadeOnScroll containerRef={refContainer} />
             </Grid>
           </VelvetBox>

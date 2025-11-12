@@ -7,11 +7,12 @@ import { Stack } from '@mui/material';
 import React, { Fragment, memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { getEarningOptions } from '@polkadot/extension-polkagate/src/popup/staking/utils';
 import { extractRelayChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { FadeOnScroll, Motion } from '../../../components';
-import { useAccountAssets, useIsTestnetEnabled, usePrices, useSelectedAccount } from '../../../hooks';
+import { useAccountAssets, useIsTestnetEnabled, usePrices, useSelectedAccount, useTranslation } from '../../../hooks';
 import { TEST_NETS } from '../../../util/constants';
 import { fetchStaking } from '../../../util/fetchStaking';
 import { type PopupOpener, POSITION_TABS, positionsInitialState, positionsReducer, type PositionsState } from '../util/utils';
@@ -26,44 +27,53 @@ interface PositionOptionsProps {
   isSelected: (genesis: string, stakingType: string) => boolean;
 }
 
-const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }: PositionOptionsProps) => (
-  <>
-    {positionItems?.map(({ decimal, genesisHash, pooledBalance, priceId, soloTotal, token }) => {
-      const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;
+const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }: PositionOptionsProps) => {
+  const { t } = useTranslation();
 
-      if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
-        return <Fragment key={`${genesisHash}_${token}_fragment`} />;
-      }
+  return (
+    <>
+      {positionItems?.map(({ decimal, genesisHash, pooledBalance, priceId, soloTotal, token }) => {
+        const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;
 
-      return (
-        <Fragment key={`${genesisHash}_${token}_fragment`}>
-          {pooledBalance && !pooledBalance?.isZero() && ['both', 'pool'].includes(state.stakingType) &&
-            <PositionItem
-              balance={pooledBalance}
-              decimal={decimal}
-              genesisHash={genesisHash}
-              isSelected={isSelected(genesisHash, 'pool')}
-              key={`${genesisHash}_${token}_pool`}
-              price={price}
-              token={token}
-              type='pool'
-            />}
-          {soloTotal && !soloTotal?.isZero() && ['both', 'solo'].includes(state.stakingType) &&
-            <PositionItem
-              balance={soloTotal}
-              decimal={decimal}
-              genesisHash={genesisHash}
-              isSelected={isSelected(genesisHash, 'solo')}
-              key={`${genesisHash}_${token}_solo`}
-              price={price}
-              token={token}
-              type='solo'
-            />}
-        </Fragment>
-      );
-    })}
-  </>
-);
+        if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
+          return <Fragment key={`${genesisHash}_${token}_fragment`} />;
+        }
+
+        return (
+          <Fragment key={`${genesisHash}_${token}_fragment`}>
+            {pooledBalance && !pooledBalance?.isZero() && ['both', 'pool'].includes(state.stakingType) &&
+              <PositionItem
+                balance={pooledBalance}
+                decimal={decimal}
+                genesisHash={genesisHash}
+                isSelected={isSelected(genesisHash, 'pool')}
+                key={`${genesisHash}_${token}_pool`}
+                price={price}
+                token={token}
+                type='pool'
+              />}
+            {soloTotal && !soloTotal?.isZero() && ['both', 'solo'].includes(state.stakingType) &&
+              <PositionItem
+                balance={soloTotal}
+                decimal={decimal}
+                genesisHash={genesisHash}
+                isSelected={isSelected(genesisHash, 'solo')}
+                key={`${genesisHash}_${token}_solo`}
+                price={price}
+                token={token}
+                type='solo'
+              />}
+          </Fragment>
+        );
+      })}
+      <NothingFound
+        show={positionItems?.length === 0}
+        style={{ pb: '50px' }}
+        text={t('Token Not Found')}
+      />
+    </>
+  );
+};
 
 interface EarningOptionsProps {
   earningItems: PositionInfo[] | undefined;
@@ -74,28 +84,37 @@ interface EarningOptionsProps {
   setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
-const EarningOptions = ({ allSuggestedValidators, earningItems, popupOpener, rates, setSelectedPosition, state }: EarningOptionsProps) => (
-  <>
-    {earningItems?.map((token) => {
-      const { chainName, genesisHash, tokenSymbol } = token;
-      const relayChainName = (extractRelayChainName(chainName) ?? chainName).toLowerCase();
-      const info = { ...token, rate: rates?.[relayChainName] || 0, suggestedValidators: allSuggestedValidators?.[relayChainName] || [] } as PositionInfo;
+const EarningOptions = ({ allSuggestedValidators, earningItems, popupOpener, rates, setSelectedPosition, state }: EarningOptionsProps) => {
+  const { t } = useTranslation();
 
-      if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
-        return <Fragment key={`${genesisHash}_${tokenSymbol}_fragment`} />;
-      }
+  return (
+    <>
+      {earningItems?.map((token) => {
+        const { chainName, genesisHash, tokenSymbol } = token;
+        const relayChainName = (extractRelayChainName(chainName) ?? chainName).toLowerCase();
+        const info = { ...token, rate: rates?.[relayChainName] || 0, suggestedValidators: allSuggestedValidators?.[relayChainName] || [] } as PositionInfo;
 
-      return (
-        <EarningItem
-          info={info}
-          key={`${genesisHash}_${tokenSymbol}`}
-          popupOpener={popupOpener}
-          setSelectedPosition={setSelectedPosition}
-        />
-      );
-    })}
-  </>
-);
+        if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
+          return <Fragment key={`${genesisHash}_${tokenSymbol}_fragment`} />;
+        }
+
+        return (
+          <EarningItem
+            info={info}
+            key={`${genesisHash}_${tokenSymbol}`}
+            popupOpener={popupOpener}
+            setSelectedPosition={setSelectedPosition}
+          />
+        );
+      })}
+      <NothingFound
+        show={earningItems?.length === 0}
+        style={{ pb: '50px' }}
+        text={t('Token Not Found')}
+      />
+    </>
+  );
+};
 
 interface Props {
   popupOpener: PopupOpener;

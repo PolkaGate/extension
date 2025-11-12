@@ -12,7 +12,7 @@ import { emptyList } from '../assets/icons/index';
 import { ActionButton, FadeOnScroll, MySnackbar, MyTooltip, SearchField } from '../components';
 import { useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { getAuthList, removeAuthorization } from '../messaging';
-import { EditDappAccess, SharePopup } from '.';
+import { EditDappAccess, NothingFound, SharePopup } from '.';
 
 interface Props {
   onClose: ExtensionPopupCloser;
@@ -56,7 +56,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
     setSearchKeyword(text);
   }, [setSearchKeyword]);
 
-  const onDeleteDapp = useCallback((url: string) => {
+  const onDeleteDapp = useCallback((url: string) => () => {
     setIsBusy(true);
     removeAuthorization(url)
       .catch(console.error)
@@ -66,7 +66,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
       });
   }, []);
 
-  const onEditList = useCallback((info: AuthUrlInfo) => {
+  const onEditList = useCallback((info: AuthUrlInfo) => () => {
     setAccessToEdit(info);
   }, [setAccessToEdit]);
 
@@ -89,6 +89,8 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
     }
   }, [filteredAuthorizedDapps, setRefresh]);
 
+  const dAppsToShow = (filteredAuthorizedDapps && Object.entries(filteredAuthorizedDapps)) ?? [];
+
   return (
     <Stack alignItems='center' direction='column' sx={{ height: '460px', position: 'relative', pt: '10px' }}>
       <Typography color='#BEAAD8' sx={{ p: isExtension ? '0 10px' : '10px 25px' }} variant='B-4'>
@@ -109,7 +111,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
         </Typography>
       </Stack>
       <Container disableGutters ref={refContainer} sx={{ height: ' 400px', overflow: 'hidden', overflowY: 'auto', p: isExtension ? '0 15px 50px' : '0 5px 50px' }}>
-        {filteredAuthorizedDapps && Object.entries(filteredAuthorizedDapps).map(([url, info], index) => {
+        {dAppsToShow.map(([url, info], index) => {
           const isIncluded = info.authorizedAccounts.find((address) => address === selectedAccount?.address);
 
           return (
@@ -118,7 +120,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
                 !!index && isExtension &&
                 <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '345px' }} />
               }
-              <Stack alignItems='center' direction='row' justifyContent='space-between' key={index} sx={{ bgcolor: isExtension ? 'transparent' : '#05091C', borderRadius: '14px', p: isExtension ? '10px 0' : '12px 10px', mb: '2px', width: '100%' }}>
+              <Stack alignItems='center' direction='row' justifyContent='space-between' key={index} sx={{ bgcolor: isExtension ? 'transparent' : '#05091C', borderRadius: '14px', mb: '2px', p: isExtension ? '10px 0' : '12px 10px', width: '100%' }}>
                 <Stack alignItems='center' columnGap='5px' direction='row'>
                   <Link2 color='#FF4FB9' size='16' variant='Bulk' />
                   <Typography color='#EAEBF1' variant='B-4'>
@@ -127,7 +129,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
                 </Stack>
                 <Stack alignItems='center' columnGap='5px' direction='row'>
                   <MyTooltip content={t('Edit access')}>
-                    <Box onClick={() => onEditList(info)} sx={{ alignItems: 'center', bgcolor: isIncluded ? '#82FFA533' : '#2D1E4A', borderRadius: '128px', cursor: 'pointer', display: 'flex', height: '24px', justifyContent: 'center', minWidth: '34px' }}>
+                    <Box onClick={onEditList(info)} sx={{ alignItems: 'center', bgcolor: isIncluded ? '#82FFA533' : '#2D1E4A', borderRadius: '128px', cursor: 'pointer', display: 'flex', height: '24px', justifyContent: 'center', minWidth: '34px' }}>
                       <Typography color='#AA83DC' sx={{ mr: '3px' }} variant='B-4'>
                         {info.authorizedAccounts.length}
                       </Typography>
@@ -135,7 +137,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
                     </Box>
                   </MyTooltip>
                   <MyTooltip content={t('Remove access')}>
-                    <Box onClick={() => onDeleteDapp(url)} sx={{ alignItems: 'center', bgcolor: '#FF165C26', borderRadius: '128px', cursor: 'pointer', display: 'flex', height: '24px', justifyContent: 'center', width: '34px' }}>
+                    <Box onClick={onDeleteDapp(url)} sx={{ alignItems: 'center', bgcolor: '#FF165C26', borderRadius: '128px', cursor: 'pointer', display: 'flex', height: '24px', justifyContent: 'center', width: '34px' }}>
                       <Trash color='#FF165C' size='16' variant='Bulk' />
                     </Box>
                   </MyTooltip>
@@ -144,6 +146,11 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
             </>
           );
         })}
+        <NothingFound
+          show={dAppsToShow.length === 0}
+          style={{ p: 0 }}
+          text={t('Website Not Found')}
+        />
       </Container>
       <FadeOnScroll containerRef={refContainer} height='53px' ratio={0.4} />
       <ActionButton
@@ -184,7 +191,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
  *
  * Has been used in both full-screen & extension mode!
  */
-function WebsitesAccess ({ open, onClose }: Props): React.ReactElement {
+function WebsitesAccess ({ onClose, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 
@@ -229,20 +236,20 @@ function WebsitesAccess ({ open, onClose }: Props): React.ReactElement {
       popupProps={{ TitleIcon: accessToEdit ? undefined : Key, iconSize: 18, maxHeight: '460px', onBack: accessToEdit ? () => setAccessToEdit(undefined) : undefined, pt: 20, withoutTopBorder: true }}
       title={t('Website access')}
     >
-      {!Object.keys(filteredAuthorizedDapps ?? {}).length
+      {!Object.keys(authorizedDapps ?? {}).length
         ? <EmptyAccessList />
         : accessToEdit
           ? <EditDappAccess
-            access={accessToEdit}
-            setAccessToEdit={setAccessToEdit}
-            setRefresh={setRefresh}
-          />
+              access={accessToEdit}
+              setAccessToEdit={setAccessToEdit}
+              setRefresh={setRefresh}
+            />
           : <AccessList
-            filteredAuthorizedDapps={filteredAuthorizedDapps}
-            setAccessToEdit={setAccessToEdit}
-            setRefresh={setRefresh}
-            setSearchKeyword={setSearchKeyword}
-          />
+              filteredAuthorizedDapps={filteredAuthorizedDapps}
+              setAccessToEdit={setAccessToEdit}
+              setRefresh={setRefresh}
+              setSearchKeyword={setSearchKeyword}
+            />
       }
     </SharePopup>
   );
