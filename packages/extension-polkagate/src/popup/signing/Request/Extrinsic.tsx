@@ -142,7 +142,7 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
   }, [fee, setMode, t]);
 
   return (
-    <Grid container display='block' fontSize='16px' justifyContent='center' justifyItems='center'>
+    <Grid container display='block' fontSize='16px' justifyContent='center' justifyItems='center' minHeight={453} position='relative'>
       <DappRow
         url={url}
       />

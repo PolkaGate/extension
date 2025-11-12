@@ -59,7 +59,7 @@ export default function Confirm ({ extrinsicPayload, fee, onCancel, onSignature,
   }, [payload?.address, signId, navigate]);
 
   return (
-    <Grid container display='block' height='440px' item zIndex={1}>
+    <Grid container display='block' height='440px' item position='relative' zIndex={1}>
       <Box
         component='img'
         src={cubes as string}
