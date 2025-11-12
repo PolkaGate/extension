@@ -133,7 +133,7 @@ export default function Chains (): React.ReactElement {
         <Grid container item>
           <SearchField
             onInputChange={onSearch}
-            placeholder='🔍 Search chain'
+            placeholder='🔍 Search network'
             style={{ borderRadius: '12px', height: '36px', marginBottom: '10px' }}
           />
         </Grid>
@@ -178,7 +178,7 @@ export default function Chains (): React.ReactElement {
         <NothingFound
           show={chainsToList?.length === 0}
           style={{ pb: '65px' }}
-          text={t('Chain Not Found')}
+          text={t('Network Not Found')}
         />
       </Grid>
       <ActionButton

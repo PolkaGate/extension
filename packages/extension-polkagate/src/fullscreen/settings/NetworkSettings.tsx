@@ -237,7 +237,7 @@ function NetworkSettings (): React.ReactElement {
             show={chainsToList.length === 0}
             size={200}
             style={{ pt: '100px' }}
-            text={t('Chain Not Found')}
+            text={t('Network Not Found')}
           />
         </Grid>
         {chainToShowEndpoints &&

@@ -107,7 +107,7 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
         <NothingFound
           show={chainsToShow.length === 0}
           style={{ pb: '60px' }}
-          text={t('Chain Not Found')}
+          text={t('Network Not Found')}
         />
       </Grid>
     </Grid>

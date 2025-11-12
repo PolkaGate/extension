@@ -149,7 +149,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
         <NothingFound
           show={dAppsToShow.length === 0}
           style={{ p: 0 }}
-          text={t('Dapp Not Found')}
+          text={t('Website Not Found')}
         />
       </Container>
       <FadeOnScroll containerRef={refContainer} height='53px' ratio={0.4} />

@@ -6,7 +6,7 @@ import { Stack, type SxProps, type Theme, Typography } from '@mui/material';
 import React from 'react';
 
 import { emptyState } from '../assets/animations';
-import { useTranslation } from '../hooks';
+import { useIsBlueish, useTranslation } from '../hooks';
 
 interface Props {
   text?: string;
@@ -17,6 +17,7 @@ interface Props {
 
 function NothingFound ({ show = false, size = 150, style = {}, text }: Props) {
   const { t } = useTranslation();
+  const isBlueish = useIsBlueish();
 
   if (!show) {
     return null;
@@ -25,7 +26,7 @@ function NothingFound ({ show = false, size = 150, style = {}, text }: Props) {
   return (
     <Stack direction='column' sx={{ alignItems: 'center', justifyContent: 'center', py: '20px', width: '100%', ...style }}>
       <DotLottieReact autoplay loop src={emptyState as string} style={{ height: size, width: size }} />
-      <Typography color='text.highlight' variant='B-2'>
+      <Typography color={isBlueish ? 'text.highlight' : 'text.primary'} variant='B-2'>
         {text ?? t('Nothing Found')}
       </Typography>
     </Stack>
