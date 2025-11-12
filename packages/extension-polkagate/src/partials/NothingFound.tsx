@@ -19,7 +19,7 @@ function NothingFound ({ show = false, size = 150, style = {}, text }: Props) {
   const { t } = useTranslation();
 
   if (!show) {
-    return;
+    return null;
   }
 
   return (
