@@ -170,7 +170,6 @@ function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxy
           withCancel
         />}
     </Grid>
-
   );
 }
 

@@ -160,8 +160,14 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
     return undefined;
   }, [proxyItems, depositToPay, t, fee, txInfo]);
 
+  const confirmationStep = useMemo(() => step === STEPS.CONFIRMATION && transactionDetail, [step, transactionDetail]);
+
   const extraHeight = useMemo(() => {
-    const basedHeight = 75;
+    if (confirmationStep) {
+      return 0;
+    }
+
+    const basedHeight = 35;
     const newProxies = proxyItems?.filter(({ status }) => status === 'new');
 
     if (newProxies?.length) {
@@ -175,7 +181,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
     }
 
     return 0;
-  }, [proxyItems]);
+  }, [confirmationStep, proxyItems]);
 
   return (
     <DraggableModal
@@ -197,7 +203,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
       style={{
         backgroundColor: '#1B133C',
          minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${555 + extraHeight}px`,
-         padding: '20px 15px 10px'
+         padding: confirmationStep ? '20px 5px' : '20px 15px 10px'
         }}
       title={
         [STEPS.REVIEW, STEPS.SIGN_QR].includes(step)
@@ -230,7 +236,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
           <WaitScreen />
         }
         {
-          step === STEPS.CONFIRMATION && transactionDetail &&
+          confirmationStep && transactionDetail &&
           <Confirmation
             address={address ?? ''}
             backToHome={handleClose}
