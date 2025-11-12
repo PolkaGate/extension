@@ -10,11 +10,12 @@ import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { AssetLogo, DisplayBalance, Identity2, Motion, Progress } from '../../components';
+import { AssetLogo, DisplayBalance, Identity2, Motion } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
 import getLogo2 from '../../util/getLogo2';
 import RewardConfigureButton from './new-solo/components/RewardConfigureButton';
 import { type PopupOpener, StakingPopUps } from './util/utils';
+import RewardsLoading from './RewardsLoading';
 
 interface WindowChangerProps {
   onNextPeriod: () => void;
@@ -112,7 +113,7 @@ const RewardSetting = ({ genesisHash, popupOpener, token, type }: RewardSettingP
         </Typography>
       </Container>
       {type === 'solo' &&
-       <RewardConfigureButton onClick={popupOpener(StakingPopUps.REWARD_DESTINATION_CONFIG)} />
+        <RewardConfigureButton onClick={popupOpener(StakingPopUps.REWARD_DESTINATION_CONFIG)} />
       }
     </Container>
   );
@@ -264,18 +265,11 @@ const RewardTable = ({ descSortedRewards, expanded, genesisHash, onExpand }: Rew
 };
 
 export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token, type }: ChartHeaderProps) {
-  const { t } = useTranslation();
-
   return (
     <Motion variant='slide'>
       {
         !rewardInfo?.descSortedRewards
-          ? (
-            <Progress
-              style={{ height: '310px' }}
-              title={t('Loading rewards details')}
-              withEllipsis
-            />)
+          ? <RewardsLoading />
           : (
             <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
               <Stack direction='column' sx={{ bgcolor: '#1B133C', borderRadius: '18px', width: '533px' }}>

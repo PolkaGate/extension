@@ -10,11 +10,12 @@ interface Props {
   style?: React.CSSProperties | SxProps<Theme>;
   animation?: SkeletonProps['animation'];
   variant?: SkeletonProps['variant'];
-  width?: number;
+  width?: number | string;
 }
 
 function MySkeleton ({ animation, bgcolor, height = 12, style = {}, variant, width = 0 }: Props): React.ReactElement {
   const isDark = useTheme();
+  const _width = typeof width === 'number' ? `${width}px` : width;
 
   return (
     <Skeleton
@@ -26,7 +27,7 @@ function MySkeleton ({ animation, bgcolor, height = 12, style = {}, variant, wid
         fontWeight: 'bold',
         height: `${height}px`,
         transform: 'none',
-        width: `${width}px`,
+        width: _width,
         ...style
       }}
       variant={variant ?? 'text'}
