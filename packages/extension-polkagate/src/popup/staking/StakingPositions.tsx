@@ -11,7 +11,7 @@ import { type BN } from '@polkadot/util';
 import { ActionButton, BackWithLabel, ChainLogo, FadeOnScroll, Motion, SearchField } from '../../components';
 import SnowFlake from '../../components/SVG/SnowFlake';
 import { useAccountAssets, useBackground, useIsDark, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
-import { HomeMenu, UserDashboardHeader } from '../../partials';
+import { HomeMenu, NothingFound, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 import { amountToHuman } from '../../util';
 import { TEST_NETS } from '../../util/constants';
@@ -202,6 +202,11 @@ export default function StakingPositions (): React.ReactElement {
                   </Fragment>
                 );
               })}
+              <NothingFound
+                show={filteredToken?.length === 0}
+                style={{ pb: '50px' }}
+                text={t('Token Not Found')}
+              />
               <FadeOnScroll containerRef={refContainer} />
             </Grid>
           </VelvetBox>
