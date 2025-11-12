@@ -5,7 +5,7 @@
 
 import { SUPPORTED_NFT_CHAINS } from '../../../fullscreen/nft/utils/constants';
 import { getFormattedAddress } from '../../address';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
+import { fastestEndpoint, getChainEndpoints } from '../utils';
 
 const NFT_FUNCTION_NAME = 'getNFTs';
 
@@ -191,9 +191,9 @@ async function getNFTs (addresses) {
     const formattedAddresses = addresses.map((address) => getFormattedAddress(address, undefined, prefix));
     const endpoints = getChainEndpoints(name, undefined);
 
-    const { api, connections } = await fastestEndpoint(endpoints);
+    const { api, webSocket } = await fastestEndpoint(endpoints);
 
-    return ({ api, chainName, connections, formattedAddresses, originalAddresses: addresses });
+    return ({ api, chainName, formattedAddresses, originalAddresses: addresses, webSocket });
   });
 
   const apis = await Promise.all(apiPromises);
@@ -224,7 +224,9 @@ async function getNFTs (addresses) {
     return itemsByAddress;
   } finally {
     // Ensure all websocket connections are closed
-    apis.forEach(({ connections }) => closeWebsockets(connections));
+    apis.forEach(({ webSocket }) => {
+      webSocket.disconnect().catch(console.error);
+    });
   }
 }
 
