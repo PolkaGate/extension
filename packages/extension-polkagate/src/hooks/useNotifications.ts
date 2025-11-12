@@ -291,20 +291,17 @@ export default function useNotifications (justLoadData = true) {
 
   const isNotificationOff = useMemo(() => !notificationSetting.enable && !notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
   const isFirstTime = useMemo(() => !notificationSetting.enable && notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
-  const noNotificationYet = useMemo(() => notificationSetting.enable && !notifications.isFirstTime && notifications.notificationMessages?.length === 0, [notificationSetting.enable, notifications.isFirstTime, notifications.notificationMessages?.length]);
+  const noNotificationYet = useMemo(() => notificationSetting.enable && !isFirstTime && notifications.notificationMessages?.length === 0, [isFirstTime, notificationSetting.enable, notifications.notificationMessages?.length]);
 
-  const isAllFetched = useMemo(
-    () => Object.values(fetchState).every((s) => s === Status.FETCHED),
-    [fetchState]
-  );
+  justLoadData && console.log('notifications ::::', notifications);
 
   const loading = useMemo(() => {
-    if (isNotificationOff || isFirstTime || (notificationItems && Object.entries(notificationItems).length > 0) || noNotificationYet || isAllFetched) {
+    if (isNotificationOff || isFirstTime || notificationItems || noNotificationYet) {
       return false;
     }
 
     return true;
-  }, [isAllFetched, isFirstTime, isNotificationOff, noNotificationYet, notificationItems]);
+  }, [isFirstTime, isNotificationOff, noNotificationYet, notificationItems]);
 
   const status = useMemo(() => ({
     isFirstTime,
