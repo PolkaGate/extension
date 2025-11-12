@@ -17,7 +17,8 @@ const START_WITH_PATH = [
   '/send/',
   '/settingsfs/',
   '/stake/',
-  '/socialRecovery/'
+  '/socialRecovery/',
+  '/notification/'
 ] as const;
 
 const ROOT_PATH = [

@@ -13,7 +13,7 @@ interface Props {
 
 function TwoToneText ({ backgroundColor, color = '#BEAAD8', style = {}, text, textPartInColor = '' }: Props): React.ReactElement {
   if (!textPartInColor) {
-    return <span>{text}</span>;
+    return <span style={{ ...style }}>{text}</span>;
   }
 
   return (

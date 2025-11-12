@@ -9,6 +9,8 @@ import NFTAlbum from '@polkadot/extension-polkagate/src/fullscreen/nft';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
 import Settings from '@polkadot/extension-polkagate/src/fullscreen/settings';
 import History from '@polkadot/extension-polkagate/src/popup/history/newDesign';
+import Notification from '@polkadot/extension-polkagate/src/popup/notification';
+import NotificationSettings from '@polkadot/extension-polkagate/src/popup/notification/NotificationSettings';
 import MigratePasswords from '@polkadot/extension-polkagate/src/popup/passwordManagement/MigratePasswords';
 
 // NOTE: the rule for paths is /urlName/:address/:genesisHash/blah blah
@@ -41,6 +43,16 @@ export const FEATURE_ROUTES: RouteConfig[] = [
   {
     Component: Settings,
     path: '/settingsfs/*'
+  },
+  {
+    Component: Notification,
+    path: '/notification',
+    trigger: 'notification'
+  },
+  {
+    Component: NotificationSettings,
+    path: '/notification/settings',
+    trigger: 'notification-settings'
   },
   {
     Component: MigratePasswords,

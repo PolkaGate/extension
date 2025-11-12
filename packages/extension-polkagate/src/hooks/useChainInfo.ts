@@ -22,7 +22,7 @@ import useMetadata from './useMetadata';
  * @property {number | undefined} decimal - The number of decimals for the blockchain's token. Can be undefined.
  * @property {string | undefined} token - The symbol for the blockchain's token. Can be undefined.
  */
-interface ChainInfo {
+export interface ChainInfo {
   api: ApiPromise | undefined;
   chain: Chain | null | undefined;
   chainName: string | undefined;
