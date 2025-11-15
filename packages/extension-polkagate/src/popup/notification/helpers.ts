@@ -10,7 +10,7 @@ import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '@polkadot/extension-
 import getChainName from '@polkadot/extension-polkagate/src/util/getChainName';
 import { isMigratedRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
-import { MAX_RETRIES, RECEIVED_FUNDS_THRESHOLD, RECEIVED_REWARDS_THRESHOLD, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM } from './constant';
+import { BATCH_SIZE, MAX_RETRIES, RECEIVED_FUNDS_THRESHOLD, RECEIVED_REWARDS_THRESHOLD, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM } from './constant';
 import { timestampToDate } from './util';
 
 const transformTransfers = (address: string, transfers: TransferSubscan[], network: DropdownOption) => {
@@ -114,6 +114,7 @@ const transformReferendas = (referendas: ReferendaSubscan[], network: DropdownOp
  */
 export const getReceivedFundsInformation = async (addresses: string[], chain: string): Promise<ReceivedFundInformation[]> => {
   const results: ReceivedFundInformation[] = [];
+
   // If the network is a migrated relay chain then there's no need to fetch received fund information on
   const isMigrateRelayChain = isMigratedRelay(chain);
 
@@ -124,9 +125,9 @@ export const getReceivedFundsInformation = async (addresses: string[], chain: st
   const chainName = getChainName(chain);
   const network = { text: getSubscanChainName(chainName), value: chain } as DropdownOption;
 
-  // Process each address
-  for (const address of addresses) {
-    let lastError: unknown = null;
+  // Helper function to process a single address
+  const processAddress = async (address: string): Promise<ReceivedFundInformation | null> => {
+    // let lastError: unknown = null;
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
@@ -143,26 +144,49 @@ export const getReceivedFundsInformation = async (addresses: string[], chain: st
 
         if (!receivedInfo.data.transfers || receivedInfo.data.transfers.length === 0) {
           // account doesn't have any history for this address on this network
-          break;
+          return null;
         }
 
         const transformed = transformTransfers(address, receivedInfo.data.transfers, network);
 
-        results.push(transformed as ReceivedFundInformation);
-
-        // success - stop retrying for this address
-        break;
-      } catch (error) {
-        lastError = error;
-        console.warn(`Attempt ${attempt} failed for ${network.text} and address ${address} (RECEIVED). Retrying...`);
+        return transformed as ReceivedFundInformation;
+      } catch (_error) {
+        // lastError = error;
+        // console.warn(`Attempt ${attempt} failed for ${network.text} and address ${address} (RECEIVED). Retrying...`);
 
         // Exponential backoff
         await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
       }
     }
 
-    if (lastError) {
-      console.error(`(RECEIVED) Failed to fetch data for ${network.text} and address ${address} after ${MAX_RETRIES} attempts`, lastError);
+    // if (lastError) {
+    //   console.error(`(RECEIVED) Failed to fetch data for ${network.text} and address ${address} after ${MAX_RETRIES} attempts`, lastError);
+    // }
+
+    return null;
+  };
+
+  // Process addresses in batches
+  for (let i = 0; i < addresses.length; i += BATCH_SIZE) {
+    const batch = addresses.slice(i, i + BATCH_SIZE);
+
+    // console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}: ${batch.length} addresses`);
+
+    // Process all addresses in the current batch concurrently
+    const batchResults = await Promise.all(
+      batch.map((address) => processAddress(address))
+    );
+
+    // Add non-null results to the results array
+    batchResults.forEach((result) => {
+      if (result) {
+        results.push(result);
+      }
+    });
+
+    // Optional: Add a small delay between batches to be extra safe with rate limits
+    if (i + BATCH_SIZE < addresses.length) {
+      await new Promise((resolve) => setTimeout(resolve, 500)); // 500ms delay between batches
     }
   }
 
@@ -177,6 +201,7 @@ export const getReceivedFundsInformation = async (addresses: string[], chain: st
  */
 export const getPayoutsInformation = async (addresses: string[], chain: string): Promise<StakingRewardInformation[]> => {
   const results: StakingRewardInformation[] = [];
+
   // If the network is a migrated relay chain then there's no need to fetch received fund information on
   const isMigrateRelayChain = isMigratedRelay(chain);
 
@@ -187,9 +212,9 @@ export const getPayoutsInformation = async (addresses: string[], chain: string):
   const chainName = getChainName(chain);
   const network = { text: getSubscanChainName(chainName), value: chain } as DropdownOption;
 
-  // Process each address
-  for (const address of addresses) {
-    let lastError: unknown = null;
+  // Helper function to process a single address
+  const processAddress = async (address: string): Promise<StakingRewardInformation | null> => {
+    // let lastError: unknown = null;
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
@@ -201,7 +226,7 @@ export const getPayoutsInformation = async (addresses: string[], chain: string):
           list: PayoutSubscan[]
         }>;
 
-        const poolPayoutInfo = await postData(`https://${network.text}.api.subscan.io/api/scan/nomination_pool/rewards`, {
+        const poolPayoutInfo = await postData(`https://${network.text}.api.scan/nomination_pool/rewards`, {
           address,
           category: 'Reward',
           row: RECEIVED_REWARDS_THRESHOLD
@@ -215,22 +240,48 @@ export const getPayoutsInformation = async (addresses: string[], chain: string):
 
         const payoutInfo = [...(soloPayoutInfo?.data?.list ?? []), ...(poolPayoutInfo?.data?.list ?? [])];
 
-        if (!payoutInfo) {
-          break; // account doesn't have any history
+        if (!payoutInfo || payoutInfo.length === 0) {
+          return null; // account doesn't have any history
         }
 
-        results.push(transformPayouts(address, payoutInfo, network));
-      } catch (error) {
-        lastError = error;
-        console.warn(`Attempt ${attempt} failed for ${network.text} and address ${address} (PAYOUT). Retrying...`);
+        return transformPayouts(address, payoutInfo, network);
+      } catch (_error) {
+        // lastError = error;
+        // console.warn(`Attempt ${attempt} failed for ${network.text} and address ${address} (PAYOUT). Retrying...`);
 
         // Exponential backoff
         await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
       }
     }
 
-    if (lastError) {
-      console.error(`(PAYOUT) Failed to fetch data for ${network.text} and address ${address} after ${MAX_RETRIES} attempts`, lastError);
+    // if (lastError) {
+    //   console.error(`(PAYOUT) Failed to fetch data for ${network.text} and address ${address} after ${MAX_RETRIES} attempts`, lastError);
+    // }
+
+    return null;
+  };
+
+  // Process addresses in batches
+  for (let i = 0; i < addresses.length; i += BATCH_SIZE) {
+    const batch = addresses.slice(i, i + BATCH_SIZE);
+
+    // console.log(`Processing payout batch ${Math.floor(i / BATCH_SIZE) + 1}: ${batch.length} addresses`);
+
+    // Process all addresses in the current batch concurrently
+    const batchResults = await Promise.all(
+      batch.map((address) => processAddress(address))
+    );
+
+    // Add non-null results to the results array
+    batchResults.forEach((result) => {
+      if (result) {
+        results.push(result);
+      }
+    });
+
+    // Optional: Add a small delay between batches to be extra safe with rate limits
+    if (i + BATCH_SIZE < addresses.length) {
+      await new Promise((resolve) => setTimeout(resolve, 500)); // 500ms delay between batches
     }
   }
 
@@ -262,7 +313,7 @@ export const getReferendasInformation = async (chain: string): Promise<Referenda
     REFERENDA_COUNT_TO_TRACK = REFERENDA_COUNT_TO_TRACK_KSM;
   }
 
-  let lastError: unknown = null;
+  // let lastError: unknown = null;
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
@@ -281,9 +332,9 @@ export const getReferendasInformation = async (chain: string): Promise<Referenda
       }
 
       results.push(transformReferendas(referendaInfo.data.list, network));
-    } catch (error) {
-      lastError = error;
-      console.warn(`Attempt ${attempt} failed for ${network.text} (REFERENDA). Retrying...`);
+    } catch (_error) {
+      // lastError = error;
+      // console.warn(`Attempt ${attempt} failed for ${network.text} (REFERENDA). Retrying...`);
 
       // Exponential backoff
       await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
@@ -291,9 +342,9 @@ export const getReferendasInformation = async (chain: string): Promise<Referenda
   }
 
   // If all retries fail, log the final error
-  if (lastError) {
-    console.error(`(REFERENDA) Failed to fetch data for ${network.text} after ${MAX_RETRIES} attempts`, lastError);
-  }
+  // if (lastError) {
+  //   console.error(`(REFERENDA) Failed to fetch data for ${network.text} after ${MAX_RETRIES} attempts`, lastError);
+  // }
 
   return results;
 };

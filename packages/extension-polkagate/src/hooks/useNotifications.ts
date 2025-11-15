@@ -258,6 +258,8 @@ export default function useNotifications (justLoadData = true) {
     };
 
     loadSavedNotifications().catch(console.error);
+
+    console.log('Notifications Loaded/Initialized');
   }, [notificationIsOff]);
 
   // Fetch received funds, referendas and staking rewards notifications

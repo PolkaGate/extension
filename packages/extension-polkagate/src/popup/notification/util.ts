@@ -14,6 +14,7 @@ import { getUserAddedPriceId } from '@polkadot/extension-polkagate/src/fullscree
 import { DEFAULT_PRICE, type Price } from '@polkadot/extension-polkagate/src/hooks/useTokenPriceBySymbol';
 import { getPriceIdByChainName, sanitizeChainName, toCamelCase } from '@polkadot/extension-polkagate/src/util';
 import chains from '@polkadot/extension-polkagate/src/util/chains';
+
 import { NOTIFICATION_TIMESTAMP_OFFSET } from './constant';
 
 export function timestampToDate (timestamp: number | string): string {
@@ -471,8 +472,12 @@ export const getNotificationMessages = (item: NotificationMessageType, chainInfo
 };
 
 export const filterMessages = (pervMessages: NotificationMessageInformation[] | undefined, newMessages: NotificationMessage[] | undefined) => {
-  if (!pervMessages?.length || !newMessages?.length) {
-    return newMessages?.map((item) => ({ message: item, read: false })) ?? [];
+  if (!newMessages?.length) {
+    return pervMessages;
+  }
+
+  if (!pervMessages?.length) {
+    return newMessages.map((item) => ({ message: item, read: false })) ?? [];
   }
 
   const pervMessagesSet = new Set(pervMessages.map(({ message }) => message.detail.itemKey));
