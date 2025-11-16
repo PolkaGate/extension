@@ -206,7 +206,7 @@ function DetailCard ({ historyItem }: Props) {
                       addressStyle={{ backgroundColor: '#C6AECC26', borderRadius: '9px', marginTop: '-3%', padding: '2px 3px' }}
                       charsCount={4}
                       direction='row'
-                      genesisHash={POLKADOT_GENESIS}
+                      genesisHash={historyItem.chain?.genesisHash || POLKADOT_GENESIS}
                       identiconSize={18}
                       nameStyle={{ py: '2px' }}
                       showSocial={false}

@@ -110,7 +110,7 @@ function HistoryItem ({ historyItem }: HistoryItemProps) {
                   addressStyle={{ backgroundColor: '#C6AECC26', borderRadius: '9px', marginTop: '-3%', padding: '2px 3px' }}
                   charsCount={4}
                   direction='row'
-                  genesisHash={POLKADOT_GENESIS}
+                  genesisHash={chain?.genesisHash ?? POLKADOT_GENESIS}
                   identiconSize={24}
                   nameStyle={{ py: '2px' }}
                   showSocial={false}
