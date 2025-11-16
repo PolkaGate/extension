@@ -133,25 +133,31 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
   const theme = useTheme();
   const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
-  const _decimal = transactionDetail?.assetDecimal ?? transactionDetail?.decimal ?? nativeAssetDecimal;
-  const _token = transactionDetail?.token ?? nativeToken;
+  const { accounts, amount, assetDecimal, decimal, extra, token = nativeToken } = transactionDetail;
+  const _decimal = assetDecimal ?? decimal ?? nativeAssetDecimal;
 
   const mainEntries = useMemo(() => {
-    const baseFields = ['amount', 'deposit', 'fee', 'block', 'txHash'];
-    const fieldsToDisplay = showDate ? ['date', ...baseFields] : baseFields;
+    const isAmountInHeader = amount && !accounts;
+
+    const baseFields = ['deposit', 'fee', 'block', 'txHash'];
+
+    const fieldsToDisplay = [
+      ...(showDate ? ['date'] : []),
+      ...(isAmountInHeader ? baseFields : ['amount', ...baseFields])
+    ];
 
     return fieldsToDisplay
       .map((field) => [field, transactionDetail[field as keyof TransactionDetail]])
       .filter(([_, value]) => value !== undefined && value !== null) as [string, TransactionDetail[keyof TransactionDetail]][];
-  }, [showDate, transactionDetail]);
+  }, [accounts, amount, showDate, transactionDetail]);
 
   const extraEntries = useMemo(() => {
-    if (transactionDetail.extra && typeof transactionDetail.extra === 'object') {
-      return Object.entries(transactionDetail.extra).filter(([_, value]) => value !== undefined && value !== null);
+    if (extra && typeof extra === 'object') {
+      return Object.entries(extra).filter(([_, value]) => value !== undefined && value !== null);
     }
 
     return [];
-  }, [transactionDetail]);
+  }, [extra]);
 
   const getContentTypeAndColor = useCallback((key: string, content: TransactionDetail[keyof TransactionDetail]) => {
     const isHash = key === 'txHash';
@@ -159,11 +165,11 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
     const isFee = ['fee'].includes(key);
     const isBalance = isFee || ['amount', 'deposit'].includes(key);
     const isAddress = isValidAddress(content as string);
-    const isFromAddress = key === 'from' && isAddress;
+    const isFromToAddress = isAddress && ['from', 'to'].includes(key);
     const isDate = showDate && key === 'date';
     const color = (isBlock || isDate) ? 'text.primary' : isBlueish ? 'text.highlight' : 'text.secondary';
 
-    return { color, isAddress, isBalance, isBlock, isDate, isFee, isFromAddress, isHash };
+    return { color, isAddress, isBalance, isBlock, isDate, isFee, isFromToAddress, isHash };
   }, [isBlueish, showDate]);
 
   const entriesToRender = [...extraEntries, ...mainEntries].filter(([_, content]) => content !== null && content !== undefined);
@@ -173,7 +179,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
       <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', justifyContent: 'center', maxHeight: '260px', overflow: 'auto', p: '12px 18px' }}>
         {entriesToRender.map(([key, content], index) => {
           const withDivider = entriesToRender.length > index + 1;
-          const { color, isAddress, isBalance, isBlock, isDate, isFee, isFromAddress, isHash } = getContentTypeAndColor(key, content);
+          const { color, isAddress, isBalance, isBlock, isDate, isFee, isFromToAddress, isHash } = getContentTypeAndColor(key, content);
 
           return (
             <React.Fragment key={key}>
@@ -183,7 +189,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                 </Typography>
                 <Stack columnGap='3px' direction='row' justifyContent='end'>
                   {
-                    isFromAddress &&
+                    isFromToAddress &&
                     <Identity2
                       address={content as string}
                       genesisHash={POLKADOT_GENESIS}
@@ -214,7 +220,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                             }}
                             token={(isFee && typeof content === 'object' && 'token' in (content as any)
                               ? (content as FeeInfo).token
-                              : isFee ? nativeToken : _token) ?? ''}
+                              : isFee ? nativeToken : token) ?? ''}
                           />)
                         : isDate
                           ? new Date(content as number).toLocaleString('en-US', { day: 'numeric', hour: 'numeric', hour12: true, minute: '2-digit', month: 'short', second: '2-digit', weekday: 'short', year: 'numeric' })
@@ -242,9 +248,10 @@ interface ButtonsProps {
   genesisHash: string | undefined;
   goToHistory?: () => void;
   isBlueish: boolean;
+  success: boolean;
 }
 
-function Buttons ({ address, backToHome, backToHomeText, genesisHash, goToHistory, isBlueish }: ButtonsProps) {
+function Buttons ({ address, backToHome, backToHomeText, genesisHash, goToHistory, isBlueish, success }: ButtonsProps) {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
 
@@ -264,7 +271,7 @@ function Buttons ({ address, backToHome, backToHomeText, genesisHash, goToHistor
   return (
     <Stack direction='column' sx={{ alignItems: 'center', gap: '8px', left: 0, mt: '2px', width: '100%' }}>
       {
-        goToHistory &&
+        goToHistory && success &&
         <NeonButton
           contentPlacement='center'
           onClick={goToHistory}
@@ -317,6 +324,7 @@ interface ContentProps {
   backToHome?: () => void;
   backToHomeText?: string;
   genesisHash: string | undefined;
+  isModal?: boolean;
   showHistoryButton?: boolean;
   onClose?: () => void;
   showStakingHome?: boolean;
@@ -324,7 +332,7 @@ interface ContentProps {
   transactionDetail: TransactionDetail;
 }
 
-function Content ({ address, backToHome, backToHomeText, genesisHash, onClose, showDate, showHistoryButton, showStakingHome, transactionDetail }: ContentProps) {
+function Content ({ address, backToHome, backToHomeText, genesisHash, isModal, onClose, showDate, showHistoryButton, showStakingHome, transactionDetail }: ContentProps) {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const isBlueish = useIsBlueish();
@@ -385,26 +393,29 @@ function Content ({ address, backToHome, backToHomeText, genesisHash, onClose, s
   const _backToHomeText = (pathname.startsWith('/fullscreen-stake/') || stakingPath) ? t('Staking Home') : backToHomeText;
 
   return (
-    <Stack direction='column' sx={{ gap: '8px', p: '15px 15px 0', zIndex: 1 }}>
+    <Stack direction='column' sx={{ gap: '8px', height: isModal ? '100%' : 'inherit', p: '15px 15px 0', zIndex: 1 }}>
       <Header
         genesisHash={genesisHash}
         isBlueish={isBlueish}
         transactionDetail={transactionDetail}
       />
-      <Detail
-        genesisHash={genesisHash}
-        isBlueish={isBlueish}
-        showDate={showDate}
-        transactionDetail={transactionDetail}
-      />
-      <Buttons
-        address={address}
-        backToHome={(backToHome || showStakingHome) ? handleHome : undefined}
-        backToHomeText={ _backToHomeText}
-        genesisHash={genesisHash}
-        goToHistory={showHistoryButton ? goToHistory : undefined}
-        isBlueish={isBlueish}
-      />
+      <Stack direction='column' sx={{ gap: '8px', height: 'inherit', justifyContent: 'space-between' }}>
+        <Detail
+          genesisHash={genesisHash}
+          isBlueish={isBlueish}
+          showDate={showDate}
+          transactionDetail={transactionDetail}
+        />
+        <Buttons
+          address={address}
+          backToHome={(backToHome || showStakingHome) ? handleHome : undefined}
+          backToHomeText={_backToHomeText}
+          genesisHash={genesisHash}
+          goToHistory={showHistoryButton ? goToHistory : undefined}
+          isBlueish={isBlueish}
+          success={transactionDetail.success}
+        />
+      </Stack>
     </Stack>
   );
 }
@@ -435,6 +446,7 @@ export default function Confirmation ({ address, backToHome, backToHomeText, gen
     backToHome,
     backToHomeText,
     genesisHash,
+    isModal,
     onClose,
     showDate,
     showHistoryButton,
@@ -451,7 +463,7 @@ export default function Confirmation ({ address, backToHome, backToHomeText, gen
             onClose={onClose ?? _onCloseModal}
             open={openModal}
             showBackIconAsClose
-            style={{ backgroundColor: '#1B133C', minHeight: '625px', padding: '20px 9px 10px' }}
+            style={{ backgroundColor: '#1B133C', minHeight: '600px', padding: '20px 9px 10px' }}
             title={transactionDetail.success ? t('Completed') : t('Failed')}
           >
             <Content {...contentProps} />

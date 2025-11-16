@@ -117,7 +117,7 @@ export default function AddProxy ({ chain, proxiedAddress, proxyItems, setNewDep
       noDivider
       onClose={onCancel}
       open={step === STEPS.ADD_PROXY}
-      style={{ backgroundColor: '#1B133C', minHeight: '478px', padding: '20px 15px 10px' }}
+      style={{ backgroundColor: '#1B133C', minHeight: '460px', padding: '20px 15px' }}
       title={t('Add proxy')}
     >
       <Grid container item sx={{ px: '5px' }}>

@@ -6,6 +6,8 @@ import type { PoolInfo } from '@polkadot/extension-polkagate/util/types';
 import { Stack } from '@mui/material';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
+
 import { DecisionButtons, FadeOnScroll, Progress, SearchField } from '../../../components';
 import { usePools, useTranslation } from '../../../hooks';
 import { FetchPoolProgress } from '../../../popup/staking/pool-new/joinPool/ChoosePool';
@@ -102,6 +104,11 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
             setSelectedPool={setSelectedPool}
           />
         }
+        <NothingFound
+          show={incrementalPools !== undefined && (poolsToShow === null || poolsToShow?.length === 0)}
+          style={{ pt: '100px' }}
+          text={t('Pool Not Found')}
+        />
         <DecisionButtons
           cancelButton
           direction='horizontal'

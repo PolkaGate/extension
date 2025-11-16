@@ -12,7 +12,7 @@ import { BackWithLabel, Motion } from '../../../components';
 import { useBackground, useChainInfo, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import { updateStorage } from '../../../util';
-import { STORAGE_KEY, PROXY_TYPE } from '../../../util/constants';
+import { PROXY_TYPE, STORAGE_KEY } from '../../../util/constants';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingMenu from '../partial/StakingMenu';
 import StakingPortfolio from '../partial/StakingPortfolio';

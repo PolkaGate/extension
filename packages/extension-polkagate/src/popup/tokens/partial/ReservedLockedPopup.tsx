@@ -128,8 +128,8 @@ function Item ({ amount, decimal, noDivider, price, reason, token, unlockTracks 
         <Grid alignItems='center' container item justifyContent='space-between' xs>
           <Grid alignItems='center' container gap='4px' item width='fit-content'>
             <ReasonAndDescription
-              description={unlockTracks?.lockedTooltip}
-              inColorPart={unlockTracks?.unlockDate}
+              description={isGovernance ? unlockTracks?.lockedTooltip : undefined}
+              inColorPart={isGovernance ? unlockTracks?.unlockDate : undefined}
               reason={reason}
             />
             {isGovernance && unlockTracks &&
