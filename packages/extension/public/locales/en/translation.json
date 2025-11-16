@@ -310,7 +310,6 @@
   "Account Portfolio": "",
   "Crypto": "",
   "Fiat": "",
-  "Nothing found": "",
   "Balance Display Currency": "",
   "Add Watch-only account": "",
   "Enter the watch-only address. It can also serve as a proxied account, but without transaction signing. A proxy account in the extension is needed for signing.": "",
@@ -563,7 +562,6 @@
   "Min": "",
   "Summary": "",
   "Checking proxy accounts ...": "",
-  "Loading, please wait ...": "",
   "Sender": "",
   "Loading ...": "",
   "Select network": "",
@@ -824,5 +822,13 @@
   "Back to Home": "",
   "Back to Account": "",
   "Staking Home": "",
-  "Address copied!": ""
+  "Address copied!": "",
+  "Network Not Found": "",
+  "Account Not Found": "",
+  "Pool Not Found": "",
+  "Validator(s) Not Found": "",
+  "Token Not Found": "",
+  "Nothing Found": "",
+  "Website Not Found": "",
+  "Crypto/Fiat Not Found": ""
 }
