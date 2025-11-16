@@ -38,6 +38,8 @@ export function timestampToDate (timestamp: number | string): string {
   });
 }
 
+const lastTime = (latestLoggedIn: number) => latestLoggedIn - NOTIFICATION_TIMESTAMP_OFFSET;
+
 /**
  * Generate notification messages for referenda that occurred since the user's last login.
  */
@@ -50,7 +52,7 @@ export const generateReferendaNotifications = (
   for (const currentNetworkData of newRefs) {
     let { data: currentReferenda, network } = currentNetworkData;
 
-    currentReferenda = currentReferenda.filter(({ latestTimestamp }) => latestTimestamp >= (latestLoggedIn + NOTIFICATION_TIMESTAMP_OFFSET));
+    currentReferenda = currentReferenda.filter(({ latestTimestamp }) => latestTimestamp >= lastTime(latestLoggedIn));
 
     for (const referenda of currentReferenda) {
       newMessages.push({
@@ -75,7 +77,7 @@ export const generateStakingRewardNotifications = (
 
   payouts.forEach(({ address, data, network }) => {
     data
-      .filter(({ timestamp }) => timestamp >= (latestLoggedIn + NOTIFICATION_TIMESTAMP_OFFSET))
+      .filter(({ timestamp }) => timestamp >= lastTime(latestLoggedIn))
       .forEach((payout) => {
         newMessages.push({
           chain: network,
@@ -100,7 +102,7 @@ export const generateReceivedFundNotifications = (
 
   transfers.forEach(({ address, data, network }) => {
     data
-      .filter(({ timestamp }) => timestamp >= (latestLoggedIn + NOTIFICATION_TIMESTAMP_OFFSET))
+      .filter(({ timestamp }) => timestamp >= lastTime(latestLoggedIn))
       .forEach((receivedFund) => {
         newMessages.push({
           chain: network,
