@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export const COLUMN_WIDTH = {
-  ACTION: '200px',
-  SUB_ACTION: '100px',
-  AMOUNT: '190px',
+  ACTION: '150px',
+  SUB_ACTION: '250px',
+  AMOUNT: '140px',
   DATE: '200px',
-  STATUS: '200px'
+  STATUS: '150px'
 };
 
 export enum TAB {
