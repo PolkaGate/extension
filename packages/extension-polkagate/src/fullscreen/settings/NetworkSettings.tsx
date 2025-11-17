@@ -75,8 +75,8 @@ function AddButton (): React.ReactElement {
 
   return (
     <>
-      <VelvetBox style={{ minWidth: '165px', width: 'fit-content' }}>
-        <Stack direction='row' onClick={extensionPopupOpener(ExtensionPopups.NEW_NETWORK)} sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-1px)' }, alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', columnGap: '3px', cursor: 'pointer', height: '40px', px: '5px', transition: 'all 250ms ease-out' }}>
+      <VelvetBox style={{ minWidth: 'fit-content', width: 'auto' }}>
+        <Stack direction='row' onClick={extensionPopupOpener(ExtensionPopups.NEW_NETWORK)} sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-1px)' }, alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', columnGap: '3px', cursor: 'pointer', height: '40px', p: '0 15px 0 5px', transition: 'all 250ms ease-out', width: '100%' }}>
           <Add color='#FF4FB9' size='24' variant='Linear' />
           <Typography color='text.primary' sx={{ textWrap: 'nowrap', width: 'fit-content' }} variant='B-6'>
             {t('Add New Network')}
