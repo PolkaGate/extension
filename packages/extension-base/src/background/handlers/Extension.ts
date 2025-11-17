@@ -496,28 +496,47 @@ export default class Extension {
     }
   }
 
-  private accountsUnlockAll ({ cacheTime, password }: RequestUnlockAllAccounts): boolean {
+  private accountsUnlockAll ({ cacheTime, lazy = false, password }: RequestUnlockAllAccounts): boolean {
     if (!password) {
       throw new Error('Password needed to unlock the account');
     }
 
+    const unlockOrThrow = (account: KeyringAddress) => {
+      const pair = this.unlockPair({ address: account.address, password });
+
+      assert(pair, `Unable to unlock account ${account.address}`);
+    };
+
     try {
       const accountsLocal = this.localAccounts();
 
-      for (const { address } of accountsLocal) {
-        const unlockedPair = this.unlockPair({ address, password });
-
-        assert(unlockedPair, 'Unable to unlock pair');
+      if (accountsLocal.length === 0) {
+        return true;
       }
 
-      // Set a single expiry timestamp for all accounts
+      if (lazy) {
+        unlockOrThrow(accountsLocal[0]);
+
+        setTimeout(() => {
+          accountsLocal.slice(1).forEach((a) => {
+            try {
+              unlockOrThrow(a);
+            } catch (e) {
+              console.error(e);
+            }
+          });
+        }, 0);
+      } else {
+        accountsLocal.forEach(unlockOrThrow);
+      }
+
       this.setUnlockExpiry({ expiryTime: Date.now() + cacheTime });
 
       return true;
     } catch (error) {
       console.error('accountsUnlockAll failed:', error);
 
-      return false; // return false if any decode fails
+      return false;
     }
   }
 
