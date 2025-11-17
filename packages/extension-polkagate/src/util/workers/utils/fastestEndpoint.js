@@ -38,7 +38,14 @@ export async function fastestEndpoint (endpoints) {
   );
 
   // Get the fastest connection
-  const { api, provider } = await Promise.any(apiPromises);
+  let api, provider;
+
+  try {
+    ({ api, provider } = await Promise.any(apiPromises));
+  } catch (e) {
+    // e is AggregateError if all fail
+    throw new Error('All endpoints failed to connect', { cause: e });
+  }
 
   // Disconnect all other providers (non-blocking)
   Promise.all(
