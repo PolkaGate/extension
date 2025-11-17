@@ -72,7 +72,7 @@ export default async function getValidatorsInformation (genesisHash, port) {
   const endpoints = getChainEndpoints(chainName);
 
   try {
-    const { api, webSocket } = await fastestEndpoint(endpoints);
+    const { api, provider } = await fastestEndpoint(endpoints);
 
     console.log('getting validators information on ' + chainName);
 
@@ -85,13 +85,13 @@ export default async function getValidatorsInformation (genesisHash, port) {
     console.log('electedInfo, waitingInfo, currentEra fetched successfully');
 
     // Close the initial connection to the relay chain
-    webSocket.disconnect().catch(console.error);
+    provider.disconnect().catch(console.error);
 
     // Start connect to the People chain endpoints in order to fetch identities
     console.log('Connecting to People chain endpoints...');
     const peopleChainName = getPeopleChainName(genesisHash);
     const peopleEndpoints = getChainEndpoints(peopleChainName);
-    const { api: peopleApi, webSocket: peopleWebSocket } = await fastestEndpoint(peopleEndpoints);
+    const { api: peopleApi, provider: peopleWebSocket } = await fastestEndpoint(peopleEndpoints);
 
     // Keep elected and waiting validators separate
     const electedValidatorsInfo = electedInfo.info;

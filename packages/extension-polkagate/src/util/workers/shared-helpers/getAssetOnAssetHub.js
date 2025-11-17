@@ -15,7 +15,7 @@ import { getAssets } from './getAssets.js';
  */
 export async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName, userAddedEndpoints, port) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
-  const { api, webSocket } = await fastestEndpoint(endpoints);
+  const { api, provider } = await fastestEndpoint(endpoints);
 
   const { metadata } = metadataFromApi(api);
 
@@ -43,5 +43,5 @@ export async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainNam
   console.info(chainName, ': account assets fetched.');
   port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, results }));
 
-  webSocket.disconnect().catch(console.error);
+  provider.disconnect().catch(console.error);
 }

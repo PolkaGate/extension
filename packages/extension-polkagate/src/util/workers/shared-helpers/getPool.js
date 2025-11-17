@@ -31,7 +31,7 @@ export async function getPool (genesisHash, stakerAddress, id, port) {
   const chainName = getChainName(genesisHash);
   const endpoints = getChainEndpoints(chainName ?? '');
 
-  const { api, webSocket } = await fastestEndpoint(endpoints);
+  const { api, provider } = await fastestEndpoint(endpoints);
 
   console.log(`getPool is called for ${stakerAddress} on chain ${chainName}`);
   id && console.log('getPool is called to fetch the pool with poolId:', id);
@@ -133,5 +133,5 @@ export async function getPool (genesisHash, stakerAddress, id, port) {
 
   port.postMessage(JSON.stringify({ functionName: 'getPool', results: JSON.stringify(poolInfo) }));
 
-  webSocket.disconnect().catch(console.error);
+  provider.disconnect().catch(console.error);
 }
