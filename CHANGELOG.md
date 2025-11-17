@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.17.0](https://github.com/polkagate/extension/compare/v1.16.3...v1.17.0) (2025-11-17)
+
+
+### Features
+
+* add lazy unlocking to speed up login for users with many accounts ([#2039](https://github.com/polkagate/extension/issues/2039)) ([9864097](https://github.com/polkagate/extension/commit/986409751ecef11e1130fe286eafc5d726fc1cfa))
+
 ## [1.16.3](https://github.com/polkagate/extension/compare/v1.16.2...v1.16.3) (2025-11-11)
 
 
