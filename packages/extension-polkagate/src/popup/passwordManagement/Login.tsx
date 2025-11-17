@@ -71,7 +71,7 @@ function Content ({ setStep }: Props): React.ReactElement {
   }, [accountsNeedMigration?.length, hasLocalAccounts, isPasswordMigrated]);
 
   const handleDirectUnlock = useCallback(async (password: string, period: number) => {
-    const success = await unlockAllAccounts(password, period);
+    const success = await unlockAllAccounts(password, period, true);
 
     if (success) {
       setExtensionLock(false);
