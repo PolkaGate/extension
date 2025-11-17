@@ -31,6 +31,8 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
     return null;
   }
 
+  const color = isBlueish ? theme.palette.text.highlight : theme.palette.primary.main;
+
   if (!proxies) {
     return (
       <Grid container item sx={{ alignItems: 'center', width: 'fit-content' }}>
@@ -39,7 +41,7 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
           placement='top'
         >
           <Grid container item sx={{ alignItems: 'center', p: '4px', width: 'fit-content' }}>
-            <BeatLoader color={theme.palette.text.highlight} loading size={5} />
+            <BeatLoader color={color} loading size={5} />
           </Grid>
         </MyTooltip>
       </Grid>
@@ -48,8 +50,8 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 
   return (
     <Grid container item onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '4px', width: 'fit-content' }}>
-      <Data color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} size='12' />
-      <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} variant='B-1'>
+      <Data color={color} size='12' />
+      <Typography color={color} variant='B-1'>
         {t('Use Proxy')}
       </Typography>
     </Grid>
