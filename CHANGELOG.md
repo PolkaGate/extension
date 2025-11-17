@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.18.0](https://github.com/polkagate/extension/compare/v1.17.0...v1.18.0) (2025-11-17)
+
+
+### Features
+
+* The extension now supports German! ([912619f](https://github.com/polkagate/extension/commit/912619fead62029e5d9ca73fc42b3e67d0a8f4a4))
+
 # [1.17.0](https://github.com/polkagate/extension/compare/v1.16.3...v1.17.0) (2025-11-17)
 
 
