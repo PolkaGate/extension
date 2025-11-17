@@ -496,7 +496,7 @@ export default class Extension {
     }
   }
 
-  private accountsUnlockAll ({ cacheTime, lazy, password }: RequestUnlockAllAccounts): boolean {
+  private accountsUnlockAll ({ cacheTime, lazy = false, password }: RequestUnlockAllAccounts): boolean {
     if (!password) {
       throw new Error('Password needed to unlock the account');
     }
