@@ -40,12 +40,14 @@ export async function fastestEndpoint (endpoints) {
   // Get the fastest connection
   const { api, provider } = await Promise.any(apiPromises);
 
-  // Disconnect all other providers
-  await Promise.all(
+  // Disconnect all other providers (non-blocking)
+  Promise.all(
     providers.map((p) =>
-      p === provider ? Promise.resolve() : p.disconnect().catch(() => null)
+      p === provider
+        ? Promise.resolve()
+        : p.disconnect().catch(() => null)
     )
-  );
+  ).catch(() => null);
 
   return { api, selectedEndpoint: provider.endpoint, webSocket: provider };
 }
