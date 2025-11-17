@@ -501,6 +501,12 @@ export default class Extension {
       throw new Error('Password needed to unlock the account');
     }
 
+    const unlockOrThrow = (account: KeyringAddress) => {
+      const pair = this.unlockPair({ address: account.address, password });
+
+      assert(pair, `Unable to unlock account ${account.address}`);
+    };
+
     try {
       const accountsLocal = this.localAccounts();
 
@@ -508,45 +514,23 @@ export default class Extension {
         return true;
       }
 
-      // ------------------------------
-      // NON-LAZY → unlock ALL immediately
-      // ------------------------------
-      if (!lazy) {
-        for (const { address } of accountsLocal) {
-          const pair = this.unlockPair({ address, password });
+      if (lazy) {
+        unlockOrThrow(accountsLocal[0]);
 
-          assert(pair, `Unable to unlock account ${address}`);
-        }
-
-        // Start session
-        this.setUnlockExpiry({ expiryTime: Date.now() + cacheTime });
-
-        return true;
+        setTimeout(() => {
+          accountsLocal.slice(1).forEach((a) => {
+            try {
+              unlockOrThrow(a);
+            } catch (e) {
+              console.error(e);
+            }
+          });
+        }, 0);
+      } else {
+        accountsLocal.forEach(unlockOrThrow);
       }
 
-      // ------------------------------------
-      // LAZY MODE → unlock FIRST immediately
-      // ------------------------------------
-      const first = accountsLocal[0];
-      const firstPair = this.unlockPair({ address: first.address, password });
-
-      assert(firstPair, 'Unable to unlock the first account');
-
-      // Start session based on first unlock
       this.setUnlockExpiry({ expiryTime: Date.now() + cacheTime });
-
-      // Unlock the rest asynchronously
-      setTimeout(() => {
-        for (let i = 1; i < accountsLocal.length; i++) {
-          try {
-            const unlockedPair = this.unlockPair({ address: accountsLocal[i].address, password });
-
-            assert(unlockedPair, 'Unable to unlock pair');
-          } catch (e) {
-            console.error('Async unlock failed for', accountsLocal[i].address, e);
-          }
-        }
-      }, 0);
 
       return true;
     } catch (error) {
