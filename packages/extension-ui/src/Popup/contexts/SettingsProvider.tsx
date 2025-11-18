@@ -29,8 +29,10 @@ export default function SettingsProvider ({ children }: SettingsProviderProps) {
       const i18nLang = chrome.i18n.getUILanguage().split('-')[0];
       const isSupported = getLanguageOptions().find(({ value }) => value === i18nLang);
 
-      isSupported && uiSettings.set({ i18nLang });
-      console.log('PolkaGate default language is set to ', i18nLang);
+      if (isSupported) {
+        uiSettings.set({ i18nLang });
+        console.log('PolkaGate default language is set to', i18nLang);
+      }
     }
   }, [settingsCtx.i18nLang]);
 
