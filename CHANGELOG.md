@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.19.0](https://github.com/polkagate/extension/compare/v1.18.0...v1.19.0) (2025-11-18)
+
+
+### Features
+
+* add support for the NeuroWeb parachain ([#2038](https://github.com/polkagate/extension/issues/2038)) ([a0e9106](https://github.com/polkagate/extension/commit/a0e9106c56d656146ae1b9b71096c73a9d796f4e))
+
 # [1.18.0](https://github.com/polkagate/extension/compare/v1.17.0...v1.18.0) (2025-11-17)
 
 
