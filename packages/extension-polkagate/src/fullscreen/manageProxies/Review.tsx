@@ -24,7 +24,7 @@ interface Props {
   call: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
   genesisHash: string | undefined;
   depositToPay: BN | undefined;
-  fee: Balance | undefined;
+  fee: Balance | undefined | null;
   setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
   proxyItems: ProxyItem[] | null | undefined;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
@@ -39,7 +39,7 @@ function DisplayValue ({ balance, canPayFee, decimal, genesisHash, label, token 
   canPayFee?: CanPayFee;
   label: string;
   genesisHash: string | undefined;
-  balance: BN | undefined;
+  balance: BN | undefined | null;
   decimal: number | undefined;
   token: string | undefined;
 }): React.ReactElement {

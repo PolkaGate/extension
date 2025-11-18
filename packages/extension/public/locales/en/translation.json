@@ -830,5 +830,7 @@
   "Token Not Found": "",
   "Nothing Found": "",
   "Website Not Found": "",
-  "Crypto/Fiat Not Found": ""
+  "Crypto/Fiat Not Found": "",
+  "Enable the {{chainName}} network to sign transactions. Settings → Networks": "",
+  "No Metadata found for this chain, please update Metadata": ""
 }

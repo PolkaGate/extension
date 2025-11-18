@@ -116,7 +116,8 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
           'CheckMortality',
           'CheckNonce',
           'CheckWeight',
-          'ChargeTransactionPayment'
+          'ChargeAssetTxPayment',
+          'CheckMetadataHash'
         ],
         tip: 0,
         version: preparedTransaction.version

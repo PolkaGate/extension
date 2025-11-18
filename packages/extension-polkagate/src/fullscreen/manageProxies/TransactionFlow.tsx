@@ -22,7 +22,7 @@ import { type ProxyFlowStep } from './types';
 
 interface Props {
   address: string | undefined;
-  api: ApiPromise | undefined;
+  api: ApiPromise | undefined | null;
   setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
   proxyItems: ProxyItem[] | null | undefined;
   chain: Chain | null | undefined;

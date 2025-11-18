@@ -17,7 +17,7 @@ import { approveSignPassword, isSignLocked } from '../../../messaging';
 interface Props {
   address: string;
   error: string | null;
-  fee?: Balance;
+  fee?: Balance | null;
   isSignable: boolean;
   genesisHash?: string;
   setError: (value: string | null) => void;

@@ -19,7 +19,7 @@ export interface ModeData {
   type: SIGN_POPUP_MODE;
   data?: Call | null;
   title: string;
-  fee?: Balance;
+  fee?: Balance | null;
   Icon?: Icon
 }
 

@@ -13,7 +13,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { bnToBn } from '@polkadot/util';
 
 import { ChainLogo, DecisionButtons, DisplayBalance, FormatPrice, Identity2, TwoToneText } from '../../../components';
-import { useAccountAssets, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useSelectedChains, useTokenPrice, useTranslation } from '../../../hooks';
+import { useAccountAssets, useAllChains, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useSelectedChains, useTokenPrice, useTranslation } from '../../../hooks';
 import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
 import { getValue } from '../../account/util';
@@ -106,6 +106,7 @@ function DappRow ({ url }: { url: string }): React.ReactElement<Props> {
 function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const allChains = useAllChains();
   const selectedChains = useSelectedChains();
 
   const chain = useMetadata(genesisHash);
@@ -117,12 +118,12 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
   const specVersion = useRef(bnToBn(hexSpec)).current;
 
   const decoded = useMemo(() => chain?.hasMetadata ? decodeMethod(method, chain, specVersion) : { args: null, method: null }, [method, chain, specVersion]);
+  const isNetworkSupported = useMemo(() => genesisHash && allChains.find((c) => c.genesisHash === genesisHash), [allChains, genesisHash]);
   const isNetworkEnabled = useMemo(() => genesisHash && selectedChains && selectedChains.includes(genesisHash), [genesisHash, selectedChains]);
 
   const call = useMemo(
     () => (api && decoded?.method)
-      ? api.tx?.[decoded.method.section as keyof typeof api.tx]
-      ?.[decoded.method.method]
+      ? api.tx?.[decoded.method.section as keyof typeof api.tx]?.[decoded.method.method]
       : undefined,
     [api, decoded?.method]
   );
@@ -172,18 +173,20 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
         <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
           {t('on')}
         </Typography>
-        <Stack alignItems='center' columnGap='10px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>
+        <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>
           <ChainLogo genesisHash={genesisHash} size={36} />
           <Stack alignItems='flex-start'>
-            <Typography color='#EAEBF1' variant='B-2'>
-              {chainName}
+            <Typography color='#EAEBF1' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', width: '95%' }} variant='B-2'>
+              {chainName || t('Unknown')}
             </Typography>
-            <DisplayBalance
-              balance={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
-              decimal={decimal}
-              style={{ color: '#BEAAD8', ...theme.typography['B-4'] }}
-              token={token}
-            />
+            {api !== null &&
+              <DisplayBalance
+                balance={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
+                decimal={decimal}
+                style={{ color: '#BEAAD8', ...theme.typography['B-4'] }}
+                token={token}
+              />
+            }
           </Stack>
         </Stack>
       </Grid>
@@ -203,19 +206,27 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
         genesisHash={genesisHash}
         setMode={setMode}
       />
-      <FeeRow
-        fee={fee}
-        genesisHash={genesisHash}
-      />
-      {isNetworkEnabled === false
+      {fee !== null &&
+        <FeeRow
+          fee={fee}
+          genesisHash={genesisHash}
+        />
+      }
+      {(isNetworkSupported && isNetworkEnabled === false) || !chainName
         ? <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: '30px', position: 'absolute' }}>
           <Warning2 color='#FFCE4F' size='24px' variant='Bold' />
           <Typography color='#EAEBF1' textAlign='left' variant='B-2' width='90%'>
-          <TwoToneText
-            color={theme.palette.text.highlight}
-            text={t('Enable the {{chainName}} network to sign transactions. Settings → Networks', { replace: { chainName } })}
-            textPartInColor={'Settings → Networks'}
-          />
+            <TwoToneText
+              color={theme.palette.text.secondary}
+              text={ chainName
+                  ? t('Enable the {{chainName}} network to sign transactions. Settings → Networks', { replace: { chainName } })
+                  : t('No metadata found for this chain, please update metadata')
+              }
+              textPartInColor={chainName
+                ? 'Settings → Networks'
+                : t('metadata')
+              }
+            />
           </Typography>
         </Grid>
         : <DecisionButtons

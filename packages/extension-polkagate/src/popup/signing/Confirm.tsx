@@ -19,7 +19,7 @@ import SignWithPassword from './Request/SignWithPassword';
 
 interface Props {
   onCancel: () => void;
-  fee?: Balance | undefined;
+  fee?: Balance | undefined | null;
   request: SigningRequest;
   extrinsicPayload: ExtrinsicPayload;
   onSignature: ({ signature }: { signature: HexString; }) => void;

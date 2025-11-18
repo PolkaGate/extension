@@ -59,7 +59,7 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 };
 
 export interface SignUsingPasswordProps {
-  api: ApiPromise | undefined;
+  api: ApiPromise | undefined | null;
   direction?: 'horizontal' | 'vertical';
   disabled?: boolean;
   decisionButtonProps?: Partial<DecisionButtonProps>
