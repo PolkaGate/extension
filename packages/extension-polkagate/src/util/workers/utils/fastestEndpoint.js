@@ -56,5 +56,5 @@ export async function fastestEndpoint (endpoints) {
     )
   ).catch(() => null);
 
-  return { api, provider, selectedEndpoint: provider.endpoint };
+  return { api, selectedEndpoint: provider.endpoint };
 }

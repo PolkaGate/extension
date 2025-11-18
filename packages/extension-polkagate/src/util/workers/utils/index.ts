@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export * from './balancify.js';
-export * from './fastestApi.js';
 export * from './fastestEndpoint.js';
 export * from './getChainEndpoints.js';
 export * from './getChainEndpointsFromGenesisHash.js';

@@ -16,9 +16,9 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
   const results = {};
 
   try {
-    const { api, balanceInfo, connectionToBeClosed } = await getBalances(chainName, addresses, userAddedEndpoints, port) ?? {};
+    const { api, balanceInfo } = await getBalances(chainName, addresses, userAddedEndpoints, port) ?? {};
 
-    if (!api || !balanceInfo || !connectionToBeClosed) {
+    if (!api || !balanceInfo) {
       return;
     }
 
@@ -46,7 +46,7 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
       }];
     });
 
-    connectionToBeClosed.disconnect().catch(console.error);
+    api.disconnect().catch(console.error);
   } catch (error) {
     console.error(`getAssetOnRelayChain: Error fetching balances for ${chainName}:`, error);
   } finally {

@@ -20,7 +20,7 @@ import { balancifyAsset, fastestEndpoint, getChainEndpoints, metadataFromApi, to
  */
 export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, chainName, userAddedEndpoints, port) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
-  const { api, provider } = await fastestEndpoint(endpoints);
+  const { api } = await fastestEndpoint(endpoints);
 
   const { metadata } = metadataFromApi(api);
 
@@ -103,5 +103,5 @@ export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, c
   console.info(chainName, ': account assets fetched.');
   port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET, results }));
 
-  provider.disconnect().catch(console.error);
+  api.disconnect().catch(console.error);
 }
