@@ -18,7 +18,7 @@ function AdaptiveLayout ({ children, style = {} }: Props): React.ReactElement {
   const ChosenLayout = isOnboarding.current ? OnboardingLayout : HomeLayout;
 
   return (
-    <ChosenLayout childrenStyle={{ margin: isOnboarding ? undefined : '30px 0 0 25px', maxWidth: '550px', ...style }}>
+    <ChosenLayout childrenStyle={{ margin: isOnboarding.current ? undefined : '30px 0 0 25px', maxWidth: '550px', ...style }}>
       {children}
     </ChosenLayout>
   );
