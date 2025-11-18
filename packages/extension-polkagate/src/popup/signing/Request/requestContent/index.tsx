@@ -91,9 +91,6 @@ function RequestContent ({ decoded, genesisHash, setMode }: Props): React.ReactE
     });
   }, []);
 
-  console.log('decoded?.method', decoded?.method);
-  console.log('txInfo', txInfo);
-
   return (
     <Grid container item sx={{ height: '100px', overflowY: 'auto' }}>
       {decoded?.method && txInfo?.map((info, index) => (
