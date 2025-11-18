@@ -6,6 +6,7 @@ import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import React, { useEffect, useState } from 'react';
 
 import { SettingsContext } from '@polkadot/extension-polkagate/src/components/contexts';
+import { getLanguageOptions } from '@polkadot/extension-polkagate/src/util/getLanguageOptions';
 import uiSettings from '@polkadot/ui-settings';
 
 interface SettingsProviderProps {
@@ -22,6 +23,16 @@ export default function SettingsProvider ({ children }: SettingsProviderProps) {
 
     uiSettings.on('change', settingsChange);
   }, []);
+
+  useEffect(() => {
+    if (settingsCtx.i18nLang === 'default') {
+      const i18nLang = chrome.i18n.getUILanguage().split('-')[0];
+      const isSupported = getLanguageOptions().find(({ value }) => value === i18nLang);
+
+      isSupported && uiSettings.set({ i18nLang });
+      console.log('PolkaGate default language is set to ', i18nLang);
+    }
+  }, [settingsCtx.i18nLang]);
 
   return (
     <SettingsContext.Provider value={settingsCtx}>
