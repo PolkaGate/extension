@@ -4,6 +4,8 @@
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 
+import { ChevronRight } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,6 +26,26 @@ const registry = new TypeRegistry();
 function isRawPayload (payload: SignerPayloadJSON | SignerPayloadRaw): payload is SignerPayloadRaw {
   return !!(payload as SignerPayloadRaw).data;
 }
+
+const Next = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <IconButton
+      onClick={onClick}
+      sx={{
+        background: '#BFA1FF26',
+        borderRadius: '10px',
+        height: '36px',
+        position: 'absolute',
+        right: '5px',
+        top: '-12px',
+        width: '36px',
+        zIndex: 2
+      }}
+    >
+      <ChevronRight sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
+    </IconButton>
+  );
+};
 
 export default function Signing (): React.ReactElement {
   const { t } = useTranslation();
@@ -115,8 +137,12 @@ export default function Signing (): React.ReactElement {
 
   return request
     ? <SharePopup
-      modalStyle={{ minHeight: '550px',  padding: '10px', position: 'relative', width: 360 }}
-      onClose={onCancel}
+      modalProps={{
+        RightItem: mode.type === SIGN_POPUP_MODE.DETAIL ? <Next onClick={onNext} /> : undefined,
+        showBackIconAsClose: [SIGN_POPUP_MODE.DETAIL, SIGN_POPUP_MODE.SIGN].includes(mode.type)
+      }}
+      modalStyle={{ minHeight: '550px', padding: '10px', position: 'relative', width: 360 }}
+      onClose={[SIGN_POPUP_MODE.DETAIL, SIGN_POPUP_MODE.SIGN].includes(mode.type) ? onBack : onCancel}
       open
       popupProps={{
         TitleIcon: mode.Icon,
