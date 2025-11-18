@@ -7,12 +7,13 @@ import type { AnyJson, SignerPayloadJSON } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 
 import { Avatar, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
-import { ChainLogo, DecisionButtons, DisplayBalance, FormatPrice, Identity2 } from '../../../components';
-import { useAccountAssets, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useTokenPrice, useTranslation } from '../../../hooks';
+import { ChainLogo, DecisionButtons, DisplayBalance, FormatPrice, Identity2, TwoToneText } from '../../../components';
+import { useAccountAssets, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useSelectedChains, useTokenPrice, useTranslation } from '../../../hooks';
 import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
 import { getValue } from '../../account/util';
@@ -105,6 +106,7 @@ function DappRow ({ url }: { url: string }): React.ReactElement<Props> {
 function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const selectedChains = useSelectedChains();
 
   const chain = useMetadata(genesisHash);
   const { api, chainName, decimal, token } = useChainInfo(genesisHash);
@@ -115,6 +117,7 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
   const specVersion = useRef(bnToBn(hexSpec)).current;
 
   const decoded = useMemo(() => chain?.hasMetadata ? decodeMethod(method, chain, specVersion) : { args: null, method: null }, [method, chain, specVersion]);
+  const isNetworkEnabled = useMemo(() => genesisHash && selectedChains && selectedChains.includes(genesisHash), [genesisHash, selectedChains]);
 
   const call = useMemo(
     () => (api && decoded?.method)
@@ -204,14 +207,26 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
         fee={fee}
         genesisHash={genesisHash}
       />
-      <DecisionButtons
-        direction='vertical'
-        onPrimaryClick={onNext}
-        onSecondaryClick={onCancel}
-        primaryBtnText={t('Next')}
-        secondaryBtnText={t('Cancel')}
-        style={{ bottom: '0px', position: 'absolute' }}
-      />
+      {isNetworkEnabled === false
+        ? <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: '30px', position: 'absolute' }}>
+          <Warning2 color='#FFCE4F' size='24px' variant='Bold' />
+          <Typography color='#EAEBF1' textAlign='left' variant='B-2' width='90%'>
+          <TwoToneText
+            color={theme.palette.text.highlight}
+            text={t('Enable the {{chainName}} network to sign transactions. Settings → Networks', { replace: { chainName } })}
+            textPartInColor={'Settings → Networks'}
+          />
+          </Typography>
+        </Grid>
+        : <DecisionButtons
+          direction='vertical'
+          onPrimaryClick={onNext}
+          onSecondaryClick={onCancel}
+          primaryBtnText={t('Next')}
+          secondaryBtnText={t('Cancel')}
+          style={{ bottom: '0px', position: 'absolute' }}
+          />
+      }
     </Grid>
   );
 }
