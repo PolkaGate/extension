@@ -1,5 +1,19 @@
 # Change Log
 
+## [1.19.2](https://github.com/polkagate/extension/compare/v1.19.1...v1.19.2) (2025-11-19)
+
+
+### Bug Fixes
+
+* prevent home layout from appearing during accounts import ([#2046](https://github.com/polkagate/extension/issues/2046)) ([28e80cc](https://github.com/polkagate/extension/commit/28e80cc81d739955522f2a67dad52c4543589e0d))
+
+## [1.19.1](https://github.com/polkagate/extension/compare/v1.19.0...v1.19.1) (2025-11-19)
+
+
+### Bug Fixes
+
+* enable pending rewards button in full screen regardless of earned amount ([#2052](https://github.com/polkagate/extension/issues/2052)) ([696119c](https://github.com/polkagate/extension/commit/696119c857055998ff1c43e3ae3783276c2d579d))
+
 # [1.19.0](https://github.com/polkagate/extension/compare/v1.18.0...v1.19.0) (2025-11-18)
 
 
