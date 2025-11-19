@@ -55,7 +55,7 @@ const TileBoxes = memo(function MemoTileBoxes ({ availableBalanceToStake, genesi
 
               Icon: Timer,
               onClick: popupOpener(StakingPopUps.PENDING_REWARDS),
-              text: t('{{PENDING_REWARDS_TEXT}}', { replace: { PENDING_REWARDS_TEXT } })
+              text: t(PENDING_REWARDS_TEXT)
             }]}
         cryptoAmount={rewards}
         decimal={decimal ?? 0}

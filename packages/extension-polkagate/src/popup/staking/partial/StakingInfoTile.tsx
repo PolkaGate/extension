@@ -12,7 +12,7 @@ import { PENDING_REWARDS_TEXT } from '@polkadot/extension-polkagate/src/fullscre
 import { type BN, noop } from '@polkadot/util';
 
 import { CryptoFiatBalance, DisplayBalance, FormatPrice, MySkeleton, MyTooltip } from '../../../components';
-import { useIsDark, useIsHideNumbers, useIsHovered } from '../../../hooks';
+import { useIsDark, useIsHideNumbers, useIsHovered, useTranslation } from '../../../hooks';
 
 interface TileActionButtonProps {
   text: string;
@@ -166,6 +166,7 @@ export interface Props {
 
 export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, icon, isFullScreen, layoutDirection = 'column', onExpand, style, title, token }: Props): React.ReactElement {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const isDisabled = useMemo(() => Boolean(cryptoAmount?.isZero()), [cryptoAmount]);
   const isRow = useMemo(() => layoutDirection === 'row', [layoutDirection]);
@@ -269,7 +270,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
               <TileActionButton
                 Icon={button.Icon}
                 iconVariant={button.iconVariant}
-                isDisabled={button.text !== PENDING_REWARDS_TEXT && isDisabled}
+                isDisabled={button.text !== t(PENDING_REWARDS_TEXT) && isDisabled}
                 isFullScreen={isFullScreen}
                 isLoading={cryptoAmount === undefined}
                 isRow={isRow}
