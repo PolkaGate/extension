@@ -20,7 +20,7 @@ import { STEPS } from './consts';
 import { type ProxyFlowStep } from './types';
 
 interface Props {
-  api: ApiPromise | undefined;
+  api: ApiPromise | undefined | null;
   setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
   isDisabledAddProxyButton: boolean;
   proxyItems: ProxyItem[] | null | undefined;

@@ -3,7 +3,7 @@
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { KeyringPair, KeyringPair$Json, KeyringPair$Meta } from '@polkadot/keyring/types';
-import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
+import type { Registry, SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type { KeyringAddress } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
@@ -13,6 +13,7 @@ import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUr
 import type State from './State';
 
 import { ALLOWED_PATH, START_WITH_PATH } from '@polkadot/extension-base/defaults';
+import { metadataExpand } from '@polkadot/extension-chains';
 import { TypeRegistry } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
 import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
@@ -25,9 +26,6 @@ import { createSubscription, unsubscribe } from './subscriptions';
 const SEED_DEFAULT_LENGTH = 12;
 const SEED_LENGTHS = [12, 15, 18, 21, 24];
 const ETH_DERIVE_DEFAULT = "/m/44'/60'/0'/0/0";
-
-// a global registry to use internally
-const registry = new TypeRegistry();
 
 function getSuri (seed: string, type?: KeypairType): string {
   return type === 'ethereum'
@@ -550,20 +548,25 @@ export default class Extension {
     return this.#unlockExpiry === null || this.#unlockExpiry < Date.now();
   }
 
-  private handleRegistry (payload: SignerPayloadJSON): void {
-    // Get the metadata for the genesisHash
+  private handleRegistry (payload: SignerPayloadJSON | SignerPayloadRaw): TypeRegistry {
+    if (!isJsonPayload(payload)) {
+      return new TypeRegistry();
+    }
+
+    let registry: Registry;
     const currentMetadata = this.metadataGet(payload.genesisHash);
 
-    // set the registry before calling the sign function
-    const signedExtensions = currentMetadata?.signedExtensions?.length
-      ? currentMetadata.signedExtensions
-      : registry.signedExtensions;
-
-    registry.setSignedExtensions(signedExtensions, currentMetadata?.userExtensions);
-
     if (currentMetadata) {
-      registry.register(currentMetadata?.types);
+      const expanded = metadataExpand(currentMetadata, false);
+
+      registry = expanded.registry;
+      registry.setSignedExtensions(payload.signedExtensions, expanded.definition.userExtensions);
+    } else {
+      registry = new TypeRegistry();
+      registry.setSignedExtensions(payload.signedExtensions);
     }
+
+    return registry as TypeRegistry;
   }
 
   private signingApprovePassword ({ id, password, remainingTime, savePass }: RequestSigningApprovePassword): boolean {
@@ -593,9 +596,7 @@ export default class Extension {
 
     const { payload } = request;
 
-    if (isJsonPayload(payload)) {
-      this.handleRegistry(payload);
-    }
+    const registry = this.handleRegistry(payload);
 
     const result = request.sign(registry, pair);
 
@@ -624,7 +625,8 @@ export default class Extension {
       return null;
     }
 
-    this.handleRegistry(payload);
+    const registry = this.handleRegistry(payload);
+
     const { signature } = registry.createType('ExtrinsicPayload', payload, { version: payload.version }).sign(pair);
 
     return signature;

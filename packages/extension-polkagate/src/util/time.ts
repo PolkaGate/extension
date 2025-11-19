@@ -211,7 +211,7 @@ const THRESHOLD = BN_THOUSAND.div(BN_TWO);
 const DEFAULT_TIME = new BN(6_000);
 const A_DAY = new BN(24 * 60 * 60 * 1000);
 
-export function calcInterval (api: ApiPromise | undefined): BN {
+export function calcInterval (api: ApiPromise | undefined | null): BN {
   if (!api) {
     return DEFAULT_TIME;
   }

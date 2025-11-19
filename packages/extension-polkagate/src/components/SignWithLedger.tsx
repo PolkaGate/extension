@@ -19,7 +19,7 @@ import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/consta
 
 interface Props {
   address: string | undefined;
-  api: ApiPromise | undefined;
+  api: ApiPromise | undefined | null;
   disabled?: boolean,
   from: string | undefined;
   handleTxResult: (txResult: TxResult) => void

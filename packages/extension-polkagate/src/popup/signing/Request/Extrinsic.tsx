@@ -7,12 +7,13 @@ import type { AnyJson, SignerPayloadJSON } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 
 import { Avatar, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
-import { ChainLogo, DecisionButtons, DisplayBalance, FormatPrice, Identity2 } from '../../../components';
-import { useAccountAssets, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useTokenPrice, useTranslation } from '../../../hooks';
+import { ChainLogo, DecisionButtons, DisplayBalance, FormatPrice, Identity2, TwoToneText } from '../../../components';
+import { useAccountAssets, useAllChains, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useSelectedChains, useTokenPrice, useTranslation } from '../../../hooks';
 import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
 import { getValue } from '../../account/util';
@@ -105,6 +106,8 @@ function DappRow ({ url }: { url: string }): React.ReactElement<Props> {
 function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const allChains = useAllChains();
+  const selectedChains = useSelectedChains();
 
   const chain = useMetadata(genesisHash);
   const { api, chainName, decimal, token } = useChainInfo(genesisHash);
@@ -115,11 +118,12 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
   const specVersion = useRef(bnToBn(hexSpec)).current;
 
   const decoded = useMemo(() => chain?.hasMetadata ? decodeMethod(method, chain, specVersion) : { args: null, method: null }, [method, chain, specVersion]);
+  const isNetworkSupported = useMemo(() => genesisHash && allChains.find((c) => c.genesisHash === genesisHash), [allChains, genesisHash]);
+  const isNetworkEnabled = useMemo(() => genesisHash && selectedChains && selectedChains.includes(genesisHash), [genesisHash, selectedChains]);
 
   const call = useMemo(
     () => (api && decoded?.method)
-      ? api.tx?.[decoded.method.section as keyof typeof api.tx]
-      ?.[decoded.method.method]
+      ? api.tx?.[decoded.method.section as keyof typeof api.tx]?.[decoded.method.method]
       : undefined,
     [api, decoded?.method]
   );
@@ -141,8 +145,11 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
     });
   }, [fee, setMode, t]);
 
+  const noMetadata = !chainName;
+  const missingInfo = (isNetworkSupported && isNetworkEnabled === false) || noMetadata;
+
   return (
-    <Grid container display='block' fontSize='16px' justifyContent='center' justifyItems='center' minHeight={453} position='relative'>
+    <Grid container display='block' fontSize='16px' justifyContent='center' justifyItems='center' minHeight='100%' position='relative'>
       <DappRow
         url={url}
       />
@@ -169,41 +176,61 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
         <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
           {t('on')}
         </Typography>
-        <Stack alignItems='center' columnGap='10px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>
+        <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>
           <ChainLogo genesisHash={genesisHash} size={36} />
-          <Stack alignItems='flex-start'>
-            <Typography color='#EAEBF1' variant='B-2'>
-              {chainName}
+          <Stack alignItems='flex-start' width='90px'>
+            <Typography color='#EAEBF1' sx={{ overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', width: '95%' }} variant='B-2'>
+              {chainName || t('Unknown')}
             </Typography>
-            <DisplayBalance
-              balance={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
-              decimal={decimal}
-              style={{ color: '#BEAAD8', ...theme.typography['B-4'] }}
-              token={token}
-            />
+            {api !== null && !missingInfo &&
+              <DisplayBalance
+                balance={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
+                decimal={decimal}
+                style={{ color: '#BEAAD8', ...theme.typography['B-4'] }}
+                token={token}
+              />
+            }
           </Stack>
         </Stack>
       </Grid>
-      <Stack direction='row' justifyContent='space-between' width='100%'>
-        <Typography color='#674394' variant='B-2'>
-          {t('Request content')}
-        </Typography>
-        {/* <Stack alignItems='center' columnGap='5px' direction='row'>
-          <ExportSquare color='#AA83DC' size='14px' variant='Linear' />
-          <Typography color='#AA83DC' variant='B-2'>
-            {t('View Details')}
+      {decoded.method &&
+        <>
+          <Stack direction='row' justifyContent='space-between' width='100%'>
+            <Typography color='#674394' variant='B-2'>
+              {t('Request content')}
+            </Typography>
+          </Stack>
+          <RequestContent
+            decoded={decoded}
+            genesisHash={genesisHash}
+            setMode={setMode}
+          />
+        </>
+      }
+      {fee !== null && !missingInfo &&
+        <FeeRow
+          fee={fee}
+          genesisHash={genesisHash}
+        />
+      }
+      {missingInfo &&
+        <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: '125px', position: 'absolute' }}>
+          <Warning2 color='#FFCE4F' size='24px' variant='Bold' />
+          <Typography color='#EAEBF1' textAlign='left' variant='B-4' width='90%'>
+            <TwoToneText
+              color={theme.palette.primary.main}
+              text={noMetadata
+                ? t('No metadata found for this chain. Please update metadata')
+                : t('Enable the {{chainName}} network to view transaction detail. Go to Settings → Networks', { replace: { chainName } })
+              }
+              textPartInColor={noMetadata
+                ? t('metadata')
+                : 'Settings → Networks'
+              }
+            />
           </Typography>
-        </Stack> */}
-      </Stack>
-      <RequestContent
-        decoded={decoded}
-        genesisHash={genesisHash}
-        setMode={setMode}
-      />
-      <FeeRow
-        fee={fee}
-        genesisHash={genesisHash}
-      />
+        </Grid>
+      }
       <DecisionButtons
         direction='vertical'
         onPrimaryClick={onNext}
