@@ -19,6 +19,7 @@ import StakingPortfolio from '../../../popup/staking/partial/StakingPortfolio';
 import { GlowBall } from '../../../style/VelvetBox';
 import { type PopupOpener, StakingPopUps } from '../util/utils';
 
+export const PENDING_REWARDS_TEXT = 'Pending Rewards';
 interface TileBoxProps {
   genesisHash: string | undefined;
   redeemable: Balance | BN | undefined;
@@ -54,7 +55,7 @@ const TileBoxes = memo(function MemoTileBoxes ({ availableBalanceToStake, genesi
 
               Icon: Timer,
               onClick: popupOpener(StakingPopUps.PENDING_REWARDS),
-              text: t('Pending Rewards')
+              text: t('{{PENDING_REWARDS_TEXT}}', { replace: { PENDING_REWARDS_TEXT } })
             }]}
         cryptoAmount={rewards}
         decimal={decimal ?? 0}

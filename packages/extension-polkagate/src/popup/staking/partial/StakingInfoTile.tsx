@@ -8,6 +8,7 @@ import { Box, Container, Grid, Stack, type SxProps, type Theme, Typography, useT
 import { ArrowCircleDown, type Icon } from 'iconsax-react';
 import React, { useMemo, useRef } from 'react';
 
+import { PENDING_REWARDS_TEXT } from '@polkadot/extension-polkagate/src/fullscreen/stake/partials/StakingPortfolioAndTiles';
 import { type BN, noop } from '@polkadot/util';
 
 import { CryptoFiatBalance, DisplayBalance, FormatPrice, MySkeleton, MyTooltip } from '../../../components';
@@ -268,7 +269,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
               <TileActionButton
                 Icon={button.Icon}
                 iconVariant={button.iconVariant}
-                isDisabled={isDisabled}
+                isDisabled={button.text !== PENDING_REWARDS_TEXT && isDisabled}
                 isFullScreen={isFullScreen}
                 isLoading={cryptoAmount === undefined}
                 isRow={isRow}
