@@ -830,5 +830,6 @@
   "Token Not Found": "",
   "Nothing Found": "",
   "Website Not Found": "",
-  "Crypto/Fiat Not Found": ""
+  "Crypto/Fiat Not Found": "",
+  "{{PENDING_REWARDS_TEXT}}": ""
 }
