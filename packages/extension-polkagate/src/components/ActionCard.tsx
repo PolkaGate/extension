@@ -19,9 +19,12 @@ interface Props {
   onClick: () => void;
   style?: SxProps<Theme>;
   title: string;
+  children?: React.ReactNode;
+  showColorBall?: boolean;
+  showChevron?: boolean;
 }
 
-function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, style, title }: Props): React.ReactElement {
+function ActionCard ({ Icon, children, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, showChevron = true, showColorBall = true, style, title }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);
@@ -44,6 +47,7 @@ function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, 
   const colorBallStyle: React.CSSProperties = {
     backgroundColor: '#CC429D',
     borderRadius: '50%',
+    display: showColorBall ? 'initial' : 'none',
     filter: 'blur(28px)', // Glow effect
     height: '42px',
     left: '1px',
@@ -87,17 +91,18 @@ function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, 
           sx={{ ...IconStyle, height: '34px', p: '2px', width: '34px' }}
         />
       }
-      <Grid container item>
+      <Grid container item xs>
         <Grid alignItems='center' container item>
           <Typography color={hovered ? '#AA83DC' : theme.palette.text.primary} sx={{ transition: 'all 250ms ease-out' }} variant='B-2'>
             {title}
           </Typography>
-          <ArrowRight2 color={hovered ? '#AA83DC' : theme.palette.text.primary} size='12' style={chevronStyle} />
+          {showChevron && <ArrowRight2 color={hovered ? '#AA83DC' : theme.palette.text.primary} size='12' style={chevronStyle} />}
         </Grid>
         <Typography color={theme.palette.text.secondary} textAlign='left' variant='B-4'>
           {description}
         </Typography>
       </Grid>
+      {children}
       <div style={colorBallStyle} />
     </Container>
   );
