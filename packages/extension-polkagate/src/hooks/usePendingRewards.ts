@@ -67,6 +67,7 @@ export type EraUnclaimedPayouts = Record<string, [number, BN]>;
 
 export const PAGED_REWARD_START_ERA: Record<string, number> = {
   Kusama: 6514,
+  Paseo: 2236,
   Polkadot: 1420,
   Westend: 7167
 };

@@ -7,13 +7,13 @@ import { Translate } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { getLanguageOptions } from '@polkadot/extension-polkagate/src/util/getLanguageOptions';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 import uiSetting from '@polkadot/ui-settings';
 
 import { SettingsContext } from '../../../components/contexts';
 import useIsDark from '../../../hooks/useIsDark';
 import SelectLanguage from '../../../partials/SelectLanguage';
 import { ExtensionPopups } from '../../../util/constants';
-import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 export default function Language (): React.ReactElement {
   const settings = useContext(SettingsContext);
