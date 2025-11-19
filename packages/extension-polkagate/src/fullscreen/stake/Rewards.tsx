@@ -11,9 +11,9 @@ import React, { useCallback, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 
 import { AssetLogo, DisplayBalance, Identity2, Motion } from '../../components';
+import NoInfoYet from '../../components/NoInfoYet';
 import { useChainInfo, useTranslation } from '../../hooks';
 import getLogo2 from '../../util/getLogo2';
-import NoInfoYet from '../components/NoInfoYet';
 import RewardConfigureButton from './new-solo/components/RewardConfigureButton';
 import { type PopupOpener, StakingPopUps } from './util/utils';
 import RewardsLoading from './RewardsLoading';
@@ -219,7 +219,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
               width: '330px'
             }}
             withShortAddress
-            />}
+          />}
       </Container>
     </Collapse>
   );
