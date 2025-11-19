@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.19.3](https://github.com/polkagate/extension/compare/v1.19.2...v1.19.3) (2025-11-19)
+
+
+### Bug Fixes
+
+* handle signing with metadata only when the chain is not already supported ([#2049](https://github.com/polkagate/extension/issues/2049)) ([677ca13](https://github.com/polkagate/extension/commit/677ca139073118813b2395b180fc0746932f78fd))
+
 ## [1.19.2](https://github.com/polkagate/extension/compare/v1.19.1...v1.19.2) (2025-11-19)
 
 
