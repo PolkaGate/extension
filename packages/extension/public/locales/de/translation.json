@@ -450,7 +450,6 @@
   "Your Signature": "Ihre Signatur",
   "on": "auf",
   "Request content": "Anfrageinhalt",
-  "View Details": "Details anzeigen",
   "Estimated Fee": "Geschätzte Gebühr",
   "Sign With QR-Code": "Mit QR-Code signieren",
   "First scan the QR code with your mobile wallet. Then scan the generated QR code by your mobile wallet on the next screen": "Scannen Sie zuerst den QR-Code mit Ihrer mobilen Wallet. Scannen Sie anschließend den generierten QR-Code auf dem nächsten Bildschirm mit Ihrer mobilen Wallet.",
@@ -599,7 +598,6 @@
   "Joining Pool": "Pool-Beitritt",
   "Selected Pool": "Ausgewählter Pool",
   "Loading rewards": "Lade Belohnungen",
-  "No rewards found": "Keine Belohnungen gefunden",
   "Payout rewards": "Belohnungen auszahlen",
   "Re-staking": "Neu-Staking",
   "We’re updating your balance — please wait a moment and try again.": "Wir aktualisieren Ihr Guthaben — bitte warten Sie einen Moment und versuchen Sie es erneut.",
@@ -830,5 +828,10 @@
   "Token Not Found": "Token nicht gefunden",
   "Nothing Found": "Nichts gefunden",
   "Website Not Found": "Website nicht gefunden",
-  "Crypto/Fiat Not Found": "Krypto/Fiat nicht gefunden"
+  "Crypto/Fiat Not Found": "Krypto/Fiat nicht gefunden",
+  "No information yet": "Noch keine Informationen",
+  "No rewards yet": "Noch keine Belohnungen",
+  "No metadata found for this chain. Please update metadata": "Keine Metadaten für diese Chain gefunden. Bitte aktualisieren Sie die Metadaten",
+  "Enable the {{chainName}} network to view transaction detail. Go to Settings → Networks": "Aktivieren Sie das {{chainName}}-Netzwerk, um die Transaktionsdetails anzuzeigen. Gehen Sie zu Einstellungen → Netzwerke",
+  "metadata": "Metadaten"
 }

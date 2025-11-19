@@ -450,7 +450,6 @@
   "Your Signature": "",
   "on": "",
   "Request content": "",
-  "View Details": "",
   "Estimated Fee": "",
   "Sign With QR-Code": "",
   "First scan the QR code with your mobile wallet. Then scan the generated QR code by your mobile wallet on the next screen": "",
@@ -599,7 +598,6 @@
   "Joining Pool": "",
   "Selected Pool": "",
   "Loading rewards": "",
-  "No rewards found": "",
   "Payout rewards": "",
   "Re-staking": "",
   "We’re updating your balance — please wait a moment and try again.": "",
@@ -831,8 +829,9 @@
   "Nothing Found": "",
   "Website Not Found": "",
   "Crypto/Fiat Not Found": "",
-  "Enable the {{chainName}} network to sign transactions. Settings → Networks": "",
-  "No Metadata found for this chain, please update Metadata": ""
   "No information yet": "",
-  "No rewards yet": ""
+  "No rewards yet": "",
+  "No metadata found for this chain. Please update metadata": "",
+  "Enable the {{chainName}} network to view transaction detail. Go to Settings → Networks": "",
+  "metadata": ""
 }
