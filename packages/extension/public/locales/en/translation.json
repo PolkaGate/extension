@@ -831,5 +831,6 @@
   "Nothing Found": "",
   "Website Not Found": "",
   "Crypto/Fiat Not Found": "",
-  "{{PENDING_REWARDS_TEXT}}": ""
+  "No information yet": "",
+  "No rewards yet": ""
 }
