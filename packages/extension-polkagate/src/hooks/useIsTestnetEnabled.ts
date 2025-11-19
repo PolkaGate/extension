@@ -12,7 +12,9 @@ export default function useIsTestnetEnabled (): boolean | undefined {
   useEffect(() => {
     getAndWatchStorage(
       STORAGE_KEY.TEST_NET_ENABLED,
-      setTestnetIsEnabled
+      setTestnetIsEnabled,
+      false,
+      false
     );
   }, []);
 

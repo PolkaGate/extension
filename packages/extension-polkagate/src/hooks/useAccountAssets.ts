@@ -49,7 +49,7 @@ export default function useAccountAssets (address: string | undefined, genesisHa
   return useMemo(() => {
     const userBalances = address ? accountsAssets?.balances?.[address] : undefined;
 
-    if (!address || !userBalances) {
+    if (!address || !userBalances || isTestnetEnabled === undefined) {
       return undefined;
     }
 
