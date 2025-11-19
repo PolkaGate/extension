@@ -145,8 +145,11 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
     });
   }, [fee, setMode, t]);
 
+  const noMetadata = !chainName;
+  const missingInfo = (isNetworkSupported && isNetworkEnabled === false) || noMetadata;
+
   return (
-    <Grid container display='block' fontSize='16px' justifyContent='center' justifyItems='center' minHeight={453} position='relative'>
+    <Grid container display='block' fontSize='16px' justifyContent='center' justifyItems='center' minHeight='100%' position='relative'>
       <DappRow
         url={url}
       />
@@ -175,11 +178,11 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
         </Typography>
         <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>
           <ChainLogo genesisHash={genesisHash} size={36} />
-          <Stack alignItems='flex-start'>
-            <Typography color='#EAEBF1' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', width: '95%' }} variant='B-2'>
+          <Stack alignItems='flex-start' width='90px'>
+            <Typography color='#EAEBF1' sx={{ overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', width: '95%' }} variant='B-2'>
               {chainName || t('Unknown')}
             </Typography>
-            {api !== null &&
+            {api !== null && !missingInfo &&
               <DisplayBalance
                 balance={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
                 decimal={decimal}
@@ -190,54 +193,52 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
           </Stack>
         </Stack>
       </Grid>
-      <Stack direction='row' justifyContent='space-between' width='100%'>
-        <Typography color='#674394' variant='B-2'>
-          {t('Request content')}
-        </Typography>
-        {/* <Stack alignItems='center' columnGap='5px' direction='row'>
-          <ExportSquare color='#AA83DC' size='14px' variant='Linear' />
-          <Typography color='#AA83DC' variant='B-2'>
-            {t('View Details')}
-          </Typography>
-        </Stack> */}
-      </Stack>
-      <RequestContent
-        decoded={decoded}
-        genesisHash={genesisHash}
-        setMode={setMode}
-      />
-      {fee !== null &&
+      {decoded.method &&
+        <>
+          <Stack direction='row' justifyContent='space-between' width='100%'>
+            <Typography color='#674394' variant='B-2'>
+              {t('Request content')}
+            </Typography>
+          </Stack>
+          <RequestContent
+            decoded={decoded}
+            genesisHash={genesisHash}
+            setMode={setMode}
+          />
+        </>
+      }
+      {fee !== null && !missingInfo &&
         <FeeRow
           fee={fee}
           genesisHash={genesisHash}
         />
       }
-      {(isNetworkSupported && isNetworkEnabled === false) || !chainName
-        ? <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: '30px', position: 'absolute' }}>
+      {missingInfo &&
+        <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: '125px', position: 'absolute' }}>
           <Warning2 color='#FFCE4F' size='24px' variant='Bold' />
-          <Typography color='#EAEBF1' textAlign='left' variant='B-2' width='90%'>
+          <Typography color='#EAEBF1' textAlign='left' variant='B-4' width='90%'>
             <TwoToneText
-              color={theme.palette.text.secondary}
-              text={ chainName
-                  ? t('Enable the {{chainName}} network to sign transactions. Settings → Networks', { replace: { chainName } })
-                  : t('No metadata found for this chain, please update metadata')
+              color={theme.palette.primary.main}
+              text={noMetadata
+                ? t('No metadata found for this chain. Please update metadata')
+                : t('Enable the {{chainName}} network to view transaction detail. Go to Settings → Networks', { replace: { chainName } })
               }
-              textPartInColor={chainName
-                ? 'Settings → Networks'
-                : t('metadata')
+              textPartInColor={noMetadata
+                ? t('metadata')
+                : 'Settings → Networks'
               }
             />
           </Typography>
         </Grid>
-        : <DecisionButtons
-          direction='vertical'
-          onPrimaryClick={onNext}
-          onSecondaryClick={onCancel}
-          primaryBtnText={t('Next')}
-          secondaryBtnText={t('Cancel')}
-          style={{ bottom: '0px', position: 'absolute' }}
-          />
       }
+      <DecisionButtons
+        direction='vertical'
+        onPrimaryClick={onNext}
+        onSecondaryClick={onCancel}
+        primaryBtnText={t('Next')}
+        secondaryBtnText={t('Cancel')}
+        style={{ bottom: '0px', position: 'absolute' }}
+      />
     </Grid>
   );
 }
