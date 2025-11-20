@@ -149,7 +149,7 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
   const missingInfo = (isNetworkSupported && isNetworkEnabled === false) || noMetadata;
 
   return (
-    <Grid container display='block' fontSize='16px' justifyContent='center' justifyItems='center' minHeight='100%' position='relative'>
+    <Grid container display='block' fontSize='16px' justifyContent='center' justifyItems='center' minHeight='450px' position='relative'>
       <DappRow
         url={url}
       />

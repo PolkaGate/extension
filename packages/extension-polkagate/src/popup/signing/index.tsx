@@ -147,11 +147,11 @@ export default function Signing (): React.ReactElement {
       popupProps={{
         TitleIcon: mode.Icon,
         iconSize: 24,
-        maxHeight: 'calc(100% - 75px)',
+        maxHeight: 'calc(100% - 65px)',
         onBack: [SIGN_POPUP_MODE.DETAIL, SIGN_POPUP_MODE.SIGN].includes(mode.type) ? onBack : undefined,
         onNext: SIGN_POPUP_MODE.DETAIL === mode.type ? onNext : undefined,
         pt: 10,
-        style: { '> div#container div#boxContainer': { height: 'calc(100% - 75px)' } },
+        style: { '> div#container div#boxContainer': { height: 'calc(100% - 65px)' } },
         withoutTopBorder: true
       }}
       title={mode.title}
