@@ -97,6 +97,10 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
       return;
     }
 
+    const paymentExt = api.registry.signedExtensions.includes('ChargeAssetTxPayment')
+      ? 'ChargeAssetTxPayment'
+      : 'ChargeTransactionPayment';
+
     try {
       const _payload = {
         address: from,
@@ -116,7 +120,7 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
           'CheckMortality',
           'CheckNonce',
           'CheckWeight',
-          'ChargeAssetTxPayment',
+          paymentExt,
           'CheckMetadataHash'
         ],
         tip: 0,
