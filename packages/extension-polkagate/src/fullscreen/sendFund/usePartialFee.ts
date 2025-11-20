@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { BN, nextTick } from '@polkadot/util';
 
 export default function usePartialFee (
-  api: ApiPromise | undefined,
+  api: ApiPromise | undefined | null,
   inputs: Inputs | undefined,
   formatted: string | undefined,
   assetId: object | AnyNumber | undefined

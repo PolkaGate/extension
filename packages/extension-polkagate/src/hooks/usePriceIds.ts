@@ -48,7 +48,7 @@ export default function usePriceIds (): priceIdInfo[] | undefined | null {
 
       return {
         genesisHash,
-        id: maybeChainName,
+        id: maybeChainName.toLowerCase(),
         symbol: chainInfo?.tokenSymbol ?? 'Unit'
       };
     }).filter((i) => !!i);

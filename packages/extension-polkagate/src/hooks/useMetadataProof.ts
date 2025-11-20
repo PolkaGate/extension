@@ -16,7 +16,7 @@ export interface MetadataProof {
   txMetadata: Uint8Array
 }
 
-export default function useMetadataProof (api: ApiPromise | undefined, payload: SignerPayloadJSON | undefined): MetadataProof | undefined {
+export default function useMetadataProof (api: ApiPromise | undefined | null, payload: SignerPayloadJSON | undefined): MetadataProof | undefined {
   const [proof, setProof] = useState<MetadataProof>();
 
   const apiGenesisHash = api?.genesisHash.toHex();

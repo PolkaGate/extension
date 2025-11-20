@@ -25,7 +25,7 @@ interface Props {
   genesisHash: string | undefined;
   onClose: () => void;
   errorMessage: string | undefined;
-  estimatedFee: Balance | undefined;
+  estimatedFee: Balance | undefined | null;
   onInputChange: (value: string | null | undefined) => void;
   onMaxValue: string;
   tx: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;

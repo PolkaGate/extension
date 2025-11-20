@@ -10,6 +10,7 @@ import * as flags from 'country-flag-icons/string/3x2';
 import { BuyCrypto, Coin1, Hashtag } from 'iconsax-react';
 import React, { Fragment, memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { CurrencyContext, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
@@ -169,6 +170,11 @@ const CurrencyOptions = memo(function CO ({ handleCurrencySelect, onDoubleClick,
         />
       </Grid>
       <Grid container item justifyContent='center' sx={{ display: 'block', height: '315px', maxHeight: '315px', mb: '60px', overflowY: 'auto', pt: '5px' }}>
+        <NothingFound
+          show={searchedCurrencies?.length === 0}
+          style={{ pt: '50px' }}
+          text={t('Crypto/Fiat Not Found')}
+        />
         <CurrencyList
           currencyList={cryptos}
           handleCurrencySelect={handleCurrencySelect}
@@ -184,10 +190,6 @@ const CurrencyOptions = memo(function CO ({ handleCurrencySelect, onDoubleClick,
           selectedCurrency={selectedCurrency}
           type='fiat'
         />
-        {[...cryptos, ...fiats].length === 0 &&
-          <Typography color='text.primary' mt='15px' variant='B-2'>
-            {t('Nothing found')}!
-          </Typography>}
       </Grid>
     </Grid>
   );

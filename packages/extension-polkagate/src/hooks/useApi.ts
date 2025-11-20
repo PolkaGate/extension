@@ -8,11 +8,11 @@ import { useContext, useEffect, useState } from 'react';
 import { APIContext } from '../components';
 import { useEndpoints } from '.';
 
-export default function useApi (genesisHash: string | null | undefined): ApiPromise | undefined {
+export default function useApi (genesisHash: string | null | undefined): ApiPromise | undefined | null {
   const { getApi } = useContext(APIContext);
   const endpoints = useEndpoints(genesisHash);
 
-  const [api, setApi] = useState<ApiPromise | undefined>(undefined);
+  const [api, setApi] = useState<ApiPromise | undefined | null>(undefined);
 
   useEffect(() => {
     if (!genesisHash || !endpoints) {
@@ -22,5 +22,7 @@ export default function useApi (genesisHash: string | null | undefined): ApiProm
     getApi(genesisHash, endpoints)?.then(setApi).catch(console.error);
   }, [endpoints, genesisHash, getApi]);
 
-  return api;
+  return endpoints.length === 0
+    ? null
+    : api;
 }

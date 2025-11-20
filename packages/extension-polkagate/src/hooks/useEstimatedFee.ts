@@ -11,7 +11,7 @@ import { BN_ONE } from '@polkadot/util';
 
 import useChainInfo from './useChainInfo';
 
-export default function useEstimatedFee (genesisHash: string | undefined, address: string | undefined, call?: SubmittableExtrinsicFunction<'promise', AnyTuple> | SubmittableExtrinsic<'promise', ISubmittableResult>, params?: unknown[] | (() => unknown)[]): Balance | undefined {
+export default function useEstimatedFee (genesisHash: string | undefined, address: string | undefined, call?: SubmittableExtrinsicFunction<'promise', AnyTuple> | SubmittableExtrinsic<'promise', ISubmittableResult>, params?: unknown[] | (() => unknown)[]): Balance | undefined | null {
   const { api } = useChainInfo(genesisHash);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
@@ -28,9 +28,9 @@ export default function useEstimatedFee (genesisHash: string | undefined, addres
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
-       setEstimatedFee(api?.createType('Balance', BN_ONE) as unknown as Balance);
+      setEstimatedFee(api?.createType('Balance', BN_ONE) as unknown as Balance);
 
-       return;
+      return;
     }
 
     (async () => {
@@ -45,5 +45,7 @@ export default function useEstimatedFee (genesisHash: string | undefined, addres
     })().catch(console.error);
   }, [address, api, call, params, estimatedFee]);
 
-  return estimatedFee;
+  return api === null
+    ? null
+    : estimatedFee;
 }

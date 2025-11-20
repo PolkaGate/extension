@@ -9,6 +9,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { ActionButton, ChainLogo, Motion, SearchField } from '../../../components';
@@ -132,7 +133,7 @@ export default function Chains (): React.ReactElement {
         <Grid container item>
           <SearchField
             onInputChange={onSearch}
-            placeholder='🔍 Search chain'
+            placeholder='🔍 Search network'
             style={{ borderRadius: '12px', height: '36px', marginBottom: '10px' }}
           />
         </Grid>
@@ -174,6 +175,11 @@ export default function Chains (): React.ReactElement {
             </Grid>
           );
         })}
+        <NothingFound
+          show={chainsToList?.length === 0}
+          style={{ pb: '65px' }}
+          text={t('Network Not Found')}
+        />
       </Grid>
       <ActionButton
         contentPlacement='center'

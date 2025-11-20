@@ -53,7 +53,7 @@ function Row ({ assetId, genesisHash, isSmall, setSelectedAsset, token }: RowPro
       alignItems='center' columnGap='5px' direction='row' justifyContent='space-between' onClick={onClick} ref={refContainer}
       sx={{ backgroundColor: hovered ? '#6743944D' : 'transparent', borderRadius: '8px', cursor: 'pointer', height: '40px', px: '5px', width: '100%' }}
     >
-      <AssetLogo assetSize={isSmall ? '18px' : '28px'} genesisHash={genesisHash} logo={logoInfo?.logo} />
+      <AssetLogo assetSize={isSmall ? '18px' : '28px'} genesisHash={genesisHash} logo={logoInfo?.logo} token={token} />
       <Typography color={hovered ? '#FF4FB9' : '#EAEBF1'} sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }} variant={isSmall ? 'B-1' : 'B-2'}>
         {token}
       </Typography>

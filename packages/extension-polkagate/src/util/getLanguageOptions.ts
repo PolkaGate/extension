@@ -34,6 +34,10 @@ export function getLanguageOptions (): LanguageOptions[] {
       value: 'hi'
     },
     {
+      text: 'Deutsch',
+      value: 'de'
+    },
+    {
       text: 'español',
       value: 'es'
     }

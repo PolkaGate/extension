@@ -141,7 +141,8 @@ function DropZoneContent (): React.ReactElement<InputFileProps> {
           borderRadius: '8px',
           height: '32px',
           marginTop: '5px',
-          width: '100px'
+          minWidth: '100px',
+          width: 'fit-content'
         }}
         text={t('Browse')}
         variant='contained'
