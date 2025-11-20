@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.19.4](https://github.com/polkagate/extension/compare/v1.19.3...v1.19.4) (2025-11-20)
+
+
+### Bug Fixes
+
+* dynamically select payment signed extension based on chain support ([ed678b0](https://github.com/polkagate/extension/commit/ed678b0aa14c56e26e622eeaac59959b9201939d))
+* update approach to find supported chains for cross-chain token transfers ([4853cf8](https://github.com/polkagate/extension/commit/4853cf892e4f327416a0f68078515821a2b086f1))
+
 ## [1.19.3](https://github.com/polkagate/extension/compare/v1.19.2...v1.19.3) (2025-11-19)
 
 
