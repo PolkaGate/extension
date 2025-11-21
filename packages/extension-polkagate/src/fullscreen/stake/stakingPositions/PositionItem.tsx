@@ -1,10 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-ignore
 import type { PalletNominationPoolsClaimPermission } from '@polkadot/types/lookup';
 
 import { Container, Grid, Stack, Typography } from '@mui/material';
-import { ArrowRight2, InfoCircle, Information } from 'iconsax-react';
+import { ArrowRight2, InfoCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
