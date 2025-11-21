@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.19.5](https://github.com/polkagate/extension/compare/v1.19.4...v1.19.5) (2025-11-21)
+
+
+### Bug Fixes
+
+* filter out possible undefined price IDs ([7040650](https://github.com/polkagate/extension/commit/7040650f4bdbb29741c633fc8f6f05489a51618f))
+
 ## [1.19.4](https://github.com/polkagate/extension/compare/v1.19.3...v1.19.4) (2025-11-20)
 
 
