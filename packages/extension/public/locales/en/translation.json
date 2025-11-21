@@ -833,5 +833,8 @@
   "No rewards yet": "",
   "No metadata found for this chain. Please update metadata": "",
   "Enable the {{chainName}} network to view transaction detail. Go to Settings → Networks": "",
-  "metadata": ""
+  "metadata": "",
+  "Increase stake": "",
+  "Entire balance": "",
+  "Decrease stake": ""
 }
