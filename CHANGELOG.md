@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.19.6](https://github.com/polkagate/extension/compare/v1.19.5...v1.19.6) (2025-11-22)
+
+
+### Bug Fixes
+
+* show user-added networks in the network selection list in modals ([#2058](https://github.com/polkagate/extension/issues/2058)) ([314eb5e](https://github.com/polkagate/extension/commit/314eb5ed287bd76eff31fd7c2c32b264c2d32f7a))
+
 ## [1.19.5](https://github.com/polkagate/extension/compare/v1.19.4...v1.19.5) (2025-11-21)
 
 
