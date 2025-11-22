@@ -17,7 +17,7 @@ import type { IconTheme as BaseIconTheme } from '@polkadot/react-identicon/types
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 // @ts-ignore
-import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsClaimPermission, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { LatestReferenda } from '../fullscreen/governance/types';
@@ -911,6 +911,7 @@ export interface FetchedBalance {
   availableBalance: BN,
   balanceDetails?: any,
   chainName: string,
+  claimPermissions?: PalletNominationPoolsClaimPermission['type'],
   currencyId?: any,
   date?: number,
   decimal: number,

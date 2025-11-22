@@ -1,15 +1,18 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Grid, Typography } from '@mui/material';
-import { ArrowRight2 } from 'iconsax-react';
+//@ts-ignore
+import type { PalletNominationPoolsClaimPermission } from '@polkadot/types/lookup';
+
+import { Container, Grid, Stack, Typography } from '@mui/material';
+import { ArrowRight2, InfoCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { mapHubToRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { type BN, noop } from '@polkadot/util';
 
-import { ChainLogo, CryptoFiatBalance, Motion } from '../../../components';
+import { ChainLogo, CryptoFiatBalance, Motion, MyTooltip } from '../../../components';
 import { useChainInfo } from '../../../hooks';
 import { StakingBadge, TestnetBadge } from '../../../popup/staking/StakingPositions';
 import { amountToHuman, updateStorage } from '../../../util';
@@ -86,13 +89,14 @@ export const ChainIdentifier = ({ genesisHash }: TokenInfoProps) => {
 interface Props extends TokenInfoProps {
   type: 'pool' | 'solo';
   balance: BN;
+  claimPermissions?: PalletNominationPoolsClaimPermission['type'],
   price: number;
   decimal: number;
   token: string;
   isSelected?: boolean;
 }
 
-function PositionItem ({ balance, decimal, genesisHash, isSelected, price, token, type }: Props) {
+function PositionItem ({ balance, claimPermissions, decimal, genesisHash, isSelected, price, token, type }: Props) {
   const { address } = useParams<{ address: string }>();
   const navigate = useNavigate();
   const hasPoolStaking = useMemo(() => type === 'pool', [type]);
@@ -108,11 +112,27 @@ function PositionItem ({ balance, decimal, genesisHash, isSelected, price, token
       .catch(console.error);
   }, [genesisHash, navigate, address, type]);
 
+  const claimPermissionTooltips: Record<string, string> = {
+    Permissioned: 'Only this account can claim its rewards.',
+    PermissionlessAll: 'Anyone can claim or compound rewards. Rewards always stay in this account.',
+    PermissionlessCompound: 'Anyone can compound rewards. Rewards always stay in this account.',
+    PermissionlessWithdraw: 'Anyone can claim rewards. Rewards always stay in this account.'
+  };
+
+  const claimPermissionTooltip = claimPermissions ? claimPermissionTooltips[claimPermissions] || 'Unknown claim permission.' : '';
+
   return (
     <Motion variant='zoom'>
       <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: isSelected ? '#2D1E4A' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
         <TokenInfo genesisHash={genesisHash} />
-        <StakingBadge hasPoolStaking={hasPoolStaking} isFullscreen />
+        <Stack columnGap='5px' direction='row'>
+          <StakingBadge hasPoolStaking={hasPoolStaking} isFullscreen />
+          {claimPermissionTooltip &&
+            <MyTooltip content={claimPermissionTooltip}>
+              <InfoCircle color='#674394' size={20} variant='Bulk' />
+            </MyTooltip>
+          }
+        </Stack>
         <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
         <ChainIdentifier genesisHash={genesisHash} />
         <Staked balance={balance} decimal={decimal} price={price} token={token} />

@@ -24,7 +24,7 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
 
     const genesisHash = api.genesisHash.toString();
 
-    balanceInfo.forEach(({ address, balances, poolName, poolReward, pooledBalance, soloTotal }) => {
+    balanceInfo.forEach(({ address, balances, claimPermissions, poolName, poolReward, pooledBalance, soloTotal }) => {
       const totalBalance = balances.freeBalance.add(balances.reservedBalance);
 
       const priceId = TEST_NETS.includes(genesisHash)
@@ -36,6 +36,7 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
         assetId: NATIVE_TOKEN_ASSET_ID,
         balanceDetails: balancify({ ...balances, poolReward, pooledBalance, soloTotal }),
         chainName,
+        claimPermissions,
         decimal: api.registry.chainDecimals[0],
         genesisHash,
         isNative: true,

@@ -42,6 +42,7 @@ export async function getBalances (chainName, addresses, userAddedEndpoints, por
       return {
         address,
         balances,
+        claimPermissions: pooled?.claimPermissions ?? null,
         poolName: pooled?.poolName,
         poolReward: pooled?.poolReward ?? BN_ZERO,
         pooledBalance: pooled?.pooledBalance ?? BN_ZERO,
@@ -49,7 +50,9 @@ export async function getBalances (chainName, addresses, userAddedEndpoints, por
       };
     });
 
-    return { api, balanceInfo: await Promise.all(requests), connectionsToBeClosed: connections };
+    return { api,
+      balanceInfo: await Promise.all(requests),
+      connectionsToBeClosed: connections };
   }
 
   return undefined;

@@ -32,7 +32,7 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
 
   return (
     <>
-      {positionItems?.map(({ decimal, genesisHash, pooledBalance, priceId, soloTotal, token }) => {
+      {positionItems?.map(({ claimPermissions, decimal, genesisHash, pooledBalance, priceId, soloTotal, token }) => {
         const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;
 
         if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
@@ -44,6 +44,7 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
             {pooledBalance && !pooledBalance?.isZero() && ['both', 'pool'].includes(state.stakingType) &&
               <PositionItem
                 balance={pooledBalance}
+                claimPermissions={claimPermissions}
                 decimal={decimal}
                 genesisHash={genesisHash}
                 isSelected={isSelected(genesisHash, 'pool')}
