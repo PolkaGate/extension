@@ -368,6 +368,7 @@ export interface RequestUpdateMeta {
 export interface RequestUnlockAllAccounts {
   password: string;
   cacheTime: number; // milliseconds
+  lazy?: boolean;
 }
 
 // Responses

@@ -1,5 +1,90 @@
 # Change Log
 
+## [1.19.6](https://github.com/polkagate/extension/compare/v1.19.5...v1.19.6) (2025-11-22)
+
+
+### Bug Fixes
+
+* show user-added networks in the network selection list in modals ([#2058](https://github.com/polkagate/extension/issues/2058)) ([314eb5e](https://github.com/polkagate/extension/commit/314eb5ed287bd76eff31fd7c2c32b264c2d32f7a))
+
+## [1.19.5](https://github.com/polkagate/extension/compare/v1.19.4...v1.19.5) (2025-11-21)
+
+
+### Bug Fixes
+
+* filter out possible undefined price IDs ([7040650](https://github.com/polkagate/extension/commit/7040650f4bdbb29741c633fc8f6f05489a51618f))
+
+## [1.19.4](https://github.com/polkagate/extension/compare/v1.19.3...v1.19.4) (2025-11-20)
+
+
+### Bug Fixes
+
+* dynamically select payment signed extension based on chain support ([ed678b0](https://github.com/polkagate/extension/commit/ed678b0aa14c56e26e622eeaac59959b9201939d))
+* update approach to find supported chains for cross-chain token transfers ([4853cf8](https://github.com/polkagate/extension/commit/4853cf892e4f327416a0f68078515821a2b086f1))
+
+## [1.19.3](https://github.com/polkagate/extension/compare/v1.19.2...v1.19.3) (2025-11-19)
+
+
+### Bug Fixes
+
+* handle signing with metadata only when the chain is not already supported ([#2049](https://github.com/polkagate/extension/issues/2049)) ([677ca13](https://github.com/polkagate/extension/commit/677ca139073118813b2395b180fc0746932f78fd))
+
+## [1.19.2](https://github.com/polkagate/extension/compare/v1.19.1...v1.19.2) (2025-11-19)
+
+
+### Bug Fixes
+
+* prevent home layout from appearing during accounts import ([#2046](https://github.com/polkagate/extension/issues/2046)) ([28e80cc](https://github.com/polkagate/extension/commit/28e80cc81d739955522f2a67dad52c4543589e0d))
+
+## [1.19.1](https://github.com/polkagate/extension/compare/v1.19.0...v1.19.1) (2025-11-19)
+
+
+### Bug Fixes
+
+* enable pending rewards button in full screen regardless of earned amount ([#2052](https://github.com/polkagate/extension/issues/2052)) ([696119c](https://github.com/polkagate/extension/commit/696119c857055998ff1c43e3ae3783276c2d579d))
+
+# [1.19.0](https://github.com/polkagate/extension/compare/v1.18.0...v1.19.0) (2025-11-18)
+
+
+### Features
+
+* add support for the NeuroWeb parachain ([#2038](https://github.com/polkagate/extension/issues/2038)) ([a0e9106](https://github.com/polkagate/extension/commit/a0e9106c56d656146ae1b9b71096c73a9d796f4e))
+
+# [1.18.0](https://github.com/polkagate/extension/compare/v1.17.0...v1.18.0) (2025-11-17)
+
+
+### Features
+
+* The extension now supports German! ([912619f](https://github.com/polkagate/extension/commit/912619fead62029e5d9ca73fc42b3e67d0a8f4a4))
+
+# [1.17.0](https://github.com/polkagate/extension/compare/v1.16.3...v1.17.0) (2025-11-17)
+
+
+### Features
+
+* add lazy unlocking to speed up login for users with many accounts ([#2039](https://github.com/polkagate/extension/issues/2039)) ([9864097](https://github.com/polkagate/extension/commit/986409751ecef11e1130fe286eafc5d726fc1cfa))
+
+## [1.16.3](https://github.com/polkagate/extension/compare/v1.16.2...v1.16.3) (2025-11-11)
+
+
+### Bug Fixes
+
+* resolve misdisplayed unlock date in reserved reasons section ([#2023](https://github.com/polkagate/extension/issues/2023)) ([88b9007](https://github.com/polkagate/extension/commit/88b90079587a9d4784822fc8c9d03928678fb412))
+
+## [1.16.2](https://github.com/polkagate/extension/compare/v1.16.1...v1.16.2) (2025-11-10)
+
+
+### Bug Fixes
+
+* force password migration when no legacy password is present ([#2019](https://github.com/polkagate/extension/issues/2019)) ([01b7d45](https://github.com/polkagate/extension/commit/01b7d459c63869904b9ae74e7aa4b19e8ed84fe4))
+
+## [1.16.1](https://github.com/polkagate/extension/compare/v1.16.0...v1.16.1) (2025-11-04)
+
+
+### Bug Fixes
+
+* correct Hindi and Russian translation entries ([1766fa6](https://github.com/polkagate/extension/commit/1766fa6ff2b8ce49b890f640ed3f85129e5fcca6))
+
 # [1.16.0](https://github.com/polkagate/extension/compare/v1.15.5...v1.16.0) (2025-11-01)
 
 

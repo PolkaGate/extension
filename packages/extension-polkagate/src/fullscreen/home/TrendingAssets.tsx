@@ -131,7 +131,7 @@ function TrendingAssets (): React.ReactElement {
   const [chartToken, setChartToken] = useState<string>();
 
   const chartPriceId = useMemo(() => {
-    const found = pricesInCurrencies?.prices && Object.entries(pricesInCurrencies?.prices).find(([, info]) => info.symbol === chartToken);
+    const found = pricesInCurrencies?.prices && Object.entries(pricesInCurrencies?.prices).find(([, info]) => chartToken && info.symbol === chartToken);
 
     return found?.[0];
   }, [chartToken, pricesInCurrencies?.prices]);

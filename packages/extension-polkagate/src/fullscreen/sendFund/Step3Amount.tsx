@@ -185,7 +185,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
           <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
             {t('Available')}
           </Typography>
-          <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+          <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} token={inputs?.token} />
           <DisplayBalance
             balance={transferableBalance}
             decimal={decimal}

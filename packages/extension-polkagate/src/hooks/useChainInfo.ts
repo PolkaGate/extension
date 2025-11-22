@@ -23,7 +23,7 @@ import useMetadata from './useMetadata';
  * @property {string | undefined} token - The symbol for the blockchain's token. Can be undefined.
  */
 interface ChainInfo {
-  api: ApiPromise | undefined;
+  api: ApiPromise | null | undefined;
   chain: Chain | null | undefined;
   chainName: string | undefined;
   decimal: number | undefined;
@@ -43,11 +43,6 @@ export default function useChainInfo (genesisHash: string | null | undefined, no
   const chain = useMetadata(genesisHash, true);
   const api = useApi(noApi ? undefined : genesisHash);
 
-  const hasMatchingGenesis = useMemo(
-    () => api?.genesisHash?.toHex() === genesisHash,
-    [api?.genesisHash, genesisHash]
-  );
-
   return useMemo(() => {
     const chainInfo = chains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
     const chainName = sanitizeChainName(chainInfo?.chain ?? chain?.name, true);
@@ -66,13 +61,19 @@ export default function useChainInfo (genesisHash: string | null | undefined, no
       };
     }
 
+    const hasMatchingGenesis = api?.genesisHash?.toHex() === genesisHash;
+
     return {
-      api: hasMatchingGenesis ? api : undefined,
+      api: api === null
+        ? null
+        : hasMatchingGenesis
+          ? api
+          : undefined,
       chain,
       chainName,
       decimal: decimal ?? chain?.tokenDecimals,
       displayName,
       token: token ?? chain?.tokenSymbol
     };
-  }, [api, chain, genesisHash, hasMatchingGenesis]);
+  }, [api, chain, genesisHash]);
 }

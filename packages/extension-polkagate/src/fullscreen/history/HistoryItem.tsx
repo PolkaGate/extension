@@ -4,14 +4,14 @@
 import type { TransactionDetail } from '../../util/types';
 
 import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { ArrowRight2, CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
 import HistoryDetail from '@polkadot/extension-polkagate/src/popup/history/newDesign/HistoryDetail';
-import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
 import { BN_ZERO } from '@polkadot/util';
 
-import { CryptoFiatBalance, ScrollingTextBox } from '../../components';
+import { CryptoFiatBalance, Identity2, ScrollingTextBox } from '../../components';
 import { useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import { amountToMachine, calcPrice, historyIconBgColor, resolveActionType } from '../../util';
 import { COLUMN_WIDTH } from './consts';
@@ -105,21 +105,17 @@ function HistoryItem ({ historyItem }: HistoryItemProps) {
           <Grid alignItems='center' columnGap='4px' container item width={COLUMN_WIDTH.SUB_ACTION}>
             {isTransfer
               ? <Stack alignItems='center' direction='row' sx={{ columnGap: '5px', justifyContent: 'start' }} width='fit-content'>
-                <PolkaGateIdenticon
-                  address={to?.address || from.address}
-                  size={24}
-                />
-                <ScrollingTextBox
-                  scrollOnHover
-                  text={isSend
-                    ? (to?.name || to?.address) ?? ''
-                    : (from.name || from.address) ?? ''
-                  }
-                  textStyle={{
-                    color: '#BEAAD8',
-                    ...theme.typography['B-2']
-                  }}
-                  width={120}
+                <Identity2
+                  address={isSend ? to?.address ?? '' : from.address}
+                  addressStyle={{ backgroundColor: '#C6AECC26', borderRadius: '9px', marginTop: '-3%', padding: '2px 3px' }}
+                  charsCount={4}
+                  direction='row'
+                  genesisHash={chain?.genesisHash ?? POLKADOT_GENESIS}
+                  identiconSize={24}
+                  nameStyle={{ py: '2px' }}
+                  showSocial={false}
+                  style={{ color: '#BEAAD8', maxWidth: 'inherit', overflow: 'auto', variant: 'B-2' }}
+                  withShortAddress={true}
                 />
               </Stack>
               : (<Typography color='#BEAAD8' textTransform='capitalize' variant='B-2'>

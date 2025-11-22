@@ -27,10 +27,10 @@ interface UseTransactionFlowProps {
   showAccountBox?: boolean;
   reviewHeader?: React.ReactNode;
   extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
-  noStakingHomeButton?: boolean;
+  showStakingHome?: boolean;
 }
 
-export default function useTransactionFlow ({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, noStakingHomeButton, pool, proxyTypeFilter, restakeReward, review, reviewHeader, setRestakeReward, showAccountBox, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
+export default function useTransactionFlow ({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, pool, proxyTypeFilter, restakeReward, review, reviewHeader, setRestakeReward, showAccountBox, showStakingHome = true, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
   if (!review || !tx) {
     return null;
   }
@@ -42,13 +42,13 @@ export default function useTransactionFlow ({ address, backPathTitle, closeRevie
       closeReview={closeReview}
       extraDetailConfirmationPage={extraDetailConfirmationPage}
       genesisHash={genesisHash}
-      noStakingHomeButton={noStakingHomeButton}
       pool={pool}
       proxyTypeFilter={proxyTypeFilter}
       restakeReward={restakeReward}
       reviewHeader={reviewHeader}
       setRestakeReward={setRestakeReward}
       showAccountBox={showAccountBox}
+      showStakingHome={showStakingHome}
       stepCounter={stepCounter}
       transaction={tx}
       transactionInformation={transactionInformation}

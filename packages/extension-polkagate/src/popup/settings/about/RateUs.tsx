@@ -10,14 +10,14 @@ import { star } from '../icons';
 import RateUsButton from '../partials/RateUsButton';
 
 const EXTENSION_RATE = 4.7;
-const EXTENSION_REVIEWERS_COUNT = 29;
+const EXTENSION_REVIEWERS_COUNT = 30;
 
 interface Props{
   style?: React.CSSProperties;
 }
 
 function RateUs ({ style }: Props): React.ReactElement {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <Grid alignItems='center' columnGap='5px' container item justifyContent='space-between' sx={{ bgcolor: 'background.paper', border: '4px solid', borderColor: 'border.paper', borderRadius: '14px', height: '70px', mt: '5px', px: '10px', ...style }}>

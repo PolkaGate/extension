@@ -18,7 +18,7 @@ export interface ActiveRecoveryFor {
   vouchedFriends: string[];
 }
 
-export default function useActiveRecoveries (api: ApiPromise | undefined, searchFor?: string): ActiveRecoveryFor[] | null | undefined {
+export default function useActiveRecoveries (api: ApiPromise | undefined | null, searchFor?: string): ActiveRecoveryFor[] | null | undefined {
   const { accounts } = useContext(AccountContext);
 
   const [activeRecoveries, setActiveRecoveries] = useState<ActiveRecoveryFor[] | null>();

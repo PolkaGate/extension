@@ -9,7 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { mapHubToRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { type BN, noop } from '@polkadot/util';
 
-import { ChainLogo, CryptoFiatBalance } from '../../../components';
+import { ChainLogo, CryptoFiatBalance, Motion } from '../../../components';
 import { useChainInfo } from '../../../hooks';
 import { StakingBadge, TestnetBadge } from '../../../popup/staking/StakingPositions';
 import { amountToHuman, updateStorage } from '../../../util';
@@ -109,14 +109,16 @@ function PositionItem ({ balance, decimal, genesisHash, isSelected, price, token
   }, [genesisHash, navigate, address, type]);
 
   return (
-    <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: isSelected ? '#2D1E4A' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
-      <TokenInfo genesisHash={genesisHash} />
-      <StakingBadge hasPoolStaking={hasPoolStaking} isFullscreen />
-      <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
-      <ChainIdentifier genesisHash={genesisHash} />
-      <Staked balance={balance} decimal={decimal} price={price} token={token} />
-      <ArrowButton onClick={noop} />
-    </Container>
+    <Motion variant='zoom'>
+      <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: isSelected ? '#2D1E4A' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
+        <TokenInfo genesisHash={genesisHash} />
+        <StakingBadge hasPoolStaking={hasPoolStaking} isFullscreen />
+        <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
+        <ChainIdentifier genesisHash={genesisHash} />
+        <Staked balance={balance} decimal={decimal} price={price} token={token} />
+        <ArrowButton onClick={noop} />
+      </Container>
+    </Motion>
   );
 }
 

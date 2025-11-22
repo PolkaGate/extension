@@ -2432,61 +2432,61 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@paraspell/assets@npm:11.12.3":
-  version: 11.12.3
-  resolution: "@paraspell/assets@npm:11.12.3"
+"@paraspell/assets@npm:11.14.3":
+  version: 11.14.3
+  resolution: "@paraspell/assets@npm:11.14.3"
   dependencies:
-    "@paraspell/sdk-common": "npm:11.12.3"
-  checksum: 10/8bfd97a484e38e8475392ed3666759026958154bf768578a8c5e6fef3a808eb055e360a4c609671bce0f54a67b2cb03f6134f9ba979c069f999f34253a759f3b
+    "@paraspell/sdk-common": "npm:11.14.3"
+  checksum: 10/662ea5a3a5d204ac1c4a679c58b29625647ce1c031e444886791df6111da89ae25178f5ad00322b2db204c62dc363d580cfa7150dd52a2f6f3a2465683c510d6
   languageName: node
   linkType: hard
 
-"@paraspell/pallets@npm:11.12.3":
-  version: 11.12.3
-  resolution: "@paraspell/pallets@npm:11.12.3"
+"@paraspell/pallets@npm:11.14.3":
+  version: 11.14.3
+  resolution: "@paraspell/pallets@npm:11.14.3"
   dependencies:
-    "@paraspell/sdk-common": "npm:11.12.3"
-  checksum: 10/692ab90f457720621db9a1d854ccacf387e3cb721370cf87454c02463d5a04bdfefd9130a41795532b5134fe823df196402f063ababc9cd891dc986ccc87e328
+    "@paraspell/sdk-common": "npm:11.14.3"
+  checksum: 10/4309caa414f5bb25f0b28bd9c05929a84e6917cc5017f8742e6f0443f8a0b1ef5c95ebc1f3abe749094a6fb25341a55eb0625af88afa10e918d59bc3c13b1e74
   languageName: node
   linkType: hard
 
-"@paraspell/sdk-common@npm:11.12.3":
-  version: 11.12.3
-  resolution: "@paraspell/sdk-common@npm:11.12.3"
-  checksum: 10/6ec468b464d6d4634b05be344764722adcb26fd2678a7d12dc52e11e39161cbf2ee2b2b928b75da3e2af2d98292da289dbbfc9ffc2f3b610489569109d0ab38e
+"@paraspell/sdk-common@npm:11.14.3":
+  version: 11.14.3
+  resolution: "@paraspell/sdk-common@npm:11.14.3"
+  checksum: 10/5bcf73339ab6abb052eacd746ec904831a16d947380c9a2434dddee6ea36623bbc75351d3c146d285364f0afcdef558e023b65d1c7060dcf59072fbaa30e52e5
   languageName: node
   linkType: hard
 
-"@paraspell/sdk-core@npm:11.12.3":
-  version: 11.12.3
-  resolution: "@paraspell/sdk-core@npm:11.12.3"
+"@paraspell/sdk-core@npm:11.14.3":
+  version: 11.14.3
+  resolution: "@paraspell/sdk-core@npm:11.14.3"
   dependencies:
     "@noble/hashes": "npm:^1.8.0"
-    "@paraspell/assets": "npm:11.12.3"
-    "@paraspell/pallets": "npm:11.12.3"
-    "@paraspell/sdk-common": "npm:11.12.3"
+    "@paraspell/assets": "npm:11.14.3"
+    "@paraspell/pallets": "npm:11.14.3"
+    "@paraspell/sdk-common": "npm:11.14.3"
     "@scure/base": "npm:^2.0.0"
-    viem: "npm:^2.37.9"
-  checksum: 10/c3914728e2a214e35cd52c74b062e0137347e8627dc57700112d8226502ac45c683bf98c7ecaee9da9e2efd255653cb8154cf0b342111a87b3ddfd9a1253d55c
+    viem: "npm:^2.38.5"
+  checksum: 10/fb8e0e021862e0202901fa8273735734820724133ca97edf31576bb200b0df72a21f840eb6b49b2239156df191e674956d8973c5062716582955b6fb6ecf6440
   languageName: node
   linkType: hard
 
-"@paraspell/sdk-pjs@npm:^11.12.3":
-  version: 11.12.3
-  resolution: "@paraspell/sdk-pjs@npm:11.12.3"
+"@paraspell/sdk-pjs@npm:^11.14.3":
+  version: 11.14.3
+  resolution: "@paraspell/sdk-pjs@npm:11.14.3"
   dependencies:
-    "@paraspell/sdk-core": "npm:11.12.3"
-    "@snowbridge/api": "npm:0.2.0"
-    "@snowbridge/contract-types": "npm:0.2.0"
+    "@paraspell/sdk-core": "npm:11.14.3"
+    "@snowbridge/api": "npm:0.2.12"
+    "@snowbridge/contract-types": "npm:0.2.12"
     ethers: "npm:^6.15.0"
-    viem: "npm:^2.37.9"
+    viem: "npm:^2.38.5"
   peerDependencies:
     "@polkadot/api": ">= 16.0 < 17"
     "@polkadot/api-base": ">= 16.0 < 17"
     "@polkadot/types": ">= 16.0 < 17"
     "@polkadot/util": ">= 13"
     "@polkadot/util-crypto": ">= 13"
-  checksum: 10/749e6108cf1989f458a5a31e29994fe31f7df01d5cc26dcc4b58feba1a3ed14203f3b49bd6065e0b3e10512ad5b2aa66896004879e54198a376428e923f5ba3e
+  checksum: 10/f94944da3f1ad36bf26fb44f66f3ef140c81e0bed58a967a2054587693615fe803b6d03cb18c5ccaa5dbca7415657fa7c3232a1d6fe3dd885d4864d6c8ecb8b7
   languageName: node
   linkType: hard
 
@@ -4191,9 +4191,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@polkagate/apps-config@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@polkagate/apps-config@npm:1.1.1"
+"@polkagate/apps-config@npm:^1.1.5":
+  version: 1.1.5
+  resolution: "@polkagate/apps-config@npm:1.1.5"
   dependencies:
     "@acala-network/type-definitions": "npm:5.1.2"
     "@bifrost-finance/type-definitions": "npm:1.11.3"
@@ -4240,7 +4240,7 @@ __metadata:
     pontem-types-bundle: "npm:1.0.15"
     rxjs: "npm:^7.8.1"
     tslib: "npm:^2.6.2"
-  checksum: 10/1f40089bf163cc154c0cd3376f23070c9da0f60603729db0c8fa2f84d997f74bc7777ac55f9531d31571646a3c7bdb402a264dbd37565d4fd4a11215ed2f177b
+  checksum: 10/24049d58526a8e021d8568f8cbb64446da1d8077e3c67fa07e3e7214c7e3a38591564ee504fedbd85597c24d0b773bbfc0d5682534f2116ee43f7d2254962984
   languageName: node
   linkType: hard
 
@@ -5090,45 +5090,43 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@snowbridge/api@npm:0.2.0":
-  version: 0.2.0
-  resolution: "@snowbridge/api@npm:0.2.0"
+"@snowbridge/api@npm:0.2.12":
+  version: 0.2.12
+  resolution: "@snowbridge/api@npm:0.2.12"
   dependencies:
-    "@polkadot/api": "npm:^15.10.2"
-    "@polkadot/keyring": "npm:^13.4.4"
-    "@polkadot/types": "npm:^15.10.2"
-    "@polkadot/util": "npm:^13.4.4"
-    "@polkadot/util-crypto": "npm:^13.4.4"
-    "@snowbridge/base-types": "npm:0.2.0"
-    "@snowbridge/contract-types": "npm:0.2.0"
-    "@typechain/ethers-v6": "npm:^0.5.1"
-    ethers: "npm:^6.13.5"
-    rxjs: "npm:^7.8.1"
-  checksum: 10/236038deb2617ae463a10fb60075c7a124ae8a87e0325512f403dba7454bbc74944526f25064e696272300e3ee8df1c2eaf0c437e9740178816b162020e731f0
+    "@polkadot/api": "npm:16.4.8"
+    "@polkadot/keyring": "npm:13.5.6"
+    "@polkadot/types": "npm:16.4.8"
+    "@polkadot/util": "npm:13.5.6"
+    "@polkadot/util-crypto": "npm:13.5.6"
+    "@snowbridge/base-types": "npm:0.2.12"
+    "@snowbridge/contract-types": "npm:0.2.12"
+    ethers: "npm:6.15.0"
+  checksum: 10/36cdda220edac43ba5162554b707be4a85cc0a146aaf0afba7ba7e8ce319f3709ee395464b0a8d5e19b4f5f9b700c4072401ed1da8f65c7c55834a97e8553041
   languageName: node
   linkType: hard
 
-"@snowbridge/base-types@npm:0.2.0":
-  version: 0.2.0
-  resolution: "@snowbridge/base-types@npm:0.2.0"
-  checksum: 10/ebef7b45df64183354077d94cfc669f235df8a9cfc160e96db7beb5a4a031e7b404b852c4d95ebf37e19843127c6644e827ac18c5ab3d5d9ed414c2d6d8a456b
+"@snowbridge/base-types@npm:0.2.12":
+  version: 0.2.12
+  resolution: "@snowbridge/base-types@npm:0.2.12"
+  checksum: 10/40265eea29a2726d96790e518e4bd85132762f6469e5bb4c004f95c1ef1167b53e858f6c5ce8636b1d1bfcb569eb26c804b9cdd7cb712ac7b5ed1ac1f156c58e
   languageName: node
   linkType: hard
 
-"@snowbridge/contract-types@npm:0.2.0":
-  version: 0.2.0
-  resolution: "@snowbridge/contract-types@npm:0.2.0"
+"@snowbridge/contract-types@npm:0.2.12":
+  version: 0.2.12
+  resolution: "@snowbridge/contract-types@npm:0.2.12"
   dependencies:
-    "@snowbridge/contracts": "npm:0.2.0"
-    ethers: "npm:^6.13.5"
-  checksum: 10/ddeab67fed56b80d34c0635cdd6b47ca32263f62736731ce83cb52967a934c2f6252775995135f5e2bb9a8fd078eb830741e7b08632ab066194a81fc6ddd771f
+    "@snowbridge/contracts": "npm:0.2.12"
+    ethers: "npm:6.15.0"
+  checksum: 10/58054547f9823e4870ea5d1e86a5170ffaac49b1df98f5f8383ac337e84eb743b8465f402dd03489e4c5eb45b8cf0c783a19203445e585184a4268d990a7581a
   languageName: node
   linkType: hard
 
-"@snowbridge/contracts@npm:0.2.0":
-  version: 0.2.0
-  resolution: "@snowbridge/contracts@npm:0.2.0"
-  checksum: 10/a7f4d7e3d7bcec32ebf0c0c6f6ae270ba2e74a8c7446e467f80cc693daff2f3a146266a5870b03f3440a6ebfa2a1c94e3d8a46e5e92684d7bfb6cc18062dbc0c
+"@snowbridge/contracts@npm:0.2.12":
+  version: 0.2.12
+  resolution: "@snowbridge/contracts@npm:0.2.12"
+  checksum: 10/1d4b07a993be964c59268f0a58e88b4ffebf74ad245247b2e9b93784b6abf9b58a0a244df50b0d2dacd634b6cf2909d4eb01880f4b33467fce368893bc0c9044
   languageName: node
   linkType: hard
 
@@ -5367,20 +5365,6 @@ __metadata:
   dependencies:
     tslib: "npm:^2.4.0"
   checksum: 10/779d047a77e8a619b6e26b6fe556f413316d846e9a35438668a15510a4d6e7294388c998f65911f6f1a13838745575d7793cb1d27182752f6f95991725b15d45
-  languageName: node
-  linkType: hard
-
-"@typechain/ethers-v6@npm:^0.5.1":
-  version: 0.5.1
-  resolution: "@typechain/ethers-v6@npm:0.5.1"
-  dependencies:
-    lodash: "npm:^4.17.15"
-    ts-essentials: "npm:^7.0.1"
-  peerDependencies:
-    ethers: 6.x
-    typechain: ^8.3.2
-    typescript: ">=4.7.0"
-  checksum: 10/51dd8be3548fe3c061d2a5372beb9214e767e2b69f10c12424b699bba7ff409a13c4bdff2e513ef49046b51153db56489752205541be8fb1775f3b9ad884b85b
   languageName: node
   linkType: hard
 
@@ -11584,7 +11568,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^6.13.5, ethers@npm:^6.15.0":
+"ethers@npm:6.15.0, ethers@npm:^6.15.0":
   version: 6.15.0
   resolution: "ethers@npm:6.15.0"
   dependencies:
@@ -19524,7 +19508,7 @@ __metadata:
     "@mui/icons-material": "npm:^5.15.18"
     "@mui/lab": "npm:^5.0.0-alpha.85"
     "@mui/material": "npm:^5.8.3"
-    "@paraspell/sdk-pjs": "npm:^11.12.3"
+    "@paraspell/sdk-pjs": "npm:^11.14.3"
     "@polkadot/api": "npm:^16.4.8"
     "@polkadot/api-augment": "npm:^16.4.8"
     "@polkadot/api-base": "npm:^16.4.8"
@@ -19540,7 +19524,7 @@ __metadata:
     "@polkadot/types-support": "npm:^16.4.8"
     "@polkadot/util": "npm:^13.5.3"
     "@polkadot/util-crypto": "npm:^13.5.3"
-    "@polkagate/apps-config": "npm:^1.1.1"
+    "@polkagate/apps-config": "npm:^1.1.5"
     "@semantic-release/changelog": "npm:^6.0.3"
     "@semantic-release/commit-analyzer": "npm:^13.0.0"
     "@semantic-release/git": "npm:^10.0.1"
@@ -21411,15 +21395,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-essentials@npm:^7.0.1":
-  version: 7.0.3
-  resolution: "ts-essentials@npm:7.0.3"
-  peerDependencies:
-    typescript: ">=3.7.0"
-  checksum: 10/021b4263ddd58897171f3f5c467b5c872f76ba2ea07dfc11fa9667ba8d62ccb7f390db3e581139dcc6da94c3ff6306921f574acdb2b94cbc9d7da3e859e24665
-  languageName: node
-  linkType: hard
-
 "ts-graphviz@npm:^1.5.0":
   version: 1.8.2
   resolution: "ts-graphviz@npm:1.8.2"
@@ -22336,9 +22311,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:^2.37.9":
-  version: 2.38.0
-  resolution: "viem@npm:2.38.0"
+"viem@npm:^2.38.5":
+  version: 2.39.3
+  resolution: "viem@npm:2.39.3"
   dependencies:
     "@noble/curves": "npm:1.9.1"
     "@noble/hashes": "npm:1.8.0"
@@ -22353,7 +22328,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/4262582399059b895471acc6bb1c23866a33a1cdb3aa3c5755bb65746ac2814b1323f1b72f66d0b8b5f6f98ae9843b86acd79dc0f170b7f7ec6469f9842eb0ac
+  checksum: 10/a96066afc12b32558ea7a8050b639ec49fa3648ef9103cbd0ec2e00bed7e747c36468846a56a0f962a507f202c2244d3fb58a5edb404946ea7fb191894eed582
   languageName: node
   linkType: hard
 

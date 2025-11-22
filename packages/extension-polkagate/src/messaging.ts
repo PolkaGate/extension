@@ -97,8 +97,8 @@ export async function getSignature (payload: SignerPayloadJSON): Promise<HexStri
   return sendMessage('pri(signing.getSignature)', { payload });
 }
 
-export async function unlockAllAccounts (password: string, cacheTime: number): Promise<boolean> {
-  return sendMessage('pri(accounts.unlockAll)', { cacheTime, password });
+export async function unlockAllAccounts (password: string, cacheTime: number, lazy = false): Promise<boolean> {
+  return sendMessage('pri(accounts.unlockAll)', { cacheTime, lazy, password });
 }
 
 export async function areAccountsLocksExpired (): Promise<boolean> {

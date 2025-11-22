@@ -14,10 +14,9 @@ import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { DecisionButtons, SignArea3 } from '../../components';
 import { useCanPayFeeAndDeposit, useFormatted, useTeleport, useTranslation } from '../../hooks';
-import { WaitScreen } from '../../partials';
+import { Confirmation, WaitScreen } from '../../partials';
 import { toBN } from '../../util';
 import HomeLayout from '../components/layout';
-import Confirmation from '../manageProxies/Confirmation';
 import RecipientAddress from './partials/RecipientAddress';
 import StepsRow, { INPUT_STEPS } from './partials/StepsRow';
 import Step1Sender from './Step1Sender';
@@ -27,7 +26,7 @@ import Step4Summary from './Step4Summary';
 import { type Inputs } from './types';
 import useParaSpellFeeCall from './useParaSpellFeeCall';
 
-export default function SendFund(): React.ReactElement {
+export default function SendFund (): React.ReactElement {
   const { t } = useTranslation();
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
 
@@ -108,11 +107,7 @@ export default function SendFund(): React.ReactElement {
     }));
   }, [paraSpellTransaction, setInputs]);
 
-  useEffect(() => {
-    if (!address || !genesisHash) {
-      return;
-    }
-
+  const onReset = useCallback(() => {
     const RESET_INPUTS: Partial<Inputs> = {
       amount: undefined,
       amountAsBN: undefined,
@@ -134,7 +129,15 @@ export default function SendFund(): React.ReactElement {
     setTxInfo(undefined);
     setFlowStep(TRANSACTION_FLOW_STEPS.REVIEW);
     setShowProxySelection(false);
-  }, [address, genesisHash]);
+  }, []);
+
+  useEffect(() => {
+    if (!address || !genesisHash) {
+      return;
+    }
+
+    onReset();
+  }, [address, genesisHash, onReset]);
 
   const onNext = useCallback(() => {
     setInputStep((prevStep) => prevStep + 1);
@@ -145,6 +148,10 @@ export default function SendFund(): React.ReactElement {
   }, []);
 
   const onCloseModal = useCallback(() => {
+    onReset();
+  }, [onReset]);
+
+  const backToHome = useCallback(() => {
     navigate(`/accountfs/${address}/${genesisHash}/${assetId}`) as void;
   }, [address, assetId, genesisHash, navigate]);
 
@@ -162,8 +169,8 @@ export default function SendFund(): React.ReactElement {
       description: t('Amount'),
       extra: {
         from: formatted,
-        recipientNetwork: inputs?.recipientChain?.text,
-        to: inputs?.recipientAddress
+        to: inputs?.recipientAddress,
+        recipientNetwork: inputs?.recipientChain?.text
       },
       ...txInfo,
       fee: inputs?.feeInfo,
@@ -288,10 +295,12 @@ export default function SendFund(): React.ReactElement {
         flowStep === TRANSACTION_FLOW_STEPS.CONFIRMATION &&
         <Confirmation
           address={address ?? ''}
+          backToHome={backToHome}
+          backToHomeText={t('Back to Account')}
           genesisHash={genesisHash}
           isModal
-          onCloseModal={onCloseModal}
-          showDate
+          onClose={onCloseModal}
+          showHistoryButton={false}
           transactionDetail={transactionDetail}
         />
       }

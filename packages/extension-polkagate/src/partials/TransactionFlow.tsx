@@ -13,9 +13,8 @@ import React, { useCallback, useState } from 'react';
 import { BackWithLabel, Motion } from '../components';
 import { useBackground, useTransactionData, useTranslation } from '../hooks';
 import { PROCESSING_TITLE, TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
-import Confirmation2 from './Confirmation2';
 import Review from './Review';
-import { UserDashboardHeader, WaitScreen } from '.';
+import { Confirmation, UserDashboardHeader, WaitScreen } from '.';
 
 export interface TransactionFlowProps {
   closeReview: () => void;
@@ -30,12 +29,12 @@ export interface TransactionFlowProps {
   restakeReward?: boolean;
   setRestakeReward?: React.Dispatch<React.SetStateAction<boolean>>;
   showAccountBox?: boolean;
-  noStakingHomeButton?: boolean;
+  showStakingHome?: boolean;
   reviewHeader?: React.ReactNode;
   extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
 }
 
-export default function TransactionFlow ({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, noStakingHomeButton, pool, proxyTypeFilter, restakeReward, reviewHeader, setRestakeReward, showAccountBox, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
+export default function TransactionFlow ({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, setRestakeReward, showAccountBox, showStakingHome, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
   useBackground('staking');
   const { t } = useTranslation();
 
@@ -96,11 +95,11 @@ export default function TransactionFlow ({ address, backPathTitle, closeReview, 
           <WaitScreen />
         }
         {flowStep === TRANSACTION_FLOW_STEPS.CONFIRMATION && transactionDetail &&
-          <Confirmation2
+          <Confirmation
             address={address ?? ''}
-            close={closeReview}
             genesisHash={genesisHash}
-            noStakingHomeButton={noStakingHomeButton}
+            onClose={closeReview}
+            showStakingHome={showStakingHome}
             transactionDetail={transactionDetail}
           />
         }

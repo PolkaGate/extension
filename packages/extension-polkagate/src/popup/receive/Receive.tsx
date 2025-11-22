@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
 
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import { ETHEREUM_GENESISHASH } from '@polkadot/extension-polkagate/src/util/evmUtils/constantsEth';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
@@ -124,7 +125,7 @@ function SelectNetwork ({ setSelectedChain }: SelectChainProp) {
           placeholder={t('🔍 Search networks')}
         />
       </Grid>
-      <Grid container item sx={{ maxHeight: '395px', my: '10px', overflowY: 'auto' }}>
+      <Grid container item sx={{ maxHeight: '395px', minHeight: '395px', my: '10px', overflowY: 'auto' }}>
         {
           chainsToShow.map((chain, index) => {
             const chainName = chain.name;
@@ -146,6 +147,11 @@ function SelectNetwork ({ setSelectedChain }: SelectChainProp) {
               </React.Fragment>
             );
           })}
+        <NothingFound
+          show={chainsToShow.length === 0}
+          style={{ pb: '125px' }}
+          text={t('Network Not Found')}
+        />
       </Grid>
     </Grid>
   );

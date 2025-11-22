@@ -12,7 +12,7 @@ import { DisplayBalance, GradientDivider } from '../../../components';
 import { useIsExtensionPopup, useTranslation } from '../../../hooks';
 
 interface Props {
-  feeValue: Balance | undefined;
+  feeValue: Balance | undefined | null;
   token: string | undefined;
   decimal: number | undefined;
 }

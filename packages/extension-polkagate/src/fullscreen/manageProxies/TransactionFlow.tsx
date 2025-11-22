@@ -14,16 +14,15 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { SelectedProxy } from '../../components';
 import { useEstimatedFee, useTranslation } from '../../hooks';
-import { WaitScreen } from '../../partials';
+import { Confirmation, WaitScreen } from '../../partials';
 import { DraggableModal } from '../components/DraggableModal';
-import Confirmation from './Confirmation';
 import { STEPS } from './consts';
 import Review from './Review';
 import { type ProxyFlowStep } from './types';
 
 interface Props {
   address: string | undefined;
-  api: ApiPromise | undefined;
+  api: ApiPromise | undefined | null;
   setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
   proxyItems: ProxyItem[] | null | undefined;
   chain: Chain | null | undefined;
@@ -161,8 +160,14 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
     return undefined;
   }, [proxyItems, depositToPay, t, fee, txInfo]);
 
+  const confirmationStep = useMemo(() => step === STEPS.CONFIRMATION && transactionDetail, [step, transactionDetail]);
+
   const extraHeight = useMemo(() => {
-    const basedHeight = 75;
+    if (confirmationStep) {
+      return 0;
+    }
+
+    const basedHeight = 35;
     const newProxies = proxyItems?.filter(({ status }) => status === 'new');
 
     if (newProxies?.length) {
@@ -176,7 +181,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
     }
 
     return 0;
-  }, [proxyItems]);
+  }, [confirmationStep, proxyItems]);
 
   return (
     <DraggableModal
@@ -190,11 +195,16 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
           }}
         />
       }
+      noCloseButton={step === STEPS.WAIT_SCREEN}
       noDivider
       onClose={handleClose}
       open={true}
       showBackIconAsClose
-      style={{ backgroundColor: '#1B133C', minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${540 + extraHeight}px`, padding: '20px 15px 10px' }}
+      style={{
+        backgroundColor: '#1B133C',
+         minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${555 + extraHeight}px`,
+         padding: confirmationStep ? '20px 5px' : '20px 15px 10px'
+        }}
       title={
         [STEPS.REVIEW, STEPS.SIGN_QR].includes(step)
           ? t('Review')
@@ -226,10 +236,12 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
           <WaitScreen />
         }
         {
-          step === STEPS.CONFIRMATION && transactionDetail &&
+          confirmationStep && transactionDetail &&
           <Confirmation
             address={address ?? ''}
+            backToHome={handleClose}
             genesisHash={genesisHash}
+            showHistoryButton={false}
             transactionDetail={transactionDetail}
           />
         }

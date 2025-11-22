@@ -73,6 +73,7 @@ export { default as MySwitch } from './MySwitch';
 export { default as MyTextField } from './MyTextField';
 export { default as MyTooltip } from './MyTooltip';
 export { default as NeonButton } from './NeonButton';
+export { default as NoInfoYet } from './NoInfoYet';
 export { default as OnActionToolTip } from './OnActionToolTip';
 export { default as PasswordInput } from './PasswordInput';
 export { default as PButton } from './PButton';

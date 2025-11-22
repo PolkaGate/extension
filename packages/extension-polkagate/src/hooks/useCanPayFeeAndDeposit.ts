@@ -54,7 +54,7 @@ export default function useCanPayFeeAndDeposit (
   address: AccountId | string | undefined,
   genesisHash: string | undefined,
   proxyAddress: AccountId | string | undefined,
-  estimatedFee: Balance | BN | undefined,
+  estimatedFee: Balance | BN | undefined | null,
   deposit?: BN | Balance | undefined,
   balancesFromProps?: BalancesInfo | undefined
 ): CanPayFee {

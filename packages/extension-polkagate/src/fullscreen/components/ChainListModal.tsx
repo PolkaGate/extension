@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import useUpdateAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useUpdateAccountSelectedChain';
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { PROXY_CHAINS, STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 import { isMigratedHub, isMigratedRelay, mapRelayToSystemGenesisIfMigrated, migratedRelays } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
@@ -151,6 +152,11 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
                 </Grid>
               );
             })}
+            <NothingFound
+              show={filteredChainsToList.length === 0}
+              style={{ pt: '80px' }}
+              text={t('Network Not Found')}
+            />
           </Stack>
         </VelvetBox>
         <GradientButton

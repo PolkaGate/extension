@@ -4,6 +4,8 @@
 import { Stack } from '@mui/material';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
+
 import { DecisionButtons, FadeOnScroll, Progress, SearchField } from '../../../components';
 import { useStakingConsts, useTranslation, useValidatorsInformation } from '../../../hooks';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
@@ -161,11 +163,17 @@ function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStaking
                 width: '410px'
               }}
             />
-            <ValidatorsTable
-              genesisHash={genesisHash ?? ''}
-              onSelect={onSelect}
-              selected={newSelectedValidators}
-              validatorsInformation={filtered ?? []}
+            {filtered && filtered.length > 0 && genesisHash &&
+              <ValidatorsTable
+                genesisHash={genesisHash}
+                onSelect={onSelect}
+                selected={newSelectedValidators}
+                validatorsInformation={filtered}
+              />}
+            <NothingFound
+              show={isLoaded && filtered?.length === 0}
+              style={{ pt: '80px' }}
+              text={t('Validator(s) Not Found')}
             />
           </>}
         <DecisionButtons

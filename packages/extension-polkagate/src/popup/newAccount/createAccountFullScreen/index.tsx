@@ -107,7 +107,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
         primaryBtnText={t('Create account')}
         secondaryBtnText={t('Cancel')}
         showChevron
-        style={{ flexDirection: 'row-reverse', marginTop: '15px', position: 'absolute', width: 'inherit' }}
+        style={{ flexDirection: 'row-reverse', marginTop: '15px', width: 'inherit' }}
       />
     </Motion>
   );

@@ -8,6 +8,7 @@ import { AddCircle, Trash } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, ActionButton, ActionContext, FadeOnScroll, GradientButton, MyTooltip } from '../../components';
@@ -151,6 +152,10 @@ function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConf
                 })}
               </>
             )}
+            <NothingFound
+              show={Object.keys(filteredCategorizedAccounts).length === 0}
+              text={t('Account Not Found')}
+            />
           </Stack>
           <FadeOnScroll containerRef={refContainer} height='30px' ratio={0.3} />
         </VelvetBox>
