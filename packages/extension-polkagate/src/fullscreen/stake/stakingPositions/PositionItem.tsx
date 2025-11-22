@@ -96,7 +96,7 @@ interface Props extends TokenInfoProps {
   isSelected?: boolean;
 }
 
-function PositionItem({ balance, claimPermissions, decimal, genesisHash, isSelected, price, token, type }: Props) {
+function PositionItem ({ balance, claimPermissions, decimal, genesisHash, isSelected, price, token, type }: Props) {
   const { address } = useParams<{ address: string }>();
   const navigate = useNavigate();
   const hasPoolStaking = useMemo(() => type === 'pool', [type]);
@@ -113,11 +113,12 @@ function PositionItem({ balance, claimPermissions, decimal, genesisHash, isSelec
   }, [genesisHash, navigate, address, type]);
 
   const claimPermissionTooltips: Record<string, string> = {
-    Permissioned: 'Only the member can claim their rewards.',
-    PermissionlessAll: 'Anyone can compound or withdraw this member’s rewards. Rewards are always paid to the member’s account.',
-    PermissionlessCompound: 'Anyone can compound this member’s rewards. Rewards remain in the member’s account.',
-    PermissionlessWithdraw: 'Anyone can withdraw this member’s rewards. Funds are safely paid to the member’s account.'
+    Permissioned: 'Only this account can claim its rewards.',
+    PermissionlessAll: 'Anyone can claim or compound rewards. Rewards always stay in this account.',
+    PermissionlessCompound: 'Anyone can compound rewards. Rewards always stay in this account.',
+    PermissionlessWithdraw: 'Anyone can claim rewards. Rewards always stay in this account.'
   };
+
   const claimPermissionTooltip = claimPermissions ? claimPermissionTooltips[claimPermissions] || 'Unknown claim permission.' : '';
 
   return (
