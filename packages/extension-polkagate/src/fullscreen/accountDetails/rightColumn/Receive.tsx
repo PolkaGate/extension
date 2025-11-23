@@ -13,7 +13,6 @@ import { Address2, ChainLogo, DecisionButtons, GradientDivider, MySnackbar, Sear
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util';
-import { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import { ETHEREUM_GENESISHASH } from '@polkadot/extension-polkagate/src/util/evmUtils/constantsEth';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { isEthereumAddress } from '@polkadot/util-crypto';
@@ -141,7 +140,7 @@ function Receive ({ address, closePopup, onClose, setAddress }: Props): React.Re
 
   useEffect(() => {
     if (isEthereumAddress(address)) {
-      setSelectedChain({ genesisHash: ETHEREUM_GENESISHASH, name: 'Ethereum' } as NetworkInfo);
+      setSelectedChain({ value: ETHEREUM_GENESISHASH, text: 'Ethereum' });
     }
   }, [address]);
 

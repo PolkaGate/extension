@@ -7,7 +7,7 @@ import type { AnyNumber } from '@polkadot/types-codec/types';
 import type { BN } from '@polkadot/util';
 
 import { getSupportedAssets } from '@paraspell/sdk-pjs';
-import { Foreign, ForeignAbstract, getParaId, getRelayChainSymbol, isTLocation, Native, SUBSTRATE_CHAINS, type TCurrencyCore, type TSubstrateChain } from '@paraspell/sdk-pjs';
+import { CHAINS, Foreign, ForeignAbstract, getParaId, getRelayChainSymbol, isTLocation, Native, SUBSTRATE_CHAINS, type TCurrencyCore, type TSubstrateChain } from '@paraspell/sdk-pjs';
 
 import { decodeMultiLocation, isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
 import { NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
@@ -149,4 +149,10 @@ export const getLocation = (api: ApiPromise, id: BN): AnyNumber | object | undef
     interior: { X2: [palletInstance, generalIndex] },
     parents: 0
   };
+};
+
+export const isParaspellSupportedChain = (chain: string): boolean => {
+  const normalized = chain.toLowerCase().replace(/\s+/g, '');
+
+  return !!CHAINS.find((c) => c.toLowerCase() === normalized);
 };

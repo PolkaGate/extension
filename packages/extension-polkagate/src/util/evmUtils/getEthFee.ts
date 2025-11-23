@@ -16,7 +16,12 @@ export interface FeeEstimateParams {
   token?: string; // token symbol, e.g., "ETH", "USDT", etc.
 }
 
-export async function getEthFee ({ chainName, from, to, token = 'ETH', value }: FeeEstimateParams): Promise<BN> {
+export interface EthFee {
+  currencySymbol: string
+  fee: BN
+}
+
+export async function getEthFee ({ chainName, from, to, token = 'ETH', value }: FeeEstimateParams): Promise<EthFee> {
   const provider = getEthProvider(chainName);
 
   if (!provider) {
@@ -72,5 +77,8 @@ export async function getEthFee ({ chainName, from, to, token = 'ETH', value }: 
 
   const fee = gasLimit * effectiveGasPrice;
 
-  return new BN(fee);
+  return {
+    currencySymbol: token,
+    fee: new BN(fee)
+  };
 }

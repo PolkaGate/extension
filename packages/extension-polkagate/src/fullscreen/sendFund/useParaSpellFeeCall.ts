@@ -7,11 +7,12 @@ import type { ISubmittableResult } from '@polkadot/types/types';
 import type { Inputs, ParaspellFees } from './types';
 
 import { Builder, type TDestination, type TSubstrateChain } from '@paraspell/sdk-pjs';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useChainInfo } from '@polkadot/extension-polkagate/src/hooks';
+import { BN_ZERO } from '@polkadot/util';
 
-import { getCurrency, normalizeChainName } from './utils';
+import { getCurrency, isParaspellSupportedChain, normalizeChainName } from './utils';
 
 interface ParaSpellState {
   paraSpellFee?: ParaspellFees;
@@ -23,6 +24,8 @@ export default function useParaSpellFeeCall (address: string | undefined, isRead
   const [isCrossChain, setIsCrossChain] = useState<boolean>();
   const [paraSpellState, setParaSpellState] = useState<ParaSpellState>({});
 
+  const isSupportedByParaspell = useMemo(() => senderChainName && isParaspellSupportedChain(senderChainName), [senderChainName]);
+
   const { amountAsBN,
     assetId,
     recipientAddress,
@@ -33,7 +36,7 @@ export default function useParaSpellFeeCall (address: string | undefined, isRead
   useEffect(() => {
     const _recipientChainName = recipientChain?.text;
 
-    if (!isReadyToMakeTx || assetId === undefined || !senderChainName || !amountAsBN || !api || amountAsBN?.isZero() || !address || !token || !_recipientChainName || !recipientAddress || !address) {
+    if (!isSupportedByParaspell || !isReadyToMakeTx || assetId === undefined || !senderChainName || !amountAsBN || !api || amountAsBN?.isZero() || !address || !token || !_recipientChainName || !recipientAddress || !address) {
       return;
     }
 
@@ -60,23 +63,49 @@ export default function useParaSpellFeeCall (address: string | undefined, isRead
 
       let cancelled = false;
 
-      Promise.all([builder.build(), builder.getTransferInfo()])
-        .then(([tx, info]) => {
+      builder.build()
+        .then((tx) => {
           if (cancelled) {
             return;
           }
 
-          setParaSpellState({
+          setParaSpellState((pre) => ({
+            ...(pre || {}),
+            paraSpellTransaction: tx
+          }));
+        }).catch((err) => {
+          if (!cancelled) {
+            setError('Something went wrong while building transaction!');
+          }
+
+          console.error('building transaction error', err);
+        });
+
+      builder.getTransferInfo()
+        .then((info) => {
+          if (cancelled) {
+            return;
+          }
+
+          setParaSpellState((pre) => ({
+            ...(pre || {}),
             paraSpellFee: {
               destinationFee: info.destination.xcmFee,
               originFee: info.origin.xcmFee
-            },
-            paraSpellTransaction: tx
-          });
+            }
+          }));
         }).catch((err) => {
           if (!cancelled) {
             setError('Something went wrong while calculating estimated fee!');
           }
+
+          // @ts-ignore
+          setParaSpellState((pre) => ({
+            ...(pre || {}),
+            paraSpellFee: {
+              originFee: { fee: BN_ZERO }
+            }
+          }));
 
           console.error('fee calc error', err);
         });

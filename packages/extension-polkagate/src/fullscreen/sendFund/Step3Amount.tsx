@@ -21,7 +21,7 @@ import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
 import NumberedTitle from './partials/NumberedTitle';
 import useLimitedFeeCall from './useLimitedFeeCall';
 import useWarningMessage from './useWarningMessage';
-import { getCurrency, normalizeChainName } from './utils';
+import { getCurrency, isParaspellSupportedChain, normalizeChainName } from './utils';
 
 interface Props {
   inputs: Inputs | undefined;
@@ -45,15 +45,24 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
   const isNativeToken = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
   const amountAsBN = useMemo(() => decimal ? amountToMachine(amount, decimal) : undefined, [amount, decimal]);
 
-  const { maxFee } = useLimitedFeeCall(address, assetId, assetToTransfer, inputs, genesisHash, teleportState);
+  const { call, limitedTotalFee, maxFee } = useLimitedFeeCall(address, assetId, assetToTransfer, inputs, genesisHash, teleportState);
   const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, inputs?.transferType ?? 'Normal', new BN(inputs?.fee?.originFee?.fee || 0));
 
   useEffect(() => {
-    amountAsBN && setInputs((prevInputs) => ({
-      ...(prevInputs || {}),
+    amountAsBN && setInputs((pre) => ({
+      ...(pre || {}),
       amountAsBN
     }));
   }, [amountAsBN, setInputs]);
+
+  useEffect(() => {
+    //@ts-ignore
+    call && setInputs((pre) => ({
+      ...(pre || {}),
+      call,
+      fee: limitedTotalFee
+    }));
+  }, [call, limitedTotalFee, setInputs]);
 
   const onMaxClick = useCallback(() => {
     if (!transferableBalance || !maxFee || !assetToTransfer) {
@@ -97,7 +106,8 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
   }, [assetToTransfer, decimal, setInputs, t, transferableBalance]);
 
   const ED = useMemo(() => {
-    let maybeED = '1';
+    const DEFAULT_ED = '0.01';
+    let maybeED = DEFAULT_ED;
 
     try {
       const { assetId, token } = inputs || {};
@@ -105,10 +115,14 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
       if (senderChainName && assetId !== undefined && token && api) {
         const _senderChainName = normalizeChainName(senderChainName);
         const currency = getCurrency(api, token, assetId);
-        const mayBeEDasBN = getExistentialDeposit(_senderChainName as TChain, currency);
+        const mayBeEDasBN = isParaspellSupportedChain(senderChainName)
+          ? getExistentialDeposit(_senderChainName as TChain, currency)
+          : api.consts['balances']['existentialDeposit'] as unknown as BN;
 
         if (mayBeEDasBN && decimal !== undefined) {
-          maybeED = amountToHuman(mayBeEDasBN, decimal);
+          const EDinHuman = amountToHuman(mayBeEDasBN, decimal);
+
+          maybeED = EDinHuman === '0' ? DEFAULT_ED : EDinHuman;
         }
       }
 

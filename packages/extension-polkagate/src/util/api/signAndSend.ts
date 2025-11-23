@@ -13,6 +13,9 @@ import type { ExtrinsicPayloadValue, ISubmittableResult } from '@polkadot/types/
 import type { HexString } from '@polkadot/util/types';
 import type { TxResult } from '../types';
 
+import { hexToU8a, u8aToHex } from '@polkadot/util';
+import { signatureVerify } from '@polkadot/util-crypto';
+
 async function getAppliedFee (api: ApiPromise, signedBlock: SignedBlock, txHashHex: HexString): Promise<string | undefined> {
   const apiAt = await api.at(signedBlock.block.hash);
   const allEvents = await apiAt.query['system']['events']() as Vec<FrameSystemEventRecord>;
@@ -137,8 +140,30 @@ export async function send (
 ): Promise<TxResult> {
   return new Promise((resolve) => {
     console.log('✈️ Sending the transaction ...');
+    console.log('Signature:', signature);
+    console.log('payload', payload);
+    console.log('signer', from);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    // console.log(api.consts['system']['version'].specVersion.toString());
+ const check = signatureVerify(payload?.toString(), signature, from);
 
-    extrinsic.addSignature(from, signature, payload);
+console.log('signatureVerify result:', { isValid: check.isValid, crypto: check.crypto, publicKey: u8aToHex(check.publicKey) });
+
+    let sigU8a = hexToU8a(signature);
+
+    // Ethereum signature: r(32) + s(32) + v(1) = 65 bytes
+    // Sometimes your signature might have an extra prefix byte, remove if present
+    if (sigU8a.length === 66 && sigU8a[0] === 2) {
+      sigU8a = sigU8a.slice(1); // remove the first byte
+    }
+
+    // Remove the last byte (Ethereum recovery 'v')
+    sigU8a = sigU8a.slice(0, 64);
+
+    // Add Substrate ECDSA prefix
+    sigU8a = new Uint8Array([2, ...sigU8a]);
+
+    extrinsic.addSignature(from, u8aToHex(sigU8a), payload);
 
     let unsub: (() => void) | undefined;
 

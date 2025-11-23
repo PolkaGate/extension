@@ -18,7 +18,7 @@ import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { DecisionButtons, GradientButton, MyTooltip } from '.';
 
 interface UseProxyProps {
-  proxies: Proxy[] | undefined;
+  proxies: Proxy[] | undefined | null;
   onClick: (() => void) | undefined;
 }
 
@@ -27,7 +27,7 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
 
-  if ((proxies && proxies.length === 0) || !onClick) {
+  if ((proxies && proxies.length === 0) || !onClick || proxies === null) {
     return null;
   }
 
@@ -66,7 +66,7 @@ export interface SignUsingPasswordProps {
   onCancel: () => void;
   onSignature: ({ signature }: { signature: HexString; }) => Promise<void>;
   onUseProxy: (() => void) | undefined;
-  proxies: Proxy[] | undefined;
+  proxies: Proxy[] | undefined | null;
   style?: React.CSSProperties;
   withCancel: boolean | undefined;
   signerPayload: SignerPayloadJSON | undefined;
@@ -82,6 +82,8 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
   const onConfirm = useCallback(async () => {
     try {
       if (!signerPayload) {
+        console.log('No signer payload found');
+
         return;
       }
 

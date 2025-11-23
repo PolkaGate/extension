@@ -50,7 +50,7 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
   } catch (error) {
     console.error(`getAssetOnRelayChain: Error fetching balances for ${chainName}:`, error);
   } finally {
-    console.info(chainName, ': account assets fetched.');
+    console.info(chainName, ': account assets fetched.', results);
     Object.keys(results).length
       ? port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.RELAY, results }))
       : port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.RELAY, results: null }));

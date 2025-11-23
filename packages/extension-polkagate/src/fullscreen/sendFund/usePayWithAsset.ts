@@ -4,7 +4,7 @@
 import { getFeeAssets, type TAssetInfo, type TChain, type TJunction, type TJunctions, type TLocation } from '@paraspell/sdk-pjs';
 import { useMemo } from 'react';
 
-import { normalizeChainName } from './utils';
+import { isParaspellSupportedChain, normalizeChainName } from './utils';
 
 /**
  * Normalizes a MultiLocation into a consistent format for fee payment logic.
@@ -99,7 +99,7 @@ function normalizeMultiLocation (location: TLocation): TLocation {
 
 export default function usePayWithAsset (chainName: string | undefined): Omit<TAssetInfo, 'isFeeAsset'>[] | undefined {
   return useMemo(() => {
-    if (!chainName) {
+    if (!chainName || !isParaspellSupportedChain(chainName)) {
       return;
     }
 

@@ -4,7 +4,7 @@
 //@ts-nocheck
 import type { JsonRpcSigner } from 'ethers';
 
-import { Wallet } from "ethers";
+import { Wallet } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { getEthProvider } from '../util/getEthProvider';

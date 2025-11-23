@@ -13,7 +13,7 @@ import { getEthFee } from '@polkadot/extension-polkagate/src/util/evmUtils/getEt
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { DecisionButtons, SignArea3 } from '../../components';
-import { useCanPayFeeAndDeposit, useFormatted, useTeleport, useTranslation } from '../../hooks';
+import { useCanPayFeeAndDeposit, useChainInfo, useFormatted, useTeleport, useTranslation } from '../../hooks';
 import { Confirmation, WaitScreen } from '../../partials';
 import { toBN } from '../../util';
 import HomeLayout from '../components/layout';
@@ -35,6 +35,7 @@ export default function SendFund (): React.ReactElement {
   const teleportState = useTeleport(genesisHash);
   const navigate = useNavigate();
   const formatted = useFormatted(address, genesisHash);
+  const { chainName } = useChainInfo(genesisHash, true);
 
   const [inputs, setInputs] = useState<Inputs>();
   const [error, setError] = useState<string | undefined>();
@@ -51,7 +52,7 @@ export default function SendFund (): React.ReactElement {
   useEffect(() => {
     const { amount, fee, recipientAddress: to, token } = inputs ?? {};
 
-    if (ethFeeRef.current || fee || !address || !isEthereumAddress(address) || !amount || !to || !token || !RecipientAddress) {
+    if (ethFeeRef.current || fee || !address || !chainName || !isEthereumAddress(address) || !amount || !to || !token || !RecipientAddress) {
       return;
     }
 
@@ -62,19 +63,19 @@ export default function SendFund (): React.ReactElement {
     ethFeeRef.current = true;
 
     getEthFee({
-      // chainName: senderChainName,
+      chainName,
       from: address,
       to,
       token,
       value: amount
-    }).then((fee) => {
-      console.log('fee:', String(fee));
-      fee && setInputs((prev) => ({
+    }).then((res) => {
+      //@ts-ignore
+      res && setInputs((prev) => ({
         ...(prev || {}),
-        fee
+        fee: { originFee: res }
       }));
     }).catch(console.error);
-  }, [address, inputs]);
+  }, [address, chainName, inputs]);
 
   useEffect(() => {
     if (!genesisHash) {
@@ -256,7 +257,7 @@ export default function SendFund (): React.ReactElement {
             <SignArea3
               address={address}
               direction='horizontal'
-              disabled={!inputs?.paraSpellTransaction}
+              disabled={!(inputs?.paraSpellTransaction || inputs?.call)}
               extraProps={{
                 decisionButtonProps: {
                   primaryButtonProps: { style: { width: '148%' } },
@@ -279,7 +280,7 @@ export default function SendFund (): React.ReactElement {
               showProxySelection={showProxySelection}
               signerOption={inputs?.feeInfo?.assetId ? { assetId: inputs.feeInfo.assetId } : undefined}
               style={{ position: 'unset', width: '73%' }}
-              transaction={inputs?.paraSpellTransaction}
+              transaction={inputs?.paraSpellTransaction ?? inputs?.call}
               withCancel
             />
           </div>

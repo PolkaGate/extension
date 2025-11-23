@@ -20,10 +20,10 @@ import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util';
 import { useChainInfo } from '.';
 
-export default function useProxies (genesisHash: string | null | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined {
+export default function useProxies (genesisHash: string | null | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined | null {
   const { api } = useChainInfo(genesisHash);
 
-  const [proxies, setProxies] = useState<Proxy[] | undefined>();
+  const [proxies, setProxies] = useState<Proxy[] | undefined | null>();
   const [proxiesWithAvailability, setProxiesWithAvailability] = useState<Proxy[] | undefined>();
   const { accounts } = useContext(AccountContext);
 

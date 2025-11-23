@@ -33,6 +33,15 @@ export default function Step2Recipient ({ assetId, genesisHash, inputs, setInput
 
   const [selectedChain, setSelectedChain] = useState<DropdownOption>({ text: inputs?.recipientChain?.text ?? chainName ?? '', value: inputs?.recipientChain?.value ?? genesisHash ?? '' });
 
+  useEffect(() => {
+    const maybeRecipientChainName = inputs?.recipientChain?.text ?? chainName;
+    const maybeRecipientGenesisHash = inputs?.recipientChain?.value ?? genesisHash;
+
+    if (maybeRecipientChainName && maybeRecipientGenesisHash) {
+      setSelectedChain({ text: maybeRecipientChainName, value: maybeRecipientGenesisHash });
+    }
+  }, [chainName, genesisHash, inputs?.recipientChain?.text, inputs?.recipientChain?.value]);
+
   const destinationOptions = useMemo((): DropdownOption[] => {
     if (!chainName || !inputs?.token) {
       return [];
@@ -87,7 +96,7 @@ export default function Step2Recipient ({ assetId, genesisHash, inputs, setInput
             title={t('Select recipient network')}
           />
           <SelectYourChain
-            chainName={selectedChain?.text ?? inputs?.recipientChain?.text ?? chainName}
+            chainName={selectedChain?.text || inputs?.recipientChain?.text || chainName}
             destinationOptions={destinationOptions}
             setSelectedChain={setSelectedChain}
             style={{ width: '100%' }}

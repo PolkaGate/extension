@@ -96,7 +96,8 @@ export default function RestoreJson (): React.ReactElement {
         address,
         genesisHash,
         isExternal,
-        name: name ?? 'Unknown'
+        name: name ?? 'Unknown',
+        // type: isEthereumAddress(address) ? 'ethereum' : undefined
       } as JsonGetAccountInfo));
 
       setAccountsInfo(accs);
@@ -114,6 +115,7 @@ export default function RestoreJson (): React.ReactElement {
         });
     }
   }, []);
+
 
   const filterAndEncryptFile = useCallback(async (jsonFile: KeyringPairs$Json, selected: string[]) => {
     const decryptedFile = jsonDecrypt(jsonFile, password);

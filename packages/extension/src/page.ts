@@ -10,7 +10,7 @@ import { injectExtension } from '@polkadot/extension-inject';
 
 import { packageInfo } from './packageInfo';
 
-function inject() {
+function inject () {
   injectExtension(enable, {
     name: 'polkagate', // added by polkagate
     version: packageInfo.version

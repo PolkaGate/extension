@@ -26,7 +26,7 @@ const SUCCESSFUL = 1;
  * Hook to encapsulate logic for dispatching asset-fetching requests
  * to a worker, based on chain type.
  */
-export default function useFetchAssetsOnChains ({ addresses, genesisOptions, userAddedEndpoints, worker }: Params) {
+export default function useFetchAssetsOnChains({ addresses, genesisOptions, userAddedEndpoints, worker }: Params) {
   const assetsChains = useMemo(() => createAssets(), []);
 
   const postToWorker = useCallback((functionName: string, parameters: Record<string, unknown>): number => {
@@ -104,10 +104,6 @@ export default function useFetchAssetsOnChains ({ addresses, genesisOptions, use
       return fetchEvmAssets(chainName, evmAddresses);
     }
 
-    if (!substrateAddresses?.length) {
-      return FAILED;
-    }
-
     // Relay chains or chains with a single token
     if (RELAY_CHAINS_GENESISHASH.includes(genesisHash) || isSingleTokenChain) {
       const chainName = getChainName(genesisHash, genesisOptions);
@@ -118,7 +114,11 @@ export default function useFetchAssetsOnChains ({ addresses, genesisOptions, use
         return FAILED;
       }
 
-      return fetchAssetOnRelayChain(chainName, substrateAddresses);
+      return fetchAssetOnRelayChain(chainName, addresses);
+    }
+
+    if (!substrateAddresses?.length) {
+      return FAILED;
     }
 
     // Asset hubs (like Statemint)

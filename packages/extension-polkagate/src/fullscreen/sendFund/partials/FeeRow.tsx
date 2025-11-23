@@ -122,8 +122,6 @@ export default function FeeRow ({ address, genesisHash, inputs, setInputs }: Pro
     };
   }, [inputs.fee, inputs?.isCrossChain, maybeSelectedNonNativeFeeAsset, decimal, token, maybePartialFee]);
 
-  console.log('feeInfo:', JSON.stringify(feeInfo));
-
   useEffect(() => {
     setInputs((prevInputs) => ({
       ...(prevInputs || {}),

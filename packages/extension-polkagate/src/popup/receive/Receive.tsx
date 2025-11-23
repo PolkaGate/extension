@@ -241,7 +241,7 @@ export default function Receive ({ openPopup, setOpenPopup }: Props) {
 
   useEffect(() => {
     if (isEthereumAddress(selectedAddress?.address)) {
-      setSelectedChain({ genesisHash: ETHEREUM_GENESISHASH, name: 'Ethereum' } as NetworkInfo);
+      setSelectedChain({ genesisHash: ETHEREUM_GENESISHASH, name: 'Ethereum' } as unknown as NetworkInfo);
     }
   }, [selectedAddress?.address]);
 

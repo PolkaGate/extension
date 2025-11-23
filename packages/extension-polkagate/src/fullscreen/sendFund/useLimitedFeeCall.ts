@@ -23,8 +23,8 @@ import { INVALID_PARA_ID, XCM_LOC } from './utils';
 /** This hook is DEPRECATED */
 
 // This hook is used to estimate fees and prepare the transaction for sending funds for testnets mostly and non xcm transfers on other chains since paraspell does not support transfer all as well
-export default function useLimitedFeeCall (address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, inputs: Inputs | undefined, genesisHash: string | undefined, teleportState: Teleport) {
-  const { api, chainName: senderChainName } = useChainInfo(genesisHash);
+export default function useLimitedFeeCall(address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, inputs: Inputs | undefined, genesisHash: string | undefined, teleportState: Teleport) {
+  const { api, chainName: senderChainName, decimal: senderDecimal, token } = useChainInfo(genesisHash);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [estimatedCrossChainFee, setEstimatedCrossChainFee] = useState<Balance>();
@@ -42,7 +42,7 @@ export default function useLimitedFeeCall (address: string | undefined, assetId:
     : isForeignAsset
       ? decodeMultiLocation(assetId as HexString)
       : parseInt(assetId)
-  , [assetId, isForeignAsset, isNativeToken, noAssetId]);
+    , [assetId, isForeignAsset, isNativeToken, noAssetId]);
 
   const amountAsBN = useMemo(() => decimal ? amountToMachine(inputs?.amount, decimal) : undefined, [decimal, inputs?.amount]);
   const isCrossChain = useMemo(() => senderChainName !== inputs?.recipientChain?.text, [inputs?.recipientChain?.text, senderChainName]);
@@ -145,9 +145,21 @@ export default function useLimitedFeeCall (address: string | undefined, assetId:
     ];
   }, [api, assetToTransfer, teleportState, isCrossChain, recipientParaId, amountAsBN, recipientAddress]);
 
+  const onChainParam = useMemo(() => {
+    if (!assetToTransfer || !address || !onChainCall || !amountAsBN) {
+      return;
+    }
+
+    return isNonNativeToken
+      ? ['currencies', 'tokens'].includes(onChainCall.section)
+        ? [address, assetToTransfer.currencyId as unknown, amountAsBN]
+        : [parsedAssetId, address, amountAsBN]
+      : [address, amountAsBN];
+  }, [assetToTransfer, address, onChainCall, amountAsBN, isNonNativeToken, parsedAssetId]);
+
   const calculateFee = useCallback((_amount: Balance | BN, setFeeCall: React.Dispatch<React.SetStateAction<Balance | undefined>>) => {
     /** to set Maximum fee which will be used to estimate and show max transferable amount */
-    if (!api || !assetToTransfer || !address || !onChainCall) {
+    if (!api || !onChainParam || !address || !onChainCall) {
       return;
     }
 
@@ -157,14 +169,8 @@ export default function useLimitedFeeCall (address: string | undefined, assetId:
       return setFeeCall(dummyAmount);
     }
 
-    const _params: unknown[] = isNonNativeToken
-      ? ['currencies', 'tokens'].includes(onChainCall.section)
-        ? [address, assetToTransfer.currencyId, _amount]
-        : [parsedAssetId, address, _amount]
-      : [address, _amount];
-
-    onChainCall(..._params).paymentInfo(address).then((i) => setFeeCall(i?.partialFee)).catch(console.error);
-  }, [api, address, assetToTransfer, onChainCall, isNonNativeToken, parsedAssetId]);
+    onChainCall(...onChainParam).paymentInfo(address).then((i) => setFeeCall(i?.partialFee)).catch(console.error);
+  }, [api, onChainParam, address, onChainCall]);
 
   useEffect(() => {
     // This is to estimate fee for max transferable amount
@@ -193,8 +199,23 @@ export default function useLimitedFeeCall (address: string | undefined, assetId:
     isCrossChain && call(...crossChainParams).paymentInfo(address).then((i) => setEstimatedCrossChainFee(i?.partialFee)).catch(console.error);
   }, [call, address, isCrossChain, crossChainParams]);
 
+  const params = isCrossChain ? crossChainParams : onChainParam;
+
   return {
-    maxFee,
-    totalFee: estimatedFee ? estimatedFee.add(estimatedCrossChainFee || BN_ZERO) : undefined,
+    call: params ? call?.(...params) : undefined,
+    limitedTotalFee: {
+      destinationFee: {
+        asset: {
+          decimals: senderDecimal,
+          location: assetId,
+          symbol: token
+        },
+        fee: estimatedCrossChainFee || BN_ZERO
+      },
+      originFee: {
+        fee: estimatedFee
+      }
+    },
+    maxFee
   };
 }

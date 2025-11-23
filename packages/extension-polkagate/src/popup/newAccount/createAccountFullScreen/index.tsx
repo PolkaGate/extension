@@ -10,16 +10,17 @@ import { useNavigate } from 'react-router-dom';
 
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
-import { DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField, PasswordInput } from '../../../components';
+import { DecisionButtons, GlowCheckbox, GradientButton, MatchPasswordField, Motion, MyTextField, PasswordInput, TwoToneText } from '../../../components';
 import { OnboardTitle } from '../../../fullscreen/components/index';
 import AdaptiveLayout from '../../../fullscreen/components/layout/AdaptiveLayout';
 import { useTranslation } from '../../../hooks';
 import { createSeed } from '../../../messaging';
 import MnemonicSeedDisplay from './components/MnemonicSeedDisplay';
+import ModeSwitch from './ModeSwitch';
 import { STEP } from './types';
 import { useAccountImportOrCreate } from './useAccountImportOrCreate';
 
-export function SetNameAndPassword ({ seed }: { seed: string | null }): React.ReactElement {
+export function SetNameAndPassword ({ accountType, seed }: { accountType: KeypairType, seed: string | null, }): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -30,7 +31,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
     onConfirm,
     password,
     setName,
-    setPassword } = useAccountImportOrCreate({});
+    setPassword } = useAccountImportOrCreate({ accountType });
 
   const onNameChange = useCallback((enteredName: string) => {
     const trimmedName = enteredName.replace(/^\s+/, '');
@@ -43,21 +44,6 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
     navigate('/') as void;
   }, [navigate]);
 
-  // const onCreate = useCallback(() => {
-  //   if (name && password && seed) {
-  //     setIsBusy(true);
-
-  //     createAccountSuri(name, password, seed, accountType)
-  //       .then(() => {
-  //         setStorage(SELECTED_PROFILE_NAME_IN_STORAGE, PROFILE_TAGS.LOCAL).catch(console.error);
-  //         navigate('/') as void;
-  //       })
-  //       .catch((error: Error): void => {
-  //         setIsBusy(false);
-  //         console.error(error);
-  //       });
-  //   }
-  // }, [accountType, name, navigate, password, seed]);
   const onCreate = useCallback(async () => {
     try {
       await onConfirm(seed);
@@ -187,7 +173,7 @@ function CreateAccount (): React.ReactElement {
         }
         {step === STEP.DETAIL &&
           <SetNameAndPassword
-          // accountType={accountType}
+          accountType={accountType}
           seed={seed}
           />
         }
