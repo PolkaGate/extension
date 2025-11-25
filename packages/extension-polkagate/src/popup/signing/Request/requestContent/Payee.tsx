@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
+//@ts-ignore
 import type { PalletStakingRewardDestination } from '@polkadot/types/lookup';
 
 import { Stack, Typography, useTheme } from '@mui/material';

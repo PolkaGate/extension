@@ -4,6 +4,7 @@
 /* eslint-disable padding-line-between-statements */
 
 import type { Call } from '@polkadot/types/interfaces';
+//@ts-ignore
 import type { PalletStakingRewardDestination } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 
