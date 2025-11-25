@@ -4,7 +4,7 @@
 /* eslint-disable padding-line-between-statements */
 
 import type { Call } from '@polkadot/types/interfaces';
-//@ts-ignore
+// @ts-ignore
 import type { PalletStakingRewardDestination } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 
@@ -23,15 +23,42 @@ interface Props {
   info: Call;
 }
 
-function TransactionSummary ({ genesisHash, info }: Props): React.ReactElement<Props> {
-  const action = `${info?.section}_${info?.method}`;
+interface DefaultProps {
+  info: Call;
+}
+
+function DefaultCase({ info }: DefaultProps): React.ReactElement<DefaultProps> {
+  return (
+    <Stack columnGap='10px' direction='row' justifyContent='start'>
+      <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
+        {info?.section}
+      </Typography>
+      <Typography color='#EAEBF1' fontSize='13px' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '150px' }} variant='B-3'>
+        {toTitleCase(info?.method)}
+      </Typography>
+    </Stack>
+  );
+}
+
+function TransactionSummary({ genesisHash, info }: Props): React.ReactElement<Props> {
+  if (!info) {
+    return (
+      <DefaultCase
+        info={info}
+      />);
+  }
+
+  const action = `${info.section}_${info.method}`;
 
   switch (action) {
     case 'balances_transfer':
     case 'balances_transferKeepAlive':
       {
-        const amount = String(info?.args[1]);
-        const to = String(info?.args[0]);
+        if (!info.args || info.args.length < 2) {
+          return <DefaultCase info={info} />;
+        }
+        const amount = String(info.args[1]);
+        const to = String(info.args[0]);
 
         return (
           <Transfer
@@ -44,7 +71,7 @@ function TransactionSummary ({ genesisHash, info }: Props): React.ReactElement<P
 
     case 'balances_transferAll':
       {
-        const to = String(info?.args[0]);
+        const to = String(info.args[0]);
 
         return (
           <TransferAll
@@ -57,7 +84,7 @@ function TransactionSummary ({ genesisHash, info }: Props): React.ReactElement<P
     case 'staking_bondExtra':
     case 'staking_rebond':
     case 'staking_unbond': {
-      const amount = String(info?.args[0]);
+      const amount = String(info.args[0]);
 
       return (
         <AdjustStakeAmount
@@ -69,7 +96,7 @@ function TransactionSummary ({ genesisHash, info }: Props): React.ReactElement<P
     }
 
     case 'staking_setPayee': {
-      const payee = info?.args[0] as unknown as PalletStakingRewardDestination;
+      const payee = info.args[0] as unknown as PalletStakingRewardDestination;
 
       return (
         <Payee
@@ -80,7 +107,7 @@ function TransactionSummary ({ genesisHash, info }: Props): React.ReactElement<P
     }
 
     case 'nominationPools_bondExtra': {
-      const { value } = info?.args[0] as unknown as { value: BN | null };
+      const { value } = info.args[0] as unknown as { value: BN | null };
 
       return (
         <NominationPoolsBondExtra
@@ -92,14 +119,9 @@ function TransactionSummary ({ genesisHash, info }: Props): React.ReactElement<P
 
     default:
       return (
-        <Stack columnGap='10px' direction='row' justifyContent='start'>
-          <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
-            {info?.section}
-          </Typography>
-          <Typography color='#EAEBF1' fontSize='13px' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '150px' }} variant='B-3'>
-            {toTitleCase(info?.method)}
-          </Typography>
-        </Stack>
+        <DefaultCase
+          info={info}
+        />
       );
   }
 }

@@ -20,7 +20,7 @@ function NominationPoolsBondExtra ({ amount, genesisHash }: Props): React.ReactE
   const theme = useTheme();
 
   const { decimal, token } = useChainInfo(genesisHash, true);
-  const maybeAmount = String(amount);
+  const maybeAmount = amount ? String(amount) : null;
   const Icon = maybeAmount ? ArrowRight : MagicStar;
 
   return (

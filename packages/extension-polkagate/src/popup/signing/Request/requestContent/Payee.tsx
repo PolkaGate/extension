@@ -35,7 +35,7 @@ function Payee ({ genesisHash, payee }: Props): React.ReactElement<Props> {
         Icon: Repeat,
         color: theme.palette.success.main,
         style: { transform: 'rotate(-45deg)' },
-        text: t('Auto-stake  rewards')
+        text: t('Auto-stake rewards')
       };
     }
 
