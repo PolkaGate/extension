@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.19.7](https://github.com/polkagate/extension/compare/v1.19.6...v1.19.7) (2025-11-25)
+
+
+### Bug Fixes
+
+* correct reward destination display when set to STAKED ([3413d84](https://github.com/polkagate/extension/commit/3413d84b9e6bd393192813bfefccd034c72aea7c))
+
 ## [1.19.6](https://github.com/polkagate/extension/compare/v1.19.5...v1.19.6) (2025-11-22)
 
 
