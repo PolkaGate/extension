@@ -833,5 +833,9 @@
   "No rewards yet": "",
   "No metadata found for this chain. Please update metadata": "",
   "Enable the {{chainName}} network to view transaction detail. Go to Settings → Networks": "",
-  "metadata": ""
+  "metadata": "",
+  "AI Transaction Details": "",
+  "Enable AI transaction details on dapp signing": "",
+  "Processing…": "",
+  "AI insight": ""
 }
