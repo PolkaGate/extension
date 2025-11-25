@@ -3,21 +3,53 @@
 
 import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight } from 'iconsax-react';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { ChainLogo, DisplayBalance } from '../../../../components';
 import { useChainInfo, useTranslation } from '../../../../hooks';
 
 interface Props {
+  action: string;
   genesisHash: string;
   amount: string;
 }
 
-function Unbond ({ amount, genesisHash }: Props): React.ReactElement<Props> {
+interface StakeAdjustmentInfo {
+  color: string;
+  style: React.CSSProperties;
+  text: string;
+}
+
+function AdjustStakeAmount ({ action, amount, genesisHash }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
   const { decimal, token } = useChainInfo(genesisHash, true);
+
+  const { color, style, text } = useMemo<StakeAdjustmentInfo>(() => {
+    switch (action) {
+      case 'bondExtra':
+      case 'rebond':
+        return {
+          color: theme.palette.success.main,
+          style: { transform: 'rotate(-45deg)' },
+          text: t('Increase stake')
+        };
+      case 'unbond':
+        return {
+          color: theme.palette.error.light,
+          style: { transform: 'rotate(45deg)' },
+          text: t('Decrease stake')
+        };
+
+      default:
+        return {
+          color: theme.palette.primary.main,
+          style: { },
+          text: t('Stake')
+        };
+    }
+  }, [action, t, theme.palette.error.light, theme.palette.primary.main, theme.palette.success.main]);
 
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start'>
@@ -32,12 +64,12 @@ function Unbond ({ amount, genesisHash }: Props): React.ReactElement<Props> {
         />
         <Stack alignItems='center' columnGap='5px' direction='row'>
           <Typography color='#BEAAD8' sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
-            {t('Decrease stake')}
+            {text}
           </Typography>
           <ArrowRight
-            color={theme.palette.error.light}
+            color={color}
             size={14}
-            style={{ transform: 'rotate(45deg)' }}
+            style={{ ...style }}
             variant='Linear'
           />
         </Stack>
@@ -46,4 +78,4 @@ function Unbond ({ amount, genesisHash }: Props): React.ReactElement<Props> {
   );
 }
 
-export default React.memo(Unbond);
+export default React.memo(AdjustStakeAmount);

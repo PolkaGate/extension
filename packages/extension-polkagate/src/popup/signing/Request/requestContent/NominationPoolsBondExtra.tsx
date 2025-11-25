@@ -21,7 +21,7 @@ function NominationPoolsBondExtra ({ amount, genesisHash }: Props): React.ReactE
 
   const { decimal, token } = useChainInfo(genesisHash, true);
   const maybeAmount = String(amount);
-const Icon = maybeAmount ? ArrowRight : MagicStar;
+  const Icon = maybeAmount ? ArrowRight : MagicStar;
 
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start'>

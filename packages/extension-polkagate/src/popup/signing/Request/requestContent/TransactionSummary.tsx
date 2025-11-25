@@ -1,25 +1,28 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable padding-line-between-statements */
+
 import type { Call } from '@polkadot/types/interfaces';
+import type { PalletStakingRewardDestination } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
 
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
 import { toTitleCase } from '../../../../util';
-import Bond from './Bond';
+import AdjustStakeAmount from './AdjustStakeAmount';
+import NominationPoolsBondExtra from './NominationPoolsBondExtra';
+import Payee from './Payee';
 import Transfer from './Transfer';
 import TransferAll from './TransferAll';
-import Unbond from './Unbond';
-import NominationPoolsBondExtra from './NominationPoolsBondExtra';
-import type { BN } from '@polkadot/util';
 
 interface Props {
   genesisHash: string;
   info: Call;
 }
 
-function TransactionSummary({ genesisHash, info }: Props): React.ReactElement<Props> {
+function TransactionSummary ({ genesisHash, info }: Props): React.ReactElement<Props> {
   const action = `${info?.section}_${info?.method}`;
 
   switch (action) {
@@ -50,13 +53,27 @@ function TransactionSummary({ genesisHash, info }: Props): React.ReactElement<Pr
         );
       }
 
-    case 'staking_bondExtra': {
+    case 'staking_bondExtra':
+    case 'staking_rebond':
+    case 'staking_unbond': {
       const amount = String(info?.args[0]);
 
       return (
-        <Bond
+        <AdjustStakeAmount
+          action={info?.method}
           amount={amount}
           genesisHash={genesisHash}
+        />
+      );
+    }
+
+    case 'staking_setPayee': {
+      const payee = info?.args[0] as unknown as PalletStakingRewardDestination;
+
+      return (
+        <Payee
+          genesisHash={genesisHash}
+          payee={payee}
         />
       );
     }
@@ -67,17 +84,6 @@ function TransactionSummary({ genesisHash, info }: Props): React.ReactElement<Pr
       return (
         <NominationPoolsBondExtra
           amount={value}
-          genesisHash={genesisHash}
-        />
-      );
-    }
-
-    case 'staking_unbond': {
-      const amount = String(info?.args[0]);
-
-      return (
-        <Unbond
-          amount={amount}
           genesisHash={genesisHash}
         />
       );
