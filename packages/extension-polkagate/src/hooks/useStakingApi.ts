@@ -870,7 +870,7 @@ export const useSoloSettings = (
 
     const destinationType = Object.keys(parsedStakingAccount.rewardDestination)[0];
 
-    if (destinationType === 'Staked') {
+    if (destinationType.toLowerCase() === 'staked') {
       return 'Staked';
     } else {
       return 'Others';
