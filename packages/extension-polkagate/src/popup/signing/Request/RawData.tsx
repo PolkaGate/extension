@@ -61,7 +61,7 @@ export default function RawData ({ account, error, request, setError, setMode, s
     , [data]);
 
   return (
-    <Grid container display='block' fontSize='16px' height='440px' justifyContent='center' justifyItems='center'>
+    <Grid container display='block' fontSize='16px' height='440px' justifyContent='center' justifyItems='center' position='relative'>
       <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: '#05091C80', borderRadius: '14px', height: '34px', pr: '5px', width: 'fit-content' }}>
         <Avatar
           src={faviconUrl ?? undefined}

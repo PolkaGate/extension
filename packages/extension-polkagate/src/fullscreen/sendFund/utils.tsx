@@ -6,7 +6,8 @@ import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/type
 import type { AnyNumber } from '@polkadot/types-codec/types';
 import type { BN } from '@polkadot/util';
 
-import { Foreign, ForeignAbstract, getParaId, getRelayChainSymbol, hasSupportForAsset, isTLocation, Native, SUBSTRATE_CHAINS, type TCurrencyCore, type TSubstrateChain } from '@paraspell/sdk-pjs';
+import { getSupportedAssets } from '@paraspell/sdk-pjs';
+import { Foreign, ForeignAbstract, getParaId, getRelayChainSymbol, isTLocation, Native, SUBSTRATE_CHAINS, type TCurrencyCore, type TSubstrateChain } from '@paraspell/sdk-pjs';
 
 import { decodeMultiLocation, isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
 import { NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
@@ -59,7 +60,8 @@ export function getSupportedDestinations (sourceChain: TSubstrateChain | string,
 
   for (const chain of SUBSTRATE_CHAINS) {
     if (chain !== _sourceChainName) {
-      const isSupported = hasSupportForAsset(chain, assetSymbol);
+      const supportedAssets = getSupportedAssets(_sourceChainName, chain);
+      const isSupported = supportedAssets.find(({ symbol }) => symbol === assetSymbol);
 
       const isPolkadotKusamaBridge = _sourceChainName.toLowerCase().includes('assethub') && chain.toLowerCase().includes('assethub');
 

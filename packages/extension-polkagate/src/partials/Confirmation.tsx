@@ -75,7 +75,7 @@ const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
   const { accounts, amount, assetDecimal, description, failureText, nominators, success, token } = transactionDetail;
 
   return (
-    <GlowBox isBlueish={isBlueish} style={{ m: 0, width: '100%' }}>
+    <GlowBox isBlueish={isBlueish} style={{ m: 0, minHeight: '120px', width: '100%' }}>
       <FailSuccessIcon
         description={description}
         failureText={failureText}

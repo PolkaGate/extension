@@ -11,6 +11,7 @@ import React, { useCallback, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 
 import { AssetLogo, DisplayBalance, Identity2, Motion } from '../../components';
+import NoInfoYet from '../../components/NoInfoYet';
 import { useChainInfo, useTranslation } from '../../hooks';
 import getLogo2 from '../../util/getLogo2';
 import RewardConfigureButton from './new-solo/components/RewardConfigureButton';
@@ -218,7 +219,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
               width: '330px'
             }}
             withShortAddress
-            />}
+          />}
       </Container>
     </Collapse>
   );
@@ -265,10 +266,19 @@ const RewardTable = ({ descSortedRewards, expanded, genesisHash, onExpand }: Rew
 };
 
 export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token, type }: ChartHeaderProps) {
+  const { t } = useTranslation();
+  const { descSortedRewards, detail, expand, status } = rewardInfo;
+
   return (
     <Motion variant='slide'>
-      {
-        !rewardInfo?.descSortedRewards
+      {status === 'error'
+        ? (
+          <NoInfoYet
+            show
+            style={{ py: '7%' }}
+            text={t('No rewards yet')}
+          />)
+        : !descSortedRewards
           ? <RewardsLoading />
           : (
             <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
@@ -284,10 +294,10 @@ export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token, 
               </Stack>
               <Grid container item sx={{ maxHeight: '324px', overflow: 'hidden', overflowY: 'auto', width: '482px' }}>
                 <RewardTable
-                  descSortedRewards={rewardInfo.descSortedRewards ?? []}
-                  expanded={rewardInfo.detail}
+                  descSortedRewards={descSortedRewards ?? []}
+                  expanded={detail}
                   genesisHash={genesisHash}
-                  onExpand={rewardInfo.expand}
+                  onExpand={expand}
                 />
               </Grid>
             </Container>)

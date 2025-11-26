@@ -10,8 +10,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { logoWhiteTransparent } from '../assets/logos';
 import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { useIsDark } from '../hooks';
-import { convertToCamelCase } from '../util';
-import { sanitizeChainName } from '../util';
+import { convertToCamelCase, sanitizeChainName } from '../util';
 import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
 import getLogo2 from '../util/getLogo2';
 import { mapHubToRelay } from '../util/migrateHubUtils';
@@ -69,7 +68,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
 
   const _chainName = sanitizeChainName(foundChainName || chainName, true);
   const chainLogoInfo = getLogo2(_chainName);
-  const _logo = logo || (showSquare ? chainLogoInfo?.logoSquare : chainLogoInfo?.logo);
+  const _logo = logo || (showSquare ? chainLogoInfo?.logoSquare ?? chainLogoInfo?.logo : chainLogoInfo?.logo);
 
   const filter = isDark
     ? TOKENS_WITH_BLACK_LOGO.includes(token ?? '') || CHAINS_WITH_BLACK_LOGO.includes(_chainName ?? '')

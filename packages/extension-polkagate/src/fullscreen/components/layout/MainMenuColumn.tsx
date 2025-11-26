@@ -10,7 +10,7 @@ import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/use
 import { Version } from '@polkadot/extension-polkagate/src/partials';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util';
-import { ExtensionPopups, PRIVACY_POLICY_LINK,STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { ExtensionPopups, PRIVACY_POLICY_LINK, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
@@ -130,7 +130,7 @@ function MainMenuColumn (): React.ReactElement {
         <Grid container item justifyContent='start' width='fit-content'>
           <Version style={{ padding: 0, textAlign: 'left', width: '20%' }} variant='B-5' />
           <NeedHelp style={{ columnGap: '4px', marginLeft: '10px' }} />
-          <Link href={PRIVACY_POLICY_LINK} rel='noreferrer' sx={{ '&:hover': { color: '#AA83DC' }, color: '#674394', cursor: 'pointer', mt: '7px' }} target='_blank' underline='none' variant='B-5'>
+          <Link href={PRIVACY_POLICY_LINK} rel='noreferrer' sx={{ '&:hover': { color: '#AA83DC' }, color: '#674394', cursor: 'pointer', mt: '7px', textAlign: 'left', width: '100%' }} target='_blank' underline='none' variant='B-5'>
             {t('Privacy & Security')}
           </Link>
         </Grid>

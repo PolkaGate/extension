@@ -34,10 +34,10 @@ export async function toGetNativeToken (addresses, api, chainName) {
     const genesisHash = api.genesisHash.toString();
     const isAssetHub = isOnAssetHub(genesisHash);
 
-    let maybeStakingTotals;
+    let maybeStakings;
 
     if (isAssetHub && isMigratedHub(genesisHash)) {
-      maybeStakingTotals = await getStakingBalances(address, api);
+      maybeStakings = await getStakingBalances(address, api);
     }
 
     // @ts-ignore
@@ -45,14 +45,15 @@ export async function toGetNativeToken (addresses, api, chainName) {
       assetId: isAssetHub ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB : NATIVE_TOKEN_ASSET_ID,
       balanceDetails: balancify(balances[index]),
       chainName,
+      claimPermissions: maybeStakings?.pooled?.claimPermissions,
       decimal: api.registry.chainDecimals[0],
       genesisHash,
       isNative: true,
-      poolName: maybeStakingTotals?.pooled?.poolName,
-      poolReward: maybeStakingTotals?.pooled?.poolReward ?? BN_ZERO,
-      pooledBalance: maybeStakingTotals?.pooled?.pooledBalance ?? BN_ZERO,
+      poolName: maybeStakings?.pooled?.poolName,
+      poolReward: maybeStakings?.pooled?.poolReward ?? BN_ZERO,
+      pooledBalance: maybeStakings?.pooled?.pooledBalance ?? BN_ZERO,
       priceId: getPriceIdByChainName(chainName),
-      soloTotal: maybeStakingTotals?.soloTotal,
+      soloTotal: maybeStakings?.soloTotal,
       token: api.registry.chainTokens[0],
       totalBalance: String(totalBalance)
     }];

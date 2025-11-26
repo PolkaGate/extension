@@ -96,7 +96,7 @@ function GovernanceModal ({ chainName, setOpen }: Props): React.ReactElement {
             height: '44px',
             marginTop: '20px'
           }}
-          text={t('Cancel')}
+          text={t('Close')}
         />
       </Grid>
     </SharePopup>

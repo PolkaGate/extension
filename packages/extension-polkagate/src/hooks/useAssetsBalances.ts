@@ -94,7 +94,7 @@ export default function useAssetsBalances (accounts: AccountJson[] | null, genes
         const { genesisHash } = assets[address][0];
 
         if (isMigratedRelay(genesisHash)) {
-          console.debug(` ${genesisHash} is migrated`);
+          // console.debug(` ${genesisHash} is migrated`);
 
           return;
         }

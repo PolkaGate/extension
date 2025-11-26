@@ -4,13 +4,14 @@
 import type { TransactionDetail } from '../../../util/types';
 
 import { Avatar, Collapse, Container, Dialog, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { BN_ZERO } from '@polkadot/util';
 
-import { DisplayBalance, FadeOnScroll, FormatPrice, GradientButton, Transition } from '../../../components';
+import { DisplayBalance, FadeOnScroll, FormatPrice, GradientButton, Identity2, Transition } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsExtensionPopup, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
@@ -197,10 +198,21 @@ function DetailCard ({ historyItem }: Props) {
                 <Typography color='text.secondary' textTransform='capitalize' variant='B-1' width='fit-content'>
                   {toTitleCase(key)}
                 </Typography>
-                <Typography color={color} sx={{ bgcolor: isAddress || isHash ? '#C6AECC26' : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
+                <Typography color={color} sx={{ bgcolor: isHash ? '#C6AECC26' : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
                   {isBlock && '#'}
                   {isAddress
-                    ? toShortAddress(value.toString())
+                    ? <Identity2
+                      address={value.toString()}
+                      addressStyle={{ backgroundColor: '#C6AECC26', borderRadius: '9px', marginTop: '-3%', padding: '2px 3px' }}
+                      charsCount={4}
+                      direction='row'
+                      genesisHash={historyItem.chain?.genesisHash || POLKADOT_GENESIS}
+                      identiconSize={18}
+                      nameStyle={{ py: '2px' }}
+                      showSocial={false}
+                      style={{ color: 'text.primary', variant: 'B-1' }}
+                      withShortAddress={true}
+                      />
                     : isHash
                       ? toShortAddress(value.toString(), 6)
                       : isDate

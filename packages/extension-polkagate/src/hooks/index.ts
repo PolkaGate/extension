@@ -82,6 +82,7 @@ export { default as useSelectedAccount } from './useSelectedAccount';
 export { default as useSelectedChains } from './useSelectedChains';
 export { default as useSelectedLanguage } from './useSelectedLanguage';
 export { default as useSelectedProfile } from './useSelectedProfile';
+export { default as useSoloSettings } from './useSoloSettings';
 export { default as useSoloStakingInfo } from './useSoloStakingInfo';
 export { default as useSoloStakingTotalReward } from './useSoloStakingTotalReward';
 export { default as useStakingAccount } from './useStakingAccount';

@@ -7,12 +7,12 @@ import React, { useMemo } from 'react';
 
 import useSelectedLanguage from '@polkadot/extension-polkagate/src/hooks/useSelectedLanguage';
 import { getLanguageOptions } from '@polkadot/extension-polkagate/src/util/getLanguageOptions';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { useTranslation } from '../../../components/translate';
 import useIsDark from '../../../hooks/useIsDark';
 import SelectLanguage from '../../../partials/SelectLanguage';
 import { ExtensionPopups } from '../../../util/constants';
-import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 export default function Language (): React.ReactElement {
   const { t } = useTranslation();

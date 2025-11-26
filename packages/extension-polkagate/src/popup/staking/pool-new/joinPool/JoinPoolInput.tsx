@@ -24,7 +24,7 @@ interface Props {
   onBack: () => void;
   genesisHash: string | undefined;
   errorMessage: string | undefined;
-  estimatedFee: Balance | undefined;
+  estimatedFee: Balance | undefined | null;
   availableBalanceToStake: BN | undefined;
   bondAmount: BN | undefined;
   onInputChange: (value: string | null | undefined) => void;
