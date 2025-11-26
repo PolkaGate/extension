@@ -4,43 +4,57 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
 /**
- * @param {{ value: string; }[]} endpoints
+ * Connects to multiple endpoints and returns the fastest one.
+ * Automatically disconnects all other providers.
+ *
+ * @param {{ value: string }[]} endpoints
  */
 export async function fastestEndpoint (endpoints) {
-  let connection;
+  // Filter invalid endpoints
+  const validEndpoints = endpoints
+    .map(({ value }) => value)
+    .filter(
+      (value) =>
+        !/^wss:\/\/\d+$/.test(value) &&
+        !value.includes('onfinality') &&
+        !value.startsWith('light')
+    );
 
-  const connections = endpoints.map(({ value }) => {
-    // Check if e.value matches the pattern 'wss://<any_number>'
-    // ignore due to its rate limits
-    if (/^wss:\/\/\d+$/.test(value) || (value).includes('onfinality') || value.startsWith('light')) {
-      return undefined;
-    }
+  if (!validEndpoints.length) {
+    throw new Error('No valid endpoints provided');
+  }
 
-    const wsProvider = new WsProvider(value);
+  // Create all providers
+  const providers = validEndpoints.map((value) => new WsProvider(value));
 
-    connection = ApiPromise.create({ provider: wsProvider });
+  // Wrap each ApiPromise creation in an object, so we keep the link between api and provider
+  const apiPromises = providers.map((provider) =>
+    ApiPromise.create({ provider })
+      .then((api) => ({ api, provider })) // attach provider reference
+      .catch((error) => {
+        provider.disconnect().catch(() => null);
+        throw error;
+      })
+  );
 
-    return {
-      connection,
-      connectionEndpoint: value,
-      wsProvider
-    };
-  }).filter((i) => !!i);
+  // Get the fastest connection
+  let api, provider;
 
-  const api = await Promise.any(connections.map(({ connection }) => connection));
+  try {
+    ({ api, provider } = await Promise.any(apiPromises));
+  } catch (e) {
+    // e is AggregateError if all fail
+    throw new Error('All endpoints failed to connect', { cause: e });
+  }
 
-  // Find the matching connection that created this API
-  // @ts-ignore
-  const notConnectedEndpoint = connections.filter(({ connectionEndpoint }) => connectionEndpoint !== api?._options?.provider?.endpoint);
-  // @ts-ignore
-  const connectedEndpoint = connections.find(({ connectionEndpoint }) => connectionEndpoint === api?._options?.provider?.endpoint);
+  // Disconnect all other providers (non-blocking)
+  Promise.all(
+    providers.map((p) =>
+      p === provider
+        ? Promise.resolve()
+        : p.disconnect().catch(() => null)
+    )
+  ).catch(() => null);
 
-  notConnectedEndpoint.forEach(({ wsProvider }) => {
-    wsProvider.disconnect().catch(() => null);
-  });
-
-  return {
-    api,
-    connections: connectedEndpoint ? [connectedEndpoint] : []
-  };
+  return { api, selectedEndpoint: provider.endpoint };
 }
