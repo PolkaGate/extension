@@ -1,5 +1,19 @@
 # Change Log
 
+## [1.19.8](https://github.com/polkagate/extension/compare/v1.19.7...v1.19.8) (2025-11-26)
+
+
+### Bug Fixes
+
+* resolve solo staking settings issue where selecting “Others” disables the next step ([#2060](https://github.com/polkagate/extension/issues/2060)) ([625fdfe](https://github.com/polkagate/extension/commit/625fdfea07e399c1d961d010dbe77b783053b86e))
+
+## [1.19.7](https://github.com/polkagate/extension/compare/v1.19.6...v1.19.7) (2025-11-25)
+
+
+### Bug Fixes
+
+* correct reward destination display when set to STAKED ([3413d84](https://github.com/polkagate/extension/commit/3413d84b9e6bd393192813bfefccd034c72aea7c))
+
 ## [1.19.6](https://github.com/polkagate/extension/compare/v1.19.5...v1.19.6) (2025-11-22)
 
 
