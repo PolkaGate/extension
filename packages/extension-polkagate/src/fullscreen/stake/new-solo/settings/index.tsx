@@ -21,7 +21,7 @@ export default function Settings ({ address, genesisHash, onClose }: Props) {
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.NONE);
 
   const { ED,
-    changeToStake,
+    changeToStaked,
     nextDisabled,
     rewardDestinationAddress,
     rewardDestinationType,
@@ -48,7 +48,7 @@ export default function Settings ({ address, genesisHash, onClose }: Props) {
     >
       <Content
         ED={ED}
-        changeToStake={changeToStake}
+        changeToStaked={changeToStaked}
         genesisHash={genesisHash}
         nextDisabled={nextDisabled}
         onNext={onNext}

@@ -17,12 +17,14 @@ export const EXTRA_PRICE_IDS: Record<string, string> = {
 
 export const COIN_GECKO_PRICE_CHANGE_DURATION = 24;
 
-export default async function getPrices (priceIds: string[], currencyCode = 'usd') {
-  const revisedPriceIds = priceIds.map((item) => {
-    const id = item.toLowerCase();
+export default async function getPrices (priceIds: (string | undefined)[], currencyCode = 'usd') {
+  const revisedPriceIds = priceIds
+    .filter((item): item is string => Boolean(item))
+    .map((item) => {
+      const id = item.toLowerCase();
 
-    return EXTRA_PRICE_IDS[id] || id;
-  });
+      return EXTRA_PRICE_IDS[id] || id;
+    });
 
   const prices = await getReq(`https://api.coingecko.com/api/v3/simple/price?ids=${revisedPriceIds}&vs_currencies=${currencyCode}&include_${COIN_GECKO_PRICE_CHANGE_DURATION}hr_change=true`, {});
 
