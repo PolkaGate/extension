@@ -45,6 +45,7 @@ export async function toGetNativeToken (addresses, api, chainName) {
       assetId: isAssetHub ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB : NATIVE_TOKEN_ASSET_ID,
       balanceDetails: balancify(balances[index]),
       chainName,
+      claimPermissions: maybeStakings?.pooled?.claimPermissions,
       decimal: api.registry.chainDecimals[0],
       genesisHash,
       isNative: true,
