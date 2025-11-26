@@ -48,81 +48,89 @@ function TransactionSummary({ genesisHash, info }: Props): React.ReactElement<Pr
       />);
   }
 
-  const action = `${info.section}_${info.method}`;
+  try {
+    const action = `${info.section}_${info.method}`;
 
-  switch (action) {
-    case 'balances_transfer':
-    case 'balances_transferKeepAlive':
-      {
-        if (!info.args || info.args.length < 2) {
-          return <DefaultCase info={info} />;
+    switch (action) {
+      case 'balances_transfer':
+      case 'balances_transferKeepAlive':
+        {
+          if (!info.args || info.args.length < 2) {
+            return <DefaultCase info={info} />;
+          }
+          const amount = String(info.args[1]);
+          const to = String(info.args[0]);
+
+          return (
+            <Transfer
+              amount={amount}
+              genesisHash={genesisHash}
+              to={to}
+            />
+          );
         }
-        const amount = String(info.args[1]);
-        const to = String(info.args[0]);
+
+      case 'balances_transferAll':
+        {
+          const to = String(info.args[0]);
+
+          return (
+            <TransferAll
+              genesisHash={genesisHash}
+              to={to}
+            />
+          );
+        }
+
+      case 'staking_bondExtra':
+      case 'staking_rebond':
+      case 'staking_unbond': {
+        const amount = String(info.args[0]);
 
         return (
-          <Transfer
+          <AdjustStakeAmount
+            action={info?.method}
             amount={amount}
             genesisHash={genesisHash}
-            to={to}
           />
         );
       }
 
-    case 'balances_transferAll':
-      {
-        const to = String(info.args[0]);
+      case 'staking_setPayee': {
+        const payee = info.args[0] as unknown as PalletStakingRewardDestination;
 
         return (
-          <TransferAll
+          <Payee
             genesisHash={genesisHash}
-            to={to}
+            payee={payee}
           />
         );
       }
 
-    case 'staking_bondExtra':
-    case 'staking_rebond':
-    case 'staking_unbond': {
-      const amount = String(info.args[0]);
+      case 'nominationPools_bondExtra': {
+        const { value } = info.args[0] as unknown as { value: BN | null };
 
-      return (
-        <AdjustStakeAmount
-          action={info?.method}
-          amount={amount}
-          genesisHash={genesisHash}
-        />
-      );
+        return (
+          <NominationPoolsBondExtra
+            amount={value}
+            genesisHash={genesisHash}
+          />
+        );
+      }
+
+      default:
+        return (
+          <DefaultCase
+            info={info}
+          />
+        );
     }
-
-    case 'staking_setPayee': {
-      const payee = info.args[0] as unknown as PalletStakingRewardDestination;
-
-      return (
-        <Payee
-          genesisHash={genesisHash}
-          payee={payee}
-        />
-      );
-    }
-
-    case 'nominationPools_bondExtra': {
-      const { value } = info.args[0] as unknown as { value: BN | null };
-
-      return (
-        <NominationPoolsBondExtra
-          amount={value}
-          genesisHash={genesisHash}
-        />
-      );
-    }
-
-    default:
-      return (
-        <DefaultCase
-          info={info}
-        />
-      );
+  } catch (e) {
+    console.error('Error in TransactionSummary: ', e);
+    return (
+      <DefaultCase
+        info={info}
+      />);
   }
 }
 
