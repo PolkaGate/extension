@@ -834,5 +834,13 @@
   "No metadata found for this chain. Please update metadata": "",
   "Enable the {{chainName}} network to view transaction detail. Go to Settings → Networks": "",
   "metadata": "",
-  "Loading, please wait ...": ""
+  "Loading, please wait ...": "",
+  "Increase stake": "",
+  "Decrease stake": "",
+  "Re-stake rewards": "",
+  "Auto-stake rewards": "",
+  "Withdraw rewards": "",
+  "Send rewards to": "",
+  "Set reward destination": "",
+  "Entire balance": ""
 }

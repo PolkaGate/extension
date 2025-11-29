@@ -1,15 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Variant } from '@mui/material/styles/createTypography';
-
 import { Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { ChainLogo, DisplayBalance, ShortAddress } from '../../../../components';
-import { useAccountName, useChainInfo, useTranslation } from '../../../../hooks';
-import PolkaGateIdenticon from '../../../../style/PolkaGateIdenticon';
-import { toTitleCase } from '../../../../util/string';
+import { ChainLogo, DisplayBalance, Identity2 } from '../../../../components';
+import { useChainInfo, useTranslation } from '../../../../hooks';
 
 interface Props {
   genesisHash: string;
@@ -20,7 +16,6 @@ interface Props {
 function Transfer ({ amount, genesisHash, to }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const accountName = useAccountName(to || '');
 
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -39,22 +34,16 @@ function Transfer ({ amount, genesisHash, to }: Props): React.ReactElement<Props
           <Typography color='#BEAAD8' sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {t('Transfer to')}
           </Typography>
-          <PolkaGateIdenticon
+          <Identity2
             address={to}
-            size={15}
+            addressStyle={{ color: 'text.secondary', variant: 'B-4' }}
+            charsCount={4}
+            genesisHash={genesisHash}
+            identiconSize={15}
+            identiconStyle={{ marginRight: '5px' }}
+            showSocial={false}
+            style={{ color: 'text.primary', variant: 'B-2' }}
           />
-          {accountName
-            ? <Typography color='text.primary' textAlign='left' variant='B-2' width='100%'>
-              {toTitleCase(accountName)}
-            </Typography>
-            : (
-              <ShortAddress
-                address={to}
-                charsCount={4}
-                style={{ color: 'text.secondary', justifyContent: 'flex-start' }}
-                variant={'B-4' as Variant}
-              />)
-          }
         </Stack>
       </Stack>
     </Stack>
