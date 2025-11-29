@@ -1,10 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-ignore
+// @ts-ignore
 import type { PalletNominationPoolsClaimPermission } from '@polkadot/types/lookup';
 
-import { Container, Grid, Stack, Typography } from '@mui/material';
+import { Box, Container, Grid, Stack, Typography } from '@mui/material';
 import { ArrowRight2, InfoCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -127,11 +127,13 @@ function PositionItem ({ balance, claimPermissions, decimal, genesisHash, isSele
         <TokenInfo genesisHash={genesisHash} />
         <Stack columnGap='5px' direction='row'>
           <StakingBadge hasPoolStaking={hasPoolStaking} isFullscreen />
-          {claimPermissionTooltip &&
-            <MyTooltip content={claimPermissionTooltip}>
-              <InfoCircle color='#674394' size={20} variant='Bulk' />
-            </MyTooltip>
-          }
+          <Box sx={{ width: '20px' }}>
+            {claimPermissionTooltip &&
+              <MyTooltip content={claimPermissionTooltip}>
+                <InfoCircle color='#674394' size={20} variant='Bulk' />
+              </MyTooltip>
+            }
+          </Box>
         </Stack>
         <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
         <ChainIdentifier genesisHash={genesisHash} />
