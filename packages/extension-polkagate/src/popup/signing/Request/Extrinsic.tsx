@@ -17,13 +17,9 @@ import { useAccountAssets, useAllChains, useChainInfo, useEstimatedFee, useFavIc
 import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
 import { getValue } from '../../account/util';
-import { type ModeData, SIGN_POPUP_MODE } from '../types';
+import { type Decoded, type ModeData, SIGN_POPUP_MODE } from '../types';
+import AiInsight from './AiInsight';
 import RequestContent from './requestContent';
-
-interface Decoded {
-  args: AnyJson | null;
-  method: Call | null;
-}
 
 interface Props {
   payload: ExtrinsicPayload;
@@ -199,6 +195,11 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
             <Typography color='#674394' variant='B-2'>
               {t('Request content')}
             </Typography>
+            <AiInsight
+              decoded={decoded}
+              genesisHash={genesisHash}
+              url={url}
+            />
           </Stack>
           <RequestContent
             decoded={decoded}

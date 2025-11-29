@@ -7,6 +7,7 @@ import React from 'react';
 import { Motion } from '../../components';
 import { VelvetBox } from '../../style';
 import AccountIcon from './partials/AccountIcon';
+import AiTransactionInfo from './partials/AiTransactionInfo';
 import Appearance from './partials/Appearance';
 import AutoLockTimerAdjustment from './partials/AutoLockTimerAdjustment';
 import DappRequests from './partials/DappRequests';
@@ -29,6 +30,7 @@ function ExtensionSettings (): React.ReactElement {
             </Stack>
             <DiagnosticsReports />
             <Password />
+            <AiTransactionInfo />
           </Stack>
           <Stack alignItems='flex-start' direction='column' justifyContent='flex-start'>
             <AccountIcon />

@@ -104,6 +104,8 @@ export interface RequestSignatures {
 
   // added for polkagate
   'pri(accounts.updateMeta)': [RequestUpdateMeta, boolean];
+  'pri(ai.agentLoad)': [RequestCreateAgent, Promise<boolean>];
+  'pri(ai.explainTransaction)': [RequestExplainTx, Promise<string>];
   'pri(extension.lock)': [null, boolean];
   'pri(authorize.ignore)': [string, void];
   'pri(metadata.update)': [MetadataDef, boolean];
@@ -227,6 +229,15 @@ export interface RequestAccountCreateHardware {
   genesisHash: HexString | null | undefined ;
   hardwareType: string;
   name: string;
+}
+
+export interface RequestCreateAgent{
+  modelIndex?: number;
+  progressCallback?: (progress: number) => void;
+}
+
+export interface RequestExplainTx{
+  txJson: unknown
 }
 
 export interface RequestAccountChangePassword {

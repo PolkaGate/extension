@@ -77,6 +77,14 @@ export async function updateMeta (address: string, meta: string): Promise<boolea
   return sendMessage('pri(accounts.updateMeta)', { address, meta });
 }
 
+export async function loadAiAgent (modelIndex?: number, progressCallback?: (progress: number) => void): Promise<boolean> {
+  return sendMessage('pri(ai.agentLoad)', { modelIndex, progressCallback });
+}
+
+export async function explainTransactionWithAi (txJson: unknown): Promise<string> {
+  return sendMessage('pri(ai.explainTransaction)', { txJson });
+}
+
 export async function lockExtension (): Promise<boolean> {
   return sendMessage('pri(extension.lock)');
 }
