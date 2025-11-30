@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
-//@ts-ignore
+// @ts-ignore
 import type { PalletConvictionVotingVoteAccountVote } from '@polkadot/types/lookup';
 import type { AnyTuple } from '@polkadot/types-codec/types';
 import type { BN } from '@polkadot/util';
@@ -24,8 +24,8 @@ function ConvictionVotingVote ({ args, genesisHash }: Props): React.ReactElement
   const theme = useTheme();
 
   const { decimal, token } = useChainInfo(genesisHash, true);
-  const rfIndex = String(args[0]);
-  const vote = args[1] as unknown as PalletConvictionVotingVoteAccountVote;
+  const rfIndex = args.length > 0 ? String(args[0]) : '';
+  const vote = args.length > 1 ? (args[1] as unknown as PalletConvictionVotingVoteAccountVote) : undefined;
 
   const { Icon, balance, iconColor, iconStyle = {}, text, textInColor } = useMemo((): { Icon: Icon, balance?: BN, iconColor: string, iconStyle?: React.CSSProperties, text: string, textInColor?: string } => {
     const defaultCase = {
@@ -43,7 +43,7 @@ function ConvictionVotingVote ({ args, genesisHash }: Props): React.ReactElement
           {
             const { balance, vote: { aye, conviction } } = hVote[key] as unknown as { balance: BN, vote: { aye: boolean, conviction: string } };
             const voteType = aye ? 'AYE' : 'NAY';
-            const convictionCount = Number(conviction.match(/\d+/)?.[0]);
+            const convictionCount = Number(conviction.match(/\d+/)?.[0]) || 0;
 
             return {
               Icon: aye ? Like1 : Dislike,
