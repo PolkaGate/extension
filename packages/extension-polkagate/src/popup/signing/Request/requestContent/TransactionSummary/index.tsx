@@ -11,12 +11,13 @@ import type { BN } from '@polkadot/util';
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
-import { toTitleCase } from '../../../../util';
+import { toTitleCase } from '../../../../../util';
 import AdjustStakeAmount from './AdjustStakeAmount';
 import NominationPoolsBondExtra from './NominationPoolsBondExtra';
 import Payee from './Payee';
 import Transfer from './Transfer';
 import TransferAll from './TransferAll';
+import Vote from './ConvictionVotingVote';
 
 interface Props {
   genesisHash: string;
@@ -27,7 +28,7 @@ interface DefaultProps {
   info: Call;
 }
 
-function DefaultCase({ info }: DefaultProps): React.ReactElement<DefaultProps> {
+function DefaultCase ({ info }: DefaultProps): React.ReactElement<DefaultProps> {
   return (
     <Stack columnGap='10px' direction='row' justifyContent='start'>
       <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
@@ -40,7 +41,7 @@ function DefaultCase({ info }: DefaultProps): React.ReactElement<DefaultProps> {
   );
 }
 
-function TransactionSummary({ genesisHash, info }: Props): React.ReactElement<Props> {
+function TransactionSummary ({ genesisHash, info }: Props): React.ReactElement<Props> {
   if (!info) {
     return (
       <DefaultCase
@@ -58,6 +59,7 @@ function TransactionSummary({ genesisHash, info }: Props): React.ReactElement<Pr
           if (!info.args || info.args.length < 2) {
             return <DefaultCase info={info} />;
           }
+
           const amount = String(info.args[1]);
           const to = String(info.args[0]);
 
@@ -118,6 +120,15 @@ function TransactionSummary({ genesisHash, info }: Props): React.ReactElement<Pr
         );
       }
 
+      case 'convictionVoting_vote': {
+        return (
+          <Vote
+            args={info.args}
+            genesisHash={genesisHash}
+          />
+        );
+      }
+
       default:
         return (
           <DefaultCase
@@ -127,6 +138,7 @@ function TransactionSummary({ genesisHash, info }: Props): React.ReactElement<Pr
     }
   } catch (e) {
     console.error('Error in TransactionSummary: ', e);
+
     return (
       <DefaultCase
         info={info}

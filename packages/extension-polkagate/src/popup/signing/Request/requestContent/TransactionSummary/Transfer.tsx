@@ -4,8 +4,8 @@
 import { Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { ChainLogo, DisplayBalance, Identity2 } from '../../../../components';
-import { useChainInfo, useTranslation } from '../../../../hooks';
+import { ChainLogo, DisplayBalance, Identity2 } from '../../../../../components';
+import { useChainInfo, useTranslation } from '../../../../../hooks';
 
 interface Props {
   genesisHash: string;
@@ -13,7 +13,7 @@ interface Props {
   to: string;
 }
 
-function Transfer ({ amount, genesisHash, to }: Props): React.ReactElement<Props> {
+function Transfer({ amount, genesisHash, to }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

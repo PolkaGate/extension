@@ -7,15 +7,15 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight, MagicStar } from 'iconsax-react';
 import React from 'react';
 
-import { ChainLogo, DisplayBalance } from '../../../../components';
-import { useChainInfo, useTranslation } from '../../../../hooks';
+import { ChainLogo, DisplayBalance } from '../../../../../components';
+import { useChainInfo, useTranslation } from '../../../../../hooks';
 
 interface Props {
   amount: BN | null;
   genesisHash: string;
 }
 
-function NominationPoolsBondExtra ({ amount, genesisHash }: Props): React.ReactElement<Props> {
+function NominationPoolsBondExtra({ amount, genesisHash }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 

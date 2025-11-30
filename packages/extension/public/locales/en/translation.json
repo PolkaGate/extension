@@ -842,5 +842,10 @@
   "Withdraw rewards": "",
   "Send rewards to": "",
   "Set reward destination": "",
-  "Entire balance": ""
+  "Entire balance": "",
+  "Vote on referendum {{rfIndex}}": "",
+  "{{voteType}} on ref {{rfIndex}} ({{convictionCount}}x multiplier)": "",
+  "{{convictionCount}}x": "",
+  "Split Vote on referendum {{rfIndex}}": "",
+  "Split Abstain vote on referendum {{rfIndex}}": ""
 }

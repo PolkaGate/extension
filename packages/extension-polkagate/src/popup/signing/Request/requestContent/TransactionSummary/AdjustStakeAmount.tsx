@@ -5,8 +5,8 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { ChainLogo, DisplayBalance } from '../../../../components';
-import { useChainInfo, useTranslation } from '../../../../hooks';
+import { ChainLogo, DisplayBalance } from '../../../../../components';
+import { useChainInfo, useTranslation } from '../../../../../hooks';
 
 interface Props {
   action: string;

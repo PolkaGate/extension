@@ -6,10 +6,10 @@ import type { Variant } from '@mui/material/styles/createTypography';
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
-import { ChainLogo, ShortAddress } from '../../../../components';
-import { useAccountName, useTranslation } from '../../../../hooks';
-import PolkaGateIdenticon from '../../../../style/PolkaGateIdenticon';
-import { toTitleCase } from '../../../../util/string';
+import { ChainLogo, ShortAddress } from '../../../../../components';
+import { useAccountName, useTranslation } from '../../../../../hooks';
+import PolkaGateIdenticon from '../../../../../style/PolkaGateIdenticon';
+import { toTitleCase } from '../../../../../util/string';
 
 interface Props {
   genesisHash: string;

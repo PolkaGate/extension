@@ -9,8 +9,8 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight, MoneyRecive, Repeat } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { ChainLogo, Identity2 } from '../../../../components';
-import { useTranslation } from '../../../../hooks';
+import { ChainLogo, Identity2 } from '../../../../../components';
+import { useTranslation } from '../../../../../hooks';
 
 interface Props {
   payee: PalletStakingRewardDestination;
@@ -25,7 +25,7 @@ interface StakeAdjustmentInfo {
   text: string;
 }
 
-function Payee ({ genesisHash, payee }: Props): React.ReactElement<Props> {
+function Payee({ genesisHash, payee }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -83,13 +83,13 @@ function Payee ({ genesisHash, payee }: Props): React.ReactElement<Props> {
               identiconStyle={{ marginRight: '5px' }}
               showSocial={false}
               style={{ color: 'text.primary', variant: 'B-2' }}
-              />
+            />
             : Icon && <Icon
               color={color}
               size={14}
               style={{ ...style }}
               variant='Linear'
-              />}
+            />}
         </Stack>
       </Stack>
     </Stack>
