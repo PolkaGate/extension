@@ -29,6 +29,7 @@ interface PositionOptionsProps {
 
 const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }: PositionOptionsProps) => {
   const { t } = useTranslation();
+  const totalPositions = positionItems?.length ?? 0;
 
   return (
     <>
@@ -52,6 +53,7 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
                 price={price}
                 token={token}
                 type='pool'
+                totalPositions={totalPositions}
               />}
             {soloTotal && !soloTotal?.isZero() && ['both', 'solo'].includes(state.stakingType) &&
               <PositionItem
@@ -63,6 +65,7 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
                 price={price}
                 token={token}
                 type='solo'
+                totalPositions={totalPositions}
               />}
           </Fragment>
         );
