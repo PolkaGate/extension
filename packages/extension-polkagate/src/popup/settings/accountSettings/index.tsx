@@ -9,7 +9,6 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
-import { noop } from '@polkadot/util';
 
 import { ActionCard, BackWithLabel, Motion } from '../../../components';
 import { useAccountSelectedChain, useTranslation } from '../../../hooks';
@@ -40,12 +39,11 @@ function AccountSettings (): React.ReactElement {
   const isComingFromAccountsList = (location.state as State)?.pathname === '/accounts';
   const onBack = useCallback(() => navigate(isComingFromAccountsList ? (location.state as State)?.pathname ?? '' : '/settings') as void, [isComingFromAccountsList, location, navigate]);
 
+  const onNotificationSettings = useCallback(() => navigate('/notification/settings') as void, [navigate]);
   const onExport = useCallback(() => navigate('/settings-account-export') as void, [navigate]);
   const onImport = useCallback(() => windowOpen('/account/have-wallet') as unknown as void, []);
   const onManageProxy = useCallback(() => windowOpen(`/proxyManagement/${address}/${selectedChain}`) as unknown as void, [address, selectedChain]);
-  const onCloseRemove = useCallback(() => {
-    navigate('/') as void;
-  }, [navigate]);
+  const onCloseRemove = useCallback(() => navigate('/') as void, [navigate]);
 
   const CARD_STYLE = { alignItems: 'center', height: '58px', mt: '5px' };
 
@@ -62,7 +60,7 @@ function AccountSettings (): React.ReactElement {
           iconColor='#FF4FB9'
           iconSize={24}
           iconWithoutTransform
-          onClick={noop}
+          onClick={onNotificationSettings}
           style={{ ...CARD_STYLE }}
           title={t('Notifications')}
         />
