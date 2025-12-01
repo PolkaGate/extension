@@ -833,5 +833,19 @@
   "No rewards yet": "暂无奖励",
   "No metadata found for this chain. Please update metadata": "未找到该链的元数据，请更新元数据",
   "Enable the {{chainName}} network to view transaction detail. Go to Settings → Networks": "启用 {{chainName}} 网络以查看交易详情。请前往 设置 → 网络",
-  "metadata": "元数据"
+  "metadata": "元数据",
+  "Loading, please wait ...": "加载中，请稍候...",
+  "Increase stake": "增加质押",
+  "Decrease stake": "减少质押",
+  "Re-stake rewards": "重新质押奖励",
+  "Auto-stake rewards": "自动质押奖励",
+  "Withdraw rewards": "提取奖励",
+  "Send rewards to": "将奖励发送至",
+  "Set reward destination": "设置奖励接收地址",
+  "Entire balance": "全部余额",
+  "Vote on referendum {{rfIndex}}": "对公投 {{rfIndex}} 投票",
+  "{{voteType}} on ref {{rfIndex}} ({{convictionCount}}x multiplier)": "{{voteType}} 于公投 {{rfIndex}}（{{convictionCount}}x 倍数）",
+  "{{convictionCount}}x": "{{convictionCount}}x",
+  "Split Vote on referendum {{rfIndex}}": "在公投 {{rfIndex}} 上进行拆分投票",
+  "Split Abstain vote on referendum {{rfIndex}}": "在公投 {{rfIndex}} 上进行拆分-弃权投票"
 }

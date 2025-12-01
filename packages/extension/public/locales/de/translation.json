@@ -833,5 +833,19 @@
   "No rewards yet": "Noch keine Belohnungen",
   "No metadata found for this chain. Please update metadata": "Keine Metadaten für diese Chain gefunden. Bitte aktualisieren Sie die Metadaten",
   "Enable the {{chainName}} network to view transaction detail. Go to Settings → Networks": "Aktivieren Sie das {{chainName}}-Netzwerk, um die Transaktionsdetails anzuzeigen. Gehen Sie zu Einstellungen → Netzwerke",
-  "metadata": "Metadaten"
+  "metadata": "Metadaten",
+  "Loading, please wait ...": "Wird geladen, bitte warten ...",
+  "Increase stake": "Einsatz erhöhen",
+  "Decrease stake": "Einsatz verringern",
+  "Re-stake rewards": "Belohnungen erneut einsetzen",
+  "Auto-stake rewards": "Belohnungen automatisch einsetzen",
+  "Withdraw rewards": "Belohnungen abheben",
+  "Send rewards to": "Belohnungen senden an",
+  "Set reward destination": "Ziel für Belohnungen festlegen",
+  "Entire balance": "Gesamtes Guthaben",
+  "Vote on referendum {{rfIndex}}": "Abstimmung über Referendum {{rfIndex}}",
+  "{{voteType}} on ref {{rfIndex}} ({{convictionCount}}x multiplier)": "{{voteType}} bei Ref {{rfIndex}} ({{convictionCount}}x Multiplikator)",
+  "{{convictionCount}}x": "{{convictionCount}}x",
+  "Split Vote on referendum {{rfIndex}}": "Geteilte Stimme beim Referendum {{rfIndex}}",
+  "Split Abstain vote on referendum {{rfIndex}}": "Geteilte Enthaltungsstimme beim Referendum {{rfIndex}}"
 }

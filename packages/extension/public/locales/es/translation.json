@@ -833,5 +833,19 @@
   "No rewards yet": "Aún no hay recompensas",
   "No metadata found for this chain. Please update metadata": "No se encontraron metadatos para esta cadena. Por favor actualiza los metadatos",
   "Enable the {{chainName}} network to view transaction detail. Go to Settings → Networks": "Habilita la red {{chainName}} para ver el detalle de la transacción. Ve a Configuración → Redes",
-  "metadata": "metadatos"
+  "metadata": "metadatos",
+  "Loading, please wait ...": "Cargando, por favor espera ...",
+  "Increase stake": "Aumentar participación",
+  "Decrease stake": "Disminuir participación",
+  "Re-stake rewards": "Reinvertir recompensas",
+  "Auto-stake rewards": "Auto-reinvertir recompensas",
+  "Withdraw rewards": "Retirar recompensas",
+  "Send rewards to": "Enviar recompensas a",
+  "Set reward destination": "Establecer destino de recompensas",
+  "Entire balance": "Saldo completo",
+  "Vote on referendum {{rfIndex}}": "Votar en el referéndum {{rfIndex}}",
+  "{{voteType}} on ref {{rfIndex}} ({{convictionCount}}x multiplier)": "{{voteType}} en ref {{rfIndex}} (multiplicador {{convictionCount}}x)",
+  "{{convictionCount}}x": "{{convictionCount}}x",
+  "Split Vote on referendum {{rfIndex}}": "Voto dividido en el referéndum {{rfIndex}}",
+  "Split Abstain vote on referendum {{rfIndex}}": "Voto dividido con abstención en el referéndum {{rfIndex}}"
 }

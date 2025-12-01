@@ -13,11 +13,11 @@ import React from 'react';
 
 import { toTitleCase } from '../../../../../util';
 import AdjustStakeAmount from './AdjustStakeAmount';
+import Vote from './ConvictionVotingVote';
 import NominationPoolsBondExtra from './NominationPoolsBondExtra';
 import Payee from './Payee';
 import Transfer from './Transfer';
 import TransferAll from './TransferAll';
-import Vote from './ConvictionVotingVote';
 
 interface Props {
   genesisHash: string;
