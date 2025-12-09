@@ -87,16 +87,17 @@ export const ChainIdentifier = ({ genesisHash }: TokenInfoProps) => {
 };
 
 interface Props extends TokenInfoProps {
-  type: 'pool' | 'solo';
   balance: BN;
   claimPermissions?: PalletNominationPoolsClaimPermission['type'],
-  price: number;
   decimal: number;
-  token: string;
   isSelected?: boolean;
+  price: number;
+  token: string;
+  totalPositions: number;
+  type: 'pool' | 'solo';
 }
 
-function PositionItem ({ balance, claimPermissions, decimal, genesisHash, isSelected, price, token, type }: Props) {
+function PositionItem ({ balance, claimPermissions, decimal, genesisHash, isSelected, price, token, totalPositions, type }: Props) {
   const { address } = useParams<{ address: string }>();
   const navigate = useNavigate();
   const hasPoolStaking = useMemo(() => type === 'pool', [type]);
@@ -123,7 +124,7 @@ function PositionItem ({ balance, claimPermissions, decimal, genesisHash, isSele
 
   return (
     <Motion variant='zoom'>
-      <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: isSelected ? '#2D1E4A' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
+      <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: isSelected ? '#2D1E4A' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: totalPositions > 1 ? '4px' : '4px 30px 4px 4px', pl: '18px' }}>
         <TokenInfo genesisHash={genesisHash} />
         <Stack columnGap='5px' direction='row'>
           <StakingBadge hasPoolStaking={hasPoolStaking} isFullscreen />
@@ -138,7 +139,9 @@ function PositionItem ({ balance, claimPermissions, decimal, genesisHash, isSele
         <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
         <ChainIdentifier genesisHash={genesisHash} />
         <Staked balance={balance} decimal={decimal} price={price} token={token} />
-        <ArrowButton onClick={noop} />
+        {totalPositions > 1 &&
+          <ArrowButton onClick={noop} />
+        }
       </Container>
     </Motion>
   );
