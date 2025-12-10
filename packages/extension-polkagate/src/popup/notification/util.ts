@@ -337,12 +337,15 @@ export function getNotificationDescription (item: NotificationMessageType, t: TF
       const statusMap: Record<string, string> = {
         approved: '{{chainName}} referendum #{{referendumIndex}} has been approved',
         cancelled: '{{chainName}} referendum #{{referendumIndex}} has been cancelled',
+        confirm: '{{chainName}} referendum #{{referendumIndex}} has been confirmed',
         decision: '{{chainName}} referendum #{{referendumIndex}} has been created',
         executed: '{{chainName}} referendum #{{referendumIndex}} has been executed',
+        executedfailed: '{{chainName}} referendum #{{referendumIndex}} execution failed',
         ongoing: '{{chainName}} referendum #{{referendumIndex}} has been created',
         rejected: '{{chainName}} referendum #{{referendumIndex}} has been rejected',
         submitted: '{{chainName}} referendum #{{referendumIndex}} has been submitted',
-        timeout: '{{chainName}} referendum #{{referendumIndex}} has timed out'
+        timeout: '{{chainName}} referendum #{{referendumIndex}} has timed out',
+        timedOut: '{{chainName}} referendum #{{referendumIndex}} has timed out'
       };
 
       const status = item.referenda?.status;
