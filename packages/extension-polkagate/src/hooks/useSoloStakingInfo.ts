@@ -19,7 +19,7 @@ import useSoloStakingTotalReward from './useSoloStakingTotalReward';
 import useStakingAccount from './useStakingAccount';
 import useStakingConsts from './useStakingConsts';
 import useStakingRewardDestinationAddress from './useStakingRewardDestinationAddress';
-import { useEraInfo } from '.';
+import { useEraInfo, useIsValidator } from '.';
 
 export interface EraInfo {
   blockTime: number; // usually 6 sec
@@ -46,6 +46,7 @@ export interface SoloStakingInfo {
   sessionInfo: UnstakingType | undefined; // Information about unstaking and release dates
   stakingAccount: AccountStakingInfo | null | undefined; // User's staking account information
   stakingConsts: StakingConsts | null | undefined; // Staking constants like minimum bond amount
+  isValidator: boolean | undefined;
 }
 
 interface SavedSoloStakingInfo extends SoloStakingInfo {
@@ -139,6 +140,7 @@ function reviveSoloStakingInfoBNs (info: SavedSoloStakingInfo): SavedSoloStaking
 
 const DEFAULT_VALUE = {
   availableBalanceToStake: undefined,
+  isValidator: undefined,
   rewardDestinationAddress: undefined,
   rewards: undefined,
   sessionInfo: undefined,
@@ -160,6 +162,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
   const currentEra = useCurrentEraIndex(genesisHash);
   const stakingAccount = useStakingAccount(address, genesisHash, refresh, setRefresh);
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
+  const isValidator = useIsValidator(address, genesisHash);
   const rewards = useSoloStakingTotalReward(chainName, stakingAccount); // total reward
   const stakingConsts = useStakingConsts(genesisHash);
   const eraInfo = useEraInfo(genesisHash);
@@ -201,6 +204,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
 
     const info = {
       availableBalanceToStake: balances.freeBalance,
+      isValidator,
       rewardDestinationAddress,
       rewards,
       sessionInfo,
@@ -217,7 +221,7 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     );
 
     setSoloStakingInfo((pre) => ({ ...pre, ...nonUndefinedInfo }) as SoloStakingInfo);
-  }, [address, balances, currentEra, genesisHash, rewardDestinationAddress, rewards, sessionInfo, stakingAccount, stakingConsts, refresh]);
+  }, [address, balances, currentEra, genesisHash, rewardDestinationAddress, rewards, sessionInfo, stakingAccount, stakingConsts, refresh, isValidator]);
 
   useEffect(() => {
     if (rewards && soloStakingInfo && rewardsFetchingFlag.current) {
@@ -278,5 +282,11 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     }
   }, [genesisHash]);
 
-  return useMemo(() => soloStakingInfo || soloStakingInfoStorage || DEFAULT_VALUE, [soloStakingInfo, soloStakingInfoStorage]);
+  return useMemo(
+    () => ({
+      ...(soloStakingInfo || soloStakingInfoStorage || DEFAULT_VALUE),
+      isValidator
+    }),
+    [isValidator, soloStakingInfo, soloStakingInfoStorage]
+  );
 }

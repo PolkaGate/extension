@@ -51,6 +51,7 @@ export { default as useIsHovered } from './useIsHovered';
 export { default as useIsOnline } from './useIsOnline';
 export { default as useIsPasswordMigrated } from './useIsPasswordMigrated';
 export { default as useIsTestnetEnabled } from './useIsTestnetEnabled';
+export { default as useIsValidator } from './useIsValidator';
 export { useLedger } from './useLedger';
 export { default as useLocalAccounts } from './useLocalAccounts';
 export { default as useLockedInReferenda } from './useLockedInReferenda';

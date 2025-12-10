@@ -701,7 +701,6 @@
   "Claim manually": "",
   "Advanced staking management": "",
   "Paid automatically": "",
-  "The are no validators yet.": "",
   "Claim Now": "",
   "Unclaimed Rewards": "",
   "Estimated rewards": "",
@@ -847,5 +846,11 @@
   "{{voteType}} on ref {{rfIndex}} ({{convictionCount}}x multiplier)": "",
   "{{convictionCount}}x": "",
   "Split Vote on referendum {{rfIndex}}": "",
-  "Split Abstain vote on referendum {{rfIndex}}": ""
+  "Split Abstain vote on referendum {{rfIndex}}": "",
+  "This account is a validator.": "",
+  "Validator Summary": "",
+  "Rewards Points": "",
+  "Nominators count": "",
+  "Total Stake": "",
+  "Self Stake": ""
 }

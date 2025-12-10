@@ -207,7 +207,7 @@ const DisplayName = React.memo(function DisplayName ({ accountInfo, address, inT
   };
 
   return (
-    <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', ...nameStyle }} textAlign='left' variant={style?.variant as Variant}>
+    <Typography sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', ...nameStyle }} textAlign='left' variant={style?.variant as Variant ?? 'B-2'}>
       {renderDisplayName()}
     </Typography>
   );
