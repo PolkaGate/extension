@@ -701,7 +701,6 @@
   "Claim manually": "Получить вручную",
   "Advanced staking management": "Расширенное управление стейкингом",
   "Paid automatically": "Авто",
-  "The are no validators yet.": "Пока нет валидаторов.",
   "Claim Now": "Получить сейчас",
   "Unclaimed Rewards": "Награды",
   "Estimated rewards": "Оценочные награды",
@@ -847,5 +846,9 @@
   "{{voteType}} on ref {{rfIndex}} ({{convictionCount}}x multiplier)": "{{voteType}} по реф. {{rfIndex}} (множитель {{convictionCount}}x)",
   "{{convictionCount}}x": "{{convictionCount}}x",
   "Split Vote on referendum {{rfIndex}}": "Разделённый голос по референдуму {{rfIndex}}",
-  "Split Abstain vote on referendum {{rfIndex}}": "Разделённый голос с воздержанием по референдуму {{rfIndex}}"
+  "Split Abstain vote on referendum {{rfIndex}}": "Разделённый голос с воздержанием по референдуму {{rfIndex}}",
+  "Validator Summary": "Сводка валидатора",
+  "Rewards Points": "Очки вознаграждения",
+  "Total Stake": "Общий стейк",
+  "The are no validators yet.": "Пока нет валидаторов."
 }

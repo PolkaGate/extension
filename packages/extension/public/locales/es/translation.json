@@ -701,7 +701,6 @@
   "Claim manually": "Reclamar manualmente",
   "Advanced staking management": "Gestión avanzada de staking",
   "Paid automatically": "Pagado automáticamente",
-  "The are no validators yet.": "Aún no hay validadores.",
   "Claim Now": "Reclamar ahora",
   "Unclaimed Rewards": "Pendientes",
   "Estimated rewards": "Recompensas estimadas",
@@ -847,5 +846,9 @@
   "{{voteType}} on ref {{rfIndex}} ({{convictionCount}}x multiplier)": "{{voteType}} en ref {{rfIndex}} (multiplicador {{convictionCount}}x)",
   "{{convictionCount}}x": "{{convictionCount}}x",
   "Split Vote on referendum {{rfIndex}}": "Voto dividido en el referéndum {{rfIndex}}",
-  "Split Abstain vote on referendum {{rfIndex}}": "Voto dividido con abstención en el referéndum {{rfIndex}}"
+  "Split Abstain vote on referendum {{rfIndex}}": "Voto dividido con abstención en el referéndum {{rfIndex}}",
+  "Validator Summary": "Resumen del validador",
+  "Rewards Points": "Puntos de recompensa",
+  "Total Stake": "Participación total",
+  "The are no validators yet.": "Aún no hay validadores."
 }

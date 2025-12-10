@@ -701,7 +701,6 @@
   "Claim manually": "मैन्युअल रूप से दावा करें",
   "Advanced staking management": "उन्नत स्टेकिंग प्रबंधन",
   "Paid automatically": "स्वचालित रूप से भुगतान किया गया",
-  "The are no validators yet.": "अभी कोई वैलिडेटर नहीं हैं।",
   "Claim Now": "अब दावा करें",
   "Unclaimed Rewards": "अदावा किए गए पुरस्कार",
   "Estimated rewards": "अनुमानित पुरस्कार",
@@ -847,5 +846,9 @@
   "{{voteType}} on ref {{rfIndex}} ({{convictionCount}}x multiplier)": "जनमत संग्रह {{rfIndex}} पर {{voteType}} ({{convictionCount}}x गुणक)",
   "{{convictionCount}}x": "{{convictionCount}}x",
   "Split Vote on referendum {{rfIndex}}": "जनमत संग्रह {{rfIndex}} पर विभाजित वोट",
-  "Split Abstain vote on referendum {{rfIndex}}": "जनमत संग्रह {{rfIndex}} पर विभाजित-अस्थगित वोट"
+  "Split Abstain vote on referendum {{rfIndex}}": "जनमत संग्रह {{rfIndex}} पर विभाजित-अस्थगित वोट",
+  "Validator Summary": "वैलिडेटर सारांश",
+  "Rewards Points": "रिवॉर्ड पॉइंट्स",
+  "Total Stake": "कुल स्टेक",
+  "The are no validators yet.": "अभी कोई वैलिडेटर नहीं हैं।"
 }

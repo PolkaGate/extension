@@ -847,10 +847,8 @@
   "{{convictionCount}}x": "",
   "Split Vote on referendum {{rfIndex}}": "",
   "Split Abstain vote on referendum {{rfIndex}}": "",
-  "This account is a validator.": "",
   "Validator Summary": "",
   "Rewards Points": "",
-  "Nominators count": "",
   "Total Stake": "",
-  "Self Stake": ""
+  "The are no validators yet.": ""
 }

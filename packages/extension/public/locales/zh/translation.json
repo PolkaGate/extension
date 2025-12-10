@@ -701,7 +701,6 @@
   "Claim manually": "手动领取",
   "Advanced staking management": "高级质押管理",
   "Paid automatically": "自动支付",
-  "The are no validators yet.": "尚无验证人。",
   "Claim Now": "立即领取",
   "Unclaimed Rewards": "未领取奖励",
   "Estimated rewards": "预计奖励",
@@ -847,5 +846,9 @@
   "{{voteType}} on ref {{rfIndex}} ({{convictionCount}}x multiplier)": "{{voteType}} 于公投 {{rfIndex}}（{{convictionCount}}x 倍数）",
   "{{convictionCount}}x": "{{convictionCount}}x",
   "Split Vote on referendum {{rfIndex}}": "在公投 {{rfIndex}} 上进行拆分投票",
-  "Split Abstain vote on referendum {{rfIndex}}": "在公投 {{rfIndex}} 上进行拆分-弃权投票"
+  "Split Abstain vote on referendum {{rfIndex}}": "在公投 {{rfIndex}} 上进行拆分-弃权投票",
+  "Validator Summary": "验证者概览",
+  "Rewards Points": "奖励积分",
+  "Total Stake": "总质押",
+  "The are no validators yet.": "尚无验证人。"
 }
