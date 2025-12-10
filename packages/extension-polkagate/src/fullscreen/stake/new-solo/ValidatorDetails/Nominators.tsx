@@ -85,11 +85,16 @@ export default function Nominators ({ genesisHash, nominators }: Props) {
   const refContainer = useRef<HTMLDivElement>(null);
 
   return (
-    <Stack direction='column' sx={{ maxHeight: '350px', width: '100%' }}>
-      <Typography color='text.primary' sx={{ p: '20px 10px 5px' }} textAlign='left' variant='H-3'>
-        {t('Nominators')}
-      </Typography>
-      <Stack direction='column' ref={refContainer} sx={{ gap: '4px', height: '350px', maxHeight: '350px', overflow: 'auto', width: '100%' }}>
+    <Stack direction='column' sx={{ width: '100%' }}>
+      <Stack alignItems='center' columnGap={1} direction='row' sx={{ p: '20px 10px 5px' }}>
+        <Typography color='text.primary' textAlign='left' variant='H-3'>
+          {t('Nominators')}
+        </Typography>
+        <Typography color='#AA83DC' sx={{ alignItems: 'center', bgcolor: '#AA83DC26', borderRadius: '1024px', display: 'flex', height: '19px', px: '10px' }} variant='B-2'>
+          {nominators ? `${nominators.length}` : ''}
+        </Typography>
+      </Stack>
+      <Stack direction='column' ref={refContainer} sx={{ gap: '4px', maxHeight: 'calc(100vh - 588px)', maxWidth: '1050px', minHeight: '315px', overflow: 'auto', width: '100%', position: 'relative' }}>
         {!nominators &&
           Array.from({ length: 3 }).map((_, index) => (
             <PlaceHolder

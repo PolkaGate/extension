@@ -23,19 +23,19 @@ function Item ({ decimal, skeletonWidth = 60, title, token, value }:
       <Typography color='#BEAAD8' sx={{ mr: '5px', whiteSpace: 'nowrap' }} textAlign='left' variant='B-2'>
         {title}
       </Typography>
-        <Typography color='#AA83DC' sx={{ alignItems: 'center', bgcolor: '#AA83DC26', borderRadius: '1024px', display: 'flex', height: '19px', px: value != null ? '10px' : 0 }} variant='B-2'>
-          {decimal && token
-            ? <DisplayBalance
-              balance={value as string}
-              decimal={decimal}
-              skeletonStyle={{ borderRadius: '10px', margin: '0', width: '88px' }}
-              token={token}
-              />
-            : value != null
-              ? value
-              : <MySkeleton bgcolor='#AA83DC26' height={15} width={skeletonWidth} />
-          }
-        </Typography>
+      <Typography color='#AA83DC' sx={{ alignItems: 'center', bgcolor: '#AA83DC26', borderRadius: '1024px', display: 'flex', height: '19px', px: value != null ? '10px' : 0 }} variant='B-2'>
+        {decimal && token
+          ? <DisplayBalance
+            balance={value as string}
+            decimal={decimal}
+            skeletonStyle={{ borderRadius: '10px', margin: '0', width: '88px' }}
+            token={token}
+            />
+          : value != null
+            ? value
+            : <MySkeleton bgcolor='#AA83DC26' height={15} width={skeletonWidth} />
+        }
+      </Typography>
     </Grid>
   );
 }
@@ -46,7 +46,7 @@ export default function Summary ({ details, genesisHash }: Props): React.ReactEl
 
   const { decimal, token } = useChainInfo(genesisHash);
 
-  const { commission, isElected, nominatorCount, own, rewardPoint, total } = details ?? {};
+  const { commission, isElected, rewardPoint, total } = details ?? {};
 
   const Icon = isElected
     ? {
@@ -82,21 +82,10 @@ export default function Summary ({ details, genesisHash }: Props): React.ReactEl
           value={rewardPoint?.toString()}
         />
         <Item
-          skeletonWidth={30}
-          title={t('Nominators count')}
-          value={nominatorCount}
-        />
-        <Item
           decimal={decimal}
           title={t('Total Stake')}
           token={token}
           value={total}
-        />
-        <Item
-          decimal={decimal}
-          title={t('Self Stake')}
-          token={token}
-          value={own}
         />
         <Item
           skeletonWidth={30}
