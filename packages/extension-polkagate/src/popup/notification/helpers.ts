@@ -209,14 +209,19 @@ export const getPayoutsInformation = async (addresses: string[], chain: string):
     : chain;
 
   const chainName = getChainName(resolvedChain);
-  const network = { text: getSubscanChainName(chainName), value: resolvedChain } as DropdownOption;
+  const chainText = getSubscanChainName(chainName);
 
-  // Helper function to process a single address
+  const network = { text: chainText, value: resolvedChain } as DropdownOption;
+
+  /**
+   * Fetches and processes payout information for a single address
+   */
   const processAddress = async (address: string): Promise<StakingRewardInformation | null> => {
     // let lastError: unknown = null;
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
+        // Solo staking payouts
         const soloPayoutInfo = await postData(`https://${network.text}.api.subscan.io/api/v2/scan/account/reward_slash`, {
           address,
           category: 'Reward',
@@ -225,7 +230,8 @@ export const getPayoutsInformation = async (addresses: string[], chain: string):
           list: PayoutSubscan[]
         }>;
 
-        const poolPayoutInfo = await postData(`https://${network.text}.api.scan/nomination_pool/rewards`, {
+        // Nomination pool payouts
+        const poolPayoutInfo = await postData(`https://${network.text}.api.subscan.io/api/scan/nomination_pool/rewards`, {
           address,
           category: 'Reward',
           row: RECEIVED_REWARDS_THRESHOLD
@@ -233,11 +239,14 @@ export const getPayoutsInformation = async (addresses: string[], chain: string):
           list: PayoutSubscan[]
         }>;
 
+        // Ensure that at least ONE request succeeded
         if (poolPayoutInfo.code !== 0 && soloPayoutInfo.code !== 0) {
-          throw new Error('Not a expected status code');
+          throw new Error('Unexpected Subscan status code');
         }
 
-        const payoutInfo = [...(soloPayoutInfo?.data?.list ?? []), ...(poolPayoutInfo?.data?.list ?? [])];
+        const payoutInfo = [
+          ...(soloPayoutInfo?.data?.list ?? []),
+          ...(poolPayoutInfo?.data?.list ?? [])];
 
         if (!payoutInfo || payoutInfo.length === 0) {
           return null; // account doesn't have any history
@@ -248,7 +257,7 @@ export const getPayoutsInformation = async (addresses: string[], chain: string):
         // lastError = error;
         // console.warn(`Attempt ${attempt} failed for ${network.text} and address ${address} (PAYOUT). Retrying...`);
 
-        // Exponential backoff
+        // Retry with exponential backoff
         await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
       }
     }
@@ -278,7 +287,7 @@ export const getPayoutsInformation = async (addresses: string[], chain: string):
       }
     });
 
-    // Optional: Add a small delay between batches to be extra safe with rate limits
+    // Safe spacing between batches to avoid rate limits
     if (i + BATCH_SIZE < addresses.length) {
       await new Promise((resolve) => setTimeout(resolve, 500)); // 500ms delay between batches
     }
@@ -304,13 +313,13 @@ export const getReferendasInformation = async (chain: string): Promise<Referenda
   const chainName = getChainName(resolvedChain);
   const network = { text: getSubscanChainName(chainName), value: resolvedChain } as DropdownOption;
 
-  let REFERENDA_COUNT_TO_TRACK = 10; // default for testnets is 10
-
-  if (network.value === POLKADOT_GENESIS_HASH) {
-    REFERENDA_COUNT_TO_TRACK = REFERENDA_COUNT_TO_TRACK_DOT;
-  } else if (network.value === KUSAMA_GENESIS_HASH) {
-    REFERENDA_COUNT_TO_TRACK = REFERENDA_COUNT_TO_TRACK_KSM;
-  }
+  // Decide how many referenda to fetch
+  const REFERENDA_COUNT_TO_TRACK =
+    network.value === POLKADOT_GENESIS_HASH
+      ? REFERENDA_COUNT_TO_TRACK_DOT
+      : network.value === KUSAMA_GENESIS_HASH
+      ? REFERENDA_COUNT_TO_TRACK_KSM
+      : 10; // fallback for testnets
 
   // let lastError: unknown = null;
 
@@ -323,7 +332,7 @@ export const getReferendasInformation = async (chain: string): Promise<Referenda
       }>;
 
       if (referendaInfo.code !== 0) {
-        throw new Error('Not a expected status code');
+        throw new Error('Unexpected status code from Subscan');
       }
 
       if (!referendaInfo.data.list) {
