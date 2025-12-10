@@ -288,19 +288,19 @@ export function getNotificationItemTitle (t: TFunction, type: NotificationType, 
         return t('Referendum executed');
       }
 
-      if (['ongoing', 'decision', 'submitted'].includes(referenda?.status ?? '')) {
+      if (['ongoing', 'decision', 'submitted'].includes(status)) {
         return t('New Referendum');
       }
 
-      if (referenda?.status === 'cancelled') {
+      if (status === 'cancelled') {
         return t('Referendum Cancelled');
       }
 
-      if (referenda?.status === 'timeout') {
+      if (status === 'timeout') {
         return t('Referendum timed out');
       }
 
-      if (referenda?.status === 'executedfailed') {
+      if (status === 'executedfailed') {
         return t('Referendum executed but failed');
       }
 
