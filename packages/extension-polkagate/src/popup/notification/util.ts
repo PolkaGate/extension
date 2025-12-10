@@ -286,17 +286,25 @@ export function getNotificationItemTitle (t: TFunction, type: NotificationType, 
 
       if (['approved', 'executed', 'confirm'].includes(status)) {
         return t('Referendum executed');
-      } else if (['ongoing', 'decision', 'submitted'].includes(referenda?.status ?? '')) {
-        return t('New Referendum');
-      } else if (referenda?.status === 'cancelled') {
-        return t('Referendum Cancelled');
-      } else if (referenda?.status === 'timeout') {
-        return t('Referendum timed out');
-      } else if (referenda?.status === 'executedfailed') {
-        return t('Referendum executed but failed');
-      } else {
-        return t('Referendum Rejected');
       }
+
+      if (['ongoing', 'decision', 'submitted'].includes(referenda?.status ?? '')) {
+        return t('New Referendum');
+      }
+
+      if (referenda?.status === 'cancelled') {
+        return t('Referendum Cancelled');
+      }
+
+      if (referenda?.status === 'timeout') {
+        return t('Referendum timed out');
+      }
+
+      if (referenda?.status === 'executedfailed') {
+        return t('Referendum executed but failed');
+      }
+
+      return t('Referendum Rejected');
     }
 
     case 'stakingReward':
