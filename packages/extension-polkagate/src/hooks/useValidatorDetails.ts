@@ -118,9 +118,5 @@ export default function useValidatorDetails (address: string | undefined, genesi
     })().catch(console.error);
   }, [address, api, activeEraIndex, decimal, formatted, relayChainApi, token]);
 
-  console.log(
-    'validatorInfo:', validatorInfo
-  );
-
   return validatorInfo;
 }
