@@ -3,13 +3,16 @@
 
 /* eslint-disable react/jsx-first-prop-new-line */
 
+import type { NotificationsType } from '@polkadot/extension-polkagate/src/popup/notification/types';
+
 import { Box, Grid } from '@mui/material';
 import { Notification as NotificationIcon } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useIsExtensionPopup, useNotifications } from '@polkadot/extension-polkagate/src/hooks';
-import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
+import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
+import { watchStorage } from '@polkadot/extension-polkagate/src/util';
+import { ExtensionPopups, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import Notification from '../../notification';
@@ -58,15 +61,16 @@ function Notifications (): React.ReactElement {
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
-  const { notificationItems } = useNotifications();
 
-  const hasNewNotification = useMemo(() => {
-    if (!notificationItems) {
-      return false;
-    }
+  const [hasNewNotification, setHasNewNotification] = useState<boolean>(false);
 
-    return Object.values(notificationItems).flat().some(({ read }) => !read);
-  }, [notificationItems]);
+  useEffect(() => {
+    const unsubscribe = watchStorage(STORAGE_KEY.NOTIFICATIONS, (result: NotificationsType) => {
+      setHasNewNotification(Object.values(result.notificationMessages ?? []).flat().some(({ read }) => !read));
+    });
+
+    return unsubscribe;
+  }, []);
 
   const onClick = useCallback(() => {
     if (isExtension) {
