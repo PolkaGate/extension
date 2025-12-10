@@ -282,5 +282,11 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
     }
   }, [genesisHash]);
 
-  return useMemo(() => soloStakingInfo || soloStakingInfoStorage || DEFAULT_VALUE, [soloStakingInfo, soloStakingInfoStorage]);
+  return useMemo(
+    () => ({
+      ...(soloStakingInfo || soloStakingInfoStorage || DEFAULT_VALUE),
+      isValidator
+    }),
+    [isValidator, soloStakingInfo, soloStakingInfoStorage]
+  );
 }
