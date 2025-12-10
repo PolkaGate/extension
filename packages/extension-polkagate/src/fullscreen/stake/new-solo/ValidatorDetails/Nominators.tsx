@@ -10,7 +10,7 @@ import React, { useRef, useState } from 'react';
 
 import { getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
 
-import { DisplayBalance, FadeOnScroll, Identity2, MySkeleton } from '../../../../components';
+import { DisplayBalance, FadeOnScroll, Identity2, MySkeleton, NoInfoYet } from '../../../../components';
 import { useChainInfo, useTranslation } from '../../../../hooks';
 import { MiniSocials } from '../../partials/ValidatorInformationFS';
 
@@ -96,7 +96,7 @@ export default function Nominators ({ genesisHash, nominators }: Props) {
       </Stack>
       <Stack direction='column' ref={refContainer} sx={{ gap: '4px', maxHeight: 'calc(100vh - 588px)', maxWidth: '1050px', minHeight: '220px', overflow: 'auto', width: '100%', position: 'relative' }}>
         {!nominators &&
-          Array.from({ length: 3 }).map((_, index) => (
+          Array.from({ length: 5 }).map((_, index) => (
             <PlaceHolder
               key={index}
             />
@@ -112,9 +112,12 @@ export default function Nominators ({ genesisHash, nominators }: Props) {
           ))
         }
         {nominators?.length === 0 &&
-          <Typography color='#AA83DC' sx={{ pt: '25px', textAlign: 'center', width: '100%' }} variant='B-2'>
-            {t('No nominators')}
-          </Typography>
+          <NoInfoYet
+            show
+            size={120}
+            style={{ pt: '2%' }}
+            text={t('No nominators')}
+          />
         }
         <FadeOnScroll containerRef={refContainer} height='45px' ratio={0.3} style={{ borderRadius: '0 0 14px 14px' }} />
       </Stack>
