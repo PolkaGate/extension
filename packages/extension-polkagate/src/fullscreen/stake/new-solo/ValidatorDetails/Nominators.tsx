@@ -94,7 +94,7 @@ export default function Nominators ({ genesisHash, nominators }: Props) {
           {nominators ? `${nominators.length}` : ''}
         </Typography>
       </Stack>
-      <Stack direction='column' ref={refContainer} sx={{ gap: '4px', maxHeight: 'calc(100vh - 588px)', maxWidth: '1050px', minHeight: '315px', overflow: 'auto', width: '100%', position: 'relative' }}>
+      <Stack direction='column' ref={refContainer} sx={{ gap: '4px', maxHeight: 'calc(100vh - 588px)', maxWidth: '1050px', minHeight: '220px', overflow: 'auto', width: '100%', position: 'relative' }}>
         {!nominators &&
           Array.from({ length: 3 }).map((_, index) => (
             <PlaceHolder
