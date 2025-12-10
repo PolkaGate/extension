@@ -33,7 +33,7 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '15px' }}>
-      <Stack direction='column' sx={{ width: 'max-content' }}>
+      <Stack direction='row' sx={{ width: 'max-content' }}>
         <Identity2
           address={getSubstrateAddress(nominator.who.toString())}
           genesisHash={genesisHash ?? ''}
@@ -43,9 +43,9 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
           showSocial={false}
           style={{ width: '300px' }}
         />
-        <Grid container item sx={{ alignItems: 'center', gap: '4px', ml: '30px', width: 'fit-content' }}>
+        <Grid container item sx={{ alignItems: 'center', gap: '5px', width: 'fit-content' }}>
           <Typography color='#AA83DC' textAlign='left' variant='B-4'>
-            {t('Staked')}:
+            {t('Staked')}
           </Typography>
           <DisplayBalance
             balance={nominator.value}
@@ -64,12 +64,12 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
 const PlaceHolder = () => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '15px' }}>
-      <Stack direction='column' sx={{ width: 'max-content' }}>
+      <Stack alignItems='center' columnGap={14} direction='row' sx={{ width: 'max-content' }}>
         <Stack alignItems='center' columnGap={1} direction='row'>
           <MySkeleton height={24} width={24} />
           <MySkeleton width={120} />
         </Stack>
-        <MySkeleton style={{ marginLeft: '33px' }} width={80} />
+        <MySkeleton width={100} />
       </Stack>
       <Stack columnGap={1} direction='row'>
         <MySkeleton height={24} width={24} />
