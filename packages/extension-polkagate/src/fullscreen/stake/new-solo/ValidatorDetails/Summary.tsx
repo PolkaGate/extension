@@ -52,7 +52,7 @@ export default function Summary ({ details, genesisHash }: Props): React.ReactEl
     ? {
       color: theme.palette.success.main,
       icon: Crown,
-      size: 20,
+      size: 21,
       text: t('Active'),
       variant: 'Bold'
     }
