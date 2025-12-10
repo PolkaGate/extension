@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.21.0](https://github.com/polkagate/extension/compare/v1.20.0...v1.21.0) (2025-12-10)
+
+
+### Features
+
+* implement notifications feature ([0336c6c](https://github.com/polkagate/extension/commit/0336c6c30684b5814e1c5610dfa9e4e903a7b0e5))
+
 # [1.20.0](https://github.com/polkagate/extension/compare/v1.19.8...v1.20.0) (2025-12-10)
 
 
