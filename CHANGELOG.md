@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.20.0](https://github.com/polkagate/extension/compare/v1.19.8...v1.20.0) (2025-12-10)
+
+
+### Features
+
+* show validator details in staking tabs for validator accounts ([#2063](https://github.com/polkagate/extension/issues/2063)) ([ae877e8](https://github.com/polkagate/extension/commit/ae877e8ec66fe79a4355926212186b5669065d6e))
+
 ## [1.19.8](https://github.com/polkagate/extension/compare/v1.19.7...v1.19.8) (2025-11-26)
 
 
