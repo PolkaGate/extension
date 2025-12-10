@@ -291,7 +291,7 @@ export function getNotificationItemTitle (t: TFunction, type: NotificationType, 
       } else if (referenda?.status === 'cancelled') {
         return t('Referendum Cancelled');
       } else if (referenda?.status === 'timeout') {
-        return t('Referendum time outed');
+        return t('Referendum timed out');
       } else if (referenda?.status === 'executedfailed') {
         return t('Referendum executed but failed');
       } else {
