@@ -1,0 +1,118 @@
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
+// @ts-ignore
+import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
+
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
+import React, { useRef, useState } from 'react';
+
+import { getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
+
+import { DisplayBalance, FadeOnScroll, Identity2, MySkeleton } from '../../../../components';
+import { useChainInfo, useTranslation } from '../../../../hooks';
+import { MiniSocials } from '../../partials/ValidatorInformationFS';
+
+interface Props {
+  genesisHash: string | undefined;
+  nominators: SpStakingIndividualExposure[] | undefined;
+}
+
+interface NominatorItemProps {
+  nominator: SpStakingIndividualExposure;
+  genesisHash: string | undefined;
+}
+
+const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const { decimal, token } = useChainInfo(genesisHash, true);
+
+  const [accountInfo, setAccountInfo] = useState<DeriveAccountRegistration | undefined>(undefined);
+
+  return (
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '15px' }}>
+      <Stack direction='column' sx={{ width: 'max-content' }}>
+        <Identity2
+          address={getSubstrateAddress(nominator.who.toString())}
+          genesisHash={genesisHash ?? ''}
+          identiconSize={24}
+          returnIdentity={setAccountInfo}
+          showShortAddress
+          showSocial={false}
+          style={{ width: '300px' }}
+        />
+        <Grid container item sx={{ alignItems: 'center', gap: '4px', ml: '30px', width: 'fit-content' }}>
+          <Typography color='#AA83DC' textAlign='left' variant='B-4'>
+            {t('Staked')}:
+          </Typography>
+          <DisplayBalance
+            balance={nominator.value}
+            decimal={decimal}
+            decimalPoint={2}
+            style={{ color: theme.palette.text.primary, fontFamily: 'Inter', fontSize: '12px', fontWeight: 500 }}
+            token={token}
+          />
+        </Grid>
+      </Stack>
+      <MiniSocials accountInfo={accountInfo} />
+    </Container>
+  );
+};
+
+const PlaceHolder = () => {
+  return (
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '15px' }}>
+      <Stack direction='column' sx={{ width: 'max-content' }}>
+        <Stack alignItems='center' columnGap={1} direction='row'>
+          <MySkeleton height={24} width={24} />
+          <MySkeleton width={120} />
+        </Stack>
+        <MySkeleton style={{ marginLeft: '33px' }} width={80} />
+      </Stack>
+      <Stack columnGap={1} direction='row'>
+        <MySkeleton height={24} width={24} />
+        <MySkeleton height={24} width={24} />
+        <MySkeleton height={24} width={24} />
+      </Stack>
+    </Container>
+  );
+};
+
+export default function Nominators ({ genesisHash, nominators }: Props) {
+  const { t } = useTranslation();
+  const refContainer = useRef<HTMLDivElement>(null);
+
+  return (
+    <Stack direction='column' sx={{ maxHeight: '350px', width: '100%' }}>
+      <Typography color='text.primary' sx={{ p: '20px 10px 5px' }} textAlign='left' variant='H-3'>
+        {t('Nominators')}
+      </Typography>
+      <Stack direction='column' ref={refContainer} sx={{ gap: '4px', height: '350px', maxHeight: '350px', overflow: 'auto', width: '100%' }}>
+        {!nominators &&
+          Array.from({ length: 3 }).map((_, index) => (
+            <PlaceHolder
+              key={index}
+            />
+          ))
+        }
+        {!!nominators?.length &&
+          nominators.map((item, index) => (
+            <NominatorItem
+              genesisHash={genesisHash}
+              key={index}
+              nominator={item}
+            />
+          ))
+        }
+        {nominators?.length === 0 &&
+          <Typography color='#AA83DC' sx={{ pt: '25px', textAlign: 'center', width: '100%' }} variant='B-2'>
+            {t('No nominators')}
+          </Typography>
+        }
+        <FadeOnScroll containerRef={refContainer} height='45px' ratio={0.3} style={{ borderRadius: '0 0 14px 14px' }} />
+      </Stack>
+    </Stack>
+  );
+}
