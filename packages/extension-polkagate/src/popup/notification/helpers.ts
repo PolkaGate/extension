@@ -8,7 +8,7 @@ import { getSubscanChainName, getSubstrateAddress } from '@polkadot/extension-po
 import { postData } from '@polkadot/extension-polkagate/src/util/api';
 import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import getChainName from '@polkadot/extension-polkagate/src/util/getChainName';
-import { isMigratedRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { isMigratedRelay, relayToSystemChains } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { BATCH_SIZE, MAX_RETRIES, RECEIVED_FUNDS_THRESHOLD, RECEIVED_REWARDS_THRESHOLD, REFERENDA_COUNT_TO_TRACK_DOT, REFERENDA_COUNT_TO_TRACK_KSM } from './constant';
 import { timestampToDate } from './util';
@@ -202,15 +202,14 @@ export const getReceivedFundsInformation = async (addresses: string[], chain: st
 export const getPayoutsInformation = async (addresses: string[], chain: string): Promise<StakingRewardInformation[]> => {
   const results: StakingRewardInformation[] = [];
 
-  // If the network is a migrated relay chain then there's no need to fetch received fund information on
-  const isMigrateRelayChain = isMigratedRelay(chain);
+  // Handle migrated relay chains
+  const isMigrated = isMigratedRelay(chain);
+  const resolvedChain = isMigrated
+    ? relayToSystemChains[chain].assetHub
+    : chain;
 
-  if (isMigrateRelayChain) {
-    return results;
-  }
-
-  const chainName = getChainName(chain);
-  const network = { text: getSubscanChainName(chainName), value: chain } as DropdownOption;
+  const chainName = getChainName(resolvedChain);
+  const network = { text: getSubscanChainName(chainName), value: resolvedChain } as DropdownOption;
 
   // Helper function to process a single address
   const processAddress = async (address: string): Promise<StakingRewardInformation | null> => {
@@ -295,15 +294,15 @@ export const getPayoutsInformation = async (addresses: string[], chain: string):
  */
 export const getReferendasInformation = async (chain: string): Promise<ReferendaInformation[]> => {
   const results: ReferendaInformation[] = [];
-  // If the network is a migrated relay chain then there's no need to fetch received fund information on
-  const isMigrateRelayChain = isMigratedRelay(chain);
 
-  if (isMigrateRelayChain) {
-    return results;
-  }
+  // Handle migrated relay chains
+  const isMigrated = isMigratedRelay(chain);
+  const resolvedChain = isMigrated
+    ? relayToSystemChains[chain].assetHub
+    : chain;
 
-  const chainName = getChainName(chain);
-  const network = { text: getSubscanChainName(chainName), value: chain } as DropdownOption;
+  const chainName = getChainName(resolvedChain);
+  const network = { text: getSubscanChainName(chainName), value: resolvedChain } as DropdownOption;
 
   let REFERENDA_COUNT_TO_TRACK = 10; // default for testnets is 10
 
@@ -328,10 +327,11 @@ export const getReferendasInformation = async (chain: string): Promise<Referenda
       }
 
       if (!referendaInfo.data.list) {
-        break; // no referenda found
+        break; // no referenda found → break retry loop
       }
 
       results.push(transformReferendas(referendaInfo.data.list, network));
+      break; // success → break retry loop
     } catch (_error) {
       // lastError = error;
       // console.warn(`Attempt ${attempt} failed for ${network.text} (REFERENDA). Retrying...`);

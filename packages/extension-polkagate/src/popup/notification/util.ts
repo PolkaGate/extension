@@ -335,14 +335,14 @@ export function getNotificationDescription (item: NotificationMessageType, t: TF
 
     case 'referenda': {
       const statusMap: Record<string, string> = {
-        approved: t('{{chainName}} referendum #{{referendumIndex}} has been approved'),
-        cancelled: t('{{chainName}} referendum #{{referendumIndex}} has been cancelled'),
-        decision: t('{{chainName}} referendum #{{referendumIndex}} has been created'),
-        executed: t('{{chainName}} referendum #{{referendumIndex}} has been executed'),
-        ongoing: t('{{chainName}} referendum #{{referendumIndex}} has been created'),
-        rejected: t('{{chainName}} referendum #{{referendumIndex}} has been rejected'),
-        submitted: t('{{chainName}} referendum #{{referendumIndex}} has been submitted'),
-        timeout: t('{{chainName}} referendum #{{referendumIndex}} has timed out')
+        approved: '{{chainName}} referendum #{{referendumIndex}} has been approved',
+        cancelled: '{{chainName}} referendum #{{referendumIndex}} has been cancelled',
+        decision: '{{chainName}} referendum #{{referendumIndex}} has been created',
+        executed: '{{chainName}} referendum #{{referendumIndex}} has been executed',
+        ongoing: '{{chainName}} referendum #{{referendumIndex}} has been created',
+        rejected: '{{chainName}} referendum #{{referendumIndex}} has been rejected',
+        submitted: '{{chainName}} referendum #{{referendumIndex}} has been submitted',
+        timeout: '{{chainName}} referendum #{{referendumIndex}} has timed out'
       };
 
       const status = item.referenda?.status;
