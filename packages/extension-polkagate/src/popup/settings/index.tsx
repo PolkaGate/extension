@@ -14,7 +14,7 @@ import ActionRow from './partials/ActionRow';
 import Introduction from './partials/Introduction';
 import Socials from './partials/Socials';
 
-enum SETTING_PAGES {
+export enum SETTING_PAGES {
   ABOUT = 'about',
   ACCOUNT = 'account',
   EXTENSION = 'extension'
