@@ -8,7 +8,7 @@ import { CreateMLCEngine } from '@mlc-ai/web-llm';
 import { getStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-export const DEFAULT_MODEL_ID = 'Phi-3.5-mini-instruct-q4f16_1-MLC';
+export const DEFAULT_MODEL_ID = 'gemma-2-2b-it-q4f16_1-MLC';
 
 /**
  * Load the AI agent with the given model ID.
@@ -18,7 +18,7 @@ export async function loadAgent (engine?: MLCEngine | null, modelId?: string, pr
     if (!engine) {
         const selectedModelId = modelId ?? await getStorage(STORAGE_KEY.AI_MODEL_ID) as string ?? DEFAULT_MODEL_ID;
 
-        console.log(`Creating  the ai model ${selectedModelId} ...`);
+        console.log(`Loading the ai model ${selectedModelId} ...`);
 
         engine = await CreateMLCEngine(selectedModelId, {
             initProgressCallback: (progress) => {
@@ -37,24 +37,24 @@ const additionalRules = (section: string | undefined) => {
 
     if (SECTION === 'convictionvoting') {
         additionalRules = `
-            VOTE RULES:
-            - Vote type, vote value, referendum index, balance, token symbol, and decimal are the most important fields
-            - Vote interpretation:
-              * If vote_value is null → Abstain
-              * The vote is a single byte hex string. Determine vote by checking the most significant bit (0x80):
-              * If (vote_byte & 0x80) != 0 → Aye, else → Nay.
-            - The "balance" field represents voting balance/voting power assigned to this vote (NOT staked or locked amounts)
-            - Format: "You are voting [Aye/Nay/Abstain] on referenda [INDEX] using [FORMATTED_AMOUNT] [TOKEN] of voting balance assigned to this vote."
+            NOTES:
+                - Vote type, vote value, referendum index, balance, token symbol, and decimal are the most important fields
+                - Vote interpretation:
+                    * If vote_value is null → Abstain
+                    * The vote is a single byte hex string. Determine vote by checking the most significant bit (0x80):
+                    * If (vote_byte & 0x80) != 0 → Aye, else → Nay.
+                - The "balance" field represents voting balance/voting power assigned to this vote (NOT staked or locked amounts)
+                - Format: "You are voting [Aye/Nay/Abstain] on referenda [INDEX] using [FORMATTED_AMOUNT] [TOKEN] of voting balance assigned to this vote."
         `;
     } else if (SECTION === 'balances') {
         additionalRules = `
-            TRANSFER RULES:
-            - Format: "You are sending [FORMATTED_AMOUNT] [TOKEN] to [ADDRESS]"
+            NOTES:
+                - Format: "You are sending [FORMATTED_AMOUNT] [TOKEN] to [ADDRESS]"
         `;
     } else if (SECTION === 'staking' || SECTION === 'nominationpools') {
         additionalRules = `
-            STAKING RULES:
-            - Use phrases like: "You are bonding", "You are nominating", "You are unbonding", "You are withdrawing", "You are claiming rewards"
+            NOTES:
+                - Use phrases like: "You are bonding", "You are nominating", "You are unbonding", "You are withdrawing", "You are claiming rewards"
         `;
     }
 

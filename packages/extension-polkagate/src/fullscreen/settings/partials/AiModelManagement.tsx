@@ -18,13 +18,11 @@ interface Props {
 }
 
 const PREFERRED_AI_MODELS = [
-    { id: 'Phi-3.5-mini-instruct-q4f16_1-MLC', name: 'Phi 3.5 mini-3B (Recommended)' },
-    { id: 'Hermes-3-Llama-3.2-3B-q4f32_1-MLC', name: 'Hermes 3 Llama 3.2-3B (32)' },
-    { id: 'Hermes-3-Llama-3.2-3B-q4f16_1-MLC', name: 'Hermes 3 Llama 3.2-3B (16)' },
-    { id: 'SmolLM2-360M-Instruct-q4f16_1-MLC', name: 'SmolLM2-360M' },
-    { id: 'gemma-2-2b-it-q4f16_1-MLC', name: 'Gemma 2-2B' },
+    { id: 'gemma-2-2b-it-q4f16_1-MLC', name: 'Gemma 2 - 2B (Recommended)' },
+    { id: 'Phi-3.5-mini-instruct-q4f16_1-MLC', name: 'Phi 3.5 mini - 3B' },
     { id: 'Qwen3-4B-q4f16_1-MLC', name: 'Qwen3-4B' },
-    { id: 'Llama-3.2-3B-Instruct-q4f32_1-MLC', name: 'Llama 3.2-3B' }
+    { id: 'SmolLM2-360M-Instruct-q4f16_1-MLC', name: 'SmolLM2 - 360M' },
+    { id: 'Llama-3.2-3B-Instruct-q4f32_1-MLC', name: 'Llama 3.2 - 3B' }
 ];
 
 const BUTTONS_STYLE = { height: '44px', mt: '65px', width: '100%' };
