@@ -85,7 +85,7 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
             size={15}
             style={{ margin: 0 }}
             type='puffLoader'
-          />
+            />
         }
       </Stack>
     </MyTooltip>

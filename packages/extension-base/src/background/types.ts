@@ -232,7 +232,7 @@ export interface RequestAccountCreateHardware {
 }
 
 export interface RequestCreateAgent{
-  modelIndex?: number;
+  modelId?: string;
   progressCallback?: (progress: number) => void;
 }
 

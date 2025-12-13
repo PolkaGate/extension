@@ -8,14 +8,14 @@ import type { BN } from '@polkadot/util';
 
 import { Avatar, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
 import { ChainLogo, DecisionButtons, DisplayBalance, FormatPrice, Identity2, TwoToneText } from '../../../components';
 import { useAccountAssets, useAllChains, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useSelectedChains, useTokenPrice, useTranslation } from '../../../hooks';
-import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util';
-import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
+import { amountToHuman, getAndWatchStorage, getSubstrateAddress, isOnAssetHub } from '../../../util';
+import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, STORAGE_KEY } from '../../../util/constants';
 import { getValue } from '../../account/util';
 import { type Decoded, type ModeData, SIGN_POPUP_MODE } from '../types';
 import AiInsight from './AiInsight';
@@ -108,6 +108,14 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
   const chain = useMetadata(genesisHash);
   const { api, chainName, decimal, token } = useChainInfo(genesisHash);
 
+  const [enabled, setEnabled] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unsubscribe = getAndWatchStorage(STORAGE_KEY.AI_TX_INFO, setEnabled);
+
+    return () => unsubscribe();
+  }, []);
+
   const substrateAddress = getSubstrateAddress(address);
 
   const accountAssets = useAccountAssets(substrateAddress);
@@ -195,11 +203,12 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
             <Typography color='#674394' variant='B-2'>
               {t('Request content')}
             </Typography>
-            <AiInsight
-              decoded={decoded}
-              genesisHash={genesisHash}
-              url={url}
-            />
+            {enabled &&
+              <AiInsight
+                decoded={decoded}
+                genesisHash={genesisHash}
+                url={url}
+              />}
           </Stack>
           <RequestContent
             decoded={decoded}

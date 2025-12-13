@@ -77,8 +77,8 @@ export async function updateMeta (address: string, meta: string): Promise<boolea
   return sendMessage('pri(accounts.updateMeta)', { address, meta });
 }
 
-export async function loadAiAgent (modelIndex?: number, progressCallback?: (progress: number) => void): Promise<boolean> {
-  return sendMessage('pri(ai.agentLoad)', { modelIndex, progressCallback });
+export async function loadAiAgent (modelId?: string, progressCallback?: (progress: number) => void): Promise<boolean> {
+  return sendMessage('pri(ai.agentLoad)', { modelId, progressCallback });
 }
 
 export async function explainTransactionWithAi (txJson: unknown): Promise<string> {
