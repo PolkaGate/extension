@@ -91,6 +91,10 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
     const onDownloadAndApply = useCallback(() => {
         setStorage(STORAGE_KEY.AI_MODEL_ID, selectedModel).catch(console.error);
 
+        if (isModelInCache) {
+            return onClose();
+        }
+
         setProgress(0.0001); // start progress
 
         CreateMLCEngine(selectedModel, {
@@ -99,7 +103,7 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
                 progress && setProgress(progress);
             }
         }).catch(console.error);
-    }, [selectedModel]);
+    }, [isModelInCache, onClose, selectedModel]);
 
     return (
         <DraggableModal
