@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Option, u32, Vec } from '@polkadot/types';
+import type { Option, StorageKey, u32, Vec } from '@polkadot/types';
 import type { AccountId, Perbill } from '@polkadot/types/interfaces';
 // @ts-ignore
 import type { PalletStakingEraRewardPoints, PalletStakingValidatorPrefs, SpStakingExposurePage, SpStakingIndividualExposure, SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
@@ -17,6 +17,7 @@ import { useActiveEraIndex, useFormatted } from '.';
 
 export interface ValidatorDetailsType {
   commission: number;
+  commissionHint: string;
   decimal: number;
   isValidator: boolean;
   isElected: boolean;
@@ -44,13 +45,13 @@ export default function useValidatorDetails (address: string | undefined, genesi
     }
 
     (async () => {
-      const [elected, disabled, maybeOverview, intentions, rewardPoints, prefs] = await Promise.all([
+      const [elected, disabled, maybeOverview, intentions, rewardPoints, validatorPrefsEntries] = await Promise.all([
         relayChainApi.query['session']['validators']() as unknown as Vec<AccountId>,
         relayChainApi.query['session']['disabledValidators']() as unknown as Vec<ITuple<[u32, Perbill]>>,
         api.query['staking']['erasStakersOverview'](activeEraIndex, address) as unknown as Option<SpStakingPagedExposureMetadata>,
         api.query['staking']['validators'].keys(),
         api.query['staking']['erasRewardPoints'](activeEraIndex) as unknown as PalletStakingEraRewardPoints,
-        api.query['staking']['validators'](formatted) as unknown as PalletStakingValidatorPrefs
+        api.query['staking']['validators'].entries() as unknown as [StorageKey, PalletStakingValidatorPrefs][]
       ]);
 
       // Check if the given stashId is a validator
@@ -74,7 +75,7 @@ export default function useValidatorDetails (address: string | undefined, genesi
         ? maybeOverview.unwrap().toPrimitive() as { nominatorCount: number; pageCount: number; own: string; total: string; }
         : { nominatorCount: 0, own: '0', pageCount: 0, total: '0' };
 
-        const pageCount = overview?.pageCount;
+      const pageCount = overview?.pageCount;
 
       const entries = Array.from(rewardPoints.individual.entries()) as [AccountId, u32][];
 
@@ -102,10 +103,38 @@ export default function useValidatorDetails (address: string | undefined, genesi
         return acc;
       }, []);
 
-      const commission = prefs.commission.toNumber() / 10_000_000;
+      // Calculate average commission and commission hint
+      const commissions = validatorPrefsEntries.map(([, prefs]) => prefs.commission.toNumber() / 10_000_000);
+
+      commissions.sort((a, b) => a - b);
+      const commissionRaw = validatorPrefsEntries.find(([storageKey]) => storageKey.args[0].toString() === formatted)?.[1].commission;
+      const commission = commissionRaw ? commissionRaw.toNumber() / 10_000_000 : 0;
+
+      // Calculate percentile rank
+      const count = commissions.length;
+      let rank = 0;
+
+      for (let i = 0; i < count; i++) {
+        if (commissions[i] <= commission) {
+          rank = i + 1;
+        } else {
+          break;
+        }
+      }
+
+      const percentile = (rank / count) * 100;
+
+      let commissionHint = '';
+
+      if (percentile >= 50) {
+        commissionHint = `higher than ${Math.round(percentile)}% of validators`;
+      } else {
+        commissionHint = `lower than ${Math.round(100 - percentile)}% of validators`;
+      }
 
       setValidatorInfo({
         commission,
+        commissionHint,
         decimal,
         isDisabled,
         isElected,

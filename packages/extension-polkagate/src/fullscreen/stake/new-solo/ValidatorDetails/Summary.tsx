@@ -5,10 +5,10 @@ import type { EraInfo } from '@polkadot/extension-polkagate/src/hooks/useSoloSta
 import type { ValidatorDetailsType } from '@polkadot/extension-polkagate/src/hooks/useValidatorDetails';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import { Award, Crown, type IconProps } from 'iconsax-react';
+import { Award, Crown, type IconProps, InfoCircle, Information } from 'iconsax-react';
 import React from 'react';
 
-import { DisplayBalance, MySkeleton } from '@polkadot/extension-polkagate/src/components';
+import { DisplayBalance, MySkeleton, MyTooltip } from '@polkadot/extension-polkagate/src/components';
 import { remainingTimeCountDown } from '@polkadot/extension-polkagate/src/util';
 
 import { useChainInfo, useTranslation } from '../../../../hooks';
@@ -20,8 +20,10 @@ interface Props {
   genesisHash: string | undefined;
 }
 
-function Item ({ decimal, skeletonWidth = 60, title, token, value }:
-  { decimal?: number, skeletonWidth?: number, title: string, token?: string, value: string | number | undefined }): React.ReactElement {
+function Item ({ decimal, hint, skeletonWidth = 60, title, token, value }:
+  { decimal?: number, hint?: string, skeletonWidth?: number, title: string, token?: string, value: string | number | undefined }): React.ReactElement {
+  const theme = useTheme();
+
   return (
     <Grid alignContent='center' alignItems='center' item sx={{ display: 'flex', flexWrap: 'nowrap' }}>
       <Typography color='text.secondary' sx={{ mr: '5px', whiteSpace: 'nowrap' }} textAlign='left' variant='B-2'>
@@ -40,6 +42,10 @@ function Item ({ decimal, skeletonWidth = 60, title, token, value }:
             : <MySkeleton bgcolor='#AA83DC26' height={15} width={skeletonWidth} />
         }
       </Typography>
+      {hint &&
+        <MyTooltip content={hint}>
+          <InfoCircle color={theme.palette.primary.main} size='16' variant='Bold' />
+        </MyTooltip>}
     </Grid>
   );
 }
@@ -50,7 +56,7 @@ export default function Summary ({ details, eraInfo, genesisHash }: Props): Reac
 
   const { decimal, token } = useChainInfo(genesisHash);
 
-  const { commission, isElected, rewardPoint, total } = details ?? {};
+  const { commission, commissionHint, isElected, rewardPoint, total } = details ?? {};
 
   const Icon = isElected
     ? {
@@ -92,6 +98,7 @@ export default function Summary ({ details, eraInfo, genesisHash }: Props): Reac
           value={total}
         />
         <Item
+          hint={commissionHint}
           skeletonWidth={30}
           title={t('Commission')}
           value={commission !== undefined ? `${commission}%` : undefined}
