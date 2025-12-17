@@ -1,6 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { EraInfo } from '@polkadot/extension-polkagate/src/hooks/useSoloStakingInfo';
 import type { ValidatorDetailsType } from '@polkadot/extension-polkagate/src/hooks/useValidatorDetails';
 
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -8,11 +9,14 @@ import { Award, Crown, type IconProps } from 'iconsax-react';
 import React from 'react';
 
 import { DisplayBalance, MySkeleton } from '@polkadot/extension-polkagate/src/components';
+import { remainingTimeCountDown } from '@polkadot/extension-polkagate/src/util';
 
 import { useChainInfo, useTranslation } from '../../../../hooks';
+import CircularProgressWithLabel from './CircularProgressWithLabel';
 
 interface Props {
   details: ValidatorDetailsType | undefined;
+  eraInfo: EraInfo | undefined;
   genesisHash: string | undefined;
 }
 
@@ -20,10 +24,10 @@ function Item ({ decimal, skeletonWidth = 60, title, token, value }:
   { decimal?: number, skeletonWidth?: number, title: string, token?: string, value: string | number | undefined }): React.ReactElement {
   return (
     <Grid alignContent='center' alignItems='center' item sx={{ display: 'flex', flexWrap: 'nowrap' }}>
-      <Typography color='#BEAAD8' sx={{ mr: '5px', whiteSpace: 'nowrap' }} textAlign='left' variant='B-2'>
+      <Typography color='text.secondary' sx={{ mr: '5px', whiteSpace: 'nowrap' }} textAlign='left' variant='B-2'>
         {title}
       </Typography>
-      <Typography color='#AA83DC' sx={{ alignItems: 'center', bgcolor: '#AA83DC26', borderRadius: '1024px', display: 'flex', height: '19px', px: value != null ? '10px' : 0 }} variant='B-2'>
+      <Typography color='#AA83DC' sx={{ alignItems: 'center', bgcolor: '#AA83DC26', borderRadius: '1024px', display: 'flex', height: '19px', px: value != null ? '10px' : 0 }} variant='B-1'>
         {decimal && token
           ? <DisplayBalance
             balance={value as string}
@@ -40,7 +44,7 @@ function Item ({ decimal, skeletonWidth = 60, title, token, value }:
   );
 }
 
-export default function Summary ({ details, genesisHash }: Props): React.ReactElement {
+export default function Summary ({ details, eraInfo, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -92,6 +96,13 @@ export default function Summary ({ details, genesisHash }: Props): React.ReactEl
           title={t('Commission')}
           value={commission !== undefined ? `${commission}%` : undefined}
         />
+        <Grid alignItems='center' columnGap='10px' container direction='row' item sx={{ width: 'fit-content' }}>
+          <Item
+            title={t('Era Progress')}
+            value={eraInfo?.activeEraDuration ? remainingTimeCountDown(eraInfo.activeEraDuration / 1_000) : undefined}
+          />
+          <CircularProgressWithLabel size={50} value={eraInfo?.progressPercent ?? 0} variant={eraInfo?.progressPercent ? 'determinate' : 'indeterminate'} />
+        </Grid>
       </Grid>
     </Grid>
   );

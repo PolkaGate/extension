@@ -22,10 +22,12 @@ import useStakingRewardDestinationAddress from './useStakingRewardDestinationAdd
 import { useEraInfo, useIsValidator } from '.';
 
 export interface EraInfo {
+  activeEra: number; // Active era number
+  activeEraDuration: number; // Active era number
   blockTime: number; // usually 6 sec
   eraLength: number; // Length of an era in blocks
   eraProgress: number; // Current progress within the era
-  activeEra: number; // Active era number
+  progressPercent: number; // Active era number
 }
 
 export interface DateAmount {
@@ -41,6 +43,7 @@ export interface UnstakingType {
 
 export interface SoloStakingInfo {
   availableBalanceToStake: BN | undefined; // Amount available for staking
+  eraInfo: EraInfo | undefined;
   rewardDestinationAddress: string | undefined; // Address for rewards
   rewards: BN | undefined; // Total rewards earned
   sessionInfo: UnstakingType | undefined; // Information about unstaking and release dates
@@ -285,8 +288,9 @@ export default function useSoloStakingInfo (address: string | undefined, genesis
   return useMemo(
     () => ({
       ...(soloStakingInfo || soloStakingInfoStorage || DEFAULT_VALUE),
+      eraInfo,
       isValidator
     }),
-    [isValidator, soloStakingInfo, soloStakingInfoStorage]
+    [eraInfo, isValidator, soloStakingInfo, soloStakingInfoStorage]
   );
 }

@@ -1,9 +1,10 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Option } from '@polkadot/types';
-//@ts-ignore
+import type { Option, u32 } from '@polkadot/types';
+// @ts-ignore
 import type { PalletStakingActiveEraInfo } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
 import type { EraInfo } from './useSoloStakingInfo';
 
 import { useEffect, useState } from 'react';
@@ -17,37 +18,61 @@ import useChainInfo from './useChainInfo';
 export default function useEraInfo (genesisHash: string | null | undefined): EraInfo | undefined {
   const relayGenesisHash = mapHubToRelay(genesisHash);
   const { api } = useChainInfo(genesisHash);
-  const { api: relayChainApi } = useChainInfo(relayGenesisHash);
+  const { api: rcApi } = useChainInfo(relayGenesisHash);
 
   const [info, setInfo] = useState<EraInfo | undefined>(undefined);
 
   useEffect(() => {
-    if (!relayChainApi || !genesisHash || !api) {
+    if (!rcApi || !genesisHash || !api) {
       setInfo(undefined);
 
       return;
     }
 
     (async () => {
-      const relaySessionProgress = await relayChainApi.derive.session.progress();
-      const activeEra = (await api.query['staking']['activeEra']()) as Option<PalletStakingActiveEraInfo>;
-      const activeEraIndex = activeEra.unwrapOr({ index: BN_ZERO }).index;
+      const activeEraRaw = (await api.query['staking']['activeEra']()) as Option<PalletStakingActiveEraInfo>;
 
-      const expectedBlockTime = relayChainApi.consts['babe']['expectedBlockTime'];
+      const { index, start } = activeEraRaw.unwrap();
+
+      const activeEraIndex = index.toNumber();
+      const activeEraStart = start.isSome ? start.unwrap().toNumber() : 0;
+
+      const sessionsPerEra = (rcApi.consts['staking']['sessionsPerEra'] as unknown as BN).toNumber();
+      const sessionLength = (rcApi.consts['babe']['epochDuration'] as unknown as BN).toNumber(); // in blocks
+      const currentSessionIndex = (await rcApi.query['session']['currentIndex']() as unknown as BN).toNumber();
+
+      const expectedBlockTime = rcApi.consts['babe']?.['expectedBlockTime'] ||
+        (rcApi.consts['timestamp']?.['minimumPeriod'] as unknown as BN).muln(2);
+
       const blockTime = expectedBlockTime ? toBN(expectedBlockTime).toNumber() / 1000 : 6;
 
-      const { currentIndex, eraLength, sessionLength, sessionProgress, sessionsPerEra } = relaySessionProgress;
-      const currentEraSessionIndex = Number(currentIndex) % (Number(sessionsPerEra));
-      const eraProgress = Math.max(0, currentEraSessionIndex) * Number(sessionLength) + Number(sessionProgress);
+      const eraLength = sessionsPerEra * sessionLength;
+
+      const bondedEras = (await api.query['staking']['bondedEras']()) as unknown as [u32, u32][];
+      const activeEraStartSessionIndex = (bondedEras.find(([e]) => e.eqn(activeEraIndex))?.[1] ?? BN_ZERO).toNumber();
+
+      // const lastSessionReportEndIndex = await api.query['stakingRcClient']['lastSessionReportEndingIndex']() as Option<BlockNumber>;
+      // const lastSessionIndex = lastSessionReportEndIndex.isSome ? lastSessionReportEndIndex.unwrap().toNumber() + 1 : 0;
+
+      const currentBlock = (await rcApi.rpc.chain.getHeader()).number.toNumber();
+      const sessionProgress = currentBlock % sessionLength;
+      const currentEraSessionIndex = currentSessionIndex - activeEraStartSessionIndex;
+
+      const eraProgress = currentEraSessionIndex * sessionLength + sessionProgress;
+
+      const activeEraDuration = Date.now() - activeEraStart;
+      const progressPercent = activeEraDuration / (eraLength * blockTime * 10);
 
       setInfo({
         activeEra: Number(activeEraIndex),
+        activeEraDuration,
         blockTime,
-        eraLength: Number(eraLength),
-        eraProgress
+        eraLength,
+        eraProgress,
+        progressPercent
       } as EraInfo);
     })().catch(console.error);
-  }, [api, genesisHash, relayChainApi]);
+  }, [api, genesisHash, rcApi]);
 
   return info;
 }
