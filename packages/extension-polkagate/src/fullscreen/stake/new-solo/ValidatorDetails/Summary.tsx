@@ -106,9 +106,13 @@ export default function Summary ({ details, eraInfo, genesisHash }: Props): Reac
         <Grid alignItems='center' columnGap='10px' container direction='row' item sx={{ width: 'fit-content' }}>
           <Item
             title={t('Era Progress')}
-            value={eraInfo?.activeEraDuration ? remainingTimeCountDown(eraInfo.activeEraDuration / 1_000) : undefined}
+            value={eraInfo?.activeEraDuration ? remainingTimeCountDown(eraInfo.activeEraDuration / 1_000, false) : undefined}
           />
-          <CircularProgressWithLabel size={50} value={eraInfo?.progressPercent ?? 0} variant={eraInfo?.progressPercent ? 'determinate' : 'indeterminate'} />
+          <CircularProgressWithLabel
+          size={50}
+          value={eraInfo?.progressPercent ?? 0}
+          variant={eraInfo?.progressPercent ? 'determinate' : 'indeterminate'}
+          />
         </Grid>
       </Grid>
     </Grid>
