@@ -24,14 +24,15 @@ export default function ValidatorDetails ({ address, eraInfo, genesisHash }: Pro
   return (
     <Motion>
       <Stack direction='column' sx={{ width: '100%' }}>
-          <Summary
-            details={details}
-            eraInfo={eraInfo}
-            genesisHash={genesisHash}
-          />
+        <Summary
+          details={details}
+          eraInfo={eraInfo}
+          genesisHash={genesisHash}
+        />
         <Nominators
           genesisHash={genesisHash}
           nominators={details?.nominators}
+          total={details?.total}
         />
       </Stack>
     </Motion>
