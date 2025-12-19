@@ -5,7 +5,7 @@ import type { EraInfo } from '@polkadot/extension-polkagate/src/hooks/useSoloSta
 import type { ValidatorDetailsType } from '@polkadot/extension-polkagate/src/hooks/useValidatorDetails';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import { Award, Crown, type IconProps, InfoCircle, Information } from 'iconsax-react';
+import { Award, type IconProps, InfoCircle, Star1 } from 'iconsax-react';
 import React from 'react';
 
 import { DisplayBalance, MySkeleton, MyTooltip } from '@polkadot/extension-polkagate/src/components';
@@ -61,17 +61,17 @@ export default function Summary ({ details, eraInfo, genesisHash }: Props): Reac
   const Icon = isElected
     ? {
       color: theme.palette.success.main,
-      icon: Crown,
+      icon: Star1,
       size: 21,
       text: t('Active'),
-      variant: 'Bold'
+      variant: 'Bulk'
     }
     : {
       color: theme.palette.text.disabled,
       icon: Award,
       size: 25,
       text: t('Waiting'),
-      variant: 'Outline'
+      variant: 'Bulk'
     };
 
   return (
