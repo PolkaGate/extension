@@ -35,7 +35,7 @@ export default function useEraInfo (genesisHash: string | null | undefined): Era
       const { index, start } = activeEraRaw.unwrap();
 
       const activeEraIndex = index.toNumber();
-      const activeEraStart = start.isSome ? start.unwrap().toNumber() : 0;
+      const activeEraStart = start.isSome ? start.unwrap().toNumber() : Date.now();
 
       const sessionsPerEra = (rcApi.consts['staking']['sessionsPerEra'] as unknown as BN).toNumber();
       const sessionLength = (rcApi.consts['babe']['epochDuration'] as unknown as BN).toNumber(); // in blocks
@@ -61,7 +61,7 @@ export default function useEraInfo (genesisHash: string | null | undefined): Era
       const eraProgress = currentEraSessionIndex * sessionLength + sessionProgress;
 
       const activeEraDuration = Date.now() - activeEraStart;
-      const progressPercent = activeEraDuration / (eraLength * blockTime * 10);
+      const progressPercent = activeEraDuration / (eraLength * blockTime * 10); // *1/10= *100/1000
 
       setInfo({
         activeEra: Number(activeEraIndex),

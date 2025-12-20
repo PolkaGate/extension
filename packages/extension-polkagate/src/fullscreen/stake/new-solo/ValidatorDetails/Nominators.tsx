@@ -38,6 +38,10 @@ const NominatorItem = ({ genesisHash, nominator, total }: NominatorItemProps) =>
   const [accountInfo, setAccountInfo] = useState<DeriveAccountRegistration | undefined>(undefined);
 
   const share = useMemo(() => {
+    if (!total) {
+       return undefined;
+    }
+
     const PRECISION = 1_00;
     const myShareBN = toBN(nominator.value).muln(100 * PRECISION).div(toBN((total)));
 
@@ -68,7 +72,7 @@ const NominatorItem = ({ genesisHash, nominator, total }: NominatorItemProps) =>
           />
           <InfoWithIcons
             StartIcon={PercentageSquare}
-            text={share ? `${share}%` : undefined}
+            text={share !== undefined ? `${share}%` : undefined}
             title={t('Share')}
             width='180px'
           />
