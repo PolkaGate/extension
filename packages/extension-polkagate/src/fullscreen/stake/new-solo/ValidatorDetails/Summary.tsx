@@ -43,7 +43,7 @@ function Item ({ decimal, hint, skeletonWidth = 60, title, token, value }:
         }
       </Typography>
       {hint &&
-        <MyTooltip content={hint}>
+        <MyTooltip content={hint} placement='top'>
           <InfoCircle color={theme.palette.primary.main} size='16' variant='Bold' />
         </MyTooltip>}
     </Grid>
