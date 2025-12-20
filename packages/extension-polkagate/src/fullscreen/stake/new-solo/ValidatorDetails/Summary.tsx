@@ -112,7 +112,7 @@ export default function Summary ({ details, eraInfo, genesisHash }: Props): Reac
           <CircularProgressWithLabel
             size={50}
             value={eraInfo?.progressPercent ?? 0}
-            variant={eraInfo?.progressPercent ? 'determinate' : 'indeterminate'}
+            variant={eraInfo?.progressPercent !== undefined ? 'determinate' : 'indeterminate'}
           />
         </Grid>
       </Grid>
