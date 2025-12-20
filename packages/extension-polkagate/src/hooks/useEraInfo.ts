@@ -32,6 +32,12 @@ export default function useEraInfo (genesisHash: string | null | undefined): Era
     (async () => {
       const activeEraRaw = (await api.query['staking']['activeEra']()) as Option<PalletStakingActiveEraInfo>;
 
+      if (activeEraRaw.isNone) {
+        console.warn('Active era not available');
+
+        return;
+      }
+
       const { index, start } = activeEraRaw.unwrap();
 
       const activeEraIndex = index.toNumber();
