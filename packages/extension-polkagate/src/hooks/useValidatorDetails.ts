@@ -1,15 +1,16 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Option, u32, Vec } from '@polkadot/types';
+import type { ApiPromise } from '@polkadot/api';
+import type { Option, StorageKey, u32, Vec } from '@polkadot/types';
 import type { AccountId, Perbill } from '@polkadot/types/interfaces';
 // @ts-ignore
 import type { PalletStakingEraRewardPoints, PalletStakingValidatorPrefs, SpStakingExposurePage, SpStakingIndividualExposure, SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
-import type { ITuple } from '@polkadot/types-codec/types';
+import type { AnyTuple, ITuple } from '@polkadot/types-codec/types';
 
 import { useEffect, useState } from 'react';
 
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 import { mapHubToRelay } from '../util/migrateHubUtils';
 import useChainInfo from './useChainInfo';
@@ -17,106 +18,178 @@ import { useActiveEraIndex, useFormatted } from '.';
 
 export interface ValidatorDetailsType {
   commission: number;
+  commissionHint: string;
   decimal: number;
   isValidator: boolean;
   isElected: boolean;
   isDisabled: boolean;
   nominators: SpStakingIndividualExposure[];
   rewardPoint: BN;
+  rewardPointHint: string;
   token: string;
   nominatorCount: number;
   own: string;
   total: string;
 }
 
+function percentileFromIndex (index: number, total: number) {
+  return index >= 0 && total ? ((index + 1) / total) * 100 : 0;
+}
+
+function getCommission (validatorPrefsEntries: [StorageKey<AnyTuple>, PalletStakingValidatorPrefs][], formattedId: AccountId): { commission: number; commissionHint: string; } {
+  const normalizedCommissions = validatorPrefsEntries
+    .map(([storageKey, prefs]) => ({
+      accountId: storageKey.args[0],
+      commission: prefs.commission.toNumber() / 10_000_000
+    }))
+    .sort((a, b) => a.commission - b.commission);
+
+  const commissionIndex = normalizedCommissions.findIndex(
+    ({ accountId }) => accountId.eq(formattedId)
+  );
+
+  const commission =
+    commissionIndex >= 0
+      ? normalizedCommissions[commissionIndex].commission
+      : 0;
+
+  const totalValidators = normalizedCommissions.length;
+  const commissionPercentile = percentileFromIndex(commissionIndex, totalValidators);
+
+  const commissionHint =
+    commissionPercentile >= 50
+      ? `Higher than ${Math.round(commissionPercentile)}% of validators`
+      : `Lower than ${Math.round(100 - commissionPercentile)}% of validators`;
+
+  return { commission, commissionHint };
+}
+
+function getRewardsPoints (rewardPoints: PalletStakingEraRewardPoints, formattedId: AccountId): { rewardPoint: BN; rewardPointHint: string; } {
+  const entries = Array.from(rewardPoints.individual.entries()) as [AccountId, u32][];
+
+  const normalizedRewardPoints = entries
+    .map(([accountId, points]) => ({
+      accountId,
+      points: points.toNumber()
+    }))
+    .filter(({ points }) => points > 0)
+    .sort((a, b) => a.points - b.points);
+
+  const rewardPointIndex = normalizedRewardPoints.findIndex(
+    ({ accountId }) => accountId.eq(formattedId)
+  );
+
+  const rewardPoint =
+    rewardPointIndex >= 0
+      ? new BN(normalizedRewardPoints[rewardPointIndex].points)
+      : BN_ZERO;
+
+  const rpCount = normalizedRewardPoints.length;
+  const rewardPointPercentile = percentileFromIndex(rewardPointIndex, rpCount);
+
+  const rewardPointHint =
+    rewardPointPercentile >= 50
+      ? `Higher than ${Math.round(rewardPointPercentile)}% of validators this era`
+      : `Lower than ${Math.round(100 - rewardPointPercentile)}% of validators this era`;
+
+  return { rewardPoint, rewardPointHint };
+}
+
+async function getNominators (activeEraIndex: number, address: string, api: ApiPromise, overview: { nominatorCount: number; pageCount: number; own: string; total: string; }): Promise<SpStakingIndividualExposure[]> {
+  const pageCount = overview?.pageCount;
+  const maybePages = pageCount
+    ? await Promise.all(
+      Array.from({ length: pageCount }).map((_, index) =>
+        api.query['staking']['erasStakersPaged'](activeEraIndex, address, index) as unknown as Option<SpStakingExposurePage>
+      )
+    )
+    : [];
+
+  return maybePages.reduce((acc: SpStakingIndividualExposure[], maybePage) => {
+    if (maybePage.isSome) {
+      const page = maybePage.unwrap();
+
+      if (page.others && Array.isArray(page.others)) {
+        acc.push(...page.others);
+      }
+    }
+
+    return acc;
+  }, []);
+}
+
+async function fetchValidatorContext (activeEraIndex: number, address: string, api: ApiPromise, rcApi: ApiPromise) {
+  return await Promise.all([
+    rcApi.query['session']['validators']() as unknown as Vec<AccountId>,
+    rcApi.query['session']['disabledValidators']() as unknown as Vec<ITuple<[u32, Perbill]>>,
+    api.query['staking']['erasStakersOverview'](activeEraIndex, address) as unknown as Option<SpStakingPagedExposureMetadata>,
+    api.query['staking']['validators'].keys(),
+    api.query['staking']['erasRewardPoints'](activeEraIndex) as unknown as PalletStakingEraRewardPoints,
+    api.query['staking']['validators'].entries() as unknown as [StorageKey, PalletStakingValidatorPrefs][]
+  ]);
+}
+
 export default function useValidatorDetails (address: string | undefined, genesisHash: string | undefined): ValidatorDetailsType | undefined {
   const { api, decimal, token } = useChainInfo(genesisHash);
-  const relayGenesisHash = mapHubToRelay(genesisHash);
-  const { api: relayChainApi } = useChainInfo(relayGenesisHash);
+  const rcGenesis = mapHubToRelay(genesisHash);
+  const { api: rcApi } = useChainInfo(rcGenesis);
   const formatted = useFormatted(address, genesisHash);
 
   const activeEraIndex = useActiveEraIndex(genesisHash);
   const [validatorInfo, setValidatorInfo] = useState<ValidatorDetailsType>();
 
   useEffect(() => {
-    if (!api || !formatted || !relayChainApi || !decimal || !token || !activeEraIndex) {
+    if (!address || !api || !formatted || !rcApi || !decimal || !token || !activeEraIndex) {
       return;
     }
 
+    const formattedId = api.createType('AccountId', formatted) as unknown as AccountId;
+
     (async () => {
-      const [elected, disabled, maybeOverview, intentions, rewardPoints, prefs] = await Promise.all([
-        relayChainApi.query['session']['validators']() as unknown as Vec<AccountId>,
-        relayChainApi.query['session']['disabledValidators']() as unknown as Vec<ITuple<[u32, Perbill]>>,
-        api.query['staking']['erasStakersOverview'](activeEraIndex, address) as unknown as Option<SpStakingPagedExposureMetadata>,
-        api.query['staking']['validators'].keys(),
-        api.query['staking']['erasRewardPoints'](activeEraIndex) as unknown as PalletStakingEraRewardPoints,
-        api.query['staking']['validators'](formatted) as unknown as PalletStakingValidatorPrefs
-      ]);
+      const [elected, disabled, maybeOverview, intentions, rewardPoints, validatorPrefsEntries] = await fetchValidatorContext(activeEraIndex, address, api, rcApi);
 
-      // Check if the given stashId is a validator
-      const isValidator = intentions
-        .map(({ args }: { args: any[] }) => args[0].toString())
-        .includes(formatted);
+      const isValidator = !!intentions
+        .find(({ args }: { args: any[] }) => (args[0] as AccountId).eq(formattedId));
 
-      // If isActive = true
-      //   If isDisabled = true → ❌ “This validator was offline and penalized this session.”
-      //   Else → 🟢 “This validator is producing blocks normally.”
-      // Else
-      //   Ignore disabledValidators entirely
+      const validatorIndex = elected.findIndex((v: AccountId) => v.eq(formattedId));
+      const isElected = validatorIndex !== -1;
 
-      const isElected = elected.some((v: AccountId) => v.toString() === formatted);
-      const index = elected.findIndex((v: AccountId) => v.toString() === formatted);
-      const isDisabled = disabled.some(([validatorIndex]: [u32, Perbill]) =>
-        validatorIndex.toNumber() === index
-      );
+      const isDisabled = isElected &&
+        disabled.some(([index]: [u32, Perbill]) =>
+          index.toNumber() === validatorIndex
+        );
 
       const overview = maybeOverview.isSome
         ? maybeOverview.unwrap().toPrimitive() as { nominatorCount: number; pageCount: number; own: string; total: string; }
         : { nominatorCount: 0, own: '0', pageCount: 0, total: '0' };
 
-        const pageCount = overview?.pageCount;
+      const nominators = overview.nominatorCount > 0
+        ? await getNominators(activeEraIndex, address, api, overview)
+        : [];
 
-      const entries = Array.from(rewardPoints.individual.entries()) as [AccountId, u32][];
+      const { rewardPoint, rewardPointHint } = isElected
+        ? getRewardsPoints(rewardPoints, formattedId)
+        : { rewardPoint: BN_ZERO, rewardPointHint: '' };
 
-      const rewardPointEntry = entries.find(([accountId]) =>
-        accountId.toString() === formatted
-      );
-
-      const rewardPoint = new BN(rewardPointEntry?.[1] ?? 0);
-
-      const maybePages = await Promise.all(
-        Array.from({ length: pageCount }).map((_, index) =>
-          api.query['staking']['erasStakersPaged'](activeEraIndex, address, index) as unknown as Option<SpStakingExposurePage>
-        )
-      );
-
-      const nominators: SpStakingIndividualExposure[] = maybePages.reduce((acc: SpStakingIndividualExposure[], maybePage) => {
-        if (maybePage.isSome) {
-          const page = maybePage.unwrap();
-
-          if (page.others && Array.isArray(page.others)) {
-            acc.push(...page.others);
-          }
-        }
-
-        return acc;
-      }, []);
-
-      const commission = prefs.commission.toNumber() / 10_000_000;
+      const { commission, commissionHint } = isValidator
+        ? getCommission(validatorPrefsEntries, formattedId)
+        : { commission: 0, commissionHint: '' };
 
       setValidatorInfo({
         commission,
+        commissionHint,
         decimal,
         isDisabled,
         isElected,
         isValidator,
         rewardPoint,
+        rewardPointHint: rewardPoint.isZero() ? '' : rewardPointHint,
         token,
         ...overview,
         nominators
       });
     })().catch(console.error);
-  }, [address, api, activeEraIndex, decimal, formatted, relayChainApi, token]);
+  }, [address, api, activeEraIndex, decimal, formatted, rcApi, token]);
 
   return validatorInfo;
 }

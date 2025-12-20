@@ -71,7 +71,9 @@ function SelectAccount ({ onAccounts, onClose, open, previousState }: Props): Re
     >
       <Stack direction='column' sx={{ gap: '12px', position: 'relative', zIndex: 1 }}>
         <Typography color='text.secondary' variant='B-4'>
-          {t('Select up to 3 accounts to be notified when account activity')}
+          {t('Select up to {{count}} accounts for activity notifications', {
+            replace: { count: MAX_ACCOUNT_COUNT_NOTIFICATION }
+          })}
         </Typography>
         <GradientDivider />
         <Stack direction='column' sx={{ gap: '10px', height: '330px', maxHeight: '330px', overflowY: 'auto', px: '6px' }}>

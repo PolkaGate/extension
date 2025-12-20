@@ -22,6 +22,7 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
       {stakingInfo?.isValidator
         ? <ValidatorDetails
           address={address}
+          eraInfo = {stakingInfo?.eraInfo}
           genesisHash={genesisHash}
           />
         : <Nominations
