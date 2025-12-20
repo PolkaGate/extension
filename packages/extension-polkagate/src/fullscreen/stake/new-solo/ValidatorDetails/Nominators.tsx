@@ -122,10 +122,10 @@ export default function Nominators ({ genesisHash, nominators, total }: Props) {
       />
       <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={open} sx={{ height: 'fit-content', minHeight: 'auto' }}>
         <Grid container>
-          <Stack direction='column' ref={refContainer} sx={{ gap: '4px', maxHeight: 'calc(100vh - 613px)', minHeight: '220px', overflow: 'auto', position: 'relative', width: '95%' }}>
+          <Stack direction='column' ref={refContainer} sx={{ gap: '4px', maxHeight: 'calc(100vh - 613px)', minHeight: '220px', overflow: 'auto', position: 'relative', width: '98%' }}>
             {!!nominators?.length &&
               <Line
-                height={45 * nominators?.length}
+                height={(48 * (nominators.length - 1))}
               />
             }
             {!nominators &&
