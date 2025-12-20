@@ -40,7 +40,7 @@ const notificationReducer = (
       return action.payload;
 
     case 'SET_MESSAGES':
-      return { ...state, notificationMessages: filterMessages(state.notificationMessages, action.payload) };
+      return { ...state, isFirstTime: false, notificationMessages: filterMessages(state.notificationMessages, action.payload) };
 
     default:
       return state;
@@ -291,9 +291,9 @@ export default function useNotifications (justLoadData = true) {
 
   const notificationItems = useMemo(() => groupNotificationsByDay(notifications.notificationMessages), [notifications.notificationMessages]);
 
-  const isNotificationOff = useMemo(() => !notificationSetting.enable && !notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
-  const isFirstTime = useMemo(() => !notificationSetting.enable && notifications.isFirstTime, [notificationSetting.enable, notifications.isFirstTime]);
-  const noNotificationYet = useMemo(() => notificationSetting.enable && !isFirstTime && notifications.notificationMessages?.length === 0, [isFirstTime, notificationSetting.enable, notifications.notificationMessages?.length]);
+  const isNotificationOff = useMemo(() => notificationIsOff && !notifications.isFirstTime, [notificationIsOff, notifications.isFirstTime]);
+  const isFirstTime = useMemo(() => !notificationIsOff && notifications.isFirstTime, [notificationIsOff, notifications.isFirstTime]);
+  const noNotificationYet = useMemo(() => notificationIsOff && !isFirstTime && notifications.notificationMessages?.length === 0, [isFirstTime, notificationIsOff, notifications.notificationMessages?.length]);
 
   const loading = useMemo(() => {
     if (isNotificationOff || isFirstTime || notificationItems || noNotificationYet) {
@@ -301,7 +301,7 @@ export default function useNotifications (justLoadData = true) {
     }
 
     return true;
-  }, [isFirstTime, isNotificationOff, noNotificationYet, notificationItems]);
+  }, [isNotificationOff, isFirstTime, notificationItems, noNotificationYet]);
 
   const status = useMemo(() => ({
     isFirstTime,

@@ -40,7 +40,7 @@ function Notification ({ handleClose }: Props) {
     >
       <>
         <Container disableGutters ref={refContainer} sx={{ display: 'grid', gap: '4px', maxHeight: '490px', overflowY: 'auto', p: '10px', pb: 0, width: '100%' }}>
-          {notificationItems && Object.entries(notificationItems).map(([dateKey, items]) => (
+          {!status.isNotificationOff && notificationItems && Object.entries(notificationItems).map(([dateKey, items]) => (
             <NotificationGroup
               group={[dateKey, items]}
               key={dateKey}
