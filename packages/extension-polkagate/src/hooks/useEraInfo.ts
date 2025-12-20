@@ -88,7 +88,9 @@ export default function useEraInfo (genesisHash: string | null | undefined): Era
         blockTime,
         eraLength,
         eraProgress,
-        progressPercent
+        progressPercent,
+        sessionLength,
+        sessionProgress
       } as EraInfo);
     })().catch(console.error);
   }, [api, genesisHash, rcApi]);

@@ -2,11 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-ignore
-import type { DeriveSessionProgress } from '@polkadot/api-derive/types';
-import type { Forcing } from '@polkadot/types/interfaces';
-// @ts-ignore
 import type { PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
-import type { ExpandedRewards } from '../fullscreen/stake/type';
 import type { Content } from '../partials/Review';
 import type { MyPoolInfo, PoolInfo } from '../util/types';
 
@@ -20,15 +16,13 @@ import { getValue } from '../popup/account/util';
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../popup/staking/partial/PoolFilter';
 import { type RolesState, updateRoleReducer } from '../popup/staking/pool-new/createPool/UpdateRoles';
 import { getStakingAsset } from '../popup/staking/utils';
-import { amountToHuman, amountToMachine, blockToDate, calcPrice, isHexToBn, safeSubtraction } from '../util';
+import { amountToHuman, amountToMachine, calcPrice, isHexToBn, safeSubtraction } from '../util';
 import { DATE_OPTIONS, POLKAGATE_POOL_IDS } from '../util/constants';
 import useAccountAssets from './useAccountAssets';
 import useChainInfo from './useChainInfo';
-import useCurrentBlockNumber from './useCurrentBlockNumber';
 import useEstimatedFee from './useEstimatedFee';
 import useFormatted from './useFormatted';
 import useIsExposed from './useIsExposed';
-import usePendingRewards from './usePendingRewards';
 import usePool from './usePool';
 import usePoolConst from './usePoolConst';
 import usePoolStakingInfo from './usePoolStakingInfo';
@@ -1369,159 +1363,6 @@ export const useEasyStake = (
     setSide,
     side,
     stakingConsts,
-    transactionInformation,
-    tx
-  };
-};
-
-export const usePendingRewardsSolo = (
-  address: string | undefined,
-  genesisHash: string | undefined
-) => {
-  const { t } = useTranslation();
-  const formatted = useFormatted(address, genesisHash);
-  const { api } = useChainInfo(genesisHash);
-  const currentBlock = useCurrentBlockNumber(genesisHash);
-  const pendingRewards = usePendingRewards(address, genesisHash);
-
-  const payoutStakers = api?.tx['staking']['payoutStakersByPage'];
-  const batch = api?.tx['utility']['batchAll'];
-
-  const [progress, setProgress] = useState<DeriveSessionProgress>();
-  const [forcing, setForcing] = useState<Forcing>();
-  const [historyDepth, setHistoryDepth] = useState<BN>();
-  const [selectedToPayout, setSelectedToPayout] = useState<ExpandedRewards[]>([]);
-  const [expandedRewards, setExpandedRewards] = useState<ExpandedRewards[] | undefined>(undefined);
-
-  useEffect(() => {
-    if (!api?.derive?.staking) {
-      return;
-    }
-
-    api.derive.session.progress().then(setProgress).catch(console.error);
-    api.query['staking']['forceEra']().then((f) => setForcing(f as Forcing)).catch(console.error);
-
-    api.query['staking']?.['historyDepth']
-      ? api.query['staking']['historyDepth']().then((depth) => setHistoryDepth(depth as unknown as BN)).catch(console.error)
-      : setHistoryDepth(api.consts['staking']['historyDepth'] as unknown as BN);
-  }, [api?.consts, api?.derive.session, api?.derive?.staking, api?.query]);
-
-  useEffect(() => {
-    if (!pendingRewards) {
-      return;
-    }
-
-    const rewardsArray: [string, string, number, BN][] = Object.entries(pendingRewards || {}).reduce<[string, string, number, BN][]>(
-      (acc, [era, eraRewards]) => {
-        const eraRewardsArray = Object.entries(eraRewards || {}).reduce<[string, string, number, BN][]>(
-          (eraAcc, [validator, [page, amount]]) => {
-            eraAcc.push([era, validator, page, amount]);
-
-            return eraAcc;
-          }, []);
-
-        return acc.concat(eraRewardsArray);
-      }, []);
-
-    setExpandedRewards(rewardsArray);
-  }, [pendingRewards]);
-
-  const eraToDate = useCallback((era: number): string | undefined => {
-    if (!(currentBlock && historyDepth && era && forcing && progress && progress.sessionLength.gt(BN_ONE))) {
-      return undefined;
-    }
-
-    const EndEraInBlock =
-      (forcing.isForceAlways
-        ? progress.sessionLength
-        : progress.eraLength
-      ).mul(
-        historyDepth
-          .sub(progress.activeEra)
-          .addn(era)
-          .add(BN_ONE)
-      ).sub(
-        forcing.isForceAlways
-          ? progress.sessionProgress
-          : progress.eraProgress);
-
-    return EndEraInBlock ? blockToDate(EndEraInBlock.addn(currentBlock).toNumber(), currentBlock, undefined, true) : undefined;
-  }, [currentBlock, forcing, historyDepth, progress]);
-
-  const totalSelectedPending = useMemo(() => {
-    if (!selectedToPayout?.length) {
-      return BN_ZERO;
-    }
-
-    return selectedToPayout.reduce((sum: BN, value: ExpandedRewards) => sum.add((value)[3]), BN_ZERO);
-  }, [selectedToPayout]);
-
-  const tx = useMemo(() => {
-    if (!selectedToPayout.length || !payoutStakers || !batch) {
-      return undefined;
-    }
-
-    const call = selectedToPayout.length > 1
-      ? batch
-      : payoutStakers;
-
-    const params = selectedToPayout.length > 1
-      ? [selectedToPayout.map((p) => payoutStakers(p[1], Number(p[0]), p[2]))]
-      : [selectedToPayout[0][1], Number(selectedToPayout[0][0]), selectedToPayout[0][2]];
-
-    return call(...params);
-  }, [batch, payoutStakers, selectedToPayout]);
-
-  const fakeTx = useMemo(() => payoutStakers?.(address, BN_ZERO, BN_ZERO), [address, payoutStakers]);
-
-  const estimatedFee = useEstimatedFee(genesisHash, formatted, tx ?? fakeTx);
-
-  const transactionInformation: Content[] = useMemo(() => {
-    return [{
-      content: totalSelectedPending,
-      itemKey: 'amount',
-      title: t('Amount'),
-      withLogo: true
-    },
-    {
-      content: estimatedFee,
-      itemKey: 'fee',
-      title: t('Fee')
-    }];
-  }, [estimatedFee, totalSelectedPending, t]);
-
-  const onSelectAll = useCallback((checked: boolean) => {
-    if (!checked && expandedRewards?.length) {
-      setSelectedToPayout([...expandedRewards]);
-    } else {
-      setSelectedToPayout([]);
-    }
-  }, [expandedRewards]);
-
-  const onSelect = useCallback((info: ExpandedRewards, checked: boolean) => {
-    if (!checked) {
-      setSelectedToPayout((prev) => prev.concat([info]));
-    } else {
-      const index = selectedToPayout.findIndex((s: ExpandedRewards) => s === info);
-
-      setSelectedToPayout((prev) => {
-        const newArray = [...prev];
-
-        newArray.splice(index, 1);
-
-        return newArray;
-      });
-    }
-  }, [selectedToPayout]);
-
-  return {
-    eraToDate,
-    estimatedFee,
-    expandedRewards,
-    onSelect,
-    onSelectAll,
-    selectedToPayout,
-    totalSelectedPending,
     transactionInformation,
     tx
   };

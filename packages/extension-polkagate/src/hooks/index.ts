@@ -64,6 +64,7 @@ export { default as useNativeAssetBalances } from './useNativeAssetBalances';
 export { default as useNFT } from './useNFT';
 export { default as useNotifications } from './useNotifications';
 export { default as usePendingRewards } from './usePendingRewards';
+export { default as usePendingRewardsSolo } from './usePendingRewardsSolo';
 export { default as usePeopleChain } from './usePeopleChain';
 export { default as usePool } from './usePool';
 export { default as usePoolBalances } from './usePoolBalances';
