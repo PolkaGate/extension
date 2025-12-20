@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.21.1](https://github.com/polkagate/extension/compare/v1.21.0...v1.21.1) (2025-12-20)
+
+
+### Bug Fixes
+
+* resolve notification enable/disable issue ([#2067](https://github.com/polkagate/extension/issues/2067)) ([707f060](https://github.com/polkagate/extension/commit/707f060f07e9365e6031b6719ac24ea20919e072))
+
 # [1.21.0](https://github.com/polkagate/extension/compare/v1.20.0...v1.21.0) (2025-12-10)
 
 
