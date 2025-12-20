@@ -41,7 +41,14 @@ export default function useEraInfo (genesisHash: string | null | undefined): Era
       const { index, start } = activeEraRaw.unwrap();
 
       const activeEraIndex = index.toNumber();
-      const activeEraStart = start.isSome ? start.unwrap().toNumber() : Date.now();
+
+      const activeEraStart = start.isSome ? start.unwrap().toNumber() : undefined;
+
+      if (!activeEraStart) {
+        console.warn('Active era start time not available');
+
+        return;
+      }
 
       const sessionsPerEra = (rcApi.consts['staking']['sessionsPerEra'] as unknown as BN).toNumber();
       const sessionLength = (rcApi.consts['babe']['epochDuration'] as unknown as BN).toNumber(); // in blocks
@@ -55,8 +62,15 @@ export default function useEraInfo (genesisHash: string | null | undefined): Era
       const eraLength = sessionsPerEra * sessionLength;
 
       const bondedEras = (await api.query['staking']['bondedEras']()) as unknown as [u32, u32][];
-      const activeEraStartSessionIndex = (bondedEras.find(([e]) => e.eqn(activeEraIndex))?.[1] ?? BN_ZERO).toNumber();
+      const activeEraStartSession = bondedEras.find(([e]) => e.eqn(activeEraIndex))?.[1];
 
+      if (!activeEraStartSession) {
+        console.warn('Active era not found in bonded eras');
+
+        return;
+      }
+
+      const activeEraStartSessionIndex = activeEraStartSession.toNumber();
       // const lastSessionReportEndIndex = await api.query['stakingRcClient']['lastSessionReportEndingIndex']() as Option<BlockNumber>;
       // const lastSessionIndex = lastSessionReportEndIndex.isSome ? lastSessionReportEndIndex.unwrap().toNumber() + 1 : 0;
 
