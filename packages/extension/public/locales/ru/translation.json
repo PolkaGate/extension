@@ -856,7 +856,6 @@
   "Select Accounts": "Выбрать аккаунты",
   "Select Chains": "Выбрать сети",
   "Notification Settings": "Уведомления",
-  "Select up to 3 accounts to be notified when account activity": "Выберите до 3 аккаунтов для уведомлений о действиях",
   "Notification": "Уведомление",
   "Era Progress": "Прогресс эры",
   "You’ve turned off notifications. Enable them anytime to get updates on your accounts, governance, and staking rewards!": "Вы отключили уведомления. Включите их в любое время, чтобы получать обновления о ваших аккаунтах, управлении и вознаграждениях за стейкинг!",
@@ -877,5 +876,6 @@
   "Received {{amountSection}} from {{chainName}} staking": "Получено {{amountSection}} из стейкинга {{chainName}}",
   "Share": "Поделиться",
   "Who supports this validator": "Кто поддерживает этого валидатора",
-  "There are no validators yet.": "Пока нет валидаторов"
+  "There are no validators yet.": "Пока нет валидаторов",
+  "Select up to {{count}} accounts for activity notifications": "Выберите до {{count}} аккаунтов для уведомлений об активности"
 }

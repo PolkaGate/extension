@@ -58,8 +58,9 @@ function SelectAccount ({ onAccounts, previousState }: Props): React.ReactElemen
     <Motion variant='slide'>
       <Stack direction='column' sx={{ gap: '12px', position: 'relative', px: '5px', zIndex: 1 }}>
         <Typography color='text.secondary' variant='B-4'>
-          {t('Select up to 3 accounts to be notified when account activity')}
-        </Typography>
+          {t('Select up to {{count}} accounts for activity notifications', {
+            replace: { count: MAX_ACCOUNT_COUNT_NOTIFICATION }
+          })}      </Typography>
         <GradientDivider />
         <Stack direction='column' sx={{ gap: '12px', height: '385px', maxHeight: '385px', overflowY: 'auto', px: '6px' }}>
           {accounts.map(({ address }) => {

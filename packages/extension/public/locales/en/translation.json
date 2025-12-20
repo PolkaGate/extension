@@ -856,7 +856,6 @@
   "Select Accounts": "",
   "Select Chains": "",
   "Notification Settings": "",
-  "Select up to 3 accounts to be notified when account activity": "",
   "Notification": "",
   "Era Progress": "",
   "You’ve turned off notifications. Enable them anytime to get updates on your accounts, governance, and staking rewards!": "",
@@ -877,5 +876,6 @@
   "Received {{amountSection}} from {{chainName}} staking": "",
   "Share": "",
   "Who supports this validator": "",
-  "There are no validators yet.": ""
+  "There are no validators yet.": "",
+  "Select up to {{count}} accounts for activity notifications": ""
 }

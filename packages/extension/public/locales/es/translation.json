@@ -856,7 +856,6 @@
   "Select Accounts": "Seleccionar cuentas",
   "Select Chains": "Seleccionar cadenas",
   "Notification Settings": "Notificaciones",
-  "Select up to 3 accounts to be notified when account activity": "Selecciona hasta 3 cuentas para recibir notificaciones de actividad",
   "Notification": "Notificación",
   "Era Progress": "Progreso de era",
   "You’ve turned off notifications. Enable them anytime to get updates on your accounts, governance, and staking rewards!": "Has desactivado las notificaciones. ¡Actívalas en cualquier momento para recibir actualizaciones de tus cuentas, gobernanza y recompensas de staking!",
@@ -877,5 +876,6 @@
   "Received {{amountSection}} from {{chainName}} staking": "Recibido {{amountSection}} del staking de {{chainName}}",
   "Share": "Compartir",
   "Who supports this validator": "Quién apoya a este validador",
-  "There are no validators yet.": "Aún no hay validadores"
+  "There are no validators yet.": "Aún no hay validadores",
+  "Select up to {{count}} accounts for activity notifications": "Selecciona hasta {{count}} cuentas para notificaciones de actividad"
 }

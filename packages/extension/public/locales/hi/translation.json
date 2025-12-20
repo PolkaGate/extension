@@ -856,7 +856,6 @@
   "Select Accounts": "खाते चुनें",
   "Select Chains": "चेन चुनें",
   "Notification Settings": "सूचना सेटिंग्स",
-  "Select up to 3 accounts to be notified when account activity": "खाता गतिविधि पर सूचनाएं पाने के लिए अधिकतम 3 खाते चुनें",
   "Notification": "सूचना",
   "Era Progress": "एरा प्रगति",
   "You’ve turned off notifications. Enable them anytime to get updates on your accounts, governance, and staking rewards!": "आपने सूचनाएं बंद कर दी हैं। किसी भी समय उन्हें सक्षम करें ताकि आपके खातों, शासन और स्टेकिंग पुरस्कारों के अपडेट मिल सकें!",
@@ -877,5 +876,6 @@
   "Received {{amountSection}} from {{chainName}} staking": "{{chainName}} स्टेकिंग से {{amountSection}} प्राप्त हुआ",
   "Share": "साझा करें",
   "Who supports this validator": "इस वैलिडेटर का समर्थन कौन करता है",
-  "There are no validators yet.": "अभी तक कोई वैलिडेटर नहीं हैं"
+  "There are no validators yet.": "अभी तक कोई वैलिडेटर नहीं हैं",
+  "Select up to {{count}} accounts for activity notifications": "गतिविधि सूचनाओं के लिए अधिकतम {{count}} खाते चुनें"
 }
