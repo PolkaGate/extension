@@ -40,7 +40,7 @@ function Notification () {
       <Motion variant='slide'>
         <Container disableGutters ref={refContainer} sx={{ maxHeight: '480px', overflowY: 'auto', padding: '15px', width: '100%' }}>
           <VelvetBox childrenStyle={{ display: 'grid', gap: '4px' }}>
-            {notificationItems && Object.entries(notificationItems).map(([dateKey, items]) => (
+            {!isNotificationOff && notificationItems && Object.entries(notificationItems).map(([dateKey, items]) => (
               <NotificationGroup
                 group={[dateKey, items]}
                 key={dateKey}
