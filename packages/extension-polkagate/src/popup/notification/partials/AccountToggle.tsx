@@ -28,13 +28,14 @@ function AccountToggle ({ address, checked, onSelect, withDivider = true }: Prop
           address={address}
           genesisHash={POLKADOT_GENESIS_HASH}
           identiconSize={24}
+          nameStyle={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
           socialStyles={{ mt: 0 }}
           style={{
             fontSize: '12px',
             fontWeight: 500,
-            variant: 'B-4'
+            variant: 'B-4',
+            width: '80%'
           }}
-        //   withShortAddress
         />
         <MySwitch
           checked={checked}
