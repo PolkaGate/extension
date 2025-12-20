@@ -850,7 +850,6 @@
   "Validator Summary": "",
   "Rewards Points": "",
   "Total Stake": "",
-  "The are no validators yet.": "",
   "Enable Notifications": "",
   "Enable Received Funds": "",
   "Staking Rewards": "",
@@ -877,5 +876,6 @@
   "Received {{amountSection}} on {{chainName}}": "",
   "Received {{amountSection}} from {{chainName}} staking": "",
   "Share": "",
-  "Who supports this validator": ""
+  "Who supports this validator": "",
+  "There are no validators yet.": ""
 }

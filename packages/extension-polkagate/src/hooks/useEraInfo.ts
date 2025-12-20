@@ -10,7 +10,6 @@ import type { EraInfo } from './useSoloStakingInfo';
 import { useEffect, useState } from 'react';
 
 import { toBN } from '@polkadot/extension-polkagate/src/util';
-import { BN_ZERO } from '@polkadot/util';
 
 import { mapHubToRelay } from '../util/migrateHubUtils';
 import useChainInfo from './useChainInfo';
