@@ -875,5 +875,7 @@
   "Referendum executed but failed": "",
   "Referendum Rejected": "",
   "Received {{amountSection}} on {{chainName}}": "",
-  "Received {{amountSection}} from {{chainName}} staking": ""
+  "Received {{amountSection}} from {{chainName}} staking": "",
+  "Share": "",
+  "Who supports this validator": ""
 }

@@ -56,7 +56,7 @@ export default function Summary ({ details, eraInfo, genesisHash }: Props): Reac
 
   const { decimal, token } = useChainInfo(genesisHash);
 
-  const { commission, commissionHint, isElected, rewardPoint, total } = details ?? {};
+  const { commission, commissionHint, isElected, rewardPoint, rewardPointHint, total } = details ?? {};
 
   const Icon = isElected
     ? {
@@ -87,6 +87,7 @@ export default function Summary ({ details, eraInfo, genesisHash }: Props): Reac
           </Typography>
         </Grid>
         <Item
+          hint={rewardPointHint}
           skeletonWidth={30}
           title={t('Rewards Points')}
           value={rewardPoint?.toString()}
@@ -109,9 +110,9 @@ export default function Summary ({ details, eraInfo, genesisHash }: Props): Reac
             value={eraInfo?.activeEraDuration ? remainingTimeCountDown(eraInfo.activeEraDuration / 1_000, false) : undefined}
           />
           <CircularProgressWithLabel
-          size={50}
-          value={eraInfo?.progressPercent ?? 0}
-          variant={eraInfo?.progressPercent ? 'determinate' : 'indeterminate'}
+            size={50}
+            value={eraInfo?.progressPercent ?? 0}
+            variant={eraInfo?.progressPercent ? 'determinate' : 'indeterminate'}
           />
         </Grid>
       </Grid>
