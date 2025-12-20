@@ -344,8 +344,8 @@ export function getNotificationDescription (item: NotificationMessageType, t: TF
         ongoing: '{{chainName}} referendum #{{referendumIndex}} has been created',
         rejected: '{{chainName}} referendum #{{referendumIndex}} has been rejected',
         submitted: '{{chainName}} referendum #{{referendumIndex}} has been submitted',
-        timeout: '{{chainName}} referendum #{{referendumIndex}} has timed out',
-        timedOut: '{{chainName}} referendum #{{referendumIndex}} has timed out'
+        timedOut: '{{chainName}} referendum #{{referendumIndex}} has timed out',
+        timeout: '{{chainName}} referendum #{{referendumIndex}} has timed out'
       };
 
       const status = item.referenda?.status;

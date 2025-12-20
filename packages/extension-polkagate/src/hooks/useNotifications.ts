@@ -59,6 +59,9 @@ interface FetchState {
   stakingRewards: Status;
 }
 
+const INITIALIZE = { receivedFunds: Status.NONE, referenda: Status.NONE, stakingRewards: Status.NONE };
+const FUNCTION = (state: FetchState, updates: Partial<FetchState>) => ({ ...state, ...updates });
+
 /**
  * React hook for managing notification settings and state.
  *
@@ -93,10 +96,7 @@ export default function useNotifications (justLoadData = true) {
   const allChains = useGenesisHashOptions(false);
 
   // fetchState to avoid duplicate network calls and redundant state updates
-  const [fetchState, setFetchState] = useReducer(
-    (state: FetchState, updates: Partial<FetchState>) => ({ ...state, ...updates }),
-    { receivedFunds: Status.NONE, referenda: Status.NONE, stakingRewards: Status.NONE }
-  );
+  const [fetchState, setFetchState] = useReducer(FUNCTION, INITIALIZE);
 
   const initializedRef = useRef<boolean>(false); // Flag to avoid duplicate initialization
   const isSavingRef = useRef<boolean>(false); // Flag to avoid duplicate save in the storage
@@ -292,8 +292,8 @@ export default function useNotifications (justLoadData = true) {
   const notificationItems = useMemo(() => groupNotificationsByDay(notifications.notificationMessages), [notifications.notificationMessages]);
 
   const isNotificationOff = useMemo(() => notificationIsOff && !notifications.isFirstTime, [notificationIsOff, notifications.isFirstTime]);
-  const isFirstTime = useMemo(() => !notificationIsOff && notifications.isFirstTime, [notificationIsOff, notifications.isFirstTime]);
-  const noNotificationYet = useMemo(() => notificationIsOff && !isFirstTime && notifications.notificationMessages?.length === 0, [isFirstTime, notificationIsOff, notifications.notificationMessages?.length]);
+  const isFirstTime = useMemo(() => notificationIsOff && notifications.isFirstTime, [notificationIsOff, notifications.isFirstTime]);
+  const noNotificationYet = useMemo(() => !notificationIsOff && !isFirstTime && notifications.notificationMessages?.length === 0, [isFirstTime, notificationIsOff, notifications.notificationMessages?.length]);
 
   const loading = useMemo(() => {
     if (isNotificationOff || isFirstTime || notificationItems || noNotificationYet) {
