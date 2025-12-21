@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.21.4](https://github.com/polkagate/extension/compare/v1.21.3...v1.21.4) (2025-12-21)
+
+
+### Bug Fixes
+
+* resolve pending rewards expiration issue caused by API derive malfunction ([#2072](https://github.com/polkagate/extension/issues/2072)) ([fe49a73](https://github.com/polkagate/extension/commit/fe49a735a9e8731458751c23f850b23cfead1629)), closes [#2068](https://github.com/polkagate/extension/issues/2068)
+
 ## [1.21.3](https://github.com/polkagate/extension/compare/v1.21.2...v1.21.3) (2025-12-21)
 
 
