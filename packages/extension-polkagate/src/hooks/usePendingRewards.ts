@@ -174,8 +174,7 @@ export default function usePendingRewards (address: string | undefined, genesisH
         allExposures.push(eraExposureInfo);
       }
 
-      console.log('eraExposureInfo:', eraExposureInfo);
-      window.dispatchEvent(new CustomEvent('percentOfErasCheckedForPendingRewards', { detail: (MAX_SUPPORTED_PAYOUT_ERAS - (currentEra - endEra) + 1) / MAX_SUPPORTED_PAYOUT_ERAS }));
+      window.dispatchEvent(new CustomEvent('percentOfErasCheckedForPendingRewards', { detail: 100 * (MAX_SUPPORTED_PAYOUT_ERAS - (currentEra - endEra) + 1) / MAX_SUPPORTED_PAYOUT_ERAS }));
 
       currentEra -= 1;
     }
