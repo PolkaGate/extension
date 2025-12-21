@@ -21,7 +21,7 @@ interface Props {
 }
 
 function Item ({ decimal, hint, skeletonWidth = 60, title, token, value }:
-  { decimal?: number, hint?: string, skeletonWidth?: number, title: string, token?: string, value: string | number | undefined }): React.ReactElement {
+  { decimal?: number, hint?: string, skeletonWidth?: number, title: string, token?: string, value: string | null | number | undefined }): React.ReactElement {
   const theme = useTheme();
 
   return (
@@ -29,7 +29,7 @@ function Item ({ decimal, hint, skeletonWidth = 60, title, token, value }:
       <Typography color='text.secondary' sx={{ mr: '5px', whiteSpace: 'nowrap' }} textAlign='left' variant='B-2'>
         {title}
       </Typography>
-      <Typography color='#AA83DC' sx={{ alignItems: 'center', bgcolor: '#AA83DC26', borderRadius: '1024px', display: 'flex', height: '19px', px: value != null ? '10px' : 0 }} variant='B-1'>
+      <Typography color='#AA83DC' sx={{ alignItems: 'center', bgcolor: '#AA83DC26', borderRadius: '1024px', display: 'flex', height: '19px', px: value != null ? '8px' : 0 }} variant='B-1'>
         {decimal && token
           ? <DisplayBalance
             balance={value as string}
@@ -39,7 +39,7 @@ function Item ({ decimal, hint, skeletonWidth = 60, title, token, value }:
             />
           : value != null
             ? value
-            : <MySkeleton bgcolor='#AA83DC26' height={15} width={skeletonWidth} />
+            : <MySkeleton bgcolor='#AA83DC26' height={19} width={skeletonWidth} />
         }
       </Typography>
       {hint &&
@@ -56,7 +56,7 @@ export default function Summary ({ details, eraInfo, genesisHash }: Props): Reac
 
   const { decimal, token } = useChainInfo(genesisHash);
 
-  const { commission, commissionHint, isElected, rewardPoint, rewardPointHint, total } = details ?? {};
+  const { APR, commission, commissionHint, isElected, rewardPoint, rewardPointHint, total } = details ?? {};
 
   const Icon = isElected
     ? {
@@ -79,7 +79,7 @@ export default function Summary ({ details, eraInfo, genesisHash }: Props): Reac
       <Typography color='text.primary' sx={{ p: '10px' }} textAlign='left' variant='H-3'>
         {t('Validator Summary')}
       </Typography>
-      <Grid alignItems='center' columnSpacing={4} container item justifyContent='flex-start' rowSpacing={2} sx={{ ml: '-20px' }} wrap='wrap'>
+      <Grid alignItems='center' columnSpacing={3} container item justifyContent='flex-start' rowSpacing={2} sx={{ ml: '-20px' }} wrap='wrap'>
         <Grid alignItems='center' item sx={{ display: 'flex' }}>
           <Icon.icon color={Icon.color} size={Icon.size} variant={Icon.variant as IconProps['variant']} />
           <Typography color='#AA83DC' sx={{ backgroundColor: '#AA83DC26', borderRadius: '1024px', px: '10px' }} textAlign='left' variant='B-2'>
@@ -91,6 +91,11 @@ export default function Summary ({ details, eraInfo, genesisHash }: Props): Reac
           skeletonWidth={30}
           title={t('Rewards Points')}
           value={rewardPoint?.toString()}
+        />
+        <Item
+          skeletonWidth={30}
+          title={t('APR')}
+          value={APR != null ? `${APR}%` : undefined}
         />
         <Item
           decimal={decimal}

@@ -17,12 +17,12 @@ interface ValidatorEraInfo {
   total: BN;
 }
 
-export default function useValidatorApy (api: ApiPromise | undefined | null, validatorAddress: string, isElected?: boolean): string | undefined | null {
+export default function useValidatorApy (api: ApiPromise | undefined | null, validatorAddress: string | undefined, isElected?: boolean): string | undefined | null {
   const [apy, setApy] = useState<string | null>();
   const eraInfo = useEraInfo(api?.genesisHash?.toHex());
 
-  const calculateValidatorAPY = useCallback(async (validatorAddress: string) => {
-    if (!api || !eraInfo) {
+  const calculateValidatorAPY = useCallback(async (validatorAddress: string | undefined) => {
+    if (!api || !eraInfo || !validatorAddress) {
       return;
     }
 
