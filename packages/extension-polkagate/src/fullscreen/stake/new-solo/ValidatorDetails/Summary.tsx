@@ -29,7 +29,7 @@ function Item ({ decimal, hint, skeletonWidth = 60, title, token, value }:
       <Typography color='text.secondary' sx={{ mr: '5px', whiteSpace: 'nowrap' }} textAlign='left' variant='B-2'>
         {title}
       </Typography>
-      <Typography color='#AA83DC' sx={{ alignItems: 'center', bgcolor: '#AA83DC26', borderRadius: '1024px', display: 'flex', height: '15px', px: value != null ? '8px' : 0 }} variant='B-1'>
+      <Typography color='#AA83DC' sx={{ alignItems: 'center', bgcolor: '#AA83DC26', borderRadius: '1024px', display: 'flex', height: '19px', px: value != null ? '8px' : 0 }} variant='B-1'>
         {decimal && token
           ? <DisplayBalance
             balance={value as string}
@@ -39,7 +39,7 @@ function Item ({ decimal, hint, skeletonWidth = 60, title, token, value }:
             />
           : value != null
             ? value
-            : <MySkeleton bgcolor='#AA83DC26' height={15} width={skeletonWidth} />
+            : <MySkeleton bgcolor='#AA83DC26' height={19} width={skeletonWidth} />
         }
       </Typography>
       {hint &&
