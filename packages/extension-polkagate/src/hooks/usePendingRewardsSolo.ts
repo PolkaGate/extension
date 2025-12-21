@@ -36,7 +36,7 @@ export default function usePendingRewardsSolo (
   const [forcing, setForcing] = useState<Forcing>();
   const [historyDepth, setHistoryDepth] = useState<BN>();
   const [selectedToPayout, setSelectedToPayout] = useState<ExpandedRewards[]>([]);
-  const [expandedRewards, setExpandedRewards] = useState<ExpandedRewards[] | undefined>(undefined);
+  const [expandedRewards, setExpandedRewards] = useState<ExpandedRewards[] | undefined | null>();
 
   useEffect(() => {
     if (!api) {
@@ -51,7 +51,13 @@ export default function usePendingRewardsSolo (
   }, [api, api?.consts, api?.query]);
 
   useEffect(() => {
-    if (!pendingRewards) {
+    if (pendingRewards === undefined) {
+      return;
+    }
+
+    if (pendingRewards === null) {
+      setExpandedRewards(null);
+
       return;
     }
 
