@@ -4,13 +4,13 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { Option, u128 } from '@polkadot/types';
 // @ts-ignore
-import type { PalletStakingActiveEraInfo, PalletStakingEraRewardPoints, PalletStakingValidatorPrefs, SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
+import type { PalletStakingEraRewardPoints, PalletStakingValidatorPrefs, SpStakingPagedExposureMetadata } from '@polkadot/types/lookup';
 
 import { useCallback, useEffect, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { calcInterval } from '../util';
+import useEraInfo from './useEraInfo';
 
 interface ValidatorEraInfo {
   netReward: number;
@@ -19,11 +19,10 @@ interface ValidatorEraInfo {
 
 export default function useValidatorApy (api: ApiPromise | undefined | null, validatorAddress: string, isElected?: boolean): string | undefined | null {
   const [apy, setApy] = useState<string | null>();
-  const blockInterval = calcInterval(api);
-  const blockIntervalInSec = blockInterval.toNumber() / 1000;
+  const eraInfo = useEraInfo(api?.genesisHash?.toHex());
 
   const calculateValidatorAPY = useCallback(async (validatorAddress: string) => {
-    if (!api) {
+    if (!api || !eraInfo) {
       return;
     }
 
@@ -34,17 +33,16 @@ export default function useValidatorApy (api: ApiPromise | undefined | null, val
     let totalStaked = BN_ZERO;
     const validatorEraInfo: ValidatorEraInfo[] = [];
 
-    const { eraLength } = await api.derive.session.progress();
+    const { activeEra, blockTime, eraLength } = eraInfo;
 
-    const currentEra = ((await api.query['staking']['activeEra']()) as Option<PalletStakingActiveEraInfo>).unwrap().index.toNumber();
     const { commission } = await api.query['staking']['validators'](validatorAddress) as PalletStakingValidatorPrefs;
 
-    const eraLengthInHrs = eraLength.toNumber() * blockIntervalInSec / 3600; // 3600 = 1hr in seconds
+    const eraLengthInHrs = eraLength * blockTime / 3600; // 3600 = 1hr in seconds
     const eraPerDay = 24 / eraLengthInHrs;
     const eraDepth = 10 * eraPerDay; // eras to calculate
 
     // Loop over the past eras to calculate rewards for the validator
-    for (let eraIndex = Math.max(0, currentEra - eraDepth); eraIndex <= currentEra; eraIndex++) {
+    for (let eraIndex = Math.max(0, activeEra - eraDepth); eraIndex <= activeEra; eraIndex++) {
       let netReward;
       const eraReward = await api.query['staking']['erasValidatorReward'](eraIndex) as Option<u128>;
 
@@ -117,7 +115,7 @@ export default function useValidatorApy (api: ApiPromise | undefined | null, val
     }
 
     setApy(APY);
-  }, [api, blockIntervalInSec]);
+  }, [api, eraInfo]);
 
   useEffect(() => {
     if (!api || isElected === undefined) {
