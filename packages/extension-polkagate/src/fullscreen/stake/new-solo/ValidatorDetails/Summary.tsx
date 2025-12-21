@@ -21,7 +21,7 @@ interface Props {
 }
 
 function Item ({ decimal, hint, skeletonWidth = 60, title, token, value }:
-  { decimal?: number, hint?: string, skeletonWidth?: number, title: string, token?: string, value: string | null| number | undefined }): React.ReactElement {
+  { decimal?: number, hint?: string, skeletonWidth?: number, title: string, token?: string, value: string | null | number | undefined }): React.ReactElement {
   const theme = useTheme();
 
   return (
@@ -95,7 +95,7 @@ export default function Summary ({ details, eraInfo, genesisHash }: Props): Reac
         <Item
           skeletonWidth={30}
           title={t('APR')}
-          value={APR ? `${APR}%` : undefined}
+          value={APR != null ? `${APR}%` : undefined}
         />
         <Item
           decimal={decimal}
