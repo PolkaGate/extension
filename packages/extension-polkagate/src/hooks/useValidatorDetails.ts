@@ -54,7 +54,7 @@ function getCommission (validatorPrefsEntries: [StorageKey<AnyTuple>, PalletStak
       ? normalizedCommissions[commissionIndex].commission
       : 0;
 
-  const displayCommission = commission < 10e5 ? 0 : commission;
+  const displayCommission = commission < 10e-5 ? 0 : commission;
 
   let commissionHint = '';
 
