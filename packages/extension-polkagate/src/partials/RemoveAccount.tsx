@@ -3,20 +3,51 @@
 
 import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
 
-import { Container, Stack } from '@mui/material';
+import { Box, Grid, Stack, Typography } from '@mui/material';
 import { LogoutCurve } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import { info } from '../assets/gif';
 import { Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } from '../components';
-import { useSelectedAccount, useTranslation } from '../hooks';
+import { useAccount, useAlerts, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { forgetAccount, validateAccount } from '../messaging';
 import WarningBox from '../popup/settings/partials/WarningBox';
+import { cleanupNotificationAccount } from '../util';
 import { SharePopup } from '.';
 
 interface Props {
   onClose: ExtensionPopupCloser;
   open: boolean;
   onRemoved?: () => void;
+  address?: string | undefined;
+
+}
+
+function TopPageElement ({ isExtension }: { isExtension: boolean }) {
+  const { t } = useTranslation();
+
+  if (isExtension) {
+    return (
+      <WarningBox
+        description={t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.')}
+        title={t('WARNING')}
+      />
+    );
+  }
+
+  return (
+    <>
+      <Box
+        component='img'
+        src={info as string}
+        sx={{ height: '100px', width: '100px', zIndex: 2 }}
+      />
+      <Typography color='#BEAAD8' sx={{ m: '20px 0 15px' }} variant='B-4'>
+        {t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.')}
+      </Typography>
+    </>
+  );
 }
 
 /**
@@ -24,9 +55,14 @@ interface Props {
  *
  * Has been used in both full-screen & extension mode!
 */
-function RemoveAccount ({ onClose, onRemoved, open }: Props): React.ReactElement {
+function RemoveAccount ({ address, onClose, onRemoved, open }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const account = useSelectedAccount();
+  const selectedAccount = useSelectedAccount();
+  const account = useAccount(address) ?? selectedAccount;
+  const navigate = useNavigate();
+  const isExtension = useIsExtensionPopup();
+
+  const { notify } = useAlerts();
 
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [acknowledged, setAcknowledge] = useState<boolean>(false);
@@ -38,13 +74,29 @@ function RemoveAccount ({ onClose, onRemoved, open }: Props): React.ReactElement
     setAcknowledge(state);
   }, []);
 
+  const notifier = useCallback((shouldNotify: boolean) => {
+    if (isExtension) {
+      setShowSnackbar(shouldNotify);
+
+      return;
+    }
+
+    shouldNotify && notify(t('Account removed successfully.'), 'info');
+  }, [isExtension, notify, t]);
+
   const handleClose = useCallback(() => {
-    setShowSnackbar(false);
     setAcknowledge(false);
     setPassword(undefined);
     setPasswordError(false);
+
+    if (window.location.href.includes('accountfs')) { // removing an account from its home
+      navigate('/') as void;
+    }
+
+    notifier(false);
+
     onClose();
-  }, [onClose]);
+  }, [navigate, notifier, onClose]);
 
   const handleCloseSnackbar = useCallback(() => {
     handleClose();
@@ -68,22 +120,17 @@ function RemoveAccount ({ onClose, onRemoved, open }: Props): React.ReactElement
         }
       }
 
-      forgetAccount(account.address)
-        .then(() => {
-          setIsBusy(false);
+      await forgetAccount(account.address);
+      await cleanupNotificationAccount(account.address);
 
-          setShowSnackbar(true);
-        })
-        .catch((error: Error) => {
-          setIsBusy(false);
-          console.error(error);
-        });
+      setIsBusy(false);
+      notifier(true);
     } catch (error) {
       setPasswordError(true);
       setIsBusy(false);
       console.error('Error while removing the account:', error);
     }
-  }, [account, acknowledged, password]);
+  }, [account, acknowledged, notifier, password]);
 
   const onPassChange = useCallback((pass: string | null): void => {
     setPasswordError(false);
@@ -92,18 +139,17 @@ function RemoveAccount ({ onClose, onRemoved, open }: Props): React.ReactElement
 
   return (
     <SharePopup
-      modalStyle={{ minHeight: '200px' }}
+      modalStyle={{ minHeight: '450px' }}
       onClose={handleClose}
       open={open}
       popupProps={{ TitleIcon: LogoutCurve, iconSize: 24, pt: 20 }}
       title={t('Remove Account')}
     >
-      <Container disableGutters sx={{ height: '440px', position: 'relative', pt: '15px' }}>
-        <WarningBox
-          description={t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.')}
-          title={t('WARNING')}
+      <Grid container item justifyContent='center' sx={{ p: '0 5px 10px', position: 'relative', zIndex: 1 }}>
+        <TopPageElement
+          isExtension={isExtension}
         />
-        <Stack direction='column' sx={{ zIndex: 1 }}>
+        <Stack direction='column' sx={{ width: '100%', zIndex: 1 }}>
           {account &&
             <Address2
               address={account?.address}
@@ -120,7 +166,7 @@ function RemoveAccount ({ onClose, onRemoved, open }: Props): React.ReactElement
                 checked={acknowledged}
                 disabled={isBusy}
                 label={t('I want to remove this account')}
-                style={{ justifyContent: 'center', mb: '80px', mt: '35px' }}
+                style={{ justifyContent: 'center', my: '30px' } }
               />)
             : (
               <PasswordInput
@@ -128,7 +174,7 @@ function RemoveAccount ({ onClose, onRemoved, open }: Props): React.ReactElement
                 hasError={isPasswordWrong}
                 onEnterPress={onRemove}
                 onPassChange={onPassChange}
-                style={{ filter: showSnackbar ? 'blur(5px)' : 'none', marginTop: '45px' }}
+                style={{ filter: showSnackbar ? 'blur(5px)' : 'none', marginTop: isExtension ? '45px' : '25px' }}
                 title={t('Your Password')}
               />)
           }
@@ -139,7 +185,7 @@ function RemoveAccount ({ onClose, onRemoved, open }: Props): React.ReactElement
             onSecondaryClick={handleClose}
             primaryBtnText={t('Remove')}
             secondaryBtnText={t('Cancel')}
-            style={{ bottom: 0, position: 'absolute' }}
+            style={{ marginTop: isExtension ? account?.isExternal ? '60px' : '27px' : '25px' }}
           />
         </Stack>
         <MySnackbar
@@ -147,7 +193,7 @@ function RemoveAccount ({ onClose, onRemoved, open }: Props): React.ReactElement
           open={showSnackbar}
           text={t('Account successfully removed!')}
         />
-      </Container>
+      </Grid>
     </SharePopup>
   );
 }
