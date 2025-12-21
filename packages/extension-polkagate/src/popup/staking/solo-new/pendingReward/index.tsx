@@ -1,9 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, LinearProgress, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import usePendingRewardsProgress from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/pendingReward/usePendingRewardsProgress';
 
 import { Badge } from '../../../../assets/gif';
 import { BackWithLabel, DecisionButtons, DisplayBalance, GradientDivider, Motion } from '../../../../components';
@@ -20,6 +22,8 @@ export default function PendingReward () {
   const navigate = useNavigate();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const address = useSelectedAccount()?.address;
+  const progress = usePendingRewardsProgress();
+
   const { api, decimal, token } = useChainInfo(genesisHash);
 
   const { eraToDate,
@@ -86,7 +90,21 @@ export default function PendingReward () {
               onSelect={onSelect}
               selectedToPayout={selectedToPayout}
             />
-            <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+            <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', position: 'relative', width: '100%' }}>
+              <LinearProgress
+                color='info'
+                sx={{
+                  borderRadius: '14px',
+                  height: '2px',
+                  position: 'absolute',
+                  top: '-10px',
+                  transition: 'visibility 250ms ease-out',
+                  visibility: progress === 100 ? 'hidden' : 'initial',
+                  width: '100%'
+                }}
+                value={progress}
+                variant='determinate'
+              />
               <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width: '100px' }}>
                 <Typography color='text.highlight' variant='B-4'>
                   {t('Selected')}:
