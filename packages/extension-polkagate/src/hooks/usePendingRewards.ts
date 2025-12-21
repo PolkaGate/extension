@@ -84,7 +84,7 @@ const isRewardsPaged = (chainName: string | undefined, era: number): boolean => 
 
 export const MAX_SUPPORTED_PAYOUT_ERAS = 7; // TODO: can increase adaptively to more if needed after enough tests
 
-export default function usePendingRewards (address: string | undefined, genesisHash: string | undefined): UnclaimedPayouts | null | undefined {
+export default function usePendingRewards (address: string | undefined, genesisHash: string | undefined): UnclaimedPayouts | undefined {
   const { api, chainName } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
   const activeEra = useActiveEraIndex(genesisHash);
