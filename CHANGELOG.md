@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.21.3](https://github.com/polkagate/extension/compare/v1.21.2...v1.21.3) (2025-12-21)
+
+
+### Bug Fixes
+
+* resolve incorrect validator APY after migration due to hub era length ([#2071](https://github.com/polkagate/extension/issues/2071)) ([195efa5](https://github.com/polkagate/extension/commit/195efa52739324b8558752102f69623734d56b29)), closes [#2070](https://github.com/polkagate/extension/issues/2070)
+
 ## [1.21.2](https://github.com/polkagate/extension/compare/v1.21.1...v1.21.2) (2025-12-20)
 
 
