@@ -1,21 +1,19 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { NotificationActionType, NotificationMessage, NotificationMessageType, NotificationsType } from '../popup/notification/types';
+import type { NotificationActionType, NotificationMessageType, NotificationsType } from '../popup/notification/types';
 import type { DropdownOption } from '../util/types';
 
-import { useCallback, useContext, useEffect, useMemo, useReducer, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 
-import { CurrencyContext } from '../components';
 import { getStorage, setStorage } from '../components/Loading';
-import { useUserAddedEndpoints } from '../fullscreen/addNewChain/utils';
 import { AUTO_MARK_AS_READ_DELAY, initialNotificationState, SUBSCAN_SUPPORTED_CHAINS } from '../popup/notification/constant';
 import { getPayoutsInformation, getReceivedFundsInformation, getReferendasInformation } from '../popup/notification/helpers';
 import useNotificationSettings from '../popup/notification/hook/useNotificationSettings';
-import { filterMessages, generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, getChainInfo, getNotificationMessages, getTokenPriceBySymbol, groupNotificationsByDay, markMessagesAsRead } from '../popup/notification/util';
+import { filterMessages, generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, groupNotificationsByDay, markMessagesAsRead } from '../popup/notification/util';
 import { sanitizeChainName } from '../util';
 import { STORAGE_KEY } from '../util/constants';
-import { useGenesisHashOptions, usePrices, useSelectedChains, useTranslation } from '.';
+import { useGenesisHashOptions, useSelectedChains } from '.';
 
 const notificationReducer = (
   state: NotificationsType,
@@ -84,11 +82,6 @@ const FUNCTION = (state: FetchState, updates: Partial<FetchState>) => ({ ...stat
  * This hook uses several internal flags and refs to avoid duplicate network calls and redundant state updates.
  */
 export default function useNotifications (justLoadData = true) {
-  const { t } = useTranslation();
-  const { currency } = useContext(CurrencyContext);
-  const useAddedEndpoints = useUserAddedEndpoints();
-  const prices = usePrices();
-
   const { notificationSetting } = useNotificationSettings(justLoadData);
   const { accounts, enable: isNotificationEnable, governance: governanceChains, receivedFunds: isReceivedFundsEnable, stakingRewards: stakingRewardChains } = notificationSetting;
 
@@ -174,68 +167,56 @@ export default function useNotifications (justLoadData = true) {
   const receivedFundsInfo = useCallback(async () => {
     if (chains && fetchState.receivedFunds === Status.NONE && accounts && isReceivedFundsEnable) {
       setFetchState({ receivedFunds: Status.FETCHING });
-      const notificationMessages: NotificationMessage[] = [];
+      const notificationMessages: NotificationMessageType[] = [];
 
       for (const chain of chains) {
-        const chainInfo = getChainInfo(chain);
-        const tokenPrice = getTokenPriceBySymbol(chainInfo.token, chainInfo.chainName, chain, prices, useAddedEndpoints);
-
         const receivedFundsRes = await getReceivedFundsInformation(accounts, chain);
         const newMessages: NotificationMessageType[] = generateReceivedFundNotifications(latestLoggedIn, receivedFundsRes);
-        const messages = newMessages.map((message) => getNotificationMessages(message, chainInfo, currency, tokenPrice, t));
 
-        notificationMessages.push(...messages);
+        notificationMessages.push(...newMessages);
       }
 
       setFetchState({ receivedFunds: Status.FETCHED });
       dispatchNotifications({ payload: notificationMessages, type: 'SET_MESSAGES' });
     }
-  }, [accounts, chains, currency, fetchState.receivedFunds, isReceivedFundsEnable, latestLoggedIn, prices, t, useAddedEndpoints]);
+  }, [accounts, chains, fetchState.receivedFunds, isReceivedFundsEnable, latestLoggedIn]);
 
   // Fetch staking rewards notifications
   const payoutsInfo = useCallback(async () => {
     if (fetchState.stakingRewards === Status.NONE && accounts && stakingRewardChains && stakingRewardChains.length !== 0) {
       setFetchState({ stakingRewards: Status.FETCHING });
-      const notificationMessages: NotificationMessage[] = [];
+      const notificationMessages: NotificationMessageType[] = [];
 
       for (const chain of stakingRewardChains) {
-        const chainInfo = getChainInfo(chain);
-        const tokenPrice = getTokenPriceBySymbol(chainInfo.token, chainInfo.chainName, chain, prices, useAddedEndpoints);
-
         const payouts = await getPayoutsInformation(accounts, chain);
         const newMessages: NotificationMessageType[] = generateStakingRewardNotifications(latestLoggedIn, payouts);
-        const messages = newMessages.map((message) => getNotificationMessages(message, chainInfo, currency, tokenPrice, t));
 
-        notificationMessages.push(...messages);
+        notificationMessages.push(...newMessages);
       }
 
       setFetchState({ stakingRewards: Status.FETCHED });
       dispatchNotifications({ payload: notificationMessages, type: 'SET_MESSAGES' });
     }
-  }, [accounts, currency, fetchState.stakingRewards, latestLoggedIn, prices, stakingRewardChains, t, useAddedEndpoints]);
+  }, [accounts, fetchState.stakingRewards, latestLoggedIn, stakingRewardChains]);
 
   // Fetch referenda notifications
   const referendasInfo = useCallback(async () => {
     if (fetchState.referenda === Status.NONE && accounts && governanceChains && governanceChains.length !== 0) {
       setFetchState({ referenda: Status.FETCHING });
 
-      const notificationMessages: NotificationMessage[] = [];
+      const notificationMessages: NotificationMessageType[] = [];
 
       for (const chain of governanceChains) {
-        const chainInfo = getChainInfo(chain);
-        const tokenPrice = getTokenPriceBySymbol(chainInfo.token, chainInfo.chainName, chain, prices, useAddedEndpoints);
-
         const referendas = await getReferendasInformation(chain);
         const newMessages: NotificationMessageType[] = generateReferendaNotifications(latestLoggedIn, referendas);
-        const messages = newMessages.map((message) => getNotificationMessages(message, chainInfo, currency, tokenPrice, t));
 
-        notificationMessages.push(...messages);
+        notificationMessages.push(...newMessages);
       }
 
       setFetchState({ referenda: Status.FETCHED });
       dispatchNotifications({ payload: notificationMessages, type: 'SET_MESSAGES' });
     }
-  }, [accounts, currency, fetchState.referenda, governanceChains, latestLoggedIn, prices, t, useAddedEndpoints]);
+  }, [accounts, fetchState.referenda, governanceChains, latestLoggedIn]);
 
   // Load notifications from storage or initialize if first time
   useEffect(() => {

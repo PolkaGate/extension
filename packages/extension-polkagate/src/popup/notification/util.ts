@@ -55,8 +55,11 @@ export const generateReferendaNotifications = (
     currentReferenda = currentReferenda.filter(({ latestTimestamp }) => latestTimestamp >= lastTime(latestLoggedIn));
 
     for (const referenda of currentReferenda) {
+      const itemKey = `referenda - ${network.value} - ${referenda.index} - ${referenda.latestTimestamp}`;
+
       newMessages.push({
         chain: network,
+        itemKey,
         referenda,
         type: 'referenda'
       });
@@ -79,9 +82,12 @@ export const generateStakingRewardNotifications = (
     data
       .filter(({ timestamp }) => timestamp >= lastTime(latestLoggedIn))
       .forEach((payout) => {
+        const itemKey = `payout - ${network.value} - ${payout.index} - ${payout.timestamp}`;
+
         newMessages.push({
           chain: network,
           forAccount: address,
+          itemKey,
           payout,
           type: 'stakingReward'
         });
@@ -104,9 +110,12 @@ export const generateReceivedFundNotifications = (
     data
       .filter(({ timestamp }) => timestamp >= lastTime(latestLoggedIn))
       .forEach((receivedFund) => {
+        const itemKey = `transfer - ${network.value} - ${receivedFund.index} - ${receivedFund.timestamp}`;
+
         newMessages.push({
           chain: network,
           forAccount: address,
+          itemKey,
           receivedFund,
           type: 'receivedFund'
         });
@@ -150,7 +159,7 @@ export function groupNotificationsByDay (
   }
 
   const grouped = notifications.reduce<Record<string, NotificationMessageInformation[]>>((acc, item) => {
-    const timestamp = item.message.detail.timestamp;
+    const timestamp = item.message.payout?.timestamp || item.message.receivedFund?.timestamp || item.message.referenda?.latestTimestamp;
 
     if (!timestamp) {
       return acc;
@@ -170,8 +179,8 @@ export function groupNotificationsByDay (
   // Sort items within each day by timestamp (newest first)
   for (const dayKey in grouped) {
     grouped[dayKey].sort((a, b) => {
-      const timeA = a.message.detail.timestamp;
-      const timeB = b.message.detail.timestamp;
+      const timeA = a.message.payout?.timestamp || a.message.receivedFund?.timestamp || a.message.referenda?.latestTimestamp || 0;
+      const timeB = b.message.payout?.timestamp || b.message.receivedFund?.timestamp || b.message.referenda?.latestTimestamp || 0;
 
       return timeB - timeA;
     });
@@ -442,7 +451,7 @@ interface ChainInfoShort {
   token: string | undefined;
 }
 
-export const getChainInfo = (genesisHash: string): ChainInfoShort => {
+export const getChainInfo = (genesisHash: string | undefined): ChainInfoShort => {
   const chainInfo = chains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
   const chainName = sanitizeChainName(chainInfo?.chain, true);
   const decimal = chainInfo?.tokenDecimal;
@@ -484,7 +493,7 @@ export const getNotificationMessages = (item: NotificationMessageType, chainInfo
   };
 };
 
-export const filterMessages = (pervMessages: NotificationMessageInformation[] | undefined, newMessages: NotificationMessage[] | undefined) => {
+export const filterMessages = (pervMessages: NotificationMessageInformation[] | undefined, newMessages: NotificationMessageType[] | undefined) => {
   if (!newMessages?.length) {
     return pervMessages;
   }
@@ -493,10 +502,10 @@ export const filterMessages = (pervMessages: NotificationMessageInformation[] | 
     return newMessages.map((item) => ({ message: item, read: false })) ?? [];
   }
 
-  const pervMessagesSet = new Set(pervMessages.map(({ message }) => message.detail.itemKey));
+  const pervMessagesSet = new Set(pervMessages.map(({ message }) => message.itemKey));
 
   const filteredMessages = newMessages
-    .filter(({ detail }) => !pervMessagesSet.has(detail.itemKey))
+    .filter(({ itemKey }) => !pervMessagesSet.has(itemKey))
     .map((item) => ({ message: item, read: false }));
 
   return pervMessages.concat(filteredMessages);

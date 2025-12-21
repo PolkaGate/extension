@@ -325,7 +325,7 @@ export const STORAGE_KEY = {
   LAST_PASS_CHANGE: 'lastPasswordChange',
   LOGIN_INFO: 'loginInfo',
   MY_POOL: 'MyPool',
-  NOTIFICATIONS: 'notifications',
+  NOTIFICATIONS: 'notificationsV2',
   NOTIFICATION_SETTINGS: 'notificationSetting',
   PRICE_IN_CURRENCIES: 'pricesInCurrencies',
   SELECTED_ACCOUNT: 'selectedAccount',

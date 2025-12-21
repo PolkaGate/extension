@@ -5,13 +5,14 @@ import type { NotificationMessageInformation } from '../types';
 
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import * as Icons from 'iconsax-react';
-import React, { Fragment } from 'react';
+import React, { Fragment, useContext } from 'react';
 
-import { GradientDivider, ScrollingTextBox, TwoToneText } from '@polkadot/extension-polkagate/src/components';
-import { useAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { CurrencyContext, GradientDivider, ScrollingTextBox, TwoToneText } from '@polkadot/extension-polkagate/src/components';
+import { useUserAddedEndpoints } from '@polkadot/extension-polkagate/src/fullscreen/addNewChain/utils';
+import { useAccount, usePrices, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { toShortAddress } from '@polkadot/extension-polkagate/src/util';
 
-import { isToday } from '../util';
+import { getChainInfo, getNotificationMessages, getTokenPriceBySymbol, isToday } from '../util';
 
 function ItemDate ({ date }: { date: string; }) {
   const theme = useTheme();
@@ -58,13 +59,23 @@ function TitleTime ({ address, noName, read, time, title }: { address: string | 
 
 function NotificationItem ({ item }: { item: NotificationMessageInformation; }) {
   const theme = useTheme();
+  const { t } = useTranslation();
+  const { currency } = useContext(CurrencyContext);
+  const useAddedEndpoints = useUserAddedEndpoints();
+  const prices = usePrices();
 
-  const title = item.message.detail.title;
-  const time = item.message.detail.time;
-  const forAccount = item.message.info.forAccount;
-  const messageType = item.message.info.type;
-  const { text, textInColor } = item.message.detail.description;
-  const { bgcolor, borderColor, color, itemIcon } = item.message.detail.iconInfo;
+  const genesisHash = item.message.chain?.value as string | undefined;
+
+  const chainInfo = getChainInfo(genesisHash);
+  const tokenPrice = getTokenPriceBySymbol(chainInfo.token, chainInfo.chainName, genesisHash, prices, useAddedEndpoints);
+  const { detail, info } = getNotificationMessages(item.message, chainInfo, currency, tokenPrice, t);
+
+  const title = detail.title;
+  const time = detail.time;
+  const forAccount = info.forAccount;
+  const messageType = info.type;
+  const { text, textInColor } = detail.description;
+  const { bgcolor, borderColor, color, itemIcon } = detail.iconInfo;
 
   const ItemIcon = Icons[itemIcon as keyof typeof Icons];
 
@@ -95,7 +106,7 @@ function NotificationGroup ({ group: [dateKey, items] }: { group: [string, Notif
     <Stack direction='column' sx={{ bgcolor: '#05091C', borderRadius: '14px', gap: '8px', p: '10px', width: '100%' }}>
       <ItemDate date={dateKey} />
       {items.map((item, index) => (
-        <Fragment key={item.message.detail.itemKey}>
+        <Fragment key={item.message.itemKey}>
           <NotificationItem
             item={item}
           />
