@@ -28,6 +28,8 @@ export interface EraInfo {
   eraLength: number; // Length of an era in blocks
   eraProgress: number; // Current progress within the era
   progressPercent: number; // Active era number
+  sessionLength: number;
+  sessionProgress: number;
 }
 
 export interface DateAmount {

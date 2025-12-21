@@ -89,7 +89,7 @@ export default function usePendingRewards (address: string | undefined, genesisH
   const formatted = useFormatted(address, genesisHash);
   const activeEra = useActiveEraIndex(genesisHash);
 
-  const [pendingRewards, setPendingRewards] = useState<UnclaimedPayouts>();
+  const [pendingRewards, setPendingRewards] = useState<UnclaimedPayouts | null>();
 
   const endEra = activeEra ? activeEra - MAX_SUPPORTED_PAYOUT_ERAS - 1 : 1;
 
@@ -174,8 +174,7 @@ export default function usePendingRewards (address: string | undefined, genesisH
         allExposures.push(eraExposureInfo);
       }
 
-      console.log('eraExposureInfo:', eraExposureInfo);
-      window.dispatchEvent(new CustomEvent('percentOfErasCheckedForPendingRewards', { detail: (MAX_SUPPORTED_PAYOUT_ERAS - (currentEra - endEra) + 1) / MAX_SUPPORTED_PAYOUT_ERAS }));
+      window.dispatchEvent(new CustomEvent('percentOfErasCheckedForPendingRewards', { detail: 100 * (MAX_SUPPORTED_PAYOUT_ERAS - (currentEra - endEra) + 1) / MAX_SUPPORTED_PAYOUT_ERAS }));
 
       currentEra -= 1;
     }
@@ -324,7 +323,15 @@ export default function usePendingRewards (address: string | undefined, genesisH
     }
 
     getAllExposures().then((allExposures) => {
-      allExposures?.length && handleUnclaimedRewards(allExposures).catch(console.error);
+      if (allExposures) {
+        if (!allExposures.length) {
+          setPendingRewards(null);
+
+          return;
+        }
+
+        handleUnclaimedRewards(allExposures).catch(console.error);
+      }
     }).catch(console.error);
   }, [address, api, activeEra, formatted, getAllExposures, handleUnclaimedRewards]);
 

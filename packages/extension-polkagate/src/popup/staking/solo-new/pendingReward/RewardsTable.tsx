@@ -52,7 +52,7 @@ export const TableHeader = ({ checked, onSelectAll }: TableHeaderProp) => {
 };
 
 interface RewardsTableProp {
-  expandedRewards: ExpandedRewards[] | undefined;
+  expandedRewards: ExpandedRewards[] | undefined | null;
   selectedToPayout: ExpandedRewards[];
   onSelect: (info: ExpandedRewards, checked: boolean) => void;
   genesisHash: string | undefined;
@@ -92,7 +92,7 @@ export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect
             <StyledSkeleton key={index} />
           ))}
         <NoInfoYet
-          show={Boolean(expandedRewards && expandedRewards.length === 0)}
+          show={expandedRewards === null || Boolean(expandedRewards && expandedRewards.length === 0)}
           size={100}
           style={{ justifyContent: 'center', mt: '50px' }}
           text={t('No pending rewards found!')}
