@@ -877,5 +877,6 @@
   "Share": "",
   "Who supports this validator": "",
   "There are no validators yet.": "",
-  "Select up to {{count}} accounts for activity notifications": ""
+  "Select up to {{count}} accounts for activity notifications": "",
+  "APR": ""
 }

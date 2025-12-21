@@ -14,9 +14,10 @@ import { BN, BN_ZERO } from '@polkadot/util';
 
 import { mapHubToRelay } from '../util/migrateHubUtils';
 import useChainInfo from './useChainInfo';
-import { useActiveEraIndex, useFormatted } from '.';
+import { useActiveEraIndex, useFormatted, useValidatorApy } from '.';
 
 export interface ValidatorDetailsType {
+  APR?: string | null | undefined;
   commission: number;
   commissionHint: string;
   decimal: number;
@@ -53,15 +54,20 @@ function getCommission (validatorPrefsEntries: [StorageKey<AnyTuple>, PalletStak
       ? normalizedCommissions[commissionIndex].commission
       : 0;
 
-  const totalValidators = normalizedCommissions.length;
-  const commissionPercentile = percentileFromIndex(commissionIndex, totalValidators);
+  const displayCommission = commission < 10e5 ? 0 : commission;
 
-  const commissionHint =
-    commissionPercentile >= 50
+  let commissionHint = '';
+
+  if (displayCommission) {
+    const totalValidators = normalizedCommissions.length;
+    const commissionPercentile = percentileFromIndex(commissionIndex, totalValidators);
+
+    commissionHint = commissionPercentile >= 50
       ? `Higher than ${Math.round(commissionPercentile)}% of validators`
       : `Lower than ${Math.round(100 - commissionPercentile)}% of validators`;
+  }
 
-  return { commission, commissionHint };
+  return { commission: displayCommission, commissionHint };
 }
 
 function getRewardsPoints (rewardPoints: PalletStakingEraRewardPoints, formattedId: AccountId): { rewardPoint: BN; rewardPointHint: string; } {
@@ -84,13 +90,16 @@ function getRewardsPoints (rewardPoints: PalletStakingEraRewardPoints, formatted
       ? new BN(normalizedRewardPoints[rewardPointIndex].points)
       : BN_ZERO;
 
-  const rpCount = normalizedRewardPoints.length;
-  const rewardPointPercentile = percentileFromIndex(rewardPointIndex, rpCount);
+  let rewardPointHint = '';
 
-  const rewardPointHint =
-    rewardPointPercentile >= 50
+  if (!rewardPoint.isZero()) {
+    const rpCount = normalizedRewardPoints.length;
+    const rewardPointPercentile = percentileFromIndex(rewardPointIndex, rpCount);
+
+    rewardPointHint = rewardPointPercentile >= 50
       ? `Higher than ${Math.round(rewardPointPercentile)}% of validators this era`
       : `Lower than ${Math.round(100 - rewardPointPercentile)}% of validators this era`;
+  }
 
   return { rewardPoint, rewardPointHint };
 }
@@ -137,6 +146,7 @@ export default function useValidatorDetails (address: string | undefined, genesi
 
   const activeEraIndex = useActiveEraIndex(genesisHash);
   const [validatorInfo, setValidatorInfo] = useState<ValidatorDetailsType>();
+  const APR = useValidatorApy(api, formatted, validatorInfo?.isElected);
 
   useEffect(() => {
     if (!address || !api || !formatted || !rcApi || !decimal || !token || !activeEraIndex) {
@@ -183,7 +193,7 @@ export default function useValidatorDetails (address: string | undefined, genesi
         isElected,
         isValidator,
         rewardPoint,
-        rewardPointHint: rewardPoint.isZero() ? '' : rewardPointHint,
+        rewardPointHint,
         token,
         ...overview,
         nominators
@@ -191,5 +201,10 @@ export default function useValidatorDetails (address: string | undefined, genesi
     })().catch(console.error);
   }, [address, api, activeEraIndex, decimal, formatted, rcApi, token]);
 
-  return validatorInfo;
+  return validatorInfo
+    ? {
+      APR,
+      ...validatorInfo
+    }
+    : undefined;
 }
