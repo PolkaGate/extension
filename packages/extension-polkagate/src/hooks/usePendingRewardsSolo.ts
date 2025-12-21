@@ -39,7 +39,7 @@ export default function usePendingRewardsSolo (
   const [expandedRewards, setExpandedRewards] = useState<ExpandedRewards[] | undefined>(undefined);
 
   useEffect(() => {
-    if (!api?.derive.session) {
+    if (!api) {
       return;
     }
 
@@ -48,7 +48,7 @@ export default function usePendingRewardsSolo (
     api.query['staking']?.['historyDepth']
       ? api.query['staking']['historyDepth']().then((depth) => setHistoryDepth(depth as unknown as BN)).catch(console.error)
       : setHistoryDepth(api.consts['staking']['historyDepth'] as unknown as BN);
-  }, [api?.consts, api?.derive.session, api?.query]);
+  }, [api, api?.consts, api?.query]);
 
   useEffect(() => {
     if (!pendingRewards) {
