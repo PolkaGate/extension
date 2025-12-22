@@ -877,5 +877,14 @@
   "Share": "分享",
   "Who supports this validator": "谁支持该验证者",
   "There are no validators yet.": "尚无验证者",
-  "Select up to {{count}} accounts for activity notifications": "选择最多 {{count}} 个账户以接收活动通知"
+  "Select up to {{count}} accounts for activity notifications": "选择最多 {{count}} 个账户以接收活动通知",
+  "{{chainName}} referendum #{{referendumIndex}} has been submitted": "{{chainName}} 的第 {{referendumIndex}} 号公投已提交",
+  "{{chainName}} referendum #{{referendumIndex}} has been approved": "{{chainName}} 的第 {{referendumIndex}} 号公投已批准",
+  "{{chainName}} referendum #{{referendumIndex}} has been cancelled": "{{chainName}} 的第 {{referendumIndex}} 号公投已取消",
+  "{{chainName}} referendum #{{referendumIndex}} has been confirmed": "{{chainName}} 的第 {{referendumIndex}} 号公投已确认",
+  "{{chainName}} referendum #{{referendumIndex}} has been created": "{{chainName}} 的第 {{referendumIndex}} 号公投已创建",
+  "{{chainName}} referendum #{{referendumIndex}} has been executed": "{{chainName}} 的第 {{referendumIndex}} 号公投已执行",
+  "{{chainName}} referendum #{{referendumIndex}} execution failed": "{{chainName}} 的第 {{referendumIndex}} 号公投执行失败",
+  "{{chainName}} referendum #{{referendumIndex}} has been rejected": "{{chainName}} 的第 {{referendumIndex}} 号公投已被否决",
+  "{{chainName}} referendum #{{referendumIndex}} has timed out": "{{chainName}} 的第 {{referendumIndex}} 号公投已超时"
 }

@@ -878,5 +878,14 @@
   "Who supports this validator": "",
   "There are no validators yet.": "",
   "Select up to {{count}} accounts for activity notifications": "",
-  "APR": ""
+  "APR": "",
+  "{{chainName}} referendum #{{referendumIndex}} has been submitted": "",
+  "{{chainName}} referendum #{{referendumIndex}} has been approved": "",
+  "{{chainName}} referendum #{{referendumIndex}} has been cancelled": "",
+  "{{chainName}} referendum #{{referendumIndex}} has been confirmed": "",
+  "{{chainName}} referendum #{{referendumIndex}} has been created": "",
+  "{{chainName}} referendum #{{referendumIndex}} has been executed": "",
+  "{{chainName}} referendum #{{referendumIndex}} execution failed": "",
+  "{{chainName}} referendum #{{referendumIndex}} has been rejected": "",
+  "{{chainName}} referendum #{{referendumIndex}} has timed out": ""
 }
