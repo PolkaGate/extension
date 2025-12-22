@@ -124,7 +124,7 @@ export default function NotificationSettings () {
         onAccounts={setAccounts}
         onClose={closePopup}
         open={popups === Popups.ACCOUNTS}
-        previousState={notificationSetting.accounts}
+        previousSelectedAccounts={notificationSetting.accounts}
       />
       <SelectChain
         onChains={setGovernanceChains}

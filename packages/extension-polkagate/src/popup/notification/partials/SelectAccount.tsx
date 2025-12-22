@@ -16,7 +16,7 @@ interface Props {
   onClose: ExtensionPopupCloser;
   open: boolean;
   onAccounts: (addresses: string[]) => () => void;
-  previousState: string[] | undefined;
+  previousSelectedAccounts: string[] | undefined;
 }
 
 /**
@@ -25,18 +25,20 @@ interface Props {
  *
  * Only has been used in extension mode!
  */
-function SelectAccount ({ onAccounts, onClose, open, previousState }: Props): React.ReactElement {
+function SelectAccount ({ onAccounts, onClose, open, previousSelectedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
 
-  const [selectedAccounts, setSelectedAccounts] = useState<string[]>(previousState ?? []);
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>(previousSelectedAccounts ?? []);
 
-  // Ensure state updates when previousState changes
+  // Ensure state updates when previousSelectedAccounts changes
   useEffect(() => {
-    if (previousState) {
-      setSelectedAccounts(previousState);
+    if (previousSelectedAccounts) {
+      const validSelectedAccounts = previousSelectedAccounts.filter((selectedAddress) => accounts.find(({ address }) => selectedAddress === address));
+
+      setSelectedAccounts(validSelectedAccounts);
     }
-  }, [previousState]);
+  }, [accounts, previousSelectedAccounts]);
 
   // Handles selecting or deselecting an account
   const handleSelect = useCallback((newSelect: string) => {
