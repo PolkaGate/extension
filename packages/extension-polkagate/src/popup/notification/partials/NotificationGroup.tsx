@@ -1,17 +1,20 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { CurrencyItemType } from '@polkadot/extension-polkagate/fullscreen/home/partials/type';
+import type { Prices, UserAddedEndpoint } from '@polkadot/extension-polkagate/util/types';
 import type { NotificationMessageInformation } from '../types';
 
-import { Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Grid, Stack, type Theme, Typography, useTheme } from '@mui/material';
 import * as Icons from 'iconsax-react';
-import React, { Fragment } from 'react';
+import React, { Fragment, useContext } from 'react';
 
-import { GradientDivider, ScrollingTextBox, TwoToneText } from '@polkadot/extension-polkagate/src/components';
-import { useAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { CurrencyContext, GradientDivider, ScrollingTextBox, TwoToneText } from '@polkadot/extension-polkagate/src/components';
+import { useUserAddedEndpoints } from '@polkadot/extension-polkagate/src/fullscreen/addNewChain/utils';
+import { useAccount, usePrices, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { toShortAddress } from '@polkadot/extension-polkagate/src/util';
 
-import { isToday } from '../util';
+import { getChainInfo, getNotificationMessages, getTokenPriceBySymbol, isToday } from '../util';
 
 function ItemDate ({ date }: { date: string; }) {
   const theme = useTheme();
@@ -42,10 +45,10 @@ function TitleTime ({ address, noName, read, time, title }: { address: string | 
         {!noName &&
           <ScrollingTextBox
             scrollOnHover
-            style={{ bgcolor: '#AA83DC26', px: '4px' }}
+            style={{ bgcolor: '#AA83DC26', borderRadius: '14px', px: '8px' }}
             text={account?.name ?? toShortAddress(address) ?? t('Unknown')}
             textStyle={{ color: '#AA83DC', ...theme.typography['B-1'] }}
-            width={75}
+            width={100}
           />}
         {!read && <Grid sx={{ bgcolor: theme.palette.menuIcon.hover, borderRadius: '999px', height: '8px', width: '8px' }} />}
       </Grid>
@@ -56,15 +59,25 @@ function TitleTime ({ address, noName, read, time, title }: { address: string | 
   );
 }
 
-function NotificationItem ({ item }: { item: NotificationMessageInformation; }) {
-  const theme = useTheme();
+interface NotificationItemProps {
+    item: NotificationMessageInformation;
+    currency: CurrencyItemType | undefined
+    t: (key: string) => string;
+    theme: Theme;
+    prices: Prices | null | undefined;
+    useAddedEndpoints: Record<`0x${string}`, UserAddedEndpoint> | undefined
 
-  const title = item.message.detail.title;
-  const time = item.message.detail.time;
-  const forAccount = item.message.info.forAccount;
-  const messageType = item.message.info.type;
-  const { text, textInColor } = item.message.detail.description;
-  const { bgcolor, borderColor, color, itemIcon } = item.message.detail.iconInfo;
+  }
+
+function NotificationItem ({ currency, item, prices, t, theme, useAddedEndpoints }: NotificationItemProps) {
+  const genesisHash = item.message.chain?.value as string | undefined;
+
+  const chainInfo = getChainInfo(genesisHash);
+  const tokenPrice = getTokenPriceBySymbol(chainInfo.token, chainInfo.chainName, genesisHash, prices, useAddedEndpoints);
+  const { detail: { description, iconInfo, time, title }, info: { forAccount, type: messageType } } = getNotificationMessages(item.message, chainInfo, currency, tokenPrice, t);
+
+  const { text, textInColor } = description;
+  const { bgcolor, borderColor, color, itemIcon } = iconInfo;
 
   const ItemIcon = Icons[itemIcon as keyof typeof Icons];
 
@@ -91,13 +104,24 @@ function NotificationItem ({ item }: { item: NotificationMessageInformation; }) 
 }
 
 function NotificationGroup ({ group: [dateKey, items] }: { group: [string, NotificationMessageInformation[]]; }) {
+  const theme = useTheme();
+  const { t } = useTranslation();
+  const { currency } = useContext(CurrencyContext);
+  const useAddedEndpoints = useUserAddedEndpoints();
+  const prices = usePrices();
+
   return (
     <Stack direction='column' sx={{ bgcolor: '#05091C', borderRadius: '14px', gap: '8px', p: '10px', width: '100%' }}>
       <ItemDate date={dateKey} />
       {items.map((item, index) => (
-        <Fragment key={item.message.detail.itemKey}>
+        <Fragment key={item.message.itemKey}>
           <NotificationItem
+            currency={currency}
             item={item}
+            prices={prices}
+            t={t}
+            theme={theme}
+            useAddedEndpoints={useAddedEndpoints}
           />
           {items.length > index + 1 &&
             <GradientDivider style={{ mx: '-10px', my: '2px' }} />

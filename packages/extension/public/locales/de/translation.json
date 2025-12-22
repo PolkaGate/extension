@@ -877,5 +877,14 @@
   "Share": "Teilen",
   "Who supports this validator": "Wer unterstützt diesen Validator",
   "There are no validators yet.": "Es gibt noch keine Validatoren",
-  "Select up to {{count}} accounts for activity notifications": "Wählen Sie bis zu {{count}} Konten für Aktivitätsbenachrichtigungen aus"
+  "Select up to {{count}} accounts for activity notifications": "Wählen Sie bis zu {{count}} Konten für Aktivitätsbenachrichtigungen aus",
+  "{{chainName}} referendum #{{referendumIndex}} has been submitted": "{{chainName}}-Referendum Nr. {{referendumIndex}} wurde eingereicht",
+  "{{chainName}} referendum #{{referendumIndex}} has been approved": "{{chainName}}-Referendum Nr. {{referendumIndex}} wurde genehmigt",
+  "{{chainName}} referendum #{{referendumIndex}} has been cancelled": "{{chainName}}-Referendum Nr. {{referendumIndex}} wurde abgebrochen",
+  "{{chainName}} referendum #{{referendumIndex}} has been confirmed": "{{chainName}}-Referendum Nr. {{referendumIndex}} wurde bestätigt",
+  "{{chainName}} referendum #{{referendumIndex}} has been created": "{{chainName}}-Referendum Nr. {{referendumIndex}} wurde erstellt",
+  "{{chainName}} referendum #{{referendumIndex}} has been executed": "{{chainName}}-Referendum Nr. {{referendumIndex}} wurde ausgeführt",
+  "{{chainName}} referendum #{{referendumIndex}} execution failed": "Ausführung des {{chainName}}-Referendums Nr. {{referendumIndex}} ist fehlgeschlagen",
+  "{{chainName}} referendum #{{referendumIndex}} has been rejected": "{{chainName}}-Referendum Nr. {{referendumIndex}} wurde abgelehnt",
+  "{{chainName}} referendum #{{referendumIndex}} has timed out": "{{chainName}}-Referendum Nr. {{referendumIndex}} ist abgelaufen"
 }

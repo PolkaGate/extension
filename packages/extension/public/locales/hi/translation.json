@@ -877,5 +877,14 @@
   "Share": "साझा करें",
   "Who supports this validator": "इस वैलिडेटर का समर्थन कौन करता है",
   "There are no validators yet.": "अभी तक कोई वैलिडेटर नहीं हैं",
-  "Select up to {{count}} accounts for activity notifications": "गतिविधि सूचनाओं के लिए अधिकतम {{count}} खाते चुनें"
+  "Select up to {{count}} accounts for activity notifications": "गतिविधि सूचनाओं के लिए अधिकतम {{count}} खाते चुनें",
+  "{{chainName}} referendum #{{referendumIndex}} has been submitted": "{{chainName}} जनमत संग्रह #{{referendumIndex}} प्रस्तुत किया गया",
+  "{{chainName}} referendum #{{referendumIndex}} has been approved": "{{chainName}} जनमत संग्रह #{{referendumIndex}} स्वीकृत हुआ",
+  "{{chainName}} referendum #{{referendumIndex}} has been cancelled": "{{chainName}} जनमत संग्रह #{{referendumIndex}} रद्द किया गया",
+  "{{chainName}} referendum #{{referendumIndex}} has been confirmed": "{{chainName}} जनमत संग्रह #{{referendumIndex}} की पुष्टि हुई",
+  "{{chainName}} referendum #{{referendumIndex}} has been created": "{{chainName}} जनमत संग्रह #{{referendumIndex}} बनाया गया",
+  "{{chainName}} referendum #{{referendumIndex}} has been executed": "{{chainName}} जनमत संग्रह #{{referendumIndex}} लागू किया गया",
+  "{{chainName}} referendum #{{referendumIndex}} execution failed": "{{chainName}} जनमत संग्रह #{{referendumIndex}} का निष्पादन विफल रहा",
+  "{{chainName}} referendum #{{referendumIndex}} has been rejected": "{{chainName}} जनमत संग्रह #{{referendumIndex}} अस्वीकृत हुआ",
+  "{{chainName}} referendum #{{referendumIndex}} has timed out": "{{chainName}} जनमत संग्रह #{{referendumIndex}} की समय सीमा समाप्त हो गई"
 }
