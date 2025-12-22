@@ -63,7 +63,7 @@ export function remainingTime (blocks: number, noMinutes?: boolean): string {
  * @param {number | undefined} seconds - The number of seconds remaining.
  * @returns {string} The formatted countdown time (e.g., "2 days 3 hours 15 mins 30 sec") or "finished" if time has elapsed.
  */
-export function remainingTimeCountDown (seconds: number | undefined): string {
+export function remainingTimeCountDown (seconds: number | undefined, withSec = true): string {
   if (!seconds || seconds <= 0) {
     return 'finished';
   }
@@ -76,7 +76,7 @@ export function remainingTimeCountDown (seconds: number | undefined): string {
   const m = min ? `${min} min ` : '';
   const s = sec ? `${sec} sec` : '';
 
-  return d + h + m + s;
+  return withSec ? d + h + m + s : d + h + m;
 }
 
 /**

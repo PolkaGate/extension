@@ -279,21 +279,22 @@ export const KODADOT_URL = 'https://kodadot.xyz';
 export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
 export enum ExtensionPopups {
-  LANGUAGE,
-  GOVERNANCE,
-  NEW_NETWORK,
-  NONE,
-  PASSWORD,
-  PRIVACY,
-  WARNING,
-  // Account Popups
   DAPPS,
   DERIVE,
   EXPORT,
+  GOVERNANCE,
+  LANGUAGE,
+  NEW_NETWORK,
+  NONE,
+  NOTIFICATION,
+  PASSWORD,
+  PRIVACY,
+  // Account Popups
   IMPORT,
   RECEIVE,
   RENAME,
   REMOVE,
+  WARNING
 }
 
 export const TRANSACTION_FLOW_STEPS = {
@@ -326,6 +327,8 @@ export const STORAGE_KEY = {
   LAST_PASS_CHANGE: 'lastPasswordChange',
   LOGIN_INFO: 'loginInfo',
   MY_POOL: 'MyPool',
+  NOTIFICATIONS: 'notifications',
+  NOTIFICATION_SETTINGS: 'notificationSetting',
   PRICE_IN_CURRENCIES: 'pricesInCurrencies',
   SELECTED_ACCOUNT: 'selectedAccount',
   SELECTED_CHAINS: 'selectedChains',

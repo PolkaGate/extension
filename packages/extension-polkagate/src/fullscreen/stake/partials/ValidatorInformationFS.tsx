@@ -20,7 +20,7 @@ import { getSubstrateAddress, isHexToBn, toShortAddress } from '../../../util';
 import { getTokenUnit } from '../util/utils';
 import { InfoBox } from './InfoBox';
 
-const Socials = ({ accountInfo }: { accountInfo: DeriveAccountRegistration | undefined }) => {
+export const MiniSocials = ({ accountInfo }: { accountInfo: DeriveAccountRegistration | undefined }) => {
   return (
     <Grid alignItems='center' columnGap='2px' container item sx={{ width: 'fit-content' }}>
       {accountInfo?.email &&
@@ -74,7 +74,7 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
           />
         </Grid>
       </Stack>
-      <Socials accountInfo={accountInfo} />
+      <MiniSocials accountInfo={accountInfo} />
     </Container>
   );
 };

@@ -6,7 +6,7 @@ import type { ExpandedRewards } from '../../type';
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { Fragment, useCallback, useMemo, useRef } from 'react';
 
-import { AssetLogo, DisplayBalance, FadeOnScroll, GlowCheckbox, Identity2, MySkeleton } from '../../../../components';
+import { AssetLogo, DisplayBalance, FadeOnScroll, GlowCheckbox, Identity2, MySkeleton, NoInfoYet } from '../../../../components';
 import { useChainInfo, useTranslation } from '../../../../hooks';
 import getLogo2 from '../../../../util/getLogo2';
 import { timeDiffSummary } from './timeDiffSummary';
@@ -54,7 +54,7 @@ export const TableHeader = ({ checked, disabled, onSelectAll }: TableHeaderProp)
 };
 
 interface RewardsTableProp {
-  expandedRewards: ExpandedRewards[] | undefined;
+  expandedRewards: ExpandedRewards[] | undefined | null;
   selectedToPayout: ExpandedRewards[];
   onSelect: (info: ExpandedRewards, checked: boolean) => void;
   genesisHash: string | undefined;
@@ -97,13 +97,12 @@ export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect
           Array.from({ length: 7 }).map((_, index) => (
             <StyledSkeleton key={index} />
           ))}
-        {expandedRewards && expandedRewards.length === 0 &&
-          <Grid container justifyContent='center' sx={{ mt: '70px' }}>
-            <Typography color='#AA83DC' variant='B-2'>
-              {t('No pending rewards found!')}
-            </Typography>
-          </Grid>
-        }
+        <NoInfoYet
+          show={expandedRewards === null || Boolean(expandedRewards && expandedRewards.length === 0)}
+          size={100}
+          style={{ justifyContent: 'center', mt: '50px' }}
+          text={t('No pending rewards found!')}
+        />
         {expandedRewards?.map((info, index) => {
           const [eraIndex, validator, _page, value] = info;
           const isChecked = isIncluded(info);
