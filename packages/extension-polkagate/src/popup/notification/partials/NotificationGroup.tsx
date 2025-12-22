@@ -68,14 +68,10 @@ function NotificationItem ({ item }: { item: NotificationMessageInformation; }) 
 
   const chainInfo = getChainInfo(genesisHash);
   const tokenPrice = getTokenPriceBySymbol(chainInfo.token, chainInfo.chainName, genesisHash, prices, useAddedEndpoints);
-  const { detail, info } = getNotificationMessages(item.message, chainInfo, currency, tokenPrice, t);
+  const { detail: { description, iconInfo, time, title }, info: { forAccount, type: messageType } } = getNotificationMessages(item.message, chainInfo, currency, tokenPrice, t);
 
-  const title = detail.title;
-  const time = detail.time;
-  const forAccount = info.forAccount;
-  const messageType = info.type;
-  const { text, textInColor } = detail.description;
-  const { bgcolor, borderColor, color, itemIcon } = detail.iconInfo;
+  const { text, textInColor } = description;
+  const { bgcolor, borderColor, color, itemIcon } = iconInfo;
 
   const ItemIcon = Icons[itemIcon as keyof typeof Icons];
 
