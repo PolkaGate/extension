@@ -43,10 +43,10 @@ function TitleTime ({ address, noName, read, time, title }: { address: string | 
         {!noName &&
           <ScrollingTextBox
             scrollOnHover
-            style={{ bgcolor: '#AA83DC26', px: '4px' }}
+            style={{ bgcolor: '#AA83DC26', borderRadius: '14px', px: '8px' }}
             text={account?.name ?? toShortAddress(address) ?? t('Unknown')}
             textStyle={{ color: '#AA83DC', ...theme.typography['B-1'] }}
-            width={75}
+            width={100}
           />}
         {!read && <Grid sx={{ bgcolor: theme.palette.menuIcon.hover, borderRadius: '999px', height: '8px', width: '8px' }} />}
       </Grid>
