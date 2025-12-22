@@ -330,11 +330,11 @@ export function getNotificationDescription (item: NotificationMessageType, t: TF
 
   switch (item.type) {
     case 'receivedFund': {
-      const assetSymbol = item.receivedFund?.assetSymbol;
-      const assetAmount = formatNumber(item.receivedFund?.amount);
-      const currencyAmount = formatNumber(item.receivedFund?.currencyAmount);
+      const { amount, assetSymbol, currencyAmount } = item.receivedFund || {};
+      const assetAmount = formatNumber(amount);
+      const _currencyAmount = formatNumber(currencyAmount);
 
-      const amountSection = `${assetAmount} ${assetSymbol} (${currencySign}${currencyAmount})`;
+      const amountSection = `${assetAmount} ${assetSymbol} (${currencySign}${_currencyAmount})`;
 
       return {
         text: t('Received {{amountSection}} on {{chainName}}', { replace: { amountSection, chainName } }),
@@ -343,29 +343,24 @@ export function getNotificationDescription (item: NotificationMessageType, t: TF
     }
 
     case 'referenda': {
+      const { referendumIndex, status = 'rejected' } = item.referenda || {};
+
       const statusMap: Record<string, string> = {
-        approved: '{{chainName}} referendum #{{referendumIndex}} has been approved',
-        cancelled: '{{chainName}} referendum #{{referendumIndex}} has been cancelled',
-        confirm: '{{chainName}} referendum #{{referendumIndex}} has been confirmed',
-        decision: '{{chainName}} referendum #{{referendumIndex}} has been created',
-        executed: '{{chainName}} referendum #{{referendumIndex}} has been executed',
-        executedfailed: '{{chainName}} referendum #{{referendumIndex}} execution failed',
-        ongoing: '{{chainName}} referendum #{{referendumIndex}} has been created',
-        rejected: '{{chainName}} referendum #{{referendumIndex}} has been rejected',
-        submitted: '{{chainName}} referendum #{{referendumIndex}} has been submitted',
-        timedOut: '{{chainName}} referendum #{{referendumIndex}} has timed out',
-        timeout: '{{chainName}} referendum #{{referendumIndex}} has timed out'
+        approved: t('{{chainName}} referendum #{{referendumIndex}} has been approved', { replace: { chainName, referendumIndex } }),
+        cancelled: t('{{chainName}} referendum #{{referendumIndex}} has been cancelled', { replace: { chainName, referendumIndex } }),
+        confirm: t('{{chainName}} referendum #{{referendumIndex}} has been confirmed', { replace: { chainName, referendumIndex } }),
+        decision: t('{{chainName}} referendum #{{referendumIndex}} has been created', { replace: { chainName, referendumIndex } }),
+        executed: t('{{chainName}} referendum #{{referendumIndex}} has been executed', { replace: { chainName, referendumIndex } }),
+        executedfailed: t('{{chainName}} referendum #{{referendumIndex}} execution failed', { replace: { chainName, referendumIndex } }),
+        ongoing: t('{{chainName}} referendum #{{referendumIndex}} has been created', { replace: { chainName, referendumIndex } }),
+        rejected: t('{{chainName}} referendum #{{referendumIndex}} has been rejected', { replace: { chainName, referendumIndex } }),
+        submitted: t('{{chainName}} referendum #{{referendumIndex}} has been submitted', { replace: { chainName, referendumIndex } }),
+        timedOut: t('{{chainName}} referendum #{{referendumIndex}} has timed out', { replace: { chainName, referendumIndex } }),
+        timeout: t('{{chainName}} referendum #{{referendumIndex}} has timed out', { replace: { chainName, referendumIndex } })
       };
 
-      const status = item.referenda?.status;
-      const referendumIndex = item.referenda?.referendumIndex;
-      // Default to "rejected" text if status is missing
-      const textTemplate = statusMap[status ?? 'rejected'];
-
       return {
-        text: t(textTemplate, {
-          replace: { chainName, referendumIndex }
-        }),
+        text: statusMap[status],
         textInColor: `#${referendumIndex}`
       };
     }
