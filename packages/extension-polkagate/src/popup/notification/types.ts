@@ -132,6 +132,7 @@ export type NotificationType = 'referenda' | 'stakingReward' | 'receivedFund';
 export interface NotificationMessageType {
   chain?: DropdownOption;
   type: NotificationType;
+  itemKey: string;
   forAccount?: string;
   payout?: PayoutsProp;
   referenda?: ReferendaProp;
@@ -148,7 +149,7 @@ export type NotificationActionType =
   | { type: 'INITIALIZE'; }
   | { type: 'MARK_AS_READ'; }
   | { type: 'LOAD_FROM_STORAGE'; payload: NotificationsType }
-  | { type: 'SET_MESSAGES'; payload: NotificationMessage[] };
+  | { type: 'SET_MESSAGES'; payload: NotificationMessageType[] };
 
 export interface NotificationMessageDetail {
   description: {
@@ -177,6 +178,6 @@ export interface NotificationMessage {
 }
 
 export interface NotificationMessageInformation {
-  message: NotificationMessage,
+  message: NotificationMessageType,
   read: boolean;
 }

@@ -877,5 +877,14 @@
   "Share": "Поделиться",
   "Who supports this validator": "Кто поддерживает этого валидатора",
   "There are no validators yet.": "Пока нет валидаторов",
-  "Select up to {{count}} accounts for activity notifications": "Выберите до {{count}} аккаунтов для уведомлений об активности"
+  "Select up to {{count}} accounts for activity notifications": "Выберите до {{count}} аккаунтов для уведомлений об активности",
+  "{{chainName}} referendum #{{referendumIndex}} has been submitted": "Референдум {{chainName}} №{{referendumIndex}} был подан",
+  "{{chainName}} referendum #{{referendumIndex}} has been approved": "Референдум {{chainName}} №{{referendumIndex}} был одобрен",
+  "{{chainName}} referendum #{{referendumIndex}} has been cancelled": "Референдум {{chainName}} №{{referendumIndex}} был отменён",
+  "{{chainName}} referendum #{{referendumIndex}} has been confirmed": "Референдум {{chainName}} №{{referendumIndex}} был подтверждён",
+  "{{chainName}} referendum #{{referendumIndex}} has been created": "Референдум {{chainName}} №{{referendumIndex}} был создан",
+  "{{chainName}} referendum #{{referendumIndex}} has been executed": "Референдум {{chainName}} №{{referendumIndex}} был выполнен",
+  "{{chainName}} referendum #{{referendumIndex}} execution failed": "Выполнение референдума {{chainName}} №{{referendumIndex}} завершилось неудачей",
+  "{{chainName}} referendum #{{referendumIndex}} has been rejected": "Референдум {{chainName}} №{{referendumIndex}} был отклонён",
+  "{{chainName}} referendum #{{referendumIndex}} has timed out": "Референдум {{chainName}} №{{referendumIndex}} истёк"
 }

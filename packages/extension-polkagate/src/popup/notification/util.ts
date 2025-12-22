@@ -55,8 +55,11 @@ export const generateReferendaNotifications = (
     currentReferenda = currentReferenda.filter(({ latestTimestamp }) => latestTimestamp >= lastTime(latestLoggedIn));
 
     for (const referenda of currentReferenda) {
+      const itemKey = `referenda - ${network.value} - ${referenda.index} - ${referenda.latestTimestamp}`;
+
       newMessages.push({
         chain: network,
+        itemKey,
         referenda,
         type: 'referenda'
       });
@@ -79,9 +82,12 @@ export const generateStakingRewardNotifications = (
     data
       .filter(({ timestamp }) => timestamp >= lastTime(latestLoggedIn))
       .forEach((payout) => {
+        const itemKey = `payout - ${network.value} - ${payout.index} - ${payout.timestamp}`;
+
         newMessages.push({
           chain: network,
           forAccount: address,
+          itemKey,
           payout,
           type: 'stakingReward'
         });
@@ -104,9 +110,12 @@ export const generateReceivedFundNotifications = (
     data
       .filter(({ timestamp }) => timestamp >= lastTime(latestLoggedIn))
       .forEach((receivedFund) => {
+        const itemKey = `transfer - ${network.value} - ${receivedFund.index} - ${receivedFund.timestamp}`;
+
         newMessages.push({
           chain: network,
           forAccount: address,
+          itemKey,
           receivedFund,
           type: 'receivedFund'
         });
@@ -150,7 +159,7 @@ export function groupNotificationsByDay (
   }
 
   const grouped = notifications.reduce<Record<string, NotificationMessageInformation[]>>((acc, item) => {
-    const timestamp = item.message.detail.timestamp;
+    const timestamp = item.message.payout?.timestamp || item.message.receivedFund?.timestamp || item.message.referenda?.latestTimestamp;
 
     if (!timestamp) {
       return acc;
@@ -170,8 +179,8 @@ export function groupNotificationsByDay (
   // Sort items within each day by timestamp (newest first)
   for (const dayKey in grouped) {
     grouped[dayKey].sort((a, b) => {
-      const timeA = a.message.detail.timestamp;
-      const timeB = b.message.detail.timestamp;
+      const timeA = a.message.payout?.timestamp || a.message.receivedFund?.timestamp || a.message.referenda?.latestTimestamp || 0;
+      const timeB = b.message.payout?.timestamp || b.message.receivedFund?.timestamp || b.message.referenda?.latestTimestamp || 0;
 
       return timeB - timeA;
     });
@@ -321,11 +330,11 @@ export function getNotificationDescription (item: NotificationMessageType, t: TF
 
   switch (item.type) {
     case 'receivedFund': {
-      const assetSymbol = item.receivedFund?.assetSymbol;
-      const assetAmount = formatNumber(item.receivedFund?.amount);
-      const currencyAmount = formatNumber(item.receivedFund?.currencyAmount);
+      const { amount, assetSymbol, currencyAmount } = item.receivedFund || {};
+      const assetAmount = formatNumber(amount);
+      const _currencyAmount = formatNumber(currencyAmount);
 
-      const amountSection = `${assetAmount} ${assetSymbol} (${currencySign}${currencyAmount})`;
+      const amountSection = `${assetAmount} ${assetSymbol} (${currencySign}${_currencyAmount})`;
 
       return {
         text: t('Received {{amountSection}} on {{chainName}}', { replace: { amountSection, chainName } }),
@@ -334,29 +343,24 @@ export function getNotificationDescription (item: NotificationMessageType, t: TF
     }
 
     case 'referenda': {
+      const { referendumIndex, status = 'rejected' } = item.referenda || {};
+
       const statusMap: Record<string, string> = {
-        approved: '{{chainName}} referendum #{{referendumIndex}} has been approved',
-        cancelled: '{{chainName}} referendum #{{referendumIndex}} has been cancelled',
-        confirm: '{{chainName}} referendum #{{referendumIndex}} has been confirmed',
-        decision: '{{chainName}} referendum #{{referendumIndex}} has been created',
-        executed: '{{chainName}} referendum #{{referendumIndex}} has been executed',
-        executedfailed: '{{chainName}} referendum #{{referendumIndex}} execution failed',
-        ongoing: '{{chainName}} referendum #{{referendumIndex}} has been created',
-        rejected: '{{chainName}} referendum #{{referendumIndex}} has been rejected',
-        submitted: '{{chainName}} referendum #{{referendumIndex}} has been submitted',
-        timedOut: '{{chainName}} referendum #{{referendumIndex}} has timed out',
-        timeout: '{{chainName}} referendum #{{referendumIndex}} has timed out'
+        approved: t('{{chainName}} referendum #{{referendumIndex}} has been approved', { replace: { chainName, referendumIndex } }),
+        cancelled: t('{{chainName}} referendum #{{referendumIndex}} has been cancelled', { replace: { chainName, referendumIndex } }),
+        confirm: t('{{chainName}} referendum #{{referendumIndex}} has been confirmed', { replace: { chainName, referendumIndex } }),
+        decision: t('{{chainName}} referendum #{{referendumIndex}} has been created', { replace: { chainName, referendumIndex } }),
+        executed: t('{{chainName}} referendum #{{referendumIndex}} has been executed', { replace: { chainName, referendumIndex } }),
+        executedfailed: t('{{chainName}} referendum #{{referendumIndex}} execution failed', { replace: { chainName, referendumIndex } }),
+        ongoing: t('{{chainName}} referendum #{{referendumIndex}} has been created', { replace: { chainName, referendumIndex } }),
+        rejected: t('{{chainName}} referendum #{{referendumIndex}} has been rejected', { replace: { chainName, referendumIndex } }),
+        submitted: t('{{chainName}} referendum #{{referendumIndex}} has been submitted', { replace: { chainName, referendumIndex } }),
+        timedOut: t('{{chainName}} referendum #{{referendumIndex}} has timed out', { replace: { chainName, referendumIndex } }),
+        timeout: t('{{chainName}} referendum #{{referendumIndex}} has timed out', { replace: { chainName, referendumIndex } })
       };
 
-      const status = item.referenda?.status;
-      const referendumIndex = item.referenda?.referendumIndex;
-      // Default to "rejected" text if status is missing
-      const textTemplate = statusMap[status ?? 'rejected'];
-
       return {
-        text: t(textTemplate, {
-          replace: { chainName, referendumIndex }
-        }),
+        text: statusMap[status],
         textInColor: `#${referendumIndex}`
       };
     }
@@ -442,7 +446,7 @@ interface ChainInfoShort {
   token: string | undefined;
 }
 
-export const getChainInfo = (genesisHash: string): ChainInfoShort => {
+export const getChainInfo = (genesisHash: string | undefined): ChainInfoShort => {
   const chainInfo = chains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
   const chainName = sanitizeChainName(chainInfo?.chain, true);
   const decimal = chainInfo?.tokenDecimal;
@@ -484,7 +488,7 @@ export const getNotificationMessages = (item: NotificationMessageType, chainInfo
   };
 };
 
-export const filterMessages = (pervMessages: NotificationMessageInformation[] | undefined, newMessages: NotificationMessage[] | undefined) => {
+export const filterMessages = (pervMessages: NotificationMessageInformation[] | undefined, newMessages: NotificationMessageType[] | undefined) => {
   if (!newMessages?.length) {
     return pervMessages;
   }
@@ -493,10 +497,10 @@ export const filterMessages = (pervMessages: NotificationMessageInformation[] | 
     return newMessages.map((item) => ({ message: item, read: false })) ?? [];
   }
 
-  const pervMessagesSet = new Set(pervMessages.map(({ message }) => message.detail.itemKey));
+  const pervMessagesSet = new Set(pervMessages.map(({ message }) => message.itemKey));
 
   const filteredMessages = newMessages
-    .filter(({ detail }) => !pervMessagesSet.has(detail.itemKey))
+    .filter(({ itemKey }) => !pervMessagesSet.has(itemKey))
     .map((item) => ({ message: item, read: false }));
 
   return pervMessages.concat(filteredMessages);

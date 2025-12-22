@@ -78,6 +78,7 @@ function Notification ({ handleClose }: Props) {
         </Container>
         <FadeOnScroll
           containerRef={refContainer}
+          ratio={0.3}
         />
       </>
     </DraggableModal>

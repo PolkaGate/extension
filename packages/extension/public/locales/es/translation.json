@@ -877,5 +877,14 @@
   "Share": "Compartir",
   "Who supports this validator": "Quién apoya a este validador",
   "There are no validators yet.": "Aún no hay validadores",
-  "Select up to {{count}} accounts for activity notifications": "Selecciona hasta {{count}} cuentas para notificaciones de actividad"
+  "Select up to {{count}} accounts for activity notifications": "Selecciona hasta {{count}} cuentas para notificaciones de actividad",
+  "{{chainName}} referendum #{{referendumIndex}} has been submitted": "El referéndum #{{referendumIndex}} de {{chainName}} ha sido presentado",
+  "{{chainName}} referendum #{{referendumIndex}} has been approved": "El referéndum #{{referendumIndex}} de {{chainName}} ha sido aprobado",
+  "{{chainName}} referendum #{{referendumIndex}} has been cancelled": "El referéndum #{{referendumIndex}} de {{chainName}} ha sido cancelado",
+  "{{chainName}} referendum #{{referendumIndex}} has been confirmed": "El referéndum #{{referendumIndex}} de {{chainName}} ha sido confirmado",
+  "{{chainName}} referendum #{{referendumIndex}} has been created": "El referéndum #{{referendumIndex}} de {{chainName}} ha sido creado",
+  "{{chainName}} referendum #{{referendumIndex}} has been executed": "El referéndum #{{referendumIndex}} de {{chainName}} ha sido ejecutado",
+  "{{chainName}} referendum #{{referendumIndex}} execution failed": "La ejecución del referéndum #{{referendumIndex}} de {{chainName}} falló",
+  "{{chainName}} referendum #{{referendumIndex}} has been rejected": "El referéndum #{{referendumIndex}} de {{chainName}} ha sido rechazado",
+  "{{chainName}} referendum #{{referendumIndex}} has timed out": "El referéndum #{{referendumIndex}} de {{chainName}} ha caducado"
 }

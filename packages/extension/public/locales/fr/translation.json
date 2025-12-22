@@ -877,5 +877,14 @@
   "Share": "Partager",
   "Who supports this validator": "Qui soutient ce validateur",
   "There are no validators yet.": "Il n'y a pas encore de validateurs",
-  "Select up to {{count}} accounts for activity notifications": "Sélectionnez jusqu'à {{count}} comptes pour les notifications d’activité"
+  "Select up to {{count}} accounts for activity notifications": "Sélectionnez jusqu'à {{count}} comptes pour les notifications d’activité",
+  "{{chainName}} referendum #{{referendumIndex}} has been submitted": "Le référendum {{chainName}} n° {{referendumIndex}} a été soumis",
+  "{{chainName}} referendum #{{referendumIndex}} has been approved": "Le référendum {{chainName}} n° {{referendumIndex}} a été approuvé",
+  "{{chainName}} referendum #{{referendumIndex}} has been cancelled": "Le référendum {{chainName}} n° {{referendumIndex}} a été annulé",
+  "{{chainName}} referendum #{{referendumIndex}} has been confirmed": "Le référendum {{chainName}} n° {{referendumIndex}} a été confirmé",
+  "{{chainName}} referendum #{{referendumIndex}} has been created": "Le référendum {{chainName}} n° {{referendumIndex}} a été créé",
+  "{{chainName}} referendum #{{referendumIndex}} has been executed": "Le référendum {{chainName}} n° {{referendumIndex}} a été exécuté",
+  "{{chainName}} referendum #{{referendumIndex}} execution failed": "L’exécution du référendum {{chainName}} n° {{referendumIndex}} a échoué",
+  "{{chainName}} referendum #{{referendumIndex}} has been rejected": "Le référendum {{chainName}} n° {{referendumIndex}} a été rejeté",
+  "{{chainName}} referendum #{{referendumIndex}} has timed out": "Le référendum {{chainName}} n° {{referendumIndex}} a expiré"
 }
