@@ -1,9 +1,11 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { CurrencyItemType } from '@polkadot/extension-polkagate/fullscreen/home/partials/type';
+import type { Prices, UserAddedEndpoint } from '@polkadot/extension-polkagate/util/types';
 import type { NotificationMessageInformation } from '../types';
 
-import { Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Grid, Stack, type Theme, Typography, useTheme } from '@mui/material';
 import * as Icons from 'iconsax-react';
 import React, { Fragment, useContext } from 'react';
 
@@ -57,13 +59,17 @@ function TitleTime ({ address, noName, read, time, title }: { address: string | 
   );
 }
 
-function NotificationItem ({ item }: { item: NotificationMessageInformation; }) {
-  const theme = useTheme();
-  const { t } = useTranslation();
-  const { currency } = useContext(CurrencyContext);
-  const useAddedEndpoints = useUserAddedEndpoints();
-  const prices = usePrices();
+interface NotificationItemProps {
+    item: NotificationMessageInformation;
+    currency: CurrencyItemType | undefined
+    t: (key: string) => string;
+    theme: Theme;
+    prices: Prices | null | undefined;
+    useAddedEndpoints: Record<`0x${string}`, UserAddedEndpoint> | undefined
 
+  }
+
+function NotificationItem ({ currency, item, prices, t, theme, useAddedEndpoints }: NotificationItemProps) {
   const genesisHash = item.message.chain?.value as string | undefined;
 
   const chainInfo = getChainInfo(genesisHash);
@@ -98,13 +104,24 @@ function NotificationItem ({ item }: { item: NotificationMessageInformation; }) 
 }
 
 function NotificationGroup ({ group: [dateKey, items] }: { group: [string, NotificationMessageInformation[]]; }) {
+  const theme = useTheme();
+  const { t } = useTranslation();
+  const { currency } = useContext(CurrencyContext);
+  const useAddedEndpoints = useUserAddedEndpoints();
+  const prices = usePrices();
+
   return (
     <Stack direction='column' sx={{ bgcolor: '#05091C', borderRadius: '14px', gap: '8px', p: '10px', width: '100%' }}>
       <ItemDate date={dateKey} />
       {items.map((item, index) => (
         <Fragment key={item.message.itemKey}>
           <NotificationItem
+            currency={currency}
             item={item}
+            prices={prices}
+            t={t}
+            theme={theme}
+            useAddedEndpoints={useAddedEndpoints}
           />
           {items.length > index + 1 &&
             <GradientDivider style={{ mx: '-10px', my: '2px' }} />
