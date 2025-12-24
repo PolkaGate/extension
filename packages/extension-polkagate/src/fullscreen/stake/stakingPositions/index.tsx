@@ -29,10 +29,11 @@ interface PositionOptionsProps {
 
 const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }: PositionOptionsProps) => {
   const { t } = useTranslation();
+  const totalPositions = positionItems?.length ?? 0;
 
   return (
     <>
-      {positionItems?.map(({ decimal, genesisHash, pooledBalance, priceId, soloTotal, token }) => {
+      {positionItems?.map(({ claimPermissions, decimal, genesisHash, pooledBalance, priceId, soloTotal, token }) => {
         const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;
 
         if (TEST_NETS.includes(genesisHash) && !state.isTestnet) {
@@ -44,6 +45,7 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
             {pooledBalance && !pooledBalance?.isZero() && ['both', 'pool'].includes(state.stakingType) &&
               <PositionItem
                 balance={pooledBalance}
+                claimPermissions={claimPermissions}
                 decimal={decimal}
                 genesisHash={genesisHash}
                 isSelected={isSelected(genesisHash, 'pool')}
@@ -51,6 +53,7 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
                 price={price}
                 token={token}
                 type='pool'
+                totalPositions={totalPositions}
               />}
             {soloTotal && !soloTotal?.isZero() && ['both', 'solo'].includes(state.stakingType) &&
               <PositionItem
@@ -62,6 +65,7 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
                 price={price}
                 token={token}
                 type='solo'
+                totalPositions={totalPositions}
               />}
           </Fragment>
         );

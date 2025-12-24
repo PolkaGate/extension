@@ -8,7 +8,7 @@ import React, { Fragment, useCallback, useMemo, useRef } from 'react';
 
 import { timeDiffSummary } from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/pendingReward/timeDiffSummary';
 
-import { AssetLogo, DisplayBalance, FadeOnScroll, GradientDivider, Identity2, MySkeleton } from '../../../../components';
+import { AssetLogo, DisplayBalance, FadeOnScroll, GradientDivider, Identity2, MySkeleton, NoInfoYet } from '../../../../components';
 import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../../hooks';
 import getLogo2 from '../../../../util/getLogo2';
 import CheckBox from '../../components/CheckBox';
@@ -52,7 +52,7 @@ export const TableHeader = ({ checked, onSelectAll }: TableHeaderProp) => {
 };
 
 interface RewardsTableProp {
-  expandedRewards: ExpandedRewards[] | undefined;
+  expandedRewards: ExpandedRewards[] | undefined | null;
   selectedToPayout: ExpandedRewards[];
   onSelect: (info: ExpandedRewards, checked: boolean) => void;
   genesisHash: string | undefined;
@@ -91,13 +91,12 @@ export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect
           Array.from({ length: 8 }).map((_, index) => (
             <StyledSkeleton key={index} />
           ))}
-        {expandedRewards && expandedRewards.length === 0 &&
-          <Grid container justifyContent='center' sx={{ mt: '70px' }}>
-            <Typography color='text.highlight' variant='B-2'>
-              {t('No pending rewards found!')}
-            </Typography>
-          </Grid>
-        }
+        <NoInfoYet
+          show={expandedRewards === null || Boolean(expandedRewards && expandedRewards.length === 0)}
+          size={100}
+          style={{ justifyContent: 'center', mt: '50px' }}
+          text={t('No pending rewards found!')}
+        />
         {expandedRewards?.map((info, index) => {
           const [eraIndex, validator, _page, value] = info;
           const isChecked = isIncluded(info);

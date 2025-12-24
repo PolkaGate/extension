@@ -10,36 +10,36 @@ export interface LanguageOptions extends DropdownOption {
 export function getLanguageOptions (): LanguageOptions[] {
   return [
     // default/native
+     {
+      text: 'Deutsch',
+      value: 'de'
+    },
     {
       flag: 'US',
       text: 'English',
       value: 'en'
     },
-    {
-      flag: 'CN',
-      text: '汉语',
-      value: 'zh'
+      {
+      text: 'español',
+      value: 'es'
     },
     {
       text: 'Français',
       value: 'fr'
+    },
+     {
+      flag: 'IN',
+      text: 'हिन्दी',
+      value: 'hi'
     },
     {
       text: 'Русский',
       value: 'ru'
     },
     {
-      flag: 'IN',
-      text: 'हिन्दी',
-      value: 'hi'
-    },
-    {
-      text: 'Deutsch',
-      value: 'de'
-    },
-    {
-      text: 'español',
-      value: 'es'
+      flag: 'CN',
+      text: '汉语',
+      value: 'zh'
     }
   ];
 }

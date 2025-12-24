@@ -25,7 +25,7 @@ function NoValidatorBox ({ style = {}, text }: Props) {
           sx={{ height: 'auto', m: '30px auto 15px', width: '150px' }}
         />
         <Typography color='text.secondary' mb='30px' variant='B-2'>
-          {text ?? t('The are no validators yet.')}
+          {text ?? t('There are no validators yet.')}
         </Typography>
       </Grid>
     </Motion>

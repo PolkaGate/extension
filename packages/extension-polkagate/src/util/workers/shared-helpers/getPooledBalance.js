@@ -22,11 +22,12 @@ export async function getPooledBalance (api, address) {
     return { pooledBalance: BN_ZERO };
   }
 
-  const [bondedPool, metadata, stashIdAccount, myClaimable = BN_ZERO] = await Promise.all([
+  const [bondedPool, metadata, stashIdAccount, myClaimable = BN_ZERO, claimPermissions] = await Promise.all([
     api.query.nominationPools.bondedPools(poolId),
     api.query.nominationPools.metadata(poolId),
     api.derive.staking.account(accounts.stashId),
-    api.call.nominationPoolsApi?.pendingRewards(address) // not available on paseo hub
+    api.call.nominationPoolsApi?.pendingRewards(address), // not available on paseo hub
+    api.query.nominationPools.claimPermissions(address)
   ]);
 
   const active = member.points.isZero()
@@ -46,6 +47,7 @@ export async function getPooledBalance (api, address) {
     : null;
 
   return {
+    claimPermissions: claimPermissions.toString(),
     poolName,
     poolReward: myClaimable.toString(),
     pooledBalance: active.add(unlockingValue).toString()
