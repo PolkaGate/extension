@@ -27,10 +27,12 @@ interface Props {
 function TopPageElement ({ isExtension }: { isExtension: boolean }) {
   const { t } = useTranslation();
 
+  const description = t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.');
+
   if (isExtension) {
     return (
       <WarningBox
-        description={t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.')}
+        description={description}
         title={t('WARNING')}
       />
     );
@@ -44,7 +46,7 @@ function TopPageElement ({ isExtension }: { isExtension: boolean }) {
         sx={{ height: '100px', width: '100px', zIndex: 2 }}
       />
       <Typography color='#BEAAD8' sx={{ m: '20px 0 15px' }} variant='B-4'>
-        {t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.')}
+        {description}
       </Typography>
     </>
   );
