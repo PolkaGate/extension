@@ -6,6 +6,8 @@ import type { MLCEngine } from '@mlc-ai/web-llm';
 import { CreateMLCEngine } from '@mlc-ai/web-llm';
 
 import { getStorage } from '@polkadot/extension-polkagate/src/util';
+import { additionalRules, type AiTxAnyJson, RAG } from '@polkadot/extension-polkagate/src/util/aiUtils/aiUtils';
+import { explainTx } from '@polkadot/extension-polkagate/src/util/aiUtils/handlers';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 export const DEFAULT_MODEL_ID = 'gemma-2-2b-it-q4f16_1-MLC';
@@ -31,108 +33,67 @@ export async function loadAgent (engine?: MLCEngine | null, modelId?: string, pr
     return engine;
 }
 
-const additionalRules = (section: string | undefined) => {
-    let additionalRules = '';
-    const SECTION = section?.toLowerCase();
-
-    if (SECTION === 'convictionvoting') {
-        additionalRules = `
-            NOTES:
-                - Vote type, vote value, referendum index, balance, token symbol, and decimal are the most important fields
-                - Vote interpretation:
-                    * If vote_value is null → Abstain
-                    * The vote is a single byte hex string. Determine vote by checking the most significant bit (0x80):
-                    * If (vote_byte & 0x80) != 0 → Aye, else → Nay.
-                - The "balance" field represents voting balance/voting power assigned to this vote (NOT staked or locked amounts)
-                - Format: "You are voting [Aye/Nay/Abstain] on referenda [INDEX] using [FORMATTED_AMOUNT] [TOKEN] of voting balance assigned to this vote."
-        `;
-    } else if (SECTION === 'balances') {
-        additionalRules = `
-            NOTES:
-                - Format: "You are sending [FORMATTED_AMOUNT] [TOKEN] to [ADDRESS]"
-        `;
-    } else if (SECTION === 'staking' || SECTION === 'nominationpools') {
-        additionalRules = `
-            NOTES:
-                - Use phrases like: "You are bonding", "You are nominating", "You are unbonding", "You are withdrawing", "You are claiming rewards"
-        `;
-    }
-
-    return additionalRules;
-};
-
-interface TransactionJson {
-    section?: string;
-    [key: string]: unknown;
-}
-
 /**
  * Explain a transaction JSON using the AI agent.
  * @param txJson - parsed transaction JSON
  * @returns explanation string
  */
-export async function explainTransaction (engine: MLCEngine | null, txJson: unknown) {
+export async function explainTransaction (engine: MLCEngine | null, txJson: AiTxAnyJson) {
     if (!engine) {
-        // Default model ID if not loaded yet
         engine = await loadAgent();
     }
 
-    const tx = txJson as TransactionJson;
-    const ADDITIONAL_RULES = additionalRules(tx?.section);
+    // console.log('txJson:', txJson);
+
+    const key = `${txJson['section'] as string}.${txJson['method'] as string}`;
+    const data = { ...txJson['decode'], ...txJson } as AiTxAnyJson;
+    const txData = JSON.stringify(explainTx(data, key));
+    const ragInfo = RAG(key);
 
     const prompt = `
-        ROLE:
-            You are a transaction explanation engine for the PolkaGate wallet.
+        Explain the following ${txJson['chainName']} network transaction to a user.
 
-        TASK:
-            Generate a short, clear explanation describing what the user is currently doing by signing this transaction.
+        Use the 'Transaction explanation helper info' field as the source of truth.
+        Do not reinterpret or calculate anything yourself.
 
-        CONTEXT:
-            - The transaction is NOT signed yet.
-            - The ONLY source of truth is the JSON below.
-            - Extract all values (amounts, decimals, token symbol, addresses, chain info) directly from the JSON.
-            - Compute formatted amounts as:
-                FORMATTED_AMOUNT = (amount OR balance) / (10 ** DECIMAL)
+        Context:
+        ${additionalRules(txJson['section'] as string)}
 
-        ${ADDITIONAL_RULES}
+        Transaction explanation helper info:
+        ${ragInfo}
 
-        CONSTRAINTS:
-            - Use present continuous tense (e.g., "are sending", "are voting", "are staking")
-            - Do NOT explain how the transaction works
-            - Do NOT add assumptions or external knowledge
-            - Do NOT mention JSON, fields, or technical terms
-            - Do NOT include reasoning, steps, or meta comments
-
-        OUTPUT FORMAT:
-            - One single sentence
-            - 75–200 characters
-            - Plain text only
-
-        FORMATTING RULES:
-            - Use thousand separators
-            - Shorten addresses: first 6 + "..." + last 6
-
-        TRANSACTION JSON:
-            ${JSON.stringify(txJson)}
+        Transaction data:
+        ${txData}
     `;
 
+    // console.log('prompt:', prompt);
+
     const systemPrompt = `
-        You are an AI assistance that is an expert blockchain transaction analyzer for PolkaGate wallet that explains Polkadot/Substrate transactions in clear, simple language for PolkaGate users.
-        Your task is to read the provided transaction JSON and generate a concise, user-friendly summary of what the transaction does.
-        Focus on clarity and simplicity, avoiding technical jargon.
-        Always follow the instructions provided in the user message.
+        You are an AI assistant that explains Polkadot blockchain transactions to end users in clear, simple language.
+
+        Rules (critical):
+        - You MUST NOT reinterpret, recompute, or guess any technical values.
+        - If an 'explanation' object is provided, it is authoritative and already correct.
+        - NEVER perform math, decoding, or bitwise logic yourself.
+        - NEVER contradict the 'explanation' field.
+        - Your task is ONLY to convert provided facts into a natural-language explanation.
+        - Your sentences must be like, e.g. "You are doing something ...".
+
+        Behavior:
+        - If 'explanation.type' is "KNOWN", produce a single concise sentence explaining the action.
+        - If 'explanation.type' is "GENERIC", explain the transaction generically without assumptions.
+        - Be accurate, calm, and user-friendly.
+        - Do not mention internal fields, JSON, or implementation details.
+
+        Output:
+        - One short paragraph (75 characters minimum - 250 characters maximum).
+        - Do NOT add extra explanations, synonyms, or extra wording.
     `;
 
     const response = await engine.chat.completions.create({
         messages: [
-            {
-                content: systemPrompt,
-                role: 'system'
-            },
-            {
-                content: prompt,
-                role: 'user'
-            }
+            { content: systemPrompt, role: 'system' },
+            { content: prompt, role: 'user' }
         ]
     });
 

@@ -12,6 +12,7 @@ import { explainTransactionWithAi } from '@polkadot/extension-polkagate/src/mess
 
 import { MyTooltip, Progress } from '../../../components';
 import { useChainInfo, useTranslation } from '../../../hooks';
+import { hexToString } from '@polkadot/util';
 
 interface Props {
   decoded: Decoded;
@@ -31,17 +32,9 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
       return;
     }
 
-    const isBatchCall = decoded.method?.method.includes('batch');
-
     const txInfo: Call | undefined = (() => {
       if (!decoded.method) {
         return undefined;
-      }
-
-      if (isBatchCall) {
-        const batchArgs = decoded.method.args[0];
-
-        return Array.isArray(batchArgs) && batchArgs[0] ? batchArgs[0] as Call : undefined;
       }
 
       return decoded.method;
@@ -56,12 +49,12 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
           ? JSON.stringify(value, null, 2)
           : ` ${value as string}`
       };
-    }
-    );
+    });
 
     explainTransactionWithAi({
       chainName,
       decimal,
+      decode: decoded.method,
       description: txInfo?.meta.docs,
       extra,
       method: txInfo?.method,
