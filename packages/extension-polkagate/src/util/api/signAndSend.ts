@@ -16,7 +16,7 @@ import type { TxResult } from '../types';
 import { hexToU8a, u8aToHex } from '@polkadot/util';
 import { signatureVerify } from '@polkadot/util-crypto';
 
-async function getAppliedFee (api: ApiPromise, signedBlock: SignedBlock, txHashHex: HexString): Promise<string | undefined> {
+async function getAppliedFee(api: ApiPromise, signedBlock: SignedBlock, txHashHex: HexString): Promise<string | undefined> {
   const apiAt = await api.at(signedBlock.block.hash);
   const allEvents = await apiAt.query['system']['events']() as Vec<FrameSystemEventRecord>;
 
@@ -43,7 +43,7 @@ async function getAppliedFee (api: ApiPromise, signedBlock: SignedBlock, txHashH
   return fee;
 }
 
-export async function handleResult (
+export async function handleResult(
   api: ApiPromise,
   resolve: (value: TxResult | PromiseLike<TxResult>) => void,
   result: ISubmittableResult
@@ -113,7 +113,7 @@ export async function handleResult (
   }
 }
 
-export async function signAndSend (
+export async function signAndSend(
   api: ApiPromise,
   extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
   pair: KeyringPair,
@@ -131,7 +131,7 @@ export async function signAndSend (
   });
 }
 
-export async function send (
+export async function send(
   from: string,
   api: ApiPromise,
   extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
@@ -147,7 +147,11 @@ export async function send (
     // console.log(api.consts['system']['version'].specVersion.toString());
  const check = signatureVerify(payload?.toString(), signature, from);
 
-console.log('signatureVerify result:', { isValid: check.isValid, crypto: check.crypto, publicKey: u8aToHex(check.publicKey) });
+console.log('signatureVerify result:', { crypto: check.crypto, isValid: check.isValid,  publicKey: u8aToHex(check.publicKey) });
+    // console.log(api.consts['system']['version'].specVersion.toString());
+//     const check = signatureVerify(payloadHex, signatureHex, signer);
+
+// console.log('signatureVerify result:', { isValid: check.isValid, crypto: check.crypto, publicKey: u8aToHex(check.publicKey) });
 
     let sigU8a = hexToU8a(signature);
 

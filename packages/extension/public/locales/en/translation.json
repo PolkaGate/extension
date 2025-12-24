@@ -887,5 +887,8 @@
   "{{chainName}} referendum #{{referendumIndex}} has been executed": "",
   "{{chainName}} referendum #{{referendumIndex}} execution failed": "",
   "{{chainName}} referendum #{{referendumIndex}} has been rejected": "",
-  "{{chainName}} referendum #{{referendumIndex}} has timed out": ""
+  "{{chainName}} referendum #{{referendumIndex}} has timed out": "",
+  "everything": "",
+  "Choose account type": "",
+  "account type": ""
 }

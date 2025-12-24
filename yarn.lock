@@ -18739,6 +18739,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-devtools-core@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "react-devtools-core@npm:7.0.1"
+  dependencies:
+    shell-quote: "npm:^1.6.1"
+    ws: "npm:^7"
+  checksum: 10/b403ac59af41c63bde6e480c4670b10cdc2fb6b4a06afa1f074527477c66648a221d926a396fe28301a700deebb212c9e1212bd42f0083898be7ad7aee743017
+  languageName: node
+  linkType: hard
+
 "react-dom@npm:^16.7.0":
   version: 16.14.0
   resolution: "react-dom@npm:16.14.0"
@@ -19702,6 +19712,7 @@ __metadata:
     qrcode.react: "npm:^3.0.2"
     react-chartjs-2: "npm:^5.3.0"
     react-countup: "npm:^6.5.3"
+    react-devtools-core: "npm:^7.0.1"
     react-json-to-table: "npm:^0.1.7"
     react-markdown: "npm:^8.0.7"
     react-qrcode-logo: "npm:^4.0.0"
@@ -20179,7 +20190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shell-quote@npm:^1.8.3":
+"shell-quote@npm:^1.6.1, shell-quote@npm:^1.8.3":
   version: 1.8.3
   resolution: "shell-quote@npm:1.8.3"
   checksum: 10/5473e354637c2bd698911224129c9a8961697486cff1fb221f234d71c153fc377674029b0223d1d3c953a68d451d79366abfe53d1a0b46ee1f28eb9ade928f4c
@@ -23450,7 +23461,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^7.3.1":
+"ws@npm:^7, ws@npm:^7.3.1":
   version: 7.5.10
   resolution: "ws@npm:7.5.10"
   peerDependencies:

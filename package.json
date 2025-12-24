@@ -24,10 +24,10 @@
   ],
   "scripts": {
     "apply-version": "node -e \"const { execSync } = require('child_process'); const fs = require('fs'); try { const version = execSync('git describe --tags --abbrev=0').toString().trim().replace(/^v/, ''); console.log('Version fetched:', version); const packageJsonPath = './packages/extension/package.json'; const packageJson = JSON.parse(fs.readFileSync(packageJsonPath)); packageJson.version = version; fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2)); } catch (error) { console.log('No tags found, skipping package.json update'); }\"",
-    "build": "NODE_ENV=production yarn apply-version && polkadot-dev-build-ts && yarn build:zip && yarn build:rollup",
+    "build": "NODE_ENV=production yarn copy-prod-manifest && && yarn apply-version && polkadot-dev-build-ts && yarn build:zip && yarn build:rollup",
     "build:before": "yarn build:i18n",
-    "build:clean": "yarn build && find packages/extension/build -name '*.map' -type f -delete",
-    "build:dev": "NODE_ENV=development polkadot-dev-build-ts",
+    "build:clean": "yarn copy-prod-manifest && yarn build && find packages/extension/build -name '*.map' -type f -delete",
+    "build:dev": "NODE_ENV=development yarn copy-dev-manifest && polkadot-dev-build-ts",
     "build:i18n": "i18next-scanner --config i18next-scanner.config.cjs",
     "build:release": "polkadot-ci-ghact-build",
     "build:rollup": "polkadot-exec-rollup --config",
@@ -37,6 +37,8 @@
     "build:zip:src": "rm -rf ./master-src.zip && zip -r -x '*build/*' -x '*node_modules*' -FS ./master-src.zip packages .editorconfig .eslintignore .eslintrc.js babel.config.cjs CHANGELOG.md CONTRIBUTING.md i18next-scanner.config.js jest.config.cjs LICENSE package.json README.md tsconfig.json yarn.lock",
     "clean": "polkadot-dev-clean-build",
     "clean-translations": "node cleanTranslations.cjs",
+    "copy-dev-manifest": "cp packages/extension/manifest.dev.json packages/extension/manifest.json",
+    "copy-prod-manifest": "cp packages/extension/manifest.prod.json packages/extension/manifest.json",
     "docs": "npx typedoc && (start ./docs/index.html || open ./docs/index.html || xdg-open ./docs/index.html)",
     "lint": "polkadot-dev-run-lint",
     "postinstall": "polkadot-dev-yarn-only",
@@ -45,7 +47,7 @@
     "start": "NODE_ENV=development yarn watch",
     "test": "polkadot-dev-run-test --silent --detectOpenHandles --testPathPattern=packages/extension-polkagate/src --maxWorkers=1",
     "test:one": "polkadot-dev-run-test --detectOpenHandles",
-    "watch": "cd packages/extension && yarn polkadot-exec-webpack --config webpack.watch.cjs --mode development --watch"
+    "watch": "yarn copy-prod-manifest && cd packages/extension && yarn polkadot-exec-webpack --config webpack.watch.cjs --mode development --watch"
   },
   "dependencies": {
     "@acala-network/api": "^6.2.0",
@@ -132,6 +134,7 @@
     "jsdom-worker-fix": "^0.1.8",
     "openai": "^4.0.0",
     "pinst": "^3.0.0",
+    "react-devtools-core": "^7.0.1",
     "semantic-release": "^24.1.0",
     "sinon-chrome": "^3.0.1",
     "typedoc": "^0.27.9",

@@ -140,7 +140,7 @@ function Receive ({ address, closePopup, onClose, setAddress }: Props): React.Re
 
   useEffect(() => {
     if (isEthereumAddress(address)) {
-      setSelectedChain({ value: ETHEREUM_GENESISHASH, text: 'Ethereum' });
+      setSelectedChain({ text: 'Ethereum', value: ETHEREUM_GENESISHASH});
     }
   }, [address]);
 
