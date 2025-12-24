@@ -693,11 +693,12 @@ export interface BalancesInfo extends DeriveBalancesAll {
   totalBalance?: number;
 }
 export interface AccountStakingInfo extends DeriveStakingAccount {
-  era: number;
-  decimal?: number;
-  token?: string;
   date?: number;
+  decimal?: number;
+  era: number;
   genesisHash?: string;
+  isValidator?: boolean;
+  token?: string;
 }
 export interface MemberPoints {
   accountId: string;

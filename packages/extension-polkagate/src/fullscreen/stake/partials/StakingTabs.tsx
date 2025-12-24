@@ -97,12 +97,12 @@ function StakingTabs ({ disabled, genesisHash, popupOpener, rewardInfo, setSelec
         Icon: Discover,
         isSelected: tab === STAKING_TABS.VALIDATORS,
         onClick: tabSetter(STAKING_TABS.VALIDATORS),
-        title: t('Nominations')
+        title: stakingInfo?.isValidator ? t('Validator') : t('Nominations')
       });
     }
 
     return tabs;
-  }, [t, tab, tabSetter, type]);
+  }, [stakingInfo?.isValidator, t, tab, tabSetter, type]);
 
   const content = useMemo(() => {
     switch (tab) {

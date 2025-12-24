@@ -1,5 +1,47 @@
 # Change Log
 
+## [1.21.4](https://github.com/polkagate/extension/compare/v1.21.3...v1.21.4) (2025-12-21)
+
+
+### Bug Fixes
+
+* resolve pending rewards expiration issue caused by API derive malfunction ([#2072](https://github.com/polkagate/extension/issues/2072)) ([fe49a73](https://github.com/polkagate/extension/commit/fe49a735a9e8731458751c23f850b23cfead1629)), closes [#2068](https://github.com/polkagate/extension/issues/2068)
+
+## [1.21.3](https://github.com/polkagate/extension/compare/v1.21.2...v1.21.3) (2025-12-21)
+
+
+### Bug Fixes
+
+* resolve incorrect validator APY after migration due to hub era length ([#2071](https://github.com/polkagate/extension/issues/2071)) ([195efa5](https://github.com/polkagate/extension/commit/195efa52739324b8558752102f69623734d56b29)), closes [#2070](https://github.com/polkagate/extension/issues/2070)
+
+## [1.21.2](https://github.com/polkagate/extension/compare/v1.21.1...v1.21.2) (2025-12-20)
+
+
+### Bug Fixes
+
+* resolve a minor issue when enabling notifications  ([53edc26](https://github.com/polkagate/extension/commit/53edc26849b13a16d8a66eec29489144522a74af))
+
+## [1.21.1](https://github.com/polkagate/extension/compare/v1.21.0...v1.21.1) (2025-12-20)
+
+
+### Bug Fixes
+
+* resolve notification enable/disable issue ([#2067](https://github.com/polkagate/extension/issues/2067)) ([707f060](https://github.com/polkagate/extension/commit/707f060f07e9365e6031b6719ac24ea20919e072))
+
+# [1.21.0](https://github.com/polkagate/extension/compare/v1.20.0...v1.21.0) (2025-12-10)
+
+
+### Features
+
+* implement notifications feature ([0336c6c](https://github.com/polkagate/extension/commit/0336c6c30684b5814e1c5610dfa9e4e903a7b0e5))
+
+# [1.20.0](https://github.com/polkagate/extension/compare/v1.19.8...v1.20.0) (2025-12-10)
+
+
+### Features
+
+* show validator details in staking tabs for validator accounts ([#2063](https://github.com/polkagate/extension/issues/2063)) ([ae877e8](https://github.com/polkagate/extension/commit/ae877e8ec66fe79a4355926212186b5669065d6e))
+
 ## [1.19.8](https://github.com/polkagate/extension/compare/v1.19.7...v1.19.8) (2025-11-26)
 
 
