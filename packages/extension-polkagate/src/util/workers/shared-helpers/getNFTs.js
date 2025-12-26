@@ -3,7 +3,6 @@
 
 // @ts-nocheck
 
-import { isEthereumAddress } from '@polkadot/util-crypto';
 import { SUPPORTED_NFT_CHAINS } from '../../../fullscreen/nft/utils/constants';
 import { getFormattedAddress } from '../../address';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
