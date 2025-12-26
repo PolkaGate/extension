@@ -7,7 +7,7 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 
 import { hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import { decodeAddress, encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 import allChains from './chains';
 import { SHORT_ADDRESS_CHARACTERS, WESTEND_GENESIS_HASH } from './constants';
@@ -30,7 +30,11 @@ export function isValidAddress (address: string | undefined): boolean {
   }
 }
 
-export function getFormattedAddress (_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
+export function getFormattedAddress (_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string | undefined {
+    if (isEthereumAddress(String(_address))) {
+      return;
+    }
+
   const publicKey = decodeAddress(_address);
   const prefix = _chain ? _chain.ss58Format : (settingsPrefix === -1 ? 42 : settingsPrefix);
 

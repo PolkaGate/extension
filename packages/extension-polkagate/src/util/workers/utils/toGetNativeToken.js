@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BN_ZERO } from '@polkadot/util';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { getPriceIdByChainName } from '../..';
 import { isOnAssetHub } from '../../chain';
@@ -18,12 +19,14 @@ import { balancify } from '.';
 export async function toGetNativeToken (addresses, api, chainName) {
   const _result = {};
 
-  const balances = await Promise.all(addresses.map((address) => api.derive.balances.all(address)));
+  const substrateAddresses = addresses.filter((address) => !isEthereumAddress(address));
 
-  const systemBalance = await Promise.all(addresses.map((address) => api.query['system']['account'](address)));
+  const balances = await Promise.all(substrateAddresses.map((address) => api.derive.balances.all(address)));
+
+  const systemBalance = await Promise.all(substrateAddresses.map((address) => api.query['system']['account'](address)));
   const existentialDeposit = api.consts['balances']['existentialDeposit'];
 
-  await Promise.all(addresses.map(async (address, index) => {
+  await Promise.all(substrateAddresses.map(async (address, index) => {
     // @ts-ignore
     balances[index].ED = existentialDeposit;
     // @ts-ignore

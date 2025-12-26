@@ -3,6 +3,7 @@
 
 // @ts-nocheck
 
+import { isEthereumAddress } from '@polkadot/util-crypto';
 import { SUPPORTED_NFT_CHAINS } from '../../../fullscreen/nft/utils/constants';
 import { getFormattedAddress } from '../../address';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
@@ -188,7 +189,7 @@ async function getNFTs (addresses) {
 
   // Initialize API connections for all chainNames
   const apiPromises = chainNames.map(async ([chainName, { name, prefix }]) => {
-    const formattedAddresses = addresses.map((address) => getFormattedAddress(address, undefined, prefix));
+    const formattedAddresses = addresses.map((address) => getFormattedAddress(address, undefined, prefix)).filter(Boolean);
     const endpoints = getChainEndpoints(name, undefined);
 
     const { api, connections } = await fastestEndpoint(endpoints);

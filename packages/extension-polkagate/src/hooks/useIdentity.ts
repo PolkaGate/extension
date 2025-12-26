@@ -8,6 +8,7 @@ import type { PalletIdentityRegistration } from '@polkadot/types/lookup';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { hexToString } from '@polkadot/util';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import getChainGenesisHash from '../util/getChainGenesisHash';
 import useApi from './useApi';
@@ -72,7 +73,7 @@ export default function useIdentity (genesisHash: string | undefined, formatted:
       return setInfo(accountInfo);
     }
 
-    api && formatted && getIdentityOf(formatted).then((identity) => {
+    api && formatted && !isEthereumAddress(formatted) && getIdentityOf(formatted).then((identity) => {
       if (identity) {
         setInfo({
           accountId: api.createType('AccountId', formatted),

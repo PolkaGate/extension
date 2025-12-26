@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { BN_ZERO } from '@polkadot/util';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
 import { fastestEndpoint, getChainEndpoints, metadataFromApi } from '../utils';
@@ -25,34 +26,38 @@ export async function getBalances (chainName, addresses, userAddedEndpoints, por
     console.info(chainName, 'metadata : fetched and saved.');
     port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.RELAY, metadata }));
 
-    const requests = addresses.map(async (address) => {
-      const allBalances = await api.derive.balances.all(address);
-      const systemBalance = await api.query['system']['account'](address);
-      const existentialDeposit = api.consts['balances']['existentialDeposit'];
+    const requests = addresses
+      .filter((address) => !isEthereumAddress(address))
+      .map(async (address) => {
+        const allBalances = await api.derive.balances.all(address);
+        const systemBalance = await api.query['system']['account'](address);
+        const existentialDeposit = api.consts['balances']['existentialDeposit'];
 
-      const balances = {
-        ...allBalances,
-        ED: existentialDeposit,
-        // @ts-ignore
-        frozenBalance: systemBalance.data.frozen
-      };
+        const balances = {
+          ...allBalances,
+          ED: existentialDeposit,
+          // @ts-ignore
+          frozenBalance: systemBalance.data.frozen
+        };
 
-      const { pooled, soloTotal } = await getStakingBalances(address, api);
+        const { pooled, soloTotal } = await getStakingBalances(address, api);
 
-      return {
-        address,
-        balances,
-        claimPermissions: pooled?.claimPermissions ?? null,
-        poolName: pooled?.poolName,
-        poolReward: pooled?.poolReward ?? BN_ZERO,
-        pooledBalance: pooled?.pooledBalance ?? BN_ZERO,
-        soloTotal
-      };
-    });
+        return {
+          address,
+          balances,
+          claimPermissions: pooled?.claimPermissions ?? null,
+          poolName: pooled?.poolName,
+          poolReward: pooled?.poolReward ?? BN_ZERO,
+          pooledBalance: pooled?.pooledBalance ?? BN_ZERO,
+          soloTotal
+        };
+      });
 
-    return { api,
+    return {
+      api,
       balanceInfo: await Promise.all(requests),
-      connectionsToBeClosed: connections };
+      connectionsToBeClosed: connections
+    };
   }
 
   return undefined;

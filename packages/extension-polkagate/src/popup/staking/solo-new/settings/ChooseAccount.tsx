@@ -28,8 +28,8 @@ const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, se
   const { accounts } = useContext(AccountContext);
   const { chain } = useChainInfo(genesisHash, true);
 
-  const handleSelect = useCallback((selectedAccount: string) => () => {
-    setSpecificAccount(selectedAccount);
+  const handleSelect = useCallback((selectedAccount: string | undefined) => () => {
+    selectedAccount && setSpecificAccount(selectedAccount);
   }, [setSpecificAccount]);
 
   return (
