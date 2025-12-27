@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { RequestSign } from '@polkadot/extension-base/background/types';
+import type { Chain } from '@polkadot/extension-chains/types';
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { ModeData } from './types';
@@ -10,10 +11,10 @@ import { Grid, Stack, Typography } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { TypeRegistry } from '@polkadot/types';
-import { formatNumber } from '@polkadot/util';
+import { formatNumber, hexToU8a, isHex } from '@polkadot/util';
 
 import { DisplayBalance } from '../../components';
-import { useChainInfo, useTranslation } from '../../hooks';
+import { useChainInfo, useMetadata, useTranslation } from '../../hooks';
 import { toBN, toTitleCase } from '../../util';
 
 interface Data {
@@ -29,10 +30,25 @@ interface Props {
 const registry = new TypeRegistry();
 const STYLE = { '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, p: '10px', position: 'relative' };
 
+function decodeCallIndex (chain: Chain | null | undefined, val: string) {
+  try {
+    if (!chain || !isHex(val)) {
+      return val;
+    }
+
+    const call = chain.registry.findMetaCall(hexToU8a(val));
+
+    return `${call.section} → ${call.method}`;
+  } catch {
+    return val;
+  }
+}
+
 function ExtrinsicDetail ({ mode: { data }, request }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const signerPayload = request.payload as SignerPayloadJSON;
+  const chain = useMetadata(signerPayload?.genesisHash);
 
   const [{ payload }, setData] = useState<Data>({ hexBytes: null, payload: null });
 
@@ -127,7 +143,17 @@ function ExtrinsicDetail ({ mode: { data }, request }: Props): React.ReactElemen
                     <Typography color='#EAEBF1' fontFamily='JetBrainsMono' fontSize='13px' fontWeight={500}>
                       {typeof value === 'object'
                         ? <pre style={{ margin: 0 }}>
-                          {JSON.stringify(value, null, 2)} {/* Format the object value */}
+                          {JSON.stringify(
+                            value,
+                            (key, val) => {
+                              if (key === 'callIndex' && typeof val === 'string') {
+                                return decodeCallIndex(chain, val);
+                              }
+
+                              return val;
+                            },
+                            2
+                          )}
                         </pre>
                         : ` ${value as string}` // If it's a primitive, display it directly
                       }
