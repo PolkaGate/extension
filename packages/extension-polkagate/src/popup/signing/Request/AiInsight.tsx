@@ -5,7 +5,7 @@ import type { Call } from '@polkadot/types/interfaces';
 import type { Decoded } from '../types';
 
 import { Stack, Typography } from '@mui/material';
-import { Information } from 'iconsax-react';
+import { Magicpen } from 'iconsax-react';
 import React, { useEffect, useState } from 'react';
 
 import { explainTransactionWithAi } from '@polkadot/extension-polkagate/src/messaging';
@@ -72,7 +72,7 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
           {t('AI insight')}
         </Typography>
         {aiInfo
-          ? <Information color='#AA83DC' size={16} variant='Bold' />
+          ? <Magicpen color='#AA83DC' size={16} variant='Bold' />
           : <Progress
             size={15}
             style={{ margin: 0 }}
