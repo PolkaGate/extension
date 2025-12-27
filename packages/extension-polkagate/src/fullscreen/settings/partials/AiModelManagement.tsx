@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AI_MODEL_ID, DEFAULT_MODEL_ID } from '@polkadot/extension-base/background/handlers/txAiAgent';
 import { ActionButton, DecisionButtons, GradientButton, Motion, Radio, TwoToneText } from '@polkadot/extension-polkagate/src/components';
-import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useAlerts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
 
 import { DraggableModal } from '../../components/DraggableModal';
@@ -73,6 +73,7 @@ const DownloadSection = ({ model, onCancel, onDone, progress }: { model: string;
 
 export default function AiModelManagement ({ onCancel, onClose }: Props): React.ReactElement {
     const { t } = useTranslation();
+    const { notify } = useAlerts();
 
     useEffect(() => {
         // Initialize the selected model from storage
@@ -124,8 +125,12 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
                 console.info('Downloading AI model:', text);
                 progress && setProgress(progress);
             }
-        }).catch(console.error);
-    }, [isModelInCache, onClose, selectedModel]);
+        }).catch((error: unknown) => {
+              const message = error instanceof Error ? error.message : String(error);
+
+            notify(message, 'error');
+        });
+    }, [isModelInCache, notify, onClose, selectedModel]);
 
     return (
         <DraggableModal
