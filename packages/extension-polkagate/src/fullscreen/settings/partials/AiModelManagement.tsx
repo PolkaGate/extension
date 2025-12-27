@@ -77,11 +77,7 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
     useEffect(() => {
         // Initialize the selected model from storage
         getStorage(AI_MODEL_ID).then((modelId) => {
-            if (modelId) {
-                setSelectedModel(modelId as string | undefined);
-            }
-
-            setSelectedModel(DEFAULT_MODEL_ID);
+            setSelectedModel(modelId as string | undefined ?? DEFAULT_MODEL_ID);
         }).catch(console.error);
     }, []);
 
