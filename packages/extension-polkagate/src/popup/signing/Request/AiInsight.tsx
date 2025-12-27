@@ -5,7 +5,7 @@ import type { Call } from '@polkadot/types/interfaces';
 import type { Decoded } from '../types';
 
 import { Stack, Typography } from '@mui/material';
-import { Information } from 'iconsax-react';
+import { Magicpen } from 'iconsax-react';
 import React, { useEffect, useState } from 'react';
 
 import { explainTransactionWithAi } from '@polkadot/extension-polkagate/src/messaging';
@@ -31,17 +31,9 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
       return;
     }
 
-    const isBatchCall = decoded.method?.method.includes('batch');
-
     const txInfo: Call | undefined = (() => {
       if (!decoded.method) {
         return undefined;
-      }
-
-      if (isBatchCall) {
-        const batchArgs = decoded.method.args[0];
-
-        return Array.isArray(batchArgs) && batchArgs[0] ? batchArgs[0] as Call : undefined;
       }
 
       return decoded.method;
@@ -56,12 +48,12 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
           ? JSON.stringify(value, null, 2)
           : ` ${value as string}`
       };
-    }
-    );
+    });
 
     explainTransactionWithAi({
       chainName,
       decimal,
+      decode: decoded.method,
       description: txInfo?.meta.docs,
       extra,
       method: txInfo?.method,
@@ -76,17 +68,17 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
   return (
     <MyTooltip content={aiInfo ?? t('Processing…')}>
       <Stack alignItems='center' columnGap='5px' direction='row' style={{ flexWrap: 'nowrap' }}>
-        <Typography color='#674394' sx={{ cursor: 'default', whiteSpace: 'nowrap' }} variant='B-2'>
-          {t('AI insight')}
-        </Typography>
         {aiInfo
-          ? <Information color='#674394' size={16} variant='Bold' />
+          ? <Magicpen color='#AA83DC' size={16} variant='Bold' />
           : <Progress
             size={15}
             style={{ margin: 0 }}
             type='puffLoader'
           />
         }
+        <Typography color='primary.main' sx={{ cursor: 'default', whiteSpace: 'nowrap' }} variant='B-2'>
+          {t('AI insight')}
+        </Typography>
       </Stack>
     </MyTooltip>
   );

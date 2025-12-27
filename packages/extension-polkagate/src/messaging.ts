@@ -3,6 +3,7 @@
 
 import type { AccountJson, AllowedPath, AuthorizeRequest, MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, MetadataRequest, RequestTypes, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSigningIsLocked, ResponseTypes, SeedLengths, SigningRequest, SubscriptionMessageTypes } from '@polkadot/extension-base/background/types';
 import type { Message } from '@polkadot/extension-base/types';
+import type { AiTxAnyJson } from '@polkadot/extension-base/utils/AiUtils/aiTypes';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
@@ -77,11 +78,11 @@ export async function updateMeta (address: string, meta: string): Promise<boolea
   return sendMessage('pri(accounts.updateMeta)', { address, meta });
 }
 
-export async function loadAiAgent (modelIndex?: number, progressCallback?: (progress: number) => void): Promise<boolean> {
-  return sendMessage('pri(ai.agentLoad)', { modelIndex, progressCallback });
+export async function loadAiAgent (modelId?: string, progressCallback?: (progress: number) => void): Promise<boolean> {
+  return sendMessage('pri(ai.agentLoad)', { modelId, progressCallback });
 }
 
-export async function explainTransactionWithAi (txJson: unknown): Promise<string> {
+export async function explainTransactionWithAi (txJson: AiTxAnyJson): Promise<string> {
   return sendMessage('pri(ai.explainTransaction)', { txJson });
 }
 

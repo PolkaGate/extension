@@ -11,6 +11,7 @@ import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types'
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
+import type { AiTxAnyJson } from '../utils/AiUtils/aiTypes';
 import type { AuthResponse } from './handlers/State';
 
 export type AuthUrls = Record<string, AuthUrlInfo>;
@@ -232,12 +233,12 @@ export interface RequestAccountCreateHardware {
 }
 
 export interface RequestCreateAgent{
-  modelIndex?: number;
+  modelId?: string;
   progressCallback?: (progress: number) => void;
 }
 
 export interface RequestExplainTx{
-  txJson: unknown
+  txJson: AiTxAnyJson;
 }
 
 export interface RequestAccountChangePassword {

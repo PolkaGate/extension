@@ -23,7 +23,7 @@ import { keyExtractSuri, mnemonicGenerate, mnemonicValidate } from '@polkadot/ut
 
 import { withErrorLog } from './helpers';
 import { createSubscription, unsubscribe } from './subscriptions';
-import { DEFAULT_MODEL_INDEX, explainTransaction, loadAgent } from './txAiAgetnt';
+import { DEFAULT_MODEL_ID, explainTransaction, loadAgent } from './txAiAgetnt';
 
 const SEED_DEFAULT_LENGTH = 12;
 const SEED_LENGTHS = [12, 15, 18, 21, 24];
@@ -129,8 +129,8 @@ export default class Extension {
     return true;
   }
 
-  private async loadAiAgent ({ modelIndex = DEFAULT_MODEL_INDEX, progressCallback }: RequestCreateAgent): Promise<boolean> {
-    engine = await loadAgent(engine, modelIndex, progressCallback);
+  private async loadAiAgent ({ modelId = DEFAULT_MODEL_ID, progressCallback }: RequestCreateAgent): Promise<boolean> {
+    engine = await loadAgent(engine, modelId, progressCallback);
 
     return true;
   }
