@@ -23,7 +23,7 @@ import { keyExtractSuri, mnemonicGenerate, mnemonicValidate } from '@polkadot/ut
 
 import { withErrorLog } from './helpers';
 import { createSubscription, unsubscribe } from './subscriptions';
-import { DEFAULT_MODEL_ID, explainTransaction, loadAgent } from './txAiAgetnt';
+import { DEFAULT_MODEL_ID, explainTransaction, loadAgent } from './txAiAgent';
 
 const SEED_DEFAULT_LENGTH = 12;
 const SEED_LENGTHS = [12, 15, 18, 21, 24];

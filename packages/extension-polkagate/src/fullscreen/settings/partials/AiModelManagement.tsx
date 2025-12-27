@@ -5,7 +5,7 @@ import { CreateMLCEngine, hasModelInCache } from '@mlc-ai/web-llm';
 import { LinearProgress, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AI_MODEL_ID, DEFAULT_MODEL_ID } from '@polkadot/extension-base/background/handlers/txAiAgetnt';
+import { AI_MODEL_ID, DEFAULT_MODEL_ID } from '@polkadot/extension-base/background/handlers/txAiAgent';
 import { ActionButton, DecisionButtons, GradientButton, Motion, Radio, TwoToneText } from '@polkadot/extension-polkagate/src/components';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
