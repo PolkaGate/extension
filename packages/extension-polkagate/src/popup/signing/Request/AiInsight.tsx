@@ -68,17 +68,17 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
   return (
     <MyTooltip content={aiInfo ?? t('Processing…')}>
       <Stack alignItems='center' columnGap='5px' direction='row' style={{ flexWrap: 'nowrap' }}>
-        <Typography color='primary.main' sx={{ cursor: 'default', whiteSpace: 'nowrap' }} variant='B-2'>
-          {t('AI insight')}
-        </Typography>
         {aiInfo
           ? <Magicpen color='#AA83DC' size={16} variant='Bold' />
           : <Progress
             size={15}
             style={{ margin: 0 }}
             type='puffLoader'
-            />
+          />
         }
+        <Typography color='primary.main' sx={{ cursor: 'default', whiteSpace: 'nowrap' }} variant='B-2'>
+          {t('AI insight')}
+        </Typography>
       </Stack>
     </MyTooltip>
   );
