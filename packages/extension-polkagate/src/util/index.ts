@@ -4,6 +4,7 @@
 export * from './address';
 export * from './amount';
 export * from './chain';
+export * from './cleanupNotificationAccount';
 export * from './history';
 export * from './meta';
 export * from './misc';
