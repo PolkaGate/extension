@@ -11,7 +11,8 @@ import React, { useEffect, useState } from 'react';
 import { explainTransactionWithAi } from '@polkadot/extension-polkagate/src/messaging';
 
 import { MyTooltip, Progress } from '../../../components';
-import { useChainInfo, useTranslation } from '../../../hooks';
+import { useChainInfo, useMetadata, useTranslation } from '../../../hooks';
+import { decodeCallIndex } from './util';
 
 interface Props {
   decoded: Decoded;
@@ -23,6 +24,7 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
   const { t } = useTranslation();
 
   const { chainName, decimal, token } = useChainInfo(genesisHash, true);
+  const chain = useMetadata(genesisHash);
 
   const [aiInfo, setInfo] = useState<string>();
 
@@ -45,7 +47,17 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
 
       return {
         [key]: typeof value === 'object'
-          ? JSON.stringify(value, null, 2)
+          ? JSON.stringify(
+            value,
+            (key: string, val: unknown): unknown => {
+              if (key === 'callIndex' && typeof val === 'string') {
+                return decodeCallIndex(chain, val);
+              }
+
+              return val;
+            },
+            2
+          )
           : ` ${value as string}`
       };
     });
@@ -63,7 +75,7 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
     })
       .then(setInfo)
       .catch(console.error);
-  }, [chainName, decimal, decoded, token, url]);
+  }, [chain, chainName, decimal, decoded, token, url]);
 
   return (
     <MyTooltip content={aiInfo ?? t('Processing…')}>
@@ -74,7 +86,7 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
             size={15}
             style={{ margin: 0 }}
             type='puffLoader'
-          />
+            />
         }
         <Typography color='primary.main' sx={{ cursor: 'default', whiteSpace: 'nowrap' }} variant='B-2'>
           {t('AI insight')}

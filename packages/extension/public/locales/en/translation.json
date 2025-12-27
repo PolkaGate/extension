@@ -888,7 +888,6 @@
   "{{chainName}} referendum #{{referendumIndex}} execution failed": "",
   "{{chainName}} referendum #{{referendumIndex}} has been rejected": "",
   "{{chainName}} referendum #{{referendumIndex}} has timed out": "",
-  "Downloading and applying the selected AI model. This may take a few minutes depending on the model size and your device performance": "",
   "Please do not close the extension or navigate away during this process": "",
   "Downloading": "",
   "AI Model Management": "",
@@ -899,5 +898,7 @@
   "Enable AI transaction details on dapp signing": "",
   "Manage AI models": "",
   "Processing…": "",
-  "AI insight": ""
+  "AI insight": "",
+  "Downloading and applying the  {{normalizedModelName}} model. This may take a few minutes depending on the model size and your device performance": "",
+  "Downloading AI Model": ""
 }
