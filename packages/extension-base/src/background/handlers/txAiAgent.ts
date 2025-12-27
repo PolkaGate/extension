@@ -30,16 +30,21 @@ export const getStorage = (label: string, parse = false): Promise<object | strin
  */
 export async function loadAgent (engine?: MLCEngine | null, modelId?: string, progressCallback?: (progress: number) => void) {
     if (!engine) {
-        const selectedModelId = modelId ?? await getStorage(AI_MODEL_ID) as string ?? DEFAULT_MODEL_ID;
+        try {
+            const selectedModelId = modelId ?? await getStorage(AI_MODEL_ID) as string ?? DEFAULT_MODEL_ID;
 
-        console.log(`Loading the AI model ${selectedModelId} ...`);
+            console.log(`Loading the AI model ${selectedModelId} ...`);
 
-        engine = await CreateMLCEngine(selectedModelId, {
-            initProgressCallback: (progress) => {
-                console.log('Loading model', progress);
-                progressCallback?.(progress.progress);
-            }
-        });
+            engine = await CreateMLCEngine(selectedModelId, {
+                initProgressCallback: (progress) => {
+                    console.log('Loading model', progress);
+                    progressCallback?.(progress.progress);
+                }
+            });
+        } catch (error) {
+            console.error('Failed to load AI agent:', error);
+            throw new Error(`AI agent initialization failed: ${error instanceof Error ? error.message : String(error)}`);
+        }
     }
 
     return engine;
