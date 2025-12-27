@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.21.5](https://github.com/polkagate/extension/compare/v1.21.4...v1.21.5) (2025-12-27)
+
+
+### Bug Fixes
+
+* handle staking page when account has no position on unsupported chain ([c2d7632](https://github.com/polkagate/extension/commit/c2d7632a9ace07bc95be3544fdb446ba969d3e8f))
+
 ## [1.21.4](https://github.com/polkagate/extension/compare/v1.21.3...v1.21.4) (2025-12-21)
 
 
