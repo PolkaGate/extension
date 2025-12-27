@@ -188,7 +188,7 @@ async function getNFTs (addresses) {
 
   // Initialize API connections for all chainNames
   const apiPromises = chainNames.map(async ([chainName, { name, prefix }]) => {
-    const formattedAddresses = addresses.map((address) => getFormattedAddress(address, undefined, prefix));
+    const formattedAddresses = addresses.map((address) => getFormattedAddress(address, undefined, prefix)).filter(Boolean);
     const endpoints = getChainEndpoints(name, undefined);
 
     const { api, connections } = await fastestEndpoint(endpoints);
