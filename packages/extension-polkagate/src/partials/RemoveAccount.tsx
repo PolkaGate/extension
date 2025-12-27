@@ -19,9 +19,7 @@ import { SharePopup } from '.';
 interface Props {
   onClose: ExtensionPopupCloser;
   open: boolean;
-  onRemoved?: () => void;
   address?: string | undefined;
-
 }
 
 function TopPageElement ({ isExtension }: { isExtension: boolean }) {
@@ -57,7 +55,7 @@ function TopPageElement ({ isExtension }: { isExtension: boolean }) {
  *
  * Has been used in both full-screen & extension mode!
 */
-function RemoveAccount ({ address, onClose, onRemoved, open }: Props): React.ReactElement {
+function RemoveAccount ({ address, onClose, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const account = useAccount(address) ?? selectedAccount;
@@ -98,12 +96,8 @@ function RemoveAccount ({ address, onClose, onRemoved, open }: Props): React.Rea
     notifier(false);
 
     onClose();
-  }, [navigate, notifier, onClose]);
-
-  const handleCloseSnackbar = useCallback(() => {
-    handleClose();
-    onRemoved?.();
-  }, [handleClose, onRemoved]);
+    isExtension && navigate('/') as void; // in extension mode, go back to home on close
+  }, [isExtension, navigate, notifier, onClose]);
 
   const onRemove = useCallback(async () => {
     try {
@@ -125,14 +119,14 @@ function RemoveAccount ({ address, onClose, onRemoved, open }: Props): React.Rea
       await forgetAccount(account.address);
       await cleanupNotificationAccount(account.address);
 
-      setIsBusy(false);
       notifier(true);
+      !isExtension && handleClose(); // in full-screen mode, close the modal on success
     } catch (error) {
       setPasswordError(true);
       setIsBusy(false);
       console.error('Error while removing the account:', error);
     }
-  }, [account, acknowledged, notifier, password]);
+  }, [account, acknowledged, handleClose, isExtension, notifier, password]);
 
   const onPassChange = useCallback((pass: string | null): void => {
     setPasswordError(false);
@@ -147,55 +141,58 @@ function RemoveAccount ({ address, onClose, onRemoved, open }: Props): React.Rea
       popupProps={{ TitleIcon: LogoutCurve, iconSize: 24, pt: 20 }}
       title={t('Remove Account')}
     >
-      <Grid container item justifyContent='center' sx={{ p: '0 5px 10px', position: 'relative', zIndex: 1 }}>
-        <TopPageElement
-          isExtension={isExtension}
-        />
-        <Stack direction='column' sx={{ width: '100%', zIndex: 1 }}>
-          {account &&
-            <Address2
-              address={account?.address}
-              charsCount={14}
-              name={account?.name}
-              showAddress
-              style={{ borderRadius: '14px', filter: showSnackbar ? 'blur(5px)' : 'none', mt: '5px' }}
-            />
-          }
-          {account && account.isExternal
-            ? (
-              <GlowCheckbox
-                changeState={toggleAcknowledge}
-                checked={acknowledged}
-                disabled={isBusy}
-                label={t('I want to remove this account')}
-                style={{ justifyContent: 'center', my: '30px' } }
-              />)
-            : (
-              <PasswordInput
-                focused
-                hasError={isPasswordWrong}
-                onEnterPress={onRemove}
-                onPassChange={onPassChange}
-                style={{ filter: showSnackbar ? 'blur(5px)' : 'none', marginTop: isExtension ? '45px' : '25px' }}
-                title={t('Your Password')}
-              />)
-          }
-          <DecisionButtons
-            direction='vertical'
-            disabled={isBusy || (account?.isExternal && !acknowledged) || (!account?.isExternal && !password)}
-            onPrimaryClick={onRemove}
-            onSecondaryClick={handleClose}
-            primaryBtnText={t('Remove')}
-            secondaryBtnText={t('Cancel')}
-            style={{ marginTop: isExtension ? account?.isExternal ? '60px' : '27px' : '25px' }}
+      <>
+        <Grid container item justifyContent='center' sx={{ p: '0 5px 10px', position: 'relative', zIndex: 1 }}>
+          <TopPageElement
+            isExtension={isExtension}
           />
-        </Stack>
+          <Stack direction='column' sx={{ width: '100%', zIndex: 1 }}>
+            {account &&
+              <Address2
+                address={account?.address}
+                charsCount={14}
+                name={account?.name}
+                showAddress
+                style={{ borderRadius: '14px', filter: showSnackbar ? 'blur(5px)' : 'none', mt: '5px' }}
+              />
+            }
+            {account && account.isExternal
+              ? (
+                <GlowCheckbox
+                  changeState={toggleAcknowledge}
+                  checked={acknowledged}
+                  disabled={isBusy}
+                  label={t('I want to remove this account')}
+                  style={{ justifyContent: 'center', my: '30px' }}
+                />)
+              : (
+                <PasswordInput
+                  focused
+                  hasError={isPasswordWrong}
+                  onEnterPress={onRemove}
+                  onPassChange={onPassChange}
+                  style={{ filter: showSnackbar ? 'blur(5px)' : 'none', marginTop: isExtension ? '45px' : '25px' }}
+                  title={t('Your Password')}
+                />)
+            }
+            <DecisionButtons
+              direction='vertical'
+              disabled={isBusy || (account?.isExternal && !acknowledged) || (!account?.isExternal && !password)}
+              isBusy={isBusy}
+              onPrimaryClick={onRemove}
+              onSecondaryClick={handleClose}
+              primaryBtnText={t('Remove')}
+              secondaryBtnText={t('Cancel')}
+              style={{ marginTop: isExtension ? account?.isExternal ? '60px' : '27px' : '25px' }}
+            />
+          </Stack>
+        </Grid>
         <MySnackbar
-          onClose={handleCloseSnackbar}
+          onClose={handleClose}
           open={showSnackbar}
           text={t('Account successfully removed!')}
         />
-      </Grid>
+      </>
     </SharePopup>
   );
 }

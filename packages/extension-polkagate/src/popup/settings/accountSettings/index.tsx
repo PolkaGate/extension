@@ -123,7 +123,6 @@ function AccountSettings (): React.ReactElement {
       />
       <RemoveAccount
         onClose={extensionPopupCloser}
-        onRemoved={onCloseRemove}
         open={extensionPopup === ExtensionPopups.REMOVE}
       />
       <WebsitesAccess
