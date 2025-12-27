@@ -31,17 +31,9 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
       return;
     }
 
-    const isBatchCall = decoded.method?.method.includes('batch');
-
     const txInfo: Call | undefined = (() => {
       if (!decoded.method) {
         return undefined;
-      }
-
-      if (isBatchCall) {
-        const batchArgs = decoded.method.args[0];
-
-        return Array.isArray(batchArgs) && batchArgs[0] ? batchArgs[0] as Call : undefined;
       }
 
       return decoded.method;
@@ -56,12 +48,12 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
           ? JSON.stringify(value, null, 2)
           : ` ${value as string}`
       };
-    }
-    );
+    });
 
     explainTransactionWithAi({
       chainName,
       decimal,
+      decode: decoded.method,
       description: txInfo?.meta.docs,
       extra,
       method: txInfo?.method,
@@ -85,7 +77,7 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
             size={15}
             style={{ margin: 0 }}
             type='puffLoader'
-          />
+            />
         }
       </Stack>
     </MyTooltip>

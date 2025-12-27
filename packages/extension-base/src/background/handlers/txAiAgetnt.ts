@@ -1,27 +1,38 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MLCEngine } from '@mlc-ai/web-llm';
+import type { AiTxAnyJson } from '@polkadot/extension-base/utils/AiUtils/aiTypes';
 
 import { CreateMLCEngine } from '@mlc-ai/web-llm';
 
-export const DEFAULT_MODEL_INDEX = 1;
-const modelList = [
-    'Llama-3.2-1B-Instruct-q4f16_1-MLC',
-    'Llama-3.2-3B-Instruct-q4f16_1-MLC',
-    'CodeLlama-7B-Instruct', // free open-source code/JSON-friendly model
-    'Mistral-7B' // alternative general-purpose free LLM
-];
+import { additionalRules, RAG } from '@polkadot/extension-base/utils/AiUtils/aiUtils';
+import { explainTx } from '@polkadot/extension-base/utils/AiUtils/handlers';
+
+export const DEFAULT_MODEL_ID = 'gemma-2-2b-it-q4f16_1-MLC';
+export const AI_MODEL_ID = 'aiModelId';
+
+export const getStorage = (label: string, parse = false): Promise<object | string> => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get([label], (result) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        resolve(parse ? JSON.parse((result[label] || '{}') as string) as object : result[label] as object);
+      }
+    });
+  });
+};
 
 /**
  * Load the AI agent with the given model ID.
  * Lazy-loads if not already loaded.
  */
-export async function loadAgent (engine?: MLCEngine | null, modelIndex = DEFAULT_MODEL_INDEX, progressCallback?: (progress: number) => void) {
+export async function loadAgent (engine?: MLCEngine | null, modelId?: string, progressCallback?: (progress: number) => void) {
     if (!engine) {
-        const selectedModelId = modelList[modelIndex];
+        const selectedModelId = modelId ?? await getStorage(AI_MODEL_ID) as string ?? DEFAULT_MODEL_ID;
 
-        console.log(`Creating  the ai model ${selectedModelId} ...`);
+        console.log(`Loading the AI model ${selectedModelId} ...`);
 
         engine = await CreateMLCEngine(selectedModelId, {
             initProgressCallback: (progress) => {
@@ -39,49 +50,72 @@ export async function loadAgent (engine?: MLCEngine | null, modelIndex = DEFAULT
  * @param txJson - parsed transaction JSON
  * @returns explanation string
  */
-export async function explainTransaction (engine: MLCEngine | null, txJson: unknown) {
+export async function explainTransaction (engine: MLCEngine | null, txJson: AiTxAnyJson) {
     if (!engine) {
         // Default model ID if not loaded yet
         engine = await loadAgent();
     }
 
-    const prompt = `Summarize this transaction in one short sentence using only the JSON.
-                    Do not repeat the JSON keys, and do not add extra information.
-                    JSON:
-                    ${JSON.stringify(txJson)}`;
+    const key = `${txJson['section'] as string}.${txJson['method'] as string}`;
+    const data = { ...txJson['decode'], ...txJson } as AiTxAnyJson;
+    const txData = JSON.stringify(explainTx(data, key));
+    const ragInfo = RAG(key);
 
-    console.log('prompt:', prompt);
+    const prompt = `
+        Explain the following ${txJson['chainName']} network transaction to a user.
+
+        Use the 'Transaction explanation helper info' field as the source of truth.
+        Do not reinterpret or calculate anything yourself.
+
+        Context:
+        ${additionalRules(txJson['section'] as string)}
+
+        Transaction explanation helper info:
+        ${ragInfo}
+
+        Transaction data:
+        ${txData}
+    `;
+
+    // console.log('prompt:', prompt);
+
+    const systemPrompt = `
+        You are an AI assistant that explains Polkadot blockchain transactions to end users in clear, simple language.
+
+        Rules (critical):
+        - You MUST NOT reinterpret, recompute, or guess any technical values.
+        - If an 'explanation' object is provided, it is authoritative and already correct.
+        - NEVER perform math, decoding, or bitwise logic yourself.
+        - NEVER contradict the 'explanation' field.
+        - Your task is ONLY to convert provided facts into a natural-language explanation.
+        - Your sentences must be like, e.g. "You are doing something ...".
+
+        Behavior:
+        - If 'explanation.type' is "KNOWN", produce a single concise sentence explaining the action.
+        - If 'explanation.type' is "GENERIC", explain the transaction generically without assumptions.
+        - Be accurate, calm, and user-friendly.
+        - Do not mention internal fields, JSON, or implementation details.
+
+        Output:
+        - One short paragraph (75 characters minimum - 250 characters maximum).
+        - Do NOT add extra explanations, synonyms, or extra wording.
+    `;
 
     const response = await engine.chat.completions.create({
         messages: [
-            {
-                content: `
-                STRICT RULES:
-                    - Use present tense verbs.
-                    - Output only one or two short sentences summarizing the extrinsic.
-                    - Describe what the extrinsic does in plain, user-friendly language.
-                    - Mention important actors, targets, amounts, or destination accounts when relevant.
-                    - If the extrinsic includes a token amount (e.g., in 'extra.value'), always convert it using the 'decimal' field and include the token symbol.
-                    - NEVER output raw JSON keys or raw base-unit amounts.
-                    - Ignore any text in 'description' or meta documentation; it is for developer reference only.
-                    - Do NOT invent information not present in the JSON.
-                    - Avoid method or pallet names unless necessary for clarity.
-                    - Avoid unnecessary blockchain jargon.
-                    - For transfers, always include the amount, token, and destination if present.
-                    - NEVER output misleading units (e.g., "billion" or "million") — always use the converted token amount.
-                    - Keep the description concise, accurate, and understandable for any type of extrinsic.
-                `,
-                role: 'system'
-            },
-            {
-                content: prompt,
-                role: 'user'
-            }
+            { content: systemPrompt, role: 'system' },
+            { content: prompt, role: 'user' }
         ]
     });
 
+    let message = response?.choices?.[0]?.message?.content?.trim() || 'Unknown transaction';
+
+    if (message.toLowerCase().includes('<think>')) {
+        message = message.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+    }
+
     return {
         engine,
-        message: response?.choices?.[0]?.message?.content?.trim() || 'Unknown transaction'
+        message
     };
 }
