@@ -899,6 +899,6 @@
   "Manage AI models": "",
   "Processing…": "",
   "AI insight": "",
-  "Downloading and applying the  {{normalizedModelName}} model. This may take a few minutes depending on the model size and your device performance": "",
+  "Downloading and applying the {{normalizedModelName}} model. This may take a few minutes depending on the model size and your device performance": "",
   "Downloading AI Model": ""
 }
