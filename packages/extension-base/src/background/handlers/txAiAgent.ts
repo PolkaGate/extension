@@ -13,15 +13,15 @@ export const DEFAULT_MODEL_ID = 'gemma-2-2b-it-q4f16_1-MLC';
 export const AI_MODEL_ID = 'aiModelId';
 
 export const getStorage = (label: string, parse = false): Promise<object | string> => {
-  return new Promise((resolve, reject) => {
-    chrome.storage.local.get([label], (result) => {
-      if (chrome.runtime.lastError) {
-        reject(chrome.runtime.lastError);
-      } else {
-        resolve(parse ? JSON.parse((result[label] || '{}') as string) as object : result[label] as object);
-      }
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.get([label], (result) => {
+            if (chrome.runtime.lastError) {
+                reject(chrome.runtime.lastError);
+            } else {
+                resolve(parse ? JSON.parse((result[label] || '{}') as string) as object : result[label] as object);
+            }
+        });
     });
-  });
 };
 
 /**
@@ -51,17 +51,18 @@ export async function loadAgent (engine?: MLCEngine | null, modelId?: string, pr
  * @returns explanation string
  */
 export async function explainTransaction (engine: MLCEngine | null, txJson: AiTxAnyJson) {
-    if (!engine) {
-        // Default model ID if not loaded yet
-        engine = await loadAgent();
-    }
+    try {
+        if (!engine) {
+            // Default model ID if not loaded yet
+            engine = await loadAgent();
+        }
 
-    const key = `${txJson['section'] as string}.${txJson['method'] as string}`;
-    const data = { ...txJson['decode'], ...txJson } as AiTxAnyJson;
-    const txData = JSON.stringify(explainTx(data, key));
-    const ragInfo = RAG(key);
+        const key = `${txJson['section'] as string}.${txJson['method'] as string}`;
+        const data = { ...txJson['decode'], ...txJson } as AiTxAnyJson;
+        const txData = JSON.stringify(explainTx(data, key));
+        const ragInfo = RAG(key);
 
-    const prompt = `
+        const prompt = `
         Explain the following ${txJson['chainName']} network transaction to a user.
 
         Use the 'Transaction explanation helper info' field as the source of truth.
@@ -77,9 +78,9 @@ export async function explainTransaction (engine: MLCEngine | null, txJson: AiTx
         ${txData}
     `;
 
-    // console.log('prompt:', prompt);
+        // console.log('prompt:', prompt);
 
-    const systemPrompt = `
+        const systemPrompt = `
         You are an AI assistant that explains Polkadot blockchain transactions to end users in clear, simple language.
 
         Rules (critical):
@@ -101,21 +102,25 @@ export async function explainTransaction (engine: MLCEngine | null, txJson: AiTx
         - Do NOT add extra explanations, synonyms, or extra wording.
     `;
 
-    const response = await engine.chat.completions.create({
-        messages: [
-            { content: systemPrompt, role: 'system' },
-            { content: prompt, role: 'user' }
-        ]
-    });
+        const response = await engine.chat.completions.create({
+            messages: [
+                { content: systemPrompt, role: 'system' },
+                { content: prompt, role: 'user' }
+            ]
+        });
 
-    let message = response?.choices?.[0]?.message?.content?.trim() || 'Unknown transaction';
+        let message = response?.choices?.[0]?.message?.content?.trim() || 'Unknown transaction';
 
-    if (message.toLowerCase().includes('<think>')) {
-        message = message.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+        if (message.toLowerCase().includes('<think>')) {
+            message = message.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+        }
+
+        return {
+            engine,
+            message
+        };
+    } catch (error) {
+        console.error('Failed to explain transaction:', error);
+        throw new Error(`AI transaction explanation failed: ${error instanceof Error ? error.message : String(error)}`);
     }
-
-    return {
-        engine,
-        message
-    };
 }
