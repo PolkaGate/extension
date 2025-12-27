@@ -13,8 +13,9 @@ import { TypeRegistry } from '@polkadot/types';
 import { formatNumber } from '@polkadot/util';
 
 import { DisplayBalance } from '../../components';
-import { useChainInfo, useTranslation } from '../../hooks';
+import { useChainInfo, useMetadata, useTranslation } from '../../hooks';
 import { toBN, toTitleCase } from '../../util';
+import { decodeCallIndex } from './Request/util';
 
 interface Data {
   hexBytes: string | null;
@@ -33,6 +34,7 @@ function ExtrinsicDetail ({ mode: { data }, request }: Props): React.ReactElemen
   const { t } = useTranslation();
 
   const signerPayload = request.payload as SignerPayloadJSON;
+  const chain = useMetadata(signerPayload?.genesisHash);
 
   const [{ payload }, setData] = useState<Data>({ hexBytes: null, payload: null });
 
@@ -127,7 +129,17 @@ function ExtrinsicDetail ({ mode: { data }, request }: Props): React.ReactElemen
                     <Typography color='#EAEBF1' fontFamily='JetBrainsMono' fontSize='13px' fontWeight={500}>
                       {typeof value === 'object'
                         ? <pre style={{ margin: 0 }}>
-                          {JSON.stringify(value, null, 2)} {/* Format the object value */}
+                          {JSON.stringify(
+                            value,
+                            (key, val) => {
+                              if (key === 'callIndex' && typeof val === 'string') {
+                                return decodeCallIndex(chain, val);
+                              }
+
+                              return val;
+                            },
+                            2
+                          )}
                         </pre>
                         : ` ${value as string}` // If it's a primitive, display it directly
                       }
