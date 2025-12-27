@@ -3,10 +3,10 @@
 
 import { CreateMLCEngine, hasModelInCache } from '@mlc-ai/web-llm';
 import { LinearProgress, Stack, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { AI_MODEL_ID, DEFAULT_MODEL_ID } from '@polkadot/extension-base/background/handlers/txAiAgetnt';
-import { ActionButton, DecisionButtons, GradientButton, Motion, Radio } from '@polkadot/extension-polkagate/src/components';
+import { ActionButton, DecisionButtons, GradientButton, Motion, Radio, TwoToneText } from '@polkadot/extension-polkagate/src/components';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
 
@@ -27,7 +27,7 @@ const PREFERRED_AI_MODELS = [
 
 const BUTTONS_STYLE = { height: '44px', mt: '65px', width: '100%' };
 
-const DownloadSection = ({ onCancel, onDone, progress }: { progress: number; onCancel: () => void; onDone: () => void; }) => {
+const DownloadSection = ({ model, onCancel, onDone, progress }: { model: string; progress: number; onCancel: () => void; onDone: () => void; }) => {
     const { t } = useTranslation();
 
     const handleCancel = useCallback(() => {
@@ -35,11 +35,16 @@ const DownloadSection = ({ onCancel, onDone, progress }: { progress: number; onC
         window.location.reload();
     }, [onCancel]);
 
+    const normalizedModelName = model.replace('(Recommended)', '');
+
     return (
         <Motion>
             <Stack alignItems='center' direction='column' sx={{ mt: '20px' }}>
-                <Typography color='text.primary' sx={{ textAlign: 'left' }} variant='B-2'>
-                    {t('Downloading and applying the selected AI model. This may take a few minutes depending on the model size and your device performance')}.
+                <Typography color='text.primary' sx={{ textAlign: 'left' }} variant='B-1'>
+                    <TwoToneText
+                        text={t('Downloading and applying the  {{normalizedModelName}} model. This may take a few minutes depending on the model size and your device performance', { replace: { normalizedModelName } })}
+                        textPartInColor={normalizedModelName}
+                    />
                 </Typography>
                 <Typography color='text.primary' sx={{ mt: '15px', textAlign: 'left' }} variant='B-2'>
                     {t('Please do not close the extension or navigate away during this process')}.
@@ -84,6 +89,8 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
     const [progress, setProgress] = useState<number>(0); // 0–100
     const [isModelInCache, setIsModelInCache] = useState<boolean | undefined>(undefined);
 
+    const selectedModelName = useMemo(() => PREFERRED_AI_MODELS.find(({ id }) => id === selectedModel)?.name, [selectedModel]);
+
     useEffect(() => {
         if (!selectedModel) {
             return;
@@ -118,7 +125,7 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
 
         CreateMLCEngine(selectedModel, {
             initProgressCallback: ({ progress, text }) => {
-                console.log('Downloading model:', text);
+                console.info('Downloading AI model:', text);
                 progress && setProgress(progress);
             }
         }).catch(console.error);
@@ -131,16 +138,17 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
             open
             showBackIconAsClose
             style={{ minHeight: '400px', padding: '20px' }}
-            title={t('AI Model Management')}
+            title={progress ? t('Downloading AI Model') : t('AI Model Management')}
         >
-            {progress
+            {progress && selectedModelName
                 ? <DownloadSection
+                    model={selectedModelName}
                     onCancel={onCancel}
                     onDone={onClose}
                     progress={progress}
                   />
                 : <>
-                    <Typography color='#BEAAD8' sx={{ p: '10px 0', textAlign: 'left', width: '100%' }} variant='B-4'>
+                    <Typography color='#BEAAD8' sx={{ display: 'block', p: '10px 0', textAlign: 'left', width: '100%' }} variant='B-4'>
                         {t('Choose the AI model you want to use for transaction analysis. You can switch between different models based on your preferences for speed, accuracy, and resource usage.')}
                     </Typography>
                     <Stack alignItems='center' columnGap='10px' direction='column' sx={{ alignItems: 'flex-start', mt: '20px' }}>
