@@ -83,7 +83,7 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
     }, []);
 
     const [selectedModel, setSelectedModel] = useState<string | undefined>(undefined);
-    const [progress, setProgress] = useState<number>(0); // 0–100
+    const [progress, setProgress] = useState<number>(0); // 0–1
     const [isModelInCache, setIsModelInCache] = useState<boolean | undefined>(undefined);
 
     const selectedModelName = useMemo(() => PREFERRED_AI_MODELS.find(({ id }) => id === selectedModel)?.name, [selectedModel]);
