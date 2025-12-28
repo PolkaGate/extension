@@ -20,7 +20,7 @@ import LedgerSign from './ledger/LedgerSign';
 import LedgerSignGeneric from './ledger/LedgerSignGeneric';
 import SignWithPassword from './Request/SignWithPassword';
 
-function FeeRow ({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: string }): React.ReactElement<Props> {
+function FeeRow ({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: string }) {
   const { t } = useTranslation();
   const { decimal } = useChainInfo(genesisHash);
   const { price } = useTokenPrice(genesisHash);

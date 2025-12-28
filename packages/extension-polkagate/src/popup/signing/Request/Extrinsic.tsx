@@ -60,7 +60,7 @@ function decodeMethod (data: string, chain: Chain, specVersion: BN): Decoded {
   return { args, method };
 }
 
-function DappRow ({ url }: { url: string }): React.ReactElement<Props> {
+function DappRow ({ url }: { url: string }) {
   const dapp = new URL(url).origin;
   const faviconUrl = useFavIcon(dapp);
 
