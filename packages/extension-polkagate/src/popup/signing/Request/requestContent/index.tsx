@@ -19,7 +19,7 @@ interface Decoded {
 
 interface Props {
   genesisHash: string;
-  setMode: React.Dispatch<React.SetStateAction<ModeData>>
+  setMode: React.Dispatch<React.SetStateAction<ModeData>>;
   decoded: Decoded;
 }
 
@@ -31,7 +31,7 @@ function RequestContent ({ decoded, genesisHash, setMode }: Props): React.ReactE
 
   const txInfo = useMemo(() => (isBatchCall ? decoded?.method?.args[0] : [decoded?.method]) as Call[], [decoded?.method, isBatchCall]);
 
-  const onShowDetails = useCallback((index: number) => {
+  const onShowDetails = useCallback((index: number) => () => {
     setMode({
       data: txInfo[index],
       title: t('Request Content'),
@@ -39,7 +39,7 @@ function RequestContent ({ decoded, genesisHash, setMode }: Props): React.ReactE
     });
   }, [setMode, t, txInfo]);
 
-  const handleColor = useCallback((color: string, index: number) => {
+  const handleColor = useCallback((color: string, index: number) => () => {
     setIconColor((prev) => {
       prev[index] = color;
 
@@ -48,7 +48,7 @@ function RequestContent ({ decoded, genesisHash, setMode }: Props): React.ReactE
   }, []);
 
   return (
-    <Grid container item sx={{ height: '100px', overflowY: 'auto' }}>
+    <Grid container item sx={{ overflowY: 'auto' }}>
       {decoded?.method && txInfo?.map((info, index) => (
         <Grid alignItems='center' container item justifyContent='space-between' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', flexWrap: 'noWrap', height: isBatchCall ? '40px' : '58px', mt: '10px', px: '10px' }}>
           <TransactionSummary
@@ -57,9 +57,9 @@ function RequestContent ({ decoded, genesisHash, setMode }: Props): React.ReactE
           />
           <ArrowCircleRight
             color={iconColor?.[index] ?? '#BEAAD8'}
-            onClick={() => onShowDetails(index)}
-            onMouseEnter={() => handleColor('#f84bb4', index)}
-            onMouseLeave={() => handleColor('#BEAAD8', index)}
+            onClick={onShowDetails(index)}
+            onMouseEnter={handleColor('#f84bb4', index)}
+            onMouseLeave={handleColor('#BEAAD8', index)}
             size={isBatchCall ? '20' : '32'}
             style={{ cursor: 'pointer' }}
             variant='Bulk'

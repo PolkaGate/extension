@@ -7,11 +7,10 @@ import type { Balance, ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 
-import { Box, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { cubes } from '../../assets/icons';
 import { approveSignSignature } from '../../messaging';
 import LedgerSign from './ledger/LedgerSign';
 import LedgerSignGeneric from './ledger/LedgerSignGeneric';
@@ -23,9 +22,10 @@ interface Props {
   request: SigningRequest;
   extrinsicPayload: ExtrinsicPayload;
   onSignature: ({ signature }: { signature: HexString; }) => void;
+  signWithPasswordStyle?: React.CSSProperties;
 }
 
-export default function Confirm ({ extrinsicPayload, fee, onCancel, onSignature, request }: Props): React.ReactElement {
+export default function Confirm ({ extrinsicPayload, fee, onCancel, onSignature, request, signWithPasswordStyle }: Props): React.ReactElement {
   const navigate = useNavigate();
   const { isExternal, isHardware } = request.account;
 
@@ -59,12 +59,7 @@ export default function Confirm ({ extrinsicPayload, fee, onCancel, onSignature,
   }, [payload?.address, signId, navigate]);
 
   return (
-    <Grid container display='block' height='440px' item position='relative' zIndex={1}>
-      <Box
-        component='img'
-        src={cubes as string}
-        sx={{ height: 'auto', m: '30px auto 15px', width: '85.39px' }}
-      />
+    <Grid container display='block' item>
       {isHardware && account && (
         account?.isGeneric || account?.isMigration
           ? (
@@ -97,7 +92,7 @@ export default function Confirm ({ extrinsicPayload, fee, onCancel, onSignature,
           onCancel={onCancel}
           setError={setError}
           signId={signId}
-          withSavePassword
+          style={signWithPasswordStyle}
         />
       }
     </Grid>
