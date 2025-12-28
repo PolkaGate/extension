@@ -166,7 +166,7 @@ const CurrencyOptions = memo(function CO ({ handleCurrencySelect, onDoubleClick,
       <Grid container item>
         <SearchField
           onInputChange={onSearch}
-          placeholder='🔍 Search currency'
+          placeholder={t('🔍 Search currency')}
         />
       </Grid>
       <Grid container item justifyContent='center' sx={{ display: 'block', height: '315px', maxHeight: '315px', mb: '60px', overflowY: 'auto', pt: '5px' }}>

@@ -422,7 +422,7 @@
   "Account export is completed!": "Exportação da conta concluída!",
   "Account Settings": "Configurações da Conta",
   "Notifications": "Notificações",
-  "Automatically select the highest-performing remote node.": "Selecionar automaticamente o nó remoto de melhor desempenho.",
+  "Automatically select the highest-performing remote node.": "Selecionar automaticamente o melhor nó remoto.",
   "NODES": "NÓS",
   "Extension Settings": "Configurações da Extensão",
   "Main": "Principal",
@@ -855,7 +855,7 @@
   "Staking Rewards": "Recompensas de Staking",
   "Select Accounts": "Selecionar Contas",
   "Select Chains": "Selecionar Redes",
-  "Notification Settings": "Configurações de Notificação",
+  "Notification Settings": "Notificações",
   "Notification": "Notificação",
   "Era Progress": "Progresso da Era",
   "You’ve turned off notifications. Enable them anytime to get updates on your accounts, governance, and staking rewards!": "Você desativou as notificações. Ative-as a qualquer momento para receber atualizações sobre suas contas, governança e recompensas de staking!",
@@ -887,5 +887,8 @@
   "{{chainName}} referendum #{{referendumIndex}} has been executed": "Referendo #{{referendumIndex}} em {{chainName}} foi executado",
   "{{chainName}} referendum #{{referendumIndex}} execution failed": "Execução do referendo #{{referendumIndex}} em {{chainName}} falhou",
   "{{chainName}} referendum #{{referendumIndex}} has been rejected": "Referendo #{{referendumIndex}} em {{chainName}} foi rejeitado",
-  "{{chainName}} referendum #{{referendumIndex}} has timed out": "Referendo #{{referendumIndex}} em {{chainName}} expirou"
+  "{{chainName}} referendum #{{referendumIndex}} has timed out": "Referendo #{{referendumIndex}} em {{chainName}} expirou",
+  "Add": "Adicionar",
+  "Check": "Verificar",
+  "Rate the app": "Avaliar o app"
 }
