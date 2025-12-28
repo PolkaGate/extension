@@ -3,7 +3,7 @@
 
 import type { SigningRequest } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
-import type { Balance, Call, ExtrinsicPayload } from '@polkadot/types/interfaces';
+import type { Call, ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { AnyJson, SignerPayloadJSON } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
 import type { HexString } from '@polkadot/util/types';
@@ -14,9 +14,9 @@ import React, { useMemo, useRef } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
-import { ChainLogo, DisplayBalance, FormatPrice, Identity2, TwoToneText } from '../../../components';
-import { useAccountAssets, useAllChains, useChainInfo, useEstimatedFee, useFavIcon, useIsExtensionPopup, useMetadata, useSelectedChains, useTokenPrice, useTranslation } from '../../../hooks';
-import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util';
+import { ChainLogo, DisplayBalance, Identity2, TwoToneText } from '../../../components';
+import { useAccountAssets, useAllChains, useChainInfo, useEstimatedFee, useFavIcon, useIsExtensionPopup, useMetadata, useSelectedChains, useTranslation } from '../../../hooks';
+import { getSubstrateAddress, isOnAssetHub } from '../../../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
 import { getValue } from '../../account/util';
 import Confirm from '../Confirm';
@@ -58,36 +58,6 @@ function decodeMethod (data: string, chain: Chain, specVersion: BN): Decoded {
   }
 
   return { args, method };
-}
-
-function FeeRow ({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: string }): React.ReactElement<Props> {
-  const { t } = useTranslation();
-  const { decimal } = useChainInfo(genesisHash);
-  const { price } = useTokenPrice(genesisHash);
-
-  return (
-    <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, bottom: '-33px', p: '10px', position: 'relative' }}>
-      <Typography color='#AA83DC' variant='B-1'>
-        {t('Estimated Fee')}
-      </Typography>
-      <Stack alignItems='center' columnGap='5px' direction='row' lineHeight='normal'>
-        <FormatPrice
-          commify
-          decimalColor='#EAEBF1'
-          decimalPoint={4}
-          fontFamily='Inter'
-          fontSize='13px'
-          fontWeight={500}
-          num={fee ? amountToHuman(fee?.muln(price ?? 0), decimal) : undefined}
-          skeletonHeight={21}
-          textColor='#EAEBF1'
-        />
-        <Typography color='#AA83DC' variant='B-1'>
-          {fee?.toHuman()}
-        </Typography>
-      </Stack>
-    </Grid>
-  );
 }
 
 function DappRow ({ url }: { url: string }): React.ReactElement<Props> {
@@ -195,7 +165,7 @@ function Extrinsic ({ onCancel, onSignature, payload, request, setMode, signerPa
         {decoded.method &&
           <>
             <Stack direction='row' justifyContent='space-between' width='100%'>
-              <Typography color='#674394' variant='B-2'>
+              <Typography color='#674394' mb='8px' variant='B-2'>
                 {t('Request content')}
               </Typography>
             </Stack>
@@ -207,12 +177,6 @@ function Extrinsic ({ onCancel, onSignature, payload, request, setMode, signerPa
           </>
         }
       </Stack>
-      {fee !== null && !missingInfo &&
-        <FeeRow
-          fee={fee}
-          genesisHash={genesisHash}
-        />
-      }
       {missingInfo &&
         <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: '125px', position: 'absolute' }}>
           <Warning2 color='#FFCE4F' size='24px' variant='Bold' />
@@ -233,6 +197,7 @@ function Extrinsic ({ onCancel, onSignature, payload, request, setMode, signerPa
       }
       <Confirm
         extrinsicPayload={payload}
+        fee={missingInfo ? null : fee}
         onCancel={onCancel}
         onSignature={onSignature}
         request={request}

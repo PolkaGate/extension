@@ -7,14 +7,48 @@ import type { Balance, ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 
-import { Grid } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { FormatPrice } from '@polkadot/extension-polkagate/src/components';
+import { useChainInfo, useTokenPrice, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { amountToHuman } from '@polkadot/extension-polkagate/src/util';
 
 import { approveSignSignature } from '../../messaging';
 import LedgerSign from './ledger/LedgerSign';
 import LedgerSignGeneric from './ledger/LedgerSignGeneric';
 import SignWithPassword from './Request/SignWithPassword';
+
+function FeeRow ({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: string }): React.ReactElement<Props> {
+  const { t } = useTranslation();
+  const { decimal } = useChainInfo(genesisHash);
+  const { price } = useTokenPrice(genesisHash);
+
+  return (
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, p: '10px', position: 'relative' }}>
+      <Typography color='#AA83DC' variant='B-1'>
+        {t('Estimated Fee')}
+      </Typography>
+      <Stack alignItems='center' columnGap='5px' direction='row' lineHeight='normal'>
+        <FormatPrice
+          commify
+          decimalColor='#EAEBF1'
+          decimalPoint={4}
+          fontFamily='Inter'
+          fontSize='13px'
+          fontWeight={500}
+          num={fee ? amountToHuman(fee?.muln(price ?? 0), decimal) : undefined}
+          skeletonHeight={21}
+          textColor='#EAEBF1'
+        />
+        <Typography color='#AA83DC' variant='B-1'>
+          {fee?.toHuman()}
+        </Typography>
+      </Stack>
+    </Grid>
+  );
+}
 
 interface Props {
   onCancel: () => void;
@@ -59,7 +93,12 @@ export default function Confirm ({ extrinsicPayload, fee, onCancel, onSignature,
   }, [payload?.address, signId, navigate]);
 
   return (
-    <Grid container display='block' item>
+    <Grid container item sx={{ bottom: 0, display: 'block', height: '160px', position: 'absolute' }}>
+      {fee !== null &&
+        <FeeRow
+          fee={fee}
+          genesisHash={payload.genesisHash}
+        />}
       {isHardware && account && (
         account?.isGeneric || account?.isMigration
           ? (

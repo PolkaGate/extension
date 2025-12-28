@@ -48,9 +48,9 @@ function RequestContent ({ decoded, genesisHash, setMode }: Props): React.ReactE
   }, []);
 
   return (
-    <Grid container item sx={{ overflowY: 'auto' }}>
+    <Grid container item sx={{ gap: '4px', maxHeight: '175px', overflowY: 'auto' }}>
       {decoded?.method && txInfo?.map((info, index) => (
-        <Grid alignItems='center' container item justifyContent='space-between' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', flexWrap: 'noWrap', height: isBatchCall ? '40px' : '58px', mt: '10px', px: '10px' }}>
+        <Grid alignItems='center' container item justifyContent='space-between' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', flexWrap: 'noWrap', height: isBatchCall ? '40px' : '58px', px: '10px' }}>
           <TransactionSummary
             genesisHash={genesisHash}
             info={info}
