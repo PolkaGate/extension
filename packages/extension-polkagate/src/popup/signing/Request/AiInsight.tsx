@@ -6,13 +6,13 @@ import type { Decoded } from '../types';
 
 import { Stack, Typography } from '@mui/material';
 import { Magicpen } from 'iconsax-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { explainTransactionWithAi } from '@polkadot/extension-polkagate/src/messaging';
 
 import { MyTooltip, Progress } from '../../../components';
-import { useChainInfo, useMetadata, useTranslation } from '../../../hooks';
-import { decodeCallIndex } from './util';
+import { useChainInfo, useTranslation } from '../../../hooks';
+import { processCall } from './util';
 
 interface Props {
   decoded: Decoded;
@@ -20,62 +20,49 @@ interface Props {
   genesisHash: string;
 }
 
+const CALLS_TO_PROCESS = ['utility.batch', 'utility.batchAll', 'utility.forceBatch', 'proxy.proxy'];
+
 function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
-  const { chainName, decimal, token } = useChainInfo(genesisHash, true);
-  const chain = useMetadata(genesisHash);
+  const generatingRef = useRef(false);
+
+  const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
 
   const [aiInfo, setInfo] = useState<string>();
 
   useEffect(() => {
-    if (decoded.method === null) {
+    if (decoded.method === null || generatingRef.current || !chain) {
       return;
     }
 
-    const txInfo: Call | undefined = (() => {
-      if (!decoded.method) {
-        return undefined;
-      }
+    generatingRef.current = true;
 
-      return decoded.method;
-    })();
+    const txMethod = decoded.method.toPrimitive();
+    const txKey = `${decoded.method.section}.${decoded.method.method}`.toLowerCase();
+    const txInfo: Call | undefined = !decoded.method ? undefined : decoded.method;
+    let extra: Record<string, unknown> | string | null = null;
 
-    const extra = txInfo?.argsEntries.map((entry, index) => {
-      const [key, _type] = entry; // destructuring to get the key and type from argsEntries
-      const value = txInfo.args[index]; // Accessing the corresponding value from args
-
-      return {
-        [key]: typeof value === 'object'
-          ? JSON.stringify(
-            value,
-            (key: string, val: unknown): unknown => {
-              if (key === 'callIndex' && typeof val === 'string') {
-                return decodeCallIndex(chain, val);
-              }
-
-              return val;
-            },
-            2
-          )
-          : ` ${value as string}`
-      };
-    });
+    if (CALLS_TO_PROCESS.includes(txKey)) {
+      extra = processCall(txMethod, chain);
+    }
 
     explainTransactionWithAi({
       chainName,
       decimal,
-      decode: decoded.method,
       description: txInfo?.meta.docs,
       extra,
       method: txInfo?.method,
       requestedDapp: url,
       section: txInfo?.section,
-      token
+      ss58Format: chain.ss58Format,
+      token,
+      txKey,
+      ...txMethod
     })
       .then(setInfo)
       .catch(console.error);
-  }, [chain, chainName, decimal, decoded, token, url]);
+  }, [chain, chainName, decimal, decoded.method, token, url]);
 
   return (
     <MyTooltip content={aiInfo ?? t('Processing…')}>

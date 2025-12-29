@@ -76,7 +76,7 @@ export function metadataExpand (definition: MetadataDef, isPartial = false): Cha
   return result;
 }
 
-export function findChain(definitions: MetadataDef[], genesisHash?: string | null): Chain | null {
+export function findChain (definitions: MetadataDef[], genesisHash?: string | null): Chain | null {
   const def = definitions.find((def) => def.genesisHash === genesisHash);
 
   return def
@@ -84,10 +84,10 @@ export function findChain(definitions: MetadataDef[], genesisHash?: string | nul
     : null;
 }
 
-export function addMetadata(def: MetadataDef): void {
+export function addMetadata (def: MetadataDef): void {
   definitions.set(def.genesisHash, def);
 }
 
-export function knownMetadata(): MetadataDef[] {
+export function knownMetadata (): MetadataDef[] {
   return [...definitions.values()];
 }
