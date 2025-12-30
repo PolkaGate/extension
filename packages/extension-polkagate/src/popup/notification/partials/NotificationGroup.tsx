@@ -96,7 +96,9 @@ function NotificationItem ({ currency, item, prices, t, theme, useAddedEndpoints
       return;
     }
 
-    switch (item.message.type) {
+    const { forAccount, payout, receivedFund, type } = item.message;
+
+    switch (type) {
       case 'referenda': {
         const subsquareChainName = networkName.toLowerCase().includes('polkadot') ? 'polkadot' : 'kusama';
 
@@ -105,24 +107,24 @@ function NotificationItem ({ currency, item, prices, t, theme, useAddedEndpoints
       }
 
       case 'stakingReward': {
-        if (item.message.payout?.eventId) {
-          window.open(`https://${networkName}.subscan.io/event/${item.message.payout?.eventId}`, '_blank');
+        if (payout?.eventId) {
+          window.open(`https://${networkName}.subscan.io/event/${payout.eventId}`, '_blank');
         } else {
-          window.open(`https://${networkName}.subscan.io/account/${item.message.forAccount}?tab=reward`, '_blank');
+          window.open(`https://${networkName}.subscan.io/account/${forAccount}?tab=reward`, '_blank');
         }
 
         break;
       }
 
       case 'receivedFund': {
-        window.open(`https://${networkName}.subscan.io/extrinsic/${item.message.receivedFund?.index}`, '_blank');
+        window.open(`https://${networkName}.subscan.io/extrinsic/${receivedFund?.index}`, '_blank');
         break;
       }
 
       default:
         break;
     }
-  }, [item.message.chain?.text, item.message.forAccount, item.message.payout?.eventId, item.message.receivedFund?.index, item.message.referenda?.index, item.message.type]);
+  }, [item.message]);
 
   return (
     <Stack direction='row' onClick={onClick} ref={hoveredRef} sx={{ alignItems: 'center', gap: '6px', width: '100%' }}>
