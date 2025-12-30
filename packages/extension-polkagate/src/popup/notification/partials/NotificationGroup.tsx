@@ -72,7 +72,6 @@ interface NotificationItemProps {
   theme: Theme;
   prices: Prices | null | undefined;
   useAddedEndpoints: Record<`0x${string}`, UserAddedEndpoint> | undefined
-
 }
 
 function NotificationItem ({ currency, item, prices, t, theme, useAddedEndpoints }: NotificationItemProps) {
@@ -117,36 +116,42 @@ function NotificationItem ({ currency, item, prices, t, theme, useAddedEndpoints
       }
 
       case 'receivedFund': {
-        window.open(`https://${networkName}.subscan.io/extrinsic/${receivedFund?.index}`, '_blank');
+        const extrinsicIndex = receivedFund?.index;
+
+        if (extrinsicIndex === undefined) {
+          return;
+        }
+
+        window.open(`https://${networkName}.subscan.io/extrinsic/${extrinsicIndex}`, '_blank');
         break;
       }
 
       default:
-        break;
-    }
+  break;
+}
   }, [item.message]);
 
-  return (
-    <Stack direction='row' onClick={onClick} ref={hoveredRef} sx={{ alignItems: 'center', gap: '6px', width: '100%' }}>
-      <ItemIcon color={color} style={{ backgroundColor: bgcolor, border: '2px solid', borderColor, borderRadius: '999px', height: '32px', padding: '3px', width: '32px' }} variant='Bold' />
-      <Stack direction='column' sx={{ width: 'calc(100% - 32px - 6px)' }}>
-        <TitleTime
-          address={forAccount}
-          hovered={hovered}
-          noName={messageType === 'referenda'}
-          read={item.read}
-          time={time}
-          title={title}
-        />
-        <TwoToneText
-          color={theme.palette.text.primary}
-          style={{ color: theme.palette.text.secondary, width: 'fit-content', ...theme.typography['B-4'], textAlign: 'left' }}
-          text={text}
-          textPartInColor={textInColor}
-        />
-      </Stack>
+return (
+  <Stack direction='row' onClick={onClick} ref={hoveredRef} sx={{ alignItems: 'center', gap: '6px', width: '100%' }}>
+    <ItemIcon color={color} style={{ backgroundColor: bgcolor, border: '2px solid', borderColor, borderRadius: '999px', height: '32px', padding: '3px', width: '32px' }} variant='Bold' />
+    <Stack direction='column' sx={{ width: 'calc(100% - 32px - 6px)' }}>
+      <TitleTime
+        address={forAccount}
+        hovered={hovered}
+        noName={messageType === 'referenda'}
+        read={item.read}
+        time={time}
+        title={title}
+      />
+      <TwoToneText
+        color={theme.palette.text.primary}
+        style={{ color: theme.palette.text.secondary, width: 'fit-content', ...theme.typography['B-4'], textAlign: 'left' }}
+        text={text}
+        textPartInColor={textInColor}
+      />
     </Stack>
-  );
+  </Stack>
+);
 }
 
 function NotificationGroup ({ group: [dateKey, items] }: { group: [string, NotificationMessageInformation[]]; }) {
