@@ -8,13 +8,14 @@ import type { NotificationMessageInformation } from '../types';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { Collapse, Grid, Stack, type Theme, Typography, useTheme } from '@mui/material';
 import * as Icons from 'iconsax-react';
-import React, { Fragment, useCallback, useContext, useRef } from 'react';
+import React, { Fragment, useContext, useRef } from 'react';
 
 import { CurrencyContext, GradientDivider, ScrollingTextBox, TwoToneText } from '@polkadot/extension-polkagate/src/components';
 import { useUserAddedEndpoints } from '@polkadot/extension-polkagate/src/fullscreen/addNewChain/utils';
 import { useAccount, useIsHovered, usePrices, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { toShortAddress } from '@polkadot/extension-polkagate/src/util';
 
+import useNotificationLink from '../hook/useNotificationLink';
 import { getChainInfo, getNotificationMessages, getTokenPriceBySymbol, isToday } from '../util';
 
 function ItemDate ({ date }: { date: string; }) {
@@ -77,6 +78,7 @@ interface NotificationItemProps {
 function NotificationItem ({ currency, item, prices, t, theme, useAddedEndpoints }: NotificationItemProps) {
   const hoveredRef = useRef(null);
   const hovered = useIsHovered(hoveredRef);
+  const { isNavigable, onClick } = useNotificationLink(item.message);
 
   const genesisHash = item.message.chain?.value as string | undefined;
   const chainInfo = getChainInfo(genesisHash);
@@ -88,70 +90,27 @@ function NotificationItem ({ currency, item, prices, t, theme, useAddedEndpoints
 
   const ItemIcon = Icons[itemIcon as keyof typeof Icons];
 
-  const onClick = useCallback(() => {
-    const networkName = item.message.chain?.text;
-
-    if (!networkName) {
-      return;
-    }
-
-    const { forAccount, payout, receivedFund, type } = item.message;
-
-    switch (type) {
-      case 'referenda': {
-        const subsquareChainName = networkName.toLowerCase().includes('polkadot') ? 'polkadot' : 'kusama';
-
-        window.open(`https://${subsquareChainName}.subsquare.io/referenda/${item.message.referenda?.index}`, '_blank');
-        break;
-      }
-
-      case 'stakingReward': {
-        if (payout?.eventId) {
-          window.open(`https://${networkName}.subscan.io/event/${payout.eventId}`, '_blank');
-        } else {
-          window.open(`https://${networkName}.subscan.io/account/${forAccount}?tab=reward`, '_blank');
-        }
-
-        break;
-      }
-
-      case 'receivedFund': {
-        const extrinsicIndex = receivedFund?.index;
-
-        if (extrinsicIndex === undefined) {
-          return;
-        }
-
-        window.open(`https://${networkName}.subscan.io/extrinsic/${extrinsicIndex}`, '_blank');
-        break;
-      }
-
-      default:
-  break;
-}
-  }, [item.message]);
-
-return (
-  <Stack direction='row' onClick={onClick} ref={hoveredRef} sx={{ alignItems: 'center', gap: '6px', width: '100%' }}>
-    <ItemIcon color={color} style={{ backgroundColor: bgcolor, border: '2px solid', borderColor, borderRadius: '999px', height: '32px', padding: '3px', width: '32px' }} variant='Bold' />
-    <Stack direction='column' sx={{ width: 'calc(100% - 32px - 6px)' }}>
-      <TitleTime
-        address={forAccount}
-        hovered={hovered}
-        noName={messageType === 'referenda'}
-        read={item.read}
-        time={time}
-        title={title}
-      />
-      <TwoToneText
-        color={theme.palette.text.primary}
-        style={{ color: theme.palette.text.secondary, width: 'fit-content', ...theme.typography['B-4'], textAlign: 'left' }}
-        text={text}
-        textPartInColor={textInColor}
-      />
+  return (
+    <Stack direction='row' onClick={onClick} ref={hoveredRef} sx={{ alignItems: 'center', gap: '6px', width: '100%' }}>
+      <ItemIcon color={color} style={{ backgroundColor: bgcolor, border: '2px solid', borderColor, borderRadius: '999px', height: '32px', padding: '3px', width: '32px' }} variant='Bold' />
+      <Stack direction='column' sx={{ width: 'calc(100% - 32px - 6px)' }}>
+        <TitleTime
+          address={forAccount}
+          hovered={isNavigable && hovered}
+          noName={messageType === 'referenda'}
+          read={item.read}
+          time={time}
+          title={title}
+        />
+        <TwoToneText
+          color={theme.palette.text.primary}
+          style={{ color: theme.palette.text.secondary, width: 'fit-content', ...theme.typography['B-4'], textAlign: 'left' }}
+          text={text}
+          textPartInColor={textInColor}
+        />
+      </Stack>
     </Stack>
-  </Stack>
-);
+  );
 }
 
 function NotificationGroup ({ group: [dateKey, items] }: { group: [string, NotificationMessageInformation[]]; }) {
