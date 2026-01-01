@@ -5,15 +5,17 @@ import type { CurrencyItemType } from '@polkadot/extension-polkagate/fullscreen/
 import type { Prices, UserAddedEndpoint } from '@polkadot/extension-polkagate/util/types';
 import type { NotificationMessageInformation } from '../types';
 
-import { Grid, Stack, type Theme, Typography, useTheme } from '@mui/material';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { Collapse, Grid, Stack, type Theme, Typography, useTheme } from '@mui/material';
 import * as Icons from 'iconsax-react';
-import React, { Fragment, useContext } from 'react';
+import React, { Fragment, useContext, useRef } from 'react';
 
 import { CurrencyContext, GradientDivider, ScrollingTextBox, TwoToneText } from '@polkadot/extension-polkagate/src/components';
 import { useUserAddedEndpoints } from '@polkadot/extension-polkagate/src/fullscreen/addNewChain/utils';
-import { useAccount, usePrices, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useAccount, useIsHovered, usePrices, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { toShortAddress } from '@polkadot/extension-polkagate/src/util';
 
+import useNotificationLink from '../hook/useNotificationLink';
 import { getChainInfo, getNotificationMessages, getTokenPriceBySymbol, isToday } from '../util';
 
 function ItemDate ({ date }: { date: string; }) {
@@ -31,7 +33,7 @@ function ItemDate ({ date }: { date: string; }) {
   );
 }
 
-function TitleTime ({ address, noName, read, time, title }: { address: string | undefined; read: boolean; time: string; title: string; noName: boolean }) {
+function TitleTime ({ address, hovered, noName, read, time, title }: { address: string | undefined; read: boolean; time: string; title: string; noName: boolean; hovered: boolean; }) {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -52,26 +54,33 @@ function TitleTime ({ address, noName, read, time, title }: { address: string | 
           />}
         {!read && <Grid sx={{ bgcolor: theme.palette.menuIcon.hover, borderRadius: '999px', height: '8px', width: '8px' }} />}
       </Grid>
-      <Typography color='#674394' variant='B-1'>
-        {time}
-      </Typography>
+      <Grid container item sx={{ width: 'fit-content' }}>
+        <Typography color='#674394' variant='B-1'>
+          {time}
+        </Typography>
+        <Collapse in={hovered} orientation='horizontal' timeout={350}>
+          <OpenInNewIcon sx={{ ':hover': { borderBottomColor: '#674394' }, borderBottom: '2px solid transparent', color: '#674394', cursor: 'pointer', fontSize: '16px', ml: '4px' }} />
+        </Collapse>
+      </Grid>
     </Stack>
   );
 }
 
 interface NotificationItemProps {
-    item: NotificationMessageInformation;
-    currency: CurrencyItemType | undefined
-    t: (key: string) => string;
-    theme: Theme;
-    prices: Prices | null | undefined;
-    useAddedEndpoints: Record<`0x${string}`, UserAddedEndpoint> | undefined
-
-  }
+  item: NotificationMessageInformation;
+  currency: CurrencyItemType | undefined
+  t: (key: string) => string;
+  theme: Theme;
+  prices: Prices | null | undefined;
+  useAddedEndpoints: Record<`0x${string}`, UserAddedEndpoint> | undefined
+}
 
 function NotificationItem ({ currency, item, prices, t, theme, useAddedEndpoints }: NotificationItemProps) {
-  const genesisHash = item.message.chain?.value as string | undefined;
+  const hoveredRef = useRef(null);
+  const hovered = useIsHovered(hoveredRef);
+  const { isNavigable, onClick } = useNotificationLink(item.message);
 
+  const genesisHash = item.message.chain?.value as string | undefined;
   const chainInfo = getChainInfo(genesisHash);
   const tokenPrice = getTokenPriceBySymbol(chainInfo.token, chainInfo.chainName, genesisHash, prices, useAddedEndpoints);
   const { detail: { description, iconInfo, time, title }, info: { forAccount, type: messageType } } = getNotificationMessages(item.message, chainInfo, currency, tokenPrice, t);
@@ -82,11 +91,12 @@ function NotificationItem ({ currency, item, prices, t, theme, useAddedEndpoints
   const ItemIcon = Icons[itemIcon as keyof typeof Icons];
 
   return (
-    <Stack direction='row' sx={{ alignItems: 'center', gap: '6px', width: '100%' }}>
+    <Stack direction='row' onClick={onClick} ref={hoveredRef} sx={{ alignItems: 'center', gap: '6px', width: '100%' }}>
       <ItemIcon color={color} style={{ backgroundColor: bgcolor, border: '2px solid', borderColor, borderRadius: '999px', height: '32px', padding: '3px', width: '32px' }} variant='Bold' />
       <Stack direction='column' sx={{ width: 'calc(100% - 32px - 6px)' }}>
         <TitleTime
           address={forAccount}
+          hovered={isNavigable && hovered}
           noName={messageType === 'referenda'}
           read={item.read}
           time={time}

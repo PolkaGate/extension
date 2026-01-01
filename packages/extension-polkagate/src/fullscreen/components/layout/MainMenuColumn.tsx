@@ -10,7 +10,7 @@ import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/use
 import { Version } from '@polkadot/extension-polkagate/src/partials';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util';
-import { ExtensionPopups, PRIVACY_POLICY_LINK, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { ExtensionPopups, PRIVACY_POLICY_LINK, STAKING_CHAINS, STATEMINT_GENESIS_HASH, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
@@ -63,7 +63,10 @@ function MainMenuColumn (): React.ReactElement {
       stakeType = maxPositionType;
     } else {
       // Otherwise fall back to selected chain
-      genesisHashKey = mapRelayToSystemGenesisIfMigrated(selectedGenesisHash) ?? selectedGenesisHash ?? '';
+      const maybeSelectedGenesis = mapRelayToSystemGenesisIfMigrated(selectedGenesisHash) ?? selectedGenesisHash ?? '';
+
+      // Use Polkadot Hub as default when the selected chain has no staking support
+      genesisHashKey = STAKING_CHAINS.includes(maybeSelectedGenesis) ? maybeSelectedGenesis : STATEMINT_GENESIS_HASH;
       stakeType = 'solo';
     }
 
