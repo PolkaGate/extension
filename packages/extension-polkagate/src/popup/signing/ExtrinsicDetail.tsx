@@ -119,7 +119,7 @@ function ExtrinsicDetail ({ mode: { data }, request, setMode }: Props): React.Re
           </Typography>
         </Grid>
         {!!data?.argsEntries?.length &&
-          <Grid alignItems='start' container item sx={{ bgcolor: '#05091C', borderRadius: '14px', p: '10px', pl: '20px' }}>
+          <Grid alignItems='start' container item sx={{ bgcolor: '#1B133C', borderRadius: '14px', p: '10px', pl: '20px' }}>
             <Typography color='#AA83DC' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, mb: '10px', pb: '5px', position: 'relative', textAlign: 'left', width: '100%' }} textTransform='uppercase' variant='S-1'>
               {t('Arguments')}
             </Typography>
