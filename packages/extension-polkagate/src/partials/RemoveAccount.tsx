@@ -116,8 +116,11 @@ function RemoveAccount ({ address, onClose, open }: Props): React.ReactElement {
         }
       }
 
-      await forgetAccount(account.address);
-      await cleanupNotificationAccount(account.address);
+      const success = await forgetAccount(account.address);
+
+      if (success) {
+        await cleanupNotificationAccount(account.address);
+      }
 
       notifier(true);
       !isExtension && handleClose(); // in full-screen mode, close the modal on success
