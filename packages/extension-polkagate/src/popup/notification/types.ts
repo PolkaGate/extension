@@ -45,7 +45,7 @@ export interface PayoutSubscan {
   amount: string;
   block_timestamp: number;
   module_id: string;
-  event_id: string;
+  event_index: string;
 }
 
 export interface ReferendaSubscan {
@@ -92,6 +92,7 @@ export interface PayoutsProp {
   date: string;
   index: number | string | undefined;
   timestamp: number;
+  eventId: string;
 }
 
 export type ReferendaStatus = 'approved' | 'cancelled' | 'decision' | 'executed' | 'ongoing' | 'rejected' | 'submitted' | 'timeout' | 'confirm' | 'executedfailed';

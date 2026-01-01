@@ -133,7 +133,7 @@ export default function Chains (): React.ReactElement {
         <Grid container item>
           <SearchField
             onInputChange={onSearch}
-            placeholder='🔍 Search network'
+            placeholder={t('🔍 Search networks')}
             style={{ borderRadius: '12px', height: '36px', marginBottom: '10px' }}
           />
         </Grid>

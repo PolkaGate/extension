@@ -5,9 +5,12 @@ import { Grid, Typography } from '@mui/material';
 import { Like1 } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
+import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
+
 const EXTENSION_URL = 'https://chromewebstore.google.com/detail/polkagate-the-gateway-to/ginchbkmljhldofnbjabmeophlhdldgp';
 
 export default function RateUsButton (): React.ReactElement {
+  const { t } = useTranslation();
   const onClick = useCallback(() => window.open(EXTENSION_URL), []);
 
   return (
@@ -40,7 +43,7 @@ export default function RateUsButton (): React.ReactElement {
         pl='5px'
         variant='B-2'
       >
-        Rate the app
+        {t('Rate the app')}
       </Typography>
     </Grid>
 
