@@ -134,7 +134,7 @@ function ExtrinsicDetail ({ mode: { data }, request, setMode }: Props): React.Re
                       <Typography color='#AA83DC' fontFamily='JetBrainsMono' fontSize='13px' fontWeight={500} sx={{ mr: '5px', width: 'max-content' }}>
                         {key}:
                       </Typography>
-                      <Typography color='#EAEBF1' fontFamily='JetBrainsMono' fontSize='13px' fontWeight={500}>
+                      <Typography color='#EAEBF1' component='div' fontFamily='JetBrainsMono' fontSize='13px' fontWeight={500}>
                         {value !== null && typeof value === 'object'
                           ? <pre style={{ margin: 0 }}>
                             {JSON.stringify(value, null, 2)}
