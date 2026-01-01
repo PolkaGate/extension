@@ -61,6 +61,7 @@ const transformPayouts = (address: string, payouts: PayoutSubscan[], network: Dr
       amount: payout.amount,
       date: timestampToDate(payout.block_timestamp),
       era: payout.era,
+      eventId: payout.event_index,
       index: payout.extrinsic_index,
       timestamp: payout.block_timestamp
     } as PayoutsProp;
