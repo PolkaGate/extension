@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.23.0](https://github.com/polkagate/extension/compare/v1.22.0...v1.23.0) (2026-01-01)
+
+
+### Features
+
+* link notification items to Subscan/Subsquare pages ([#2086](https://github.com/polkagate/extension/issues/2086)) ([308d4e7](https://github.com/polkagate/extension/commit/308d4e72ce743c86abfe6dbeff839601e5ef4b80))
+
 # [1.22.0](https://github.com/polkagate/extension/compare/v1.21.5...v1.22.0) (2025-12-30)
 
 
