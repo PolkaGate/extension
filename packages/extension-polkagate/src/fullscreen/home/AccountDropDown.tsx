@@ -8,13 +8,13 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import DropMenuContent from '@polkadot/extension-polkagate/src/components/DropMenuContent';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
+import RemoveAccount from '@polkadot/extension-polkagate/src/partials/RemoveAccount';
 import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import Receive from '../accountDetails/rightColumn/Receive';
 import ExportAccount from '../settings/partials/ExportAccount';
-import RemoveAccount from './RemoveAccount';
 import RenameAccount from './RenameAccount';
 
 interface Props {
@@ -141,6 +141,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', isExternal, na
         <RemoveAccount
           address={address}
           onClose={extensionPopupCloser}
+          open
         />}
       {extensionPopup === ExtensionPopups.EXPORT &&
         <ExportAccount

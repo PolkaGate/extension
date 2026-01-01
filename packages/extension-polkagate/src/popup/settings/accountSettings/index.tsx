@@ -43,7 +43,6 @@ function AccountSettings (): React.ReactElement {
   const onExport = useCallback(() => navigate('/settings-account-export') as void, [navigate]);
   const onImport = useCallback(() => windowOpen('/account/have-wallet') as unknown as void, []);
   const onManageProxy = useCallback(() => windowOpen(`/proxyManagement/${address}/${selectedChain}`) as unknown as void, [address, selectedChain]);
-  const onCloseRemove = useCallback(() => navigate('/') as void, [navigate]);
 
   const CARD_STYLE = { alignItems: 'center', height: '58px', mt: '5px' };
 
@@ -123,7 +122,6 @@ function AccountSettings (): React.ReactElement {
       />
       <RemoveAccount
         onClose={extensionPopupCloser}
-        onRemoved={onCloseRemove}
         open={extensionPopup === ExtensionPopups.REMOVE}
       />
       <WebsitesAccess
