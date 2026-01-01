@@ -68,7 +68,7 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
     const { notify } = useAlerts();
 
     const PREFERRED_AI_MODELS = useMemo(() => [
-        { description: t('Balanced speed and accuracy'), id: 'gemma-2-2b-it-q4f16_1-MLC', name: 'Gemma 2 - 2B (Recommended)' },
+        { description: t('Balanced speed and accuracy (Recommended)'), id: 'gemma-2-2b-it-q4f16_1-MLC', name: 'Gemma 2 - 2B' },
         { description: t('Better reasoning, slightly slower'), id: 'Phi-3.5-mini-instruct-q4f16_1-MLC', name: 'Phi 3.5 mini - 3B' },
         { description: t('Highest accuracy, higher resource usage'), id: 'Qwen3-4B-q4f16_1-MLC', name: 'Qwen3-4B' },
         { description: t(' Strong general-purpose model'), id: 'Llama-3.2-3B-Instruct-q4f32_1-MLC', name: 'Llama 3.2 - 3B' }
@@ -149,7 +149,7 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
                   />
                 : <>
                     <Typography color='#BEAAD8' sx={{ display: 'block', p: '10px 0', textAlign: 'left', width: '100%' }} variant='B-4'>
-                        {t('Choose the AI model you want to use for transaction analysis. You can switch between different models based on your preferences for speed, accuracy, and resource usage.')}
+                        {t('Choose the AI model for transaction analysis. You can switch models based on speed, accuracy, and resource usage.')}
                     </Typography>
                     <Stack alignItems='center' columnGap='10px' direction='column' sx={{ alignItems: 'flex-start', mt: '20px' }}>
                         {PREFERRED_AI_MODELS.map((model, index) => {
@@ -160,12 +160,12 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
                                     <Radio
                                         checked={checked}
                                         columnGap='5px'
-                                        label={model.name}
+                                        label={model.description}
                                         onChange={onChangeModel}
                                         value={model.id}
                                     />
-                                    <Typography color='#674394' sx={{ m: '-10px 0 0 36px', textAlign: 'left' }} variant='B-5'>
-                                        {model.description}
+                                    <Typography color='#674394' sx={{ m: '-5px 0 0 36px', textAlign: 'left' }} variant='B-5'>
+                                        {model.name}
                                     </Typography>
                                 </Stack>
                             );
