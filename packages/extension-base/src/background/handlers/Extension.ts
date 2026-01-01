@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { CreateMLCEngine } from '@mlc-ai/web-llm';
 import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { KeyringPair, KeyringPair$Json, KeyringPair$Meta } from '@polkadot/keyring/types';
 import type { Registry, SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
@@ -28,8 +27,6 @@ import { DEFAULT_MODEL_ID, explainTransaction, loadAgent } from './txAiAgent';
 const SEED_DEFAULT_LENGTH = 12;
 const SEED_LENGTHS = [12, 15, 18, 21, 24];
 const ETH_DERIVE_DEFAULT = "/m/44'/60'/0'/0/0";
-
-let engine: Awaited<ReturnType<typeof CreateMLCEngine>> | null = null;
 
 function getSuri (seed: string, type?: KeypairType): string {
   return type === 'ethereum'
@@ -130,15 +127,15 @@ export default class Extension {
   }
 
   private async loadAiAgent ({ modelId = DEFAULT_MODEL_ID, progressCallback }: RequestCreateAgent): Promise<boolean> {
-    engine = await loadAgent(engine, modelId, progressCallback);
+    this.#state.engine = await loadAgent(this.#state.engine, modelId, progressCallback);
 
     return true;
   }
 
   private async explainTransactionWithAi ({ txJson }: RequestExplainTx): Promise<string> {
-    const res = await explainTransaction(engine, txJson);
+    const res = await explainTransaction(this.#state.engine, txJson);
 
-    engine = res.engine;
+    this.#state.engine = res.engine;
 
     return res.message;
   }

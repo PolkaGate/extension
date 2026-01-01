@@ -35,7 +35,7 @@ export async function loadAgent (engine?: MLCEngine | null, modelId?: string, pr
 
             console.log(`Loading the AI model ${selectedModelId} ...`);
 
-            engine = await CreateMLCEngine(selectedModelId, {
+            return await CreateMLCEngine(selectedModelId, {
                 initProgressCallback: (progress) => {
                     console.log('Loading model', progress);
                     progressCallback?.(progress.progress);
@@ -58,54 +58,53 @@ export async function loadAgent (engine?: MLCEngine | null, modelId?: string, pr
 export async function explainTransaction (engine: MLCEngine | null, txJson: AiTxAnyJson) {
     try {
         if (!engine) {
-            // Default model ID if not loaded yet
             engine = await loadAgent();
         }
 
-        const key = `${txJson['section'] as string}.${txJson['method'] as string}`;
-        const data = { ...txJson['decode'], ...txJson } as AiTxAnyJson;
-        const txData = JSON.stringify(explainTx(data, key));
-        const ragInfo = RAG(key);
+        // console.log('Explaining transaction!', txJson);
+
+        const txData = JSON.stringify(explainTx(txJson, txJson['txKey'] as string));
+        const ragInfo = RAG(txJson['txKey'] as string);
 
         const prompt = `
-        Explain the following ${txJson['chainName']} network transaction to a user.
+            Explain the following ${txJson['chainName']} network transaction to a user.
 
-        Use the 'Transaction explanation helper info' field as the source of truth.
-        Do not reinterpret or calculate anything yourself.
+            Use the 'Transaction explanation helper info' field as the source of truth.
+            Do not reinterpret or calculate anything yourself.
 
-        Context:
-        ${additionalRules(txJson['section'] as string)}
+            Context:
+            ${additionalRules(txJson['section'] as string)}
 
-        Transaction explanation helper info:
-        ${ragInfo}
+            Transaction explanation helper info:
+            ${ragInfo}
 
-        Transaction data:
-        ${txData}
-    `;
+            Transaction data:
+            ${txData}
+            ${txJson['extra'] ? `Data inside call: ${JSON.stringify(txJson['extra'], null, 2)}` : ''}
+        `;
 
         // console.log('prompt:', prompt);
 
         const systemPrompt = `
-        You are an AI assistant that explains Polkadot blockchain transactions to end users in clear, simple language.
+            You are an AI assistant that explains Polkadot blockchain transactions to end users in clear, simple language.
 
-        Rules (critical):
-        - You MUST NOT reinterpret, recompute, or guess any technical values.
-        - If an 'explanation' object is provided, it is authoritative and already correct.
-        - NEVER perform math, decoding, or bitwise logic yourself.
-        - NEVER contradict the 'explanation' field.
-        - Your task is ONLY to convert provided facts into a natural-language explanation.
-        - Your sentences must be like, e.g. "You are doing something ...".
+            Rules (critical):
+            - You MUST NOT reinterpret, recompute, or guess any technical values.
+            - If an 'explanation' object is provided, it is authoritative and already correct.
+            - NEVER perform math, decoding, or bitwise logic yourself.
+            - NEVER contradict the 'explanation' field.
+            - Your task is ONLY to convert provided facts into a natural-language explanation.
+            - Your sentences must be like, e.g. "You are doing something ...".
+            Behavior:
+            - If 'explanation.type' is "KNOWN", produce a single concise sentence explaining the action.
+            - If 'explanation.type' is "GENERIC", explain the transaction generically without assumptions.
+            - Be accurate, calm, and user-friendly.
+            - Do not mention internal fields, JSON, or implementation details.
 
-        Behavior:
-        - If 'explanation.type' is "KNOWN", produce a single concise sentence explaining the action.
-        - If 'explanation.type' is "GENERIC", explain the transaction generically without assumptions.
-        - Be accurate, calm, and user-friendly.
-        - Do not mention internal fields, JSON, or implementation details.
-
-        Output:
-        - One short paragraph (75 characters minimum - 250 characters maximum).
-        - Do NOT add extra explanations, synonyms, or extra wording.
-    `;
+            Output:
+            - One short paragraph (75 characters minimum - 250 characters maximum).
+            - Do NOT add extra explanations, synonyms, or extra wording.
+        `;
 
         const response = await engine.chat.completions.create({
             messages: [
