@@ -135,11 +135,11 @@ function ExtrinsicDetail ({ mode: { data }, request, setMode }: Props): React.Re
                         {key}:
                       </Typography>
                       <Typography color='#EAEBF1' fontFamily='JetBrainsMono' fontSize='13px' fontWeight={500}>
-                        {typeof value === 'object'
+                        {value !== null && typeof value === 'object'
                           ? <pre style={{ margin: 0 }}>
-                            {JSON.stringify(value, null, 2)} {/* Format the object value */}
+                            {JSON.stringify(value, null, 2)}
                           </pre>
-                          : ` ${value as string}` // If it's a primitive, display it directly
+                          : ` ${String(value)}`
                         }
                       </Typography>
                     </Stack>
