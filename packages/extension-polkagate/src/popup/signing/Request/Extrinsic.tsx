@@ -115,7 +115,7 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
   const substrateAddress = getSubstrateAddress(address);
 
   const accountAssets = useAccountAssets(substrateAddress);
-  const specVersion = useRef(bnToBn(hexSpec)).current;
+  const specVersion = useMemo(() => bnToBn(hexSpec), [hexSpec]);
 
   const decoded = useMemo(() => chain?.hasMetadata ? decodeMethod(method, chain, specVersion) : { args: null, method: null }, [method, chain, specVersion]);
   const isNetworkSupported = useMemo(() => genesisHash && allChains.find((c) => c.genesisHash === genesisHash), [allChains, genesisHash]);
