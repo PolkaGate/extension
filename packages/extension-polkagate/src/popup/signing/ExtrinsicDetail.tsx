@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { TypeRegistry } from '@polkadot/types';
 import { formatNumber } from '@polkadot/util';
 
-import { DisplayBalance, NeonButton } from '../../components';
+import { ActionButton, DisplayBalance } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
 import { toBN, toTitleCase } from '../../util';
 import { type ModeData, SIGN_POPUP_MODE } from './types';
@@ -158,7 +158,7 @@ function ExtrinsicDetail ({ mode: { data }, request, setMode }: Props): React.Re
           </Typography>
         </Stack>
       </Grid>
-      <NeonButton
+      <ActionButton
         contentPlacement='center'
         onClick={onBack}
         style={{ height: '44px', marginTop: '5px', width: '100%' }}
