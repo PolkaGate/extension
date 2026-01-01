@@ -17,14 +17,6 @@ interface Props {
     onClose: () => void;
 }
 
-const PREFERRED_AI_MODELS = [
-    { id: 'gemma-2-2b-it-q4f16_1-MLC', name: 'Gemma 2 - 2B (Recommended)' },
-    { id: 'Phi-3.5-mini-instruct-q4f16_1-MLC', name: 'Phi 3.5 mini - 3B' },
-    { id: 'Qwen3-4B-q4f16_1-MLC', name: 'Qwen3-4B' },
-    { id: 'SmolLM2-360M-Instruct-q4f16_1-MLC', name: 'SmolLM2 - 360M' },
-    { id: 'Llama-3.2-3B-Instruct-q4f32_1-MLC', name: 'Llama 3.2 - 3B' }
-];
-
 const BUTTONS_STYLE = { height: '44px', mt: '65px', width: '100%' };
 
 const DownloadSection = ({ model, onCancel, onDone, progress }: { model: string; progress: number; onCancel: () => void; onDone: () => void; }) => {
@@ -75,6 +67,13 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
     const { t } = useTranslation();
     const { notify } = useAlerts();
 
+    const PREFERRED_AI_MODELS = useMemo(() => [
+        { description: t('Balanced speed and accuracy'), id: 'gemma-2-2b-it-q4f16_1-MLC', name: 'Gemma 2 - 2B (Recommended)' },
+        { description: t('Better reasoning, slightly slower'), id: 'Phi-3.5-mini-instruct-q4f16_1-MLC', name: 'Phi 3.5 mini - 3B' },
+        { description: t('Highest accuracy, higher resource usage'), id: 'Qwen3-4B-q4f16_1-MLC', name: 'Qwen3-4B' },
+        { description: t(' Strong general-purpose model'), id: 'Llama-3.2-3B-Instruct-q4f32_1-MLC', name: 'Llama 3.2 - 3B' }
+    ], [t]);
+
     useEffect(() => {
         // Initialize the selected model from storage
         getStorage(AI_MODEL_ID).then((modelId) => {
@@ -86,7 +85,7 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
     const [progress, setProgress] = useState<number>(0); // 0–1
     const [isModelInCache, setIsModelInCache] = useState<boolean | undefined>(undefined);
 
-    const selectedModelName = useMemo(() => PREFERRED_AI_MODELS.find(({ id }) => id === selectedModel)?.name, [selectedModel]);
+    const selectedModelName = useMemo(() => PREFERRED_AI_MODELS.find(({ id }) => id === selectedModel)?.name, [PREFERRED_AI_MODELS, selectedModel]);
 
     useEffect(() => {
         if (!selectedModel) {
@@ -126,7 +125,7 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
                 progress && setProgress(progress);
             }
         }).catch((error: unknown) => {
-              const message = error instanceof Error ? error.message : String(error);
+            const message = error instanceof Error ? error.message : String(error);
 
             notify(message, 'error');
         });
@@ -157,14 +156,19 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
                             const checked = model.id === selectedModel;
 
                             return (
-                                <Radio
-                                    checked={checked}
-                                    columnGap='5px'
-                                    key={index}
-                                    label={model.name}
-                                    onChange={onChangeModel}
-                                    value={model.id}
-                                />);
+                                <Stack direction='column' key={index} sx={{ alignItems: 'left' }}>
+                                    <Radio
+                                        checked={checked}
+                                        columnGap='5px'
+                                        label={model.name}
+                                        onChange={onChangeModel}
+                                        value={model.id}
+                                    />
+                                    <Typography color='#674394' sx={{ m: '-10px 0 0 36px', textAlign: 'left' }} variant='B-5'>
+                                        {model.description}
+                                    </Typography>
+                                </Stack>
+                            );
                         })}
                     </Stack>
                     <DecisionButtons
