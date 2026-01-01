@@ -8,7 +8,7 @@ import type { BN } from '@polkadot/util';
 
 import { Avatar, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
