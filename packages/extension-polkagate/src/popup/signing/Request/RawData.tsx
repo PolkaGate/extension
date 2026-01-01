@@ -55,13 +55,14 @@ export default function RawData ({ account, error, request, setError, setMode, s
 
   const { address, data } = request.payload as SignerPayloadRaw;
 
-  const text = useMemo(() => isAscii(data)
-    ? u8aToString(u8aUnwrapBytes(data))
-    : data
+  const text = useMemo(() =>
+    isAscii(data)
+      ? u8aToString(u8aUnwrapBytes(data))
+      : data
     , [data]);
 
   return (
-    <Grid container display='block' fontSize='16px' height='440px' justifyContent='center' justifyItems='center' position='relative'>
+    <Grid container display='block' fontSize='16px' height='490px' justifyContent='center' justifyItems='center' position='relative'>
       <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: '#05091C80', borderRadius: '14px', height: '34px', pr: '5px', width: 'fit-content' }}>
         <Avatar
           src={faviconUrl ?? undefined}
