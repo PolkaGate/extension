@@ -1,23 +1,26 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SigningRequest } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
-import type { Balance, Call, ExtrinsicPayload } from '@polkadot/types/interfaces';
+import type { Call, ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { AnyJson, SignerPayloadJSON } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
+import type { HexString } from '@polkadot/util/types';
 
 import { Avatar, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
-import { ChainLogo, DecisionButtons, DisplayBalance, FormatPrice, Identity2, TwoToneText } from '../../../components';
-import { useAccountAssets, useAllChains, useChainInfo, useEstimatedFee, useFavIcon, useMetadata, useSelectedChains, useTokenPrice, useTranslation } from '../../../hooks';
-import { amountToHuman, getSubstrateAddress, isOnAssetHub } from '../../../util';
+import { ChainLogo, DisplayBalance, Identity2, TwoToneText } from '../../../components';
+import { useAccountAssets, useAllChains, useChainInfo, useEstimatedFee, useFavIcon, useIsExtensionPopup, useMetadata, useSelectedChains, useTranslation } from '../../../hooks';
+import { getSubstrateAddress, isOnAssetHub } from '../../../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
 import { getValue } from '../../account/util';
-import { type ModeData, SIGN_POPUP_MODE } from '../types';
+import Confirm from '../Confirm';
+import { type ModeData } from '../types';
 import RequestContent from './requestContent';
 
 interface Decoded {
@@ -30,7 +33,9 @@ interface Props {
   signerPayload: SignerPayloadJSON;
   url: string;
   onCancel: () => void;
-  setMode: React.Dispatch<React.SetStateAction<ModeData>>
+  setMode: React.Dispatch<React.SetStateAction<ModeData>>;
+  onSignature: ({ signature }: { signature: HexString }) => void;
+  request: SigningRequest;
 }
 
 function displayDecodeVersion (message: string, chain: Chain, specVersion: BN): string {
@@ -55,42 +60,12 @@ function decodeMethod (data: string, chain: Chain, specVersion: BN): Decoded {
   return { args, method };
 }
 
-function FeeRow ({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: string }): React.ReactElement<Props> {
-  const { t } = useTranslation();
-  const { decimal } = useChainInfo(genesisHash);
-  const { price } = useTokenPrice(genesisHash);
-
-  return (
-    <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, bottom: '-33px', p: '10px', position: 'relative' }}>
-      <Typography color='#AA83DC' variant='B-1'>
-        {t('Estimated Fee')}
-      </Typography>
-      <Stack alignItems='center' columnGap='5px' direction='row' lineHeight='normal'>
-        <FormatPrice
-          commify
-          decimalColor='#EAEBF1'
-          decimalPoint={4}
-          fontFamily='Inter'
-          fontSize='13px'
-          fontWeight={500}
-          num={fee ? amountToHuman(fee?.muln(price ?? 0), decimal) : undefined}
-          skeletonHeight={21}
-          textColor='#EAEBF1'
-        />
-        <Typography color='#AA83DC' variant='B-1'>
-          {fee?.toHuman()}
-        </Typography>
-      </Stack>
-    </Grid>
-  );
-}
-
-function DappRow ({ url }: { url: string }): React.ReactElement<Props> {
+function DappRow ({ url }: { url: string }) {
   const dapp = new URL(url).origin;
   const faviconUrl = useFavIcon(dapp);
 
   return (
-    <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: '#05091C80', borderRadius: '14px', height: '34px', pr: '5px', width: 'fit-content' }}>
+    <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: '#05091C80', borderRadius: '14px', height: '34px', m: 'auto', pr: '5px', width: 'fit-content' }}>
       <Avatar
         src={faviconUrl ?? undefined}
         sx={{ borderRadius: '8px !important', height: '26px', width: '26px' }}
@@ -103,11 +78,12 @@ function DappRow ({ url }: { url: string }): React.ReactElement<Props> {
   );
 }
 
-function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
+function Extrinsic ({ onCancel, onSignature, payload, request, setMode, signerPayload: { address, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const allChains = useAllChains();
   const selectedChains = useSelectedChains();
+  const isExtension = useIsExtensionPopup();
 
   const chain = useMetadata(genesisHash);
   const { api, chainName, decimal, token } = useChainInfo(genesisHash);
@@ -137,82 +113,70 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
   const nativeAssetId = isOnAssetHub(genesisHash) ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB : NATIVE_TOKEN_ASSET_ID;
   const nativeAssetBalance = accountAssets?.find((asset) => asset.genesisHash === genesisHash && asset.assetId === nativeAssetId);
 
-  const onNext = useCallback(() => {
-    setMode({
-      fee,
-      title: t('Your Signature'),
-      type: SIGN_POPUP_MODE.SIGN
-    });
-  }, [fee, setMode, t]);
-
   const noMetadata = !chainName;
   const missingInfo = (isNetworkSupported && isNetworkEnabled === false) || noMetadata;
 
   return (
-    <Grid container display='block' fontSize='16px' justifyContent='center' justifyItems='center' minHeight='450px' position='relative'>
+    <>
       <DappRow
         url={url}
       />
-      <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='space-between' sx={{ m: '20px 0 15px' }}>
-        <Identity2
-          address={address}
-          addressStyle={{ color: 'text.secondary', variant: 'B-4' }}
-          charsCount={4}
-          genesisHash={genesisHash ?? ''}
-          identiconSize={36}
-          inTitleCase
-          showSocial={false}
-          style={{
-            backgroundColor: '#05091C',
-            borderRadius: '14px',
-            color: theme.palette.text.primary,
-            height: '56px',
-            paddingLeft: '10px',
-            variant: 'B-2',
-            width: '45%'
-          }}
-          withShortAddress
-        />
-        <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
-          {t('on')}
-        </Typography>
-        <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>
-          <ChainLogo genesisHash={genesisHash} size={36} />
-          <Stack alignItems='flex-start' width='90px'>
-            <Typography color='#EAEBF1' sx={{ overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', width: '95%' }} variant='B-2'>
-              {chainName || t('Unknown')}
-            </Typography>
-            {api !== null && !missingInfo &&
-              <DisplayBalance
-                balance={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
-                decimal={decimal}
-                style={{ color: '#BEAAD8', ...theme.typography['B-4'] }}
-                token={token}
-              />
-            }
-          </Stack>
-        </Stack>
-      </Grid>
-      {decoded.method &&
-        <>
-          <Stack direction='row' justifyContent='space-between' width='100%'>
-            <Typography color='#674394' variant='B-2'>
-              {t('Request content')}
-            </Typography>
-          </Stack>
-          <RequestContent
-            decoded={decoded}
-            genesisHash={genesisHash}
-            setMode={setMode}
+      <Stack direction='column' sx={{ bgcolor: isExtension ? '#1B133C' : 'unset', borderRadius: '16px', mt: '20px', p: '4px' }}>
+        <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='space-between' sx={{ mb: '15px' }}>
+          <Identity2
+            address={address}
+            addressStyle={{ color: 'text.secondary', variant: 'B-4' }}
+            charsCount={4}
+            genesisHash={genesisHash ?? ''}
+            identiconSize={36}
+            inTitleCase
+            showSocial={false}
+            style={{
+              backgroundColor: '#05091C',
+              borderRadius: '14px',
+              color: theme.palette.text.primary,
+              height: '56px',
+              paddingLeft: '10px',
+              variant: 'B-2',
+              width: '45%'
+            }}
+            withShortAddress
           />
-        </>
-      }
-      {fee !== null && !missingInfo &&
-        <FeeRow
-          fee={fee}
-          genesisHash={genesisHash}
-        />
-      }
+          <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
+            {t('on')}
+          </Typography>
+          <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>
+            <ChainLogo genesisHash={genesisHash} size={36} />
+            <Stack alignItems='flex-start' width='90px'>
+              <Typography color='#EAEBF1' sx={{ overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', width: '95%' }} variant='B-2'>
+                {chainName || t('Unknown')}
+              </Typography>
+              {api !== null && !missingInfo &&
+                <DisplayBalance
+                  balance={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
+                  decimal={decimal}
+                  style={{ color: '#BEAAD8', ...theme.typography['B-4'] }}
+                  token={token}
+                />
+              }
+            </Stack>
+          </Stack>
+        </Grid>
+        {decoded.method &&
+          <>
+            <Stack direction='row' justifyContent='space-between' width='100%'>
+              <Typography color='#674394' mb='8px' variant='B-2'>
+                {t('Request content')}
+              </Typography>
+            </Stack>
+            <RequestContent
+              decoded={decoded}
+              genesisHash={genesisHash}
+              setMode={setMode}
+            />
+          </>
+        }
+      </Stack>
       {missingInfo &&
         <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: '125px', position: 'absolute' }}>
           <Warning2 color='#FFCE4F' size='24px' variant='Bold' />
@@ -231,15 +195,15 @@ function Extrinsic ({ onCancel, setMode, signerPayload: { address, genesisHash, 
           </Typography>
         </Grid>
       }
-      <DecisionButtons
-        direction='vertical'
-        onPrimaryClick={onNext}
-        onSecondaryClick={onCancel}
-        primaryBtnText={t('Next')}
-        secondaryBtnText={t('Cancel')}
-        style={{ bottom: '0px', position: 'absolute' }}
+      <Confirm
+        extrinsicPayload={payload}
+        fee={missingInfo ? null : fee}
+        onCancel={onCancel}
+        onSignature={onSignature}
+        request={request}
+        signWithPasswordStyle={isExtension ? undefined : { inset: '15px', top: 'unset', width: 'unset' }}
       />
-    </Grid>
+    </>
   );
 }
 

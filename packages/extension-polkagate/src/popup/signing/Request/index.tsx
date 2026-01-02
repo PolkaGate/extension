@@ -1,7 +1,7 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { AccountJson, RequestSign } from '@polkadot/extension-base/background/types';
+import type { AccountJson, SigningRequest } from '@polkadot/extension-base/background/types';
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
@@ -23,19 +23,19 @@ interface Props {
   hexBytes: string | null;
   onSignature: ({ signature }: { signature: HexString; }) => void;
   payload: ExtrinsicPayload | null;
-  request: RequestSign;
+  signingRequest: SigningRequest;
   setMode: React.Dispatch<React.SetStateAction<ModeData>>;
   signId: string;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
   url: string;
 }
 
-function Request ({ account, error, hexBytes, onSignature, payload, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
+function Request ({ account, error, hexBytes, onSignature, payload, setError, setMode, signId, signingRequest, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { isExternal, isHardware, isQR } = account;
-  const signerPayload = request.payload as SignerPayloadJSON;
+  const signerPayload = signingRequest.request.payload as SignerPayloadJSON;
 
   const onCancel = useCallback((): void => {
     if (!signId) {
@@ -64,13 +64,16 @@ function Request ({ account, error, hexBytes, onSignature, payload, request, set
               address={signerPayload.address}
               cmd={CMD_MORTAL}
               genesisHash={signerPayload.genesisHash}
+              onCancel={onCancel}
               onSignature={onSignature}
               payload={payload}
             />)
           : (
             <Extrinsic
               onCancel={onCancel}
+              onSignature={onSignature}
               payload={payload}
+              request={signingRequest}
               setMode={setMode}
               signerPayload={signerPayload}
               url={url}
@@ -85,7 +88,7 @@ function Request ({ account, error, hexBytes, onSignature, payload, request, set
       <RawData
         account={account}
         error={error}
-        request={request}
+        request={signingRequest.request}
         setError={setError}
         setMode={setMode}
         signId={signId}

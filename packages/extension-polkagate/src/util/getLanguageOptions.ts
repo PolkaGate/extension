@@ -27,19 +27,24 @@ export function getLanguageOptions (): LanguageOptions[] {
       text: 'Français',
       value: 'fr'
     },
+    {
+      flag: 'CN',
+      text: '汉语',
+      value: 'zh'
+    },
      {
       flag: 'IN',
       text: 'हिन्दी',
       value: 'hi'
     },
     {
-      text: 'Русский',
-      value: 'ru'
+      flag: 'BR',
+      text: 'Português',
+      value: 'pt'
     },
     {
-      flag: 'CN',
-      text: '汉语',
-      value: 'zh'
+      text: 'Русский',
+      value: 'ru'
     }
   ];
 }
