@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.23.1](https://github.com/polkagate/extension/compare/v1.23.0...v1.23.1) (2026-01-01)
+
+
+### Bug Fixes
+
+* clean up selected notification accounts after account removal ([#2076](https://github.com/polkagate/extension/issues/2076)) ([f0d8aaf](https://github.com/polkagate/extension/commit/f0d8aaf9789ec81537c737fc34d8bc0c38c646ae))
+
 # [1.23.0](https://github.com/polkagate/extension/compare/v1.22.0...v1.23.0) (2026-01-01)
 
 
