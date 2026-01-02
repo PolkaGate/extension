@@ -195,7 +195,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
           placeholder='0.00'
         />
         <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', my: '10px', width: '100%' }} />
-        <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start'>
+        <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' onClick={onMaxClick} sx={{ cursor: 'pointer' }}>
           <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
             {t('Available')}
           </Typography>

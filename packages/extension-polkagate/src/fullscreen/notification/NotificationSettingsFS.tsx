@@ -127,7 +127,7 @@ function NotificationSettingsFS ({ handleClose }: Props) {
         return (
           <SelectAccount
             onAccounts={setAccounts}
-            previousState={notificationSetting.accounts}
+            previousSelectedAccounts={notificationSetting.accounts}
           />);
 
       case Popups.GOVERNANCE:

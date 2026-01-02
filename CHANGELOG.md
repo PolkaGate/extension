@@ -1,5 +1,33 @@
 # Change Log
 
+## [1.23.1](https://github.com/polkagate/extension/compare/v1.23.0...v1.23.1) (2026-01-01)
+
+
+### Bug Fixes
+
+* clean up selected notification accounts after account removal ([#2076](https://github.com/polkagate/extension/issues/2076)) ([f0d8aaf](https://github.com/polkagate/extension/commit/f0d8aaf9789ec81537c737fc34d8bc0c38c646ae))
+
+# [1.23.0](https://github.com/polkagate/extension/compare/v1.22.0...v1.23.0) (2026-01-01)
+
+
+### Features
+
+* link notification items to Subscan/Subsquare pages ([#2086](https://github.com/polkagate/extension/issues/2086)) ([308d4e7](https://github.com/polkagate/extension/commit/308d4e72ce743c86abfe6dbeff839601e5ef4b80))
+
+# [1.22.0](https://github.com/polkagate/extension/compare/v1.21.5...v1.22.0) (2025-12-30)
+
+
+### Features
+
+* add Portuguese language support ([#2084](https://github.com/polkagate/extension/issues/2084)) ([d3d1997](https://github.com/polkagate/extension/commit/d3d1997a5d4392f46bd0a86ca4cf1f12d9fcc5d9))
+
+## [1.21.5](https://github.com/polkagate/extension/compare/v1.21.4...v1.21.5) (2025-12-27)
+
+
+### Bug Fixes
+
+* handle staking page when account has no position on unsupported chain ([c2d7632](https://github.com/polkagate/extension/commit/c2d7632a9ace07bc95be3544fdb446ba969d3e8f))
+
 ## [1.21.4](https://github.com/polkagate/extension/compare/v1.21.3...v1.21.4) (2025-12-21)
 
 

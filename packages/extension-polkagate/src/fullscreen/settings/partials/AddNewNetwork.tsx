@@ -446,7 +446,7 @@ function AddNewNetwork ({ closePopup }: Props): React.ReactElement {
             isBusy={isLoading}
             onPrimaryClick={metadata ? onAdd : onCheck}
             onSecondaryClick={onClose}
-            primaryBtnText={t(metadata ? 'Add' : 'Check')}
+            primaryBtnText={metadata ? t('Add') : t('Check')}
             secondaryBtnText={t('Cancel')}
             style={{ bottom: '12px', flexDirection: 'row-reverse', position: 'absolute', width: '90%' }}
           />
