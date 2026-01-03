@@ -7,7 +7,7 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 
 import { hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
-import { decodeAddress, encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
+import { decodeAddress, encodeAddress, evmToAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 import allChains from './chains';
 import { SHORT_ADDRESS_CHARACTERS, WESTEND_GENESIS_HASH } from './constants';
@@ -50,6 +50,10 @@ export function getSubstrateAddress (address: AccountId | string | null | undefi
 
   // eslint-disable-next-line no-useless-catch
   try {
+     if (isEthereumAddress(String(address))) {
+      return evmToAddress(address);
+    }
+
     const publicKey = decodeAddress(address, true);
 
     substrateAddress = encodeAddress(publicKey, 42);
