@@ -3,7 +3,6 @@
 
 import type { NotificationSettingType } from '../popup/notification/hook/useNotificationSettings';
 
-import { getAuthList, updateAuthorization } from '../messaging';
 import { STORAGE_KEY } from './constants';
 import { getStorage, setStorage } from '.';
 
@@ -52,10 +51,8 @@ export async function cleanupNotificationAccount (address: string): Promise<void
  * @returns A promise that resolves when the cleanup operation is complete.
  *          Returns immediately if no authorized dApps exist or address is not found.
  */
-export async function cleanupAuthorizedAccount (address: string | undefined): Promise<void> {
-  if (!address || typeof address !== 'string') {
-    return;
-  }
+export async function cleanupAuthorizedAccount (address: string): Promise<void> {
+  const { getAuthList, updateAuthorization } = await import('../messaging');
 
   const authorizedDapps = await getAuthList();
   const authorizedDappsList = Object.values(authorizedDapps.list);
