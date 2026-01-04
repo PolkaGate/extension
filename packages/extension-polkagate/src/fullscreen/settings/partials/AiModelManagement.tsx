@@ -133,7 +133,6 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
 
     return (
         <DraggableModal
-            closeOnAnyWhereClick
             onClose={onClose}
             open
             showBackIconAsClose
