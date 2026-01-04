@@ -887,7 +887,6 @@
   "Add": "",
   "Check": "",
   "Rate the app": "",
-  "Downloading and applying the {{normalizedModelName}} model. This may take a few minutes depending on the model size and your device performance": "",
   "Please do not close the extension or navigate away during this process": "",
   "Downloading": "",
   "Balanced speed and accuracy (Recommended)": "",
@@ -903,5 +902,6 @@
   "Enable AI transaction details on dapp signing": "",
   "Manage AI models": "",
   "Processing…": "",
-  "AI insight": ""
+  "AI insight": "",
+  "Downloading and applying the {{model}} model. This may take a few minutes depending on the model size and your device performance": ""
 }
