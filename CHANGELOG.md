@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.23.2](https://github.com/polkagate/extension/compare/v1.23.1...v1.23.2) (2026-01-04)
+
+
+### Bug Fixes
+
+* handle specVersion issues with multiple pending transactions across chains ([#2089](https://github.com/polkagate/extension/issues/2089)) ([dce9fa3](https://github.com/polkagate/extension/commit/dce9fa3597e05b4fa7e09d344f32cc248a799ac1)), closes [#2088](https://github.com/polkagate/extension/issues/2088)
+
 ## [1.23.1](https://github.com/polkagate/extension/compare/v1.23.0...v1.23.1) (2026-01-01)
 
 
