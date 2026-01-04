@@ -1,4 +1,4 @@
-// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { NotificationSettingType } from '../popup/notification/hook/useNotificationSettings';
@@ -52,8 +52,7 @@ export async function cleanupNotificationAccount (address: string): Promise<void
  * @returns A promise that resolves when the cleanup operation is complete.
  *          Returns immediately if no authorized dApps exist or address is not found.
  */
-export async function cleanupAuthorizedAccount (address: string): Promise<void> {
-  // Input validation
+export async function cleanupAuthorizedAccount (address: string | undefined): Promise<void> {
   if (!address || typeof address !== 'string') {
     return;
   }
@@ -65,19 +64,17 @@ export async function cleanupAuthorizedAccount (address: string): Promise<void> 
     return;
   }
 
-  // Filter dApps that contain the target address
-  const dappsToUpdate = authorizedDappsList.filter(({ authorizedAccounts }) =>
-    authorizedAccounts.some((account) => account === address)
-  );
+  const updatePromises = authorizedDappsList.map(async ({ authorizedAccounts, id }) => {
+    if (!authorizedAccounts.includes(address)) {
+      return;
+    }
 
-  if (dappsToUpdate.length === 0) {
-    return;
-  }
-
-  // Update all affected dApps in parallel with error handling
-  const updatePromises = dappsToUpdate.map(async ({ authorizedAccounts, id }) => {
     try {
       const filteredAccounts = authorizedAccounts.filter((account) => account !== address);
+
+      if (filteredAccounts.length === authorizedAccounts.length) {
+        return;
+      }
 
       await updateAuthorization(filteredAccounts, id);
     } catch (error) {
