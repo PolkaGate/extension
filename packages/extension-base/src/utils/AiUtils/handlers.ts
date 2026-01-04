@@ -17,8 +17,8 @@ function handleBalanceTransfer (tx: AiTxAnyJson): EnrichedTx {
 
     return {
         data: {
-            amount: formatAmount(value, decimal),
-            to: toShortAddress(dest.id),
+            amount: value ? formatAmount(value, decimal) : 0,
+            to: dest.id ? toShortAddress(dest.id) : '',
             token
         },
         summaryHint: 'token transfer',
@@ -154,7 +154,7 @@ function handlePoolStaking (tx: AiTxAnyJson): EnrichedTx {
     return {
         data: {
             action,
-            amount: stakingArgs?.amount ? formatAmount(stakeAmount, decimal) : '0',
+            amount: stakeAmount > 0 ? formatAmount(stakeAmount, decimal) : '0',
             poolId: stakingArgs.pool_id,
             token
         },
@@ -221,7 +221,7 @@ function handleNominate (tx: AiTxAnyJson): EnrichedTx {
     return {
         data: {
             action: 'nominate',
-            validators: targets?.map(toShortAddress)
+            validators: targets?.map(toShortAddress) ?? []
         },
         type: 'KNOWN'
     };
