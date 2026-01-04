@@ -1,7 +1,6 @@
 // Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Call } from '@polkadot/types/interfaces';
 import type { Decoded } from '../types';
 
 import { Stack, Typography } from '@mui/material';
@@ -40,7 +39,7 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
 
     const txMethod = decoded.method.toPrimitive();
     const txKey = `${decoded.method.section}.${decoded.method.method}`.toLowerCase();
-    const txInfo: Call | undefined = !decoded.method ? undefined : decoded.method;
+    const { meta, method, section } = !decoded.method ? {} : decoded.method;
     let extra: Record<string, unknown> | string | null = null;
 
     if (CALLS_TO_PROCESS.includes(txKey)) {
@@ -50,11 +49,11 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
     explainTransactionWithAi({
       chainName,
       decimal,
-      description: txInfo?.meta.docs,
+      description: meta?.docs,
       extra,
-      method: txInfo?.method,
+      method,
       requestedDapp: url,
-      section: txInfo?.section,
+      section,
       ss58Format: chain.ss58Format,
       token,
       txKey,
