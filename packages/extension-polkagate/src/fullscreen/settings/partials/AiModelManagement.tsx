@@ -38,7 +38,7 @@ const DownloadSection = ({ model, onCancel, onDone, progress }: { model: string;
                         textPartInColor={normalizedModelName}
                     />
                 </Typography>
-                <Typography color='text.primary' sx={{ mt: '15px', textAlign: 'left' }} variant='B-2'>
+                <Typography color='text.primary' sx={{ mt: '15px', textAlign: 'left' }} variant='B-1'>
                     {t('Please do not close the extension or navigate away during this process')}.
                 </Typography>
                 <Typography color='text.secondary' sx={{ mt: '50px', textAlign: 'left', width: '100%' }} variant='B-4'>
