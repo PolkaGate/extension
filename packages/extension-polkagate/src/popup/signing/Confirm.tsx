@@ -39,7 +39,6 @@ function FeeRow ({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: 
           fontSize='13px'
           fontWeight={500}
           num={fee ? amountToHuman(fee?.muln(price ?? 0), decimal) : undefined}
-          skeletonHeight={21}
           textColor='#EAEBF1'
         />
         <Typography color='#AA83DC' variant='B-1'>
