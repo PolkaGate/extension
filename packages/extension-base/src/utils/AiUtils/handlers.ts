@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable camelcase */
@@ -252,32 +252,33 @@ export function explainTx (tx: AiTxAnyJson, key: string): EnrichedTx {
 
 export const handlers: Record<string, TxHandler> = {
     'balances.transfer': handleBalanceTransfer,
-    'balances.transferAll': handleTransferAll,
-    'balances.transferAllowDeath': handleBalanceTransfer,
-    'balances.transferKeepAlive': handleBalanceTransfer,
+    'balances.transferall': handleTransferAll,
+    'balances.transferallowdeath': handleBalanceTransfer,
+    'balances.transferkeepalive': handleBalanceTransfer,
 
     'convictionVoting.delegate': handleVoteDelegate,
     'convictionVoting.vote': handleConvictionVote,
 
-    'nominationPools.bondExtra': handlePoolStaking,
-    'nominationPools.bondExtraOther': handlePoolStaking,
-    'nominationPools.claimPayout': handlePoolStaking,
+    'nominationPools.bondextra': handlePoolStaking,
+    'nominationPools.bondextraOther': handlePoolStaking,
+    'nominationPools.claimpayout': handlePoolStaking,
     'nominationPools.create': handlePoolStaking,
-    'nominationPools.createWithPoolId': handlePoolStaking,
+    'nominationPools.createwithpoolid': handlePoolStaking,
     'nominationPools.join': handlePoolStaking,
-    'nominationPools.setMetadata': handleSetMetadata,
+    'nominationPools.setmetadata': handleSetMetadata,
     'nominationPools.unbond': handleUnbond,
-    'nominationPools.withdrawUnbonded': handleUnbond,
+    'nominationPools.withdrawunbonded': handleUnbond,
 
     'proxy.proxy': handleProxy,
 
     'staking.bond': handleStaking,
-    'staking.bondExtra': handleStaking,
+    'staking.bondextra': handleStaking,
     'staking.nominate': handleNominate,
     'staking.rebond': handleStaking,
     'staking.unbond': handleStaking,
-    'staking.withdrawUnbonded': handleStaking,
+    'staking.withdrawunbonded': handleStaking,
 
     'utility.batch': handleBatch,
-    'utility.batchAll': handleBatch
+    'utility.batchall': handleBatch,
+    'utility.forcebatch': handleBatch
 };
