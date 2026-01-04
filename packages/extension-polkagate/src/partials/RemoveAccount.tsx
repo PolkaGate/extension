@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
@@ -13,7 +13,7 @@ import { Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } fr
 import { useAccount, useAlerts, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { forgetAccount, validateAccount } from '../messaging';
 import WarningBox from '../popup/settings/partials/WarningBox';
-import { cleanupNotificationAccount } from '../util';
+import { cleanupAuthorizedAccount, cleanupNotificationAccount } from '../util';
 import { SharePopup } from '.';
 
 interface Props {
@@ -120,6 +120,7 @@ function RemoveAccount ({ address, onClose, open }: Props): React.ReactElement {
 
       if (success) {
         await cleanupNotificationAccount(account.address);
+        await cleanupAuthorizedAccount(account.address);
       }
 
       notifier(true);
