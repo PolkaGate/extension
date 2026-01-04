@@ -60,7 +60,10 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
       ...txMethod
     })
       .then(setInfo)
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => {
+        generatingRef.current = false;
+      });
   }, [chain, chainName, decimal, decoded.method, token, url]);
 
   return (
@@ -72,7 +75,7 @@ function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Pr
             size={15}
             style={{ margin: 0 }}
             type='puffLoader'
-            />
+          />
         }
         <Typography color='primary.main' sx={{ cursor: 'default', whiteSpace: 'nowrap' }} variant='B-2'>
           {t('AI insight')}
