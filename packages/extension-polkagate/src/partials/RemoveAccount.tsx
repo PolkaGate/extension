@@ -104,7 +104,7 @@ function RemoveAccount ({ address, onClose, open }: Props): React.ReactElement {
 
   const onRemove = useCallback(async () => {
     try {
-      if (!address || !canRemoveAccount) {
+      if (!_address || !canRemoveAccount) {
         return;
       }
 
@@ -112,19 +112,19 @@ function RemoveAccount ({ address, onClose, open }: Props): React.ReactElement {
       await new Promise(requestAnimationFrame);
 
       if (!isExternal && password) {
-        const isUnlockable = await validateAccount(address, password);
+        const isUnlockable = await validateAccount(_address, password);
 
         if (!isUnlockable) {
           throw new Error('Password incorrect!');
         }
       }
 
-      const success = await forgetAccount(address);
+      const success = await forgetAccount(_address);
 
       if (success) {
         await Promise.allSettled([
-          cleanupNotificationAccount(address),
-          cleanupAuthorizedAccount(address)
+          cleanupNotificationAccount(_address),
+          cleanupAuthorizedAccount(_address)
         ]);
       }
 
@@ -135,7 +135,7 @@ function RemoveAccount ({ address, onClose, open }: Props): React.ReactElement {
       setIsBusy(false);
       console.error('Error while removing the account:', error);
     }
-  }, [address, handleClose, isExtension, isExternal, canRemoveAccount, notifier, password]);
+  }, [_address, handleClose, isExtension, isExternal, canRemoveAccount, notifier, password]);
 
   const onPassChange = useCallback((pass: string | null): void => {
     setPasswordError(false);
