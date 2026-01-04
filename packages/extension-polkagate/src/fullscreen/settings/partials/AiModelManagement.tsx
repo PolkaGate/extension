@@ -27,15 +27,13 @@ const DownloadSection = ({ model, onCancel, onDone, progress }: { model: string;
         window.location.reload();
     }, [onCancel]);
 
-    const normalizedModelName = model.replace('(Recommended)', '');
-
     return (
         <Motion>
             <Stack alignItems='center' direction='column' sx={{ mt: '20px' }}>
                 <Typography color='text.primary' sx={{ textAlign: 'left' }} variant='B-1'>
                     <TwoToneText
-                        text={t('Downloading and applying the {{normalizedModelName}} model. This may take a few minutes depending on the model size and your device performance', { replace: { normalizedModelName } })}
-                        textPartInColor={normalizedModelName}
+                        text={t('Downloading and applying the {{model}} model. This may take a few minutes depending on the model size and your device performance', { replace: { model } })}
+                        textPartInColor={model}
                     />
                 </Typography>
                 <Typography color='text.primary' sx={{ mt: '15px', textAlign: 'left' }} variant='B-1'>
