@@ -1,4 +1,4 @@
-// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SigningRequest } from '@polkadot/extension-base/background/types';
@@ -10,7 +10,7 @@ import type { HexString } from '@polkadot/util/types';
 
 import { Avatar, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
@@ -153,7 +153,8 @@ function Extrinsic ({ onCancel, onSignature, payload, request, setMode, signerPa
   }, []);
 
   const substrateAddress = getSubstrateAddress(address);
-  const specVersion = useRef(bnToBn(hexSpec)).current;
+
+  const specVersion = useMemo(() => bnToBn(hexSpec), [hexSpec]);
 
   const decoded = useMemo(() => chain?.hasMetadata ? decodeMethod(method, chain, specVersion) : { args: null, method: null }, [method, chain, specVersion]);
   const isNetworkSupported = useMemo(() => genesisHash && allChains.find((c) => c.genesisHash === genesisHash), [allChains, genesisHash]);
