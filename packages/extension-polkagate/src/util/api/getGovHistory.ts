@@ -7,13 +7,12 @@
 
 import type { Extrinsics, ExtrinsicsRequest } from '../types';
 
-import request from 'umi-request';
-
 import { hexToU8a } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
 
 import { getSubscanChainName } from '../chain';
-import { backoffSleep, BATCH_SIZE, MAX_RETRIES, RETRY_DELAY } from './utils';
+import { fetchFromSubscan } from '..';
+import { backoffSleep, BATCH_SIZE, RETRY_DELAY } from './utils';
 
 // Common types
 interface AccountId {
@@ -93,30 +92,6 @@ const MODULE = 'convictionvoting';
 const PAGE_SIZE = 5;
 
 /**
- * Enhanced POST request with retry logic for rate limiting
- */
-async function postReq<T> (
-  api: string,
-  data: Record<string, unknown> = {},
-  option?: Record<string, unknown>,
-  retryCount = 0
-): Promise<T> {
-  try {
-    const response = await request.post(api, { data, ...option }) as T;
-
-    return response;
-  } catch (error) {
-    if (retryCount < MAX_RETRIES) {
-      await backoffSleep(RETRY_DELAY, retryCount);
-
-      return postReq<T>(api, data, option, retryCount + 1);
-    }
-
-    throw error;
-  }
-}
-
-/**
  * Processes an array in batches
  * @param array Array to process
  * @param batchSize Size of each batch
@@ -155,7 +130,7 @@ async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string
           };
         }
 
-        const txDetail = await postReq<ResponseType>(
+        const txDetail = await fetchFromSubscan<ResponseType>(
           `https://${network}.api.subscan.io/api/scan/extrinsic`,
           { hash: extrinsic.extrinsic_hash }
         );
@@ -190,12 +165,14 @@ export async function getGovHistory (chainName: string, address: string, pageNum
 
   const network = getSubscanChainName(chainName) as unknown as string;
 
-  const extrinsics = await postReq<ExtrinsicsRequest>(`https://${network}.api.subscan.io/api/v2/scan/extrinsics`, {
-    address,
-    module: MODULE,
-    page: pageNum,
-    row: PAGE_SIZE
-  });
+  const extrinsics = await fetchFromSubscan<ExtrinsicsRequest>(
+    `https://${network}.api.subscan.io/api/v2/scan/extrinsics`,
+    {
+      address,
+      module: MODULE,
+      page: pageNum,
+      row: PAGE_SIZE
+    });
 
   if (!extrinsics.data.extrinsics) {
     return extrinsics;

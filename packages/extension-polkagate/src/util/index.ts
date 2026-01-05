@@ -5,6 +5,7 @@ export * from './address';
 export * from './amount';
 export * from './chain';
 export * from './cleanupAccount';
+export * from './fetchFromSubscan';
 export * from './history';
 export * from './meta';
 export * from './misc';

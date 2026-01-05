@@ -4,8 +4,8 @@
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 import type { ApiResponse, PayoutsProp, PayoutSubscan, ReceivedFundInformation, ReferendaInformation, ReferendaProp, ReferendaStatus, ReferendaSubscan, StakingRewardInformation, TransfersProp, TransferSubscan } from './types';
 
-import { getSubscanChainName, getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
-import { postData } from '@polkadot/extension-polkagate/src/util/api';
+import { fetchFromSubscan, getSubscanChainName, getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
+// import { fetchFromSubscan } from '@polkadot/extension-polkagate/src/util/api';
 import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import getChainName from '@polkadot/extension-polkagate/src/util/getChainName';
 import { isMigratedRelay, relayToSystemChains } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
@@ -132,12 +132,12 @@ export const getReceivedFundsInformation = async (addresses: string[], chain: st
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
-        const receivedInfo = await postData(`https://${network.text}.api.subscan.io/api/v2/scan/transfers`, {
-          address,
-          row: RECEIVED_FUNDS_THRESHOLD
-        }) as ApiResponse<{
-          transfers: TransferSubscan[] | null
-        }>;
+        const receivedInfo = await fetchFromSubscan<ApiResponse<{ transfers: TransferSubscan[] | null }>>(
+          `https://${network.text}.api.subscan.io/api/v2/scan/transfers`,
+          {
+            address,
+            row: RECEIVED_FUNDS_THRESHOLD
+          });
 
         if (receivedInfo.code !== 0) {
           throw new Error('Not a expected status code');
@@ -214,6 +214,8 @@ export const getPayoutsInformation = async (addresses: string[], chain: string):
 
   const network = { text: chainText, value: resolvedChain } as DropdownOption;
 
+  type PayoutInfo = ApiResponse<{ list: PayoutSubscan[] }>;
+
   /**
    * Fetches and processes payout information for a single address
    */
@@ -223,22 +225,22 @@ export const getPayoutsInformation = async (addresses: string[], chain: string):
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
         // Solo staking payouts
-        const soloPayoutInfo = await postData(`https://${network.text}.api.subscan.io/api/v2/scan/account/reward_slash`, {
-          address,
-          category: 'Reward',
-          row: RECEIVED_REWARDS_THRESHOLD
-        }) as ApiResponse<{
-          list: PayoutSubscan[]
-        }>;
+        const soloPayoutInfo = await fetchFromSubscan<PayoutInfo>(
+          `https://${network.text}.api.subscan.io/api/v2/scan/account/reward_slash`,
+          {
+            address,
+            category: 'Reward',
+            row: RECEIVED_REWARDS_THRESHOLD
+          });
 
         // Nomination pool payouts
-        const poolPayoutInfo = await postData(`https://${network.text}.api.subscan.io/api/scan/nomination_pool/rewards`, {
-          address,
-          category: 'Reward',
-          row: RECEIVED_REWARDS_THRESHOLD
-        }) as ApiResponse<{
-          list: PayoutSubscan[]
-        }>;
+        const poolPayoutInfo = await fetchFromSubscan<PayoutInfo>(
+          `https://${network.text}.api.subscan.io/api/scan/nomination_pool/rewards`,
+          {
+            address,
+            category: 'Reward',
+            row: RECEIVED_REWARDS_THRESHOLD
+          });
 
         // Ensure that at least ONE request succeeded
         if (poolPayoutInfo.code !== 0 && soloPayoutInfo.code !== 0) {
@@ -319,18 +321,18 @@ export const getReferendasInformation = async (chain: string): Promise<Referenda
     network.value === POLKADOT_GENESIS_HASH
       ? REFERENDA_COUNT_TO_TRACK_DOT
       : network.value === KUSAMA_GENESIS_HASH
-      ? REFERENDA_COUNT_TO_TRACK_KSM
-      : 10; // fallback for testnets
+        ? REFERENDA_COUNT_TO_TRACK_KSM
+        : 10; // fallback for testnets
 
   // let lastError: unknown = null;
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const referendaInfo = await postData(`https://${network.text}.api.subscan.io/api/scan/referenda/referendums`, {
-        row: REFERENDA_COUNT_TO_TRACK
-      }) as ApiResponse<{
-        list: ReferendaSubscan[] | null
-      }>;
+      const referendaInfo = await fetchFromSubscan<ApiResponse<{ list: ReferendaSubscan[] | null }>>(
+        `https://${network.text}.api.subscan.io/api/scan/referenda/referendums`,
+        {
+          row: REFERENDA_COUNT_TO_TRACK
+        });
 
       if (referendaInfo.code !== 0) {
         throw new Error('Unexpected status code from Subscan');
