@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -12,7 +12,6 @@ import { encodeAddress } from '@polkadot/util-crypto';
 
 import { getSubscanChainName } from '../chain';
 import { fetchFromSubscan } from '..';
-import { backoffSleep, BATCH_SIZE, RETRY_DELAY } from './utils';
 
 // Common types
 interface AccountId {
@@ -92,41 +91,43 @@ const MODULE = 'convictionvoting';
 const PAGE_SIZE = 5;
 
 /**
- * Processes an array in batches
- * @param array Array to process
- * @param batchSize Size of each batch
- * @param processor Function to process each batch
+ * Fetches governance history for a given address
+ * @param chainName - Name of the blockchain
+ * @param address - Account address
+ * @param pageNum - Page number for pagination
+ * @param prefix - chain prefix
+ * @returns Promise resolving to ExtrinsicsRequest
  */
-async function processBatch<T> (array: T[], batchSize: number, processor: (items: T[]) => Promise<T[]>): Promise<T[]> {
-  const results: T[] = [];
-
-  for (let i = 0; i < array.length; i += batchSize) {
-    const batch = array.slice(i, i + batchSize);
-    const batchResults = await processor(batch);
-
-    results.push(...batchResults);
-
-    // Add delay between batches if not the last batch
-    if (i + batchSize < array.length) {
-      await backoffSleep(RETRY_DELAY, i / batchSize);
-    }
+export async function getGovHistory(chainName: string, address: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
+  if (!chainName || prefix === undefined) {
+    return Promise.resolve(nullObject);
   }
 
-  return results;
-}
+  const network = getSubscanChainName(chainName) as unknown as string;
 
-/**
- * Process a batch of extrinsics
- */
-async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string, prefix: number) {
-  return Promise.all(
-    extrinsics.map(async (extrinsic) => {
+  const extrinsics = await fetchFromSubscan<ExtrinsicsRequest>(
+    `https://${network}.api.subscan.io/api/v2/scan/extrinsics`,
+    {
+      address,
+      module: MODULE,
+      page: pageNum,
+      row: PAGE_SIZE
+    });
+
+  if (!extrinsics.data.extrinsics) {
+    return extrinsics;
+  }
+
+  // Fetch details for each extrinsic using fetchFromSubscan
+  const extrinsicsInfo = await Promise.all(
+    extrinsics.data.extrinsics.map(async(extrinsic) => {
       try {
         const functionName = extrinsic.call_module_function as keyof ParamTypesMapping;
 
         interface ResponseType {
           data: {
             params: ParamTypesMapping[typeof functionName];
+            transfer: { amount: string; from: string; to: string; };
           };
         }
 
@@ -148,42 +149,6 @@ async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string
       }
     })
   );
-}
-
-/**
- * Fetches governance history for a given address
- * @param chainName - Name of the blockchain
- * @param address - Account address
- * @param pageNum - Page number for pagination
- * @param prefix - chain prefix
- * @returns Promise resolving to ExtrinsicsRequest
- */
-export async function getGovHistory (chainName: string, address: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
-  if (!chainName || prefix === undefined) {
-    return Promise.resolve(nullObject);
-  }
-
-  const network = getSubscanChainName(chainName) as unknown as string;
-
-  const extrinsics = await fetchFromSubscan<ExtrinsicsRequest>(
-    `https://${network}.api.subscan.io/api/v2/scan/extrinsics`,
-    {
-      address,
-      module: MODULE,
-      page: pageNum,
-      row: PAGE_SIZE
-    });
-
-  if (!extrinsics.data.extrinsics) {
-    return extrinsics;
-  }
-
-  // Process extrinsics in batches
-  const extrinsicsInfo = await processBatch<Extrinsics>(
-    extrinsics.data.extrinsics,
-    BATCH_SIZE,
-    (batch) => processExtrinsicsBatch(batch, network, prefix)
-  );
 
   return {
     ...extrinsics,
@@ -194,7 +159,7 @@ export async function getGovHistory (chainName: string, address: string, pageNum
   };
 }
 
-function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; } }, prefix: number) {
+function getAdditionalInfo(functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; } }, prefix: number) {
   const id = (txDetail.data.params[1]?.value as AccountId)?.Id as string | undefined;
   const formattedAddress = id ? encodeAddress(hexToU8a(id), prefix) : undefined;
 
