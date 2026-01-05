@@ -175,8 +175,8 @@ export async function approveSignSignature(id: string, signature: HexString, sig
   return sendMessage('pri(signing.approve.signature)', { id, signature, signedTransaction });
 }
 
-export async function createAccountExternal(name: string, address: string, genesisHash: HexString | null | undefined): Promise<boolean> {
-  return sendMessage('pri(accounts.create.external)', { address, genesisHash, name });
+export async function createAccountExternal(name: string, address: string, genesisHash: HexString | null | undefined, type?: KeypairType): Promise<boolean> {
+ return sendMessage('pri(accounts.create.external)', { address, genesisHash, name, type });
 }
 
 export async function createAccountHardware(address: string, hardwareType: string, accountIndex: number, addressOffset: number, name: string, genesisHash?: HexString): Promise<boolean> {

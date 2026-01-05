@@ -18,6 +18,10 @@ export function isValidAddress(address: string | undefined): boolean {
       return false;
     }
 
+    if (isEthereumAddress(address)) {
+        return true;
+    }
+
     encodeAddress(
       isHex(address)
         ? hexToU8a(address)

@@ -5,7 +5,7 @@ import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useMemo } from 'react';
 
-import { decodeAddress, encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
+import { decodeAddress, encodeAddress, evmToAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 import useChainInfo from './useChainInfo';
 
@@ -21,19 +21,23 @@ export default function useFormatted(address: AccountId | string | undefined, ge
       return;
     }
 
-    const prefix: number = chain.ss58Format;
+    const { definition: { chainType }, ss58Format } = chain;
 
     try {
-      const strAddress = String(address);
+      let strAddress = String(address);
 
       if (isEthereumAddress(strAddress)) {
+        if (chainType === 'ethereum') {
         return strAddress;
+        }
+
+        strAddress = evmToAddress(strAddress);
       }
 
-      if (address && prefix !== undefined) {
-        const publicKey = decodeAddress(address);
+      if (ss58Format !== undefined) {
+        const publicKey = decodeAddress(strAddress);
 
-        return encodeAddress(publicKey, prefix);
+        return encodeAddress(publicKey, ss58Format);
       }
     } catch (error) {
       console.error(error);
