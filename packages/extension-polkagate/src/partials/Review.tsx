@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -7,7 +7,7 @@ import type { ISubmittableResult } from '@polkadot/types/types';
 import type { TransactionFlowStep } from '../util/constants';
 import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
 
-import { Container, Grid, Stack, type SxProps, type Theme,Typography, useTheme } from '@mui/material';
+import { Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { type Icon as IconType, InfoCircle } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
@@ -108,7 +108,7 @@ interface ContentItemProps extends Content {
   noDivider?: boolean;
 }
 
-export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decimal, description, genesisHash, noDivider = false, title, token, warningText, withLogo }: ContentItemProps) {
+export const ContentItem = memo(function ContentItemMemo({ Icon, content, decimal, description, genesisHash, noDivider = false, title, token, warningText, withLogo }: ContentItemProps) {
   const isExtension = useIsExtensionPopup();
 
   const logoInfo = useMemo(() => withLogo ? getLogo2(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
@@ -194,7 +194,7 @@ export interface ReviewProps {
   style?: SxProps<Theme>
 }
 
-export default function Review ({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, style = {}, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, style = {}, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-chains authors & contributors
+// Copyright 2019-2026 @polkadot/extension-chains authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
@@ -19,7 +19,7 @@ const definitions = new Map<string, MetadataDef>(
 
 const expanded = new Map<string, Chain>();
 
-export function metadataExpand (definition: MetadataDef, isPartial = false): Chain {
+export function metadataExpand(definition: MetadataDef, isPartial = false): Chain {
   const cached = expanded.get(definition.genesisHash);
 
   if (cached && cached.specVersion === definition.specVersion) {
@@ -76,7 +76,7 @@ export function metadataExpand (definition: MetadataDef, isPartial = false): Cha
   return result;
 }
 
-export function findChain (definitions: MetadataDef[], genesisHash?: string | null): Chain | null {
+export function findChain(definitions: MetadataDef[], genesisHash?: string | null): Chain | null {
   const def = definitions.find((def) => def.genesisHash === genesisHash);
 
   return def
@@ -84,10 +84,10 @@ export function findChain (definitions: MetadataDef[], genesisHash?: string | nu
     : null;
 }
 
-export function addMetadata (def: MetadataDef): void {
+export function addMetadata(def: MetadataDef): void {
   definitions.set(def.genesisHash, def);
 }
 
-export function knownMetadata (): MetadataDef[] {
+export function knownMetadata(): MetadataDef[] {
   return [...definitions.values()];
 }

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, InputAdornment, Stack, styled, TextField, Typography, useTheme } from '@mui/material';
@@ -159,7 +159,7 @@ interface Props {
   tooltip?: string;
 }
 
-export default function MyTextField ({ Icon, disabled, errorMessage, focused = false, iconSize = 22, inputType = 'text', inputValue, maxLength, mode = 'small', onEnterPress, onTextChange, placeholder, style, title, tooltip }: Props): React.ReactElement {
+export default function MyTextField({ Icon, disabled, errorMessage, focused = false, iconSize = 22, inputType = 'text', inputValue, maxLength, mode = 'small', onEnterPress, onTextChange, placeholder, style, title, tooltip }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [focusing, setFocused] = useState<boolean>(false);
@@ -189,7 +189,7 @@ export default function MyTextField ({ Icon, disabled, errorMessage, focused = f
     <Grid container item sx={style}>
       {title &&
         <Stack columnGap='2px' direction='row' sx={{ alignItems: 'center', justifyContent: 'start' }}>
-          <Typography height='20px' marginLeft= '4px' textAlign='left' variant='B-1' width='100%'>
+          <Typography height='20px' marginLeft='4px' textAlign='left' variant='B-1' width='100%'>
             {title}
           </Typography>
           {

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -16,7 +16,7 @@ export interface MetadataProof {
   txMetadata: Uint8Array
 }
 
-export default function useMetadataProof (api: ApiPromise | undefined | null, payload: SignerPayloadJSON | undefined): MetadataProof | undefined {
+export default function useMetadataProof(api: ApiPromise | undefined | null, payload: SignerPayloadJSON | undefined): MetadataProof | undefined {
   const [proof, setProof] = useState<MetadataProof>();
 
   const apiGenesisHash = api?.genesisHash.toHex();

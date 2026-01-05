@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolStakingInfo } from '../../../hooks/usePoolStakingInfo';
@@ -33,7 +33,7 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function PopUpHandlerPool ({ address, genesisHash, poolInfo, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
+function PopUpHandlerPool({ address, genesisHash, poolInfo, popupCloser, popupOpener, selectedPosition, setSelectedPosition, stakingInfo, stakingPopup, toBeReleased }: Props): React.ReactElement | null {
   const handleClose = useCallback(() => {
     popupCloser();
     setSelectedPosition(undefined);

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '../../../util/types';
@@ -6,7 +6,7 @@ import type { TransactionDetail } from '../../../util/types';
 import { log } from './utils';
 
 // Retrieves transaction history from Chrome's local storage for a specific address and chain
-export async function getHistoryFromStorage (address: string, genesisHash: string): Promise<TransactionDetail[] | undefined> {
+export async function getHistoryFromStorage(address: string, genesisHash: string): Promise<TransactionDetail[] | undefined> {
   if (!address || !genesisHash) {
     log('Missing required parameters for loading history');
 

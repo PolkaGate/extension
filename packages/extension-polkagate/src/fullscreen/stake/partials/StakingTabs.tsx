@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -70,7 +70,7 @@ enum STAKING_TABS {
   VALIDATORS
 }
 
-function StakingTabs ({ disabled, genesisHash, popupOpener, rewardInfo, setSelectedPosition, stakingInfo, token, type }: Props) {
+function StakingTabs({ disabled, genesisHash, popupOpener, rewardInfo, setSelectedPosition, stakingInfo, token, type }: Props) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<STAKING_TABS>(STAKING_TABS.STAKING_POSITIONS);
 

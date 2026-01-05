@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Theme } from '@mui/material';
@@ -125,7 +125,7 @@ export const getPriceIdByChainName = (chainName?: string, useAddedChains?: UserA
     _chainName?.replace('assethub', '')?.replace('people', '');
 };
 
-export function areArraysEqual<T> (arrays: T[][]): boolean {
+export function areArraysEqual<T>(arrays: T[][]): boolean {
   if (arrays.length < 2) {
     return true; // Single array or empty input is considered equal
   }
@@ -148,7 +148,7 @@ export function areArraysEqual<T> (arrays: T[][]): boolean {
   );
 }
 
-export function extractBaseUrl (url: string | undefined) {
+export function extractBaseUrl(url: string | undefined) {
   try {
     if (!url) {
       return;
@@ -164,7 +164,7 @@ export function extractBaseUrl (url: string | undefined) {
   }
 }
 
-export async function fastestConnection (endpoints: DropdownOption[]): Promise<FastestConnectionType> {
+export async function fastestConnection(endpoints: DropdownOption[]): Promise<FastestConnectionType> {
   try {
     const urls = endpoints.map(({ value }) => ({ value: value as string }));
     const { api, connections } = await fastestEndpoint(urls);

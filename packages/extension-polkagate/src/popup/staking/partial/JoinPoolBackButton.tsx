@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolFilterAction, PoolFilterState } from './PoolFilter';
@@ -23,7 +23,7 @@ interface Props {
   filter: PoolFilterState;
 }
 
-export default function JoinPoolBackButton ({ dispatchFilter, filter, genesisHash, noFilter, onBack, onSearch, stepCounter, style }: Props) {
+export default function JoinPoolBackButton({ dispatchFilter, filter, genesisHash, noFilter, onBack, onSearch, stepCounter, style }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef(null);

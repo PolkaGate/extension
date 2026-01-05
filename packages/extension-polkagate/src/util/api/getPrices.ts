@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PricesType } from '../types';
@@ -17,7 +17,7 @@ export const EXTRA_PRICE_IDS: Record<string, string> = {
 
 export const COIN_GECKO_PRICE_CHANGE_DURATION = 24;
 
-export default async function getPrices (priceIds: (string | undefined)[], currencyCode = 'usd') {
+export default async function getPrices(priceIds: (string | undefined)[], currencyCode = 'usd') {
   const revisedPriceIds = priceIds
     .filter((item): item is string => Boolean(item))
     .map((item) => {
@@ -48,7 +48,7 @@ export default async function getPrices (priceIds: (string | undefined)[], curre
   return price;
 }
 
-function getReq (api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<Record<string, unknown>> {
+function getReq(api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<Record<string, unknown>> {
   return request.get(api, {
     data,
     ...option

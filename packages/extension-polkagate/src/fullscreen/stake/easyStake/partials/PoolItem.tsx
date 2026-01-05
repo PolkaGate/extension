@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolInfo } from '../../../../util/types';
@@ -27,7 +27,7 @@ interface PoolInfoProp {
   style?: React.CSSProperties;
 }
 
-function PoolItem ({ genesisHash, onDetailClick, poolInfo, selectable, selected, setSelectedPool, style }: PoolInfoProp) {
+function PoolItem({ genesisHash, onDetailClick, poolInfo, selectable, selected, setSelectedPool, style }: PoolInfoProp) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const containerRef = useRef(null);

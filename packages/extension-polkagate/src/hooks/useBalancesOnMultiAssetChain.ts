@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Asset } from '@polkagate/apps-config/assets/types';
@@ -18,7 +18,7 @@ import useChainInfo from './useChainInfo';
 
 const assetsChains = createAssets();
 
-export default function useBalancesOnMultiAssetChain (address: string | undefined, genesisHash: string | undefined, assetId?: string | number): BalancesInfo | undefined {
+export default function useBalancesOnMultiAssetChain(address: string | undefined, genesisHash: string | undefined, assetId?: string | number): BalancesInfo | undefined {
   const { api, chain, chainName } = useChainInfo(genesisHash);
 
   const maybeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];

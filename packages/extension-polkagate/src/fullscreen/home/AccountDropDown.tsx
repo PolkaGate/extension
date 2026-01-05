@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { MoreVert } from '@mui/icons-material';
@@ -26,7 +26,7 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-function AccountDropDown ({ address, disabled, iconSize = '25px', isExternal, name, style }: Props) {
+function AccountDropDown({ address, disabled, iconSize = '25px', isExternal, name, style }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();

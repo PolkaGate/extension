@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ItemInformation } from '@polkadot/extension-polkagate/fullscreen/nft/utils/types';
@@ -13,7 +13,7 @@ import { GlowBox } from '../../style';
 import { toTitleCase } from '../../util';
 import NftPrice from './NftPrice';
 
-function ItemInfo ({ label, style = {}, value }: { label: string, value: string | ReactElement, style?: SxProps }): ReactElement {
+function ItemInfo({ label, style = {}, value }: { label: string, value: string | ReactElement, style?: SxProps }): ReactElement {
   return (
     <Stack direction='column' sx={{ ...style }}>
       <Typography color='#AA83DC' textAlign='left' variant='B-4'>
@@ -29,7 +29,7 @@ function ItemInfo ({ label, style = {}, value }: { label: string, value: string 
   );
 }
 
-export default function Details ({ nft }: { nft: ItemInformation | undefined }): React.ReactElement {
+export default function Details({ nft }: { nft: ItemInformation | undefined }): React.ReactElement {
   const { t } = useTranslation();
 
   const isAudioOnly = !nft?.image && nft?.animation_url && nft?.animationContentType?.startsWith('audio');

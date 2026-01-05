@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
@@ -12,7 +12,7 @@ import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { useTranslation } from '../../../components/translate';
 import AiModelManagement from './AiModelManagement';
 
-export default function AiTransactionInfo (): React.ReactElement {
+export default function AiTransactionInfo(): React.ReactElement {
   const { t } = useTranslation();
 
   const [enabled, setEnabled] = useState<boolean>(false);

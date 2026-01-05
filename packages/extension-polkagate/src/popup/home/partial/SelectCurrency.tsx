@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { CurrencyItemType } from '../../../fullscreen/home/partials/type';
@@ -71,7 +71,7 @@ const CategoryHeader = ({ type }: { type: 'crypto' | 'fiat' }) => {
   );
 };
 
-const CurrencyList = memo(function CL ({ currencyList, handleCurrencySelect, noLastDivider = false, onDoubleClick, selectedCurrency, type }: CurrencyListProps) {
+const CurrencyList = memo(function CL({ currencyList, handleCurrencySelect, noLastDivider = false, onDoubleClick, selectedCurrency, type }: CurrencyListProps) {
   const flagSVG = useCallback((currency: CurrencyItemType) => {
     const countryCode = currency.code.slice(0, 2).toUpperCase();
 
@@ -133,7 +133,7 @@ const CurrencyList = memo(function CL ({ currencyList, handleCurrencySelect, noL
   );
 });
 
-const CurrencyOptions = memo(function CO ({ handleCurrencySelect, onDoubleClick, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
+const CurrencyOptions = memo(function CO({ handleCurrencySelect, onDoubleClick, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [searchedCurrencies, setSearchedCurrencies] = useState<CurrencyItemType[]>();
@@ -195,7 +195,7 @@ const CurrencyOptions = memo(function CO ({ handleCurrencySelect, onDoubleClick,
   );
 });
 
-function Content ({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAction<boolean>> }): React.ReactElement {
+function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAction<boolean>> }): React.ReactElement {
   const { t } = useTranslation();
   const { currency, setCurrency } = useContext(CurrencyContext);
 
@@ -239,7 +239,7 @@ function Content ({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateA
   );
 }
 
-function SelectCurrency ({ openMenu, setOpenMenu }: Props): React.ReactElement {
+function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const handleClose = useCallback(() => setOpenMenu(false), [setOpenMenu]);

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SoloStakingInfo } from '../../../../hooks/useSoloStakingInfo';
@@ -14,7 +14,7 @@ interface Props {
   stakingInfo: SoloStakingInfo | undefined;
 }
 
-export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactElement {
+export default function ValidatorsTabBody({ stakingInfo }: Props): React.ReactElement {
   const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
 
   return (
@@ -22,14 +22,14 @@ export default function ValidatorsTabBody ({ stakingInfo }: Props): React.ReactE
       {stakingInfo?.isValidator
         ? <ValidatorDetails
           address={address}
-          eraInfo = {stakingInfo?.eraInfo}
+          eraInfo={stakingInfo?.eraInfo}
           genesisHash={genesisHash}
-          />
+        />
         : <Nominations
           address={address}
           genesisHash={genesisHash}
           stakingInfo={stakingInfo}
-          />}
+        />}
     </Motion>
   );
 }

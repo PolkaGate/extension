@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
@@ -36,7 +36,7 @@ interface AssetDetailType {
 
 type Summary = AssetDetailType[] | null | undefined;
 
-function TokensItems ({ onTokenClick, theme, tokenDetail }: { onTokenClick: () => void, tokenDetail: FetchedBalance & { totalPrice: number }, theme: Theme }) {
+function TokensItems({ onTokenClick, theme, tokenDetail }: { onTokenClick: () => void, tokenDetail: FetchedBalance & { totalPrice: number }, theme: Theme }) {
   const bgcolor = theme.palette.mode === 'dark' ? '#2D1E4A' : '#CCD2EA59';
   const { chainName, decimal, genesisHash, token, totalBalance, totalPrice } = tokenDetail;
   const logoInfo = getLogo2(genesisHash, token);
@@ -77,7 +77,7 @@ function TokensItems ({ onTokenClick, theme, tokenDetail }: { onTokenClick: () =
 
 const MemoizedTokensItems = memo(TokensItems);
 
-function TokenBox ({ address, theme, tokenDetail }: { address: string | undefined, theme: Theme, tokenDetail: AssetDetailType }) {
+function TokenBox({ address, theme, tokenDetail }: { address: string | undefined, theme: Theme, tokenDetail: AssetDetailType }) {
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
   const isDark = useIsDark();
@@ -180,7 +180,7 @@ const itemVariants = {
   visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
-function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const theme = useTheme();
   const address = useSelectedAccount()?.address;
 

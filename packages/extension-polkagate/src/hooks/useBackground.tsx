@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useEffect, useState } from 'react';
@@ -14,7 +14,7 @@ enum BACKGROUND {
   NONE
 }
 
-export default function useBackground (backgroundType?: 'drops' | 'staking' | 'default'): React.ReactNode {
+export default function useBackground(backgroundType?: 'drops' | 'staking' | 'default'): React.ReactNode {
   const isExtensionMode = useIsExtensionPopup();
 
   const [background, setBackground] = useState<BACKGROUND>(BACKGROUND.NONE);

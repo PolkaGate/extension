@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -69,7 +69,7 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
             balance={nominator.value}
             decimal={decimal}
             decimalPoint={2}
-            style={{ color: theme.palette.text.primary, fontFamily: 'Inter', fontSize: '12px', fontWeight: 500}}
+            style={{ color: theme.palette.text.primary, fontFamily: 'Inter', fontSize: '12px', fontWeight: 500 }}
             token={token}
           />
         </Grid>
@@ -193,7 +193,7 @@ const RightColumnContent = ({ genesisHash, onSelect, validator }: RightColumnCon
   );
 };
 
-const ValidatorIdentityFs = memo(function ValidatorIdentity ({ validatorInfo }: { validatorInfo: ValidatorInformation }) {
+const ValidatorIdentityFs = memo(function ValidatorIdentity({ validatorInfo }: { validatorInfo: ValidatorInformation }) {
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', maxWidth: '310px', overflow: 'hidden', width: 'fit-content' }}>
       <PolkaGateIdenticon
@@ -223,7 +223,7 @@ interface Props {
   validator: ValidatorInformation;
 }
 
-export default function ValidatorInformationFS ({ genesisHash, onClose, onSelect, validator }: Props) {
+export default function ValidatorInformationFS({ genesisHash, onClose, onSelect, validator }: Props) {
   const handleSelect = useCallback(() => {
     onSelect?.();
     onClose();

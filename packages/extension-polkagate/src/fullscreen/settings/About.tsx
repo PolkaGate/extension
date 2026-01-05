@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Stack } from '@mui/material';
@@ -15,7 +15,7 @@ import { Motion } from '../../components';
 import { useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 
-function MyDivider (): React.ReactElement {
+function MyDivider(): React.ReactElement {
   return (
     <Box
       sx={{
@@ -28,7 +28,7 @@ function MyDivider (): React.ReactElement {
   );
 }
 
-function About (): React.ReactElement {
+function About(): React.ReactElement {
   const { t } = useTranslation();
 
   return (

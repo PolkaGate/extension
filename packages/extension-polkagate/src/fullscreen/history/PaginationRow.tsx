@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
@@ -21,7 +21,7 @@ interface Props {
   totalItems: number;
 }
 
-function PaginationRow ({ itemsPerPage, options, page, setItemsPerPagePage, setPage, totalItems }: Props): React.ReactElement {
+function PaginationRow({ itemsPerPage, options, page, setItemsPerPagePage, setPage, totalItems }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const _itemsPerPage = Number(itemsPerPage);

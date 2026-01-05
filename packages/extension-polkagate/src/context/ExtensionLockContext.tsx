@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
@@ -29,14 +29,14 @@ interface LockExpiredMessage { type: 'LOCKED_ACCOUNTS_EXPIRED' }
 export const ExtensionLockProvider: React.FC<{ children: React.ReactElement }> = ({ children }: any) => {
   const isPasswordsMigrated = useIsPasswordMigrated();
 
-  
+
   // Note: extensionLock is initially set to true.
   const [isExtensionLocked, setIsExtensionLocked] = useState(true);
 
   useAutoLockRefresher(isExtensionLocked);
 
   useEffect(() => {
-     isPasswordsMigrated && areAccountsLocksExpired()
+    isPasswordsMigrated && areAccountsLocksExpired()
       .then((res) => {
         setIsExtensionLocked(res);
       })

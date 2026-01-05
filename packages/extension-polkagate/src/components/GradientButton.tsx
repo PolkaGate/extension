@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -45,7 +45,7 @@ export interface GradientButtonProps {
  *
  * @returns {React.ReactElement} The rendered gradient button.
  */
-export default function GradientButton ({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, isBusy, onClick, showChevron, startIconNode, startIconSize = 20, startIconVariant = 'Bulk', style, text }: GradientButtonProps): React.ReactElement<GradientButtonProps> {
+export default function GradientButton({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, isBusy, onClick, showChevron, startIconNode, startIconSize = 20, startIconVariant = 'Bulk', style, text }: GradientButtonProps): React.ReactElement<GradientButtonProps> {
   const theme = useTheme();
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();

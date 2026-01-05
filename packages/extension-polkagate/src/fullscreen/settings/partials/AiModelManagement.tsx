@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { CreateMLCEngine, hasModelInCache } from '@mlc-ai/web-llm';
@@ -49,19 +49,19 @@ const DownloadSection = ({ model, onCancel, onDone, progress }: { model: string;
                         onClick={handleCancel}
                         style={BUTTONS_STYLE}
                         text={t('Cancel')}
-                      />
+                    />
                     : <GradientButton
                         onClick={onDone}
                         style={BUTTONS_STYLE}
                         text={t('Done')}
-                      />
+                    />
                 }
             </Stack>
         </Motion>
     );
 };
 
-export default function AiModelManagement ({ onCancel, onClose }: Props): React.ReactElement {
+export default function AiModelManagement({ onCancel, onClose }: Props): React.ReactElement {
     const { t } = useTranslation();
     const { notify } = useAlerts();
 
@@ -143,7 +143,7 @@ export default function AiModelManagement ({ onCancel, onClose }: Props): React.
                     onCancel={onCancel}
                     onDone={onClose}
                     progress={progress}
-                  />
+                />
                 : <>
                     <Typography color='#BEAAD8' sx={{ display: 'block', p: '10px 0', textAlign: 'left', width: '100%' }} variant='B-4'>
                         {t('Choose the AI model for transaction analysis. You can switch models based on speed, accuracy, and resource usage.')}

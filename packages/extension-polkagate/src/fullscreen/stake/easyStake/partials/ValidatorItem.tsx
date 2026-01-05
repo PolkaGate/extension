@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
@@ -25,7 +25,7 @@ interface PoolInfoProp {
   style?: React.CSSProperties;
 }
 
-function ValidatorItem ({ genesisHash, isSelected, onDetailClick, onSelect, selectable, style, validatorInfo }: PoolInfoProp) {
+function ValidatorItem({ genesisHash, isSelected, onDetailClick, onSelect, selectable, style, validatorInfo }: PoolInfoProp) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const containerRef = useRef(null);

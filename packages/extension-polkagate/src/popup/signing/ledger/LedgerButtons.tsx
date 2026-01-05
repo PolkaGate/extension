@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Typography } from '@mui/material';
@@ -23,7 +23,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function LedgerButtons ({ disabled, error, isBusy, ledgerLocked, ledgerWarning, onCancel, onRefresh, onSignLedger, style = {} }: Props): React.ReactElement<Props> {
+function LedgerButtons({ disabled, error, isBusy, ledgerLocked, ledgerWarning, onCancel, onRefresh, onSignLedger, style = {} }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
@@ -37,8 +37,8 @@ function LedgerButtons ({ disabled, error, isBusy, ledgerLocked, ledgerWarning, 
       }
       {!error && !ledgerWarning &&
         <Grid alignItems='center' columnGap='5px' container item sx={{ mb: '25px' }}>
-          <ColorSwatch color={ isBlueish ? '#596AFF' : '#674394'} size='24px' variant='Bold' />
-          <Typography color={ isBlueish ? '#809ACB' : '#AA83DC'} sx={{ textAlign: 'left', width: '90%' }} variant='B-4'>
+          <ColorSwatch color={isBlueish ? '#596AFF' : '#674394'} size='24px' variant='Bold' />
+          <Typography color={isBlueish ? '#809ACB' : '#AA83DC'} sx={{ textAlign: 'left', width: '90%' }} variant='B-4'>
             {t('This is a ledger account. To complete this transaction, use your ledger')}
           </Typography>
         </Grid>

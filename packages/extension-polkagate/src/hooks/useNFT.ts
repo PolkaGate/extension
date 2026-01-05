@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -19,7 +19,7 @@ export interface NftItemsWorker {
 const nftManager = new NftManager();
 const NFT_FUNCTION_NAME = 'getNFTs';
 
-export default function useNFT (accountsFromContext: AccountJson[] | null) {
+export default function useNFT(accountsFromContext: AccountJson[] | null) {
   const { t } = useTranslation();
   const { notify } = useAlerts();
   const worker = useWorker();

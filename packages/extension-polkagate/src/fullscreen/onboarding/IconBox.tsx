@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
@@ -17,7 +17,7 @@ interface Props {
   onClick: () => void;
 }
 
-function IconBox ({ icon, label, onClick }: Props): React.ReactElement<Props> {
+function IconBox({ icon, label, onClick }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
@@ -10,7 +10,7 @@ import { noop } from '@polkadot/util';
 
 import { useAccountSelectedChain, useSelectedAccount, useTranslation } from '../../../hooks';
 
-function BreadcrumbItem ({ icon: Icon, label, onClick = noop }: { icon: React.ElementType; label: string; onClick?: () => void }): React.ReactElement {
+function BreadcrumbItem({ icon: Icon, label, onClick = noop }: { icon: React.ElementType; label: string; onClick?: () => void }): React.ReactElement {
   return (
     <Stack columnGap='5px' direction='row'>
       <Icon color='#AA83DC' size='18' variant='Bulk' />
@@ -26,7 +26,7 @@ function BreadcrumbItem ({ icon: Icon, label, onClick = noop }: { icon: React.El
   );
 }
 
-function Breadcrumbs (): React.ReactElement {
+function Breadcrumbs(): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const selectedAccount = useSelectedAccount();
@@ -44,15 +44,15 @@ function Breadcrumbs (): React.ReactElement {
     const redirect = `/accountfs/${selectedAccount?.address}/${genesisHash}/0`;
 
     return [
-    { check: (path: string) => ['restore', 'attach', 'import'].some((keyword) => path.includes(keyword)), icon: ImportCurve, label: t('Import account'), redirect: '/account/have-wallet' },
-    { check: (path: string) => path.includes('/historyfs'), icon: Money3, label: t('Account'), redirect },
-    { check: (path: string) => path.includes('/proxyManagement'), icon: Money3, label: t('Account'), redirect },
-    { check: (path: string) => path.includes('/send'), icon: ArrowCircleRight2, label: t('Send') },
-    { check: (path: string) => path.includes('/nft'), icon: Money3, label: t('Account'), redirect },
-    { check: (path: string) => path.includes('/solo'), icon: Money3, label: t('Account'), redirect },
-    { check: (path: string) => path.includes('/pool'), icon: Money3, label: t('Account'), redirect }
-  ];
-}, [genesisHash, selectedAccount?.address, t]);
+      { check: (path: string) => ['restore', 'attach', 'import'].some((keyword) => path.includes(keyword)), icon: ImportCurve, label: t('Import account'), redirect: '/account/have-wallet' },
+      { check: (path: string) => path.includes('/historyfs'), icon: Money3, label: t('Account'), redirect },
+      { check: (path: string) => path.includes('/proxyManagement'), icon: Money3, label: t('Account'), redirect },
+      { check: (path: string) => path.includes('/send'), icon: ArrowCircleRight2, label: t('Send') },
+      { check: (path: string) => path.includes('/nft'), icon: Money3, label: t('Account'), redirect },
+      { check: (path: string) => path.includes('/solo'), icon: Money3, label: t('Account'), redirect },
+      { check: (path: string) => path.includes('/pool'), icon: Money3, label: t('Account'), redirect }
+    ];
+  }, [genesisHash, selectedAccount?.address, t]);
 
   const matchedBreadcrumb = useMemo(() => breadcrumbMap.find(({ check }) => check(pathname)), [breadcrumbMap, pathname]);
 

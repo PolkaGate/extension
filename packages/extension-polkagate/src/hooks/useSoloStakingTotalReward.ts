@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -12,14 +12,14 @@ import { getSubscanChainName } from '../util';
 import { postData } from '../util/api';
 import useStakingRewardDestinationAddress from './useStakingRewardDestinationAddress';
 
-export async function getStakingReward (chainName: string, address: AccountId | string | null): Promise<string | null> {
+export async function getStakingReward(chainName: string, address: AccountId | string | null): Promise<string | null> {
   if (!address) {
     console.log('address is null in getting get Staking Total Rewards ');
 
     return null;
   }
 
-   const network = getSubscanChainName(chainName) as unknown as string;
+  const network = getSubscanChainName(chainName) as unknown as string;
 
   return new Promise((resolve) => {
     try {
@@ -46,7 +46,7 @@ export async function getStakingReward (chainName: string, address: AccountId | 
   });
 }
 
-export default function useSoloStakingTotalReward (chainName: string | undefined, stakingAccount: AccountStakingInfo | null | undefined): BN | undefined {
+export default function useSoloStakingTotalReward(chainName: string | undefined, stakingAccount: AccountStakingInfo | null | undefined): BN | undefined {
   const [rewards, setRewards] = useState<BN>();
   const rewardDestinationAddress = useStakingRewardDestinationAddress(stakingAccount);
 

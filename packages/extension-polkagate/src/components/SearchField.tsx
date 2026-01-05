@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, styled, TextField, useTheme } from '@mui/material';
@@ -47,7 +47,7 @@ interface Props {
   placeholderStyle?: React.CSSProperties;
 }
 
-function SearchField ({ focused = false, onInputChange, placeholder, placeholderStyle, style }: Props) {
+function SearchField({ focused = false, onInputChange, placeholder, placeholderStyle, style }: Props) {
   const theme = useTheme();
 
   const onChange = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {

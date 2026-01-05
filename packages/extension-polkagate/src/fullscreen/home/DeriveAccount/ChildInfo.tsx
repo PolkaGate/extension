@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
@@ -33,7 +33,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<DERIVATION_STEPS>>;
 }
 
-function ChildInfo ({ genesisHash, maybeChidAccount, onClose, parentAddress, parentPassword, setMaybeChidAccount, setStep }: Props): React.ReactElement {
+function ChildInfo({ genesisHash, maybeChidAccount, onClose, parentAddress, parentPassword, setMaybeChidAccount, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const parentGenesis = (genesisHash ?? POLKADOT_GENESIS) as HexString;

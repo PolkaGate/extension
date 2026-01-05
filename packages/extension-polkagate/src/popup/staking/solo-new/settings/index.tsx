@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -151,15 +151,15 @@ export const Content = ({ ED, changeToStaked, genesisHash, isBlueish, nextDisabl
       />
       {rewardDestinationType === undefined
         ? <Progress
-        size={15}
-        style={{ alignSelf: 'center', marginTop: '20px' }}
-        title={t('Loading, please wait ...')}
-          />
+          size={15}
+          style={{ alignSelf: 'center', marginTop: '20px' }}
+          title={t('Loading, please wait ...')}
+        />
         : <>
           {changeToStaked
             ? <SetToStaked
               onNext={onNext}
-              />
+            />
             : <SetToOthers
               ED={ED}
               disabled={nextDisabled}
@@ -169,7 +169,7 @@ export const Content = ({ ED, changeToStaked, genesisHash, isBlueish, nextDisabl
               setSpecificAccount={setSpecificAccount}
               showOption={rewardDestinationType === 'Others'}
               specificAccount={specificAccount ?? rewardDestinationAddress}
-              />
+            />
           }
         </>
       }
@@ -177,7 +177,7 @@ export const Content = ({ ED, changeToStaked, genesisHash, isBlueish, nextDisabl
   );
 };
 
-export default function Settings (): React.ReactElement {
+export default function Settings(): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();

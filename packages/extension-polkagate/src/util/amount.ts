@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -20,7 +20,7 @@ import { FLOATING_POINT_DIGIT } from './constants';
  * countLeadingZerosInFraction("10.45"); // 0
  * countLeadingZerosInFraction("42"); // 0
  */
-function countLeadingZerosInFraction (numStr: string) {
+function countLeadingZerosInFraction(numStr: string) {
   const match = numStr.match(/\.(0+)/);
 
   if (match) {
@@ -42,7 +42,7 @@ function countLeadingZerosInFraction (numStr: string) {
  * countDecimalPlaces(42); // 0
  * countDecimalPlaces(0.0001); // 4
  */
-export function countDecimalPlaces (n: number) {
+export function countDecimalPlaces(n: number) {
   const match = n.toString().match(/\.(\d+)/);
 
   return match ? match[1].length : 0;
@@ -61,7 +61,7 @@ export function countDecimalPlaces (n: number) {
  * getDecimal(42); // 0
  * getDecimal("0.0001", 2); // "00"
  */
-export function getDecimal (n: string | number, count = 2) {
+export function getDecimal(n: string | number, count = 2) {
   const decimalPart = n.toString().split('.')[1];
 
   return decimalPart ? decimalPart.slice(0, count) : 0;
@@ -86,7 +86,7 @@ export function getDecimal (n: string | number, count = 2) {
  * formatDecimal(-4567.89123, 3, true); // "4,567.891"
  * formatDecimal(1000, 2, true); // "1,000"
  */
-export function formatDecimal (_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
+export function formatDecimal(_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
   const MAX_DECIMAL_POINTS = 6;
 
   // make number positive if it is negative
@@ -124,7 +124,7 @@ export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Bala
  * @param {string|number} value - e.g., "1e-7" or 2.5e-8
  * @returns {string} decimal representation
  */
-export function sciToDecimal (value: string | number) {
+export function sciToDecimal(value: string | number) {
   const str = value.toString();
 
   // Check if it’s scientific notation
@@ -168,7 +168,7 @@ export function sciToDecimal (value: string | number) {
  * amountToHuman(123456789, 6, 4, true) // "123.4567"
  * amountToHuman("5000000", 3, 0, true) // "5,000"
  */
-export function amountToHuman (_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
+export function amountToHuman(_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
   if (!_amount || !_decimals) {
     return '';
   }
@@ -202,7 +202,7 @@ export function amountToHuman (_amount: string | number | BN | bigint | Compact<
  * amountToMachine("500", 2) // BN instance representing 50000
  * amountToMachine("0.005", 6) // BN instance representing 5000
  */
-export function amountToMachine (amount: string | undefined, decimal: number | undefined): BN {
+export function amountToMachine(amount: string | undefined, decimal: number | undefined): BN {
   if (!amount || !Number(amount) || !decimal) {
     return BN_ZERO;
   }

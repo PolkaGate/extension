@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 
@@ -25,7 +25,7 @@ interface Props {
  *
  * @returns {React.ReactElement} The rendered container component with optional gradient effects.
  */
-function GradientBox2 ({ children, noGradient = false, style, withGradientTopBorder = true }: Props) {
+function GradientBox2({ children, noGradient = false, style, withGradientTopBorder = true }: Props) {
   return (
     <Container
       disableGutters sx={{

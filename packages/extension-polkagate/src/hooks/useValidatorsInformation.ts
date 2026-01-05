@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DeriveAccountRegistration, DeriveStakingQuery } from '@polkadot/api-derive/types';
@@ -27,7 +27,7 @@ interface WorkerMessage {
   results?: string;
 }
 
-export default function useValidatorsInformation (genesisHash: string | undefined) {
+export default function useValidatorsInformation(genesisHash: string | undefined) {
   const worker = useContext(WorkerContext);
 
   const [fetching, setFetching] = useState<string | undefined>();

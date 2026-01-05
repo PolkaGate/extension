@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Typography } from '@mui/material';
@@ -9,7 +9,7 @@ import { useTranslation } from '@polkadot/extension-polkagate/src/components/tra
 
 const EXTENSION_URL = 'https://chromewebstore.google.com/detail/polkagate-the-gateway-to/ginchbkmljhldofnbjabmeophlhdldgp';
 
-export default function RateUsButton (): React.ReactElement {
+export default function RateUsButton(): React.ReactElement {
   const { t } = useTranslation();
   const onClick = useCallback(() => window.open(EXTENSION_URL), []);
 

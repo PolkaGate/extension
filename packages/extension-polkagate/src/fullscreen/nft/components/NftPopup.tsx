@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Attribute, ItemInformation } from '../utils/types';
@@ -33,7 +33,7 @@ export interface Props {
   } | undefined>>;
 }
 
-function AccountRow ({ address, genesisHash, label }: { label: string, address: string, genesisHash: string }): React.ReactElement {
+function AccountRow({ address, genesisHash, label }: { label: string, address: string, genesisHash: string }): React.ReactElement {
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between' lineHeight='35px'>
       <Stack alignItems='baseline' columnGap='3px' direction='row'>
@@ -53,7 +53,7 @@ function AccountRow ({ address, genesisHash, label }: { label: string, address: 
   );
 }
 
-function LeftCol ({ gifSource, info, setShowFullscreen }: {
+function LeftCol({ gifSource, info, setShowFullscreen }: {
   gifSource: string | null | undefined, info: ItemInformation; setShowFullscreen: React.Dispatch<React.SetStateAction<{
     iFrame: boolean;
     source: string | null | undefined;
@@ -135,7 +135,7 @@ function LeftCol ({ gifSource, info, setShowFullscreen }: {
   );
 }
 
-function Line (): ReactElement {
+function Line(): ReactElement {
   return (
     <Divider
       orientation='horizontal' sx={{
@@ -145,7 +145,7 @@ function Line (): ReactElement {
   );
 }
 
-function ItemInfo ({ label, link, markDown, showDivider = true, value }: { label: string, value?: string | ReactElement, showDivider?: boolean, link?: string, markDown?: string }): ReactElement {
+function ItemInfo({ label, link, markDown, showDivider = true, value }: { label: string, value?: string | ReactElement, showDivider?: boolean, link?: string, markDown?: string }): ReactElement {
   return (
     <Stack direction='column' justifyItems='center'>
       <Grid container direction='row' item justifyContent='space-between' justifyItems='space-between' sx={{ lineHeight: '35px' }}>
@@ -186,7 +186,7 @@ function ItemInfo ({ label, link, markDown, showDivider = true, value }: { label
   );
 }
 
-function NftDetails ({ gifHash, gifSource, info }: { gifHash: string | undefined, gifSource: string | null | undefined, info: ItemInformation; }): React.ReactElement<{ info: ItemInformation; }> {
+function NftDetails({ gifHash, gifSource, info }: { gifHash: string | undefined, gifSource: string | null | undefined, info: ItemInformation; }): React.ReactElement<{ info: ItemInformation; }> {
   const { t } = useTranslation();
 
   const chainNameSymbol = useMemo(() => {
@@ -228,10 +228,10 @@ function NftDetails ({ gifHash, gifSource, info }: { gifHash: string | undefined
           />
           {
             info.itemId !== undefined &&
-          <ItemInfo
-            label={t('NFT ID')}
-            value={info.itemId || 'Unknown'}
-          />
+            <ItemInfo
+              label={t('NFT ID')}
+              value={info.itemId || 'Unknown'}
+            />
           }
           {
             info.creator && info.genesisHash &&
@@ -312,7 +312,7 @@ function NftDetails ({ gifHash, gifSource, info }: { gifHash: string | undefined
   );
 }
 
-function RightCol ({ gifHash, gifSource, info, onClose }: { gifSource: string | null | undefined, gifHash: string | undefined, info: ItemInformation; onClose: () => void; }): React.ReactElement<Props> {
+function RightCol({ gifHash, gifSource, info, onClose }: { gifSource: string | null | undefined, gifHash: string | undefined, info: ItemInformation; onClose: () => void; }): React.ReactElement<Props> {
   const isDark = useIsDark();
   const { t } = useTranslation();
 
@@ -386,7 +386,7 @@ function RightCol ({ gifHash, gifSource, info, onClose }: { gifSource: string | 
   );
 }
 
-export function NftPopup ({ info, onClose, setShowFullscreen }: Props): React.ReactElement<Props> {
+export function NftPopup({ info, onClose, setShowFullscreen }: Props): React.ReactElement<Props> {
   const width = 615;
   const maxHeight = 740;
   const left = (window.innerWidth - width) / 2;

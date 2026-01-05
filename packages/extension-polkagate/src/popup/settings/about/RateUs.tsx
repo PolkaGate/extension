@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Typography } from '@mui/material';
@@ -12,11 +12,11 @@ import RateUsButton from '../partials/RateUsButton';
 const EXTENSION_RATE = 4.7;
 const EXTENSION_REVIEWERS_COUNT = 30;
 
-interface Props{
+interface Props {
   style?: React.CSSProperties;
 }
 
-function RateUs ({ style }: Props): React.ReactElement {
+function RateUs({ style }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -59,7 +59,7 @@ function RateUs ({ style }: Props): React.ReactElement {
             {EXTENSION_RATE}
           </Typography>
           <Typography color='#AA83DC' variant='B-4'>
-            ({EXTENSION_REVIEWERS_COUNT } {t('reviewers')})
+            ({EXTENSION_REVIEWERS_COUNT} {t('reviewers')})
           </Typography>
         </Grid>
       </Grid>

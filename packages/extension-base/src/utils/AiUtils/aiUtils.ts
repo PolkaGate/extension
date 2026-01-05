@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension authors & contributors
+// Copyright 2019-2026 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import extrinsics from './documents/extrinsics';
@@ -31,7 +31,7 @@ export const stakingActionCleaner = (action: string) => {
     }
 };
 
-export function additionalRules (section: string) {
+export function additionalRules(section: string) {
     const SECTION = section?.toLowerCase();
 
     if (SECTION === 'convictionvoting') {
@@ -114,6 +114,6 @@ export function additionalRules (section: string) {
     return '';
 }
 
-export function RAG (extrinsic: string): string {
+export function RAG(extrinsic: string): string {
     return JSON.stringify(extrinsics[extrinsic as keyof typeof extrinsics]) || 'No additional information available.';
 }

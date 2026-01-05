@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DropdownOption } from './types';
@@ -7,10 +7,10 @@ export interface LanguageOptions extends DropdownOption {
   flag?: string;
 }
 
-export function getLanguageOptions (): LanguageOptions[] {
+export function getLanguageOptions(): LanguageOptions[] {
   return [
     // default/native
-     {
+    {
       text: 'Deutsch',
       value: 'de'
     },
@@ -19,7 +19,7 @@ export function getLanguageOptions (): LanguageOptions[] {
       text: 'English',
       value: 'en'
     },
-      {
+    {
       text: 'español',
       value: 'es'
     },
@@ -32,7 +32,7 @@ export function getLanguageOptions (): LanguageOptions[] {
       text: '汉语',
       value: 'zh'
     },
-     {
+    {
       flag: 'IN',
       text: 'हिन्दी',
       value: 'hi'

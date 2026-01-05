@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
@@ -43,7 +43,7 @@ interface MessageBody {
   balanceDetails?: string,
 }
 
-function allHexToBN (balances: object | string | undefined): BalancesDetails | object {
+function allHexToBN(balances: object | string | undefined): BalancesDetails | object {
   if (!balances) {
     return {};
   }
@@ -65,7 +65,7 @@ function allHexToBN (balances: object | string | undefined): BalancesDetails | o
 /**
  * Hook to listen to worker asset messages and handle asset updates.
  */
-export default function useWorkerAssetListener (
+export default function useWorkerAssetListener(
   worker: MessagePort | undefined,
   handleRequestCount: (functionName: string) => void,
   combineAndSetAssets: (assets: Record<string, FetchedBalance[]>) => void
@@ -75,7 +75,7 @@ export default function useWorkerAssetListener (
       return;
     }
 
-    function handleMessage (messageEvent: MessageEvent<string>) {
+    function handleMessage(messageEvent: MessageEvent<string>) {
       const message = messageEvent.data;
 
       if (!message) {

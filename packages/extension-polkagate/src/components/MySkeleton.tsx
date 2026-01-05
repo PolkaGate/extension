@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Skeleton, type SkeletonProps, type SxProps, type Theme, useTheme } from '@mui/material';
@@ -13,7 +13,7 @@ interface Props {
   width?: number | string;
 }
 
-function MySkeleton ({ animation, bgcolor, height = 12, style = {}, variant, width = 0 }: Props): React.ReactElement {
+function MySkeleton({ animation, bgcolor, height = 12, style = {}, variant, width = 0 }: Props): React.ReactElement {
   const isDark = useTheme();
   const _width = typeof width === 'number' ? `${width}px` : width;
 

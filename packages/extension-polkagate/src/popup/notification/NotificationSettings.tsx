@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -25,7 +25,7 @@ export interface TextValuePair {
 
 const CARD_STYLE = { alignItems: 'center', height: '64px' };
 
-export default function NotificationSettings () {
+export default function NotificationSettings() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const selectedAddress = useSelectedAccount()?.address;

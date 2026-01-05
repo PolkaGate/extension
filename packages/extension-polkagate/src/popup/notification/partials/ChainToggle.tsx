@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
@@ -13,7 +13,7 @@ interface Props {
   onSelect: (newSelect: string) => void;
 }
 
-function ChainToggle ({ checked, genesis, onSelect, text }: Props) {
+function ChainToggle({ checked, genesis, onSelect, text }: Props) {
   const handleSelect = useCallback((event: ChangeEvent<HTMLInputElement>, _checked: boolean) => {
     const selected = event.target.value;
 

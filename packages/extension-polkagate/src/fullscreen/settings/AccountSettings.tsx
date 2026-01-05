@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
@@ -26,7 +26,7 @@ interface ActionBoxProps {
   onClick?: () => void;
 }
 
-function ActionBox ({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
+function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
   const navigate = useNavigate();
 
   const _onClick = useCallback(() => {
@@ -45,7 +45,7 @@ function ActionBox ({ Icon, label, onClick, path }: ActionBoxProps): React.React
   );
 }
 
-function AccountSettings (): React.ReactElement {
+function AccountSettings(): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
@@ -59,7 +59,7 @@ function AccountSettings (): React.ReactElement {
           />
         );
 
-        case ExtensionPopups.RENAME:
+      case ExtensionPopups.RENAME:
         return (
           <RenameAccount
             address={selectedAccount?.address}

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PriceValue } from '@polkadot/extension-polkagate/src/util/types';
@@ -21,7 +21,7 @@ const ASSET_IN_A_ROW = 4;
 
 type Direction = 'right' | 'left';
 
-function Move ({ direction, max, setMove }: { direction: Direction, max?: number, setMove: React.Dispatch<React.SetStateAction<number>> }): React.ReactElement {
+function Move({ direction, max, setMove }: { direction: Direction, max?: number, setMove: React.Dispatch<React.SetStateAction<number>> }): React.ReactElement {
   const [chevronHovered, setChevronHovered] = useState<Direction>();
 
   const onMouseEnterChevron = useCallback((type: Direction) => {
@@ -118,7 +118,7 @@ const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue, onClick: Rea
 
 Asset.displayName = 'Asset';
 
-function TrendingAssets (): React.ReactElement {
+function TrendingAssets(): React.ReactElement {
   const { t } = useTranslation();
   const pricesInCurrencies = usePrices();
   const { currency } = useContext(CurrencyContext);
@@ -198,7 +198,7 @@ function TrendingAssets (): React.ReactElement {
         <TokenChart
           coinId={chartPriceId}
           onClose={setChartToken}
-          // vsCurrency={currency.code} no clue why does not work
+        // vsCurrency={currency.code} no clue why does not work
         />
       }
     </VelvetBox>

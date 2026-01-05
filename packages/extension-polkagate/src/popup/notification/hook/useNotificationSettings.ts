@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react';
@@ -62,7 +62,7 @@ export enum Popups {
   STAKING_REWARDS
 }
 
-export default function useNotificationSettings (justLoadInfo = false) {
+export default function useNotificationSettings(justLoadInfo = false) {
   const { accounts } = useContext(AccountContext);
   const [notificationSetting, dispatch] = useReducer(notificationSettingReducer, initialNotificationState);
   const [popups, setPopup] = useState<Popups>(Popups.NONE);
@@ -137,7 +137,7 @@ export default function useNotificationSettings (justLoadInfo = false) {
       console.log('apply notification setting changes function that runs on unmount');
       handleChainsChanges(notificationSettingRef.current);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [justLoadInfo]);
 
   const toggleNotification = useCallback(() => {

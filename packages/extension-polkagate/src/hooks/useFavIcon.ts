@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect, useState } from 'react';
 
-export default function useFavIcon (url: string | null | undefined): string | null | undefined {
+export default function useFavIcon(url: string | null | undefined): string | null | undefined {
   const [faviconUrl, setFaviconUrl] = useState<string | null | undefined>();
 
   const checkImageExists = useCallback(async (_url: string): Promise<boolean> => {

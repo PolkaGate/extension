@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -13,7 +13,7 @@ import { useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } f
 import { setStorage } from '../../util';
 import useProfileInfo from './useProfileInfo';
 
-function Tab ({ initialAccountList, label }: { initialAccountList: AccountJson[] | undefined, label: string }): React.ReactElement {
+function Tab({ initialAccountList, label }: { initialAccountList: AccountJson[] | undefined, label: string }): React.ReactElement {
   const { t } = useTranslation();
   const profileAccounts = useProfileAccounts(initialAccountList, label);
   const selectedProfile = useSelectedProfile();
@@ -52,7 +52,7 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountJson[]
   );
 }
 
-function ProfileTabsFS ({ initialAccountList, width = '535px' }: { initialAccountList: AccountJson[] | undefined, width?: string }): React.ReactElement {
+function ProfileTabsFS({ initialAccountList, width = '535px' }: { initialAccountList: AccountJson[] | undefined, width?: string }): React.ReactElement {
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
   const containerRef = useRef<HTMLDivElement>(null);
 

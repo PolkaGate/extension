@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid } from '@mui/material';
@@ -11,7 +11,7 @@ import { useIsDark } from '../../hooks/index';
 import { COLUMN_WIDTH } from './consts';
 
 
-function Loading (): React.ReactElement {
+function Loading(): React.ReactElement {
   const isDark = useIsDark();
 
   return (
@@ -66,7 +66,7 @@ function Loading (): React.ReactElement {
   );
 }
 
-function HistoryLoading ({ itemsCount = 4 }: { itemsCount?: number; }) {
+function HistoryLoading({ itemsCount = 4 }: { itemsCount?: number; }) {
   return (
     <div style={{ display: 'grid', position: 'relative', rowGap: '5px', zIndex: 1 }}>
       {Array.from({ length: itemsCount }).map((_, index) => (

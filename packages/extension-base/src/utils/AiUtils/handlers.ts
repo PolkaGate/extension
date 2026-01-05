@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable camelcase */
@@ -10,7 +10,7 @@ import { hexToString, isHex } from '@polkadot/util';
 import { stakingActionCleaner } from './aiUtils';
 import { formatAmount, isAye, toShortAddress } from './txUtil';
 
-function handleBalanceTransfer (tx: AiTxAnyJson): EnrichedTx {
+function handleBalanceTransfer(tx: AiTxAnyJson): EnrichedTx {
     const { dest, value } = tx['args'] as { dest: { id: string; }; value: number; };
     const decimal = tx['decimal'] as number;
     const token = tx['token'] as string;
@@ -26,7 +26,7 @@ function handleBalanceTransfer (tx: AiTxAnyJson): EnrichedTx {
     };
 }
 
-function handleTransferAll (tx: AiTxAnyJson): EnrichedTx {
+function handleTransferAll(tx: AiTxAnyJson): EnrichedTx {
     const { dest } = tx['args'] as { dest: { id: string; }; };
 
     return {
@@ -39,7 +39,7 @@ function handleTransferAll (tx: AiTxAnyJson): EnrichedTx {
     };
 }
 
-function handleBatch (tx: AiTxAnyJson): EnrichedTx {
+function handleBatch(tx: AiTxAnyJson): EnrichedTx {
     const { calls } = tx['args'] as { calls: never[]; };
 
     return {
@@ -51,7 +51,7 @@ function handleBatch (tx: AiTxAnyJson): EnrichedTx {
     };
 }
 
-function handleVoteDelegate (tx: AiTxAnyJson): EnrichedTx {
+function handleVoteDelegate(tx: AiTxAnyJson): EnrichedTx {
     const delegateArgs = tx['args'] as {
         to?: { id?: string };
         balance?: number;
@@ -75,13 +75,13 @@ function handleVoteDelegate (tx: AiTxAnyJson): EnrichedTx {
     };
 }
 
-function handleConvictionVote (tx: AiTxAnyJson): EnrichedTx {
+function handleConvictionVote(tx: AiTxAnyJson): EnrichedTx {
     const voteArgs = tx['args'] as {
         poll_index: number;
         vote:
-            | { standard: { vote: string; balance: number } }
-            | { split: { aye: number; nay: number } }
-            | { splitAbstain: { aye: number; nay: number; abstain: number } };
+        | { standard: { vote: string; balance: number } }
+        | { split: { aye: number; nay: number } }
+        | { splitAbstain: { aye: number; nay: number; abstain: number } };
     };
 
     const decimal = tx['decimal'] as number;
@@ -144,7 +144,7 @@ function handleConvictionVote (tx: AiTxAnyJson): EnrichedTx {
     };
 }
 
-function handlePoolStaking (tx: AiTxAnyJson): EnrichedTx {
+function handlePoolStaking(tx: AiTxAnyJson): EnrichedTx {
     const stakingArgs = tx['args'] as { amount?: number; pool_id?: number; extra?: { freeBalance?: number; rewards?: number | null } };
     const token = tx['token'] as string;
     const decimal = tx['decimal'] as number;
@@ -162,7 +162,7 @@ function handlePoolStaking (tx: AiTxAnyJson): EnrichedTx {
     };
 }
 
-function handleSetMetadata (tx: AiTxAnyJson): EnrichedTx {
+function handleSetMetadata(tx: AiTxAnyJson): EnrichedTx {
     const stakingArgs = tx['args'] as { metadata?: string; pool_id?: number; };
     const action = stakingActionCleaner(tx['method'] as string);
     const metadata = stakingArgs?.metadata ? isHex(stakingArgs?.metadata) ? hexToString(stakingArgs?.metadata) : stakingArgs?.metadata : '';
@@ -177,7 +177,7 @@ function handleSetMetadata (tx: AiTxAnyJson): EnrichedTx {
     };
 }
 
-function handleUnbond (tx: AiTxAnyJson): EnrichedTx {
+function handleUnbond(tx: AiTxAnyJson): EnrichedTx {
     const stakingArgs = tx['args'] as { member_account?: { id: string }; unbonding_points?: number; };
     const decimal = tx['decimal'] as number;
     const token = tx['token'] as string;
@@ -197,7 +197,7 @@ function handleUnbond (tx: AiTxAnyJson): EnrichedTx {
     };
 }
 
-function handleStaking (tx: AiTxAnyJson): EnrichedTx {
+function handleStaking(tx: AiTxAnyJson): EnrichedTx {
     const stakingArgs = tx['args'] as { value?: number; max_additional?: number; };
     const decimal = tx['decimal'] as number;
     const token = tx['token'] as string;
@@ -215,7 +215,7 @@ function handleStaking (tx: AiTxAnyJson): EnrichedTx {
     };
 }
 
-function handleNominate (tx: AiTxAnyJson): EnrichedTx {
+function handleNominate(tx: AiTxAnyJson): EnrichedTx {
     const { targets } = tx['args'] as { targets: string[]; };
 
     return {
@@ -227,7 +227,7 @@ function handleNominate (tx: AiTxAnyJson): EnrichedTx {
     };
 }
 
-function handleProxy (tx: AiTxAnyJson): EnrichedTx {
+function handleProxy(tx: AiTxAnyJson): EnrichedTx {
     const proxyArgs = tx['args'] as { call?: AiTxAnyJson; real: { id?: string; }; };
 
     return {
@@ -239,7 +239,7 @@ function handleProxy (tx: AiTxAnyJson): EnrichedTx {
     };
 }
 
-export function explainTx (tx: AiTxAnyJson, key: string): EnrichedTx {
+export function explainTx(tx: AiTxAnyJson, key: string): EnrichedTx {
     return handlers[key]?.(tx) ?? {
         data: {
             args: tx['args'] as unknown,

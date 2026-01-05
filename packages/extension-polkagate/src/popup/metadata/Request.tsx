@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
@@ -18,11 +18,11 @@ interface Props {
   url: string;
 }
 
-function ItemValue ({ item, value }: { item: string, value: string }): React.ReactElement<Props> {
+function ItemValue({ item, value }: { item: string, value: string }): React.ReactElement<Props> {
   return (
     <>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ minHeight: '36px', px: '8px' }}>
-        <Typography color= '#AA83DC' variant='B-4'>
+        <Typography color='#AA83DC' variant='B-4'>
           {toTitleCase(item)}
         </Typography>
         <Typography color='#EAEBF1' sx={{ mr: '3px' }} variant='B-4'>
@@ -34,7 +34,7 @@ function ItemValue ({ item, value }: { item: string, value: string }): React.Rea
   );
 }
 
-export default function Request ({ metaId, request, url }: Props): React.ReactElement<Props> {
+export default function Request({ metaId, request, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const chain = useMetadata(request.genesisHash, true);

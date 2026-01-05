@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -20,7 +20,7 @@ const DEFAULT_SELECTED = {
   profile: PROFILE_TAGS.ALL
 };
 
-export default function SelectedProvider ({ children }: Props) {
+export default function SelectedProvider({ children }: Props) {
   const { accounts } = useContext(AccountContext);
 
   const [selected, setSelected] = useState<SelectedType>(DEFAULT_SELECTED);

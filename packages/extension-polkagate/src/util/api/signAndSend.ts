@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -13,7 +13,7 @@ import type { ExtrinsicPayloadValue, ISubmittableResult } from '@polkadot/types/
 import type { HexString } from '@polkadot/util/types';
 import type { TxResult } from '../types';
 
-async function getAppliedFee (api: ApiPromise, signedBlock: SignedBlock, txHashHex: HexString): Promise<string | undefined> {
+async function getAppliedFee(api: ApiPromise, signedBlock: SignedBlock, txHashHex: HexString): Promise<string | undefined> {
   const apiAt = await api.at(signedBlock.block.hash);
   const allEvents = await apiAt.query['system']['events']() as Vec<FrameSystemEventRecord>;
 
@@ -40,7 +40,7 @@ async function getAppliedFee (api: ApiPromise, signedBlock: SignedBlock, txHashH
   return fee;
 }
 
-export async function handleResult (
+export async function handleResult(
   api: ApiPromise,
   resolve: (value: TxResult | PromiseLike<TxResult>) => void,
   result: ISubmittableResult
@@ -110,7 +110,7 @@ export async function handleResult (
   }
 }
 
-export async function signAndSend (
+export async function signAndSend(
   api: ApiPromise,
   extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
   pair: KeyringPair,
@@ -128,7 +128,7 @@ export async function signAndSend (
   });
 }
 
-export async function send (
+export async function send(
   from: string,
   api: ApiPromise,
   extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -14,7 +14,7 @@ import useAutoLock from '../../../hooks/useAutoLock';
 // enforce a minimum auto-lock time; 0 would lock forever
 const INPUT_MIN_VALUE = '1';
 
-export default function useAdjustAutoLockTimer (): {
+export default function useAdjustAutoLockTimer(): {
   autoLock: AutoLock | undefined;
   delayType: AutoLockDelayType | undefined;
   inputValue: number | undefined;

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import useChainInfo from './useChainInfo';
 import useCurrentEraIndex from './useCurrentEraIndex';
 
-export default function useIsExposed (genesisHash: string | undefined, stakingInfo: SoloStakingInfo): boolean | undefined {
+export default function useIsExposed(genesisHash: string | undefined, stakingInfo: SoloStakingInfo): boolean | undefined {
   const { api, chain } = useChainInfo(genesisHash);
   const currentEraIndex = useCurrentEraIndex(genesisHash);
   const [exposed, setIsExposed] = useState<boolean>();

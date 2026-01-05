@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { NotificationSettingType } from '../popup/notification/hook/useNotificationSettings';
@@ -12,7 +12,7 @@ import { getStorage, setStorage } from '.';
  * @param address - The address to remove from notification settings
  * @returns Promise that resolves when the cleanup operation completes
  */
-export async function cleanupNotificationAccount (address: string): Promise<void> {
+export async function cleanupNotificationAccount(address: string): Promise<void> {
   const notificationSettings = await getStorage(STORAGE_KEY.NOTIFICATION_SETTINGS) as NotificationSettingType | null | undefined;
 
   // Early return if no settings exist
@@ -51,7 +51,7 @@ export async function cleanupNotificationAccount (address: string): Promise<void
  * @returns A promise that resolves when the cleanup operation is complete.
  *          Returns immediately if no authorized dApps exist or address is not found.
  */
-export async function cleanupAuthorizedAccount (address: string): Promise<void> {
+export async function cleanupAuthorizedAccount(address: string): Promise<void> {
   const { getAuthList, updateAuthorization } = await import('../messaging');
 
   const authorizedDapps = await getAuthList();

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, AllowedPath, AuthorizeRequest, MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, MetadataRequest, RequestTypes, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSigningIsLocked, ResponseTypes, SeedLengths, SigningRequest, SubscriptionMessageTypes } from '@polkadot/extension-base/background/types';
@@ -59,7 +59,7 @@ port.onMessage.addListener((data: Message['data']): void => {
 function sendMessage<TMessageType extends MessageTypesWithNullRequest>(message: TMessageType): Promise<ResponseTypes[TMessageType]>;
 function sendMessage<TMessageType extends MessageTypesWithNoSubscriptions>(message: TMessageType, request: RequestTypes[TMessageType]): Promise<ResponseTypes[TMessageType]>;
 function sendMessage<TMessageType extends MessageTypesWithSubscriptions>(message: TMessageType, request: RequestTypes[TMessageType], subscriber: (data: SubscriptionMessageTypes[TMessageType]) => void): Promise<ResponseTypes[TMessageType]>;
-function sendMessage<TMessageType extends MessageTypes> (message: TMessageType, request?: RequestTypes[TMessageType], subscriber?: (data: unknown) => void): Promise<ResponseTypes[TMessageType]> {
+function sendMessage<TMessageType extends MessageTypes>(message: TMessageType, request?: RequestTypes[TMessageType], subscriber?: (data: unknown) => void): Promise<ResponseTypes[TMessageType]> {
   return new Promise((resolve, reject): void => {
     const id = getId();
 
@@ -69,133 +69,133 @@ function sendMessage<TMessageType extends MessageTypes> (message: TMessageType, 
   });
 }
 
-export async function editAccount (address: string, name: string): Promise<boolean> {
+export async function editAccount(address: string, name: string): Promise<boolean> {
   return sendMessage('pri(accounts.edit)', { address, name });
 }
 
 // added for polkagate ----------------
-export async function updateMeta (address: string, meta: string): Promise<boolean> {
+export async function updateMeta(address: string, meta: string): Promise<boolean> {
   return sendMessage('pri(accounts.updateMeta)', { address, meta });
 }
 
-export async function loadAiAgent (modelId?: string, progressCallback?: (progress: number) => void): Promise<boolean> {
+export async function loadAiAgent(modelId?: string, progressCallback?: (progress: number) => void): Promise<boolean> {
   return sendMessage('pri(ai.agentLoad)', { modelId, progressCallback });
 }
 
-export async function explainTransactionWithAi (txJson: AiTxAnyJson): Promise<string> {
+export async function explainTransactionWithAi(txJson: AiTxAnyJson): Promise<string> {
   return sendMessage('pri(ai.explainTransaction)', { txJson });
 }
 
-export async function lockExtension (): Promise<boolean> {
+export async function lockExtension(): Promise<boolean> {
   return sendMessage('pri(extension.lock)');
 }
 
-export async function accountsValidate (address: string, password: string): Promise<boolean> {
+export async function accountsValidate(address: string, password: string): Promise<boolean> {
   return sendMessage('pri(accounts.validate)', { address, password });
 }
 
-export async function accountsChangePassword (address: string, oldPass: string, newPass: string): Promise<boolean> {
+export async function accountsChangePassword(address: string, oldPass: string, newPass: string): Promise<boolean> {
   return sendMessage('pri(accounts.changePassword)', { address, newPass, oldPass });
 }
 
-export async function accountsChangePasswordAll (oldPass: string, newPass: string): Promise<boolean> {
+export async function accountsChangePasswordAll(oldPass: string, newPass: string): Promise<boolean> {
   return sendMessage('pri(accounts.changePasswordAll)', { newPass, oldPass });
 }
 
-export async function getSignature (payload: SignerPayloadJSON): Promise<HexString | null> {
+export async function getSignature(payload: SignerPayloadJSON): Promise<HexString | null> {
   return sendMessage('pri(signing.getSignature)', { payload });
 }
 
-export async function unlockAllAccounts (password: string, cacheTime: number, lazy = false): Promise<boolean> {
+export async function unlockAllAccounts(password: string, cacheTime: number, lazy = false): Promise<boolean> {
   return sendMessage('pri(accounts.unlockAll)', { cacheTime, lazy, password });
 }
 
-export async function areAccountsLocksExpired (): Promise<boolean> {
+export async function areAccountsLocksExpired(): Promise<boolean> {
   return sendMessage('pri(accounts.locksExpired)');
 }
 
-export async function forgetAccountsAll (): Promise<boolean> {
+export async function forgetAccountsAll(): Promise<boolean> {
   return sendMessage('pri(accounts.forgetAll)');
 }
 
-export async function setUnlockExpiry (expiryTime: number): Promise<void> {
+export async function setUnlockExpiry(expiryTime: number): Promise<void> {
   return sendMessage('pri(accounts.setUnlockExpiry)', { expiryTime });
 }
 // -------------------------------------
 
-export async function showAccount (address: string, isShowing: boolean): Promise<boolean> {
+export async function showAccount(address: string, isShowing: boolean): Promise<boolean> {
   return sendMessage('pri(accounts.show)', { address, isShowing });
 }
 
-export async function tieAccount (address: string, genesisHash: HexString | null): Promise<boolean> {
+export async function tieAccount(address: string, genesisHash: HexString | null): Promise<boolean> {
   return sendMessage('pri(accounts.tie)', { address, genesisHash });
 }
 
-export async function exportAccount (address: string, password: string): Promise<{ exportedJson: KeyringPair$Json }> {
+export async function exportAccount(address: string, password: string): Promise<{ exportedJson: KeyringPair$Json }> {
   return sendMessage('pri(accounts.export)', { address, password });
 }
 
-export async function exportAccounts (addresses: string[], password: string): Promise<{ exportedJson: KeyringPairs$Json }> {
+export async function exportAccounts(addresses: string[], password: string): Promise<{ exportedJson: KeyringPairs$Json }> {
   return sendMessage('pri(accounts.batchExport)', { addresses, password });
 }
 
-export async function validateAccount (address: string, password: string): Promise<boolean> {
+export async function validateAccount(address: string, password: string): Promise<boolean> {
   return sendMessage('pri(accounts.validate)', { address, password });
 }
 
-export async function forgetAccount (address: string): Promise<boolean> {
+export async function forgetAccount(address: string): Promise<boolean> {
   return sendMessage('pri(accounts.forget)', { address });
 }
 
-export async function approveAuthRequest (authorizedAccounts: string[], id: string): Promise<boolean> {
+export async function approveAuthRequest(authorizedAccounts: string[], id: string): Promise<boolean> {
   return sendMessage('pri(authorize.approve)', { authorizedAccounts, id });
 }
 
-export async function updateAuthorization (authorizedAccounts: string[], url: string): Promise<void> {
+export async function updateAuthorization(authorizedAccounts: string[], url: string): Promise<void> {
   return sendMessage('pri(authorize.update)', { authorizedAccounts, url });
 }
 
-export async function approveMetaRequest (id: string): Promise<boolean> {
+export async function approveMetaRequest(id: string): Promise<boolean> {
   return sendMessage('pri(metadata.approve)', { id });
 }
 
-export async function cancelSignRequest (id: string): Promise<boolean> {
+export async function cancelSignRequest(id: string): Promise<boolean> {
   return sendMessage('pri(signing.cancel)', { id });
 }
 
-export async function isSignLocked (id: string): Promise<ResponseSigningIsLocked> {
+export async function isSignLocked(id: string): Promise<ResponseSigningIsLocked> {
   return sendMessage('pri(signing.isLocked)', { id });
 }
 
-export async function approveSignPassword (id: string, savePass: boolean, password?: string, remainingTime?: number): Promise<boolean> {
+export async function approveSignPassword(id: string, savePass: boolean, password?: string, remainingTime?: number): Promise<boolean> {
   return sendMessage('pri(signing.approve.password)', { id, password, remainingTime, savePass });
 }
 
-export async function approveSignSignature (id: string, signature: HexString, signedTransaction?: HexString): Promise<boolean> {
+export async function approveSignSignature(id: string, signature: HexString, signedTransaction?: HexString): Promise<boolean> {
   return sendMessage('pri(signing.approve.signature)', { id, signature, signedTransaction });
 }
 
-export async function createAccountExternal (name: string, address: string, genesisHash: HexString | null | undefined): Promise<boolean> {
+export async function createAccountExternal(name: string, address: string, genesisHash: HexString | null | undefined): Promise<boolean> {
   return sendMessage('pri(accounts.create.external)', { address, genesisHash, name });
 }
 
-export async function createAccountHardware (address: string, hardwareType: string, accountIndex: number, addressOffset: number, name: string, genesisHash?: HexString): Promise<boolean> {
+export async function createAccountHardware(address: string, hardwareType: string, accountIndex: number, addressOffset: number, name: string, genesisHash?: HexString): Promise<boolean> {
   return sendMessage('pri(accounts.create.hardware)', { accountIndex, address, addressOffset, genesisHash, hardwareType, name });
 }
 
-export async function createAccountSuri (name: string, password: string, suri: string, type?: KeypairType, genesisHash?: HexString): Promise<boolean> {
+export async function createAccountSuri(name: string, password: string, suri: string, type?: KeypairType, genesisHash?: HexString): Promise<boolean> {
   return sendMessage('pri(accounts.create.suri)', { genesisHash, name, password, suri, type });
 }
 
-export async function createSeed (length?: SeedLengths, seed?: string, type?: KeypairType): Promise<{ address: string; seed: string }> {
+export async function createSeed(length?: SeedLengths, seed?: string, type?: KeypairType): Promise<{ address: string; seed: string }> {
   return sendMessage('pri(seed.create)', { length, seed, type });
 }
 
-export async function getAllMetadata (): Promise<MetadataDef[]> {
+export async function getAllMetadata(): Promise<MetadataDef[]> {
   return sendMessage('pri(metadata.list)');
 }
 
-export async function getMetadata (genesisHash?: string | null, isPartial = false): Promise<Chain | null> {
+export async function getMetadata(genesisHash?: string | null, isPartial = false): Promise<Chain | null> {
   if (!genesisHash) {
     return null;
   }
@@ -228,71 +228,71 @@ export async function getMetadata (genesisHash?: string | null, isPartial = fals
   return null;
 }
 
-export async function rejectMetaRequest (id: string): Promise<boolean> {
+export async function rejectMetaRequest(id: string): Promise<boolean> {
   return sendMessage('pri(metadata.reject)', { id });
 }
 
-export async function subscribeAccounts (cb: (accounts: AccountJson[]) => void): Promise<boolean> {
+export async function subscribeAccounts(cb: (accounts: AccountJson[]) => void): Promise<boolean> {
   return sendMessage('pri(accounts.subscribe)', null, cb);
 }
 
-export async function subscribeAuthorizeRequests (cb: (accounts: AuthorizeRequest[]) => void): Promise<boolean> {
+export async function subscribeAuthorizeRequests(cb: (accounts: AuthorizeRequest[]) => void): Promise<boolean> {
   return sendMessage('pri(authorize.requests)', null, cb);
 }
 
-export async function getAuthList (): Promise<ResponseAuthorizeList> {
+export async function getAuthList(): Promise<ResponseAuthorizeList> {
   return sendMessage('pri(authorize.list)');
 }
 
-export async function removeAuthorization (id: string): Promise<ResponseAuthorizeList> {
+export async function removeAuthorization(id: string): Promise<ResponseAuthorizeList> {
   return sendMessage('pri(authorize.remove)', id);
 }
 
-export async function ignoreAuthRequest (id: string): Promise<void> {
+export async function ignoreAuthRequest(id: string): Promise<void> {
   return sendMessage('pri(authorize.ignore)', id);
 }
 
-export async function subscribeMetadataRequests (cb: (accounts: MetadataRequest[]) => void): Promise<boolean> {
+export async function subscribeMetadataRequests(cb: (accounts: MetadataRequest[]) => void): Promise<boolean> {
   return sendMessage('pri(metadata.requests)', null, cb);
 }
 
 // added for polkagate
-export async function updateMetadata (metadata: MetadataDef): Promise<boolean> {
+export async function updateMetadata(metadata: MetadataDef): Promise<boolean> {
   return sendMessage('pri(metadata.update)', metadata);
 }
 
-export async function subscribeSigningRequests (cb: (accounts: SigningRequest[]) => void): Promise<boolean> {
+export async function subscribeSigningRequests(cb: (accounts: SigningRequest[]) => void): Promise<boolean> {
   return sendMessage('pri(signing.requests)', null, cb);
 }
 
-export async function validateSeed (suri: string, type?: KeypairType): Promise<{ address: string; suri: string }> {
+export async function validateSeed(suri: string, type?: KeypairType): Promise<{ address: string; suri: string }> {
   return sendMessage('pri(seed.validate)', { suri, type });
 }
 
-export async function validateDerivationPath (parentAddress: string, suri: string, parentPassword: string): Promise<ResponseDeriveValidate> {
+export async function validateDerivationPath(parentAddress: string, suri: string, parentPassword: string): Promise<ResponseDeriveValidate> {
   return sendMessage('pri(derivation.validate)', { parentAddress, parentPassword, suri });
 }
 
-export async function deriveAccount (parentAddress: string, suri: string, parentPassword: string, name: string, password: string, genesisHash: HexString | null): Promise<boolean> {
+export async function deriveAccount(parentAddress: string, suri: string, parentPassword: string, name: string, password: string, genesisHash: HexString | null): Promise<boolean> {
   return sendMessage('pri(derivation.create)', { genesisHash, name, parentAddress, parentPassword, password, suri });
 }
 
-export async function windowOpen (path: AllowedPath): Promise<boolean> {
+export async function windowOpen(path: AllowedPath): Promise<boolean> {
   return sendMessage('pri(window.open)', path);
 }
 
-export async function jsonGetAccountInfo (json: KeyringPair$Json): Promise<ResponseJsonGetAccountInfo> {
+export async function jsonGetAccountInfo(json: KeyringPair$Json): Promise<ResponseJsonGetAccountInfo> {
   return sendMessage('pri(json.account.info)', json);
 }
 
-export async function jsonRestore (file: KeyringPair$Json, password: string): Promise<void> {
+export async function jsonRestore(file: KeyringPair$Json, password: string): Promise<void> {
   return sendMessage('pri(json.restore)', { file, password });
 }
 
-export async function batchRestore (file: KeyringPairs$Json, password: string): Promise<void> {
+export async function batchRestore(file: KeyringPairs$Json, password: string): Promise<void> {
   return sendMessage('pri(json.batchRestore)', { file, password });
 }
 
-export async function setNotification (notification: string): Promise<boolean> {
+export async function setNotification(notification: string): Promise<boolean> {
   return sendMessage('pri(settings.notification)', notification);
 }

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TLocationValue } from '@paraspell/sdk-pjs';
@@ -12,7 +12,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 import allChains from './chains';
 import { SHORT_ADDRESS_CHARACTERS, WESTEND_GENESIS_HASH } from './constants';
 
-export function isValidAddress (address: string | undefined): boolean {
+export function isValidAddress(address: string | undefined): boolean {
   try {
     if (!address || address === 'undefined') {
       return false;
@@ -30,14 +30,14 @@ export function isValidAddress (address: string | undefined): boolean {
   }
 }
 
-export function getFormattedAddress (_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
+export function getFormattedAddress(_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
   const publicKey = decodeAddress(_address);
   const prefix = _chain ? _chain.ss58Format : (settingsPrefix === -1 ? 42 : settingsPrefix);
 
   return encodeAddress(publicKey, prefix);
 }
 
-export function getSubstrateAddress (address: AccountId | string | null | undefined): string | undefined {
+export function getSubstrateAddress(address: AccountId | string | null | undefined): string | undefined {
   if (!address) {
     return undefined;
   }
@@ -58,7 +58,7 @@ export function getSubstrateAddress (address: AccountId | string | null | undefi
   return substrateAddress;
 }
 
-export function toShortAddress (address?: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
+export function toShortAddress(address?: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
   if (!address) {
     return '';
   }

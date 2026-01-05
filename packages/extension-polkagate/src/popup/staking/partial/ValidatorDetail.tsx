@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -129,7 +129,7 @@ const ValidatorIdentityDetail = ({ genesisHash, validatorDetail }: ValidatorIden
   );
 };
 
-export default function ValidatorDetail ({ genesisHash, handleClose, validatorDetail }: ValidatorDetailProps): React.ReactElement {
+export default function ValidatorDetail({ genesisHash, handleClose, validatorDetail }: ValidatorDetailProps): React.ReactElement {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
 

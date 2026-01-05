@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -27,7 +27,7 @@ type Action =
   | { type: 'UPDATE_DELAY'; payload: { endpoint: string; delay: number } }
   | { type: 'RESET' };
 
-function reducer (state: State, action: Action): State {
+function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'SET_ENABLED':
       return { ...state, mayBeEnabled: !state.mayBeEnabled };
@@ -62,7 +62,7 @@ function reducer (state: State, action: Action): State {
 
 const endpointManager = new EndpointManager();
 
-export default function useEndpointsSetting (genesisHash: string | undefined, isEnabled: boolean, onEnableChain?: (value: string, checked: boolean) => void, onClose?: () => void) {
+export default function useEndpointsSetting(genesisHash: string | undefined, isEnabled: boolean, onEnableChain?: (value: string, checked: boolean) => void, onClose?: () => void) {
   const isExtension = useIsExtensionPopup();
   const { endpoint, isAuto } = useEndpoint(genesisHash);
   const endpointOptions = useEndpoints(genesisHash);

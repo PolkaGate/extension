@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import languageCache from './cache';
@@ -14,7 +14,7 @@ export default class Backend {
 
   static type = 'backend' as const;
 
-  async read (lng: string, _namespace: string, responder: Callback): Promise<void> {
+  async read(lng: string, _namespace: string, responder: Callback): Promise<void> {
     if (languageCache[lng]) {
       return responder(null, languageCache[lng]);
     }
@@ -29,7 +29,7 @@ export default class Backend {
     return responder(error, data);
   }
 
-  async createLoader (lng: string): Promise<LoadResult> {
+  async createLoader(lng: string): Promise<LoadResult> {
     try {
       const response = await fetch(`locales/${lng}/translation.json`, {});
 

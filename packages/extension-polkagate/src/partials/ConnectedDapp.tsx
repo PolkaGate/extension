@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AuthUrlInfo } from '@polkadot/extension-base/background/types';
@@ -26,7 +26,7 @@ interface ConnectedDappContentsProps {
   authorizeRequestHandler?: AuthorizeRequestHandlerProp;
 }
 
-function ConnectedDappContents ({ authorizeRequestHandler, setOpenMenu }: ConnectedDappContentsProps): React.ReactElement {
+function ConnectedDappContents({ authorizeRequestHandler, setOpenMenu }: ConnectedDappContentsProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [checking, setChecking] = useState<boolean>(false);
@@ -125,7 +125,7 @@ function ConnectedDappContents ({ authorizeRequestHandler, setOpenMenu }: Connec
   );
 }
 
-export default function ConnectedDapp ({ authorizeRequestHandler }: { authorizeRequestHandler?: AuthorizeRequestHandlerProp }): React.ReactElement {
+export default function ConnectedDapp({ authorizeRequestHandler }: { authorizeRequestHandler?: AuthorizeRequestHandlerProp }): React.ReactElement {
   const { t } = useTranslation();
 
   const [checking, setChecking] = useState<boolean>(false);

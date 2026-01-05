@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
@@ -24,7 +24,7 @@ export interface Props {
   onCancel?: () => void;
 }
 
-function Qr ({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props): React.ReactElement<Props> {
+function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [isScanning, setIsScanning] = useState(false);
 
@@ -102,7 +102,7 @@ function Qr ({ address, cmd, genesisHash, onCancel, onSignature, payload }: Prop
           onClick={onClick}
           style={{ height: '44px', width: '100%' }}
           text={t('Back')}
-          />
+        />
         : onCancel
           ? <DecisionButtons
             direction='vertical'
@@ -110,11 +110,11 @@ function Qr ({ address, cmd, genesisHash, onCancel, onSignature, payload }: Prop
             onSecondaryClick={onCancel}
             primaryBtnText={t('Next')}
             secondaryBtnText={t('Cancel')}
-            />
+          />
           : <GradientButton
             onClick={onClick}
             text={t('Next')}
-            />
+          />
       }
     </Container>
   );

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Stack } from '@mui/material';
@@ -13,7 +13,7 @@ import HideNumbers from './HideNumbers';
 import InternetConnection from './InternetConnection';
 import Notifications from './Notifications';
 
-function MyDivider (): React.ReactElement {
+function MyDivider(): React.ReactElement {
   return (
     <Box
       sx={{
@@ -32,7 +32,7 @@ interface Props {
   setShowProxySelection?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function TopRightActions ({ genesisHash, selectedProxyAddress, setShowProxySelection }: Props): React.ReactElement {
+function TopRightActions({ genesisHash, selectedProxyAddress, setShowProxySelection }: Props): React.ReactElement {
   const isOnline = useIsOnline();
 
   return (
@@ -46,7 +46,7 @@ function TopRightActions ({ genesisHash, selectedProxyAddress, setShowProxySelec
               selectedProxyAddress
             }}
             style={{ height: '32px', width: '140px' }}
-            textMaxWidth = '50px'
+            textMaxWidth='50px'
           />)
         : <AccountChainSelect />
       }

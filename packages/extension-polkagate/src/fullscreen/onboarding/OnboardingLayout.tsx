@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, Link } from '@mui/material';
@@ -27,7 +27,7 @@ interface Props {
 
 const INNER_WIDTH = 1416;
 
-function SocialRow ({ showLeftColumn }: Props): React.ReactElement {
+function SocialRow({ showLeftColumn }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -44,7 +44,7 @@ function SocialRow ({ showLeftColumn }: Props): React.ReactElement {
   );
 }
 
-function OnboardingLayout ({ children, childrenStyle = {}, showBread = true, showLeftColumn = true, style }: Props): React.ReactElement {
+function OnboardingLayout({ children, childrenStyle = {}, showBread = true, showLeftColumn = true, style }: Props): React.ReactElement {
   useFullscreen();
 
   return (

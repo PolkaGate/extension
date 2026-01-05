@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '../../../util/types';
@@ -9,7 +9,7 @@ import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { log } from './utils';
 
 // Saves transaction history to Chrome's local storage for a specific address and chain
-export async function saveHistoryToStorage (address: string, genesisHash: string, transactions: TransactionDetail[]): Promise<void> {
+export async function saveHistoryToStorage(address: string, genesisHash: string, transactions: TransactionDetail[]): Promise<void> {
   if (!address || !genesisHash || !transactions?.length) {
     log('Missing required parameters for saving history');
 

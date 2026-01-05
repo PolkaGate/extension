@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -24,7 +24,7 @@ interface ActionBoxProps {
   onClick?: () => void;
 }
 
-function ActionBox ({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
+function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
   const navigate = useNavigate();
 
   const _onClick = useCallback(() => {
@@ -49,7 +49,7 @@ interface Props {
   assetId: string | undefined;
 }
 
-function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactElement {
+function ActionButtons({ address, assetId, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash);
   const { maxPosition, maxPositionType } = useStakingPositions(address, true);

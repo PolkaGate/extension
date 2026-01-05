@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, keyframes } from '@mui/material';
@@ -15,7 +15,7 @@ const shineKeyframes = keyframes`
   100% { left: 125%; }
 `;
 
-function ShineEffect ({ active = true, duration = 1200, interval = 6000 }: ShineEffectProps) {
+function ShineEffect({ active = true, duration = 1200, interval = 6000 }: ShineEffectProps) {
   const [shine, setShine] = useState(false);
 
   useEffect(() => {

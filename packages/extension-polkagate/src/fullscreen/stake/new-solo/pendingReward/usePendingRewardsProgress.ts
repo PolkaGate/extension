@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
 
-export default function usePendingRewardsProgress () {
+export default function usePendingRewardsProgress() {
   const [progress, setProgress] = useState<number>(0);
 
   useEffect(() => {

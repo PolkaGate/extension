@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Stack, Typography, useTheme } from '@mui/material';
@@ -18,7 +18,7 @@ import OnboardingLayout from './OnboardingLayout';
 
 export const ICON_BOX_WIDTH = '300px';
 
-function OrSeparator (): React.ReactElement {
+function OrSeparator(): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -32,7 +32,7 @@ function OrSeparator (): React.ReactElement {
   );
 }
 
-function Onboarding (): React.ReactElement {
+function Onboarding(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();

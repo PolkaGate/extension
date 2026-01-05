@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { EraInfo } from '@polkadot/extension-polkagate/src/hooks/useSoloStakingInfo';
@@ -18,7 +18,7 @@ interface Props {
   genesisHash: string | undefined;
 }
 
-export default function ValidatorDetails ({ address, eraInfo, genesisHash }: Props): React.ReactElement {
+export default function ValidatorDetails({ address, eraInfo, genesisHash }: Props): React.ReactElement {
   const details = useValidatorDetails(address, genesisHash);
 
   return (

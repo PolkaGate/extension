@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -74,7 +74,7 @@ enum MODAL_TO_OPEN {
   NONE
 }
 
-function ChainSwitcher ({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
+function ChainSwitcher({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
   const isDark = useIsDark();
   const selectedAccount = useSelectedAccount();
   const { genesisHash: maybeGenesisFromPath } = useParams<{ genesisHash: string }>();
@@ -102,7 +102,7 @@ function ChainSwitcher ({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () =>
   );
 }
 
-function AccountSelect ({ modalToOpen, noSelection = false, onClick }: { modalToOpen: MODAL_TO_OPEN, noSelection: boolean, onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
+function AccountSelect({ modalToOpen, noSelection = false, onClick }: { modalToOpen: MODAL_TO_OPEN, noSelection: boolean, onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const { accounts } = useContext(AccountContext);
@@ -157,7 +157,7 @@ function AccountSelect ({ modalToOpen, noSelection = false, onClick }: { modalTo
   );
 }
 
-export default function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement {
+export default function AccountChainSelect({ noSelection = false }: Props): React.ReactElement {
   const isDark = useIsDark();
 
   const [modalToOpen, setModalToOpen] = React.useState<MODAL_TO_OPEN>(MODAL_TO_OPEN.NONE);

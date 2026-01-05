@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChevronLeft, Close } from '@mui/icons-material';
@@ -21,7 +21,7 @@ interface LeftColumnProps {
   children: React.ReactElement;
 }
 
-function LeftColumn ({ LeftItem, RightItem, TitleLogo, children, dividerStyle, noCloseButton, noDivider, onClose, showBackIconAsClose, style = {}, title }: LeftColumnProps) {
+function LeftColumn({ LeftItem, RightItem, TitleLogo, children, dividerStyle, noCloseButton, noDivider, onClose, showBackIconAsClose, style = {}, title }: LeftColumnProps) {
   const CLoseIcon = showBackIconAsClose ? ChevronLeft : Close;
 
   const BoxStyle: SxProps<Theme> = useMemo(() => ({
@@ -103,7 +103,7 @@ interface Props {
   noDivider?: boolean;
 }
 
-function DetailPanel ({ LeftItem,
+function DetailPanel({ LeftItem,
   RightItem,
   TitleLogo,
   dividerStyle,

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -12,19 +12,19 @@ import { toTitleCase } from '@polkadot/extension-polkagate/src/util/string';
 
 import { useTranslation } from '../../../components/translate';
 
-export interface ItemProps{
+export interface ItemProps {
   Icon: Icon
   label: string;
   isSelected: boolean;
 }
 
-function Item ({ Icon, isSelected, label }: ItemProps): React.ReactElement {
+function Item({ Icon, isSelected, label }: ItemProps): React.ReactElement {
   const { notify } = useAlerts();
   const { t } = useTranslation();
   // const colorMode = useContext(ColorContext);
 
   const onClick = useCallback(() => {
-  //  colorMode.toggleColorMode();
+    //  colorMode.toggleColorMode();
     notify(t('Coming Soon!'), 'info');
   }, [notify, t]);
 
@@ -68,7 +68,7 @@ function Item ({ Icon, isSelected, label }: ItemProps): React.ReactElement {
   );
 }
 
-export default function Appearance (): React.ReactElement {
+export default function Appearance(): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
 
@@ -81,12 +81,12 @@ export default function Appearance (): React.ReactElement {
         <Item
           Icon={Moon}
           isSelected={isDark}
-          label= {t('Dark Mode')}
+          label={t('Dark Mode')}
         />
         <Item
           Icon={Sun1}
           isSelected={!isDark}
-          label= {t('Light Mode')}
+          label={t('Light Mode')}
         />
       </Stack>
     </Stack>

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MyIconTheme } from '@polkadot/extension-polkagate/src/util/types';
@@ -12,14 +12,14 @@ import { getAndWatchStorage, setStorage } from '@polkadot/extension-polkagate/sr
 
 import { useTranslation } from '../../../components/translate';
 
-export interface ItemProps{
+export interface ItemProps {
   address?: string;
   iconTheme: MyIconTheme
   label: string;
   selectedTheme: MyIconTheme | undefined
 }
 
-function Item ({ address, iconTheme, label, selectedTheme }: ItemProps): React.ReactElement {
+function Item({ address, iconTheme, label, selectedTheme }: ItemProps): React.ReactElement {
   const onClick = useCallback(() => {
     setStorage(STORAGE_KEY.ICON_THEME, iconTheme).catch(console.error);
   }, [iconTheme]);
@@ -71,7 +71,7 @@ function Item ({ address, iconTheme, label, selectedTheme }: ItemProps): React.R
   );
 }
 
-export default function AccountIcon (): React.ReactElement {
+export default function AccountIcon(): React.ReactElement {
   const { t } = useTranslation();
   const [selectedTheme, setSelectedTheme] = useState<MyIconTheme>();
 
@@ -90,25 +90,25 @@ export default function AccountIcon (): React.ReactElement {
         <Item
           address={DEMO_ACCOUNT}
           iconTheme='polkasoul'
-          label= {t('Polka Soul')}
+          label={t('Polka Soul')}
           selectedTheme={selectedTheme}
         />
         <Item
           address={DEMO_ACCOUNT}
           iconTheme='polkadot'
-          label= {t('Dots')}
+          label={t('Dots')}
           selectedTheme={selectedTheme}
         />
         <Item
           address={DEMO_ACCOUNT}
           iconTheme='beachball'
-          label= {t('Ball')}
+          label={t('Ball')}
           selectedTheme={selectedTheme}
         />
         <Item
           address={DEMO_ACCOUNT}
           iconTheme='ethereum'
-          label= {t('Cube')}
+          label={t('Cube')}
           selectedTheme={selectedTheme}
         />
       </Stack>

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable no-template-curly-in-string */
@@ -17,7 +17,7 @@ import chains from '@polkadot/extension-polkagate/src/util/chains';
 
 import { NOTIFICATION_TIMESTAMP_OFFSET } from './constant';
 
-export function timestampToDate (timestamp: number | string): string {
+export function timestampToDate(timestamp: number | string): string {
   // Ensure timestamp is a number and convert if it's a string
   const timestampNum = Number(timestamp);
 
@@ -138,7 +138,7 @@ export const markMessagesAsRead = (messages: NotificationMessageInformation[]) =
 };
 
 // Utility to get date string like "15 Dec 2025"
-function getDayKey (timestamp: number): string {
+function getDayKey(timestamp: number): string {
   const date = new Date(timestamp * 1000); // convert seconds → ms
 
   return date.toLocaleDateString('en-GB', {
@@ -151,7 +151,7 @@ function getDayKey (timestamp: number): string {
 /**
  * Groups notifications by day and sorts both the groups and their items by timestamp.
  */
-export function groupNotificationsByDay (
+export function groupNotificationsByDay(
   notifications: NotificationMessageInformation[] | undefined
 ): Record<string, NotificationMessageInformation[]> | undefined {
   if (!notifications) {
@@ -203,7 +203,7 @@ export function groupNotificationsByDay (
 /**
  * Check if a given date string (formatted as "17 Dec 2024") represents today's date.
  */
-export function isToday (dateString: string): boolean {
+export function isToday(dateString: string): boolean {
   const today = new Date();
   const todayString = today.toLocaleDateString('en-GB', {
     day: '2-digit',
@@ -217,7 +217,7 @@ export function isToday (dateString: string): boolean {
 /**
  * Converts a timestamp (in seconds) to a formatted local time string like "10:01 am".
  */
-export function getTimeOfDay (timestamp: number): string {
+export function getTimeOfDay(timestamp: number): string {
   // Convert timestamp from seconds → milliseconds
   const date = new Date(timestamp * 1000);
 
@@ -242,7 +242,7 @@ export function getTimeOfDay (timestamp: number): string {
  * @param decimal - blockchain-style decimals (divide by 10^decimal)
  * @returns numeric result (rounded)
  */
-export function formatNumber (
+export function formatNumber(
   value: number | string | undefined,
   decimalPoint = 2,
   decimal = 0
@@ -285,7 +285,7 @@ export function formatNumber (
   return Math.min(rounded, Number.MAX_SAFE_INTEGER);
 }
 
-export function getNotificationItemTitle (t: TFunction, type: NotificationType, referenda?: ReferendaProp) {
+export function getNotificationItemTitle(t: TFunction, type: NotificationType, referenda?: ReferendaProp) {
   switch (type) {
     case 'receivedFund':
       return t('Fund Received');
@@ -324,7 +324,7 @@ export function getNotificationItemTitle (t: TFunction, type: NotificationType, 
   }
 }
 
-export function getNotificationDescription (item: NotificationMessageType, t: TFunction, chainInfo: ChainInfoShort, price: Price, currency: CurrencyItemType | undefined) {
+export function getNotificationDescription(item: NotificationMessageType, t: TFunction, chainInfo: ChainInfoShort, price: Price, currency: CurrencyItemType | undefined) {
   const { chainName, decimal, token } = chainInfo;
   const currencySign = currency?.sign;
 
@@ -379,7 +379,7 @@ export function getNotificationDescription (item: NotificationMessageType, t: TF
   }
 }
 
-export function getNotificationIcon (type: NotificationType, referendaStatus: ReferendaStatus | undefined) {
+export function getNotificationIcon(type: NotificationType, referendaStatus: ReferendaStatus | undefined) {
   switch (type) {
     case 'receivedFund':
       return { bgcolor: '#06D7F64D', borderColor: '#06D7F680', color: '#06D7F6', itemIcon: 'ArrowDown3' };
@@ -419,7 +419,7 @@ const assetsChains = createAssets();
  * @param assetChainName : chain name to fetch asset id price from
  * @returns price : price of the token which the address is already switched to
  */
-export function getTokenPriceBySymbol (tokenSymbol: string | undefined, chainName: string | undefined, genesisHash: string | undefined, pricesInCurrencies: Prices | null | undefined, endpoints: Record<`0x${string}`, UserAddedEndpoint> | undefined): Price {
+export function getTokenPriceBySymbol(tokenSymbol: string | undefined, chainName: string | undefined, genesisHash: string | undefined, pricesInCurrencies: Prices | null | undefined, endpoints: Record<`0x${string}`, UserAddedEndpoint> | undefined): Price {
   const userAddedPriceId = getUserAddedPriceId(genesisHash, endpoints);
   const maybeAssetsOnMultiAssetChains = assetsChains[toCamelCase(chainName || '')];
 

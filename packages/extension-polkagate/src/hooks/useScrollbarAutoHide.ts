@@ -1,9 +1,9 @@
-// Copyright 2017-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2017-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useMemo } from 'react';
 
-export default function useScrollbarAutoHide () {
+export default function useScrollbarAutoHide() {
   const opts = useMemo(() => ({
     autoHideAfter: 700,
     bgColor: 'transparent',

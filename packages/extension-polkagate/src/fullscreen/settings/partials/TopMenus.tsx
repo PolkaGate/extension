@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
@@ -10,7 +10,7 @@ import { GradientDivider } from '@polkadot/extension-polkagate/src/style/index';
 import { useTranslation } from '../../../hooks';
 import TopMenuItem from './TopMenuItem';
 
-function TopMenus (): React.ReactElement {
+function TopMenus(): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
 

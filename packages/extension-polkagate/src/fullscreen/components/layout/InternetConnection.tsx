@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Divider, Grid } from '@mui/material';
@@ -9,7 +9,7 @@ import Connection from '@polkadot/extension-polkagate/src/components/SVG/Connect
 
 import { useIsDark, useTranslation } from '../../../hooks';
 
-function InternetConnection (): React.ReactElement {
+function InternetConnection(): React.ReactElement {
   const isDark = useIsDark();
   const { t } = useTranslation();
 
