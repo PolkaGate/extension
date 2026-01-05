@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
@@ -31,7 +31,7 @@ export enum PASSWORD_STATUS {
 
 const MINIMUM_ALLOWED_PASSWORD_LENGTH = 1;
 
-function MatchPasswordField ({ focused = false, hashPassword = false, onSetPassword, setConfirmedPassword, spacing = '18px', statusSetter, style, title1, title2 }: Props): React.ReactElement {
+function MatchPasswordField({ focused = false, hashPassword = false, onSetPassword, setConfirmedPassword, spacing = '18px', statusSetter, style, title1, title2 }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [password, setPassword] = useState<string>();

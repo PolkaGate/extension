@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { BN_ZERO } from '@polkadot/util';
@@ -15,7 +15,7 @@ import { getStakingBalances } from './getStakingBalances';
  * @param {MessagePort } port
  * @returns
  */
-export async function getBalances (chainName, addresses, userAddedEndpoints, port) {
+export async function getBalances(chainName, addresses, userAddedEndpoints, port) {
   const chainEndpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(chainEndpoints);
 
@@ -50,9 +50,11 @@ export async function getBalances (chainName, addresses, userAddedEndpoints, por
       };
     });
 
-    return { api,
+    return {
+      api,
       balanceInfo: await Promise.all(requests),
-      connectionsToBeClosed: connections };
+      connectionsToBeClosed: connections
+    };
   }
 
   return undefined;

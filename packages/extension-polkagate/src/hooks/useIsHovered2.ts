@@ -1,11 +1,11 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
 
 import { useEffect, useRef, useState } from 'react';
 
-export default function useIsHovered<T extends HTMLElement = HTMLDivElement> (): {
+export default function useIsHovered<T extends HTMLElement = HTMLDivElement>(): {
   isHovered: boolean;
   ref: React.RefObject<T | null>;
 } {

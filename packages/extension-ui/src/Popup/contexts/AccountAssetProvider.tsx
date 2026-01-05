@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SavedAssets } from '@polkadot/extension-polkagate/hooks/useAssetsBalances';
@@ -13,7 +13,7 @@ import useAssetsBalances from '@polkadot/extension-polkagate/src/hooks/useAssets
 import useNFT from '@polkadot/extension-polkagate/src/hooks/useNFT';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-export default function AccountAssetProvider ({ children }: { children: React.ReactNode }) {
+export default function AccountAssetProvider({ children }: { children: React.ReactNode }) {
   const { accounts } = useContext(AccountContext);
   const genesisHashOptions = useContext(GenesisHashOptionsContext);
   const userAddedChainCtx = useContext(UserAddedChainContext);
@@ -22,7 +22,7 @@ export default function AccountAssetProvider ({ children }: { children: React.Re
   useNotifications(false); // fetches and saves notification in the local storage
 
   const [accountsAssets, setAccountsAssets] = useState<SavedAssets | null | undefined>();
- const { isExtensionLocked } = useExtensionLockContext();
+  const { isExtensionLocked } = useExtensionLockContext();
   const assetsOnChains = useAssetsBalances(accounts, genesisHashOptions, userAddedChainCtx, worker, isExtensionLocked);
 
   useNFT(accounts);

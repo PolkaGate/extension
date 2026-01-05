@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
@@ -18,7 +18,7 @@ interface Props {
   openMenu: boolean;
 }
 
-function Content ({ handleClose }: { handleClose: () => void }): React.ReactElement {
+function Content({ handleClose }: { handleClose: () => void }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -85,7 +85,7 @@ function Content ({ handleClose }: { handleClose: () => void }): React.ReactElem
   );
 }
 
-function PrivacyPolicy ({ onClose, openMenu }: Props): React.ReactElement {
+function PrivacyPolicy({ onClose, openMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (

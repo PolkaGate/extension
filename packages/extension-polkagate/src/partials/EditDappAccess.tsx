@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AuthUrlInfo } from '@polkadot/extension-base/background/types';
@@ -18,7 +18,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function EditDappAccess ({ access, setAccessToEdit, setRefresh }: Props): React.ReactElement {
+export default function EditDappAccess({ access, setAccessToEdit, setRefresh }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { origin, url } = access;

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -30,7 +30,7 @@ interface UseTransactionFlowProps {
   showStakingHome?: boolean;
 }
 
-export default function useTransactionFlow ({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, pool, proxyTypeFilter, restakeReward, review, reviewHeader, setRestakeReward, showAccountBox, showStakingHome = true, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
+export default function useTransactionFlow({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, pool, proxyTypeFilter, restakeReward, review, reviewHeader, setRestakeReward, showAccountBox, showStakingHome = true, stepCounter, transactionInformation, tx }: UseTransactionFlowProps) {
   if (!review || !tx) {
     return null;
   }

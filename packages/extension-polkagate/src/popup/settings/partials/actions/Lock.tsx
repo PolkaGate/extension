@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
@@ -10,7 +10,7 @@ import { useExtensionLockContext } from '../../../../context/ExtensionLockContex
 import { useAutoLockPeriod, useIsDark, useTranslation } from '../../../../hooks';
 import { lockExtension } from '../../../../messaging';
 
-export default function Lock ({ isExtension, style }: { isExtension: boolean, style: SxProps<Theme> }): React.ReactElement {
+export default function Lock({ isExtension, style }: { isExtension: boolean, style: SxProps<Theme> }): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const navigate = useNavigate();

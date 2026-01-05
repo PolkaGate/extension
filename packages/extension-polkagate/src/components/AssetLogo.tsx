@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useContext } from 'react';
@@ -21,7 +21,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function AssetLogo ({ assetSize = '25px', baseTokenSize, chainName, genesisHash, logo, logoRoundness, style, subLogo, subLogoPosition, token }: Props): React.ReactElement<Props> {
+function AssetLogo({ assetSize = '25px', baseTokenSize, chainName, genesisHash, logo, logoRoundness, style, subLogo, subLogoPosition, token }: Props): React.ReactElement<Props> {
   const options = useContext(GenesisHashOptionsContext);
 
   const foundChainName = options.find((chain) => chain.value === genesisHash)?.text;

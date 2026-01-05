@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
@@ -19,7 +19,7 @@ interface Props {
   variant?: string;
 }
 
-function Progress ({ direction = 'column', size = 15, style = {}, title, type = 'beatLoader', variant = 'B-3', withEllipsis = false }: Props): React.ReactElement<Props> {
+function Progress({ direction = 'column', size = 15, style = {}, title, type = 'beatLoader', variant = 'B-3', withEllipsis = false }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
 

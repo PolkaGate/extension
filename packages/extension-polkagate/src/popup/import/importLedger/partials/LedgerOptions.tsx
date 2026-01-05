@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography } from '@mui/material';
@@ -15,7 +15,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function LedgerOptions ({ setMode }: Props): React.ReactElement {
+export default function LedgerOptions({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [hoveredMode, setHoveredMode] = useState<number>();

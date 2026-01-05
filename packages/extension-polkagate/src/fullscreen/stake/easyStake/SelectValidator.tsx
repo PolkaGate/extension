@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
@@ -19,7 +19,7 @@ export interface SelectValidatorProps {
   selectedStakingType: SelectedEasyStakingType | undefined;
 }
 
-function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: SelectValidatorProps) {
+function SelectValidator({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: SelectValidatorProps) {
   const { t } = useTranslation();
   const refContainer = useRef(null);
 

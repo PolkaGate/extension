@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -34,7 +34,7 @@ interface Props extends Partial<DraggableModalProps>, RestakeRewardTogglerProps 
   proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-export default function ClaimRewardsPopup ({ _onClose, address, amount, children, flowStep, genesisHash, onClose, proxyTypeFilter, restake, setFlowStep, setRestake, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
+export default function ClaimRewardsPopup({ _onClose, address, amount, children, flowStep, genesisHash, onClose, proxyTypeFilter, restake, setFlowStep, setRestake, setValue, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
   const { t } = useTranslation();
   const refresh = useRouteRefresh();
 

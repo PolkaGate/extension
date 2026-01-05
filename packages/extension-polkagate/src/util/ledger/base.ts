@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
@@ -18,7 +18,7 @@ export abstract class BaseLedger<T extends LedgerApp> extends Ledger {
   readonly transport: LedgerTypes;
   readonly slip44: number;
 
-  constructor (transport: LedgerTypes, slip44: number, txMetadataChainId?: string) {
+  constructor(transport: LedgerTypes, slip44: number, txMetadataChainId?: string) {
     super();
 
     // u2f is deprecated
@@ -53,7 +53,7 @@ export abstract class BaseLedger<T extends LedgerApp> extends Ledger {
     }
   };
 
-  disconnect (): Promise<void> {
+  disconnect(): Promise<void> {
     return this.withApp(async (app) => {
       await app.transport.close();
     });

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/non-nullable-type-assertion-style */
@@ -18,7 +18,7 @@ interface Props extends Partial<StakingTypeSelectionProps> {
   suggestedValidators: string[] | undefined;
 }
 
-export default function StakingTypeSelection ({ genesisHash, initialPool, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: Props) {
+export default function StakingTypeSelection({ genesisHash, initialPool, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: Props) {
   const { t } = useTranslation();
 
   const selectedPosition = useMemo(() => ({

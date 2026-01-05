@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '../../../util/types';
@@ -23,22 +23,22 @@ interface Props {
   token: FetchedBalance | undefined;
 }
 
-function TokenInfo ({ address, genesisHash, token }: Props): React.ReactElement {
+function TokenInfo({ address, genesisHash, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-    const { UnlockTrackElement,
-      closeMenu,
-      displayPopup,
-      hasAmount,
-      lockedBalance,
-      lockedTooltip,
-      onTransferable,
-      reservedBalance,
-      state,
-      tokenPrice,
-      transferable,
-      unlockTracks } = useTokenInfoDetails(address, genesisHash, token);
+  const { UnlockTrackElement,
+    closeMenu,
+    displayPopup,
+    hasAmount,
+    lockedBalance,
+    lockedTooltip,
+    onTransferable,
+    reservedBalance,
+    state,
+    tokenPrice,
+    transferable,
+    unlockTracks } = useTokenInfoDetails(address, genesisHash, token);
 
   const onStaking = useCallback((type: string) => () => {
     navigate(`/fullscreen-stake/${type}/${address}/${genesisHash}`) as void;

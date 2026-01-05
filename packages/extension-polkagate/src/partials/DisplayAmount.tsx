@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
@@ -18,7 +18,7 @@ interface AmountProps {
   token: string | undefined;
 }
 
-function DisplayAmount ({ amount, assetDecimal, differentValueColor, genesisHash, isExtension, showValue = true, token }: AmountProps) {
+function DisplayAmount({ amount, assetDecimal, differentValueColor, genesisHash, isExtension, showValue = true, token }: AmountProps) {
   const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
   const { currency } = useContext(CurrencyContext);

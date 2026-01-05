@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -35,7 +35,7 @@ const FUNCTIONS = Object.values(FETCHING_ASSETS_FUNCTION_NAMES);
  * @param addresses a list of users accounts' addresses
  * @returns a list of assets balances on different selected chains and a fetching timestamp
  */
-export default function useAssetsBalances (accounts: AccountJson[] | null, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort, isExtensionLocked?: boolean): SavedAssets | undefined | null {
+export default function useAssetsBalances(accounts: AccountJson[] | null, genesisOptions: DropdownOption[], userAddedEndpoints: UserAddedChains, worker?: MessagePort, isExtensionLocked?: boolean): SavedAssets | undefined | null {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 

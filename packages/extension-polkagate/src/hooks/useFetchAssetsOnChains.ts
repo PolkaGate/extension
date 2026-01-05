@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DropdownOption, UserAddedChains } from '../util/types';
@@ -24,7 +24,7 @@ const SUCCESSFUL = 1;
  * Hook to encapsulate logic for dispatching asset-fetching requests
  * to a worker, based on chain type.
  */
-export default function useFetchAssetsOnChains ({ addresses, genesisOptions, userAddedEndpoints, worker }: Params) {
+export default function useFetchAssetsOnChains({ addresses, genesisOptions, userAddedEndpoints, worker }: Params) {
   const assetsChains = useMemo(() => createAssets(), []);
 
   const postToWorker = useCallback((functionName: string, parameters: Record<string, unknown>): number => {

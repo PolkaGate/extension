@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useMemo, useState } from 'react';
@@ -12,7 +12,7 @@ import { useIsTestnetEnabled } from '.';
  * @description get the selected chains
  * @returns a list of selected chains genesis hashes
  */
-export default function useSelectedChains (): string[] | undefined {
+export default function useSelectedChains(): string[] | undefined {
   const isTestnetEnabled = useIsTestnetEnabled();
 
   const [selected, setSelected] = useState<string[] | undefined>();

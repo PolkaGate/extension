@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
@@ -17,7 +17,7 @@ interface Props {
   textColor?: string;
 }
 
-function Version ({ isBlueish, shortLabel = true, showLabel = true, style = {}, textColor, variant = 'B-1' }: Props): React.ReactElement {
+function Version({ isBlueish, shortLabel = true, showLabel = true, style = {}, textColor, variant = 'B-1' }: Props): React.ReactElement {
   const version = useManifest()?.version;
   const { t } = useTranslation();
 

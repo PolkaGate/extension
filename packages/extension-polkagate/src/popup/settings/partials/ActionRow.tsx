@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
@@ -9,7 +9,7 @@ import Lock from './actions/Lock';
 import Reload from './actions/Reload';
 import ThemeChange from './actions/ThemeChange';
 
-export default function ActionRow (): React.ReactElement {
+export default function ActionRow(): React.ReactElement {
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
 
@@ -27,7 +27,7 @@ export default function ActionRow (): React.ReactElement {
   };
 
   return (
-    <Grid columnGap={isExtension ? 0 : '7px' } container item justifyContent={isExtension ? 'space-between' : 'end'} >
+    <Grid columnGap={isExtension ? 0 : '7px'} container item justifyContent={isExtension ? 'space-between' : 'end'} >
       <Lock isExtension={isExtension} style={style} />
       {
         isExtension &&

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -13,7 +13,7 @@ import { toCamelCase } from '.';
 
 const endpoints = createWsEndpoints();
 
-export default function getLogo (info: string | undefined | Chain, token?: string): string | undefined {
+export default function getLogo(info: string | undefined | Chain, token?: string): string | undefined {
   let chainNameFromGenesisHash;
 
   if (token) {

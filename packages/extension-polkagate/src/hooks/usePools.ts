@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
@@ -40,7 +40,7 @@ export interface UsePools {
   totalNumberOfPools: number | undefined;
 }
 
-export default function usePools (genesisHash: string | undefined): UsePools {
+export default function usePools(genesisHash: string | undefined): UsePools {
   const { api } = useChainInfo(genesisHash);
 
   const [totalNumberOfPools, setTotalNumberOfPools] = useState<number | undefined>();

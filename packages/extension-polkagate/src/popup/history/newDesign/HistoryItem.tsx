@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '../../../util/types';
@@ -37,7 +37,7 @@ const TimeOfTheDay = ({ date }: { date: number }) => {
   );
 };
 
-const ActionSubAction = memo(function SubAction ({ historyItem }: { historyItem: TransactionDetail; }) {
+const ActionSubAction = memo(function SubAction({ historyItem }: { historyItem: TransactionDetail; }) {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -81,7 +81,7 @@ const ActionSubAction = memo(function SubAction ({ historyItem }: { historyItem:
   }, [historyItem.action, historyItem.date, historyItem.from.address, historyItem.from.name, historyItem.subAction, historyItem.to, t, theme.typography]);
 });
 
-const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem, short }: { historyItem: TransactionDetail, short: boolean }) {
+const HistoryStatusAmount = memo(function HistoryStatusAmount({ historyItem, short }: { historyItem: TransactionDetail, short: boolean }) {
   const { t } = useTranslation();
   const theme = useTheme();
   const price = useTokenPriceBySymbol(historyItem.token ?? '', historyItem.chain?.genesisHash ?? '');
@@ -138,7 +138,7 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount ({ historyItem, sh
   );
 });
 
-function HistoryItem ({ historyDate, historyItems, short }: HistoryItemProps) {
+function HistoryItem({ historyDate, historyItems, short }: HistoryItemProps) {
   const theme = useTheme();
 
   const [historyItemDetail, setHistoryItemDetail] = useState<TransactionDetail>();

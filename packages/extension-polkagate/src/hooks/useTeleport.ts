@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { LinkOption } from '@polkagate/apps-config/endpoints/types';
@@ -32,7 +32,7 @@ const DEFAULT_STATE: Teleport = {
 
 const endpoints = createWsEndpoints((k, v) => v?.toString() || k).filter((v): v is ExtLinkOption => !!v.teleport);
 
-function extractRelayDestinations (relayGenesis: string, filter: (l: ExtLinkOption) => boolean): ExtLinkOption[] {
+function extractRelayDestinations(relayGenesis: string, filter: (l: ExtLinkOption) => boolean): ExtLinkOption[] {
   return endpoints
     .filter((l) =>
       (
@@ -61,7 +61,7 @@ function extractRelayDestinations (relayGenesis: string, filter: (l: ExtLinkOpti
     );
 }
 
-export default function useTeleport (genesisHash: string | undefined): Teleport {
+export default function useTeleport(genesisHash: string | undefined): Teleport {
   const { api, chain } = useChainInfo(genesisHash);
   const { endpoint: endpointUrl } = useEndpoint(genesisHash);
   const [state, setState] = useState<Teleport>(() => ({ ...DEFAULT_STATE }));

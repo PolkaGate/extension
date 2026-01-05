@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Divider, type SxProps, type Theme } from '@mui/material';
@@ -28,7 +28,7 @@ interface GradientDividerProps {
  * @param {GradientDividerProps} props - The props for the component.
  * @returns {React.ReactElement} The rendered gradient divider.
  */
-export default function GradientDivider ({ isBlueish, orientation = 'horizontal', style }: GradientDividerProps): React.ReactElement {
+export default function GradientDivider({ isBlueish, orientation = 'horizontal', style }: GradientDividerProps): React.ReactElement {
   const isDark = useIsDark();
 
   const DividerStyle = {

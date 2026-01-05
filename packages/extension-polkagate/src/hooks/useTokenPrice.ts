@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Price } from '../util/types';
@@ -7,7 +7,7 @@ import { createAssets } from '@polkagate/apps-config/assets';
 import { useMemo } from 'react';
 
 import { useUserAddedPriceId } from '../fullscreen/addNewChain/utils';
-import { getPriceIdByChainName, isOnAssetHub, toCamelCase} from '../util';
+import { getPriceIdByChainName, isOnAssetHub, toCamelCase } from '../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
 import useChainInfo from './useChainInfo';
 import usePrices from './usePrices';
@@ -29,7 +29,7 @@ const assetsChains = createAssets();
  * @param assetChainName : chain name to fetch asset id price from
  * @returns price : price of the token which the address is already switched to
  */
-export default function useTokenPrice (genesisHash: string | undefined, assetId?: number | string, assetChainName?: string): Price | typeof DEFAULT_PRICE {
+export default function useTokenPrice(genesisHash: string | undefined, assetId?: number | string, assetChainName?: string): Price | typeof DEFAULT_PRICE {
   const { chainName: addressChainName, decimal, token } = useChainInfo(genesisHash, true);
   const userAddedPriceId = useUserAddedPriceId(genesisHash);
   const pricesInCurrencies = usePrices();

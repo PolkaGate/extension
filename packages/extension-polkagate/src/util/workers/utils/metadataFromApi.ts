@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -12,7 +12,7 @@ import { base64Encode } from '@polkadot/util-crypto';
 
 const endpoints = createWsEndpoints();
 
-export function metadataFromApi (api: ApiPromise): { metadata: MetadataDef } {
+export function metadataFromApi(api: ApiPromise): { metadata: MetadataDef } {
   const DEFAULT_DECIMALS = api.registry.createType('u32', 12);
   const DEFAULT_SS58 = api.registry.createType('u32', 42);
   const chainName = api.runtimeChain.toHuman();

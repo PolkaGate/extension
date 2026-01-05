@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { KeyboardDoubleArrowLeft as KeyboardDoubleArrowLeftIcon, KeyboardDoubleArrowRight as KeyboardDoubleArrowRightIcon } from '@mui/icons-material';
@@ -14,7 +14,7 @@ interface Props {
   onPreviousClick: () => void;
 }
 
-export default function TransactionIndex ({ index, onNextClick, onPreviousClick, totalItems }: Props): React.ReactElement<Props> {
+export default function TransactionIndex({ index, onNextClick, onPreviousClick, totalItems }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const previousClickActive = index !== 0;
   const nextClickActive = index < totalItems - 1;

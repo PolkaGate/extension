@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/consistent-indexed-object-style */
@@ -579,7 +579,7 @@ export interface ClaimedRewardInfo {
   timeStamp: number;
 }
 
-export type ProxyTypes = 'Any' | 'Assets' | 'AssetOwner'| 'AssetManager' | 'CancelProxy' | 'Collator' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'Society' | 'NominationPools';
+export type ProxyTypes = 'Any' | 'Assets' | 'AssetOwner' | 'AssetManager' | 'CancelProxy' | 'Collator' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'Society' | 'NominationPools';
 
 export interface Proxy {
   delay: number;

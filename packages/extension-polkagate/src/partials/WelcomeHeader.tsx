@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -13,7 +13,7 @@ import { useExtensionPopups } from '../util/handleExtensionPopup';
 import PrivacyPolicy from './PrivacyPolicy';
 import SelectLanguage from './SelectLanguage';
 
-function WelcomeHeader ({ isBlueish }: { isBlueish: boolean }): React.ReactElement {
+function WelcomeHeader({ isBlueish }: { isBlueish: boolean }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const privacyPolicyRef = useRef<HTMLDivElement>(null);

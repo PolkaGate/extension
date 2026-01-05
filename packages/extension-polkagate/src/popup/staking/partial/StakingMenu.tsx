@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -35,7 +35,7 @@ interface MenuItemProps {
   setLeftPosition: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
+function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
   const theme = useTheme();
   const refContainer = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(refContainer);
@@ -98,7 +98,7 @@ interface Props {
   pool?: PoolInfo | null;
 }
 
-function StakingMenu ({ genesisHash, pool, type }: Props): React.ReactElement {
+function StakingMenu({ genesisHash, pool, type }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

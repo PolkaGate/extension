@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
@@ -16,7 +16,7 @@ import SelectPool from './SelectPool';
 import SelectValidator from './SelectValidator';
 import StakingTypeSelection from './StakingTypeSelection';
 
-export default function EasyStake () {
+export default function EasyStake() {
   useBackground('staking');
 
   const { t } = useTranslation();

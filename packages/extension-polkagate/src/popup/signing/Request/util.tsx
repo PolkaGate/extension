@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AiTxAnyJson } from '@polkadot/extension-base/utils/AiUtils/aiTypes';
@@ -6,7 +6,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 
 import { hexToU8a, isHex } from '@polkadot/util';
 
-export function decodeCallIndex (chain: Chain | null | undefined, val: string) {
+export function decodeCallIndex(chain: Chain | null | undefined, val: string) {
   try {
     if (!chain || !isHex(val)) {
       return val;
@@ -37,7 +37,7 @@ interface CallObject {
  * @param chain - The blockchain chain context
  * @returns Decoded call name, nested structure, or null if invalid
  */
-export function processCall (
+export function processCall(
   obj: AiTxAnyJson,
   chain: Chain | null | undefined
 ): ProcessCallResult {
@@ -69,14 +69,14 @@ export function processCall (
 /**
  * Validates if the object has a callIndex property
  */
-function isValidCallObject (obj: AiTxAnyJson): obj is CallObject {
+function isValidCallObject(obj: AiTxAnyJson): obj is CallObject {
   return obj?.['callIndex'] !== undefined && typeof obj['callIndex'] === 'string';
 }
 
 /**
  * Processes a single nested call in args.call (proxy pattern)
  */
-function processSingleNestedCall (
+function processSingleNestedCall(
   callObj: CallObject,
   chain: Chain | null | undefined
 ): ProcessCallResult {
@@ -92,7 +92,7 @@ function processSingleNestedCall (
 /**
  * Processes multiple nested calls in args.calls (batch pattern)
  */
-function processBatchNestedCalls (
+function processBatchNestedCalls(
   callObj: CallObject,
   chain: Chain | null | undefined
 ): (string | Record<string, unknown>)[] | null {
@@ -112,7 +112,7 @@ function processBatchNestedCalls (
 /**
  * Processes an individual nested call, handling both simple and complex structures
  */
-function processNestedCall (
+function processNestedCall(
   call: AiTxAnyJson,
   chain: Chain | null | undefined
 ): ProcessCallResult {

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Stack, Typography, useTheme } from '@mui/material';
@@ -12,7 +12,7 @@ interface Props {
   textPartInColor?: string | undefined;
 }
 
-export default function NumberedTitle ({ number, textPartInColor, title }: Props): React.ReactElement {
+export default function NumberedTitle({ number, textPartInColor, title }: Props): React.ReactElement {
   const theme = useTheme();
 
   return (

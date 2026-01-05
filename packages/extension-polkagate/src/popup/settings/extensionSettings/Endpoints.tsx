@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid, Stack, Typography } from '@mui/material';
@@ -29,7 +29,7 @@ const BackButton = ({ genesisHash }: { genesisHash: string | undefined; }) => {
   );
 };
 
-function Endpoints (): React.ReactElement {
+function Endpoints(): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { genesisHash } = useParams<{ genesisHash: string }>();

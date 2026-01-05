@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -33,11 +33,11 @@ export interface ValidatorDetailsType {
   total: string;
 }
 
-function percentileFromIndex (index: number, total: number) {
+function percentileFromIndex(index: number, total: number) {
   return index >= 0 && total ? ((index + 1) / total) * 100 : 0;
 }
 
-function getCommission (validatorPrefsEntries: [StorageKey<AnyTuple>, PalletStakingValidatorPrefs][], formattedId: AccountId): { commission: number; commissionHint: string; } {
+function getCommission(validatorPrefsEntries: [StorageKey<AnyTuple>, PalletStakingValidatorPrefs][], formattedId: AccountId): { commission: number; commissionHint: string; } {
   const normalizedCommissions = validatorPrefsEntries
     .map(([storageKey, prefs]) => ({
       accountId: storageKey.args[0],
@@ -70,7 +70,7 @@ function getCommission (validatorPrefsEntries: [StorageKey<AnyTuple>, PalletStak
   return { commission: displayCommission, commissionHint };
 }
 
-function getRewardsPoints (rewardPoints: PalletStakingEraRewardPoints, formattedId: AccountId): { rewardPoint: BN; rewardPointHint: string; } {
+function getRewardsPoints(rewardPoints: PalletStakingEraRewardPoints, formattedId: AccountId): { rewardPoint: BN; rewardPointHint: string; } {
   const entries = Array.from(rewardPoints.individual.entries()) as [AccountId, u32][];
 
   const normalizedRewardPoints = entries
@@ -104,7 +104,7 @@ function getRewardsPoints (rewardPoints: PalletStakingEraRewardPoints, formatted
   return { rewardPoint, rewardPointHint };
 }
 
-async function getNominators (activeEraIndex: number, address: string, api: ApiPromise, overview: { nominatorCount: number; pageCount: number; own: string; total: string; }): Promise<SpStakingIndividualExposure[]> {
+async function getNominators(activeEraIndex: number, address: string, api: ApiPromise, overview: { nominatorCount: number; pageCount: number; own: string; total: string; }): Promise<SpStakingIndividualExposure[]> {
   const pageCount = overview?.pageCount;
   const maybePages = pageCount
     ? await Promise.all(
@@ -127,7 +127,7 @@ async function getNominators (activeEraIndex: number, address: string, api: ApiP
   }, []);
 }
 
-async function fetchValidatorContext (activeEraIndex: number, address: string, api: ApiPromise, rcApi: ApiPromise) {
+async function fetchValidatorContext(activeEraIndex: number, address: string, api: ApiPromise, rcApi: ApiPromise) {
   return await Promise.all([
     rcApi.query['session']['validators']() as unknown as Vec<AccountId>,
     rcApi.query['session']['disabledValidators']() as unknown as Vec<ITuple<[u32, Perbill]>>,
@@ -138,7 +138,7 @@ async function fetchValidatorContext (activeEraIndex: number, address: string, a
   ]);
 }
 
-export default function useValidatorDetails (address: string | undefined, genesisHash: string | undefined): ValidatorDetailsType | undefined {
+export default function useValidatorDetails(address: string | undefined, genesisHash: string | undefined): ValidatorDetailsType | undefined {
   const { api, decimal, token } = useChainInfo(genesisHash);
   const rcGenesis = mapHubToRelay(genesisHash);
   const { api: rcApi } = useChainInfo(rcGenesis);

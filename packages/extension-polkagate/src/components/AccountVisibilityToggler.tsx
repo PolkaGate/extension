@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
@@ -14,7 +14,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function AccountVisibilityToggler ({ size = '24', style = {} }: Props): React.ReactElement {
+function AccountVisibilityToggler({ size = '24', style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const account = useSelectedAccount();

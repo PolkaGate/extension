@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -7,7 +7,7 @@ import { BN, BN_ONE, BN_ZERO } from '@polkadot/util';
 
 import getPoolAccounts from '../../getPoolAccounts';
 
-export async function getPooledBalance (api, address) {
+export async function getPooledBalance(api, address) {
   const response = await api.query.nominationPools.poolMembers(address);
   const member = response?.unwrapOr(undefined);
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Pagination, PaginationItem, type PaginationRenderItemParams } from '@mui/material';
@@ -11,7 +11,7 @@ interface Props {
   count: number;
 }
 
-function MyPagination ({ count, page, setPage }: Props): React.ReactElement {
+function MyPagination({ count, page, setPage }: Props): React.ReactElement {
   const onChange = useCallback((_: unknown, value: number) => setPage(value), [setPage]);
 
   const renderFunction = useCallback((item: PaginationRenderItemParams) => (

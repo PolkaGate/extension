@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-ignore
@@ -6,7 +6,7 @@ import type { PalletConvictionVotingVoteVoting } from '@polkadot/types/lookup';
 
 export const capitalizeFirstLetter = (str: string): string => str.replace(/^\w/, (c) => c.toUpperCase());
 
-export function toSnakeCase (input: string | undefined): string | undefined {
+export function toSnakeCase(input: string | undefined): string | undefined {
   if (!input) {
     return undefined;
   }
@@ -19,7 +19,7 @@ export function toSnakeCase (input: string | undefined): string | undefined {
   return output;
 }
 
-export function convertToCamelCase (input: string): string {
+export function convertToCamelCase(input: string): string {
   const parts = input.split(';');
   const camelCased = parts.map((part, index) =>
     index === 0 ? part : part.replace(/(?:^|-)(.)/g, (_, c) => c.toUpperCase())
@@ -28,7 +28,7 @@ export function convertToCamelCase (input: string): string {
   return camelCased.join('');
 }
 
-export function toCamelCase (str: string): string {
+export function toCamelCase(str: string): string {
   if (!str) {
     return '';
   }
@@ -38,7 +38,7 @@ export function toCamelCase (str: string): string {
   })?.replace(/\s+/g, '');
 }
 
-export function toPascalCase (input: string): string | undefined {
+export function toPascalCase(input: string): string | undefined {
   if (!input) {
     return undefined;
   }
@@ -55,7 +55,7 @@ export function toPascalCase (input: string): string | undefined {
   return words.join('');
 }
 
-export function toTitleCase (input: string | undefined): string | undefined {
+export function toTitleCase(input: string | undefined): string | undefined {
   if (!input) {
     return undefined;
   }
@@ -73,7 +73,7 @@ export function toTitleCase (input: string | undefined): string | undefined {
   return words.join(' ');
 }
 
-export function pascalCaseToTitleCase (str?: string): string | undefined {
+export function pascalCaseToTitleCase(str?: string): string | undefined {
   if (!str) {
     return undefined;
   }
@@ -92,7 +92,7 @@ export function pascalCaseToTitleCase (str?: string): string | undefined {
   return result;
 }
 
-export function convertToHyphenated (str: string) {
+export function convertToHyphenated(str: string) {
   return str
     .trim()
     .toLowerCase()
@@ -103,6 +103,6 @@ export function convertToHyphenated (str: string) {
 /**
  * Checks if the given string is a valid hex-encoded genesis hash.
  */
-export function isValidGenesis (hash: string): boolean {
+export function isValidGenesis(hash: string): boolean {
   return hash.startsWith('0x') && hash.length === 66;
 }

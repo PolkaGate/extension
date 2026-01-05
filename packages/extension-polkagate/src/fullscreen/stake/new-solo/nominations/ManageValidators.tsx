@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
@@ -21,7 +21,7 @@ import SystemSuggestion from './SystemSuggestionButton';
 import { DEFAULT_VALIDATORS_PER_PAGE, getFilterValidators, getSortAndFilterValidators, isIncluded, onSort, VALIDATORS_PAGINATION_OPTIONS, VALIDATORS_SORTED_BY } from './util';
 import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
 
-function ManageValidators () {
+function ManageValidators() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();

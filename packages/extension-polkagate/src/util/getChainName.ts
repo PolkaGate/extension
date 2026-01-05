@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DropdownOption } from './types';
@@ -12,7 +12,7 @@ import { toCamelCase } from '.';
  * @param _genesisHash
  * @returns sanitized chain name
  */
-export default function getChainName (_genesisHash: string | undefined, genesisOptions?: DropdownOption[]): string | undefined {
+export default function getChainName(_genesisHash: string | undefined, genesisOptions?: DropdownOption[]): string | undefined {
   if (!_genesisHash) {
     console.info('genesisHash should not be undefined');
 

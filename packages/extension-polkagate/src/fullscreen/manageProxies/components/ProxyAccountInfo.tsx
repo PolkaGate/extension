@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ProxyItem } from '../../../util/types';
@@ -22,7 +22,7 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-function Info ({ label, value }: { label: string; value: string; }): React.ReactElement {
+function Info({ label, value }: { label: string; value: string; }): React.ReactElement {
   return (
     <Stack columnGap='5px' direction='row' sx={{ bgcolor: '#C6AECC26', borderRadius: '9px', lineHeight: '24px', px: '5px' }}>
       <Typography color='#AA83DC' variant='B-1'>
@@ -35,14 +35,14 @@ function Info ({ label, value }: { label: string; value: string; }): React.React
   );
 }
 
-export default function ProxyAccountInfo ({ handleDelete, proxyItem, showCheck = true, style = {} }: Props): React.ReactElement {
+export default function ProxyAccountInfo({ handleDelete, proxyItem, showCheck = true, style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
   const genesisHash = useAccountSelectedChain(proxyItem.proxy.delegate);
 
   const [selected, setSelected] = useState(proxyItem.status === 'remove');
 
   useEffect(() => {
-      setSelected(proxyItem.status === 'remove');
+    setSelected(proxyItem.status === 'remove');
   }, [proxyItem.status]);
 
   const handleCheck = useCallback((checked: boolean) => {

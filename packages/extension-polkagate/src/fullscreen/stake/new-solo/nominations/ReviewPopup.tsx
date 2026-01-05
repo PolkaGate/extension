@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Content } from '@polkadot/extension-polkagate/partials/Review';
@@ -21,7 +21,7 @@ interface Props {
   stakingConsts: StakingConsts | null | undefined;
 }
 
-export default function ReviewPopup ({ address, genesisHash, newSelectedValidators, onClose, stakingConsts }: Props): React.ReactElement {
+export default function ReviewPopup({ address, genesisHash, newSelectedValidators, onClose, stakingConsts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api } = useChainInfo(genesisHash);
   const navigate = useNavigate();

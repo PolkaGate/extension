@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -27,7 +27,7 @@ interface Props {
   setIsError?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
-export default function AddressInput ({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setIsError, style, withSelect }: Props): React.ReactElement<Props> {
+export default function AddressInput({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setIsError, style, withSelect }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const isBlueish = useIsBlueish();
@@ -81,9 +81,9 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
       setInvalidAddress(false);
     } else {
       navigator.clipboard.readText().then((clipText) => {
-       const isValid = isValidAddress(clipText);
+        const isValid = isValidAddress(clipText);
 
-       isValid ? setAddress?.(clipText) : setAddress?.(undefined);
+        isValid ? setAddress?.(clipText) : setAddress?.(undefined);
         setEnteredAddress(clipText);
         setInvalidAddress(!isValid);
       }).catch(console.error);
@@ -133,7 +133,7 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
                     size='18'
                     style={{ cursor: 'pointer', margin: '0 2px 0' }}
                     variant='Bulk'
-                    />
+                  />
                 }
               </InputAdornment>
             ),

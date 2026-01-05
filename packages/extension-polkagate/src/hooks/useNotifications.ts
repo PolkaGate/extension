@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { NotificationActionType, NotificationMessageType, NotificationsType } from '../popup/notification/types';
@@ -81,7 +81,7 @@ const FUNCTION = (state: FetchState, updates: Partial<FetchState>) => ({ ...stat
  * @remarks
  * This hook uses several internal flags and refs to avoid duplicate network calls and redundant state updates.
  */
-export default function useNotifications (justLoadData = true) {
+export default function useNotifications(justLoadData = true) {
   const { notificationSetting } = useNotificationSettings(justLoadData);
   const { accounts, enable: isNotificationEnable, governance: governanceChains, receivedFunds: isReceivedFundsEnable, stakingRewards: stakingRewardChains } = notificationSetting;
 

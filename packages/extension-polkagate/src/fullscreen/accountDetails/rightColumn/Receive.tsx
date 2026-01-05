@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
@@ -47,7 +47,7 @@ interface SelectChainProp {
   setSelectedChain: React.Dispatch<React.SetStateAction<DropdownOption | undefined>>;
 }
 
-function SelectChain ({ setSelectedChain }: SelectChainProp) {
+function SelectChain({ setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
   const allChains = useGenesisHashOptions(false);
 
@@ -107,7 +107,7 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
   );
 }
 
-function AddressComponent ({ address, chainName, onCopy }: AddressComponentProp) {
+function AddressComponent({ address, chainName, onCopy }: AddressComponentProp) {
   const { isHovered, ref } = useIsHovered();
 
   return (
@@ -125,7 +125,7 @@ function AddressComponent ({ address, chainName, onCopy }: AddressComponentProp)
   );
 }
 
-function Receive ({ address, closePopup, onClose, setAddress }: Props): React.ReactElement {
+function Receive({ address, closePopup, onClose, setAddress }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 

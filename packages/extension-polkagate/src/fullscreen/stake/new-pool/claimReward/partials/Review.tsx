@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -33,7 +33,7 @@ export const RewardHeaderAmount = ({ amount, genesisHash, style = {}, title, tok
         amount={amount}
         differentValueColor={isExtension ? theme.palette.text.highlight : '#AA83DC'}
         genesisHash={genesisHash}
-        isExtension ={isExtension}
+        isExtension={isExtension}
         token={token}
       />
     </Stack>
@@ -44,7 +44,7 @@ interface Props extends ReviewProps, RestakeRewardTogglerProps {
   amount: string | undefined;
 }
 
-export default function Review ({ amount, closeReview, genesisHash, proxyTypeFilter, restake, selectedProxy, setFlowStep, setRestake, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
+export default function Review({ amount, closeReview, genesisHash, proxyTypeFilter, restake, selectedProxy, setFlowStep, setRestake, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
 

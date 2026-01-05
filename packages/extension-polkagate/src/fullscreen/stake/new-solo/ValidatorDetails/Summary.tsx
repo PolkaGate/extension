@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { EraInfo } from '@polkadot/extension-polkagate/src/hooks/useSoloStakingInfo';
@@ -20,7 +20,7 @@ interface Props {
   genesisHash: string | undefined;
 }
 
-function Item ({ decimal, hint, skeletonWidth = 60, title, token, value }:
+function Item({ decimal, hint, skeletonWidth = 60, title, token, value }:
   { decimal?: number, hint?: string, skeletonWidth?: number, title: string, token?: string, value: string | null | number | undefined }): React.ReactElement {
   const theme = useTheme();
 
@@ -36,7 +36,7 @@ function Item ({ decimal, hint, skeletonWidth = 60, title, token, value }:
             decimal={decimal}
             skeletonStyle={{ borderRadius: '10px', margin: '0', width: '88px' }}
             token={token}
-            />
+          />
           : value != null
             ? value
             : <MySkeleton bgcolor='#AA83DC26' height={19} width={skeletonWidth} />
@@ -50,7 +50,7 @@ function Item ({ decimal, hint, skeletonWidth = 60, title, token, value }:
   );
 }
 
-export default function Summary ({ details, eraInfo, genesisHash }: Props): React.ReactElement {
+export default function Summary({ details, eraInfo, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

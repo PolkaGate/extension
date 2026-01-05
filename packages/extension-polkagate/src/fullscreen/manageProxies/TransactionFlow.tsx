@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -32,7 +32,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
+function TransactionFlow({ address, api, chain, depositedValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const genesisHash = chain?.genesisHash;
 
@@ -202,9 +202,9 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
       showBackIconAsClose
       style={{
         backgroundColor: '#1B133C',
-         minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${555 + extraHeight}px`,
-         padding: confirmationStep ? '20px 5px' : '20px 15px 10px'
-        }}
+        minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${555 + extraHeight}px`,
+        padding: confirmationStep ? '20px 5px' : '20px 15px 10px'
+      }}
       title={
         [STEPS.REVIEW, STEPS.SIGN_QR].includes(step)
           ? t('Review')

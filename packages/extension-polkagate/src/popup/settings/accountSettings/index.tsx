@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography } from '@mui/material';
@@ -20,7 +20,7 @@ import { ExtensionPopups, STORAGE_KEY } from '../../../util/constants';
 
 type State = { pathname: string } | undefined;
 
-function AccountSettings (): React.ReactElement {
+function AccountSettings(): React.ReactElement {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import CheckIcon from '@mui/icons-material/Check';
@@ -34,7 +34,7 @@ interface TabProps {
   setSortBy: React.Dispatch<React.SetStateAction<string>>;
 }
 
-function Tab ({ label, setSortBy, sortBy }: TabProps): React.ReactElement {
+function Tab({ label, setSortBy, sortBy }: TabProps): React.ReactElement {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
   const refContainer = useRef(null);
@@ -52,7 +52,7 @@ function Tab ({ label, setSortBy, sortBy }: TabProps): React.ReactElement {
 
   return (
     <Container disableGutters onClick={onClick} ref={refContainer} sx={{ alignItems: 'center', bgcolor: hovered ? '#222540A6' : 'transparent', borderRadius: '10px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px', width: '100%' }}>
-      <Typography color={isSelected ? color : hovered ? hoveredTextColor : textColor } variant='B-2'>
+      <Typography color={isSelected ? color : hovered ? hoveredTextColor : textColor} variant='B-2'>
         {t(label)}
       </Typography>
       <CheckIcon sx={{ background: isBlueish ? color : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '999px', color: '#fff', fontSize: '16px', fontWeight: 900, height: '18px', transition: 'all 100ms ease-out', visibility: isSelected ? 'visible' : 'hidden', width: '18px' }} />
@@ -68,7 +68,7 @@ interface DropContentProps {
   sortOptions: string[];
 }
 
-function DropContent ({ containerRef, open, setSortBy, sortBy, sortOptions }: DropContentProps) {
+function DropContent({ containerRef, open, setSortBy, sortBy, sortOptions }: DropContentProps) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
   const isExtension = useIsExtensionPopup();
@@ -119,7 +119,7 @@ interface Props {
   SortIcon?: React.ReactNode;
 }
 
-export default function SortBy ({ SortIcon, setSortBy, sortBy, sortOptions, style }: Props) {
+export default function SortBy({ SortIcon, setSortBy, sortBy, sortOptions, style }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);

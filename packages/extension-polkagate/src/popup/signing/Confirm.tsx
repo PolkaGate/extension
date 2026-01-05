@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SigningRequest } from '@polkadot/extension-base/background/types';
@@ -20,7 +20,7 @@ import LedgerSign from './ledger/LedgerSign';
 import LedgerSignGeneric from './ledger/LedgerSignGeneric';
 import SignWithPassword from './Request/SignWithPassword';
 
-function FeeRow ({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: string }) {
+function FeeRow({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: string }) {
   const { t } = useTranslation();
   const { decimal } = useChainInfo(genesisHash);
   const { price } = useTokenPrice(genesisHash);
@@ -58,7 +58,7 @@ interface Props {
   signWithPasswordStyle?: React.CSSProperties;
 }
 
-export default function Confirm ({ extrinsicPayload, fee, onCancel, onSignature, request, signWithPasswordStyle }: Props): React.ReactElement {
+export default function Confirm({ extrinsicPayload, fee, onCancel, onSignature, request, signWithPasswordStyle }: Props): React.ReactElement {
   const navigate = useNavigate();
   const { isExternal, isHardware } = request.account;
 

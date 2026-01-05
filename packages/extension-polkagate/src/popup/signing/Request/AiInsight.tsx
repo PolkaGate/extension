@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Decoded } from '../types';
@@ -21,7 +21,7 @@ interface Props {
 
 const CALLS_TO_PROCESS = ['utility.batch', 'utility.batchAll', 'utility.forceBatch', 'proxy.proxy'];
 
-function AiInsight ({ decoded, genesisHash, url }: Props): React.ReactElement<Props> {
+function AiInsight({ decoded, genesisHash, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const generatingRef = useRef(false);

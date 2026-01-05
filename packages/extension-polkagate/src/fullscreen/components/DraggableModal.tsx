@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChevronLeft, Close } from '@mui/icons-material';
@@ -28,7 +28,7 @@ export interface DraggableModalProps {
   closeOnAnyWhereClick?: boolean;
 }
 
-export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, children, closeOnAnyWhereClick = false, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noCloseButton, noDivider, onClose, open, rightItemStyle, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
+export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, children, closeOnAnyWhereClick = false, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noCloseButton, noDivider, onClose, open, rightItemStyle, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);

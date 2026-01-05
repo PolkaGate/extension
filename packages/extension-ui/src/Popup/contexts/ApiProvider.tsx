@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { APIs, DropdownOption, EndpointType } from '@polkadot/extension-polkagate/src/util/types';
@@ -62,7 +62,7 @@ const endpointManager = new EndpointManager();
  * - The component intentionally deduplicates concurrent requests for the same genesis hash/endpoint to avoid multiple
  *   identical connections.
  */
-export default function ApiProvider ({ children }: { children: React.ReactNode }) {
+export default function ApiProvider({ children }: { children: React.ReactNode }) {
   const [apis, setApis] = useState<APIs>({});
 
   const requestedQueue = useRef<Record<string, string[]>>({});

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -37,7 +37,7 @@ export interface LogoInfo {
  * }
  * ```
  */
-export default function getLogo2 (info: string | undefined | null, token?: string): LogoInfo | undefined {
+export default function getLogo2(info: string | undefined | null, token?: string): LogoInfo | undefined {
   if (!info) {
     return;
   }

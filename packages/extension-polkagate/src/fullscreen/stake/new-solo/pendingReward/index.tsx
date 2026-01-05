@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, LinearProgress, Stack, Typography, useTheme } from '@mui/material';
@@ -19,7 +19,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function PendingRewards ({ address, genesisHash, onClose }: Props) {
+export default function PendingRewards({ address, genesisHash, onClose }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const { api, decimal, token } = useChainInfo(genesisHash);

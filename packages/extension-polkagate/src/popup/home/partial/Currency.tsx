@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
@@ -10,7 +10,7 @@ import { CurrencyContext } from '@polkadot/extension-polkagate/src/components';
 import { useIsDark } from '../../../hooks';
 import SelectCurrency from './SelectCurrency';
 
-function Currency () {
+function Currency() {
   const { currency } = useContext(CurrencyContext);
   const isDark = useIsDark();
 

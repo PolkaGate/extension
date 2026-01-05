@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolInfo } from '../../../util/types';
@@ -49,7 +49,7 @@ const PoolDetailHandler = ({ comprehensive, genesisHash, poolDetail, togglePoolD
   }, [comprehensive, genesisHash, isExtension, poolDetail, togglePoolDetail]);
 };
 
-export const PoolStashIdentity = memo(function MemoPoolStashIdentity ({ poolInfo, style }: { poolInfo: PoolInfo; style?: SxProps<Theme> }) {
+export const PoolStashIdentity = memo(function MemoPoolStashIdentity({ poolInfo, style }: { poolInfo: PoolInfo; style?: SxProps<Theme> }) {
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', ...style }}>
       <PoolIdenticon
@@ -150,7 +150,7 @@ interface PoolsTableProp {
   comprehensive?: boolean; // if it is true all the information will be shown in the table
 }
 
-export default function PoolsTable ({ comprehensive, genesisHash, poolsInformation, selectable, selected, setSelectedPool }: PoolsTableProp): React.ReactElement {
+export default function PoolsTable({ comprehensive, genesisHash, poolsInformation, selectable, selected, setSelectedPool }: PoolsTableProp): React.ReactElement {
   const [poolDetail, setPoolDetail] = React.useState<PoolInfo | undefined>(undefined);
 
   const togglePoolDetail = useCallback((validatorInfo: PoolInfo | undefined) => () => {

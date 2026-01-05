@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-ignore
@@ -74,7 +74,7 @@ interface AccountsTableProps {
   tableMaxHeight?: string;
 }
 
-export default function AccountsTable ({ accounts, genesisHash, style, tableMaxHeight, totalStaked }: AccountsTableProps) {
+export default function AccountsTable({ accounts, genesisHash, style, tableMaxHeight, totalStaked }: AccountsTableProps) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const refContainer = useRef(null);

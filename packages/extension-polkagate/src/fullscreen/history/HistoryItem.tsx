@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '../../util/types';
@@ -47,7 +47,7 @@ const TimeOfTX = ({ date, style = {} }: { date: number, style: React.CSSProperti
   );
 };
 
-const HistoryStatus = memo(function HistoryStatus ({ historyItem }: { historyItem: TransactionDetail }) {
+const HistoryStatus = memo(function HistoryStatus({ historyItem }: { historyItem: TransactionDetail }) {
   const { t } = useTranslation();
   const success = historyItem.success;
 
@@ -65,7 +65,7 @@ const HistoryStatus = memo(function HistoryStatus ({ historyItem }: { historyIte
   );
 });
 
-function HistoryItem ({ historyItem }: HistoryItemProps) {
+function HistoryItem({ historyItem }: HistoryItemProps) {
   const theme = useTheme();
 
   const [historyItemDetail, setHistoryItemDetail] = useState<TransactionDetail>();

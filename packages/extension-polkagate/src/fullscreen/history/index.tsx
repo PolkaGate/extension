@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FilterOptions } from '@polkadot/extension-polkagate/src/popup/history/hookUtils/types';
@@ -33,7 +33,7 @@ const options = [
   { text: '50', value: 50 }
 ];
 
-function HistoryFs (): React.ReactElement {
+function HistoryFs(): React.ReactElement {
   const { t } = useTranslation();
 
   const selectedAccount = useSelectedAccount();
@@ -80,7 +80,7 @@ function HistoryFs (): React.ReactElement {
 
     const result = flattenedHistories.map((item) => {
       if (item.token === token) {
-       return { ...item, decimal: item.decimal ?? decimal };
+        return { ...item, decimal: item.decimal ?? decimal };
       }
 
       return undefined;

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
@@ -18,7 +18,7 @@ export interface ActiveRecoveryFor {
   vouchedFriends: string[];
 }
 
-export default function useActiveRecoveries (api: ApiPromise | undefined | null, searchFor?: string): ActiveRecoveryFor[] | null | undefined {
+export default function useActiveRecoveries(api: ApiPromise | undefined | null, searchFor?: string): ActiveRecoveryFor[] | null | undefined {
   const { accounts } = useContext(AccountContext);
 
   const [activeRecoveries, setActiveRecoveries] = useState<ActiveRecoveryFor[] | null>();

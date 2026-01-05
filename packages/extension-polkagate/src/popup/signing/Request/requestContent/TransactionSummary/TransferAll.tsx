@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
@@ -16,7 +16,7 @@ interface Props {
   to: string;
 }
 
-function TransferAll ({ genesisHash, to }: Props): React.ReactElement<Props> {
+function TransferAll({ genesisHash, to }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(to || '');
 
@@ -24,9 +24,9 @@ function TransferAll ({ genesisHash, to }: Props): React.ReactElement<Props> {
     <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start'>
       <ChainLogo genesisHash={genesisHash} size={36} />
       <Stack alignItems='flex-start' direction='column'>
-       <Typography color='#EAEBF1' sx={{ textWrapMode: 'noWrap' }} variant='B-2'>
-            {t('Entire balance')}
-          </Typography>
+        <Typography color='#EAEBF1' sx={{ textWrapMode: 'noWrap' }} variant='B-2'>
+          {t('Entire balance')}
+        </Typography>
         <Stack alignItems='center' columnGap='5px' direction='row'>
           <Typography color='#BEAAD8' sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {t('Transfer to')}

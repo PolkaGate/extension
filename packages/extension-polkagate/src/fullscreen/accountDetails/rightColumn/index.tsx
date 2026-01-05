@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { lazy, memo, Suspense, useEffect, useMemo, useState } from 'react';
@@ -15,7 +15,7 @@ import TokenSummary from './TokenSummary';
 
 const LazyTokenHistory = lazy(() => import('../../../popup/tokens/partial/TokenHistory'));
 
-function RightColumn (): React.ReactElement {
+function RightColumn(): React.ReactElement {
   const { address, genesisHash, paramAssetId } = useParams<{ address: string; genesisHash: string; paramAssetId: string }>();
   const accountAssets = useAccountAssets(address);
 
@@ -29,7 +29,7 @@ function RightColumn (): React.ReactElement {
 
   const token = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === paramAssetId)
-  , [accountAssets, genesisHash, paramAssetId]);
+    , [accountAssets, genesisHash, paramAssetId]);
 
   useEffect(() => {
     address && genesisHash && updateStorage(STORAGE_KEY.ACCOUNT_SELECTED_CHAIN, { [address]: genesisHash }).catch(console.error);

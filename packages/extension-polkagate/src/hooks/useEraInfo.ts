@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Option, u32 } from '@polkadot/types';
@@ -14,7 +14,7 @@ import { toBN } from '@polkadot/extension-polkagate/src/util';
 import { mapHubToRelay } from '../util/migrateHubUtils';
 import useChainInfo from './useChainInfo';
 
-export default function useEraInfo (genesisHash: string | null | undefined): EraInfo | undefined {
+export default function useEraInfo(genesisHash: string | null | undefined): EraInfo | undefined {
   const relayGenesisHash = mapHubToRelay(genesisHash);
   const { api } = useChainInfo(genesisHash);
   const { api: rcApi } = useChainInfo(relayGenesisHash);

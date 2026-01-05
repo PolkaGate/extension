@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-ignore
@@ -24,7 +24,7 @@ interface InfoProps extends StakingInfoStackProps {
   style?: SxProps<Theme>;
 }
 
-const InfoWithIcons = memo(function InfoWithIcons ({ StartIcon, amount, decimal, style, text, title, token, width = '80px' }: InfoProps) {
+const InfoWithIcons = memo(function InfoWithIcons({ StartIcon, amount, decimal, style, text, title, token, width = '80px' }: InfoProps) {
   const theme = useTheme();
 
   return (
@@ -67,7 +67,7 @@ interface ValidatorInfoProp {
   style?: React.CSSProperties;
 }
 
-const ValidatorInfo = memo(function ValidatorInfo ({ bgcolor, genesisHash, isActive, isAlreadySelected, isSelected, myShare, onSelect, reachedMaximum, style = {}, validatorInfo }: ValidatorInfoProp) {
+const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActive, isAlreadySelected, isSelected, myShare, onSelect, reachedMaximum, style = {}, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
 

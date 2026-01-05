@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AssetsWithUiAndPrice } from './types';
@@ -7,7 +7,7 @@ import { type Theme } from '@mui/material';
 
 import { DEFAULT_COLOR, TOKENS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
-export function adjustColor (token: string, color: string | undefined, theme: Theme): string {
+export function adjustColor(token: string, color: string | undefined, theme: Theme): string {
   if (color && (TOKENS_WITH_BLACK_LOGO.find((t) => t === token) && theme.palette.mode === 'dark')) {
     const cleanedColor = color.replace(/^#/, '');
 
@@ -30,7 +30,7 @@ export function adjustColor (token: string, color: string | undefined, theme: Th
   return color || DEFAULT_COLOR;
 }
 
-export function truncateToMaxYDecimals (num: number, y: number): string {
+export function truncateToMaxYDecimals(num: number, y: number): string {
   const [intPart, decPart] = num.toString().split('.');
 
   if (!decPart) {
@@ -40,7 +40,7 @@ export function truncateToMaxYDecimals (num: number, y: number): string {
   return `${intPart}.${decPart.slice(0, y)}`;
 }
 
-export function getMaxBalanceAsset (assets: AssetsWithUiAndPrice[]) {
+export function getMaxBalanceAsset(assets: AssetsWithUiAndPrice[]) {
   return assets.reduce((max, asset) =>
     asset.totalBalance > max.totalBalance ? asset : max
   );

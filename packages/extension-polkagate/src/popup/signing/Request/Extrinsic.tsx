@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SigningRequest } from '@polkadot/extension-base/background/types';
@@ -35,11 +35,11 @@ interface Props {
   request: SigningRequest;
 }
 
-function displayDecodeVersion (message: string, chain: Chain, specVersion: BN): string {
+function displayDecodeVersion(message: string, chain: Chain, specVersion: BN): string {
   return `${message}: chain=${chain.name}, specVersion=${chain.specVersion.toString()} (request specVersion=${specVersion.toString()})`;
 }
 
-function decodeMethod (data: string, chain: Chain, specVersion: BN): Decoded {
+function decodeMethod(data: string, chain: Chain, specVersion: BN): Decoded {
   let args: AnyJson | null = null;
   let method: Call | null = null;
 
@@ -57,7 +57,7 @@ function decodeMethod (data: string, chain: Chain, specVersion: BN): Decoded {
   return { args, method };
 }
 
-function DappRow ({ url }: { url: string }) {
+function DappRow({ url }: { url: string }) {
   const dapp = new URL(url).origin;
   const faviconUrl = useFavIcon(dapp);
 
@@ -81,7 +81,7 @@ interface SignerContextProps {
   showBalance?: boolean;
 }
 
-function SignerContext ({ address, genesisHash, showBalance = true }: SignerContextProps): React.ReactElement {
+function SignerContext({ address, genesisHash, showBalance = true }: SignerContextProps): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const { chainName, decimal, token } = useChainInfo(genesisHash);
@@ -135,7 +135,7 @@ function SignerContext ({ address, genesisHash, showBalance = true }: SignerCont
   );
 }
 
-function Extrinsic ({ onCancel, onSignature, payload, request, setMode, signerPayload: { address, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
+function Extrinsic({ onCancel, onSignature, payload, request, setMode, signerPayload: { address, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const allChains = useAllChains();

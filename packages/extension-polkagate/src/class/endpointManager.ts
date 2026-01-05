@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { EndpointType } from '../util/types';
@@ -16,14 +16,14 @@ export default class EndpointManager {
   private endpoints: SavedEndpoints = {};
   private listeners = new Set<Listener>();
 
-  constructor () {
+  constructor() {
     // Load endpoints from storage and set up storage change listener
     this.loadFromStorage();
     chrome.storage.onChanged.addListener(this.handleStorageChange);
   }
 
   // Load endpoints from chrome storage
-  private loadFromStorage () {
+  private loadFromStorage() {
     chrome.storage.local.get(ENDPOINTS_NAME_IN_STORAGE, (result: { [ENDPOINTS_NAME_IN_STORAGE]?: SavedEndpoints }) => {
       if (result[ENDPOINTS_NAME_IN_STORAGE]) {
         this.endpoints = result[ENDPOINTS_NAME_IN_STORAGE];
@@ -33,7 +33,7 @@ export default class EndpointManager {
   }
 
   // Save endpoints to chrome storage
-  private saveToStorage () {
+  private saveToStorage() {
     try {
       chrome.storage.local.set({ [ENDPOINTS_NAME_IN_STORAGE]: this.endpoints }).catch(console.error);
     } catch (error) {
@@ -50,24 +50,24 @@ export default class EndpointManager {
   };
 
   // Notify all listeners about endpoint changes
-  private notifyListeners () {
+  private notifyListeners() {
     Object.entries(this.endpoints).forEach(([genesisHash, endpointInfo]) => {
       this.listeners.forEach((listener) => listener(genesisHash, endpointInfo));
     });
   }
 
   // Get a specific endpoint
-  get (genesisHash: string): EndpointType | undefined {
+  get(genesisHash: string): EndpointType | undefined {
     return this.endpoints?.[genesisHash];
   }
 
   // Get all endpoints
-  getEndpoints (): SavedEndpoints | undefined {
+  getEndpoints(): SavedEndpoints | undefined {
     return this.endpoints;
   }
 
   // Set a specific endpoint
-  set (genesisHash: string, endpoint: EndpointType) {
+  set(genesisHash: string, endpoint: EndpointType) {
     if (!this.endpoints[genesisHash]) {
       this.endpoints[genesisHash] = {} as EndpointType;
     }
@@ -78,15 +78,15 @@ export default class EndpointManager {
   }
 
   // Check if an endpoint should be in auto mode
-  shouldBeOnAutoMode (endpoint: EndpointType) {
+  shouldBeOnAutoMode(endpoint: EndpointType) {
     return endpoint.isAuto && (Date.now() - (endpoint.timestamp ?? 0) > ENDPOINT_TIMEOUT);
   }
 
-  subscribe (listener: Listener) {
+  subscribe(listener: Listener) {
     this.listeners.add(listener);
   }
 
-  unsubscribe (listener: Listener) {
+  unsubscribe(listener: Listener) {
     this.listeners.delete(listener);
   }
 }

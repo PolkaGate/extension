@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, AccountsContext } from '@polkadot/extension-base/background/types';
@@ -14,7 +14,7 @@ import { getStorage, setStorage, updateStorage } from '@polkadot/extension-polka
 import { buildHierarchy } from '@polkadot/extension-polkagate/src/util/buildHierarchy';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-function initAccountContext (accounts: AccountJson[]): AccountsContext {
+function initAccountContext(accounts: AccountJson[]): AccountsContext {
   const hierarchy = buildHierarchy(accounts);
   const master = hierarchy.find(({ isExternal, type }) => !isExternal && canDerive(type));
 
@@ -25,7 +25,7 @@ function initAccountContext (accounts: AccountJson[]): AccountsContext {
   };
 }
 
-export default function AccountProvider ({ children }: { children: React.ReactNode }) {
+export default function AccountProvider({ children }: { children: React.ReactNode }) {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
   const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const isForgotten = useIsForgotten();

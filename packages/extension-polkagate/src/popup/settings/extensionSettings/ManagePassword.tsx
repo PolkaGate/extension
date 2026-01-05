@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack } from '@mui/material';
@@ -25,7 +25,7 @@ export const isPasswordCorrect = async (password: string, isHashed?: boolean) =>
   return info?.hashedPassword === hashedPassword;
 };
 
-export default function ManagePassword ({ onBack }: { onBack?: () => void }): React.ReactElement {
+export default function ManagePassword({ onBack }: { onBack?: () => void }): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 

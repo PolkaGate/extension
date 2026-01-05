@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolInfo } from '@polkadot/extension-polkagate/src/util/types';
@@ -17,7 +17,7 @@ export interface Props {
   onClick: () => void;
 }
 
-export default function SelectedPool ({ onClick, selectedPool, style, text }: Props): React.ReactElement {
+export default function SelectedPool({ onClick, selectedPool, style, text }: Props): React.ReactElement {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
 

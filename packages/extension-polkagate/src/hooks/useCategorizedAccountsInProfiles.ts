@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -24,7 +24,7 @@ import useSelectedProfile from './useSelectedProfile';
  *
  * @returns {Record<string, any[]>} A dictionary mapping profile tags to lists of matching account entries.
  */
-export default function useCategorizedAccountsInProfiles (): { initialAccountList: AccountJson[] | undefined, categorizedAccounts: Record<string, AccountJson[]>} {
+export default function useCategorizedAccountsInProfiles(): { initialAccountList: AccountJson[] | undefined, categorizedAccounts: Record<string, AccountJson[]> } {
   const initialAccountList = useAccountsOrder();
   const selectedProfile = useSelectedProfile();
   const { userDefinedProfiles } = useProfiles();

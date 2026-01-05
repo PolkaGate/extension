@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
@@ -14,7 +14,7 @@ interface Props {
   previousSelectedAccounts: string[] | undefined;
 }
 
-function SelectNotificationAccountsBody ({ onAccounts, previousSelectedAccounts }: Props): React.ReactElement {
+function SelectNotificationAccountsBody({ onAccounts, previousSelectedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
   const { accounts } = useContext(AccountContext);

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -27,7 +27,7 @@ interface Props {
   token?: string;
 }
 
-function normalizeToWordSet (str: string): Set<string> {
+function normalizeToWordSet(str: string): Set<string> {
   // Split PascalCase or space-separated
   const words = str
     .replace(/([a-z])([A-Z])/g, '$1 $2') // split camelCase
@@ -38,7 +38,7 @@ function normalizeToWordSet (str: string): Set<string> {
   return new Set(words);
 }
 
-function haveSameWords (str1: string, str2: string): boolean {
+function haveSameWords(str1: string, str2: string): boolean {
   const set1 = normalizeToWordSet(str1);
   const set2 = normalizeToWordSet(str2);
 
@@ -55,7 +55,7 @@ function haveSameWords (str1: string, str2: string): boolean {
   return true;
 }
 
-function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showSquare = false, size = 25, style = {}, token }: Props): React.ReactElement<Props> {
+function ChainLogo({ chainName, genesisHash, logo, logoRoundness = '50%', showSquare = false, size = 25, style = {}, token }: Props): React.ReactElement<Props> {
   const isDark = useIsDark();
   const imgRef = useRef<HTMLImageElement>(null);
   const _genesisHash = mapHubToRelay(genesisHash);
@@ -86,7 +86,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
     }
 
     const handleLoad = () => {
-       setIsDarkLogo(false);
+      setIsDarkLogo(false);
       const canvas = document.createElement('canvas');
 
       canvas.width = img.naturalWidth;
@@ -142,7 +142,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
                 ...style
               }}
               variant='square'
-              />
+            />
             : <FontAwesomeIcon
               fontSize='15px'
               icon={fas[convertToCamelCase(_logo)]}
@@ -154,7 +154,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
                 width: size,
                 ...style
               }}
-              />
+            />
           }
         </>
         : _chainName
@@ -169,7 +169,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
               ...style
             }}
             variant='square'
-            >
+          >
             {_chainName?.charAt(0)?.toUpperCase() || ''}
           </Avatar>
           : <Box
@@ -183,7 +183,7 @@ function ChainLogo ({ chainName, genesisHash, logo, logoRoundness = '50%', showS
               p: '4px',
               width: size
             }}
-            />
+          />
       }
     </>
   );

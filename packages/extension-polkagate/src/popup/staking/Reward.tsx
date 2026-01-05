@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ClaimedRewardInfo } from '../../util/types';
@@ -155,7 +155,7 @@ const RewardChartTable = ({ descSortedRewards, expanded, genesisHash, onExpand }
   );
 };
 
-export default function StakingReward () {
+export default function StakingReward() {
   useBackground('staking');
 
   const { t } = useTranslation();

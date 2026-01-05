@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Option, StorageKey } from '@polkadot/types';
@@ -19,7 +19,7 @@ import useChainInfo from './useChainInfo';
 type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage' | 'assets' | 'uniques' | 'NFT';
 export type Reserved = { [key in Item]?: Balance | null | undefined };
 
-export default function useReservedDetails (formatted: string | undefined, genesisHash: string | undefined): Reserved {
+export default function useReservedDetails(formatted: string | undefined, genesisHash: string | undefined): Reserved {
   const { api, decimal } = useChainInfo(genesisHash);
   const activeRecoveries = useActiveRecoveries(api);
   const [reserved, setReserved] = useState<Reserved>({});

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
@@ -63,7 +63,7 @@ interface Props {
   noSelection?: boolean;
 }
 
-function AccountSelection ({ noSelection = false }: Props): React.ReactElement {
+function AccountSelection({ noSelection = false }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const isBlueish = useIsBlueish();
@@ -126,17 +126,17 @@ function AccountSelection ({ noSelection = false }: Props): React.ReactElement {
         width={noSelection ? 120 : 65}
       />
       {!noSelection &&
-          <ArrowDown2
-            color={isDark
-              ? isInAccountLists
-                ? '#05091C'
-                : isBlueish ? '#596AFF' : '#AA83DC'
-              : '#8F97B8'
-            }
-            size='18'
-            style={{ transform: isInAccountLists ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }}
-            variant='Bold'
-          />}
+        <ArrowDown2
+          color={isDark
+            ? isInAccountLists
+              ? '#05091C'
+              : isBlueish ? '#596AFF' : '#AA83DC'
+            : '#8F97B8'
+          }
+          size='18'
+          style={{ transform: isInAccountLists ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }}
+          variant='Bold'
+        />}
     </Container>
   );
 }

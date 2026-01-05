@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
@@ -18,7 +18,7 @@ export interface AssetDetailType {
   token?: string | undefined;
 }
 
-export function buildChainsAssetsSummary (
+export function buildChainsAssetsSummary(
   chains: NetworkInfo[],
   assets: Record<string, FetchedBalance[]> | null | undefined,
   pricesInCurrency: Prices

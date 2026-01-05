@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension authors & contributors
+// Copyright 2019-2026 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable sort-keys */
@@ -1969,7 +1969,7 @@ export default {
     description: 'Increments the ideal number of validators up to maximum of `ElectionProviderBase::MaxWinners`.'
   },
   'staking.kick': {
-   function: 'kick(who: `Vec<MultiAddress>`)',
+    function: 'kick(who: `Vec<MultiAddress>`)',
     description: 'Allows a validator to remove specific nominators from supporting them. When this extrinsic is called, the validator stops accepting nominations from the provided accounts. The `who` parameter is an account or a list of nominator stash addresses that will no longer be nominating the calling validator.'
   },
   'staking.manualSlash': {

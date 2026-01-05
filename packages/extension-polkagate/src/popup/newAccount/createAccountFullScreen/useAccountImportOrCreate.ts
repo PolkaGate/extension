@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { KeypairType } from '@polkadot/util-crypto/types';
@@ -17,7 +17,7 @@ import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType
 import { resetOnForgotPassword } from './resetAccounts';
 import { type AccountInfo, STEP } from './types';
 
-export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo> ({ onSuccessPath = '/',
+export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ onSuccessPath = '/',
   validator }: { onSuccessPath?: string; validator?: (suri: string, type?: KeypairType) => Promise<T> }) {
   const { accounts } = useContext(AccountContext);
   const navigate = useNavigate();

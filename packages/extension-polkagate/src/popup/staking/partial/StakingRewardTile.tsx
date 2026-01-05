@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -241,7 +241,7 @@ interface Props {
   type: 'solo' | 'pool';
 }
 
-export default function StakingRewardTile ({ address, genesisHash, isDisabled, layoutDirection, onClaimReward, reward, type }: Props) {
+export default function StakingRewardTile({ address, genesisHash, isDisabled, layoutDirection, onClaimReward, reward, type }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { decimal, token } = useChainInfo(genesisHash, true);

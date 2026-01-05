@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AuthorizeRequestHandlerProp } from '.';
@@ -13,7 +13,7 @@ interface Props {
   authorizeRequestHandler: AuthorizeRequestHandlerProp
 }
 
-function AuthFullScreenMode ({ authorizeRequestHandler }: Props): React.ReactElement {
+function AuthFullScreenMode({ authorizeRequestHandler }: Props): React.ReactElement {
   return (
     <HomeLayout>
       <ConnectedDapp

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid } from '@mui/material';
@@ -10,7 +10,7 @@ import { logoWhiteTransparent } from '../../../assets/logos';
 import { useIsDark } from '../../../hooks/index';
 import Drawer from './Drawer';
 
-function Loading ({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
+function Loading({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
   const isDark = useIsDark();
 
   return (
@@ -66,7 +66,7 @@ function Loading ({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
   );
 }
 
-function AssetLoading ({ itemsCount = 4, noDrawer = false }: { itemsCount?: number; noDrawer?: boolean; }) {
+function AssetLoading({ itemsCount = 4, noDrawer = false }: { itemsCount?: number; noDrawer?: boolean; }) {
   return (
     <div style={{ display: 'grid', position: 'relative', rowGap: '10px', zIndex: 1 }}>
       {Array.from({ length: itemsCount }).map((_, index) => (
