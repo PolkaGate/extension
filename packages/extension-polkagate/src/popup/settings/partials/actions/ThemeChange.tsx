@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
@@ -9,7 +9,7 @@ import { noop } from '@polkadot/util';
 
 import useIsDark from '../../../../hooks/useIsDark';
 
-export default function ThemeChange (): React.ReactElement {
+export default function ThemeChange(): React.ReactElement {
   const isDark = useIsDark();
 
   //const colorMode = useContext(ColorContext);

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
@@ -15,7 +15,7 @@ interface Props {
   size?: number;
 }
 
-function NothingFound ({ show = false, size = 150, style = {}, text }: Props) {
+function NothingFound({ show = false, size = 150, style = {}, text }: Props) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 

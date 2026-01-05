@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -19,7 +19,7 @@ const THOUSAND_LENGTH = 4;
 const DEFAULT_DECIMAL_PRECISION = 2;
 const HIGH_PRECISION_DECIMAL = 4;
 
-function createElement (prefix: string, postfix: string, unit: string, isShort = false, decimalPoint: number, tokenColor?: string): React.ReactNode {
+function createElement(prefix: string, postfix: string, unit: string, isShort = false, decimalPoint: number, tokenColor?: string): React.ReactNode {
   return (
     <>
       {`${prefix}${isShort ? '' : '.'}`}
@@ -33,7 +33,7 @@ function createElement (prefix: string, postfix: string, unit: string, isShort =
   );
 }
 
-function applyFormat (
+function applyFormat(
   decimalPoint: number,
   value: Balance | Compact<u128 | u64 | INumber> | BN | string,
   decimal: number,
@@ -80,7 +80,7 @@ interface DisplayBalanceProps {
   withSi?: boolean;
 }
 
-function DisplayBalance ({ api, balance, decimal, decimalPoint, genesisHash, isShort, skeletonStyle, style, token, tokenColor, useAdaptiveDecimalPoint, withCurrency, withSi }: DisplayBalanceProps) {
+function DisplayBalance({ api, balance, decimal, decimalPoint, genesisHash, isShort, skeletonStyle, style, token, tokenColor, useAdaptiveDecimalPoint, withCurrency, withSi }: DisplayBalanceProps) {
   const isDark = useIsDark();
   const theme = useTheme();
   const { decimal: nativeDecimal, token: nativeToken } = useChainInfo(genesisHash, true);

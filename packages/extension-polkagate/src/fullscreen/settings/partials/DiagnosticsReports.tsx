@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
@@ -10,7 +10,7 @@ import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useTranslation } from '../../../components/translate';
 
-export default function DiagnosticsReports (): React.ReactElement {
+export default function DiagnosticsReports(): React.ReactElement {
   const { t } = useTranslation();
 
   const [isDisabled, setDisabled] = useState(false);

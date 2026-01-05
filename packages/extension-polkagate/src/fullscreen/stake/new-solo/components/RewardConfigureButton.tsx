@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
@@ -8,7 +8,7 @@ import React, { useRef } from 'react';
 import { MyTooltip } from '../../../../components';
 import { useIsHovered, useTranslation } from '../../../../hooks';
 
-export default function RewardConfigureButton ({ onClick }: { onClick: () => void }) {
+export default function RewardConfigureButton({ onClick }: { onClick: () => void }) {
   const { t } = useTranslation();
   const refContainer = useRef(null);
 

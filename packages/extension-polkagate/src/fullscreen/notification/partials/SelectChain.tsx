@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TextValuePair } from '@polkadot/extension-polkagate/src/popup/notification/NotificationSettings';
@@ -17,7 +17,7 @@ interface Props {
   options: TextValuePair[];
 }
 
-export default function SelectChain ({ onChains, options, previousState }: Props) {
+export default function SelectChain({ onChains, options, previousState }: Props) {
   const { t } = useTranslation();
 
   const [selectedChains, setSelectedChains] = useState<string[]>(previousState ?? []);
@@ -34,13 +34,13 @@ export default function SelectChain ({ onChains, options, previousState }: Props
     setSelectedChains((prev) => {
       const alreadySelected = prev.includes(newSelect);
 
-    if (alreadySelected) {
-      // If is already selected, remove it
-      return prev.filter((chain) => chain !== newSelect);
-    }
+      if (alreadySelected) {
+        // If is already selected, remove it
+        return prev.filter((chain) => chain !== newSelect);
+      }
 
-    // add
-    return [...prev, newSelect];
+      // add
+      return [...prev, newSelect];
     });
   }, []);
 

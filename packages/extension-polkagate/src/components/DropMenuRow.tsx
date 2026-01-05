@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -22,7 +22,7 @@ interface Props {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function DropMenuRow ({ option, setOpen }: Props) {
+function DropMenuRow({ option, setOpen }: Props) {
   const [hovered, setHovered] = useState(false);
   const handleNav = useHandleNavigation();
 

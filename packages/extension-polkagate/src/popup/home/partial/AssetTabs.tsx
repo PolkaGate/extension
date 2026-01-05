@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Tab, Tabs } from '@mui/material';
@@ -20,7 +20,7 @@ interface Props {
 
 const TAB_SX = { m: 0, minHeight: 'unset', minWidth: 'unset', p: 0, py: '9px' };
 
-function AssetTabs ({ setTab, tab }: Props): React.ReactElement {
+function AssetTabs({ setTab, tab }: Props): React.ReactElement {
   const isExtension = useIsExtensionPopup();
   const firstTabValue = useRef<TAB.TOKENS | TAB.CHAINS>(TAB.TOKENS);
 

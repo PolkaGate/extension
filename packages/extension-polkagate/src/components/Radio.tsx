@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { RadioProps } from '@mui/material/Radio';
@@ -87,7 +87,7 @@ interface Props extends RadioProps {
   value: unknown;
 }
 
-export default function MyRadio ({ checked, columnGap, label, onChange, props, value }: Props) {
+export default function MyRadio({ checked, columnGap, label, onChange, props, value }: Props) {
   return (
     <Stack columnGap={columnGap} direction='row' sx={{ alignItems: 'center' }}>
       <label htmlFor={`radio-${value}`} style={{ alignItems: 'center', cursor: 'pointer', display: 'flex' }}>

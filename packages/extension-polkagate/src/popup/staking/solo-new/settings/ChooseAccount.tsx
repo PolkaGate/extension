@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
@@ -96,13 +96,13 @@ const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, se
 };
 
 interface Props {
-  isBlueish: boolean| undefined;
+  isBlueish: boolean | undefined;
   genesisHash: string | undefined;
   setSpecificAccount: React.Dispatch<React.SetStateAction<string | undefined>>;
   specificAccount: string | undefined;
 }
 
-export default function ChooseAccount ({ genesisHash, isBlueish, setSpecificAccount, specificAccount }: Props): React.ReactElement {
+export default function ChooseAccount({ genesisHash, isBlueish, setSpecificAccount, specificAccount }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
@@ -121,7 +121,7 @@ export default function ChooseAccount ({ genesisHash, isBlueish, setSpecificAcco
           style={{ variant: 'B-2' }}
           withShortAddress
         />
-        <ArrowCircleDown color={ isBlueish ? theme.palette.text.highlight : theme.palette.primary.main } onClick={handleToggleMenu} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
+        <ArrowCircleDown color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} onClick={handleToggleMenu} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
       </Container>
       <AccountListToChoose
         genesisHash={genesisHash}

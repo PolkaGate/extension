@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { HexString } from '@polkadot/util/types';
@@ -26,7 +26,7 @@ export interface ScanType {
   name?: string | undefined;
 }
 
-export default function AttachQrFullScreen (): React.ReactElement {
+export default function AttachQrFullScreen(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
 

@@ -1,7 +1,7 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-export function removeProfileTag (profile: string | undefined, tagToRemove: string): string {
+export function removeProfileTag(profile: string | undefined, tagToRemove: string): string {
   if (!profile) {
     return '';
   }
@@ -13,7 +13,7 @@ export function removeProfileTag (profile: string | undefined, tagToRemove: stri
     .join(',');
 }
 
-export function addProfileTag (profile: string | undefined, tagToAdd: string): string {
+export function addProfileTag(profile: string | undefined, tagToAdd: string): string {
   if (!tagToAdd.trim()) {
     return profile ?? '';
   }

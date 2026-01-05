@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -19,7 +19,7 @@ interface WorkerMessage {
   results?: string;
 }
 
-export default function usePool (address: string | undefined, genesisHash: string | undefined, id?: number, refresh?: boolean, setRefresh?: Dispatch<SetStateAction<boolean>>): MyPoolInfo | null | undefined {
+export default function usePool(address: string | undefined, genesisHash: string | undefined, id?: number, refresh?: boolean, setRefresh?: Dispatch<SetStateAction<boolean>>): MyPoolInfo | null | undefined {
   const worker = useContext(WorkerContext);
 
   const formatted = useFormatted(address, genesisHash);

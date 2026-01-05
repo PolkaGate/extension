@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { HexString } from '@polkadot/util/types';
@@ -12,9 +12,9 @@ import { useIsTestnetEnabled } from '.';
 
 const RELAY_CHAIN = 'Relay Chain';
 
-export default function useGenesisHashOptions (showAnyChain = true): DropdownOption[] {
+export default function useGenesisHashOptions(showAnyChain = true): DropdownOption[] {
   const metadataCache = useRef<{ text: string; value: HexString }[] | null>(null);
-    const isTestnetEnabled = useIsTestnetEnabled();
+  const isTestnetEnabled = useIsTestnetEnabled();
 
   const [metadataChains, setMetadataChains] = useState<{ text: string; value: HexString }[]>([]);
 

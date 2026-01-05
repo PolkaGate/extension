@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MotionStyle } from 'framer-motion';
@@ -36,7 +36,7 @@ interface Props {
   onAnimationComplete?: () => void;
 }
 
-export default function Motion ({ children, onAnimationComplete, style, variant = 'fade' }: Props) {
+export default function Motion({ children, onAnimationComplete, style, variant = 'fade' }: Props) {
   return (
     <motion.div
       animate='animate'

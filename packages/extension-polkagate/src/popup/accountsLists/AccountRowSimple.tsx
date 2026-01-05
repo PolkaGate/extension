@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
@@ -30,7 +30,7 @@ interface Props {
 const MAX_ACCOUNT_NAME_WIDTH = 255;
 const OFFSET = 30;
 
-function AccountRowSimple ({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected, showDrag }: Props): React.ReactElement {
+function AccountRowSimple({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected, showDrag }: Props): React.ReactElement {
   const navigate = useNavigate();
   const { address, genesisHash, name } = account;
   const [appliedAddress, setAppliedAddress] = useState<string>();

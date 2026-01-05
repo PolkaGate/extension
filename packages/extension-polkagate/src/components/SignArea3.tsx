@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SignerOptions } from '@polkadot/api/types';
@@ -62,7 +62,7 @@ interface Props {
  * choose proxy or use other alternatives like signing using ledger
  *
 */
-function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingQRProps, signerOption, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
+function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingQRProps, signerOption, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);

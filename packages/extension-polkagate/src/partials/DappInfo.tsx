@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Avatar, Container, Grid, Typography } from '@mui/material';
@@ -11,7 +11,7 @@ interface Props {
   dappName?: string;
 }
 
-function DappInfo ({ dappName, favicon }: Props): React.ReactElement {
+function DappInfo({ dappName, favicon }: Props): React.ReactElement {
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '14px', display: 'flex', justifyContent: 'center', my: '15px', p: '4px', width: '90%' }}>
       {favicon

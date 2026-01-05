@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { StakingConsts } from '../util/types';
@@ -22,7 +22,7 @@ const commissionSort = (a: ValidatorInformation, b: ValidatorInformation) => {
  * This hooks return a list of suggested validators to choose
  */
 
-export default function useValidatorSuggestion (allValidatorsInfo: ValidatorsInformation | undefined, genesisHash: string | undefined): ValidatorInformation[] | null | undefined {
+export default function useValidatorSuggestion(allValidatorsInfo: ValidatorsInformation | undefined, genesisHash: string | undefined): ValidatorInformation[] | null | undefined {
   const stakingConsts = useStakingConsts(genesisHash);
   const [selected, setSelected] = useState<ValidatorInformation[] | undefined>();
 
@@ -70,7 +70,7 @@ export default function useValidatorSuggestion (allValidatorsInfo: ValidatorsInf
       Number(v.validatorPrefs.commission) !== 0 && // filter 0 commission validators, to exclude new and chilled validators
       (Number(v.validatorPrefs.commission) / (10 ** 7)) < DEFAULT_FILTERS.maxCommission.value && // filter high commission validators
       // @ts-ignore
-     ((v.exposureMeta?.nominatorCount ?? 0) < stakingConsts?.maxNominatorRewardedPerValidator || TEST_NETS.includes(genesisHash))// filter oversubscribed
+      ((v.exposureMeta?.nominatorCount ?? 0) < stakingConsts?.maxNominatorRewardedPerValidator || TEST_NETS.includes(genesisHash))// filter oversubscribed
       // && v.exposure.others.length > stakingConsts?.maxNominatorRewardedPerValidator / 4 // filter validators with very low nominators
     );
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '../../../util/types';
@@ -17,7 +17,7 @@ import useTransactionHistory from '../useTransactionHistory';
 import HistoryBox from './HistoryBox';
 import HistoryTabs, { TAB } from './HistoryTabs';
 
-function History (): React.ReactElement {
+function History(): React.ReactElement {
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const selectedAccount = useSelectedAccount();

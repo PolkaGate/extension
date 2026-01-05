@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { createAssets } from '@polkagate/apps-config/assets';
@@ -28,7 +28,7 @@ const assetsChains = createAssets();
  * @param assetChainName : chain name to fetch asset id price from
  * @returns price : price of the token which the address is already switched to
  */
-export default function useTokenPriceBySymbol (tokenSymbol: string | undefined, genesisHash: string | undefined): Price {
+export default function useTokenPriceBySymbol(tokenSymbol: string | undefined, genesisHash: string | undefined): Price {
   const { chainName } = useChainInfo(genesisHash, true);
   const userAddedPriceId = useUserAddedPriceId(genesisHash);
   const pricesInCurrencies = usePrices();

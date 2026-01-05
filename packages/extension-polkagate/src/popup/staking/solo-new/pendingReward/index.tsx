@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, LinearProgress, Stack, Typography, useTheme } from '@mui/material';
@@ -14,7 +14,7 @@ import { UserDashboardHeader } from '../../../../partials';
 import { PROXY_TYPE } from '../../../../util/constants';
 import { RewardsTable, TableHeader } from './RewardsTable';
 
-export default function PendingReward () {
+export default function PendingReward() {
   useBackground('staking');
 
   const theme = useTheme();

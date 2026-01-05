@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { createWsEndpoints } from '@polkagate/apps-config';
@@ -8,7 +8,7 @@ import { createWsEndpoints } from '@polkagate/apps-config';
  * @param {string} genesisHash
  */
 
-export function getChainEndpointsFromGenesisHash (genesisHash) {
+export function getChainEndpointsFromGenesisHash(genesisHash) {
   const allEndpoints = createWsEndpoints();
 
   return allEndpoints

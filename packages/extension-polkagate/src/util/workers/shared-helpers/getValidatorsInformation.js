@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
@@ -59,7 +59,7 @@ const convertId = (id) => ({
  * @param {string} genesisHash - The Polkadot API instance
  * @param {MessagePort } port
  */
-export default async function getValidatorsInformation (genesisHash, port) {
+export default async function getValidatorsInformation(genesisHash, port) {
   const chainName = getChainName(genesisHash);
 
   if (!chainName) {
@@ -163,7 +163,7 @@ export default async function getValidatorsInformation (genesisHash, port) {
  * @param {import("@polkadot/api-derive/types").DeriveStakingQuery[]} mayHaveSubId - Output array for validators without direct identities
  * @private
  */
-async function processDirectIdentities (api, validatorsInfo, validatorsInformation, mayHaveSubId) {
+async function processDirectIdentities(api, validatorsInfo, validatorsInformation, mayHaveSubId) {
   let totalProcessed = 0;
 
   try {
@@ -193,10 +193,10 @@ async function processDirectIdentities (api, validatorsInfo, validatorsInformati
 
       // Add to appropriate result arrays
       noIdentity.length > 0 &&
-      mayHaveSubId.push(...noIdentity);
+        mayHaveSubId.push(...noIdentity);
 
       withIdentity.length > 0 &&
-      validatorsInformation.push(...withIdentity);
+        validatorsInformation.push(...withIdentity);
 
       totalProcessed += BATCH_SIZE;
     }
@@ -215,7 +215,7 @@ async function processDirectIdentities (api, validatorsInfo, validatorsInformati
  * @param {ValidatorInformation[]} accountSubInfo - Output array for validators with sub-identity
  * @private
  */
-async function processSubIdentities (api, mayHaveSubId, validatorsInformation, accountSubInfo) {
+async function processSubIdentities(api, mayHaveSubId, validatorsInformation, accountSubInfo) {
   let totalProcessed = 0;
 
   try {
@@ -281,7 +281,7 @@ async function processSubIdentities (api, mayHaveSubId, validatorsInformation, a
  * @param {ValidatorInformation[]} validatorsInformation - Output array for results
  * @private
  */
-async function processParentIdentities (api, accountSubInfo, validatorsInformation) {
+async function processParentIdentities(api, accountSubInfo, validatorsInformation) {
   let totalProcessed = 0;
 
   try {

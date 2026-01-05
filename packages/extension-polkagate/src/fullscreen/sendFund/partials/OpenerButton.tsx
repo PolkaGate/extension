@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box } from '@mui/material';
@@ -12,7 +12,7 @@ interface Props {
   onClick?: () => void
 }
 
-export default function OpenerButton ({ flip, onClick, style = {}, type = 'Edit' }: Props): React.ReactElement {
+export default function OpenerButton({ flip, onClick, style = {}, type = 'Edit' }: Props): React.ReactElement {
   const Icon = type === 'Arrow' ? ArrowRight3 : Edit;
   const variant = type === 'Arrow' ? 'Bold' : 'Bulk';
 

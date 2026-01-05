@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
@@ -13,22 +13,22 @@ import { useIsHovered } from '../../../hooks';
 
 const DropContentContainer = styled(Grid,
   { shouldForwardProp: (prop) => prop !== 'preferredWidth' && prop !== 'isSmall' })(({ isSmall, preferredWidth }: { isSmall?: boolean, preferredWidth: number | undefined }) => ({
-  background: '#05091C',
-  border: '4px solid',
-  borderColor: '#1B133C',
-  borderRadius: '12px',
-  columnGap: '5px',
-  flexWrap: 'nowrap',
-  margin: 'auto',
-  marginTop: '4px',
-  maxHeight: '400px',
-  minWidth: '197px',
-  overflow: 'auto',
-  padding: '6px',
-  rowGap: isSmall ? '7px' : '4px',
-  transition: 'all 250ms ease-out',
-  width: `${preferredWidth}px`
-}));
+    background: '#05091C',
+    border: '4px solid',
+    borderColor: '#1B133C',
+    borderRadius: '12px',
+    columnGap: '5px',
+    flexWrap: 'nowrap',
+    margin: 'auto',
+    marginTop: '4px',
+    maxHeight: '400px',
+    minWidth: '197px',
+    overflow: 'auto',
+    padding: '6px',
+    rowGap: isSmall ? '7px' : '4px',
+    transition: 'all 250ms ease-out',
+    width: `${preferredWidth}px`
+  }));
 
 interface RowProps {
   assetId: string,
@@ -38,7 +38,7 @@ interface RowProps {
   setSelectedAsset: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-function Row ({ assetId, genesisHash, isSmall, setSelectedAsset, token }: RowProps): React.ReactElement {
+function Row({ assetId, genesisHash, isSmall, setSelectedAsset, token }: RowProps): React.ReactElement {
   const refContainer = useRef(null);
   const hovered = useIsHovered(refContainer);
 
@@ -71,7 +71,7 @@ interface DropContentProps {
   style?: CSSProperties;
 }
 
-export default function CustomizedDropDown ({ assets, containerRef, contentDropWidth, isSmall, open, setSelectedAsset, style = {} }: DropContentProps) {
+export default function CustomizedDropDown({ assets, containerRef, contentDropWidth, isSmall, open, setSelectedAsset, style = {} }: DropContentProps) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 

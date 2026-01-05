@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Compact } from '@polkadot/types';
@@ -25,7 +25,7 @@ interface ValidatorIdentityProp {
   style?: SxProps<Theme>;
 }
 
-export const ValidatorIdentity = memo(function ValidatorIdentity ({ style, validatorInfo }: ValidatorIdentityProp) {
+export const ValidatorIdentity = memo(function ValidatorIdentity({ style, validatorInfo }: ValidatorIdentityProp) {
   const isBlueish = useIsBlueish();
 
   return (
@@ -66,7 +66,7 @@ export interface StakingInfoStackProps {
   adjustedColorForTitle?: string;
 }
 
-export const StakingInfoStack = memo(function SIS ({ adjustedColorForTitle, amount, decimal, secondaryColor, text, title, token }: StakingInfoStackProps) {
+export const StakingInfoStack = memo(function SIS({ adjustedColorForTitle, amount, decimal, secondaryColor, text, title, token }: StakingInfoStackProps) {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
 
@@ -106,7 +106,7 @@ interface ValidatorInfoProp {
   style?: CSSProperties;
 }
 
-const ValidatorInfo = memo(function VI ({ genesisHash, isBlueish, isSelected, onDetailClick, onSelect, style, validatorInfo }: ValidatorInfoProp) {
+const ValidatorInfo = memo(function VI({ genesisHash, isBlueish, isSelected, onDetailClick, onSelect, style, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -202,7 +202,7 @@ interface NominatorsTableProp {
   height?: number;
 }
 
-function NominatorsTable ({ genesisHash, height = 515, onSelect, selected, validatorsInformation }: NominatorsTableProp): React.ReactElement {
+function NominatorsTable({ genesisHash, height = 515, onSelect, selected, validatorsInformation }: NominatorsTableProp): React.ReactElement {
   const isBlueish = useIsBlueish();
 
   const [validatorDetail, setValidatorDetail] = React.useState<ValidatorInformation | undefined>(undefined);

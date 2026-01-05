@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AdvancedDropdownOption } from '../util/types';
@@ -59,7 +59,7 @@ interface ContentDisplayProps {
   showCheckAsIcon?: boolean;
 }
 
-function Logo ({ text }: { text: string }) {
+function Logo({ text }: { text: string }) {
   const isDark = useIsDark();
   const icon = getLogo(text);
 
@@ -76,7 +76,7 @@ function Logo ({ text }: { text: string }) {
   );
 }
 
-function LogoContentDisplay ({ Icon, logoType, onChange, selectedValue, setOpen, setSelectedValue, showCheckAsIcon, text, value }: ContentDisplayProps) {
+function LogoContentDisplay({ Icon, logoType, onChange, selectedValue, setOpen, setSelectedValue, showCheckAsIcon, text, value }: ContentDisplayProps) {
   const isSelectedItem = useMemo(() => [text, value].includes(selectedValue ?? ''), [selectedValue, text, value]);
 
   const handleClick = useCallback(() => {
@@ -149,7 +149,7 @@ function LogoContentDisplay ({ Icon, logoType, onChange, selectedValue, setOpen,
   );
 }
 
-function TextContentDisplay ({ onChange, selectedValue, setOpen, setSelectedValue, showCheckAsIcon = true, style = {}, text, value }: ContentDisplayProps) {
+function TextContentDisplay({ onChange, selectedValue, setOpen, setSelectedValue, showCheckAsIcon = true, style = {}, text, value }: ContentDisplayProps) {
   const isSelectedItem = useMemo(() => [text, value].includes(selectedValue ?? ''), [selectedValue, text, value]);
 
   const handleClick = useCallback(() => {
@@ -191,7 +191,7 @@ interface DropContentProps {
   withDivider: boolean;
 }
 
-function DropSelect ({ Icon, containerRef, contentDropWidth, displayContentType, onChange, open, options, selectedValue, setOpen, setSelectedValue, showCheckAsIcon, style = {}, withDivider }: DropContentProps) {
+function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, onChange, open, options, selectedValue, setOpen, setSelectedValue, showCheckAsIcon, style = {}, withDivider }: DropContentProps) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 
@@ -218,7 +218,7 @@ function DropSelect ({ Icon, containerRef, contentDropWidth, displayContentType,
           const isLastOne = options.length === index + 1;
 
           return (
-            <React.Fragment key={ index }>
+            <React.Fragment key={index}>
               {displayContentType === 'text'
                 ? (
                   <TextContentDisplay

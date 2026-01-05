@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography, useTheme } from '@mui/material';
@@ -15,7 +15,7 @@ interface Props {
   isExtension?: boolean;
 }
 
-export default function EasyStakeReviewHeader ({ amount, genesisHash, isExtension, token }: Props) {
+export default function EasyStakeReviewHeader({ amount, genesisHash, isExtension, token }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -35,7 +35,7 @@ interface Props {
   onClose: () => void
 }
 
-function DisplayValue ({ balance, canPayFee, decimal, genesisHash, label, token }: {
+function DisplayValue({ balance, canPayFee, decimal, genesisHash, label, token }: {
   canPayFee?: CanPayFee;
   label: string;
   genesisHash: string | undefined;
@@ -64,7 +64,7 @@ function DisplayValue ({ balance, canPayFee, decimal, genesisHash, label, token 
   );
 }
 
-function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxyItems, selectedProxy, setSelectedProxy, setShowProxySelection, setStep, setTxInfo, showProxySelection }: Props): React.ReactElement {
+function Review({ address, call, depositToPay, fee, genesisHash, onClose, proxyItems, selectedProxy, setSelectedProxy, setShowProxySelection, setStep, setTxInfo, showProxySelection }: Props): React.ReactElement {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
   const { decimal, token } = useChainInfo(genesisHash, true);

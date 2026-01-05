@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { type ReactNode } from 'react';
@@ -16,7 +16,7 @@ export interface DecisionButtonProps {
   text: string;
 }
 
-function VariantButton ({ disabled, isBlueish, isBusy, onClick, startIcon, style, text }: DecisionButtonProps): React.ReactElement {
+function VariantButton({ disabled, isBlueish, isBusy, onClick, startIcon, style, text }: DecisionButtonProps): React.ReactElement {
   return (
     <>
       {isBlueish

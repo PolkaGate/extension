@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid, Stack, Typography } from '@mui/material';
@@ -60,7 +60,7 @@ const RewardTable = () => {
   );
 };
 
-function Chart () {
+function Chart() {
   return (
     <Stack alignItems='end' columnGap='10px' direction='row'>
       {
@@ -80,7 +80,7 @@ function Chart () {
   );
 }
 
-function RewardsLoading () {
+function RewardsLoading() {
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
       <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: '#1B133C', borderRadius: '18px', width: '533px' }}>

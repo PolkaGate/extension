@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Popover, styled } from '@mui/material';
@@ -35,7 +35,7 @@ interface Props {
   withDivider?: boolean;
 }
 
-function DropMenuContent ({ containerRef, contentDropWidth, open, options, setOpen, withDivider }: Props) {
+function DropMenuContent({ containerRef, contentDropWidth, open, options, setOpen, withDivider }: Props) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 

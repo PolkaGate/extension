@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -39,7 +39,7 @@ const NominatorItem = ({ genesisHash, nominator, total }: NominatorItemProps) =>
 
   const share = useMemo(() => {
     if (!total) {
-       return undefined;
+      return undefined;
     }
 
     const PRECISION = 1_00;
@@ -103,7 +103,7 @@ const PlaceHolder = () => {
   );
 };
 
-export default function Nominators ({ genesisHash, nominators, total }: Props) {
+export default function Nominators({ genesisHash, nominators, total }: Props) {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, type SxProps } from '@mui/material';
@@ -11,7 +11,7 @@ interface GradientBorderProps {
   style?: SxProps;
 }
 
-function GradientBorder ({ style, type }: GradientBorderProps): React.ReactElement {
+function GradientBorder({ style, type }: GradientBorderProps): React.ReactElement {
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
 

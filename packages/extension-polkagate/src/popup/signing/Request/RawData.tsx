@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, RequestSign } from '@polkadot/extension-base/background/types';
@@ -27,7 +27,7 @@ interface Props {
   url: string;
 }
 
-export default function RawData ({ account, error, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
+export default function RawData({ account, error, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dapp = new URL(url).origin;

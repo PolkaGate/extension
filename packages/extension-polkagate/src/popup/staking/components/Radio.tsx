@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { RadioProps } from '@mui/material/Radio';
@@ -96,7 +96,7 @@ interface Props extends RadioProps {
   isHovered?: boolean;
 }
 
-export default function PRadio ({ boxStyle = {}, checked, circleSize = 18, isHovered: isHoveredProp, labeStyle, label, onChange, props, value }: Props) {
+export default function PRadio({ boxStyle = {}, checked, circleSize = 18, isHovered: isHoveredProp, labeStyle, label, onChange, props, value }: Props) {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
   const [internalHovered, setInternalHovered] = useState(false);

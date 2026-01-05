@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
@@ -29,7 +29,7 @@ interface Props {
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
 }
 
-export default function Step3Amount ({ inputs, setInputs, teleportState }: Props): React.ReactElement {
+export default function Step3Amount({ inputs, setInputs, teleportState }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();

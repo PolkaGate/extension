@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
@@ -40,7 +40,7 @@ interface AddressComponentProp {
   chain: NetworkInfo;
 }
 
-function AddressComponent ({ address, chain }: AddressComponentProp) {
+function AddressComponent({ address, chain }: AddressComponentProp) {
   const { t } = useTranslation();
   const { isHovered, ref } = useIsHovered();
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -80,7 +80,7 @@ interface SelectChainProp {
   setSelectedChain: React.Dispatch<React.SetStateAction<NetworkInfo | undefined>>;
 }
 
-function SelectNetwork ({ setSelectedChain }: SelectChainProp) {
+function SelectNetwork({ setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
 
   const customSort = useCallback((itemA: NetworkInfo, itemB: NetworkInfo) => {
@@ -162,7 +162,7 @@ interface QrCodeProps {
   onBackToAccount: () => void;
 }
 
-function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: QrCodeProps) {
+function QrCode({ address, onBackToAccount, selectedChain, setSelectedChain }: QrCodeProps) {
   const { t } = useTranslation();
   const formattedAddress = useFormatted(address, selectedChain?.genesisHash);
 
@@ -177,9 +177,9 @@ function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: 
   return (
     <Grid container item justifyContent='center'>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '8px 6px' }}>
-          <BackButton
-            onClick={onBack}
-          />
+        <BackButton
+          onClick={onBack}
+        />
         <Grid alignItems='center' columnGap='8px' container item width='fit-content'>
           <ChainLogo chainName={selectedChain.name} size={24} />
           <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
@@ -232,7 +232,7 @@ interface Props {
  *
  * Only has been used in extension mode!
  */
-export default function Receive ({ openPopup, setOpenPopup }: Props) {
+export default function Receive({ openPopup, setOpenPopup }: Props) {
   const selectedAddress = useSelectedAccount();
 
   const [selectedChain, setSelectedChain] = useState<NetworkInfo | undefined>();

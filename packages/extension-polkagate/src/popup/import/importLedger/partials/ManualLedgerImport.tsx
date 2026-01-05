@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Typography } from '@mui/material';
@@ -22,7 +22,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function ManualLedgerImport ({ accountIndex, address, addressOffset, genesisHash, ledgerLoading, name, ref, setAccountIndex, setAddressOffset, style }: Props): React.ReactElement {
+export default function ManualLedgerImport({ accountIndex, address, addressOffset, genesisHash, ledgerLoading, name, ref, setAccountIndex, setAddressOffset, style }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const _onSetAccountIndex = useCallback((_value: number | string) => {

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useState } from 'react';
@@ -14,7 +14,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function Withdraw ({ address, genesisHash, onClose }: Props): React.ReactElement {
+export default function Withdraw({ address, genesisHash, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { transactionInformation, tx } = useWithdrawPool(address, genesisHash);

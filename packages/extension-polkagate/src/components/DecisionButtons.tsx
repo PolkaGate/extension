@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ActionButtonProps } from './ActionButton';
@@ -31,7 +31,7 @@ export interface DecisionButtonProps {
   dividerStyle?: React.CSSProperties;
 }
 
-function DecisionButtons ({ arrow = false, cancelButton, direction, disabled, divider = false, dividerStyle, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, primaryButtonProps, secondaryBtnText, secondaryButtonProps, showChevron, style }: DecisionButtonProps): React.ReactElement {
+function DecisionButtons({ arrow = false, cancelButton, direction, disabled, divider = false, dividerStyle, flexibleWidth, isBusy, onPrimaryClick, onSecondaryClick, primaryBtnText, primaryButtonProps, secondaryBtnText, secondaryButtonProps, showChevron, style }: DecisionButtonProps): React.ReactElement {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
 

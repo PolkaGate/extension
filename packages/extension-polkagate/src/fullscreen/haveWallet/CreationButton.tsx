@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -17,7 +17,7 @@ interface Props {
   url: string;
 }
 
-function CreationButton ({ Icon, label, labelPartInColor = '', style, url }: Props): React.ReactElement {
+function CreationButton({ Icon, label, labelPartInColor = '', style, url }: Props): React.ReactElement {
   const navigate = useNavigate();
 
   const [hovered, setHovered] = useState<boolean>(false);

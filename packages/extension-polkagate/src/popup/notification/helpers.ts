@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
@@ -319,8 +319,8 @@ export const getReferendasInformation = async (chain: string): Promise<Referenda
     network.value === POLKADOT_GENESIS_HASH
       ? REFERENDA_COUNT_TO_TRACK_DOT
       : network.value === KUSAMA_GENESIS_HASH
-      ? REFERENDA_COUNT_TO_TRACK_KSM
-      : 10; // fallback for testnets
+        ? REFERENDA_COUNT_TO_TRACK_KSM
+        : 10; // fallback for testnets
 
   // let lastError: unknown = null;
 

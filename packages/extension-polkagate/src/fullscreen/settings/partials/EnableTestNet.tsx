@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
@@ -16,7 +16,7 @@ import useIsTestnetEnabled from '../../../hooks/useIsTestnetEnabled';
 import { tieAccount } from '../../../messaging';
 import Warning from './Warning';
 
-export default function EnableTestNet (): React.ReactElement {
+export default function EnableTestNet(): React.ReactElement {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
   const isTestnetEnabled = useIsTestnetEnabled();

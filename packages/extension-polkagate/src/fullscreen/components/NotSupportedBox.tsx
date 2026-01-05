@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Typography } from '@mui/material';
@@ -13,7 +13,7 @@ interface Props {
   text?: string;
 }
 
-function NotSupportedBox ({ style = {}, text }: Props) {
+function NotSupportedBox({ style = {}, text }: Props) {
   const { t } = useTranslation();
 
   return (

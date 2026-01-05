@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
@@ -7,7 +7,7 @@ import React from 'react';
 import { useAlerts, useTransactionState } from '../hooks';
 import Alert from './Alert';
 
-function AlertBox (): React.ReactElement {
+function AlertBox(): React.ReactElement {
   const { alerts } = useAlerts();
 
   useTransactionState();

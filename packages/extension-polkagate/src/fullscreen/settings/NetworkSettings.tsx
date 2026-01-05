@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
@@ -30,7 +30,7 @@ interface ItemProps {
   chainEndpoints: (value: string) => () => void;
 }
 
-function Item ({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: ItemProps): React.ReactElement {
+function Item({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: ItemProps): React.ReactElement {
   return (
     <Grid
       alignItems='center' container item justifyContent='space-between' key={value} sx={{
@@ -69,7 +69,7 @@ function Item ({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: Ite
   );
 }
 
-function AddButton (): React.ReactElement {
+function AddButton(): React.ReactElement {
   const { t } = useTranslation();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
@@ -92,7 +92,7 @@ function AddButton (): React.ReactElement {
   );
 }
 
-function NetworkSettings (): React.ReactElement {
+function NetworkSettings(): React.ReactElement {
   const { t } = useTranslation();
   const allChains = useGenesisHashOptions(false);
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
@@ -22,7 +22,7 @@ interface Props {
  *
  * Only has been used in extension mode!
  */
-function RenameAccount ({ onClose, open }: Props): React.ReactElement {
+function RenameAccount({ onClose, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
@@ -69,7 +69,7 @@ function RenameAccount ({ onClose, open }: Props): React.ReactElement {
           Icon={User}
           focused
           iconSize={18}
-          inputValue={ newName }
+          inputValue={newName}
           onEnterPress={onRename}
           onTextChange={onNameChange}
           placeholder={t('Enter your name')}

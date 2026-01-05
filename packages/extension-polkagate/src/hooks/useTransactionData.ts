@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Content } from '../partials/Review';
@@ -9,7 +9,7 @@ import { useMemo } from 'react';
 import { toBN } from '../util';
 import useCanPayFeeAndDeposit from './useCanPayFeeAndDeposit';
 
-export default function useTransactionData (
+export default function useTransactionData(
   address: string | undefined,
   genesisHash: string | undefined,
   proxyAddress: string | undefined,

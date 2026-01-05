@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Typography } from '@mui/material';
@@ -10,7 +10,7 @@ import SelectCurrency from '@polkadot/extension-polkagate/src/popup/home/partial
 
 import { useIsDark } from '../../../hooks';
 
-function CurrencySelection (): React.ReactElement {
+function CurrencySelection(): React.ReactElement {
   const { currency } = useContext(CurrencyContext);
   const isDark = useIsDark();
 

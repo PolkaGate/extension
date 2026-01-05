@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
@@ -31,7 +31,7 @@ const DropSelectContainer = styled(Grid, { shouldForwardProp: (prop) => prop !==
   transition: 'all 250ms ease-out'
 }));
 
-function Logo ({ text }: { text: string }) {
+function Logo({ text }: { text: string }) {
   const isDark = useIsDark();
   const icon = getLogo(text);
 
@@ -66,7 +66,7 @@ interface Props {
   withDivider?: boolean;
 }
 
-function DropSelect ({ Icon, contentDropWidth, defaultValue, disabled, displayContentType = 'text', dropContentStyle, onChange, options, scrollTextOnOverflow, showCheckAsIcon, simpleArrow, style, textVariant, value, withDivider = false }: Props) {
+function DropSelect({ Icon, contentDropWidth, defaultValue, disabled, displayContentType = 'text', dropContentStyle, onChange, options, scrollTextOnOverflow, showCheckAsIcon, simpleArrow, style, textVariant, value, withDivider = false }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChevronRight } from '@mui/icons-material';
@@ -15,7 +15,7 @@ import useIsDark from '../../../hooks/useIsDark';
 import SelectLanguage from '../../../partials/SelectLanguage';
 import { ExtensionPopups } from '../../../util/constants';
 
-export default function Language (): React.ReactElement {
+export default function Language(): React.ReactElement {
   const settings = useContext(SettingsContext);
   const isDark = useIsDark();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();

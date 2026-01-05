@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
@@ -23,7 +23,7 @@ enum STEP {
   CHOOSE_ACCOUNTS
 }
 
-function EditProfile ({ profileLabel, setPopup }: Props): React.ReactElement {
+function EditProfile({ profileLabel, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const allAccounts = useAccountsOrder();

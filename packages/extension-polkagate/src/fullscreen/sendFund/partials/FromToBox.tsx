@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
@@ -15,7 +15,7 @@ interface Props {
   label: string;
 }
 
-export default function FromToBox ({ address, chainName, genesisHash, label }: Props): React.ReactElement {
+export default function FromToBox({ address, chainName, genesisHash, label }: Props): React.ReactElement {
   return (
     <Stack direction='column' justifyContent='space-between' sx={{ height: 'fit-content', width: '45%' }}>
       <Stack columnGap='5px' direction='row' justifyContent='start' sx={{ mt: '3px' }}>

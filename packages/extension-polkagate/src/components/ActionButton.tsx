@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -62,7 +62,7 @@ export interface ActionButtonProps {
   variant?: 'text' | 'contained' | 'outlined';
 }
 
-export default function ActionButton ({ EndIcon, StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBlueish, isBusy, onClick, style, text, variant }: ActionButtonProps): React.ReactElement<ActionButtonProps> {
+export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBlueish, isBusy, onClick, style, text, variant }: ActionButtonProps): React.ReactElement<ActionButtonProps> {
   const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);

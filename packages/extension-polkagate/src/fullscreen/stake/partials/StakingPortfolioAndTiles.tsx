@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Balance } from '@polkadot/types/interfaces';
@@ -32,7 +32,7 @@ interface TileBoxProps {
   popupOpener: PopupOpener;
 }
 
-const TileBoxes = memo(function MemoTileBoxes ({ availableBalanceToStake, genesisHash, popupOpener, redeemable, rewards, toBeReleased, tokenPrice, type, unlockingAmount }: TileBoxProps) {
+const TileBoxes = memo(function MemoTileBoxes({ availableBalanceToStake, genesisHash, popupOpener, redeemable, rewards, toBeReleased, tokenPrice, type, unlockingAmount }: TileBoxProps) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -140,7 +140,7 @@ interface Props {
   disabled?: boolean;
 }
 
-export default function StakingPortfolioAndTiles ({ availableBalanceToStake, disabled, genesisHash, popupOpener, redeemable, rewards, staked, toBeReleased, tokenPrice, type, unlockingAmount }: Props) {
+export default function StakingPortfolioAndTiles({ availableBalanceToStake, disabled, genesisHash, popupOpener, redeemable, rewards, staked, toBeReleased, tokenPrice, type, unlockingAmount }: Props) {
   const { t } = useTranslation();
   const { api } = useChainInfo(genesisHash);
 

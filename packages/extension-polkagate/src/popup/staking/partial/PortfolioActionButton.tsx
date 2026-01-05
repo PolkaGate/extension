@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -21,7 +21,7 @@ export interface PortfolioActionButtonProps {
   isFullScreen?: boolean;
 }
 
-export default function PortfolioActionButton ({ Icon, disabled = false, isFullScreen = false, onClick, text }: PortfolioActionButtonProps): React.ReactElement {
+export default function PortfolioActionButton({ Icon, disabled = false, isFullScreen = false, onClick, text }: PortfolioActionButtonProps): React.ReactElement {
   const containerRef = useRef(null);
   const isHovered = useIsHovered(containerRef);
   const isBlueish = useIsBlueish();
@@ -30,7 +30,7 @@ export default function PortfolioActionButton ({ Icon, disabled = false, isFullS
     isFullScreen
       ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)'
       : '#809ACB40'
-  , [isFullScreen]);
+    , [isFullScreen]);
 
   return (
     <Grid alignItems='center' container item onClick={disabled ? noop : onClick} ref={containerRef}

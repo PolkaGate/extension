@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -23,7 +23,7 @@ import { INVALID_PARA_ID, XCM_LOC } from './utils';
 /** This hook is DEPRECATED */
 
 // This hook is used to estimate fees and prepare the transaction for sending funds for testnets mostly and non xcm transfers on other chains since paraspell does not support transfer all as well
-export default function useLimitedFeeCall (address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, inputs: Inputs | undefined, genesisHash: string | undefined, teleportState: Teleport) {
+export default function useLimitedFeeCall(address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, inputs: Inputs | undefined, genesisHash: string | undefined, teleportState: Teleport) {
   const { api, chainName: senderChainName } = useChainInfo(genesisHash);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
@@ -42,7 +42,7 @@ export default function useLimitedFeeCall (address: string | undefined, assetId:
     : isForeignAsset
       ? decodeMultiLocation(assetId as HexString)
       : parseInt(assetId)
-  , [assetId, isForeignAsset, isNativeToken, noAssetId]);
+    , [assetId, isForeignAsset, isNativeToken, noAssetId]);
 
   const amountAsBN = useMemo(() => decimal ? amountToMachine(inputs?.amount, decimal) : undefined, [decimal, inputs?.amount]);
   const isCrossChain = useMemo(() => senderChainName !== inputs?.recipientChain?.text, [inputs?.recipientChain?.text, senderChainName]);

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
@@ -16,7 +16,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<PROFILE_MODE>>;
 }
 
-function HeaderSection ({ mode, setMode }: Props): React.ReactElement {
+function HeaderSection({ mode, setMode }: Props): React.ReactElement {
   const onAction = useContext(ActionContext);
   const isExtension = useIsExtensionPopup();
   const isInSettingMode = mode === PROFILE_MODE.SETTING_MODE;

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -27,7 +27,7 @@ interface TileActionButtonProps {
   isFullScreen?: boolean;
 }
 
-export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = false, isFullScreen, isLoading = false, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
+export function TileActionButton({ Icon, iconVariant = 'Bulk', isDisabled = false, isFullScreen, isLoading = false, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(containerRef);
@@ -40,7 +40,7 @@ export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = fal
         : isFullScreen
           ? '#AA83DC'
           : theme.palette.text.highlight
-  , [hovered, isDisabled, isFullScreen, theme.palette.text.highlight]);
+    , [hovered, isDisabled, isFullScreen, theme.palette.text.highlight]);
 
   const isLoadingOnFullscreen = isFullScreen && isLoading;
 
@@ -164,7 +164,7 @@ export interface Props {
   isFullScreen?: boolean;
 }
 
-export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, icon, isFullScreen, layoutDirection = 'column', onExpand, style, title, token }: Props): React.ReactElement {
+export default function StakingInfoTile({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, icon, isFullScreen, layoutDirection = 'column', onExpand, style, title, token }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
 

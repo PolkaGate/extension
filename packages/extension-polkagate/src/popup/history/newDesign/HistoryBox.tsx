@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '@polkadot/extension-polkagate/src/util/types';
@@ -14,7 +14,7 @@ import VelvetBox from '../../../style/VelvetBox';
 import AssetLoading from '../../home/partial/AssetLoading';
 import HistoryItem from './HistoryItem';
 
-function EmptyHistoryBox () {
+function EmptyHistoryBox() {
   const { t } = useTranslation();
 
   return (
@@ -37,7 +37,7 @@ interface Props {
   notReady?: boolean;
 }
 
-function HistoryBox ({ historyItems, notReady = false, style }: Props) {
+function HistoryBox({ historyItems, notReady = false, style }: Props) {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { KUSAMA_GENESIS, PASEO_GENESIS, POLKADOT_GENESIS, WESTEND_GENESIS } from '@polkagate/apps-config';
@@ -54,7 +54,7 @@ export const hubToRelay: Record<string, string> = Object.fromEntries(
  * @param type - The type of system chain to map to ( 'people', or 'assetHub'). Defaults to 'assetHub'.
  * @returns The adjusted genesis hash if a mapping exists; otherwise, returns the original genesis hash.
  */
-export function mapRelayToSystemGenesisIfMigrated (genesisHash: string | null | undefined, type: SystemChainsName = 'assetHub'): string | undefined {
+export function mapRelayToSystemGenesisIfMigrated(genesisHash: string | null | undefined, type: SystemChainsName = 'assetHub'): string | undefined {
   if (!genesisHash) {
     return;
   }
@@ -68,7 +68,7 @@ export function mapRelayToSystemGenesisIfMigrated (genesisHash: string | null | 
  * @param systemGenesisHash - The genesis hash of the system chain (e.g., people, assetHub, etc).
  * @returns The relay chain genesis hash if a mapping exists; otherwise, returns the original genesis hash.
  */
-export function mapSystemToRelay (systemGenesisHash: string | undefined | null, withMigrationCheck = true): string | undefined | null {
+export function mapSystemToRelay(systemGenesisHash: string | undefined | null, withMigrationCheck = true): string | undefined | null {
   if (!systemGenesisHash || (withMigrationCheck && !isMigratedHub(systemGenesisHash))) {
     return systemGenesisHash;
   }
@@ -87,7 +87,7 @@ export function mapSystemToRelay (systemGenesisHash: string | undefined | null, 
  * @param genesisHash - The original genesis hash of the assetHub chain.
  * @returns The relay chain genesis hash if a mapping exists; otherwise, returns the original genesis hash.
  */
-export function mapHubToRelay (genesisHash: string | undefined | null): string | undefined {
+export function mapHubToRelay(genesisHash: string | undefined | null): string | undefined {
   if (!genesisHash) {
     return;
   }
@@ -100,7 +100,7 @@ export function mapHubToRelay (genesisHash: string | undefined | null): string |
  * @param genesisHash - The genesis hash to check.
  * @returns True if the genesis hash is in the list of migrated relays; otherwise, false.
  */
-export function isMigratedRelay (genesisHash: string): boolean {
+export function isMigratedRelay(genesisHash: string): boolean {
   return migratedRelaysSet.has(genesisHash);
 }
 
@@ -109,7 +109,7 @@ export function isMigratedRelay (genesisHash: string): boolean {
  * @param info - The genesis hash or assetHub chain name to check.
  * @returns True if the genesis hash has a mapping in hubToRelay; otherwise, false.
  */
-export function isMigratedHub (info: string | undefined): boolean {
+export function isMigratedHub(info: string | undefined): boolean {
   if (!info) {
     return false;
   }
@@ -128,7 +128,7 @@ export function isMigratedHub (info: string | undefined): boolean {
  * @param genesisHash - The genesis hash of the chain to check.
  * @returns `true` if the chain is migrated; otherwise `false`.
  */
-export function isMigrated (genesisHash: string): boolean {
+export function isMigrated(genesisHash: string): boolean {
   return isMigratedRelay(genesisHash) || isMigratedHub(genesisHash);
 }
 
@@ -137,7 +137,7 @@ export function isMigrated (genesisHash: string): boolean {
  * @param name - The chain name of the chain to check.
  * @returns true for chains like "westend" and "westendAssetHub".
  */
-export function isMigratedByChainName (name: string): boolean {
+export function isMigratedByChainName(name: string): boolean {
   const lcName = name.toLowerCase();
 
   // Check for "assethub" suffix: match if any migrated relay name is included
@@ -156,7 +156,7 @@ export function isMigratedByChainName (name: string): boolean {
  * @param genesisHash - The genesis hash of the chain.
  * @returns The resolved staking asset ID, or undefined if the genesis hash is not provided.
  */
-export function resolveStakingAssetId (genesisHash: string | undefined): string | undefined {
+export function resolveStakingAssetId(genesisHash: string | undefined): string | undefined {
   if (!genesisHash) {
     return;
   }
@@ -171,7 +171,7 @@ export function resolveStakingAssetId (genesisHash: string | undefined): string 
  * @param genesisHash - The genesis hash of the chain to check.
  * @returns `true` if the chain supports staking, otherwise `false`.
  */
-export function isStakingChain (genesisHash: string | undefined): boolean | undefined {
+export function isStakingChain(genesisHash: string | undefined): boolean | undefined {
   if (!genesisHash) {
     return;
   }
@@ -187,7 +187,7 @@ export function isStakingChain (genesisHash: string | undefined): boolean | unde
  * @param relayGenesis - The genesis hash of the relay chain to check against.
  * @returns `true` if the system chain belongs to the given relay,`false` if it does not, or `undefined` if the relay genesis is not provided or not recognized.
  */
-export function isSystemChain (systemChainGenesis: string | undefined, relayGenesis: string | undefined): boolean | undefined {
+export function isSystemChain(systemChainGenesis: string | undefined, relayGenesis: string | undefined): boolean | undefined {
   if (!relayGenesis) {
     return;
   }
@@ -212,7 +212,7 @@ export function isSystemChain (systemChainGenesis: string | undefined, relayGene
  * @returns The normalized relay chain name, or the original name if not migrated (when migration check is applied),
  *          or `undefined` if `systemChainName` is not provided.
  */
-export function extractRelayChainName (systemChainName: string | undefined, withMigrationCheck?: boolean): string | undefined {
+export function extractRelayChainName(systemChainName: string | undefined, withMigrationCheck?: boolean): string | undefined {
   if (!systemChainName) {
     return;
   }

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolInfo, PositionInfo } from '../../../../util/types';
@@ -22,7 +22,7 @@ export interface StakingTypeSelectionProps {
   selectedPosition: PositionInfo | undefined;
 }
 
-export default function StakingTypeSelection ({ initialPool, selectedPosition, selectedStakingType, setSelectedStakingType, setSide }: StakingTypeSelectionProps) {
+export default function StakingTypeSelection({ initialPool, selectedPosition, selectedStakingType, setSelectedStakingType, setSide }: StakingTypeSelectionProps) {
   const { t } = useTranslation();
   const theme = useTheme();
   const poolStakingConsts = usePoolConst(selectedPosition?.genesisHash);

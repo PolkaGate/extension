@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -20,7 +20,7 @@ import { fetchStaking } from '../../util/fetchStaking';
 import StakingInfo from './stakingInfo';
 import { getEarningOptions } from './utils';
 
-export default function EarningOptions (): React.ReactElement {
+export default function EarningOptions(): React.ReactElement {
   useBackground('default');
 
   const theme = useTheme();

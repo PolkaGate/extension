@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { EndpointType } from '../util/types';
@@ -18,7 +18,7 @@ const DEFAULT_ENDPOINT = {
   timestamp: undefined
 };
 
-export default function useEndpoint (genesisHash: string | null | undefined, _endpoint?: string): EndpointType {
+export default function useEndpoint(genesisHash: string | null | undefined, _endpoint?: string): EndpointType {
   const [endpoint, setEndpoint] = useState<EndpointType>(DEFAULT_ENDPOINT);
 
   // Function to fetch or update the endpoint

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
@@ -26,7 +26,7 @@ interface Props {
   closePopup: ExtensionPopupCloser;
 }
 
-function getRandomColor () {
+function getRandomColor() {
   // Generate a random number between 0 and 16777215 (0xFFFFFF)
   const randomNumber = Math.floor(Math.random() * 16777215);
   // Convert the number to a hexadecimal string and pad with leading zeros if necessary
@@ -46,7 +46,7 @@ interface ChainItemProps {
   label: string
 }
 
-function ChainItem ({ label, value }: ChainItemProps): React.ReactElement {
+function ChainItem({ label, value }: ChainItemProps): React.ReactElement {
   return (
     <Stack alignItems='start' direction='column' rowGap='4px'>
       <Typography color='text.primary' variant='B-1'>
@@ -60,7 +60,7 @@ function ChainItem ({ label, value }: ChainItemProps): React.ReactElement {
   );
 }
 
-function ShowChainInfo ({ currencySign, metadata, price }: ShowChainInfoProps): React.ReactElement {
+function ShowChainInfo({ currencySign, metadata, price }: ShowChainInfoProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -131,7 +131,7 @@ function ShowChainInfo ({ currencySign, metadata, price }: ShowChainInfoProps): 
   );
 }
 
-function PolkadotJsUrlPicture ({ show }: { show: boolean | undefined }): React.ReactElement {
+function PolkadotJsUrlPicture({ show }: { show: boolean | undefined }): React.ReactElement {
   return (
     <Collapse in={show} orientation='vertical' sx={{ mb: '60px', width: '100%' }}>
       <Box
@@ -149,7 +149,7 @@ function PolkadotJsUrlPicture ({ show }: { show: boolean | undefined }): React.R
   );
 }
 
-function GetPriceId ({ chainName, isCheckingPriceId, price, setCheckingPriceId, setPrice }:
+function GetPriceId({ chainName, isCheckingPriceId, price, setCheckingPriceId, setPrice }:
   {
     chainName: string | undefined;
     isCheckingPriceId: boolean | undefined;
@@ -241,7 +241,7 @@ function GetPriceId ({ chainName, isCheckingPriceId, price, setCheckingPriceId, 
   );
 }
 
-function AddNewNetwork ({ closePopup }: Props): React.ReactElement {
+function AddNewNetwork({ closePopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { currency } = useContext(CurrencyContext);

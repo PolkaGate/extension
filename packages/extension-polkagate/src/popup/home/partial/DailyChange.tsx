@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -22,7 +22,7 @@ interface DailyChangeProps {
   showPercentage?: boolean;
 }
 
-function DailyChange ({ address, change = null, iconSize = 15, showHours = true, showPercentage, style = {}, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
+function DailyChange({ address, change = null, iconSize = 15, showHours = true, showPercentage, style = {}, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const youHave = usePortfolio(address);
@@ -66,7 +66,7 @@ function DailyChange ({ address, change = null, iconSize = 15, showHours = true,
       : changed > 0
         ? isDark ? '#82FFA5' : '#00CA8D'
         : '#FF165C'
-  , [changed, isDark]);
+    , [changed, isDark]);
 
   if (changed === undefined) {
     return (<MySkeleton height={20} style={{ background: '#BEAAD826', width: style?.minWidth ?? '122px' }} />);

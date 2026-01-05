@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '../../../util/types';
@@ -32,7 +32,7 @@ interface HistoryDetailProps {
 const isReceived = (historyItem: TransactionDetail) => !historyItem.subAction && historyItem.action.toLowerCase() !== 'send';
 const isSend = (historyItem: TransactionDetail) => !historyItem.subAction && historyItem.action.toLowerCase() === 'send';
 
-const DisplayCalls = memo(function DisplayCalls ({ calls }: { calls: string[]; }) {
+const DisplayCalls = memo(function DisplayCalls({ calls }: { calls: string[]; }) {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState<boolean>(false);
@@ -60,7 +60,7 @@ const DisplayCalls = memo(function DisplayCalls ({ calls }: { calls: string[]; }
   );
 });
 
-function HistoryStatus ({ action, success }: { action: string, success: boolean }) {
+function HistoryStatus({ action, success }: { action: string, success: boolean }) {
   const { t } = useTranslation();
 
   return (
@@ -83,7 +83,7 @@ function HistoryStatus ({ action, success }: { action: string, success: boolean 
   );
 }
 
-function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount: string, decimal: number, sign?: string, token?: string, genesisHash: string }) {
+function HistoryAmount({ amount, decimal, genesisHash, sign, token }: { amount: string, decimal: number, sign?: string, token?: string, genesisHash: string }) {
   const price = useTokenPriceBySymbol(token, genesisHash);
 
   const totalBalancePrice = useMemo(() => calcPrice(price.price, amountToMachine(amount, decimal) ?? BN_ZERO, decimal ?? 0), [amount, decimal, price.price]);
@@ -129,7 +129,7 @@ function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount:
   );
 }
 
-function DetailHeader ({ historyItem }: Props) {
+function DetailHeader({ historyItem }: Props) {
   const sign = isReward(historyItem) || isReceived(historyItem) ? '+' : isSend(historyItem) ? '-' : '';
 
   const { action, amount = '0', chain, decimal = 0, subAction, success, token = '' } = historyItem;
@@ -151,7 +151,7 @@ function DetailHeader ({ historyItem }: Props) {
   );
 }
 
-function DetailCard ({ historyItem }: Props) {
+function DetailCard({ historyItem }: Props) {
   const { calls, conviction, decimal = 0, delegatee, from, refId, to, token = '', txHash: hash = '', voteType } = historyItem;
 
   const items = useMemo(() => {
@@ -212,7 +212,7 @@ function DetailCard ({ historyItem }: Props) {
                       showSocial={false}
                       style={{ color: 'text.primary', variant: 'B-1' }}
                       withShortAddress={true}
-                      />
+                    />
                     : isHash
                       ? toShortAddress(value.toString(), 6)
                       : isDate
@@ -228,7 +228,7 @@ function DetailCard ({ historyItem }: Props) {
                                 width: 'max-content'
                               }}
                               token={token}
-                              />
+                            />
                             : value
                   }
                 </Typography>
@@ -242,7 +242,7 @@ function DetailCard ({ historyItem }: Props) {
   );
 }
 
-function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail | undefined, style?: React.CSSProperties }): React.ReactElement {
+function Content({ historyItem, style = {} }: { historyItem: TransactionDetail | undefined, style?: React.CSSProperties }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -285,7 +285,7 @@ function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail 
   );
 }
 
-function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React.ReactElement {
+function HistoryDetail({ historyItem, setOpenMenu }: HistoryDetailProps): React.ReactElement {
   const isExtension = useIsExtensionPopup();
   const handleClose = useCallback(() => setOpenMenu(undefined), [setOpenMenu]);
 
@@ -313,7 +313,7 @@ function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React
             }}
             fullScreen
             open={!!historyItem}
-            >
+          >
             <Container disableGutters sx={{ height: '100%', width: '100%' }}>
               <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
                 <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
@@ -331,7 +331,7 @@ function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React
             showBackIconAsClose
             style={{ backgroundColor: '#1B133C', minHeight: '400px', padding: ' 20px 10px 10px' }}
             title={historyItem?.subAction ?? historyItem?.action}
-            >
+          >
             <Content
               historyItem={historyItem}
               style={{ background: 'transparent', border: 0 }}

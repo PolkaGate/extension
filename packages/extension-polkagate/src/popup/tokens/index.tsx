@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
@@ -33,7 +33,7 @@ const BackButton = ({ logoInfo, token }: { token: FetchedBalance | undefined; lo
   </Grid>
 );
 
-function Tokens (): React.ReactElement {
+function Tokens(): React.ReactElement {
   useBackground('default');
 
   const theme = useTheme();
@@ -46,7 +46,7 @@ function Tokens (): React.ReactElement {
   const accountAssets = useAccountAssets(address);
   const token = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === paramAssetId)
-  , [accountAssets, genesisHash, paramAssetId]);
+    , [accountAssets, genesisHash, paramAssetId]);
 
   const logoInfo = useMemo(() => getLogo2(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
 

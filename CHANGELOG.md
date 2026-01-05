@@ -1,5 +1,26 @@
 # Change Log
 
+# [1.24.0](https://github.com/polkagate/extension/compare/v1.23.3...v1.24.0) (2026-01-05)
+
+
+### Features
+
+* AI-powered insights now appear on your signing page!  ([24f0d52](https://github.com/polkagate/extension/commit/24f0d52521b53ae263b0c5239a95bd487592d08c)), closes [#2080](https://github.com/polkagate/extension/issues/2080)
+
+## [1.23.3](https://github.com/polkagate/extension/compare/v1.23.2...v1.23.3) (2026-01-05)
+
+
+### Bug Fixes
+
+* properly clean up authorized dApp accounts after account removal ([a469028](https://github.com/polkagate/extension/commit/a469028fb668db6522fa16fd5ce92641b123f88c))
+
+## [1.23.2](https://github.com/polkagate/extension/compare/v1.23.1...v1.23.2) (2026-01-04)
+
+
+### Bug Fixes
+
+* handle specVersion issues with multiple pending transactions across chains ([#2089](https://github.com/polkagate/extension/issues/2089)) ([dce9fa3](https://github.com/polkagate/extension/commit/dce9fa3597e05b4fa7e09d344f32cc248a799ac1)), closes [#2088](https://github.com/polkagate/extension/issues/2088)
+
 ## [1.23.1](https://github.com/polkagate/extension/compare/v1.23.0...v1.23.1) (2026-01-01)
 
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/types';
@@ -19,7 +19,7 @@ interface Props {
   open: boolean;
 }
 
-function EmptyAccessList () {
+function EmptyAccessList() {
   const { t } = useTranslation();
 
   return (
@@ -43,7 +43,7 @@ interface AccessListProps {
   setAccessToEdit: React.Dispatch<React.SetStateAction<AuthUrlInfo | undefined>>
 }
 
-function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setSearchKeyword }: AccessListProps): React.ReactElement {
+function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setSearchKeyword }: AccessListProps): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef(null);
@@ -115,7 +115,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
           const isIncluded = info.authorizedAccounts.find((address) => address === selectedAccount?.address);
 
           return (
-            <>
+            <React.Fragment key={index}>
               {
                 !!index && isExtension &&
                 <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '345px' }} />
@@ -143,7 +143,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
                   </MyTooltip>
                 </Stack>
               </Stack>
-            </>
+            </React.Fragment>
           );
         })}
         <NothingFound
@@ -191,7 +191,7 @@ function AccessList ({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, set
  *
  * Has been used in both full-screen & extension mode!
  */
-function WebsitesAccess ({ onClose, open }: Props): React.ReactElement {
+function WebsitesAccess({ onClose, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 
@@ -240,16 +240,16 @@ function WebsitesAccess ({ onClose, open }: Props): React.ReactElement {
         ? <EmptyAccessList />
         : accessToEdit
           ? <EditDappAccess
-              access={accessToEdit}
-              setAccessToEdit={setAccessToEdit}
-              setRefresh={setRefresh}
-            />
+            access={accessToEdit}
+            setAccessToEdit={setAccessToEdit}
+            setRefresh={setRefresh}
+          />
           : <AccessList
-              filteredAuthorizedDapps={filteredAuthorizedDapps}
-              setAccessToEdit={setAccessToEdit}
-              setRefresh={setRefresh}
-              setSearchKeyword={setSearchKeyword}
-            />
+            filteredAuthorizedDapps={filteredAuthorizedDapps}
+            setAccessToEdit={setAccessToEdit}
+            setRefresh={setRefresh}
+            setSearchKeyword={setSearchKeyword}
+          />
       }
     </SharePopup>
   );

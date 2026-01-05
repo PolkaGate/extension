@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { CurrencyItemType } from '@polkadot/extension-polkagate/fullscreen/home/partials/type';
@@ -18,7 +18,7 @@ import { toShortAddress } from '@polkadot/extension-polkagate/src/util';
 import useNotificationLink from '../hook/useNotificationLink';
 import { getChainInfo, getNotificationMessages, getTokenPriceBySymbol, isToday } from '../util';
 
-function ItemDate ({ date }: { date: string; }) {
+function ItemDate({ date }: { date: string; }) {
   const theme = useTheme();
   const isTodayDate = isToday(date);
 
@@ -33,7 +33,7 @@ function ItemDate ({ date }: { date: string; }) {
   );
 }
 
-function TitleTime ({ address, hovered, noName, read, time, title }: { address: string | undefined; read: boolean; time: string; title: string; noName: boolean; hovered: boolean; }) {
+function TitleTime({ address, hovered, noName, read, time, title }: { address: string | undefined; read: boolean; time: string; title: string; noName: boolean; hovered: boolean; }) {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -75,7 +75,7 @@ interface NotificationItemProps {
   useAddedEndpoints: Record<`0x${string}`, UserAddedEndpoint> | undefined
 }
 
-function NotificationItem ({ currency, item, prices, t, theme, useAddedEndpoints }: NotificationItemProps) {
+function NotificationItem({ currency, item, prices, t, theme, useAddedEndpoints }: NotificationItemProps) {
   const hoveredRef = useRef(null);
   const hovered = useIsHovered(hoveredRef);
   const { isNavigable, onClick } = useNotificationLink(item.message);
@@ -113,7 +113,7 @@ function NotificationItem ({ currency, item, prices, t, theme, useAddedEndpoints
   );
 }
 
-function NotificationGroup ({ group: [dateKey, items] }: { group: [string, NotificationMessageInformation[]]; }) {
+function NotificationGroup({ group: [dateKey, items] }: { group: [string, NotificationMessageInformation[]]; }) {
   const theme = useTheme();
   const { t } = useTranslation();
   const { currency } = useContext(CurrencyContext);

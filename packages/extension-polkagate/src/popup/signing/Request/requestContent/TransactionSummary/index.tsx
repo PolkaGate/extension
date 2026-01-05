@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable padding-line-between-statements */
@@ -28,7 +28,7 @@ interface DefaultProps {
   info: Call;
 }
 
-function DefaultCase ({ info }: DefaultProps): React.ReactElement<DefaultProps> {
+function DefaultCase({ info }: DefaultProps): React.ReactElement<DefaultProps> {
   return (
     <Stack columnGap='10px' direction='row' justifyContent='start'>
       <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
@@ -41,7 +41,7 @@ function DefaultCase ({ info }: DefaultProps): React.ReactElement<DefaultProps> 
   );
 }
 
-function TransactionSummary ({ genesisHash, info }: Props): React.ReactElement<Props> {
+function TransactionSummary({ genesisHash, info }: Props): React.ReactElement<Props> {
   if (!info) {
     return (
       <DefaultCase

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -38,7 +38,7 @@ const InfoBox = ({ decimal, label, value }: InfoBoxProps) => (
   </Box>
 );
 
-export default function Info (): React.ReactElement {
+export default function Info(): React.ReactElement {
   useBackground('staking');
 
   const theme = useTheme();

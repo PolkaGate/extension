@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -15,7 +15,7 @@ interface Props {
   textPartInColor: string;
 }
 
-function InfoRow ({ Icon, text, textPartInColor }: Props): React.ReactElement {
+function InfoRow({ Icon, text, textPartInColor }: Props): React.ReactElement {
   const isExtension = useIsExtensionPopup();
   const variant = isExtension ? 'B-3' : 'B-2';
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
@@ -70,7 +70,7 @@ interface Props {
   type: 'solo' | 'pool';
 }
 
-function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
+function PositionRow({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
   const navigate = useNavigate();
   const isDark = useIsDark();
   const hasPoolStaking = type === 'pool';
@@ -103,7 +103,7 @@ function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, price, t
   );
 }
 
-export default function StakingPositions (): React.ReactElement {
+export default function StakingPositions(): React.ReactElement {
   useBackground('default');
 
   const { t } = useTranslation();

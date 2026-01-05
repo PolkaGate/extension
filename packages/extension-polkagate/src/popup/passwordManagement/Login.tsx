@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, Typography } from '@mui/material';
@@ -29,7 +29,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
-function Content ({ setStep }: Props): React.ReactElement {
+function Content({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const isExtension = useIsExtensionPopup();
@@ -209,7 +209,7 @@ function Content ({ setStep }: Props): React.ReactElement {
   );
 }
 
-function Login ({ setStep }: Props): React.ReactElement {
+function Login({ setStep }: Props): React.ReactElement {
   const isExtensionPopup = useIsExtensionPopup();
 
   useBackground('drops');

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
@@ -57,7 +57,7 @@ interface MerkleProps {
   msData: MsData
 }
 
-function MerkleScienceTag ({ msData }: MerkleProps): React.ReactElement<Props> {
+function MerkleScienceTag({ msData }: MerkleProps): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const { isMSgreen, isMSwarning } = useMemo(() => ({
@@ -116,7 +116,7 @@ interface IdenticonDisplayProps extends Partial<Props> {
   isSubId?: boolean;
 }
 
-function IdenticonDisplay ({ address, chain, identiconSize, identiconStyle = {}, identiconType = 'polkagate', isSelected, isSubId, judgement }: IdenticonDisplayProps): React.ReactElement<Props> {
+function IdenticonDisplay({ address, chain, identiconSize, identiconStyle = {}, identiconType = 'polkagate', isSelected, isSubId, judgement }: IdenticonDisplayProps): React.ReactElement<Props> {
   return (
     <Grid alignItems='center' container item m='auto 0' pr='5px' sx={{ ...identiconStyle }} width='fit-content'>
       {isSelected
@@ -151,7 +151,7 @@ interface DisplayNameProps extends Partial<Props> {
   accountInfo: DeriveAccountInfo | null | undefined
 }
 
-const DisplayName = React.memo(function DisplayName ({ accountInfo, address, inTitleCase, name, nameStyle = {}, shortAddressProps, showShortAddress, style, subIdOnly = false }: DisplayNameProps): React.ReactElement<Props> {
+const DisplayName = React.memo(function DisplayName({ accountInfo, address, inTitleCase, name, nameStyle = {}, shortAddressProps, showShortAddress, style, subIdOnly = false }: DisplayNameProps): React.ReactElement<Props> {
   const { t } = useTranslation();
   const accountName = useAccountName(address);
 
@@ -218,7 +218,7 @@ interface SocialProps {
   socialStyles: SxProps<Theme> | React.CSSProperties
 }
 
-function SocialLinks ({ accountInfo, socialStyles }: SocialProps): React.ReactElement<Props> {
+function SocialLinks({ accountInfo, socialStyles }: SocialProps): React.ReactElement<Props> {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
   const isDark = useIsDark();
@@ -266,7 +266,7 @@ function SocialLinks ({ accountInfo, socialStyles }: SocialProps): React.ReactEl
   );
 }
 
-function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, inTitleCase, isSelected, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity2({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, inTitleCase, isSelected, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { chain } = useChainInfo(genesisHash, true);
   const _formatted = useFormatted(address, genesisHash);
   const msData = useMerkleScience(_formatted, chain);
@@ -321,7 +321,7 @@ function Identity2 ({ accountInfo, address, addressStyle, charsCount = 6, direct
               showShortAddress={showShortAddress}
               style={style}
               subIdOnly={subIdOnly}
-              />
+            />
           }
           {withShortAddress && direction === 'column' &&
             <Grid container item>

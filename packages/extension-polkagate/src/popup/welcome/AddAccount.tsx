@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Dialog, Grid, Typography } from '@mui/material';
@@ -19,7 +19,7 @@ interface Props {
   openMenu: boolean;
 }
 
-function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
+function AddAccount({ openMenu, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 

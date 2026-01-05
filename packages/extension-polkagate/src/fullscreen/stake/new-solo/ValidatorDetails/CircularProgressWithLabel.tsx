@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { CircularProgressProps } from '@mui/material/CircularProgress';
@@ -8,7 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 
-export default function CircularProgressWithLabel (
+export default function CircularProgressWithLabel(
   props: CircularProgressProps & { value: number, style?: React.CSSProperties }
 ) {
   return (

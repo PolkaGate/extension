@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
@@ -40,7 +40,7 @@ interface Props {
  *
  * @returns {React.ReactElement} The rendered address component.
  */
-function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, label, labelMarginTop, name, showAddress, showCopy = true, showName = true, style = {}, variant }: Props): React.ReactElement {
+function Address2({ address, charsCount = 5, identiconSize = 24, inTitleCase, label, labelMarginTop, name, showAddress, showCopy = true, showName = true, style = {}, variant }: Props): React.ReactElement {
   const { t } = useTranslation();
   const accountName = useAccountName(address || '');
   const isExtension = useIsExtensionPopup();

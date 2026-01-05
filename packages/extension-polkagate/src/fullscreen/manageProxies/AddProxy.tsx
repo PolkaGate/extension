@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -30,7 +30,7 @@ interface Props {
   setNewDepositedValue: React.Dispatch<React.SetStateAction<BN | undefined>>;
 }
 
-export default function AddProxy ({ chain, proxiedAddress, proxyItems, setNewDepositedValue, setProxyItems, setStep, step }: Props): React.ReactElement {
+export default function AddProxy({ chain, proxiedAddress, proxyItems, setNewDepositedValue, setProxyItems, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(proxiedAddress, chain?.genesisHash);
   const accountDisplayName = useAccountDisplay(proxiedAddress, chain?.genesisHash);

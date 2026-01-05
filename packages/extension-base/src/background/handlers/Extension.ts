@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension authors & contributors
+// Copyright 2019-2026 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
@@ -9,7 +9,7 @@ import type { KeyringAddress } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 // added for plus to import RequestUpdateMeta
-import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountsSetUnlockExpiry, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountsSetUnlockExpiry, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestCreateAgent, RequestDeriveCreate, RequestDeriveValidate, RequestExplainTx, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 import type State from './State';
 
 import { ALLOWED_PATH, START_WITH_PATH } from '@polkadot/extension-base/defaults';
@@ -22,18 +22,19 @@ import { keyExtractSuri, mnemonicGenerate, mnemonicValidate } from '@polkadot/ut
 
 import { withErrorLog } from './helpers';
 import { createSubscription, unsubscribe } from './subscriptions';
+import { DEFAULT_MODEL_ID, explainTransaction, loadAgent } from './txAiAgent';
 
 const SEED_DEFAULT_LENGTH = 12;
 const SEED_LENGTHS = [12, 15, 18, 21, 24];
 const ETH_DERIVE_DEFAULT = "/m/44'/60'/0'/0/0";
 
-function getSuri (seed: string, type?: KeypairType): string {
+function getSuri(seed: string, type?: KeypairType): string {
   return type === 'ethereum'
     ? `${seed}${ETH_DERIVE_DEFAULT}`
     : seed;
 }
 
-function transformAccounts (accounts: SubjectInfo): AccountJson[] {
+function transformAccounts(accounts: SubjectInfo): AccountJson[] {
   return Object.values(accounts).map(({ json: { address, meta }, type }): AccountJson => ({
     address,
     ...meta,
@@ -41,7 +42,7 @@ function transformAccounts (accounts: SubjectInfo): AccountJson[] {
   }));
 }
 
-function isJsonPayload (value: SignerPayloadJSON | SignerPayloadRaw): value is SignerPayloadJSON {
+function isJsonPayload(value: SignerPayloadJSON | SignerPayloadRaw): value is SignerPayloadJSON {
   return (value as SignerPayloadJSON).genesisHash !== undefined;
 }
 
@@ -52,16 +53,16 @@ export default class Extension {
 
   readonly #state: State;
 
-  constructor (state: State) {
+  constructor(state: State) {
     this.#state = state;
     this.scheduleExpiryCheck();
   }
 
-  private notifyLockExpired (): void {
+  private notifyLockExpired(): void {
     chrome.runtime.sendMessage({ type: 'LOCKED_ACCOUNTS_EXPIRED' }).catch(console.error);
   }
 
-  private scheduleExpiryCheck (): void {
+  private scheduleExpiryCheck(): void {
     const accountsLocal = this.localAccounts();
 
     if (accountsLocal.length === 0) {
@@ -88,13 +89,13 @@ export default class Extension {
     }, delay);
   }
 
-  private setUnlockExpiry ({ expiryTime }: RequestAccountsSetUnlockExpiry): void {
+  private setUnlockExpiry({ expiryTime }: RequestAccountsSetUnlockExpiry): void {
     this.#unlockExpiry = expiryTime;
     this.#lockMessageSent = false;
     this.scheduleExpiryCheck();
   }
 
-  private clearUnlockExpiry (): void {
+  private clearUnlockExpiry(): void {
     this.#unlockExpiry = null;
     this.#lockMessageSent = false;
 
@@ -103,13 +104,13 @@ export default class Extension {
     }
   }
 
-  private applyAddedTime ({ pair }: ApplyAddedTime): void {
+  private applyAddedTime({ pair }: ApplyAddedTime): void {
     assert(pair, 'Unable to find pair');
 
     keyring.saveAccountMeta(pair, { ...pair.meta, addedTime: Date.now() });
   }
 
-  private accountsCreateExternal ({ address, genesisHash, name }: RequestAccountCreateExternal): boolean {
+  private accountsCreateExternal({ address, genesisHash, name }: RequestAccountCreateExternal): boolean {
     const { pair } = keyring.addExternal(address, { genesisHash, name });
 
     this.applyAddedTime({ pair });
@@ -117,7 +118,7 @@ export default class Extension {
     return true;
   }
 
-  private accountsCreateHardware ({ accountIndex, address, addressOffset, genesisHash, hardwareType, name }: RequestAccountCreateHardware): boolean {
+  private accountsCreateHardware({ accountIndex, address, addressOffset, genesisHash, hardwareType, name }: RequestAccountCreateHardware): boolean {
     const { pair } = keyring.addHardware(address, hardwareType, { accountIndex, addressOffset, genesisHash, name });
 
     this.applyAddedTime({ pair });
@@ -125,7 +126,21 @@ export default class Extension {
     return true;
   }
 
-  private accountsCreateSuri ({ genesisHash, name, password, suri, type }: RequestAccountCreateSuri): boolean {
+  private async loadAiAgent({ modelId = DEFAULT_MODEL_ID, progressCallback }: RequestCreateAgent): Promise<boolean> {
+    this.#state.engine = await loadAgent(this.#state.engine, modelId, progressCallback);
+
+    return true;
+  }
+
+  private async explainTransactionWithAi({ txJson }: RequestExplainTx): Promise<string> {
+    const res = await explainTransaction(this.#state.engine, txJson);
+
+    this.#state.engine = res.engine;
+
+    return res.message;
+  }
+
+  private accountsCreateSuri({ genesisHash, name, password, suri, type }: RequestAccountCreateSuri): boolean {
     const { pair } = keyring.addUri(getSuri(suri, type), password, { genesisHash, name }, type);
 
     const unlockedPair = this.unlockPair({ address: pair.address, password });
@@ -137,7 +152,7 @@ export default class Extension {
     return true;
   }
 
-  private accountsChangePasswordAll ({ newPass, oldPass }: RequestAccountChangePasswordAll): boolean {
+  private accountsChangePasswordAll({ newPass, oldPass }: RequestAccountChangePasswordAll): boolean {
     const accountsLocal = this.localAccounts();
 
     const res = accountsLocal.map(({ address }) => {
@@ -147,7 +162,7 @@ export default class Extension {
     return res.every(Boolean);
   }
 
-  private accountsChangePassword ({ address, newPass, oldPass }: RequestAccountChangePassword): boolean {
+  private accountsChangePassword({ address, newPass, oldPass }: RequestAccountChangePassword): boolean {
     const pair = this.unlockPair({ address, password: oldPass });
 
     assert(pair, 'oldPass is invalid');
@@ -156,7 +171,7 @@ export default class Extension {
     return true;
   }
 
-  private accountsEdit ({ address, name }: RequestAccountEdit): boolean {
+  private accountsEdit({ address, name }: RequestAccountEdit): boolean {
     const pair = keyring.getPair(address);
 
     assert(pair, 'Unable to find pair');
@@ -167,7 +182,7 @@ export default class Extension {
   }
 
   // added for plus to update meta generally
-  private accountsUpdateMeta ({ address, meta }: RequestUpdateMeta): boolean {
+  private accountsUpdateMeta({ address, meta }: RequestUpdateMeta): boolean {
     const pair = keyring.getPair(address);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const metadata = JSON.parse(meta);
@@ -179,7 +194,7 @@ export default class Extension {
     return true;
   }
 
-  private lockExtension (): boolean {
+  private lockExtension(): boolean {
     for (const { address } of this.localAccounts()) {
       let pair;
 
@@ -222,23 +237,23 @@ export default class Extension {
     return true;
   }
 
-  private accountsExport ({ address, password }: RequestAccountExport): ResponseAccountExport {
+  private accountsExport({ address, password }: RequestAccountExport): ResponseAccountExport {
     return { exportedJson: keyring.backupAccount(keyring.getPair(address), password) };
   }
 
-  private async accountsBatchExport ({ addresses, password }: RequestAccountBatchExport): Promise<ResponseAccountsExport> {
+  private async accountsBatchExport({ addresses, password }: RequestAccountBatchExport): Promise<ResponseAccountsExport> {
     return {
       exportedJson: await keyring.backupAccounts(addresses, password)
     };
   }
 
-  private accountsForget ({ address }: RequestAccountForget): boolean {
+  private accountsForget({ address }: RequestAccountForget): boolean {
     keyring.forgetAccount(address);
 
     return true;
   }
 
-  private accountsForgetAll (): boolean {
+  private accountsForgetAll(): boolean {
     const accounts = keyring.getAccounts();
 
     accounts.forEach(({ address }) => {
@@ -248,7 +263,7 @@ export default class Extension {
     return true;
   }
 
-  private refreshAccountPasswordCache (pair: KeyringPair): number {
+  private refreshAccountPasswordCache(pair: KeyringPair): number {
     const savedExpiry = this.#unlockExpiry || 0;
     const remainingTime = savedExpiry - Date.now();
 
@@ -262,7 +277,7 @@ export default class Extension {
     return remainingTime;
   }
 
-  private accountsShow ({ address, isShowing }: RequestAccountShow): boolean {
+  private accountsShow({ address, isShowing }: RequestAccountShow): boolean {
     const pair = keyring.getPair(address);
 
     assert(pair, 'Unable to find pair');
@@ -272,7 +287,7 @@ export default class Extension {
     return true;
   }
 
-  private accountsTie ({ address, genesisHash }: RequestAccountTie): boolean {
+  private accountsTie({ address, genesisHash }: RequestAccountTie): boolean {
     const pair = keyring.getPair(address);
 
     assert(pair, 'Unable to find pair');
@@ -284,7 +299,7 @@ export default class Extension {
     return true;
   }
 
-  private accountsValidate ({ address, password }: RequestAccountValidate): boolean {
+  private accountsValidate({ address, password }: RequestAccountValidate): boolean {
     try {
       keyring.backupAccount(keyring.getPair(address), password);
 
@@ -295,7 +310,7 @@ export default class Extension {
   }
 
   // FIXME This looks very much like what we have in Tabs
-  private accountsSubscribe (id: string, port: chrome.runtime.Port): boolean {
+  private accountsSubscribe(id: string, port: chrome.runtime.Port): boolean {
     const cb = createSubscription<'pri(accounts.subscribe)'>(id, port);
     const subscription = accountsObservable.subject.subscribe((accounts: SubjectInfo): void =>
       cb(transformAccounts(accounts))
@@ -309,7 +324,7 @@ export default class Extension {
     return true;
   }
 
-  private authorizeApprove ({ authorizedAccounts, id }: RequestAuthorizeApprove): boolean {
+  private authorizeApprove({ authorizedAccounts, id }: RequestAuthorizeApprove): boolean {
     const queued = this.#state.getAuthRequest(id);
 
     assert(queued, 'Unable to find request');
@@ -321,20 +336,20 @@ export default class Extension {
     return true;
   }
 
-  private async authorizeUpdate ({ authorizedAccounts, url }: RequestUpdateAuthorizedAccounts): Promise<void> {
+  private async authorizeUpdate({ authorizedAccounts, url }: RequestUpdateAuthorizedAccounts): Promise<void> {
     return await this.#state.updateAuthorizedAccounts({ authorizedAccounts, url });
   }
 
-  private getAuthList (): ResponseAuthorizeList {
+  private getAuthList(): ResponseAuthorizeList {
     return { list: this.#state.authUrls as AuthUrls };
   }
 
-  private ignoreAuthorization (id: string): void {
+  private ignoreAuthorization(id: string): void {
     return this.#state.ignoreAuthRequest(id);
   }
 
   // FIXME This looks very much like what we have in accounts
-  private authorizeSubscribe (id: string, port: chrome.runtime.Port): boolean {
+  private authorizeSubscribe(id: string, port: chrome.runtime.Port): boolean {
     const cb = createSubscription<'pri(authorize.requests)'>(id, port);
     const subscription = this.#state.authSubject.subscribe((requests: AuthorizeRequest[]): void =>
       cb(requests)
@@ -348,7 +363,7 @@ export default class Extension {
     return true;
   }
 
-  private metadataApprove ({ id }: RequestMetadataApprove): boolean {
+  private metadataApprove({ id }: RequestMetadataApprove): boolean {
     const queued = this.#state.getMetaRequest(id);
 
     assert(queued, 'Unable to find request');
@@ -362,15 +377,15 @@ export default class Extension {
     return true;
   }
 
-  private metadataGet (genesisHash: string | null): MetadataDef | null {
+  private metadataGet(genesisHash: string | null): MetadataDef | null {
     return this.#state.knownMetadata.find((result) => result.genesisHash === genesisHash) || null;
   }
 
-  private metadataList (): MetadataDef[] {
+  private metadataList(): MetadataDef[] {
     return this.#state.knownMetadata;
   }
 
-  private metadataReject ({ id }: RequestMetadataReject): boolean {
+  private metadataReject({ id }: RequestMetadataReject): boolean {
     const queued = this.#state.getMetaRequest(id);
 
     assert(queued, 'Unable to find request');
@@ -382,7 +397,7 @@ export default class Extension {
     return true;
   }
 
-  private metadataSubscribe (id: string, port: chrome.runtime.Port): boolean {
+  private metadataSubscribe(id: string, port: chrome.runtime.Port): boolean {
     const cb = createSubscription<'pri(metadata.requests)'>(id, port);
     const subscription = this.#state.metaSubject.subscribe((requests: MetadataRequest[]): void =>
       cb(requests)
@@ -397,7 +412,7 @@ export default class Extension {
   }
 
   // added for PolkaGate
-  private metadataUpdate (metadata: MetadataDef): boolean {
+  private metadataUpdate(metadata: MetadataDef): boolean {
     assert(metadata, 'Unable to update metadata');
 
     this.#state.saveMetadata(metadata);
@@ -405,7 +420,7 @@ export default class Extension {
     return true;
   }
 
-  private jsonRestore ({ file, password }: RequestJsonRestore): void {
+  private jsonRestore({ file, password }: RequestJsonRestore): void {
     try {
       const pair = keyring.restoreAccount(file, password);
 
@@ -416,7 +431,7 @@ export default class Extension {
     }
   }
 
-  private batchRestore ({ file, password }: RequestBatchRestore): void {
+  private batchRestore({ file, password }: RequestBatchRestore): void {
     try {
       keyring.restoreAccounts(file, password);
     } catch (error) {
@@ -424,7 +439,7 @@ export default class Extension {
     }
   }
 
-  private jsonGetAccountInfo (json: KeyringPair$Json): ResponseJsonGetAccountInfo {
+  private jsonGetAccountInfo(json: KeyringPair$Json): ResponseJsonGetAccountInfo {
     try {
       const { address, meta: { genesisHash, name }, type } = keyring.createFromJson(json);
 
@@ -440,7 +455,7 @@ export default class Extension {
     }
   }
 
-  private seedCreate ({ length = SEED_DEFAULT_LENGTH, seed: _seed, type }: RequestSeedCreate): ResponseSeedCreate {
+  private seedCreate({ length = SEED_DEFAULT_LENGTH, seed: _seed, type }: RequestSeedCreate): ResponseSeedCreate {
     const seed = _seed || mnemonicGenerate(length);
 
     return {
@@ -449,7 +464,7 @@ export default class Extension {
     };
   }
 
-  private seedValidate ({ suri, type }: RequestSeedValidate): ResponseSeedValidate {
+  private seedValidate({ suri, type }: RequestSeedValidate): ResponseSeedValidate {
     const { phrase } = keyExtractSuri(suri);
 
     if (isHex(phrase)) {
@@ -466,13 +481,13 @@ export default class Extension {
     };
   }
 
-  private localAccounts (): KeyringAddress[] {
+  private localAccounts(): KeyringAddress[] {
     const accounts = keyring.getAccounts();
 
     return accounts.filter(({ meta }) => !meta.isExternal);
   }
 
-  private unlockPair ({ address, password }: { address: string, password: string | undefined }): KeyringPair | null {
+  private unlockPair({ address, password }: { address: string, password: string | undefined }): KeyringPair | null {
     assert(password, 'Password needed to unlock the account');
 
     try {
@@ -494,7 +509,7 @@ export default class Extension {
     }
   }
 
-  private accountsUnlockAll ({ cacheTime, lazy = false, password }: RequestUnlockAllAccounts): boolean {
+  private accountsUnlockAll({ cacheTime, lazy = false, password }: RequestUnlockAllAccounts): boolean {
     if (!password) {
       throw new Error('Password needed to unlock the account');
     }
@@ -538,7 +553,7 @@ export default class Extension {
     }
   }
 
-  private areLocksExpired (): boolean {
+  private areLocksExpired(): boolean {
     const accountsLocal = this.localAccounts();
 
     if (accountsLocal.length === 0) {
@@ -548,7 +563,7 @@ export default class Extension {
     return this.#unlockExpiry === null || this.#unlockExpiry < Date.now();
   }
 
-  private handleRegistry (payload: SignerPayloadJSON | SignerPayloadRaw): TypeRegistry {
+  private handleRegistry(payload: SignerPayloadJSON | SignerPayloadRaw): TypeRegistry {
     if (!isJsonPayload(payload)) {
       return new TypeRegistry();
     }
@@ -569,7 +584,7 @@ export default class Extension {
     return registry as TypeRegistry;
   }
 
-  private signingApprovePassword ({ id, password, remainingTime, savePass }: RequestSigningApprovePassword): boolean {
+  private signingApprovePassword({ id, password, remainingTime, savePass }: RequestSigningApprovePassword): boolean {
     const queued = this.#state.getSignRequest(id);
 
     assert(queued, 'Unable to find request');
@@ -610,7 +625,7 @@ export default class Extension {
     return true;
   }
 
-  private getSignature ({ payload }: RequestSigningSignature): HexString | null {
+  private getSignature({ payload }: RequestSigningSignature): HexString | null {
     if (!payload?.address || !payload.genesisHash) {
       throw new Error('Invalid payload: missing required fields.');
     }
@@ -632,7 +647,7 @@ export default class Extension {
     return signature;
   }
 
-  private signingApproveSignature ({ id, signature, signedTransaction }: RequestSigningApproveSignature): boolean {
+  private signingApproveSignature({ id, signature, signedTransaction }: RequestSigningApproveSignature): boolean {
     const queued = this.#state.getSignRequest(id);
 
     assert(queued, 'Unable to find request');
@@ -644,7 +659,7 @@ export default class Extension {
     return true;
   }
 
-  private signingCancel ({ id }: RequestSigningCancel): boolean {
+  private signingCancel({ id }: RequestSigningCancel): boolean {
     const queued = this.#state.getSignRequest(id);
 
     assert(queued, 'Unable to find request');
@@ -656,7 +671,7 @@ export default class Extension {
     return true;
   }
 
-  private signingIsLocked ({ id }: RequestSigningIsLocked): ResponseSigningIsLocked {
+  private signingIsLocked({ id }: RequestSigningIsLocked): ResponseSigningIsLocked {
     const queued = this.#state.getSignRequest(id);
 
     assert(queued, 'Unable to find request');
@@ -675,7 +690,7 @@ export default class Extension {
   }
 
   // FIXME This looks very much like what we have in authorization
-  private signingSubscribe (id: string, port: chrome.runtime.Port): boolean {
+  private signingSubscribe(id: string, port: chrome.runtime.Port): boolean {
     const cb = createSubscription<'pri(signing.requests)'>(id, port);
     const subscription = this.#state.signSubject.subscribe((requests: SigningRequest[]): void =>
       cb(requests)
@@ -689,7 +704,7 @@ export default class Extension {
     return true;
   }
 
-  private windowOpen (path: AllowedPath): boolean {
+  private windowOpen(path: AllowedPath): boolean {
     const url = `${chrome.runtime.getURL('index.html')}#${path}`;
 
     if (!ALLOWED_PATH.includes(path as any) && !START_WITH_PATH.find((p) => path.startsWith(p))) { // added for PolkaGate, updated
@@ -703,7 +718,7 @@ export default class Extension {
     return true;
   }
 
-  private derive (parentAddress: string, suri: string, password: string, metadata: KeyringPair$Meta): KeyringPair {
+  private derive(parentAddress: string, suri: string, password: string, metadata: KeyringPair$Meta): KeyringPair {
     const parentPair = keyring.getPair(parentAddress);
 
     try {
@@ -719,7 +734,7 @@ export default class Extension {
     }
   }
 
-  private derivationValidate ({ parentAddress, parentPassword, suri }: RequestDeriveValidate): ResponseDeriveValidate {
+  private derivationValidate({ parentAddress, parentPassword, suri }: RequestDeriveValidate): ResponseDeriveValidate {
     const childPair = this.derive(parentAddress, suri, parentPassword, {});
 
     return {
@@ -728,7 +743,7 @@ export default class Extension {
     };
   }
 
-  private derivationCreate ({ genesisHash, name, parentAddress, parentPassword, password, suri }: RequestDeriveCreate): boolean {
+  private derivationCreate({ genesisHash, name, parentAddress, parentPassword, password, suri }: RequestDeriveCreate): boolean {
     const childPair = this.derive(parentAddress, suri, parentPassword, {
       genesisHash,
       name,
@@ -743,7 +758,7 @@ export default class Extension {
     return true;
   }
 
-  private async removeAuthorization (url: string): Promise<ResponseAuthorizeList> {
+  private async removeAuthorization(url: string): Promise<ResponseAuthorizeList> {
     const remAuth = await this.#state.removeAuthorization(url);
 
     return { list: remAuth };
@@ -751,7 +766,7 @@ export default class Extension {
 
   // Weird thought, the eslint override is not needed in Tabs
   // eslint-disable-next-line @typescript-eslint/require-await
-  public async handle<TMessageType extends MessageTypes> (id: string, type: TMessageType, request: RequestTypes[TMessageType], port: chrome.runtime.Port): Promise<ResponseType<TMessageType>> {
+  public async handle<TMessageType extends MessageTypes>(id: string, type: TMessageType, request: RequestTypes[TMessageType], port: chrome.runtime.Port): Promise<ResponseType<TMessageType>> {
     switch (type) {
       case 'pri(authorize.approve)':
         return this.authorizeApprove(request as RequestAuthorizeApprove);
@@ -783,6 +798,12 @@ export default class Extension {
       // ----------------added for polkagate---------------------
       case 'pri(accounts.updateMeta)':
         return this.accountsUpdateMeta(request as RequestUpdateMeta);
+
+      case 'pri(ai.agentLoad)':
+        return this.loadAiAgent(request as RequestCreateAgent);
+
+      case 'pri(ai.explainTransaction)':
+        return this.explainTransactionWithAi(request as RequestExplainTx);
 
       case 'pri(extension.lock)':
         return this.lockExtension();

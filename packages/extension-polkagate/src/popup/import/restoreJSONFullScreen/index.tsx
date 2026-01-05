@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ResponseJsonGetAccountInfo } from '@polkadot/extension-base/background/types';
@@ -29,7 +29,7 @@ export interface JsonGetAccountInfo extends ResponseJsonGetAccountInfo {
   isExternal?: boolean;
 }
 
-export default function RestoreJson (): React.ReactElement {
+export default function RestoreJson(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -155,12 +155,12 @@ export default function RestoreJson (): React.ReactElement {
       const resetOk = await resetOnForgotPassword();
 
       if (!resetOk) {
-         setIsBusy(false);
+        setIsBusy(false);
 
-         notify(t('Failed to reset accounts'), 'error');
+        notify(t('Failed to reset accounts'), 'error');
 
-         return;
-       }
+        return;
+      }
 
       if (isKeyringPairs$Json(file)) {
         await handleKeyringPairsJson(file);

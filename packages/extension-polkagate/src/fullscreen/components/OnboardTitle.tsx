@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
@@ -16,7 +16,7 @@ interface Props {
   onBack?: () => unknown;
 }
 
-function OnboardTitle ({ label, labelPartInColor, onBack, url }: Props): React.ReactElement {
+function OnboardTitle({ label, labelPartInColor, onBack, url }: Props): React.ReactElement {
   const { accounts } = useContext(AccountContext);
   const isDark = useIsDark();
   const navigate = useNavigate();

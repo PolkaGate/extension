@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '../../../util/handleExtensionPopup';
@@ -23,7 +23,7 @@ interface Props {
  *
  * Only has been used in extension mode!
  */
-function SelectAccount ({ onAccounts, onClose, open, previousSelectedAccounts }: Props): React.ReactElement {
+function SelectAccount({ onAccounts, onClose, open, previousSelectedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (

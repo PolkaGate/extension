@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Typography } from '@mui/material';
@@ -7,7 +7,7 @@ import React from 'react';
 import { safeBox, safeBoxLight } from '../assets/icons';
 import { useIsDark, useTranslation } from '../hooks';
 
-const AssetNull = ({ text }: {text?: string}) => {
+const AssetNull = ({ text }: { text?: string }) => {
   const { t } = useTranslation();
   const isDark = useIsDark();
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack } from '@mui/material';
@@ -32,7 +32,7 @@ const containerVariants = {
   }
 };
 
-function AssetsBox ({ loadingItemsCount }: { loadingItemsCount?: number }): React.ReactElement {
+function AssetsBox({ loadingItemsCount }: { loadingItemsCount?: number }): React.ReactElement {
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);
   const selectedChains = useSelectedChains();

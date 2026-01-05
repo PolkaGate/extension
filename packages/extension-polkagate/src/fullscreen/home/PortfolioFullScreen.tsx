@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
@@ -11,7 +11,7 @@ import { GlowBox } from '../../style';
 
 const HEIGHT = 48;
 
-function PortfolioFullScreen (): React.ReactElement {
+function PortfolioFullScreen(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();

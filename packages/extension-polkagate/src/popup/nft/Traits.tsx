@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Attribute, ItemInformation } from '@polkadot/extension-polkagate/fullscreen/nft/utils/types';
@@ -13,7 +13,7 @@ import { useTranslation } from '../../hooks';
 import { toTitleCase } from '../../util';
 import { KODADOT_URL } from '../../util/constants';
 
-function Line (): ReactElement {
+function Line(): ReactElement {
   return (
     <Divider
       orientation='horizontal' sx={{
@@ -23,7 +23,7 @@ function Line (): ReactElement {
   );
 }
 
-function ItemInfo ({ label, link, markDown, showDivider = true, value }: { label: string, value?: string | ReactElement, showDivider?: boolean, link?: string, markDown?: string }): ReactElement {
+function ItemInfo({ label, link, markDown, showDivider = true, value }: { label: string, value?: string | ReactElement, showDivider?: boolean, link?: string, markDown?: string }): ReactElement {
   return (
     <Stack direction='column' justifyItems='center'>
       <Grid container direction='row' item justifyContent='space-between' justifyItems='space-between' sx={{ lineHeight: '35px' }}>
@@ -64,7 +64,7 @@ function ItemInfo ({ label, link, markDown, showDivider = true, value }: { label
   );
 }
 
-export default function Traits ({ nft }: { nft: ItemInformation | undefined }): React.ReactElement {
+export default function Traits({ nft }: { nft: ItemInformation | undefined }): React.ReactElement {
   const { t } = useTranslation();
 
   const [gifSource, setGifSource] = useState<string | null | undefined>(undefined);

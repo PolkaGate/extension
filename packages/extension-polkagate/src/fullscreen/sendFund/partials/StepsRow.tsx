@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Divider, Stack, Typography } from '@mui/material';
@@ -31,7 +31,7 @@ const StepItem = ({ inputStep, label, num, withDivider = true }: { inputStep: nu
     }  </Stack>
 );
 
-export default function StepsRow ({ inputStep }: { inputStep: INPUT_STEPS }): React.ReactElement {
+export default function StepsRow({ inputStep }: { inputStep: INPUT_STEPS }): React.ReactElement {
   const { t } = useTranslation();
 
   return (

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ValidatorInfo } from '../../../util/types';
@@ -12,7 +12,7 @@ export interface Data {
   staked: string;
 }
 
-function descendingComparator<T> (a: ValidatorInfo, b: ValidatorInfo, orderBy: keyof T) {
+function descendingComparator<T>(a: ValidatorInfo, b: ValidatorInfo, orderBy: keyof T) {
   let A, B;
 
   switch (orderBy) {
@@ -44,7 +44,7 @@ function descendingComparator<T> (a: ValidatorInfo, b: ValidatorInfo, orderBy: k
   return 0;
 }
 
-export function getComparator (sortType: string): (a: ValidatorInfo, b: ValidatorInfo) => number {
+export function getComparator(sortType: string): (a: ValidatorInfo, b: ValidatorInfo) => number {
   const [orderBy, order] = sortType.split(': ');
 
   return order === 'High to Low' ? (a, b) => descendingComparator(a, b, orderBy) : (a, b) => -descendingComparator(a, b, orderBy);

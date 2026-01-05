@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -82,7 +82,7 @@ export const Option = ({ decimal, icon, isSelected, minimumText, onClick, title,
   );
 };
 
-export default function Stake () {
+export default function Stake() {
   useBackground('staking');
 
   const { t } = useTranslation();

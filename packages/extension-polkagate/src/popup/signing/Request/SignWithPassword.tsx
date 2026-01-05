@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { JSX } from 'react';
@@ -26,7 +26,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function SignWithPassword ({ address, error, fee, genesisHash, isSignable, onCancel, setError, signId, style }: Props): JSX.Element {
+export default function SignWithPassword({ address, error, fee, genesisHash, isSignable, onCancel, setError, signId, style }: Props): JSX.Element {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const canPayFee = useCanPayFee(address, genesisHash, fee);

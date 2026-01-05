@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -17,7 +17,7 @@ interface ValidatorEraInfo {
   total: BN;
 }
 
-export default function useValidatorApy (api: ApiPromise | undefined | null, validatorAddress: string | undefined, isElected?: boolean): string | undefined | null {
+export default function useValidatorApy(api: ApiPromise | undefined | null, validatorAddress: string | undefined, isElected?: boolean): string | undefined | null {
   const [apy, setApy] = useState<string | null>();
   const eraInfo = useEraInfo(api?.genesisHash?.toHex());
 

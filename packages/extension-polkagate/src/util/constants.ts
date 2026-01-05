@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ProxyTypes } from './types';
@@ -313,6 +313,7 @@ export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 
 export const STORAGE_KEY = {
   ACCOUNT_SELECTED_CHAIN: 'accountSelectedChain',
+  AI_TX_INFO: 'aiTransactionInfo',
   ASSETS: 'migratedAssets',
   AUTO_LOCK: 'autoLock',
   CURRENCY: 'currency',

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '@polkadot/extension-polkagate/util/types';
@@ -19,7 +19,7 @@ interface Props {
   extraFilters: ExtraFilters
 }
 
-function HistoryFilterRow ({ allHistories, extraFilters, setExtraFilters }: Props): React.ReactElement {
+function HistoryFilterRow({ allHistories, extraFilters, setExtraFilters }: Props): React.ReactElement {
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start' sx={{ m: '12px 13px 4px', width: 'fit-content' }}>
       <Stack alignItems='center' direction='row' justifyContent='start' sx={{ border: '1px solid #BEAAD833', borderRadius: '12px', width: 'fit-content' }}>
