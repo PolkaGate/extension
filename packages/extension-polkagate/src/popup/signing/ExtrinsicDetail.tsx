@@ -34,7 +34,6 @@ function ExtrinsicDetail ({ mode: { data }, request, setMode }: Props): React.Re
   const { t } = useTranslation();
 
   const signerPayload = request.payload as SignerPayloadJSON;
-
   const [{ payload }, setData] = useState<Data>({ hexBytes: null, payload: null });
 
   useEffect((): void => {

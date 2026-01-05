@@ -11,6 +11,7 @@ import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types'
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
+import type { AiTxAnyJson } from '../utils/AiUtils/aiTypes';
 import type { AuthResponse } from './handlers/State';
 
 export type AuthUrls = Record<string, AuthUrlInfo>;
@@ -104,6 +105,8 @@ export interface RequestSignatures {
 
   // added for polkagate
   'pri(accounts.updateMeta)': [RequestUpdateMeta, boolean];
+  'pri(ai.agentLoad)': [RequestCreateAgent, Promise<boolean>];
+  'pri(ai.explainTransaction)': [RequestExplainTx, Promise<string>];
   'pri(extension.lock)': [null, boolean];
   'pri(authorize.ignore)': [string, void];
   'pri(metadata.update)': [MetadataDef, boolean];
@@ -227,6 +230,15 @@ export interface RequestAccountCreateHardware {
   genesisHash: HexString | null | undefined ;
   hardwareType: string;
   name: string;
+}
+
+export interface RequestCreateAgent{
+  modelId?: string;
+  progressCallback?: (progress: number) => void;
+}
+
+export interface RequestExplainTx{
+  txJson: AiTxAnyJson;
 }
 
 export interface RequestAccountChangePassword {
