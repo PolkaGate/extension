@@ -22,6 +22,7 @@ import { getValue } from '../../account/util';
 import Confirm from '../Confirm';
 import { type Decoded, type ModeData } from '../types';
 import AiInsight from './AiInsight';
+import { AiInsightErrorBoundary } from './AiInsightErrorBoundary';
 import RequestContent from './requestContent';
 
 interface Props {
@@ -194,11 +195,14 @@ function Extrinsic ({ onCancel, onSignature, payload, request, setMode, signerPa
                 {t('Request content')}
               </Typography>
               {enabled &&
-                <AiInsight
-                  decoded={decoded}
-                  genesisHash={genesisHash}
-                  url={url}
-                />}
+                <AiInsightErrorBoundary>
+                  <AiInsight
+                    decoded={decoded}
+                    genesisHash={genesisHash}
+                    url={url}
+                  />
+                </AiInsightErrorBoundary>
+              }
             </Stack>
             <RequestContent
               decoded={decoded}
