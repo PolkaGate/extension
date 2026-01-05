@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.23.3](https://github.com/polkagate/extension/compare/v1.23.2...v1.23.3) (2026-01-05)
+
+
+### Bug Fixes
+
+* properly clean up authorized dApp accounts after account removal ([a469028](https://github.com/polkagate/extension/commit/a469028fb668db6522fa16fd5ce92641b123f88c))
+
 ## [1.23.2](https://github.com/polkagate/extension/compare/v1.23.1...v1.23.2) (2026-01-04)
 
 
