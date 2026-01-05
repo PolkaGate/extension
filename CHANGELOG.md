@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.24.0](https://github.com/polkagate/extension/compare/v1.23.3...v1.24.0) (2026-01-05)
+
+
+### Features
+
+* AI-powered insights now appear on your signing page!  ([24f0d52](https://github.com/polkagate/extension/commit/24f0d52521b53ae263b0c5239a95bd487592d08c)), closes [#2080](https://github.com/polkagate/extension/issues/2080)
+
 ## [1.23.3](https://github.com/polkagate/extension/compare/v1.23.2...v1.23.3) (2026-01-05)
 
 
