@@ -100,12 +100,12 @@ function ConnectedDappContents ({ authorizeRequestHandler, setOpenMenu }: Connec
   return (
     <Grid container item justifyContent='center' sx={{ overflow: 'hidden', position: 'relative', pt: '5px', zIndex: 1 }}>
       {authorizeRequestHandler?.hasBanner &&
-            <TransactionIndex
-              index={authorizeRequestHandler?.currentIndex}
-              onNextClick={authorizeRequestHandler?.onNext}
-              onPreviousClick={authorizeRequestHandler?.onPrevious}
-              totalItems={authorizeRequestHandler.totalRequests}
-            />
+        <TransactionIndex
+          index={authorizeRequestHandler?.currentIndex}
+          onNextClick={authorizeRequestHandler?.onNext}
+          onPreviousClick={authorizeRequestHandler?.onPrevious}
+          totalItems={authorizeRequestHandler.totalRequests}
+        />
       }
       <Typography color='text.secondary' pt={authorizeRequestHandler?.hasBanner ? '8px' : 0} variant='B-4'>
         {t('Here you can manage the current connections to your accounts')}

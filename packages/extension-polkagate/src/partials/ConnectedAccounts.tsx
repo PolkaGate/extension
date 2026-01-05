@@ -3,7 +3,7 @@
 
 import type { AccountJson, AuthUrlInfo } from '@polkadot/extension-base/background/types';
 
-import { Container, Grid, type SxProps, type Theme,Typography } from '@mui/material';
+import { Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { User } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
