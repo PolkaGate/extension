@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { KeypairType } from '@polkadot/util-crypto/types';
@@ -16,7 +16,7 @@ interface Props {
   isDefault: boolean;
 }
 
-export default function ModeSwitch ({ isDefault, setAccountType }: Props): React.ReactElement {
+export default function ModeSwitch({ isDefault, setAccountType }: Props): React.ReactElement {
   const onModeSwitch = useCallback(() => {
     setAccountType((prev) => prev === DEFAULT_TYPE ? 'ethereum' : DEFAULT_TYPE);
   }, [setAccountType]);

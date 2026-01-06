@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Stack, Typography } from '@mui/material';
@@ -51,7 +51,7 @@ export const AddItem = ({ disabled, label, onClick }: AddItemProps) => (
   </Grid>
 );
 
-export default function GenericApp ({ setMode }: Props): React.ReactElement {
+export default function GenericApp({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
   const navigate = useNavigate();
@@ -69,13 +69,13 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
 
   const selectedAddresses = useMemo(() =>
     Object.entries(addressList).filter(([_, options]) => options.selected),
-  [addressList]);
+    [addressList]);
 
   const importDisabled = useMemo((): boolean =>
     isAdvancedMode
       ? !address
       : !selectedAddresses.length // if there is at least one address is selected
-  , [address, selectedAddresses, isAdvancedMode]);
+    , [address, selectedAddresses, isAdvancedMode]);
 
   useEffect(() => {
     if (!address) {

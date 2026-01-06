@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Add } from '@mui/icons-material';
@@ -14,7 +14,7 @@ import { PROFILE_MODE } from '@polkadot/extension-polkagate/src/popup/accountsLi
 import { useTranslation } from '../../hooks';
 import { DraggableModal } from '../components/DraggableModal';
 
-function AccountsAdd (): React.ReactElement {
+function AccountsAdd(): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { isHovered, ref } = useIsHovered();
@@ -70,7 +70,7 @@ function AccountsAdd (): React.ReactElement {
           dividerStyle={{ marginBottom: 0 }}
           onClose={onClose}
           open={openModal}
-          rightItemStyle = {{ right: '28px' }}
+          rightItemStyle={{ right: '28px' }}
           showBackIconAsClose
           style={{ minHeight: '550px', padding: '20px 0 0' }}
           title={t('customization')}

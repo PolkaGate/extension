@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ComponentProps } from 'react';
@@ -27,7 +27,7 @@ interface Props {
   skeletonAlignment?: 'flex-start' | 'flex-end';
 }
 
-function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fiatBalance, fiatProps, skeletonAlignment = 'flex-end', skeletonColor, style = {}, token = '', whichFirst = 'fiat' }: Props) {
+function CryptoFiatBalance({ cryptoBalance, cryptoProps, decimal = 0, fiatBalance, fiatProps, skeletonAlignment = 'flex-end', skeletonColor, style = {}, token = '', whichFirst = 'fiat' }: Props) {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
   const isDark = useIsDark();
@@ -35,7 +35,7 @@ function CryptoFiatBalance ({ cryptoBalance, cryptoProps, decimal = 0, fiatBalan
   const balanceColor = useMemo(() => isDark
     ? isBlueish ? theme.palette.text.primary : '#BEAAD8'
     : '#291443'
-  , [isBlueish, isDark, theme.palette.text.primary]);
+    , [isBlueish, isDark, theme.palette.text.primary]);
   const priceColor = useMemo(() => isDark ? '#BEAAD8' : '#8F97B8', [isDark]);
 
   const balanceStyle = useMemo(() => ({

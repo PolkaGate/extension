@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -29,7 +29,7 @@ BN.prototype.toJSON = function () {
  * @param setRefresh
  * @returns account staking Info
  */
-export default function useStakingAccount (address: AccountId | string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
+export default function useStakingAccount(address: AccountId | string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
   const { api, decimal, token } = useChainInfo(genesisHash);
   const stashId = useStashId(address, genesisHash);
 

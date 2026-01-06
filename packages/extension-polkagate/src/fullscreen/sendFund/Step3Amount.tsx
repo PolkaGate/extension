@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
@@ -29,7 +29,7 @@ interface Props {
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
 }
 
-export default function Step3Amount ({ inputs, setInputs, teleportState }: Props): React.ReactElement {
+export default function Step3Amount({ inputs, setInputs, teleportState }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
@@ -45,7 +45,9 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
   const isNativeToken = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
   const amountAsBN = useMemo(() => decimal ? amountToMachine(amount, decimal) : undefined, [amount, decimal]);
 
-  const { call, limitedTotalFee, maxFee } = useLimitedFeeCall(address, assetId, assetToTransfer, inputs, genesisHash, teleportState);
+  const { amount: inputsAmount, recipientAddress, recipientChain, transferType } = inputs || {};
+
+  const { call, limitedTotalFee, maxFee, params } = useLimitedFeeCall(address, assetId, assetToTransfer, inputsAmount, decimal, recipientAddress, recipientChain, transferType, genesisHash, teleportState);
   const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, inputs?.transferType ?? 'Normal', new BN(inputs?.fee?.originFee?.fee || 0));
 
   useEffect(() => {
@@ -56,13 +58,17 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
   }, [amountAsBN, setInputs]);
 
   useEffect(() => {
-    //@ts-ignore
-    call && setInputs((pre) => ({
-      ...(pre || {}),
-      call,
-      fee: limitedTotalFee
-    }));
-  }, [call, limitedTotalFee, setInputs]);
+    if (!call) {
+      return;
+    }
+
+    const executedCall = (!call || !params) ? undefined : call(...params);
+
+    // @ts-ignore
+    setInputs((prev) => {
+      return { ...(prev || {}), call: executedCall, fee: limitedTotalFee };
+    });
+  }, [call, limitedTotalFee, params, setInputs]);
 
   const onMaxClick = useCallback(() => {
     if (!transferableBalance || !maxFee || !assetToTransfer) {

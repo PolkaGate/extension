@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -11,7 +11,7 @@ import { isEthereumAddress } from '@polkadot/util-crypto';
 import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util';
 
-export default function useAccount (address: string | AccountId | null | undefined): AccountJson | undefined {
+export default function useAccount(address: string | AccountId | null | undefined): AccountJson | undefined {
   const { accounts } = useContext(AccountContext);
 
   return useMemo(() => {

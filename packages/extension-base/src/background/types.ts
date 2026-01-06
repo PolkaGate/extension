@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension authors & contributors
+// Copyright 2019-2026 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable no-use-before-define */
@@ -225,7 +225,7 @@ export interface RequestAccountCreateHardware {
   accountIndex: number;
   address: string;
   addressOffset: number;
-  genesisHash: HexString | null | undefined ;
+  genesisHash: HexString | null | undefined;
   hardwareType: string;
   name: string;
 }

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Proxy, ProxyItem, ProxyTypes } from '../util/types';
@@ -118,14 +118,14 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, proxyTypeFilter, selectedPr
 interface Props {
   openMenu: boolean;
   handleClose: () => void;
-  proxies: Proxy[] | undefined |null;
+  proxies: Proxy[] | undefined | null;
   genesisHash: string | null | undefined;
   setSelectedProxy: React.Dispatch<React.SetStateAction<Proxy | undefined>>;
   selectedProxy: Proxy | undefined;
   proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props) {
+export default function SignUsingProxy({ genesisHash, handleClose, openMenu, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const refContainer = useRef(null);

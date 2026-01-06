@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -19,7 +19,7 @@ interface ParaSpellState {
   paraSpellTransaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
 }
 
-export default function useParaSpellFeeCall (address: string | undefined, isReadyToMakeTx: boolean | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, setError: React.Dispatch<React.SetStateAction<string | undefined>>) {
+export default function useParaSpellFeeCall(address: string | undefined, isReadyToMakeTx: boolean | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, setError: React.Dispatch<React.SetStateAction<string | undefined>>) {
   const { api, chainName: senderChainName } = useChainInfo(genesisHash);
   const [isCrossChain, setIsCrossChain] = useState<boolean>();
   const [paraSpellState, setParaSpellState] = useState<ParaSpellState>({});

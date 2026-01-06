@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AssetsWithUiAndPrice } from './types';
@@ -46,7 +46,7 @@ const WIDTHS = {
   4: 27
 };
 
-function AssetsRows ({ assets }: { assets: AssetsWithUiAndPrice[] }): React.ReactElement {
+function AssetsRows({ assets }: { assets: AssetsWithUiAndPrice[] }): React.ReactElement {
   const { t } = useTranslation();
   const { currency } = useContext(CurrencyContext);
   const refContainer = useRef<HTMLDivElement>(null);

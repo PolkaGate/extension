@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -134,7 +134,7 @@ export const getEthBalances = async (/** @type {string} */ chainName, /** @type 
  * @param {string} chainName
  * @param {MessagePort } port
  */
-export async function getAssetOnEvm (addresses, chainName, port) {
+export async function getAssetOnEvm(addresses, chainName, port) {
   const results = {};
 
   try {

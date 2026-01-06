@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, AuthUrlInfo } from '@polkadot/extension-base/background/types';
 
-import { Container, Grid, type SxProps, type Theme,Typography } from '@mui/material';
+import { Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { User } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -24,7 +24,7 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, requestId, setRefresh, style }: Props) {
+export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, requestId, setRefresh, style }: Props) {
   const { t } = useTranslation();
   const { accounts } = useContext(AccountContext);
 

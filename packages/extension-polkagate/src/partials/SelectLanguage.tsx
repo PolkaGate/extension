@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
@@ -47,7 +47,7 @@ const ListItem = styled(Grid)(() => ({
 }));
 
 const LanguageSelect = React.memo(
-  function F ({ handleLanguageSelect, onDoubleClick, options, selectedLanguage }: LanguageOptionProps): React.ReactElement {
+  function F({ handleLanguageSelect, onDoubleClick, options, selectedLanguage }: LanguageOptionProps): React.ReactElement {
     const refContainer = useRef<HTMLDivElement>(null);
     const flag = useCallback((value: string) => {
       const option = options.find((item) => item?.flag?.toUpperCase() === value.toUpperCase() || String(item.value).toUpperCase() === value.toUpperCase());
@@ -88,7 +88,7 @@ const LanguageSelect = React.memo(
     );
   });
 
-function Content ({ onClose }: { onClose: ExtensionPopupCloser }): React.ReactElement {
+function Content({ onClose }: { onClose: ExtensionPopupCloser }): React.ReactElement {
   const { t } = useTranslation();
   const languageTicker = useSelectedLanguage();
 
@@ -127,7 +127,7 @@ function Content ({ onClose }: { onClose: ExtensionPopupCloser }): React.ReactEl
   );
 }
 
-function SelectLanguage ({ onClose, openMenu }: Props): React.ReactElement {
+function SelectLanguage({ onClose, openMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PositionInfo } from '../../../util/types';
@@ -90,7 +90,7 @@ interface Props {
   setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
-function EarningItem ({ info, popupOpener, setSelectedPosition }: Props) {
+function EarningItem({ info, popupOpener, setSelectedPosition }: Props) {
   const { availableBalance, decimal, freeBalance, genesisHash, rate, tokenSymbol } = info;
   const isTestNet = useMemo(() => TEST_NETS.includes(genesisHash), [genesisHash]);
 

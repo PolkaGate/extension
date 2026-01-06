@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Lock } from '@polkadot/extension-polkagate/fullscreen/governance/types';
@@ -24,7 +24,7 @@ export interface UnlockInformationType {
   unlockableAmount: BN | undefined;
 }
 
-export default function LeftColumn (): React.ReactElement {
+export default function LeftColumn(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
   const { accounts } = useContext(AccountContext);

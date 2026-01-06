@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { IconTheme as BaseIconTheme } from '@polkadot/react-identicon/types';
@@ -26,7 +26,7 @@ interface Props {
   withNotify?: boolean;
 }
 
-function PolkaGateIdenticon ({ address, iconTheme, onCopy, prefix, size, style = {}, withNotify = true }: Props) {
+function PolkaGateIdenticon({ address, iconTheme, onCopy, prefix, size, style = {}, withNotify = true }: Props) {
   const { accountIconTheme } = useContext(AccountIconThemeContext);
   const { t } = useTranslation();
   const { notify } = useAlerts();
@@ -53,7 +53,7 @@ function PolkaGateIdenticon ({ address, iconTheme, onCopy, prefix, size, style =
             onCopy={onCopy}
             prefix={prefix}
             size={size}
-            style={{ cursor: withNotify ? 'copy' : 'default'}}
+            style={{ cursor: withNotify ? 'copy' : 'default' }}
             theme={_theme}
             value={address}
           />)

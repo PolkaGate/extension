@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension authors & contributors
+// Copyright 2019-2026 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // Runs in the extension background, handling all keyring access
@@ -55,7 +55,7 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
 let creating: Promise<void> | undefined; // A global promise to avoid concurrency issues
 const path = 'offscreen.html';
 
-async function setupOffscreenDocument (): Promise<void> {
+async function setupOffscreenDocument(): Promise<void> {
   // Check all windows controlled by the service worker to see if one
   // of them is the offscreen document with the given path
   const offscreenUrl = chrome.runtime.getURL(path);

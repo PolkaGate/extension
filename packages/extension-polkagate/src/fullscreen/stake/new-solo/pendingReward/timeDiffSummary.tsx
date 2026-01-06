@@ -1,17 +1,17 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
-export function timeDiffSummary (inputDateStr: string, isExtension?: boolean): React.ReactNode {
+export function timeDiffSummary(inputDateStr: string, isExtension?: boolean): React.ReactNode {
   const inputDate = new Date(inputDateStr);
   const now = new Date();
 
   if (isNaN(inputDate.getTime())) {
     return (
       <Typography color='primary.main' variant='B-2'>
-      -
+        -
       </Typography>
     );
   }

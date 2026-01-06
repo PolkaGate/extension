@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
@@ -13,7 +13,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { useTranslation } from '../../hooks';
 
-export default function useWarningMessage (assetId: string | undefined, amountAsBN: BN | undefined, assetToTransfer: FetchedBalance | undefined, decimal: number | undefined, transferType: TransferType, totalFee: BN | undefined): string | undefined {
+export default function useWarningMessage(assetId: string | undefined, amountAsBN: BN | undefined, assetToTransfer: FetchedBalance | undefined, decimal: number | undefined, transferType: TransferType, totalFee: BN | undefined): string | undefined {
   const { t } = useTranslation();
 
   const transferableBalance = useMemo(() => getValue('transferable', assetToTransfer), [assetToTransfer]);

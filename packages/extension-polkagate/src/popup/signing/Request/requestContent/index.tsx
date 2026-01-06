@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Call } from '@polkadot/types/interfaces';
@@ -23,7 +23,7 @@ interface Props {
   decoded: Decoded;
 }
 
-function RequestContent ({ decoded, genesisHash, setMode }: Props): React.ReactElement<Props> {
+function RequestContent({ decoded, genesisHash, setMode }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isBatchCall = decoded.method?.method.includes('batch');
 

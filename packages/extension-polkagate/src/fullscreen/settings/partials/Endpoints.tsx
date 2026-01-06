@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography } from '@mui/material';
@@ -31,7 +31,7 @@ interface EndpointRowProps {
   onChangeEndpoint: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-function EndpointRow ({ checked, delay, isFirst, isLast, name, onChangeEndpoint, value }: EndpointRowProps): React.ReactElement {
+function EndpointRow({ checked, delay, isFirst, isLast, name, onChangeEndpoint, value }: EndpointRowProps): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -61,7 +61,7 @@ function EndpointRow ({ checked, delay, isFirst, isLast, name, onChangeEndpoint,
   );
 }
 
-function Endpoints ({ genesisHash, isEnabled, onClose, onEnableChain, open }: Props): React.ReactElement {
+function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const refContainer = useRef(null);
 

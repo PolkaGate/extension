@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-base authors & contributors
+// Copyright 2019-2026 @polkadot/extension-base authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { InjectedProvider, ProviderList, ProviderMeta } from '@polkadot/extension-inject/types';
@@ -113,7 +113,7 @@ export default class PostMessageProvider implements InjectedProvider {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async send (method: string, params: unknown[], _?: boolean, subscription?: SubscriptionHandler): Promise<any> {
+  public async send(method: string, params: unknown[], _?: boolean, subscription?: SubscriptionHandler): Promise<any> {
     if (subscription) {
       const { callback, type } = subscription;
 

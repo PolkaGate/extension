@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { UserAddedChains } from '@polkadot/extension-polkagate/util/types';
@@ -9,7 +9,7 @@ import { UserAddedChainContext } from '@polkadot/extension-polkagate/src/compone
 import { getStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-export default function UserAddedChainsProvider ({ children }: { children: React.ReactNode }) {
+export default function UserAddedChainsProvider({ children }: { children: React.ReactNode }) {
   const [userAddedChainCtx, setUserAddedChainCtx] = useState<UserAddedChains>({});
 
   useEffect((): void => {

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
@@ -13,7 +13,7 @@ interface Props {
   size?: number;
 }
 
-function SocialIcon ({ Icon, bgColor, link, size = 32 }: Props): React.ReactElement {
+function SocialIcon({ Icon, bgColor, link, size = 32 }: Props): React.ReactElement {
   const isDark = useIsDark();
   const isBlueish = useIsBlueish();
 

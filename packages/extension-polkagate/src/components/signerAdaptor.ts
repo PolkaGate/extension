@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -14,16 +14,16 @@ export class KeyringEthSigner {
   readonly keypair: KeyringPair;
   readonly provider: Provider;
 
-  constructor (keypair: KeyringPair, provider: Provider) {
+  constructor(keypair: KeyringPair, provider: Provider) {
     this.keypair = keypair;
     this.provider = provider;
   }
 
-  getAddress (): string {
+  getAddress(): string {
     return this.keypair.address;
   }
 
-  async signTransaction (tx: TransactionRequest): Promise<string> {
+  async signTransaction(tx: TransactionRequest): Promise<string> {
     const chainId = tx.chainId ?? 1;
     const nonce = tx.nonce ?? 0;
     const gasPrice = BigInt(tx.gasPrice ?? ethers.parseUnits('10', 'gwei'));
@@ -59,7 +59,7 @@ export class KeyringEthSigner {
     return serialize(txUnsigned, sigTyped);
   }
 
-  async sendTransaction (tx: TransactionRequest): Promise<TransactionResponse> {
+  async sendTransaction(tx: TransactionRequest): Promise<TransactionResponse> {
     const signedTx = await this.signTransaction(tx);
 
     return this.provider.broadcastTransaction(signedTx);

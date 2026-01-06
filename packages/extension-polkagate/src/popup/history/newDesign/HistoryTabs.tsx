@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Tab, Tabs, Typography } from '@mui/material';
@@ -20,7 +20,7 @@ interface Props {
   selectedChain: string;
 }
 
-function HistoryTabs ({ selectedChain, setTab, tab }: Props): React.ReactElement {
+function HistoryTabs({ selectedChain, setTab, tab }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(selectedChain, true);
 

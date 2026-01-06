@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /**
@@ -20,7 +20,7 @@ import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util';
 import { useChainInfo } from '.';
 
-export default function useProxies (genesisHash: string | null | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined | null {
+export default function useProxies(genesisHash: string | null | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined | null {
   const { api } = useChainInfo(genesisHash);
 
   const [proxies, setProxies] = useState<Proxy[] | undefined | null>();

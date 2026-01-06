@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -24,7 +24,7 @@ interface Props {
   showChevron?: boolean;
 }
 
-function ActionCard ({ Icon, children, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, showChevron = true, showColorBall = true, style, title }: Props): React.ReactElement {
+function ActionCard({ Icon, children, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, showChevron = true, showColorBall = true, style, title }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);

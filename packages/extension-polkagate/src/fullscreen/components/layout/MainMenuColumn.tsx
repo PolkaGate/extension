@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Link, Stack } from '@mui/material';
@@ -22,7 +22,7 @@ import LogoWithText from './LogoWithText';
 import MenuButton from './MenuButton';
 import ReceiveGeneral from './ReceiveGeneral';
 
-function Shining (): React.ReactElement {
+function Shining(): React.ReactElement {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', position: 'absolute', top: '-100px', width: '100%' }}>
       <Box sx={{
@@ -38,7 +38,7 @@ function Shining (): React.ReactElement {
   );
 }
 
-function MainMenuColumn (): React.ReactElement {
+function MainMenuColumn(): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const navigate = useNavigate();

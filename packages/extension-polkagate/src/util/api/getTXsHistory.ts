@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -168,7 +168,7 @@ const nullObject = {
  * @param retryCount Current retry count
  * @returns Promise resolving to the response
  */
-export async function postReq<T> (
+export async function postReq<T>(
   api: string,
   data: Record<string, unknown> = {},
   option?: Record<string, unknown>,
@@ -195,7 +195,7 @@ export async function postReq<T> (
  * @param batchSize Size of each batch
  * @param processor Function to process each batch
  */
-async function processBatch<T> (array: T[], batchSize: number, processor: (items: T[]) => Promise<T[]>): Promise<T[]> {
+async function processBatch<T>(array: T[], batchSize: number, processor: (items: T[]) => Promise<T[]>): Promise<T[]> {
   const results: T[] = [];
 
   for (let i = 0; i < array.length; i += batchSize) {
@@ -220,7 +220,7 @@ async function processBatch<T> (array: T[], batchSize: number, processor: (items
  * @param prefix Chain prefix
  * @returns Promise resolving to an array of Extrinsics
  */
-async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string, prefix: number) {
+async function processExtrinsicsBatch(extrinsics: Extrinsics[], network: string, prefix: number) {
   return Promise.all(
     extrinsics.map(async (extrinsic) => {
       try {
@@ -261,7 +261,7 @@ async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string
  * @param prefix - chain prefix
  * @returns Promise resolving to ExtrinsicsRequest
  */
-export async function getTXsHistory (chainName: string, address: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
+export async function getTXsHistory(chainName: string, address: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
   if (!chainName || prefix === undefined) {
     return Promise.resolve(nullObject);
   }
@@ -302,7 +302,7 @@ export async function getTXsHistory (chainName: string, address: string, pageNum
   };
 }
 
-function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; transfer: { amount: string; from: string; to: string; } } }, prefix: number) {
+function getAdditionalInfo(functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; transfer: { amount: string; from: string; to: string; } } }, prefix: number) {
   try {
     const params = txDetail.data.params;
     const transfer = txDetail.data?.transfer;

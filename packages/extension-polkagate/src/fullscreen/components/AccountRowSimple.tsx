@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
@@ -21,7 +21,7 @@ interface Props {
   onDoubleClick: () => void
 }
 
-function AccountRowSimple ({ account, handleSelect, isFirstAccount, isFirstProfile, isLast, isSelected, maybeSelected, onDoubleClick }: Props): React.ReactElement {
+function AccountRowSimple({ account, handleSelect, isFirstAccount, isFirstProfile, isLast, isSelected, maybeSelected, onDoubleClick }: Props): React.ReactElement {
   const _onClick = useCallback(() => {
     handleSelect(account?.address);
   }, [account?.address, handleSelect]);
@@ -42,7 +42,7 @@ function AccountRowSimple ({ account, handleSelect, isFirstAccount, isFirstProfi
             address={account?.address}
             genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
             identiconSize={24}
-            isSelected={ maybeSelected === account?.address || (isSelected && !maybeSelected)}
+            isSelected={maybeSelected === account?.address || (isSelected && !maybeSelected)}
             style={{ color: (isSelected) ? '#EAEBF1' : '#BEAAD8', variant: 'B-2' }}
           />
         </Stack>

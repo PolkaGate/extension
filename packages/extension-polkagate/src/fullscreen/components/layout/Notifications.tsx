@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -57,7 +57,7 @@ const NotificationButton = ({ hasNewNotification, onClick }: { hasNewNotificatio
   </Grid>
 );
 
-function Notifications (): React.ReactElement {
+function Notifications(): React.ReactElement {
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();

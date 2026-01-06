@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box } from '@mui/material';
@@ -10,7 +10,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function LoaderGif ({ style }: Props) {
+function LoaderGif({ style }: Props) {
   return (
     <Box
       component='img'

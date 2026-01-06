@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
@@ -17,7 +17,7 @@ import AssetsBox from './partial/AssetsBox';
 import Portfolio from './partial/Portfolio';
 import ChangeLog from './ChangeLog';
 
-export default function Home (): React.ReactElement {
+export default function Home(): React.ReactElement {
   useBackground('default') as void;
 
   const manifest = useManifest();

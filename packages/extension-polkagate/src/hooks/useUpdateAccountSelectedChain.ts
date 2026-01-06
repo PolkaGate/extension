@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect } from 'react';
@@ -21,7 +21,7 @@ import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
  * @param {boolean} changeUrl - Whether to change the URL after updating the selected chain.
  * @param {() => void} [onClose] - Optional callback to execute after updating and changing the URL.
  */
-export default function useUpdateAccountSelectedChain (address: string | undefined, _genesisHash: string | undefined, changeUrl = false, onClose?: () => void): void {
+export default function useUpdateAccountSelectedChain(address: string | undefined, _genesisHash: string | undefined, changeUrl = false, onClose?: () => void): void {
   const location = useLocation();
   const navigate = useNavigate();
 

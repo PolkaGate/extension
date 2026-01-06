@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
@@ -21,7 +21,7 @@ interface Props {
   token: FetchedBalance | undefined;
 }
 
-function TokenSummary ({ address, token }: Props): React.ReactElement {
+function TokenSummary({ address, token }: Props): React.ReactElement {
   const theme = useTheme();
   const pricesInCurrency = usePrices();
 
@@ -33,7 +33,7 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
 
   const totalBalancePrice = useMemo(() =>
     token?.decimal ? calcPrice(priceOf(token?.priceId ?? '') ?? 0, token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0) : undefined
-  , [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
+    , [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
 
   const logoInfo = useMemo(() => getLogo2(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
 
@@ -83,7 +83,7 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
         fontWeight={400}
         num={totalBalancePrice}
         skeletonHeight={30}
-        style= {{ height: '49.5px' }}
+        style={{ height: '49.5px' }}
         width={totalBalancePrice === undefined ? '100px' : 'fit-content'}
         withSmallDecimal
       />

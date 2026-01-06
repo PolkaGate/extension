@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { RequestSign } from '@polkadot/extension-base/background/types';
@@ -30,7 +30,7 @@ interface Props {
 const registry = new TypeRegistry();
 const STYLE = { '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, p: '10px', position: 'relative' };
 
-function ExtrinsicDetail ({ mode: { data }, request, setMode }: Props): React.ReactElement<Props> {
+function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
 
   const signerPayload = request.payload as SignerPayloadJSON;

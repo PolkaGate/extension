@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -28,7 +28,7 @@ interface ChooseAccountMenuProps {
   handleClose: () => void;
 }
 
-export default function ChainListModal ({ externalOptions, handleClose, open, setSelectedChain }: ChooseAccountMenuProps): React.ReactElement {
+export default function ChainListModal({ externalOptions, handleClose, open, setSelectedChain }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 

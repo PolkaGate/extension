@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -31,7 +31,7 @@ import useCurrentEraIndex from './useCurrentEraIndex';
  *   console.log(poolConsts.maxPoolMembers);
  * }
  */
-export default function usePoolConst (genesisHash: string | undefined, stateConsts?: PoolStakingConsts): PoolStakingConsts | null | undefined {
+export default function usePoolConst(genesisHash: string | undefined, stateConsts?: PoolStakingConsts): PoolStakingConsts | null | undefined {
   const { api, chain, token } = useChainInfo(genesisHash);
   const eraIndex = useCurrentEraIndex(genesisHash);
   const chainName = sanitizeChainName(chain?.name);

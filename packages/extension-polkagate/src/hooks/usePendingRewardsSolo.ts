@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Forcing } from '@polkadot/types/interfaces';
@@ -19,7 +19,7 @@ import useFormatted from './useFormatted';
 import usePendingRewards from './usePendingRewards';
 import useTranslation from './useTranslation';
 
-export default function usePendingRewardsSolo (
+export default function usePendingRewardsSolo(
   address: string | undefined,
   genesisHash: string | undefined
 ) {

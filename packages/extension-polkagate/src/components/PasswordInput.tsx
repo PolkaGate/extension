@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
@@ -66,7 +66,7 @@ interface Props {
   value?: string;
 }
 
-function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPassChange, style, title, value }: Props): React.ReactElement {
+function PasswordInput({ focused = false, hasError = false, onEnterPress, onPassChange, style, title, value }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();

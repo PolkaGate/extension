@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -14,7 +14,7 @@ import { BLOCK_RATE } from './constants';
  * @param {boolean} [noMinutes] - If `true`, omits the minutes when there are days.
  * @returns {string} The formatted remaining time (e.g., "2 days 3 hours 15 mins") or "finished" if time has elapsed.
  */
-export function remainingTime (blocks: number, noMinutes?: boolean): string {
+export function remainingTime(blocks: number, noMinutes?: boolean): string {
   let mins = Math.floor(blocks * BLOCK_RATE / 60);
 
   if (!mins) {
@@ -63,7 +63,7 @@ export function remainingTime (blocks: number, noMinutes?: boolean): string {
  * @param {number | undefined} seconds - The number of seconds remaining.
  * @returns {string} The formatted countdown time (e.g., "2 days 3 hours 15 mins 30 sec") or "finished" if time has elapsed.
  */
-export function remainingTimeCountDown (seconds: number | undefined, withSec = true): string {
+export function remainingTimeCountDown(seconds: number | undefined, withSec = true): string {
   if (!seconds || seconds <= 0) {
     return 'finished';
   }
@@ -112,7 +112,7 @@ export type TimestampPart = 'weekday' | 'month' | 'day' | 'year' | 'hours' | 'mi
  * // Returns something like "Aug-6-2024"
  * formatTimestamp(1723026480000, ['month', 'day', 'year'], '-');
  */
-export function formatTimestamp (
+export function formatTimestamp(
   timestamp: number | string | Date,
   parts?: TimestampPart[]
 ): string {
@@ -179,7 +179,7 @@ export function formatTimestamp (
   }
 }
 
-export function blockToDate (blockNumber?: number, currentBlock?: number, option?: Intl.DateTimeFormatOptions, iso?: boolean) {
+export function blockToDate(blockNumber?: number, currentBlock?: number, option?: Intl.DateTimeFormatOptions, iso?: boolean) {
   if (!blockNumber || !currentBlock) {
     return 'N/A';
   }
@@ -211,7 +211,7 @@ const THRESHOLD = BN_THOUSAND.div(BN_TWO);
 const DEFAULT_TIME = new BN(6_000);
 const A_DAY = new BN(24 * 60 * 60 * 1000);
 
-export function calcInterval (api: ApiPromise | undefined | null): BN {
+export function calcInterval(api: ApiPromise | undefined | null): BN {
   if (!api) {
     return DEFAULT_TIME;
   }

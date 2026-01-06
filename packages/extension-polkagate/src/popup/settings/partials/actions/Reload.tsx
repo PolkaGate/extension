@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
@@ -7,11 +7,11 @@ import React from 'react';
 
 import { useIsDark, useTranslation } from '../../../../hooks/index';
 
-function onReload () {
+function onReload() {
   chrome.runtime.reload();
 }
 
-export default function Reload ({ isExtension, style }: { isExtension: boolean, style: SxProps<Theme> }): React.ReactElement {
+export default function Reload({ isExtension, style }: { isExtension: boolean, style: SxProps<Theme> }): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
 

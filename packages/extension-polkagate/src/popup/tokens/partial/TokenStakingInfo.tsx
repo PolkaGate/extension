@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
@@ -28,7 +28,7 @@ enum STAKING_TYPE {
   POOL
 }
 
-function TokenStakingInfo ({ genesisHash, tokenDetail }: TokenStakingInfoProp) {
+function TokenStakingInfo({ genesisHash, tokenDetail }: TokenStakingInfoProp) {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();

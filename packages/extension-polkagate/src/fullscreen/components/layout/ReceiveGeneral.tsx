@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser, ExtensionPopupOpener } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
@@ -16,7 +16,7 @@ interface Props {
   openPopup: ExtensionPopupOpener;
 }
 
-function ReceiveGeneral ({ closePopup, openPopup }: Props): React.ReactElement {
+function ReceiveGeneral({ closePopup, openPopup }: Props): React.ReactElement {
   const [address, setAddress] = useState<string | null | undefined>();
 
   const onClose = useCallback(() => {

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SubmittableExtrinsic } from '@polkadot/api-base/types';
@@ -30,13 +30,13 @@ const UnlockEx = ({ address, amount, closeModal, genesisHash, transaction, trans
     proxyTypeFilter: PROXY_TYPE.GOVERNANCE,
     review: true,
     reviewHeader:
-    <RewardHeaderAmount
-    amount={amount}
-    genesisHash={genesisHash}
-    style={{ bgcolor: '#110F2A', borderRadius: '14px', p: '34px 24px' }}
-    title={t('Unlocking Amount')}
-    token={token}
-    />,
+      <RewardHeaderAmount
+        amount={amount}
+        genesisHash={genesisHash}
+        style={{ bgcolor: '#110F2A', borderRadius: '14px', p: '34px 24px' }}
+        title={t('Unlocking Amount')}
+        token={token}
+      />,
     showAccountBox: false,
     showStakingHome: false,
     stepCounter: { currentStep: 1, totalSteps: 1 },
@@ -118,7 +118,7 @@ interface Props {
   address: string | undefined;
 }
 
-export default function UnlockTrack ({ address, genesisHash, setOpenUnlockReview, unlockTracks }: Props) {
+export default function UnlockTrack({ address, genesisHash, setOpenUnlockReview, unlockTracks }: Props) {
   const isExtension = useIsExtensionPopup();
   const { t } = useTranslation();
   const { api } = useChainInfo(genesisHash);

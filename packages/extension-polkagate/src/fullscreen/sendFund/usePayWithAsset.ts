@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { getFeeAssets, type TAssetInfo, type TChain, type TJunction, type TJunctions, type TLocation } from '@paraspell/sdk-pjs';
@@ -20,7 +20,7 @@ import { isParaspellSupportedChain, normalizeChainName } from './utils';
  * @param location - The original MultiLocation object to normalize
  * @returns The normalized MultiLocation with a consistent `X2` structure
  */
-function normalizeMultiLocation (location: TLocation): TLocation {
+function normalizeMultiLocation(location: TLocation): TLocation {
   let { interior, parents } = location;
   const keys: (keyof TJunctions)[] = [
     'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'X8'
@@ -97,7 +97,7 @@ function normalizeMultiLocation (location: TLocation): TLocation {
   };
 }
 
-export default function usePayWithAsset (chainName: string | undefined): Omit<TAssetInfo, 'isFeeAsset'>[] | undefined {
+export default function usePayWithAsset(chainName: string | undefined): Omit<TAssetInfo, 'isFeeAsset'>[] | undefined {
   return useMemo(() => {
     if (!chainName || !isParaspellSupportedChain(chainName)) {
       return;

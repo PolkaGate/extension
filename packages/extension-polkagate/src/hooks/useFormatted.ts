@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
@@ -9,10 +9,10 @@ import { decodeAddress, encodeAddress, isEthereumAddress } from '@polkadot/util-
 
 import useChainInfo from './useChainInfo';
 
-export default function useFormatted (address: AccountId | string | undefined, genesisHash: string | null | undefined, formatted?: AccountId | string): string | undefined {
+export default function useFormatted(address: AccountId | string | undefined, genesisHash: string | null | undefined, formatted?: AccountId | string): string | undefined {
   const { chain } = useChainInfo(genesisHash, true);
 
- return useMemo(() => {
+  return useMemo(() => {
     if (formatted) {
       return String(formatted);
     }

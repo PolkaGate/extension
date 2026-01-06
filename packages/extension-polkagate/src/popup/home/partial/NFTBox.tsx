@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ItemInformation } from '../../../fullscreen/nft/utils/types';
@@ -36,7 +36,7 @@ const NoNftAlert = () => {
   );
 };
 
-function NFTBox () {
+function NFTBox() {
   const { t } = useTranslation();
   const account = useSelectedAccount();
   const isDark = useIsDark();
@@ -94,8 +94,8 @@ function NFTBox () {
     const path = `/nft/${account?.address ?? ''}`;
 
     isExtension
-    ? windowOpen(path).catch(console.error)
-    : switchToOrOpenTab(path, true);
+      ? windowOpen(path).catch(console.error)
+      : switchToOrOpenTab(path, true);
   }, [account?.address, isExtension]);
 
   return (
@@ -108,7 +108,7 @@ function NFTBox () {
                 index={index}
                 info={item}
                 key={index}
-                onClick ={isExtension ? undefined : openNft}
+                onClick={isExtension ? undefined : openNft}
               />
             ))}
           </Container>

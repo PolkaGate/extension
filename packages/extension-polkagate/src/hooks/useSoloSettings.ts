@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Content } from '../partials/Review';
@@ -12,27 +12,27 @@ import useFormatted from './useFormatted';
 import useSoloStakingInfo from './useSoloStakingInfo';
 import useTranslation from './useTranslation';
 
-  const makePayee = (value: RewardDestinationType, account: string | undefined, stashId: string | undefined) => {
-    if (!value) {
-      return;
-    }
+const makePayee = (value: RewardDestinationType, account: string | undefined, stashId: string | undefined) => {
+  if (!value) {
+    return;
+  }
 
-    if (value === 'Staked') {
-      return 'Staked';
-    }
+  if (value === 'Staked') {
+    return 'Staked';
+  }
 
-    if (account === stashId) {
-      return 'Stash';
-    }
+  if (account === stashId) {
+    return 'Stash';
+  }
 
-    if (account) {
-      return { Account: account };
-    }
+  if (account) {
+    return { Account: account };
+  }
 
-    return undefined;
-  };
+  return undefined;
+};
 
-export default function useSoloSettings (address: string | undefined, genesisHash: string | undefined) {
+export default function useSoloSettings(address: string | undefined, genesisHash: string | undefined) {
   const { t } = useTranslation();
 
   const { rewardDestinationAddress, stakingAccount, stakingConsts } = useSoloStakingInfo(address, genesisHash);
@@ -74,8 +74,8 @@ export default function useSoloSettings (address: string | undefined, genesisHas
 
   const nextDisabled = useMemo(() =>
     currentPayee !== 'Staked' &&
-     maybeNewPayee === 'Others' && (rewardDestinationAddress === specificAccount || !specificAccount)
-  , [currentPayee, maybeNewPayee, rewardDestinationAddress, specificAccount]);
+    maybeNewPayee === 'Others' && (rewardDestinationAddress === specificAccount || !specificAccount)
+    , [currentPayee, maybeNewPayee, rewardDestinationAddress, specificAccount]);
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{

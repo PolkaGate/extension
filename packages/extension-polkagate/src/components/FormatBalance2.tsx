@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable header/header */
@@ -37,7 +37,7 @@ export interface FormatBalanceProps {
 
 const K_LENGTH = 3 + 1;
 
-function getFormat (decimals: number[], tokens: string[], formatIndex = 0): [number, string] {
+function getFormat(decimals: number[], tokens: string[], formatIndex = 0): [number, string] {
   return [
     formatIndex < decimals.length
       ? decimals[formatIndex]
@@ -48,21 +48,21 @@ function getFormat (decimals: number[], tokens: string[], formatIndex = 0): [num
   ];
 }
 
-function createElement (prefix: string, postfix: string, unit: string, label: LabelPost = '', isShort = false, decimalPoint: number, tokenColor?: string | undefined): React.ReactNode {
+function createElement(prefix: string, postfix: string, unit: string, label: LabelPost = '', isShort = false, decimalPoint: number, tokenColor?: string | undefined): React.ReactNode {
   const trimmedPostfix = postfix?.replace(/0+$/, '') || '';
   const maybeTilde = postfix && parseFloat(trimmedPostfix) > parseFloat(trimmedPostfix.slice(0, decimalPoint)) ? '~' : '';
 
   return <>{`${maybeTilde}${prefix}${isShort ? '' : '.'}`}{!isShort && <span>{`00${postfix?.slice(0, decimalPoint) || ''}`.slice(-decimalPoint)}</span>}<span style={{ color: tokenColor ?? 'inherit' }}> {unit}</span>{label}</>;
 }
 
-function splitFormat (value: string, decimalPoint: number, label?: LabelPost, isShort?: boolean): React.ReactNode {
+function splitFormat(value: string, decimalPoint: number, label?: LabelPost, isShort?: boolean): React.ReactNode {
   const [prefix, postfixFull] = value.split('.');
   const [postfix, unit] = postfixFull.split(' ');
 
   return createElement(prefix, postfix, unit, label, isShort, decimalPoint);
 }
 
-function applyFormat (decimalPoint: number, value: Compact<INumber> | BN | string, [decimals, token]: [number, string], withCurrency = true, withSi?: boolean, _isShort?: boolean, labelPost?: LabelPost, tokenColor?: string | undefined): React.ReactNode {
+function applyFormat(decimalPoint: number, value: Compact<INumber> | BN | string, [decimals, token]: [number, string], withCurrency = true, withSi?: boolean, _isShort?: boolean, labelPost?: LabelPost, tokenColor?: string | undefined): React.ReactNode {
   const [prefix, postfix] = formatBalance(value, { decimals, forceUnit: '-', withAll: true, withSi: false }).split('.');
 
   const isShort = _isShort || (withSi && prefix.length >= K_LENGTH);
@@ -79,7 +79,7 @@ function applyFormat (decimalPoint: number, value: Compact<INumber> | BN | strin
   return createElement(prefix, postfix, unitPost, labelPost, isShort, decimalPoint, tokenColor);
 }
 
-function FormatBalance ({ children, decimalPoint = FLOATING_POINT_DIGIT, decimals, format, formatIndex, isShort, label, labelPost, style, tokenColor, tokens, value, valueFormatted, withCurrency, withSi }: FormatBalanceProps): React.ReactElement<FormatBalanceProps> {
+function FormatBalance({ children, decimalPoint = FLOATING_POINT_DIGIT, decimals, format, formatIndex, isShort, label, labelPost, style, tokenColor, tokens, value, valueFormatted, withCurrency, withSi }: FormatBalanceProps): React.ReactElement<FormatBalanceProps> {
   const { t } = useTranslation();
   const { isHideNumbers } = useIsHideNumbers();
 
@@ -101,7 +101,7 @@ function FormatBalance ({ children, decimalPoint = FLOATING_POINT_DIGIT, decimal
               postText={tokens[0]}
               postTextStyle={style}
               variant='small'
-              />
+            />
             : valueFormatted
               ? splitFormat(valueFormatted, decimalPoint, labelPost, isShort)
               : value

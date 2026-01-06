@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable sort-keys */
@@ -44,7 +44,7 @@ const BoxContainer = styled(Box, {
   width: 'fit-content'
 }));
 
-function ScrollingTextBox ({ scrollOnHover = false, style, text, textStyle, width }: ScrollingTextBoxProps): React.ReactElement {
+function ScrollingTextBox({ scrollOnHover = false, style, text, textStyle, width }: ScrollingTextBoxProps): React.ReactElement {
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
   const textRef = useRef<HTMLDivElement>(null);

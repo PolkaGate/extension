@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
@@ -13,7 +13,7 @@ interface SettingsProviderProps {
   children: React.ReactNode;
 }
 
-export default function SettingsProvider ({ children }: SettingsProviderProps) {
+export default function SettingsProvider({ children }: SettingsProviderProps) {
   const [settingsCtx, setSettingsCtx] = useState<SettingsStruct>(uiSettings.get());
 
   useEffect(() => {

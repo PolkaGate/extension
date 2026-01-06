@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -10,7 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getEthProvider } from '../util/getEthProvider';
 import useChainInfo from './useChainInfo';
 
-export default function useEthSigner (address: string | undefined, genesisHash: string | null | undefined): JsonRpcSigner | undefined {
+export default function useEthSigner(address: string | undefined, genesisHash: string | null | undefined): JsonRpcSigner | undefined {
   const { chainName } = useChainInfo(genesisHash, true);
 
   const [signer, setSigner] = useState<JsonRpcSigner>();

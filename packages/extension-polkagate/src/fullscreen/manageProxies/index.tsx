@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -20,7 +20,7 @@ import Manage from './Manage';
 import TransactionFlow from './TransactionFlow';
 import { type ProxyFlowStep } from './types';
 
-function ManageProxies (): React.ReactElement {
+function ManageProxies(): React.ReactElement {
   const { t } = useTranslation();
   const { address, genesisHash } = useParams<{ address: string; genesisHash: string; }>();
   const { api, chain, decimal, token } = useChainInfo(genesisHash);

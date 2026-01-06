@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, styled, type SxProps, type Theme } from '@mui/material';
@@ -68,7 +68,7 @@ interface GlowDividerProps {
   placement: 'right' | 'left';
 }
 
-function GlowDivider ({ isDark, placement, shortSideDividers, staking }: GlowDividerProps): React.ReactElement {
+function GlowDivider({ isDark, placement, shortSideDividers, staking }: GlowDividerProps): React.ReactElement {
   const stakingStyle = staking
     ? { background: 'linear-gradient(180deg, rgba(16, 16, 25, 0.1) 0%, rgba(60, 196, 255, 0.5) 50.06%, transparent 100%)' }
     : {};
@@ -105,7 +105,7 @@ interface Props {
   shortSideDividers?: boolean; // Enables shorter side dividers used specifically in fullscreen mode.
 }
 
-function GlowBox ({ children, isBlueish = false, shortSideDividers = false, showTopBorder = true, style }: Props): React.ReactElement {
+function GlowBox({ children, isBlueish = false, shortSideDividers = false, showTopBorder = true, style }: Props): React.ReactElement {
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
 

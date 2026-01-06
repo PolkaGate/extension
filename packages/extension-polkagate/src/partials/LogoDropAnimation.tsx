@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box } from '@mui/material';
@@ -21,7 +21,7 @@ const DROP_SPEED = 500;
 const MAX_DROPS = 25;
 const DROP_INTERVAL = 50;
 
-function LogoDropAnimation ({ ground = 200, style }: Props) {
+function LogoDropAnimation({ ground = 200, style }: Props) {
   const [drops, setDrops] = useState<Drop[]>([]);
 
   const requestRef = useRef<number>(0);

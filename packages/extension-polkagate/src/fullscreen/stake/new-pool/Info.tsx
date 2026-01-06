@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolStakingInfo } from '../../../hooks/usePoolStakingInfo';
@@ -19,7 +19,7 @@ interface Props {
   onClose: PopupCloser;
 }
 
-export default function Info ({ genesisHash, onClose, stakingInfo }: Props): React.ReactElement {
+export default function Info({ genesisHash, onClose, stakingInfo }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);

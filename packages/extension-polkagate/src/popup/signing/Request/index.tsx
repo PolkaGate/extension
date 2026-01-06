@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, SigningRequest } from '@polkadot/extension-base/background/types';
@@ -30,7 +30,7 @@ interface Props {
   url: string;
 }
 
-function Request ({ account, error, hexBytes, onSignature, payload, setError, setMode, signId, signingRequest, url }: Props): React.ReactElement<Props> | null {
+function Request({ account, error, hexBytes, onSignature, payload, setError, setMode, signId, signingRequest, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const navigate = useNavigate();
 

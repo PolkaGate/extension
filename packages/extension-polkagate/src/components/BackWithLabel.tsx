@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
@@ -34,7 +34,7 @@ interface DynamicBackButtonProps {
   stepCounter?: StepCounterType;
 }
 
-function BackWithLabel ({ content, onClick, stepCounter, style, text }: DynamicBackButtonProps) {
+function BackWithLabel({ content, onClick, stepCounter, style, text }: DynamicBackButtonProps) {
   const { t } = useTranslation();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);

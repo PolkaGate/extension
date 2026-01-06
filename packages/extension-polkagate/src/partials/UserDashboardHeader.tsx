@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SignerInformation } from '../components/SelectedProxy';
@@ -20,7 +20,7 @@ interface Props {
   fullscreenURL?: string;
 }
 
-function UserDashboardHeader ({ fullscreenURL, genesisHash, homeType, noSelection = false, signerInformation }: Props) {
+function UserDashboardHeader({ fullscreenURL, genesisHash, homeType, noSelection = false, signerInformation }: Props) {
   const isConnectedDapp = useMemo(() => document.getElementsByClassName('ConnectedDapp'), []);
 
   return (

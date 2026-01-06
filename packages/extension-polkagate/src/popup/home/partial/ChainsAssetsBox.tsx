@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
@@ -28,7 +28,7 @@ interface ChainHeaderProps {
   token: string | undefined;
 }
 
-function ChainHeader ({ chainName, chainTotalBalance, genesisHash, theme, token }: ChainHeaderProps) {
+function ChainHeader({ chainName, chainTotalBalance, genesisHash, theme, token }: ChainHeaderProps) {
   return (
     <Grid alignItems='center' container item justifyContent='space-between'>
       <Grid alignItems='center' container item sx={{ bgcolor: 'secondary.contrastText', borderRadius: '9px', columnGap: '4px', p: '2px 3px', pr: '4px', width: 'fit-content' }}>
@@ -62,7 +62,7 @@ interface AssetDetailProps {
   theme: Theme;
 }
 
-function AssetsDetail ({ address, asset, isExtension, theme }: AssetDetailProps) {
+function AssetsDetail({ address, asset, isExtension, theme }: AssetDetailProps) {
   const navigate = useNavigate();
   const params = useParams<{ address: string, genesisHash: string, paramAssetId: string }>();
 
@@ -105,7 +105,7 @@ const itemVariants = {
 
 const gridStyle = { display: 'grid', rowGap: '6px', width: 'inherit' };
 
-function ChainsAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
   const allChains = useAllChains();

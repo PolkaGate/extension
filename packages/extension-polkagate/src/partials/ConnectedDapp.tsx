@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AuthUrlInfo } from '@polkadot/extension-base/background/types';
@@ -26,7 +26,7 @@ interface ConnectedDappContentsProps {
   authorizeRequestHandler?: AuthorizeRequestHandlerProp;
 }
 
-function ConnectedDappContents ({ authorizeRequestHandler, setOpenMenu }: ConnectedDappContentsProps): React.ReactElement {
+function ConnectedDappContents({ authorizeRequestHandler, setOpenMenu }: ConnectedDappContentsProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [checking, setChecking] = useState<boolean>(false);
@@ -100,12 +100,12 @@ function ConnectedDappContents ({ authorizeRequestHandler, setOpenMenu }: Connec
   return (
     <Grid container item justifyContent='center' sx={{ overflow: 'hidden', position: 'relative', pt: '5px', zIndex: 1 }}>
       {authorizeRequestHandler?.hasBanner &&
-            <TransactionIndex
-              index={authorizeRequestHandler?.currentIndex}
-              onNextClick={authorizeRequestHandler?.onNext}
-              onPreviousClick={authorizeRequestHandler?.onPrevious}
-              totalItems={authorizeRequestHandler.totalRequests}
-            />
+        <TransactionIndex
+          index={authorizeRequestHandler?.currentIndex}
+          onNextClick={authorizeRequestHandler?.onNext}
+          onPreviousClick={authorizeRequestHandler?.onPrevious}
+          totalItems={authorizeRequestHandler.totalRequests}
+        />
       }
       <Typography color='text.secondary' pt={authorizeRequestHandler?.hasBanner ? '8px' : 0} variant='B-4'>
         {t('Here you can manage the current connections to your accounts')}
@@ -125,7 +125,7 @@ function ConnectedDappContents ({ authorizeRequestHandler, setOpenMenu }: Connec
   );
 }
 
-export default function ConnectedDapp ({ authorizeRequestHandler }: { authorizeRequestHandler?: AuthorizeRequestHandlerProp }): React.ReactElement {
+export default function ConnectedDapp({ authorizeRequestHandler }: { authorizeRequestHandler?: AuthorizeRequestHandlerProp }): React.ReactElement {
   const { t } = useTranslation();
 
   const [checking, setChecking] = useState<boolean>(false);

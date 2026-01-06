@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Typography } from '@mui/material';
@@ -14,7 +14,7 @@ interface Props {
   style?: CSSProperties;
 }
 
-function MyDivider (): React.ReactElement {
+function MyDivider(): React.ReactElement {
   const isExtension = useIsExtensionPopup();
 
   return (
@@ -29,7 +29,7 @@ function MyDivider (): React.ReactElement {
   );
 }
 
-function WhatsNew ({ showLabel = true, style = { columnGap: '5px', paddingBottom: '24px', paddingTop: '24px' } }: Props): React.ReactElement {
+function WhatsNew({ showLabel = true, style = { columnGap: '5px', paddingBottom: '24px', paddingTop: '24px' } }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const containerRef = useRef(null);

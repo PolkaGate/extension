@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Lock } from '@polkadot/extension-polkagate/fullscreen/governance/types';
@@ -16,7 +16,7 @@ import useCurrentBlockNumber from './useCurrentBlockNumber';
 import useFormatted from './useFormatted';
 import useTranslation from './useTranslation';
 
-export default function useTimeToUnlock (address: string | undefined, genesisHash: string | null | undefined, delegatedBalance: BN | null | undefined, referendaLocks: Lock[] | null | undefined, refresh?: boolean) {
+export default function useTimeToUnlock(address: string | undefined, genesisHash: string | null | undefined, delegatedBalance: BN | null | undefined, referendaLocks: Lock[] | null | undefined, refresh?: boolean) {
   const { t } = useTranslation();
   const { api, chain } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography } from '@mui/material';
@@ -24,7 +24,7 @@ enum stakingOptions {
   CREATE
 }
 
-export default function JoinCreatePool ({ address, genesisHash, onClose, popupOpener }: Props) {
+export default function JoinCreatePool({ address, genesisHash, onClose, popupOpener }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { decimal, token } = useChainInfo(genesisHash, true);

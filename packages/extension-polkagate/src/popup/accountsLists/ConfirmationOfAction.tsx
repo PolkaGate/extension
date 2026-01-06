@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Typography } from '@mui/material';
@@ -18,7 +18,7 @@ interface Props {
   label: string;
 }
 
-function ConfirmationOfAction ({ label, setPopup }: Props): React.ReactElement {
+function ConfirmationOfAction({ label, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const initialAccountList = useAccountsOrder();
   const profileAccounts = useProfileAccounts(initialAccountList, label);

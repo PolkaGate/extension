@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
@@ -16,7 +16,7 @@ interface Props {
  * A component for selecting an account. It allows the user to choose
  * which accounts to see their notifications for.
  */
-function SelectAccount ({ onAccounts, previousSelectedAccounts }: Props): React.ReactElement {
+function SelectAccount({ onAccounts, previousSelectedAccounts }: Props): React.ReactElement {
   return (
     <Motion variant='slide'>
       <SelectNotificationAccountsBody

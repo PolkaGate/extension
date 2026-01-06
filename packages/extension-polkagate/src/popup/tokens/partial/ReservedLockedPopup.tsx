@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -114,7 +114,7 @@ const BeatUnlockIcon = styled(Unlock, {
   transformOrigin: 'center'
 }));
 
-function Item ({ amount, decimal, noDivider, price, reason, token, unlockTracks }: ItemProps) {
+function Item({ amount, decimal, noDivider, price, reason, token, unlockTracks }: ItemProps) {
   const totalBalance = useMemo(() => calcPrice(price, amount, decimal), [amount, decimal, price]);
 
   const isGovernance = useMemo(() => reason.toLocaleLowerCase().includes('gov'), [reason]);
@@ -179,7 +179,7 @@ interface ContentProps {
   unlockTracks: UnlockType | undefined;
 }
 
-function Content ({ decimal, handleClose, items, price, style = {}, token, unlockTracks }: ContentProps) {
+function Content({ decimal, handleClose, items, price, style = {}, token, unlockTracks }: ContentProps) {
   const { t } = useTranslation();
 
   const { reasonsToShow, stillLoading } = useMemo(() => ({
@@ -236,7 +236,7 @@ function Content ({ decimal, handleClose, items, price, style = {}, token, unloc
   );
 }
 
-function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token, unlockTracks }: Props) {
+function ReservedLockedPopup({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token, unlockTracks }: Props) {
   return (
     <SharePopup
       modalProps={{

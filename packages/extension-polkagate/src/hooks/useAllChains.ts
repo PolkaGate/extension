@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useContext, useMemo } from 'react';
@@ -6,7 +6,7 @@ import { useContext, useMemo } from 'react';
 import { UserAddedChainContext } from '../components';
 import chains, { type NetworkInfo } from '../util/chains';
 
-export default function useAllChains (): NetworkInfo[] {
+export default function useAllChains(): NetworkInfo[] {
   const userAddedChainCtx = useContext(UserAddedChainContext);
 
   return useMemo(() => {

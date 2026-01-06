@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
@@ -22,7 +22,7 @@ interface Props {
   address?: string | undefined;
 }
 
-function TopPageElement ({ isExtension }: { isExtension: boolean }) {
+function TopPageElement({ isExtension }: { isExtension: boolean }) {
   const { t } = useTranslation();
 
   const description = t('Removing this account means losing access via this extension. To recover it later, use the recovery phrase.');
@@ -55,7 +55,7 @@ function TopPageElement ({ isExtension }: { isExtension: boolean }) {
  *
  * Has been used in both full-screen & extension mode!
 */
-function RemoveAccount ({ address, onClose, open }: Props): React.ReactElement {
+function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const account = useAccount(address) ?? selectedAccount;

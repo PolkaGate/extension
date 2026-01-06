@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
@@ -12,7 +12,7 @@ import { AccountProfileLabel } from '../components';
 import AccountRow from './AccountRow';
 import ProfileTabsFS from './ProfileTabsFS';
 
-function AccountList (): React.ReactElement {
+function AccountList(): React.ReactElement {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const { categorizedAccounts, initialAccountList } = useCategorizedAccountsInProfiles();
 

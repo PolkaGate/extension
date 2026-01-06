@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
@@ -43,7 +43,7 @@ export function colorFromString(input: string): string {
   return `hsl(${hue}, 100%, 50%)`;
 }
 
-function getEthereumLogos (lcInfo: string, token?: string): LogoInfo | undefined {
+function getEthereumLogos(lcInfo: string, token?: string): LogoInfo | undefined {
   const iconComponent =
     lcInfo === 'ethereum' || token === 'ETH'
       ? TokenETH

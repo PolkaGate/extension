@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -25,7 +25,7 @@ interface ChooseAccountMenuProps {
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>> | undefined;
 }
 
-export default function AccountListModal ({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress }: ChooseAccountMenuProps): React.ReactElement {
+export default function AccountListModal({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef<HTMLDivElement>(null);
@@ -146,10 +146,10 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
                   })}
                 </>
                 : <NothingFound
-                    show
-                    style={{ pt: '90px' }}
-                    text={t('Account Not Found')}
-                  />
+                  show
+                  style={{ pt: '90px' }}
+                  text={t('Account Not Found')}
+                />
             }
           </Stack>
           <FadeOnScroll containerRef={refContainer} height='15px' ratio={0.3} />

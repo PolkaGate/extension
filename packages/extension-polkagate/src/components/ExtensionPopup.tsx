@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
@@ -41,7 +41,7 @@ export interface ExtensionPopupProps {
   darkBackground?: boolean;
 }
 
-const Gradient = React.memo(function MemoGradient ({ pt, withoutBackground }: { pt?: number, withoutBackground?: boolean }) {
+const Gradient = React.memo(function MemoGradient({ pt, withoutBackground }: { pt?: number, withoutBackground?: boolean }) {
   const isBlueish = useIsBlueish();
 
   if (withoutBackground) {
@@ -59,7 +59,7 @@ const Gradient = React.memo(function MemoGradient ({ pt, withoutBackground }: { 
   );
 });
 
-function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = false, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, onNext, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
+function ExtensionPopup({ RightItem, TitleIcon, children, darkBackground = false, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, onNext, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -48,7 +48,7 @@ const TokenDetailBoxContainer = styled(Grid, {
   transition: 'all 250ms ease-out'
 }));
 
-function TokenDetailBox ({ Icon, amount, background = '#2D1E4A4D', decimal, description, iconSize = '21', iconVariant, onClick, priceId, title, token }: TokenDetailBoxProp) {
+function TokenDetailBox({ Icon, amount, background = '#2D1E4A4D', decimal, description, iconSize = '21', iconVariant, onClick, priceId, title, token }: TokenDetailBoxProp) {
   const pricesInCurrency = usePrices();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);

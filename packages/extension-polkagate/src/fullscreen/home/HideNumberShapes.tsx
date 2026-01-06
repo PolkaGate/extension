@@ -1,10 +1,10 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Stack } from '@mui/material';
 import React from 'react';
 
-export function HideNumberShape1 (): React.ReactElement {
+export function HideNumberShape1(): React.ReactElement {
   const renderRow = (count: number, offset = 0, rowId: number) => (
     <Stack direction='row' key={`row-${rowId}-${offset}`} sx={{ ml: offset ? '12px' : 0 }}>
       {Array.from({ length: count }).map((_, index) => (
@@ -53,7 +53,7 @@ export function HideNumberShape1 (): React.ReactElement {
   );
 }
 
-export function HideNumberShape2 ({ style = {} }: { style: React.CSSProperties }): React.ReactElement {
+export function HideNumberShape2({ style = {} }: { style: React.CSSProperties }): React.ReactElement {
   const renderRow = (count: number, offset = 0, rowId: number) => (
     <Stack
       direction='row'

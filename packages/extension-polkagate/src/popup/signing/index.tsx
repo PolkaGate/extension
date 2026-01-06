@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SigningRequest } from '@polkadot/extension-base/background/types';
@@ -25,7 +25,7 @@ import { type Data, type ModeData, SIGN_POPUP_MODE } from './types';
 
 const registry = new TypeRegistry();
 
-function isRawPayload (payload: SignerPayloadJSON | SignerPayloadRaw): payload is SignerPayloadRaw {
+function isRawPayload(payload: SignerPayloadJSON | SignerPayloadRaw): payload is SignerPayloadRaw {
   return !!(payload as SignerPayloadRaw).data;
 }
 
@@ -64,7 +64,7 @@ interface ContentProps {
   onSignature: ({ signature }: { signature: HexString }) => void;
 }
 
-function Content ({ error, hexBytes, mode, onNextClick, onPreviousClick, onSignature, payload, request, requestIndex, requests, setError, setMode }: ContentProps): React.ReactElement {
+function Content({ error, hexBytes, mode, onNextClick, onPreviousClick, onSignature, payload, request, requestIndex, requests, setError, setMode }: ContentProps): React.ReactElement {
   if (mode.type === SIGN_POPUP_MODE.DETAIL) {
     return (
       <ExtrinsicDetail
@@ -108,7 +108,7 @@ interface WrapperProps extends ContentProps {
   onCancel: () => void;
 }
 
-function Wrapper ({ onBack, onCancel, ...content }: WrapperProps): React.ReactElement {
+function Wrapper({ onBack, onCancel, ...content }: WrapperProps): React.ReactElement {
   const isExtension = useIsExtensionPopup();
 
   if (isExtension) {
@@ -140,7 +140,7 @@ function Wrapper ({ onBack, onCancel, ...content }: WrapperProps): React.ReactEl
   );
 }
 
-export default function Signing (): React.ReactElement {
+export default function Signing(): React.ReactElement {
   const { t } = useTranslation();
   const requests = useContext(SigningReqContext);
   const navigate = useNavigate();
@@ -237,6 +237,6 @@ export default function Signing (): React.ReactElement {
       requests={requests}
       setError={setError}
       setMode={setMode}
-      />
+    />
     : <Loading />;
 }

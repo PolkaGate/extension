@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -39,7 +39,7 @@ export interface ChainInfo {
  * @param {boolean} noApi - If true, prevents triggering the API connection.
  * @returns {ChainInfo} The information about the blockchain, including the API, chain metadata, name, decimals, and token symbol.
  */
-export default function useChainInfo (genesisHash: string | null | undefined, noApi = false): ChainInfo {
+export default function useChainInfo(genesisHash: string | null | undefined, noApi = false): ChainInfo {
   const chain = useMetadata(genesisHash, true);
   const api = useApi(noApi ? undefined : genesisHash);
 

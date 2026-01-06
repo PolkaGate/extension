@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Typography } from '@mui/material';
@@ -8,7 +8,7 @@ import { FormatPrice } from '../../../components';
 import { useIsDark, usePrices } from '../../../hooks';
 import DailyChange from './DailyChange';
 
-export function TokenPriceInfo ({ priceId, token }: { priceId?: string, token?: string }) {
+export function TokenPriceInfo({ priceId, token }: { priceId?: string, token?: string }) {
   const pricesInCurrency = usePrices();
   const isDark = useIsDark();
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon, IconProps } from 'iconsax-react';
@@ -66,7 +66,7 @@ const FilterItem = ({ Icon, Logo, checked, iconVariant, name, onClick }: FilterI
   return (
     <Grid alignItems='center' container item justifyContent='space-between'>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ columnGap: '8px', width: 'fit-content' }}>
-        {Icon && <Icon color='#AA83DC' size='24' style={{ background: '#05091C', borderRadius: '999px', padding: '3px' }} variant={ iconVariant ?? 'Outline'} />}
+        {Icon && <Icon color='#AA83DC' size='24' style={{ background: '#05091C', borderRadius: '999px', padding: '3px' }} variant={iconVariant ?? 'Outline'} />}
         {Logo}
         <Typography color='text.primary' variant='B-1'>
           {name}
@@ -87,7 +87,7 @@ interface FilterHistoryProps {
   filter: FilterState;
 }
 
-function FilterHistory ({ dispatchFilter, filter, openMenu, setOpenMenu }: FilterHistoryProps) {
+function FilterHistory({ dispatchFilter, filter, openMenu, setOpenMenu }: FilterHistoryProps) {
   const { t } = useTranslation();
 
   const closePopup = useCallback(() => {
@@ -147,7 +147,7 @@ interface Props {
   token: string | undefined;
 }
 
-function TokenHistory ({ address, decimal, genesisHash, token }: Props): React.ReactElement {
+function TokenHistory({ address, decimal, genesisHash, token }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);

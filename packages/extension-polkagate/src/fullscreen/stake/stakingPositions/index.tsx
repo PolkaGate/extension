@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance, PositionInfo, Prices } from '../../../util/types';
@@ -125,7 +125,7 @@ interface Props {
   setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
-function StakingPositions ({ popupOpener, setSelectedPosition }: Props) {
+function StakingPositions({ popupOpener, setSelectedPosition }: Props) {
   const selectedAccount = useSelectedAccount();
   const containerRef = useRef(null);
   const isTestnetEnabled = useIsTestnetEnabled();

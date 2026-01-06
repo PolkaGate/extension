@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { ColorSwatch, Eye, Folder, type Icon, KeySquare, ScanBarcode, UserOctagon } from 'iconsax-react';
@@ -12,7 +12,7 @@ interface IconInfo {
   color?: string
 }
 
-export default function useProfileInfo (label?: string | null): IconInfo {
+export default function useProfileInfo(label?: string | null): IconInfo {
   return useMemo(() => {
     switch (label) {
       case PROFILE_TAGS.ALL:

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FilterAction, FilterState, SortAction, SortState } from '../utils/types';
@@ -19,7 +19,7 @@ interface Props {
   sort: SortState;
 }
 
-const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, filters, sort }: Props) {
+const Filters = React.memo(function Filters({ dispatchFilter, dispatchSort, filters, sort }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -34,7 +34,7 @@ const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, fil
   return (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', maxWidth: '300px', p: '10px 20px', width: 'max-content' }}>
       <Grid alignItems='center' container item>
-        <Filter color= '#674394' size= '20px' style={{ marginRight: '10px' }} />
+        <Filter color='#674394' size='20px' style={{ marginRight: '10px' }} />
         <Typography color='text.secondary' variant='B-4'>
           {t('Filters')}
         </Typography>
@@ -76,7 +76,7 @@ const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, fil
         />
       </Grid>
       <Grid alignItems='center' container item mt='15px'>
-        <Sort color= '#674394' size= '20px' style={{ marginRight: '10px' }} />
+        <Sort color='#674394' size='20px' style={{ marginRight: '10px' }} />
         <Typography color='text.secondary' variant='B-4'>
           {t('Sort')}
         </Typography>
@@ -100,7 +100,7 @@ const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, fil
   );
 });
 
-function NftFilters ({ dispatchFilter, dispatchSort, filters, sort }: Props): React.ReactElement {
+function NftFilters({ dispatchFilter, dispatchSort, filters, sort }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -118,12 +118,12 @@ function NftFilters ({ dispatchFilter, dispatchSort, filters, sort }: Props): Re
 
   return (
     <>
-      <Grid alignItems= 'center' aria-describedby={id} columnGap='5px' component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: 'none', cursor: 'pointer', height: 'fit-content', p: 0, width: 'fit-content' }}>
+      <Grid alignItems='center' aria-describedby={id} columnGap='5px' component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: 'none', cursor: 'pointer', height: 'fit-content', p: 0, width: 'fit-content' }}>
         <DocumentFilter color='#AA83DC' size='18px' variant='Bulk' />
         <Typography color='#AA83DC' variant='B-4'>
           {t('Filter/Sort')}
         </Typography>
-        <ArrowDown2 color={open ? '#FFF' : '#AA83DC' } size='17' style={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }} variant='Linear' />
+        <ArrowDown2 color={open ? '#FFF' : '#AA83DC'} size='17' style={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }} variant='Linear' />
       </Grid>
       <Popover
         anchorEl={anchorEl}

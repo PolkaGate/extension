@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
@@ -24,7 +24,7 @@ const DEFAULT_AUTO_LOCK: AutoLock = {
   enabled: false
 };
 
-export default function useAutoLock (): AutoLock | undefined {
+export default function useAutoLock(): AutoLock | undefined {
   const [autoLock, setAutoLock] = useState<AutoLock>();
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -72,7 +72,7 @@ export interface SignUsingPasswordProps {
   signerPayload: SignerPayloadJSON | undefined;
 }
 
-function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', disabled, onCancel, onSignature, onUseProxy, proxies, signerPayload, style, withCancel }: SignUsingPasswordProps) {
+function SignUsingPassword({ api, decisionButtonProps, direction = 'vertical', disabled, onCancel, onSignature, onUseProxy, proxies, signerPayload, style, withCancel }: SignUsingPasswordProps) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 

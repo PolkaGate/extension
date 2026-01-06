@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid } from '@mui/material';
@@ -20,7 +20,7 @@ export enum SETTING_PAGES {
   EXTENSION = 'extension'
 }
 
-function Settings (): React.ReactElement {
+function Settings(): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const navigate = useNavigate();

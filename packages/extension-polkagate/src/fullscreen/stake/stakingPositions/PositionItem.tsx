@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-ignore
@@ -97,7 +97,7 @@ interface Props extends TokenInfoProps {
   type: 'pool' | 'solo';
 }
 
-function PositionItem ({ balance, claimPermissions, decimal, genesisHash, isSelected, price, token, totalPositions, type }: Props) {
+function PositionItem({ balance, claimPermissions, decimal, genesisHash, isSelected, price, token, totalPositions, type }: Props) {
   const { address } = useParams<{ address: string }>();
   const navigate = useNavigate();
   const hasPoolStaking = useMemo(() => type === 'pool', [type]);

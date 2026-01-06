@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -18,7 +18,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function MenuButton ({ Icon, onClick, path, style = { marginBottom: '8px' }, text }: Props): React.ReactElement {
+function MenuButton({ Icon, onClick, path, style = { marginBottom: '8px' }, text }: Props): React.ReactElement {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { isHovered, ref } = useIsHovered();
@@ -79,7 +79,7 @@ function MenuButton ({ Icon, onClick, path, style = { marginBottom: '8px' }, tex
         }}
         />
       }
-    {isHovered &&  <ShineEffect active={isHovered} />}
+      {isHovered && <ShineEffect active={isHovered} />}
     </Stack>
   );
 }

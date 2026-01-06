@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { KeypairType } from '@polkadot/util-crypto/types';
@@ -20,7 +20,7 @@ import ModeSwitch from './ModeSwitch';
 import { STEP } from './types';
 import { useAccountImportOrCreate } from './useAccountImportOrCreate';
 
-export function SetNameAndPassword ({ accountType, seed }: { accountType: KeypairType, seed: string | null, }): React.ReactElement {
+export function SetNameAndPassword({ accountType, seed }: { accountType: KeypairType, seed: string | null, }): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -72,7 +72,7 @@ export function SetNameAndPassword ({ accountType, seed }: { accountType: Keypai
           style={{ marginBottom: '20px' }}
           title1={t('Password')}
           title2={t('Repeat the password')}
-           />
+        />
         )
         : (<PasswordInput
           hasError={!!error}
@@ -80,7 +80,7 @@ export function SetNameAndPassword ({ accountType, seed }: { accountType: Keypai
           onPassChange={setPassword}
           style={{ marginBottom: '25px', marginTop: '35px' }}
           title={t('Password to secure this account')}
-           />
+        />
         )
       }
       <DecisionButtons
@@ -99,7 +99,7 @@ export function SetNameAndPassword ({ accountType, seed }: { accountType: Keypai
   );
 }
 
-function CreateAccount (): React.ReactElement {
+function CreateAccount(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -173,8 +173,8 @@ function CreateAccount (): React.ReactElement {
         }
         {step === STEP.DETAIL &&
           <SetNameAndPassword
-          accountType={accountType}
-          seed={seed}
+            accountType={accountType}
+            seed={seed}
           />
         }
       </Stack>

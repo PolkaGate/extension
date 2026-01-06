@@ -1,14 +1,14 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api-base/types';
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
-import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
+import type { DropdownOption, FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { BN } from '@polkadot/util';
 import type { HexString } from '@polkadot/util/types';
-import type { Inputs } from './types';
+import type { TransferType } from './types';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -23,14 +23,12 @@ import { INVALID_PARA_ID, XCM_LOC } from './utils';
 /** This hook is DEPRECATED */
 
 // This hook is used to estimate fees and prepare the transaction for sending funds for testnets mostly and non xcm transfers on other chains since paraspell does not support transfer all as well
-export default function useLimitedFeeCall(address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, inputs: Inputs | undefined, genesisHash: string | undefined, teleportState: Teleport) {
+export default function useLimitedFeeCall(address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, amount: string | undefined, decimal: number | undefined, recipientAddress: string | undefined, recipientChain: DropdownOption | undefined, transferType: TransferType | undefined, genesisHash: string | undefined, teleportState: Teleport) {
   const { api, chainName: senderChainName, decimal: senderDecimal, token } = useChainInfo(genesisHash);
 
   const [estimatedFee, setEstimatedFee] = useState<Balance>();
   const [estimatedCrossChainFee, setEstimatedCrossChainFee] = useState<Balance>();
   const [maxFee, setMaxFee] = useState<Balance>();
-
-  const { decimal, recipientAddress, transferType } = inputs || {};
 
   const transferableBalance = useMemo(() => getValue('transferable', assetToTransfer), [assetToTransfer]);
   const isForeignAsset = assetId ? assetId.startsWith('0x') : undefined;
@@ -44,18 +42,18 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
       : parseInt(assetId)
     , [assetId, isForeignAsset, isNativeToken, noAssetId]);
 
-  const amountAsBN = useMemo(() => decimal ? amountToMachine(inputs?.amount, decimal) : undefined, [decimal, inputs?.amount]);
-  const isCrossChain = useMemo(() => senderChainName !== inputs?.recipientChain?.text, [inputs?.recipientChain?.text, senderChainName]);
+  const amountAsBN = useMemo(() => decimal ? amountToMachine(amount, decimal) : undefined, [decimal, amount]);
+  const isCrossChain = useMemo(() => senderChainName !== recipientChain?.text, [recipientChain?.text, senderChainName]);
 
   const recipientParaId = useMemo(() => {
-    const mayParaId = inputs?.recipientChain?.value;
+    const mayParaId = recipientChain?.value;
 
     try {
       return isCrossChain ? parseInt(String(mayParaId)) : INVALID_PARA_ID;
     } catch {
       return INVALID_PARA_ID;
     }
-  }, [inputs?.recipientChain, isCrossChain]);
+  }, [recipientChain, isCrossChain]);
 
   const onChainCall = useMemo(() => {
     if (!api || !genesisHash) {
@@ -201,21 +199,24 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
 
   const params = isCrossChain ? crossChainParams : onChainParam;
 
-  return {
-    call: params ? call?.(...params) : undefined,
-    limitedTotalFee: {
-      destinationFee: {
-        asset: {
-          decimals: senderDecimal,
-          location: assetId,
-          symbol: token
-        },
-        fee: estimatedCrossChainFee || BN_ZERO
+  const limitedTotalFee = useMemo(() => ({
+    destinationFee: {
+      asset: {
+        decimals: senderDecimal,
+        location: assetId,
+        symbol: token
       },
-      originFee: {
-        fee: estimatedFee
-      }
+      fee: estimatedCrossChainFee || BN_ZERO
     },
-    maxFee
+    originFee: {
+      fee: estimatedFee
+    }
+  }), [estimatedFee, estimatedCrossChainFee, token, senderDecimal, assetId]);
+
+  return {
+    call,
+    limitedTotalFee,
+    maxFee,
+    params
   };
 }

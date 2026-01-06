@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Balance } from '@polkadot/types/interfaces';
@@ -50,7 +50,7 @@ interface PaymentCapability {
  * @param balancesFromProps - Optional pre-fetched balance info to avoid redundant API calls
  * @returns Object containing payment capability status and detailed statement
  */
-export default function useCanPayFeeAndDeposit (
+export default function useCanPayFeeAndDeposit(
   address: AccountId | string | undefined,
   genesisHash: string | undefined,
   proxyAddress: AccountId | string | undefined,
