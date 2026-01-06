@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 const MAX_REQUESTS_PER_SECOND = 3;
@@ -14,18 +14,18 @@ class SubscanRequestQueue {
   private isRunning = false;
   private readonly intervalMs: number;
 
-  constructor (requestsPerSecond: number) {
+  constructor(requestsPerSecond: number) {
     this.intervalMs = Math.floor(1000 / requestsPerSecond);
   }
 
-  enqueue<T> (fn: () => Promise<T>): Promise<T> {
+  enqueue<T>(fn: () => Promise<T>): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       this.queue.push({ fn, reject, resolve } as QueueTask<unknown>);
       this.run().catch(console.error);
     });
   }
 
-  private async run (): Promise<void> {
+  private async run(): Promise<void> {
     if (this.isRunning) {
       return;
     }
@@ -53,7 +53,7 @@ class SubscanRequestQueue {
     this.isRunning = false;
   }
 
-  private sleep (ms: number): Promise<void> {
+  private sleep(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

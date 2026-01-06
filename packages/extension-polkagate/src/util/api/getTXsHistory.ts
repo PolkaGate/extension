@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026@polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -166,7 +166,7 @@ const nullObject = {
  * @param prefix - chain prefix
  * @returns Promise resolving to ExtrinsicsRequest
  */
-export async function getTXsHistory (chainName: string, address: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
+export async function getTXsHistory(chainName: string, address: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
   if (!chainName || prefix === undefined) {
     return Promise.resolve(nullObject);
   }
@@ -228,7 +228,7 @@ export async function getTXsHistory (chainName: string, address: string, pageNum
   };
 }
 
-function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; transfer: { amount: string; from: string; to: string; } } }, prefix: number) {
+function getAdditionalInfo(functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; transfer: { amount: string; from: string; to: string; } } }, prefix: number) {
   try {
     const params = txDetail.data.params;
     const transfer = txDetail.data?.transfer;
