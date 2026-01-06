@@ -82,7 +82,7 @@ export const generateStakingRewardNotifications = (
     data
       .filter(({ timestamp }) => timestamp >= lastTime(latestLoggedIn))
       .forEach((payout) => {
-        const itemKey = `payout - ${network.value} - ${payout.index} - ${payout.timestamp}`;
+        const itemKey = `payout - ${network.value} - ${address} -  ${payout.index} - ${payout.timestamp}`;
 
         newMessages.push({
           chain: network,
