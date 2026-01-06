@@ -13,7 +13,7 @@ import { Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } fr
 import { useAccount, useAlerts, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { forgetAccount, validateAccount } from '../messaging';
 import WarningBox from '../popup/settings/partials/WarningBox';
-import { cleanupNotificationAccount } from '../util';
+import { cleanupAuthorizedAccount, cleanupNotificationAccount } from '../util';
 import { SharePopup } from '.';
 
 interface Props {
@@ -58,7 +58,7 @@ function TopPageElement({ isExtension }: { isExtension: boolean }) {
 function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
-  const account = useAccount(address) ?? selectedAccount;
+  const { address: _address, isExternal, name } = useAccount(address) ?? selectedAccount ?? {};
   const navigate = useNavigate();
   const isExtension = useIsExtensionPopup();
 
@@ -99,27 +99,33 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
     isExtension && navigate('/') as void; // in extension mode, go back to home on close
   }, [isExtension, navigate, notifier, onClose]);
 
+  const canRemoveAccount =
+    (isExternal && acknowledged) || (!isExternal && !!password);
+
   const onRemove = useCallback(async () => {
     try {
-      if (!account || (account?.isExternal && !acknowledged) || (!account?.isExternal && !password)) {
+      if (!_address || !canRemoveAccount) {
         return;
       }
 
       setIsBusy(true);
       await new Promise(requestAnimationFrame);
 
-      if (!account.isExternal && password) {
-        const isUnlockable = await validateAccount(account.address, password);
+      if (!isExternal && password) {
+        const isUnlockable = await validateAccount(_address, password);
 
         if (!isUnlockable) {
           throw new Error('Password incorrect!');
         }
       }
 
-      const success = await forgetAccount(account.address);
+      const success = await forgetAccount(_address);
 
       if (success) {
-        await cleanupNotificationAccount(account.address);
+        await Promise.allSettled([
+          cleanupNotificationAccount(_address),
+          cleanupAuthorizedAccount(_address)
+        ]);
       }
 
       notifier(true);
@@ -129,7 +135,7 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
       setIsBusy(false);
       console.error('Error while removing the account:', error);
     }
-  }, [account, acknowledged, handleClose, isExtension, notifier, password]);
+  }, [_address, handleClose, isExtension, isExternal, canRemoveAccount, notifier, password]);
 
   const onPassChange = useCallback((pass: string | null): void => {
     setPasswordError(false);
@@ -150,16 +156,16 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
             isExtension={isExtension}
           />
           <Stack direction='column' sx={{ width: '100%', zIndex: 1 }}>
-            {account &&
+            {_address &&
               <Address2
-                address={account?.address}
+                address={_address}
                 charsCount={14}
-                name={account?.name}
+                name={name}
                 showAddress
                 style={{ borderRadius: '14px', filter: showSnackbar ? 'blur(5px)' : 'none', mt: '5px' }}
               />
             }
-            {account && account.isExternal
+            {isExternal
               ? (
                 <GlowCheckbox
                   changeState={toggleAcknowledge}
@@ -180,13 +186,13 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
             }
             <DecisionButtons
               direction='vertical'
-              disabled={isBusy || (account?.isExternal && !acknowledged) || (!account?.isExternal && !password)}
+              disabled={isBusy || !canRemoveAccount}
               isBusy={isBusy}
               onPrimaryClick={onRemove}
               onSecondaryClick={handleClose}
               primaryBtnText={t('Remove')}
               secondaryBtnText={t('Cancel')}
-              style={{ marginTop: isExtension ? account?.isExternal ? '60px' : '27px' : '25px' }}
+              style={{ marginTop: isExtension ? isExternal ? '60px' : '27px' : '25px' }}
             />
           </Stack>
         </Grid>

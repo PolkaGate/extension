@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -32,7 +32,7 @@ interface Props {
   onMinValue: string;
 }
 
-export default function JoinPoolInput ({ availableBalanceToStake, bondAmount, errorMessage, estimatedFee, genesisHash, onBack, onInputChange, onMaxValue, onMinValue, onNext, selectedPool }: Props): React.ReactNode {
+export default function JoinPoolInput({ availableBalanceToStake, bondAmount, errorMessage, estimatedFee, genesisHash, onBack, onInputChange, onMaxValue, onMinValue, onNext, selectedPool }: Props): React.ReactNode {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
 

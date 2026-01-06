@@ -10,23 +10,20 @@ import type { HexString } from '@polkadot/util/types';
 
 import { Avatar, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
-import React, { useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
 import { ChainLogo, DisplayBalance, Identity2, TwoToneText } from '../../../components';
 import { useAccountAssets, useAllChains, useChainInfo, useEstimatedFee, useFavIcon, useIsExtensionPopup, useMetadata, useSelectedChains, useTranslation } from '../../../hooks';
-import { getSubstrateAddress, isOnAssetHub } from '../../../util';
-import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
+import { getAndWatchStorage, getSubstrateAddress, isOnAssetHub } from '../../../util';
+import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB, STORAGE_KEY } from '../../../util/constants';
 import { getValue } from '../../account/util';
 import Confirm from '../Confirm';
-import { type ModeData } from '../types';
+import { type Decoded, type ModeData } from '../types';
+import AiInsight from './AiInsight';
+import { AiInsightErrorBoundary } from './AiInsightErrorBoundary';
 import RequestContent from './requestContent';
-
-interface Decoded {
-  args: AnyJson | null;
-  method: Call | null;
-}
 
 interface Props {
   payload: ExtrinsicPayload;
@@ -78,6 +75,66 @@ function DappRow({ url }: { url: string }) {
   );
 }
 
+interface SignerContextProps {
+  address: string;
+  genesisHash: HexString;
+  showBalance?: boolean;
+}
+
+function SignerContext({ address, genesisHash, showBalance = true }: SignerContextProps): React.ReactElement {
+  const theme = useTheme();
+  const { t } = useTranslation();
+  const { chainName, decimal, token } = useChainInfo(genesisHash);
+
+  const substrateAddress = getSubstrateAddress(address);
+  const accountAssets = useAccountAssets(substrateAddress);
+  const nativeAssetId = isOnAssetHub(genesisHash) ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB : NATIVE_TOKEN_ASSET_ID;
+  const nativeAssetBalance = accountAssets?.find((asset) => asset.genesisHash === genesisHash && asset.assetId === nativeAssetId);
+
+  return (
+    <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='space-between'>
+      <Identity2
+        address={address}
+        addressStyle={{ color: 'text.secondary', variant: 'B-4' }}
+        charsCount={4}
+        genesisHash={genesisHash}
+        identiconSize={36}
+        inTitleCase
+        showSocial={false}
+        style={{
+          backgroundColor: '#05091C',
+          borderRadius: '14px',
+          color: theme.palette.text.primary,
+          height: '56px',
+          paddingLeft: '10px',
+          variant: 'B-2',
+          width: '45%'
+        }}
+        withShortAddress
+      />
+      <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
+        {t('on')}
+      </Typography>
+      <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>
+        <ChainLogo genesisHash={genesisHash} size={36} />
+        <Stack alignItems='flex-start' width='90px'>
+          <Typography color='#EAEBF1' sx={{ overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', width: '95%' }} variant='B-2'>
+            {chainName || t('Unknown')}
+          </Typography>
+          {showBalance &&
+            <DisplayBalance
+              balance={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
+              decimal={decimal}
+              style={{ color: '#BEAAD8', ...theme.typography['B-4'] }}
+              token={token}
+            />
+          }
+        </Stack>
+      </Stack>
+    </Grid>
+  );
+}
+
 function Extrinsic({ onCancel, onSignature, payload, request, setMode, signerPayload: { address, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -86,12 +143,19 @@ function Extrinsic({ onCancel, onSignature, payload, request, setMode, signerPay
   const isExtension = useIsExtensionPopup();
 
   const chain = useMetadata(genesisHash);
-  const { api, chainName, decimal, token } = useChainInfo(genesisHash);
+  const { api, chainName } = useChainInfo(genesisHash);
+
+  const [enabled, setEnabled] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unsubscribe = getAndWatchStorage(STORAGE_KEY.AI_TX_INFO, setEnabled);
+
+    return () => unsubscribe();
+  }, []);
 
   const substrateAddress = getSubstrateAddress(address);
 
-  const accountAssets = useAccountAssets(substrateAddress);
-  const specVersion = useRef(bnToBn(hexSpec)).current;
+  const specVersion = useMemo(() => bnToBn(hexSpec), [hexSpec]);
 
   const decoded = useMemo(() => chain?.hasMetadata ? decodeMethod(method, chain, specVersion) : { args: null, method: null }, [method, chain, specVersion]);
   const isNetworkSupported = useMemo(() => genesisHash && allChains.find((c) => c.genesisHash === genesisHash), [allChains, genesisHash]);
@@ -110,9 +174,6 @@ function Extrinsic({ onCancel, onSignature, payload, request, setMode, signerPay
     decoded.method ? decoded.method.args : []
   );
 
-  const nativeAssetId = isOnAssetHub(genesisHash) ? NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB : NATIVE_TOKEN_ASSET_ID;
-  const nativeAssetBalance = accountAssets?.find((asset) => asset.genesisHash === genesisHash && asset.assetId === nativeAssetId);
-
   const noMetadata = !chainName;
   const missingInfo = (isNetworkSupported && isNetworkEnabled === false) || noMetadata;
 
@@ -122,52 +183,26 @@ function Extrinsic({ onCancel, onSignature, payload, request, setMode, signerPay
         url={url}
       />
       <Stack direction='column' sx={{ bgcolor: isExtension ? '#1B133C' : 'unset', borderRadius: '16px', mt: '20px', p: '4px' }}>
-        <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='space-between' sx={{ mb: '15px' }}>
-          <Identity2
-            address={address}
-            addressStyle={{ color: 'text.secondary', variant: 'B-4' }}
-            charsCount={4}
-            genesisHash={genesisHash ?? ''}
-            identiconSize={36}
-            inTitleCase
-            showSocial={false}
-            style={{
-              backgroundColor: '#05091C',
-              borderRadius: '14px',
-              color: theme.palette.text.primary,
-              height: '56px',
-              paddingLeft: '10px',
-              variant: 'B-2',
-              width: '45%'
-            }}
-            withShortAddress
-          />
-          <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
-            {t('on')}
-          </Typography>
-          <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>
-            <ChainLogo genesisHash={genesisHash} size={36} />
-            <Stack alignItems='flex-start' width='90px'>
-              <Typography color='#EAEBF1' sx={{ overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', width: '95%' }} variant='B-2'>
-                {chainName || t('Unknown')}
-              </Typography>
-              {api !== null && !missingInfo &&
-                <DisplayBalance
-                  balance={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
-                  decimal={decimal}
-                  style={{ color: '#BEAAD8', ...theme.typography['B-4'] }}
-                  token={token}
-                />
-              }
-            </Stack>
-          </Stack>
-        </Grid>
+        <SignerContext
+          address={address}
+          genesisHash={genesisHash}
+          showBalance={api !== null && !missingInfo}
+        />
         {decoded.method &&
           <>
-            <Stack direction='row' justifyContent='space-between' width='100%'>
-              <Typography color='#674394' mb='8px' variant='B-2'>
+            <Stack direction='row' justifyContent='space-between' sx={{ my: '6px', width: '100%' }}>
+              <Typography color='#674394' variant='B-2'>
                 {t('Request content')}
               </Typography>
+              {enabled &&
+                <AiInsightErrorBoundary>
+                  <AiInsight
+                    decoded={decoded}
+                    genesisHash={genesisHash}
+                    url={url}
+                  />
+                </AiInsightErrorBoundary>
+              }
             </Stack>
             <RequestContent
               decoded={decoded}

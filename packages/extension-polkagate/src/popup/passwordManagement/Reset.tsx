@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, Stack, Typography } from '@mui/material';
@@ -19,7 +19,7 @@ import { lockExtension, windowOpen } from '../../messaging';
 import { Version } from '../../partials';
 import Header from './Header';
 
-export function ResetContent (): React.ReactElement {
+export function ResetContent(): React.ReactElement {
   const isExtension = useIsExtensionPopup();
 
   const { t } = useTranslation();
@@ -103,7 +103,7 @@ export function ResetContent (): React.ReactElement {
   );
 }
 
-function Reset (): React.ReactElement {
+function Reset(): React.ReactElement {
   useBackground('drops') as void;
   const { setExtensionLock } = useExtensionLockContext();
 

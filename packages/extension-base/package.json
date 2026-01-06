@@ -21,6 +21,7 @@
   "version": "0.47.5",
   "main": "index.js",
   "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.79",
     "@polkadot/api": "^16.4.8",
     "@polkadot/extension-chains": "^0.47.5",
     "@polkadot/extension-dapp": "^0.47.5",

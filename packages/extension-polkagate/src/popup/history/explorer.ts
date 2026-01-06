@@ -1,10 +1,10 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { getSubscanChainName } from '@polkadot/extension-polkagate/src/util';
 import { CHAINS_ON_POLKAHOLIC } from '@polkadot/extension-polkagate/src/util/constants';
 
-export function getLink (chainName: string, type: 'account' | 'extrinsic' = 'extrinsic', data: string): { link: string | undefined, name: string | undefined, } {
+export function getLink(chainName: string, type: 'account' | 'extrinsic' = 'extrinsic', data: string): { link: string | undefined, name: string | undefined, } {
   if (chainName.toLowerCase() === 'ethereum') {
      return { link: 'https://etherscan.io/tx/' + String(data), name: 'etherscan' };
   }

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -133,7 +133,7 @@ interface Props {
   disabled?: boolean;
 }
 
-export default function StakingPortfolio ({ buttons = [], disabled, genesisHash, isFullScreen = false, onInfo, staked, style, type }: Props): React.ReactElement {
+export default function StakingPortfolio({ buttons = [], disabled, genesisHash, isFullScreen = false, onInfo, staked, style, type }: Props): React.ReactElement {
   const theme = useTheme();
   const pricesInCurrency = usePrices();
   const tokenPrice = useTokenPrice(genesisHash);

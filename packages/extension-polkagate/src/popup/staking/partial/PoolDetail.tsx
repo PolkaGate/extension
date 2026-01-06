@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Compact } from '@polkadot/types';
@@ -270,7 +270,7 @@ interface CollapseSectionProp {
   sideText?: string;
 }
 
-export const CollapseSection = memo(function CollapseSectionMemo ({ TitleIcon, children, notShow, onClick, open, sideText, title }: CollapseSectionProp) {
+export const CollapseSection = memo(function CollapseSectionMemo({ TitleIcon, children, notShow, onClick, open, sideText, title }: CollapseSectionProp) {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
 
@@ -348,7 +348,7 @@ interface PoolDetailProps {
   openMenu?: boolean;
 }
 
-export default function PoolDetail ({ comprehensive, genesisHash, handleClose, openMenu, poolDetail }: PoolDetailProps): React.ReactElement {
+export default function PoolDetail({ comprehensive, genesisHash, handleClose, openMenu, poolDetail }: PoolDetailProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);

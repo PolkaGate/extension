@@ -115,7 +115,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
           const isIncluded = info.authorizedAccounts.find((address) => address === selectedAccount?.address);
 
           return (
-            <>
+            <React.Fragment key={index}>
               {
                 !!index && isExtension &&
                 <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '345px' }} />
@@ -143,7 +143,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
                   </MyTooltip>
                 </Stack>
               </Stack>
-            </>
+            </React.Fragment>
           );
         })}
         <NothingFound

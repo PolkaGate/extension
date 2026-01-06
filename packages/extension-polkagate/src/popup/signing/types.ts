@@ -3,6 +3,7 @@
 
 import type { Icon } from 'iconsax-react';
 import type { Balance, Call, ExtrinsicPayload } from '@polkadot/types/interfaces';
+import type { AnyJson } from '@polkadot/types-codec/types';
 
 export const CMD_MORTAL = 2;
 export const CMD_SIGN_MESSAGE = 3;
@@ -26,4 +27,9 @@ export interface ModeData {
 export interface Data {
   hexBytes: string | null;
   payload: ExtrinsicPayload | null;
+}
+
+export interface Decoded {
+  args: AnyJson | null;
+  method: Call | null;
 }

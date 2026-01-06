@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountId } from '@polkadot/types/interfaces';
@@ -17,7 +17,7 @@ import { getHistoryFromStorage } from './hookUtils/getHistoryFromStorage';
 import { saveHistoryToStorage } from './hookUtils/saveHistoryToStorage';
 import { extrinsicsReducer, formatString, log, receivedReducer } from './hookUtils/utils';
 
-export default function useTransactionHistory (address: AccountId | string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
+export default function useTransactionHistory(address: AccountId | string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
   const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
   const [isLoading, setIsLoading] = useState(false);

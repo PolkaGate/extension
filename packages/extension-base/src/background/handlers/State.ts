@@ -1,6 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-bg authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { CreateMLCEngine } from '@mlc-ai/web-llm';
 import type { MetadataDef, ProviderMeta } from '@polkadot/extension-inject/types';
 import type { JsonRpcResponse, ProviderInterface, ProviderInterfaceCallback } from '@polkadot/rpc-provider/types';
 import type { AccountJson, AuthorizeRequest, MetadataRequest, RequestAuthorizeTab, RequestRpcSend, RequestRpcSubscribe, RequestRpcUnsubscribe, RequestSign, ResponseRpcListProviders, ResponseSigning, SigningRequest } from '../types';
@@ -161,6 +162,7 @@ export default class State {
   public readonly authUrlSubjects: Record<string, BehaviorSubject<AuthUrlInfo>> = {};
 
   public defaultAuthAccountSelection: string[] = [];
+  public engine: Awaited<ReturnType<typeof CreateMLCEngine>> | null = null;
 
   constructor(providers: Providers = {}) {
     this.#providers = providers;

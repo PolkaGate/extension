@@ -39,3 +39,45 @@ export async function cleanupNotificationAccount(address: string): Promise<void>
     throw error; // Re-throw to allow caller to handle the error
   }
 }
+
+/**
+ * Removes a specific account address from all authorized dApp connections.
+ *
+ * This function iterates through all dApps that have been granted authorization
+ * and removes the specified account address from their authorized accounts list.
+ *
+ * @param address - The account address to remove from all dApp authorizations.
+ *
+ * @returns A promise that resolves when the cleanup operation is complete.
+ *          Returns immediately if no authorized dApps exist or address is not found.
+ */
+export async function cleanupAuthorizedAccount(address: string): Promise<void> {
+  const { getAuthList, updateAuthorization } = await import('../messaging');
+
+  const authorizedDapps = await getAuthList();
+  const authorizedDappsList = Object.values(authorizedDapps.list);
+
+  if (authorizedDappsList.length === 0) {
+    return;
+  }
+
+  const updatePromises = authorizedDappsList.map(async ({ authorizedAccounts, id }) => {
+    if (!authorizedAccounts.includes(address)) {
+      return;
+    }
+
+    try {
+      const filteredAccounts = authorizedAccounts.filter((account) => account !== address);
+
+      if (filteredAccounts.length === authorizedAccounts.length) {
+        return;
+      }
+
+      await updateAuthorization(filteredAccounts, id);
+    } catch (error) {
+      console.error(`Failed to update authorization for dApp ${id}:`, error);
+    }
+  });
+
+  await Promise.allSettled(updatePromises);
+}

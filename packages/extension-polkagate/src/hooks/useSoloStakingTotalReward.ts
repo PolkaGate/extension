@@ -8,8 +8,7 @@ import { useEffect, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { getSubscanChainName } from '../util';
-import { postData } from '../util/api';
+import { fetchFromSubscan, getSubscanChainName } from '../util';
 import useStakingRewardDestinationAddress from './useStakingRewardDestinationAddress';
 
 export async function getStakingReward(chainName: string, address: AccountId | string | null): Promise<string | null> {
@@ -21,29 +20,24 @@ export async function getStakingReward(chainName: string, address: AccountId | s
 
   const network = getSubscanChainName(chainName) as unknown as string;
 
-  return new Promise((resolve) => {
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      postData('https://' + network + '.api.subscan.io/api/scan/staking/total_reward', { address })
-        .then((data: { message: string; data: { sum: string; }; }) => {
-          if (data.message === 'Success') {
-            const reward = data.data.sum;
+  try {
+    const data = await fetchFromSubscan<{ message: string; data: { sum: string; }; }>(
+      `https://${network}.api.subscan.io/api/scan/staking/total_reward`, { address });
 
-            resolve(reward);
-          } else {
-            console.log(`Fetching message ${data.message}`);
-            resolve(null);
-          }
-        })
-        .catch((error) => {
-          console.log('something went wrong while getting get Staking Total Rewards ', error);
-          resolve(null);
-        });
-    } catch (error) {
-      console.log('something went wrong while getting get Staking Total Rewards ', error);
-      resolve(null);
+    if (data.message === 'Success') {
+      const reward = data.data.sum;
+
+      return reward;
+    } else {
+      console.log(`Fetching message ${data.message}`);
+
+      return null;
     }
-  });
+  } catch (error) {
+    console.error('something went wrong while getting get Staking Total Rewards ', error);
+
+    return null;
+  }
 }
 
 export default function useSoloStakingTotalReward(chainName: string | undefined, stakingAccount: AccountStakingInfo | null | undefined): BN | undefined {

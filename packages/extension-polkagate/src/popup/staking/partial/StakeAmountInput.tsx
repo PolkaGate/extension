@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -165,7 +165,7 @@ interface Props {
   titleInColor?: string;
 }
 
-export default function StakeAmountInput ({ bodyStyle = {}, buttonsArray = [], decimal, dividerStyle = {}, enteredValue, errorMessage, focused, maxLength = { decimal: 4, integer: 8 }, numberOnly = true, onInputChange, placeholder, style, subAmount, title, titleInColor }: Props): React.ReactElement {
+export default function StakeAmountInput({ bodyStyle = {}, buttonsArray = [], decimal, dividerStyle = {}, enteredValue, errorMessage, focused, maxLength = { decimal: 4, integer: 8 }, numberOnly = true, onInputChange, placeholder, style, subAmount, title, titleInColor }: Props): React.ReactElement {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
 

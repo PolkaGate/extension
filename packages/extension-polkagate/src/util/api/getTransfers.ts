@@ -6,8 +6,8 @@ import type { TransferRequest } from '../types';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { getSubscanChainName } from '../chain';
+import { fetchFromSubscan } from '..';
 import { getEthTxHistory } from './getEtherscan';
-import { postReq } from './getTXsHistory';
 
 export const nullObject = {
   code: 0,
@@ -16,7 +16,7 @@ export const nullObject = {
     transfers: null
   },
   generated_at: Date.now(),
-  message: 'Success'
+  message: 'Failed'
 } as unknown as TransferRequest;
 
 export async function getTxTransfers(chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
@@ -34,7 +34,7 @@ export async function getTxTransfers(chainName: string, address: string, pageNum
     return (await Promise.resolve(nullObject));
   }
 
-  const transferRequest = await postReq<TransferRequest>(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {
+  const transferRequest = await fetchFromSubscan<TransferRequest>(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {
     address,
     direction: 'received',
     page: pageNum,

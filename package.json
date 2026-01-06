@@ -61,6 +61,7 @@
     "@ethersproject/keccak256": "^5.8.0",
     "@ethersproject/transactions": "^5.8.0",
     "@lottiefiles/dotlottie-react": "^0.17.5",
+    "@mlc-ai/web-llm": "^0.2.79",
     "@mui/icons-material": "^5.15.18",
     "@mui/lab": "^5.0.0-alpha.85",
     "@mui/material": "^5.8.3",

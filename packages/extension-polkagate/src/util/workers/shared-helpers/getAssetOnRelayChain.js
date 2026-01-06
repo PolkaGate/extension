@@ -14,7 +14,7 @@ import { getBalances } from './getBalances.js';
  * @param {import('../../types').UserAddedChains} userAddedEndpoints
  * @param {MessagePort } port
  */
-export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpoints, port) {
+export async function getAssetOnRelayChain(addresses, chainName, userAddedEndpoints, port) {
   const results = {};
 
   try {

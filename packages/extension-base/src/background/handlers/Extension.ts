@@ -9,7 +9,7 @@ import type { KeyringAddress } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 // added for plus to import RequestUpdateMeta
-import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountsSetUnlockExpiry, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountsSetUnlockExpiry, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestCreateAgent, RequestDeriveCreate, RequestDeriveValidate, RequestExplainTx, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 import type State from './State';
 
 import { ALLOWED_PATH, START_WITH_PATH } from '@polkadot/extension-base/defaults';
@@ -22,6 +22,7 @@ import { keyExtractSuri, mnemonicGenerate, mnemonicValidate } from '@polkadot/ut
 
 import { withErrorLog } from './helpers';
 import { createSubscription, unsubscribe } from './subscriptions';
+import { DEFAULT_MODEL_ID, explainTransaction, loadAgent } from './txAiAgent';
 
 const SEED_DEFAULT_LENGTH = 12;
 const SEED_LENGTHS = [12, 15, 18, 21, 24];
@@ -123,6 +124,20 @@ export default class Extension {
     this.applyAddedTime({ pair });
 
     return true;
+  }
+
+  private async loadAiAgent({ modelId = DEFAULT_MODEL_ID, progressCallback }: RequestCreateAgent): Promise<boolean> {
+    this.#state.engine = await loadAgent(this.#state.engine, modelId, progressCallback);
+
+    return true;
+  }
+
+  private async explainTransactionWithAi({ txJson }: RequestExplainTx): Promise<string> {
+    const res = await explainTransaction(this.#state.engine, txJson);
+
+    this.#state.engine = res.engine;
+
+    return res.message;
   }
 
   private accountsCreateSuri({ genesisHash, name, password, suri, type }: RequestAccountCreateSuri): boolean {
@@ -783,6 +798,12 @@ export default class Extension {
       // ----------------added for polkagate---------------------
       case 'pri(accounts.updateMeta)':
         return this.accountsUpdateMeta(request as RequestUpdateMeta);
+
+      case 'pri(ai.agentLoad)':
+        return this.loadAiAgent(request as RequestCreateAgent);
+
+      case 'pri(ai.explainTransaction)':
+        return this.explainTransactionWithAi(request as RequestExplainTx);
 
       case 'pri(extension.lock)':
         return this.lockExtension();
