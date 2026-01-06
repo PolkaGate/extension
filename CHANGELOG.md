@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.24.1](https://github.com/polkagate/extension/compare/v1.24.0...v1.24.1) (2026-01-06)
+
+
+### Bug Fixes
+
+* lock extension after password change ([#2096](https://github.com/polkagate/extension/issues/2096)) ([9bf4a38](https://github.com/polkagate/extension/commit/9bf4a38ba814143bd6ef81dcc138ff5e139bdf0d)), closes [#2092](https://github.com/polkagate/extension/issues/2092)
+
 # [1.24.0](https://github.com/polkagate/extension/compare/v1.23.3...v1.24.0) (2026-01-05)
 
 
