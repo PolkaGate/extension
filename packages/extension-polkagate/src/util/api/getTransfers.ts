@@ -4,7 +4,7 @@
 import type { TransferRequest } from '../types';
 
 import { getSubscanChainName } from '../chain';
-import { postReq } from './getTXsHistory';
+import { fetchFromSubscan } from '..';
 
 const nullObject = {
   code: 0,
@@ -13,7 +13,7 @@ const nullObject = {
     transfers: null
   },
   generated_at: Date.now(),
-  message: 'Success'
+  message: 'Failed'
 } as unknown as TransferRequest;
 
 export async function getTxTransfers(chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
@@ -27,7 +27,7 @@ export async function getTxTransfers(chainName: string, address: string, pageNum
     return (await Promise.resolve(nullObject));
   }
 
-  const transferRequest = await postReq<TransferRequest>(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {
+  const transferRequest = await fetchFromSubscan<TransferRequest>(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {
     address,
     direction: 'received',
     page: pageNum,
