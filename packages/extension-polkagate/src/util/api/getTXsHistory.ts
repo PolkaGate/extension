@@ -9,7 +9,7 @@
 import type { Extrinsics, ExtrinsicsRequest } from '../types';
 
 import { hexToU8a } from '@polkadot/util';
-import { encodeAddress } from '@polkadot/util-crypto';
+import { encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 import { getSubscanChainName } from '../chain';
 import { fetchFromSubscan } from '..';

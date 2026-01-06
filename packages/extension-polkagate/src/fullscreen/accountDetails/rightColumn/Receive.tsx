@@ -6,16 +6,14 @@ import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 
 import { Grid, Grow, Stack, styled, Typography } from '@mui/material';
 import { DocumentCopy } from 'iconsax-react';
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
 
 import { Address2, ChainLogo, DecisionButtons, GradientDivider, MySnackbar, SearchField } from '@polkadot/extension-polkagate/src/components/index';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util';
-import { ETHEREUM_GENESISHASH } from '@polkadot/extension-polkagate/src/util/evmUtils/constantsEth';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
-import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { useFormatted, useGenesisHashOptions, useSelectedAccount, useTranslation } from '../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
