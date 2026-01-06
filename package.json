@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "apply-version": "node -e \"const { execSync } = require('child_process'); const fs = require('fs'); try { const version = execSync('git describe --tags --abbrev=0').toString().trim().replace(/^v/, ''); console.log('Version fetched:', version); const packageJsonPath = './packages/extension/package.json'; const packageJson = JSON.parse(fs.readFileSync(packageJsonPath)); packageJson.version = version; fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2)); } catch (error) { console.log('No tags found, skipping package.json update'); }\"",
-    "build": "NODE_ENV=production yarn copy-prod-manifest && && yarn apply-version && polkadot-dev-build-ts && yarn build:zip && yarn build:rollup",
+    "build": "NODE_ENV=production yarn copy-prod-manifest && yarn apply-version && polkadot-dev-build-ts && yarn build:zip && yarn build:rollup",
     "build:before": "yarn build:i18n",
     "build:clean": "yarn copy-prod-manifest && yarn build && find packages/extension/build -name '*.map' -type f -delete",
     "build:dev": "NODE_ENV=development yarn copy-dev-manifest && polkadot-dev-build-ts",
