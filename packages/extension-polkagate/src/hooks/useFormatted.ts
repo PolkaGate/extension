@@ -5,14 +5,14 @@ import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useMemo } from 'react';
 
-import { decodeAddress, encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
+import { decodeAddress, encodeAddress, evmToAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 import useChainInfo from './useChainInfo';
 
 export default function useFormatted(address: AccountId | string | undefined, genesisHash: string | null | undefined, formatted?: AccountId | string): string | undefined {
   const { chain } = useChainInfo(genesisHash, true);
 
-  return useMemo(() => {
+  const encodedAddress = useMemo(() => {
     if (formatted) {
       return String(formatted);
     }
@@ -21,17 +21,23 @@ export default function useFormatted(address: AccountId | string | undefined, ge
       return;
     }
 
-    if (isEthereumAddress(String(address))) {
-      return String(address);
-    }
-
-    const prefix: number = chain.ss58Format;
+    const { definition: { chainType }, ss58Format } = chain;
 
     try {
-      if (address && prefix !== undefined) {
-        const publicKey = decodeAddress(address);
+      let strAddress = String(address);
 
-        return encodeAddress(publicKey, prefix);
+      if (isEthereumAddress(strAddress)) {
+        if (chainType === 'ethereum') {
+        return strAddress;
+        }
+
+        strAddress = evmToAddress(strAddress);
+      }
+
+      if (ss58Format !== undefined) {
+        const publicKey = decodeAddress(strAddress);
+
+        return encodeAddress(publicKey, ss58Format);
       }
     } catch (error) {
       console.error(error);
@@ -39,4 +45,6 @@ export default function useFormatted(address: AccountId | string | undefined, ge
 
     return undefined;
   }, [formatted, chain, address]);
+
+  return encodedAddress;
 }

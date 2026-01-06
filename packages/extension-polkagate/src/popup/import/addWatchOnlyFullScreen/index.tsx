@@ -1,6 +1,8 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { KeypairType } from '@polkadot/util-crypto/types';
+
 import { Stack, Typography } from '@mui/material';
 import { User } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
@@ -9,9 +11,7 @@ import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/compo
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
-import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
-import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { AddressInput, DecisionButtons, MyTextField } from '../../../components';
 import { useTranslation } from '../../../hooks';
@@ -28,13 +28,12 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
 
   const [isBusy, setIsBusy] = useState(false);
   const [realAddress, setRealAddress] = useState<string | null | undefined>();
+  const [type, setType] = useState<KeypairType | undefined>();
   const [name, setName] = useState<string | null | undefined>();
 
   const onAdd = useCallback(() => {
     if (name && realAddress) {
       setIsBusy(true);
-
-      const type = isEthereumAddress(realAddress) ? 'ethereum' : DEFAULT_TYPE;
 
       createAccountExternal(name, realAddress, undefined, type)
         .then(() => {
@@ -48,7 +47,7 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
           console.error(error);
         });
     }
-  }, [name, realAddress]);
+  }, [name, realAddress, type]);
 
   const onCancel = useCallback(() => switchToOrOpenTab('/', true), []);
   const onNameChange = useCallback((name: string | null) => setName(name), []);
@@ -69,6 +68,7 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
           address={realAddress}
           label={t('Account ID')}
           setAddress={setRealAddress}
+          setType={setType}
           style={{ m: '30px 0 0', width: '370px' }}
         />
         <MyTextField

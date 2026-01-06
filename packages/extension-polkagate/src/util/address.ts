@@ -46,7 +46,7 @@ export function getSubstrateAddress(address: AccountId | string | null | undefin
     return undefined;
   }
 
-  if (isEthereumAddress(String(address))) {
+  if (isEthereumAddress(String(address))) { // TODO: can be removed
     return String(address);
   }
 

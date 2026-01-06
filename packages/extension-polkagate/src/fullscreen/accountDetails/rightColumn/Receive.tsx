@@ -138,12 +138,6 @@ function Receive({ address, closePopup, onClose, setAddress }: Props): React.Rea
   const chainName = useMemo(() => selectedChain ? sanitizeChainName(selectedChain?.text)?.toLowerCase() : '', [selectedChain]);
   const chainLogo = useMemo(() => getLogo2(chainName), [chainName]);
 
-  useEffect(() => {
-    if (isEthereumAddress(address)) {
-      setSelectedChain({ text: 'Ethereum', value: ETHEREUM_GENESISHASH });
-    }
-  }, [address]);
-
   const onCopy = useCallback(() => {
     formattedAddress && navigator.clipboard.writeText(formattedAddress).catch((err) => console.error('Error copying text: ', err));
     setShowSnackbar(true);

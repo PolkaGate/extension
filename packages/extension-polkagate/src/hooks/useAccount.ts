@@ -19,18 +19,14 @@ export default function useAccount(address: string | AccountId | null | undefine
       return undefined;
     }
 
-    let baseAddress;
+    const normalizedAddress = isEthereumAddress(String(address))
+      ? address
+      : getSubstrateAddress(address);
 
-    if (isEthereumAddress(String(address))) {
-      baseAddress = address;
-    } else {
-      baseAddress = getSubstrateAddress(address);
-    }
-
-    if (!baseAddress) {
+    if (!normalizedAddress) {
       return undefined;
     }
 
-    return accounts.find((acc) => acc.address === baseAddress);
+    return accounts.find(({ address }) => address === normalizedAddress);
   }, [accounts, address]);
 }
