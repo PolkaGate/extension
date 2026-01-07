@@ -4,7 +4,7 @@
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { RecordTabStatus, RecordTabStatusGov } from '../hookUtils/types';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { getTxTransfers } from '../../../util/api/getTransfers';
 import { getTXsHistory } from '../../../util/api/getTXsHistory';
@@ -30,12 +30,14 @@ interface UseTransactionFetchingResult {
  */
 export function useTransactionFetching({ address, chain, chainName, setExtrinsicsTx, setTransfersTx }: UseTransactionFetchingProps): UseTransactionFetchingResult {
     // Create request identifier for validation
-    const requested = useMemo(() => {
+    const requested: { current: string | undefined } = useRef(undefined);
+
+    useEffect(() => {
         if (!address || !chainName) {
             return undefined;
         }
 
-        return `${String(address)} - ${chainName}`;
+        requested.current = `${String(address)} - ${chainName}`;
     }, [address, chainName]);
 
     // Fetch transfer transactions
@@ -61,7 +63,7 @@ export function useTransactionFetching({ address, chain, chainName, setExtrinsic
             const res = await getTxTransfers(chainName, String(address), pageNum, SINGLE_PAGE_SIZE);
 
             // Validate response is for current request
-            if (!requested || requested !== res?.for) {
+            if (!requested.current || requested.current !== res?.for) {
                 return;
             }
 
@@ -85,7 +87,7 @@ export function useTransactionFetching({ address, chain, chainName, setExtrinsic
                 transactions: []
             });
         }
-    }, [address, chainName, requested, setTransfersTx]);
+    }, [address, chainName, setTransfersTx]);
 
     // Fetch extrinsics transactions
     const getExtrinsics = useCallback(async(currentState: RecordTabStatusGov): Promise<void> => {
@@ -110,7 +112,7 @@ export function useTransactionFetching({ address, chain, chainName, setExtrinsic
             const res = await getTXsHistory(chainName, String(address), pageNum, chain.ss58Format);
 
             // Validate response is for current request
-            if (!requested || requested !== res?.for) {
+            if (!requested.current || requested.current !== res?.for) {
                 return;
             }
 
@@ -133,7 +135,7 @@ export function useTransactionFetching({ address, chain, chainName, setExtrinsic
                 isFetching: false
             });
         }
-    }, [chain, chainName, setExtrinsicsTx, address, requested]);
+    }, [address, chain, chainName, setExtrinsicsTx]);
 
     return {
         getExtrinsics,
