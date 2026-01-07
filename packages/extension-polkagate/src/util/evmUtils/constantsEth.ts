@@ -15,14 +15,14 @@ export const EVM_GENESISHASH_MAP: Record<string, string> = {
   sepolia: SEPOLIA_GENESISHASH
 };
 
-export const EVM_TEST_CHAINS_GENESISHASH = [
+export const ETHEREUM_TEST_CHAINS_GENESISHASH = [
   GORELI_GENESISHASH,
   SEPOLIA_GENESISHASH
 ];
 
 export const EVM_CHAINS_GENESISHASH = [
   ETHEREUM_GENESISHASH,
-  ...EVM_TEST_CHAINS_GENESISHASH
+  ...ETHEREUM_TEST_CHAINS_GENESISHASH
 ];
 
 export const TOKEN_MAP: Record<string, React.ComponentType<{ size: number }>> = {

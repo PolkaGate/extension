@@ -3,7 +3,7 @@
 
 import type { ProxyTypes } from './types';
 
-import { EVM_TEST_CHAINS_GENESISHASH } from './evmUtils/constantsEth';
+import { ETHEREUM_TEST_CHAINS_GENESISHASH } from './evmUtils/constantsEth';
 
 export const EXTENSION_NAME = 'PolkaGate';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
@@ -87,7 +87,7 @@ export const POLKADOT_TEST_NETS = [
 
 export const TEST_NETS = [
   ...POLKADOT_TEST_NETS,
-  ...EVM_TEST_CHAINS_GENESISHASH
+  ...ETHEREUM_TEST_CHAINS_GENESISHASH
 ];
 
 export const PROXY_CHAINS = [

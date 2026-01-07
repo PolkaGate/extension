@@ -1,8 +1,6 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { evmToAddress, isEthereumAddress } from '@polkadot/util-crypto';
-
 import { FETCHING_ASSETS_FUNCTION_NAMES, NATIVE_TOKEN_ASSET_ID, TEST_NETS } from '../../constants';
 import { getPriceIdByChainName } from '../../misc';
 import { balancify, closeWebsockets } from '../utils';
@@ -18,8 +16,6 @@ export async function getAssetOnRelayChain(addresses, chainName, userAddedEndpoi
   const results = {};
 
   try {
-    addresses = addresses.map((addr) => isEthereumAddress(addr) ? evmToAddress(addr) : addr);
-
     const { api, balanceInfo, connectionsToBeClosed } = await getBalances(chainName, addresses, userAddedEndpoints, port) ?? {};
 
     if (!api || !balanceInfo || !connectionsToBeClosed) {
