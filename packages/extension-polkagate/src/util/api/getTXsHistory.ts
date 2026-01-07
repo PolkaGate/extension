@@ -8,10 +8,12 @@
 
 import type { Extrinsics, ExtrinsicsRequest } from '../types';
 
+import { keyMaker } from '@polkadot/extension-polkagate/src/popup/history/hookUtils/utils';
 import { hexToU8a } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
 
 import { getSubscanChainName } from '../chain';
+import getChainName from '../getChainName';
 import { fetchFromSubscan } from '..';
 
 // Common types
@@ -164,19 +166,20 @@ function nullifier(requested: string) {
 
 /**
  * Fetches TXs history for a given address on a given chainName
- * @param chainName - Name of the blockchain
  * @param address - Account address
+ * @param genesisHash - genesis hash of the blockchain
  * @param pageNum - Page number for pagination
  * @param prefix - chain prefix
  * @returns Promise resolving to ExtrinsicsRequest
  */
-export async function getTXsHistory(chainName: string, address: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
-  const requested = `${address} - ${chainName}`;
+export async function getTXsHistory(address: string, genesisHash: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
+  const requested = keyMaker(address, genesisHash);
 
   if (prefix === undefined) {
     return Promise.resolve(nullifier(requested));
   }
 
+  const chainName = getChainName(genesisHash);
   const network = getSubscanChainName(chainName) as unknown as string;
 
   const extrinsics = await fetchFromSubscan<ExtrinsicsRequest>(`https://${network}.api.subscan.io/api/v2/scan/extrinsics`, {
@@ -222,6 +225,10 @@ export async function getTXsHistory(chainName: string, address: string, pageNum:
       }
     })
   );
+
+  for (const item of extrinsicsInfo) {
+    item.forAccount = address;
+  }
 
   return {
     ...extrinsics,

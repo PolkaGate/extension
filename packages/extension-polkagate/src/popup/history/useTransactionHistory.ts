@@ -8,26 +8,27 @@ import { useEffect, useRef, useState } from 'react';
 import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { useChainInfo } from '../../hooks';
+import { keyMaker } from './hookUtils/utils';
 import { useInfiniteScroll, useTransactionFetching, useTransactionGrouping, useTransactionProcessing, useTransactionState, useTransactionStorage } from './hooks';
 
 /**
  * Main hook for managing transaction history
  * Orchestrates fetching, processing, storage, and display of transaction data
  */
-export default function useTransactionHistory(address: string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions, withObserver = true): TransactionHistoryOutput {
+export default function useTransactionHistory(address: string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
   const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
-  const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
+  const { chain, decimal, token } = useChainInfo(genesisHash, true);
 
   // Create request identifier for validation
   const requested = useRef<string | undefined>(undefined);
 
   useEffect(() => {
-    if (!address || !chainName) {
+    if (!address || !chain?.genesisHash) {
       return undefined;
     }
 
-    requested.current = `${String(address)} - ${chainName}`;
-  }, [address, chainName]);
+    requested.current = keyMaker(address, chain.genesisHash);
+  }, [address, chain?.genesisHash]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,13 +40,12 @@ export default function useTransactionHistory(address: string | undefined, _gene
     resetAllState,
     setAllHistories,
     setExtrinsicsTx,
-    setTransfersTx } = useTransactionState(address, chain, chainName, genesisHash);
+    setTransfersTx } = useTransactionState(address, chain);
 
   // 2. Handle fetching from API
   const { getExtrinsics, getTransfers } = useTransactionFetching({
     address,
     chain,
-    chainName,
     requested,
     setExtrinsicsTx,
     setTransfersTx
@@ -65,7 +65,7 @@ export default function useTransactionHistory(address: string | undefined, _gene
   useTransactionStorage({
     address,
     allHistories,
-    genesisHash,
+    chain,
     processedExtrinsics,
     processedReceived,
     requested,
@@ -82,14 +82,11 @@ export default function useTransactionHistory(address: string | undefined, _gene
 
   // 6. Setup infinite scroll
   useInfiniteScroll({
-    address,
-    chainName,
     extrinsicsTx,
     getExtrinsics,
     getTransfers,
     isReadyToFetch,
-    receivedTx,
-    withObserver
+    receivedTx
   });
 
   // Reset state when address or chain changes

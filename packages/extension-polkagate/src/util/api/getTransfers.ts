@@ -3,7 +3,10 @@
 
 import type { TransferRequest } from '../types';
 
+import { keyMaker } from '@polkadot/extension-polkagate/src/popup/history/hookUtils/utils';
+
 import { getSubscanChainName } from '../chain';
+import getChainName from '../getChainName';
 import { fetchFromSubscan } from '..';
 
 function nullifier(requested: string) {
@@ -15,12 +18,28 @@ function nullifier(requested: string) {
     },
     for: requested,
     generated_at: Date.now(),
-    message: 'Failed'
+    message: 'Success'
   } as unknown as TransferRequest;
 }
 
-export async function getTxTransfers(chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
-  const requested = `${address} - ${chainName}`;
+/**
+ * Fetches received transfer transactions for an account from Subscan.
+ *
+ * - Resolves the Subscan network using the chain genesis hash
+ * - Fetches paginated "received" transfers
+ * - Tags the response with a request key to avoid stale updates
+ *
+ * @param address - Account address to fetch transfers for
+ * @param genesisHash - Chain genesis hash
+ * @param pageNum - Page number (pagination)
+ * @param pageSize - Number of items per page
+ *
+ * @returns TransferRequest object containing transfer data
+ */
+export async function getTxTransfers(address: string, genesisHash: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
+  const requested = keyMaker(address, genesisHash);
+
+  const chainName = getChainName(genesisHash);
   const network = getSubscanChainName(chainName) as unknown as string;
 
   if (network === 'pendulum') {
@@ -33,6 +52,10 @@ export async function getTxTransfers(chainName: string, address: string, pageNum
     page: pageNum,
     row: pageSize
   });
+
+  for (const item of transferRequest.data.transfers) {
+    item.forAccount = address;
+  }
 
   transferRequest.for = requested; // Checks with requested information in the useTransactionFetching hook
 

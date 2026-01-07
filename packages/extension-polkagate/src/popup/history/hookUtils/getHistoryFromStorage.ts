@@ -18,7 +18,7 @@ export async function getHistoryFromStorage(address: string, genesisHash: string
   return new Promise((resolve) => {
     chrome.storage.local.get(STORAGE_KEY.HISTORY, (res: Record<string, unknown>) => {
       try {
-        const allHistories: Record<string, Record<string, TransactionDetail[]>> = (res?.['history'] as Record<string, Record<string, TransactionDetail[]>> ?? {});
+        const allHistories: Record<string, Record<string, TransactionDetail[]>> = (res?.[STORAGE_KEY.HISTORY] as Record<string, Record<string, TransactionDetail[]>> ?? {});
 
         // Navigate the nested structure: address -> genesisHash -> transactions
         const addressHistories: Record<string, TransactionDetail[]> = allHistories[address] || {};

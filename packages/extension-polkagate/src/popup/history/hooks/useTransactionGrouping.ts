@@ -61,8 +61,8 @@ function applyFilters(histories: TransactionDetail[], filterOptions?: FilterOpti
 
         return (
             (filterOptions.transfers && actionLower === 'balances') ||
-            (filterOptions.governance && action === 'governance') ||
-            (filterOptions.staking && ['solo staking', 'pool staking'].includes(action))
+            (filterOptions.governance && actionLower === 'governance') ||
+            (filterOptions.staking && ['solo staking', 'pool staking'].includes(actionLower))
         );
     });
 

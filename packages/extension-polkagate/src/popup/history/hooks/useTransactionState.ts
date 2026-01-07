@@ -27,7 +27,7 @@ interface UseTransactionStateResult {
  * Manages the state for received transfers and extrinsics transactions
  * Provides refs for latest state access and convenient dispatch functions
  */
-export function useTransactionState(address: string | undefined, chain: Chain | null | undefined, chainName: string | undefined, genesisHash: string | undefined): UseTransactionStateResult {
+export function useTransactionState(address: string | undefined, chain: Chain | null | undefined): UseTransactionStateResult {
   const [receivedTx, dispatchReceived] = useReducer(receivedReducer, INITIAL_STATE as RecordTabStatus);
   const [extrinsicsTx, dispatchExtrinsics] = useReducer(extrinsicsReducer, INITIAL_STATE as RecordTabStatusGov);
 
@@ -42,7 +42,7 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
   const prevGenesisHashRef = useRef<string | undefined>(undefined);
 
   // Check if we have all required data to start fetching
-  const isReadyToFetch = Boolean(address && genesisHash && chainName && chain);
+  const isReadyToFetch = Boolean(address && chain?.genesisHash);
 
   // Update refs when state changes
   useEffect(() => {
@@ -75,13 +75,17 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
 
   // Detect and log input changes
   useEffect(() => {
+    if (!chain?.genesisHash) {
+      return;
+    }
+
     const addressChanged = String(address) !== prevAddressRef.current;
-    const genesisHashChanged = genesisHash !== prevGenesisHashRef.current;
+    const genesisHashChanged = chain.genesisHash !== prevGenesisHashRef.current;
 
     if (addressChanged || genesisHashChanged) {
       log(`Input changed: address: ${addressChanged}, genesisHash: ${genesisHashChanged}`);
       prevAddressRef.current = String(address);
-      prevGenesisHashRef.current = genesisHash;
+      prevGenesisHashRef.current = chain.genesisHash;
 
       // If we have all data and something changed, reset state
       if (isReadyToFetch) {
@@ -89,7 +93,7 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
         resetAllState();
       }
     }
-  }, [address, genesisHash, isReadyToFetch, resetAllState]);
+  }, [address, chain?.genesisHash, isReadyToFetch, resetAllState]);
 
   return {
     allHistories,

@@ -8,32 +8,23 @@ import { useEffect, useRef } from 'react';
 import { log } from '../hookUtils/utils';
 
 interface UseInfiniteScrollProps {
-    address: string | undefined;
-    chainName: string | undefined;
-    receivedTx: RecordTabStatus;
     extrinsicsTx: RecordTabStatusGov;
-    getTransfers: (state: RecordTabStatus) => Promise<void>;
     getExtrinsics: (state: RecordTabStatusGov) => Promise<void>;
+    getTransfers: (state: RecordTabStatus) => Promise<void>;
     isReadyToFetch: boolean;
-    withObserver: boolean;
+    receivedTx: RecordTabStatus;
 }
 
 /**
  * Manages infinite scroll behavior using IntersectionObserver
  * Initiates initial data fetches and handles scroll-triggered pagination
  */
-export function useInfiniteScroll({ address, chainName, extrinsicsTx, getExtrinsics, getTransfers, isReadyToFetch, receivedTx, withObserver }: UseInfiniteScrollProps): void {
+export function useInfiniteScroll({ extrinsicsTx, getExtrinsics, getTransfers, isReadyToFetch, receivedTx }: UseInfiniteScrollProps): void {
     const observerInstance = useRef<IntersectionObserver | null>(null);
 
     // Refs for latest state (to avoid stale closures in observer)
     const receivedStateRef = useRef<RecordTabStatus>(receivedTx);
     const extrinsicsStateRef = useRef<RecordTabStatusGov>(extrinsicsTx);
-
-    // Track if initial fetch has been initiated
-    const initialFetchInitiatedRef = useRef({
-        extrinsics: false,
-        received: false
-    });
 
     // Keep state refs updated
     useEffect(() => {
@@ -46,7 +37,7 @@ export function useInfiniteScroll({ address, chainName, extrinsicsTx, getExtrins
 
     // Setup IntersectionObserver for infinite scroll
     useEffect(() => {
-        if (!isReadyToFetch || !withObserver) {
+        if (!isReadyToFetch) {
             return;
         }
 
@@ -74,7 +65,7 @@ export function useInfiniteScroll({ address, chainName, extrinsicsTx, getExtrins
             let canFetch = false;
 
             // Check and fetch transfers
-            if (shouldFetchMore(receivedState, 'received')) {
+            if (shouldFetchMore(receivedState)) {
                 log('More received available, fetching next page');
                 canFetch = true;
                 getTransfers(receivedState).catch(console.error);
@@ -86,7 +77,7 @@ export function useInfiniteScroll({ address, chainName, extrinsicsTx, getExtrins
             }
 
             // Check and fetch extrinsics
-            if (shouldFetchMore(extrinsicsState, 'extrinsics')) {
+            if (shouldFetchMore(extrinsicsState)) {
                 log('More extrinsics available, fetching next page');
                 canFetch = true;
                 getExtrinsics(extrinsicsState).catch(console.error);
@@ -129,33 +120,16 @@ export function useInfiniteScroll({ address, chainName, extrinsicsTx, getExtrins
             log('Cleaning up observer on unmount/rerun');
             observerInstance.current?.disconnect();
         };
-    }, [getExtrinsics, getTransfers, isReadyToFetch, withObserver]);
-
-    // Reset initial fetch flags when address/chain changes
-    useEffect(() => {
-        initialFetchInitiatedRef.current = {
-            extrinsics: false,
-            received: false
-        };
-    }, [address, chainName]);
+    }, [getExtrinsics, getTransfers, isReadyToFetch]);
 }
 
 /**
- * Determine if we should fetch more data
+ * Determine if should fetch more data
  */
 function shouldFetchMore(
-    state: RecordTabStatus | RecordTabStatusGov,
-    type: 'received' | 'extrinsics'
+    state: RecordTabStatus | RecordTabStatusGov
 ): boolean {
     return Boolean(state.hasMore &&
         !state.isFetching &&
-        !state.pageNum &&
-        !initialFetchInitiatedRef.current[type]);
+        !state.pageNum);
 }
-
-const initialFetchInitiatedRef = {
-    current: {
-        extrinsics: false,
-        received: false
-    }
-};

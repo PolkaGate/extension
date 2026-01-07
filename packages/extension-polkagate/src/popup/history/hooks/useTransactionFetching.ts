@@ -14,7 +14,7 @@ import { log } from '../hookUtils/utils';
 interface UseTransactionFetchingProps {
     address: string | undefined;
     chain: Chain | null | undefined;
-    chainName: string | undefined;
+    // chainName: string | undefined;
     setTransfersTx: (payload: Partial<RecordTabStatus>) => void;
     setExtrinsicsTx: (payload: Partial<RecordTabStatusGov>) => void;
     requested: RefObject<string | undefined>;
@@ -29,13 +29,13 @@ interface UseTransactionFetchingResult {
  * Handles fetching transaction data from APIs
  * Manages pagination and error states
  */
-export function useTransactionFetching({ address, chain, chainName, requested, setExtrinsicsTx, setTransfersTx }: UseTransactionFetchingProps): UseTransactionFetchingResult {
+export function useTransactionFetching({ address, chain, requested, setExtrinsicsTx, setTransfersTx }: UseTransactionFetchingProps): UseTransactionFetchingResult {
     // Fetch transfer transactions
     const getTransfers = useCallback(async(currentState: RecordTabStatus): Promise<void> => {
         const { hasMore, isFetching, pageNum, transactions } = currentState;
 
-        if (!chainName) {
-            log('Skipping received fetch - chainName does not exist');
+        if (!chain?.genesisHash || !address) {
+            log('Skipping received fetch - either chain or address does not exist');
 
             return;
         }
@@ -50,11 +50,15 @@ export function useTransactionFetching({ address, chain, chainName, requested, s
         setTransfersTx({ isFetching: true });
 
         try {
-            const res = await getTxTransfers(chainName, String(address), pageNum, SINGLE_PAGE_SIZE);
+            const res = await getTxTransfers(address, chain.genesisHash, pageNum, SINGLE_PAGE_SIZE);
 
             // Validate response is for current request
             if (!requested.current || requested.current !== res?.for) {
-                return;
+                return setTransfersTx({
+                    hasMore: false,
+                    isFetching: false,
+                    transactions: []
+                });
             }
 
             const { count = 0, transfers = [] } = res.data || {};
@@ -77,14 +81,14 @@ export function useTransactionFetching({ address, chain, chainName, requested, s
                 transactions: []
             });
         }
-    }, [address, chainName, requested, setTransfersTx]);
+    }, [address, chain?.genesisHash, requested, setTransfersTx]);
 
     // Fetch extrinsics transactions
     const getExtrinsics = useCallback(async(currentState: RecordTabStatusGov): Promise<void> => {
         const { hasMore, isFetching, pageNum, transactions } = currentState;
 
-        if (!chain || !chainName) {
-            log('Skipping extrinsics fetch - either chain or chainName does not exist');
+        if (!chain?.genesisHash || !address) {
+            log('Skipping extrinsics fetch - either chain or address does not exist');
 
             return;
         }
@@ -99,11 +103,15 @@ export function useTransactionFetching({ address, chain, chainName, requested, s
         setExtrinsicsTx({ isFetching: true });
 
         try {
-            const res = await getTXsHistory(chainName, String(address), pageNum, chain.ss58Format);
+            const res = await getTXsHistory(address, chain.genesisHash, pageNum, chain.ss58Format);
 
             // Validate response is for current request
             if (!requested.current || requested.current !== res?.for) {
-                return;
+                return setExtrinsicsTx({
+                    hasMore: false,
+                    isFetching: false,
+                    transactions: []
+                });
             }
 
             const { count = 0, extrinsics = [] } = res.data || {};
@@ -122,10 +130,11 @@ export function useTransactionFetching({ address, chain, chainName, requested, s
             console.error('Error fetching extrinsics history:', error);
             setExtrinsicsTx({
                 hasMore: false,
-                isFetching: false
+                isFetching: false,
+                transactions: []
             });
         }
-    }, [address, chain, chainName, requested, setExtrinsicsTx]);
+    }, [address, chain?.genesisHash, chain?.ss58Format, requested, setExtrinsicsTx]);
 
     return {
         getExtrinsics,
