@@ -4,7 +4,7 @@
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { RecordTabStatus, RecordTabStatusGov } from '../hookUtils/types';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { type RefObject, useCallback } from 'react';
 
 import { getTxTransfers } from '../../../util/api/getTransfers';
 import { getTXsHistory } from '../../../util/api/getTXsHistory';
@@ -17,6 +17,7 @@ interface UseTransactionFetchingProps {
     chainName: string | undefined;
     setTransfersTx: (payload: Partial<RecordTabStatus>) => void;
     setExtrinsicsTx: (payload: Partial<RecordTabStatusGov>) => void;
+    requested: RefObject<string | undefined>;
 }
 
 interface UseTransactionFetchingResult {
@@ -28,18 +29,7 @@ interface UseTransactionFetchingResult {
  * Handles fetching transaction data from APIs
  * Manages pagination and error states
  */
-export function useTransactionFetching({ address, chain, chainName, setExtrinsicsTx, setTransfersTx }: UseTransactionFetchingProps): UseTransactionFetchingResult {
-    // Create request identifier for validation
-    const requested: { current: string | undefined } = useRef(undefined);
-
-    useEffect(() => {
-        if (!address || !chainName) {
-            return undefined;
-        }
-
-        requested.current = `${String(address)} - ${chainName}`;
-    }, [address, chainName]);
-
+export function useTransactionFetching({ address, chain, chainName, requested, setExtrinsicsTx, setTransfersTx }: UseTransactionFetchingProps): UseTransactionFetchingResult {
     // Fetch transfer transactions
     const getTransfers = useCallback(async(currentState: RecordTabStatus): Promise<void> => {
         const { hasMore, isFetching, pageNum, transactions } = currentState;
@@ -87,7 +77,7 @@ export function useTransactionFetching({ address, chain, chainName, setExtrinsic
                 transactions: []
             });
         }
-    }, [address, chainName, setTransfersTx]);
+    }, [address, chainName, requested, setTransfersTx]);
 
     // Fetch extrinsics transactions
     const getExtrinsics = useCallback(async(currentState: RecordTabStatusGov): Promise<void> => {
@@ -135,7 +125,7 @@ export function useTransactionFetching({ address, chain, chainName, setExtrinsic
                 isFetching: false
             });
         }
-    }, [address, chain, chainName, setExtrinsicsTx]);
+    }, [address, chain, chainName, requested, setExtrinsicsTx]);
 
     return {
         getExtrinsics,

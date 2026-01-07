@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
+import type { TransactionDetail } from '@polkadot/extension-polkagate/src/util/types';
 import type { RecordTabStatus, RecordTabStatusGov } from '../hookUtils/types';
 
-import { type RefObject, useCallback, useEffect, useReducer, useRef } from 'react';
+import { type Dispatch, type RefObject, type SetStateAction, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 
 import { INITIAL_STATE } from '../hookUtils/consts';
 import { extrinsicsReducer, log, receivedReducer } from '../hookUtils/utils';
@@ -18,6 +19,8 @@ interface UseTransactionStateResult {
   setExtrinsicsTx: (payload: Partial<RecordTabStatusGov>) => void;
   resetAllState: () => void;
   isReadyToFetch: boolean;
+  setAllHistories: Dispatch<SetStateAction<TransactionDetail[] | null | undefined>>;
+  allHistories: TransactionDetail[] | null | undefined;
 }
 
 /**
@@ -27,6 +30,8 @@ interface UseTransactionStateResult {
 export function useTransactionState(address: string | undefined, chain: Chain | null | undefined, chainName: string | undefined, genesisHash: string | undefined): UseTransactionStateResult {
   const [receivedTx, dispatchReceived] = useReducer(receivedReducer, INITIAL_STATE as RecordTabStatus);
   const [extrinsicsTx, dispatchExtrinsics] = useReducer(extrinsicsReducer, INITIAL_STATE as RecordTabStatusGov);
+
+  const [allHistories, setAllHistories] = useState<TransactionDetail[] | null | undefined>(undefined);
 
   // Refs for accessing latest state in callbacks
   const receivedStateRef = useRef<RecordTabStatus>(receivedTx);
@@ -64,6 +69,7 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
   const resetAllState = useCallback(() => {
     dispatchReceived({ type: 'RESET' });
     dispatchExtrinsics({ type: 'RESET' });
+    setAllHistories(undefined);
     log('All transaction state reset');
   }, []);
 
@@ -86,12 +92,14 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
   }, [address, genesisHash, isReadyToFetch, resetAllState]);
 
   return {
+    allHistories,
     extrinsicsStateRef,
     extrinsicsTx,
     isReadyToFetch,
     receivedStateRef,
     receivedTx,
     resetAllState,
+    setAllHistories,
     setExtrinsicsTx,
     setTransfersTx
   };

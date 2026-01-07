@@ -3,7 +3,7 @@
 
 import type { TransactionDetail } from '../../../util/types';
 
-import { useEffect, useState } from 'react';
+import { type Dispatch, type RefObject, type SetStateAction, useEffect, useState } from 'react';
 
 import { MAX_LOCAL_HISTORY_ITEMS } from '../hookUtils/consts';
 import { getHistoryFromStorage } from '../hookUtils/getHistoryFromStorage';
@@ -15,20 +15,21 @@ interface UseTransactionStorageProps {
   genesisHash: string | undefined;
   processedReceived: TransactionDetail[] | undefined;
   processedExtrinsics: TransactionDetail[] | undefined;
+  setAllHistories: Dispatch<SetStateAction<TransactionDetail[] | null | undefined>>;
+  allHistories: TransactionDetail[] | null | undefined;
+  requested: RefObject<string | undefined>;
 }
 
 interface UseTransactionStorageResult {
   localHistories: TransactionDetail[] | null | undefined;
-  allHistories: TransactionDetail[] | null | undefined;
 }
 
 /**
  * Manages loading from and saving to local storage
  * Combines local and fetched transactions, removing duplicates
  */
-export function useTransactionStorage({ address, genesisHash, processedExtrinsics, processedReceived }: UseTransactionStorageProps): UseTransactionStorageResult {
+export function useTransactionStorage({ address, allHistories, genesisHash, processedExtrinsics, processedReceived, requested, setAllHistories }: UseTransactionStorageProps): UseTransactionStorageResult {
   const [localHistories, setLocalHistories] = useState<TransactionDetail[] | null | undefined>(undefined);
-  const [allHistories, setAllHistories] = useState<TransactionDetail[] | null | undefined>(undefined);
 
   // Load transactions from local storage
   useEffect(() => {
@@ -40,13 +41,30 @@ export function useTransactionStorage({ address, genesisHash, processedExtrinsic
 
     getHistoryFromStorage(String(address), String(genesisHash))
       .then((history) => {
-        log(`Loaded ${history?.length || 0} transactions from storage`);
-        setLocalHistories(history || null);
+        const gHash = history?.[0].chain?.genesisHash;
+
+        if (!gHash) {
+          setLocalHistories(null);
+
+          return;
+        }
+
+        const loadedContent = `${address} - ${gHash}`;
+        const isValid = requested.current === loadedContent;
+
+        if (isValid) {
+          log(`Loaded ${history?.length || 0} transactions from storage`);
+          setLocalHistories(history || null);
+        } else {
+          setLocalHistories(null);
+
+          log('Invalid data loaded from storage and skipped!');
+        }
       })
       .catch((error) => {
         console.error('Error loading history from storage:', error);
       });
-  }, [address, genesisHash]);
+  }, [address, genesisHash, requested]);
 
   // Combine all transaction sources and deduplicate
   useEffect(() => {
@@ -81,11 +99,26 @@ export function useTransactionStorage({ address, genesisHash, processedExtrinsic
 
     log(`Final history count: ${sorted.length} after deduplication`);
     setAllHistories(sorted);
-  }, [processedReceived, processedExtrinsics, localHistories]);
+  }, [processedReceived, processedExtrinsics, localHistories, setAllHistories]);
 
   // Save latest transactions to local storage
   useEffect(() => {
     if (!address || !genesisHash || !allHistories?.length) {
+      return;
+    }
+
+    const gHash = allHistories[0].chain?.genesisHash;
+
+    if (!gHash) {
+      return;
+    }
+
+    const requestedContentToSave = `${address} - ${gHash}`;
+    const isValid = requested.current === requestedContentToSave;
+
+    if (!isValid) {
+      log('Invalid data to save in storage and skipped!');
+
       return;
     }
 
@@ -108,12 +141,9 @@ export function useTransactionStorage({ address, genesisHash, processedExtrinsic
       .catch((error) => {
         console.error('Error saving history to storage:', error);
       });
-  }, [address, genesisHash, allHistories]);
+  }, [address, genesisHash, allHistories, requested]);
 
-  return {
-    allHistories,
-    localHistories
-  };
+  return { localHistories };
 }
 
 /**

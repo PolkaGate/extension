@@ -3,7 +3,7 @@
 
 import type { FilterOptions, TransactionHistoryOutput } from './hookUtils/types';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
@@ -18,13 +18,26 @@ export default function useTransactionHistory(address: string | undefined, _gene
   const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
 
+  // Create request identifier for validation
+  const requested = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (!address || !chainName) {
+      return undefined;
+    }
+
+    requested.current = `${String(address)} - ${chainName}`;
+  }, [address, chainName]);
+
   const [isLoading, setIsLoading] = useState(false);
 
   // 1. Manage transaction state (received & extrinsics)
-  const { extrinsicsTx,
+  const { allHistories,
+    extrinsicsTx,
     isReadyToFetch,
     receivedTx,
     resetAllState,
+    setAllHistories,
     setExtrinsicsTx,
     setTransfersTx } = useTransactionState(address, chain, chainName, genesisHash);
 
@@ -33,6 +46,7 @@ export default function useTransactionHistory(address: string | undefined, _gene
     address,
     chain,
     chainName,
+    requested,
     setExtrinsicsTx,
     setTransfersTx
   });
@@ -48,11 +62,14 @@ export default function useTransactionHistory(address: string | undefined, _gene
   });
 
   // 4. Manage local storage
-  const { allHistories } = useTransactionStorage({
+  useTransactionStorage({
     address,
+    allHistories,
     genesisHash,
     processedExtrinsics,
-    processedReceived
+    processedReceived,
+    requested,
+    setAllHistories
   });
 
   // 5. Group transactions by date with filtering
