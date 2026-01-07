@@ -14,13 +14,15 @@ interface UseInfiniteScrollProps {
     extrinsicsTx: RecordTabStatusGov;
     getTransfers: (state: RecordTabStatus) => Promise<void>;
     getExtrinsics: (state: RecordTabStatusGov) => Promise<void>;
+    isReadyToFetch: boolean;
+    withObserver: boolean;
 }
 
 /**
  * Manages infinite scroll behavior using IntersectionObserver
  * Initiates initial data fetches and handles scroll-triggered pagination
  */
-export function useInfiniteScroll({ address, chainName, extrinsicsTx, getExtrinsics, getTransfers, receivedTx }: UseInfiniteScrollProps): void {
+export function useInfiniteScroll({ address, chainName, extrinsicsTx, getExtrinsics, getTransfers, isReadyToFetch, receivedTx, withObserver }: UseInfiniteScrollProps): void {
     const observerInstance = useRef<IntersectionObserver | null>(null);
 
     // Refs for latest state (to avoid stale closures in observer)
@@ -42,34 +44,9 @@ export function useInfiniteScroll({ address, chainName, extrinsicsTx, getExtrins
         extrinsicsStateRef.current = extrinsicsTx;
     }, [extrinsicsTx]);
 
-    // Initialize first data fetch
-    useEffect(() => {
-        if (!address || !chainName) {
-            return;
-        }
-
-        // Initiate received transactions fetch
-        if (receivedTx.pageNum === 0 && !initialFetchInitiatedRef.current.received) {
-            log('Initiating initial received fetch');
-            initialFetchInitiatedRef.current.received = true;
-            getTransfers(receivedStateRef.current).catch((error) => {
-                console.error('Error in initial received fetch:', error);
-            });
-        }
-
-        // Initiate extrinsics fetch
-        if (extrinsicsTx.pageNum === 0 && !initialFetchInitiatedRef.current.extrinsics) {
-            log('Initiating initial extrinsics fetch');
-            initialFetchInitiatedRef.current.extrinsics = true;
-            getExtrinsics(extrinsicsStateRef.current).catch((error) => {
-                console.error('Error in initial extrinsics fetch:', error);
-            });
-        }
-    }, [address, chainName, receivedTx.pageNum, extrinsicsTx.pageNum, getTransfers, getExtrinsics]);
-
     // Setup IntersectionObserver for infinite scroll
     useEffect(() => {
-        if (!chainName || !address) {
+        if (!isReadyToFetch || !withObserver) {
             return;
         }
 
@@ -152,7 +129,7 @@ export function useInfiniteScroll({ address, chainName, extrinsicsTx, getExtrins
             log('Cleaning up observer on unmount/rerun');
             observerInstance.current?.disconnect();
         };
-    }, [address, chainName, getExtrinsics, getTransfers]);
+    }, [getExtrinsics, getTransfers, isReadyToFetch, withObserver]);
 
     // Reset initial fetch flags when address/chain changes
     useEffect(() => {
@@ -172,6 +149,7 @@ function shouldFetchMore(
 ): boolean {
     return Boolean(state.hasMore &&
         !state.isFetching &&
+        !state.pageNum &&
         !initialFetchInitiatedRef.current[type]);
 }
 

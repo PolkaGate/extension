@@ -6,25 +6,25 @@ import type { TransferRequest } from '../types';
 import { getSubscanChainName } from '../chain';
 import { fetchFromSubscan } from '..';
 
-const nullObject = {
-  code: 0,
-  data: {
-    count: 0,
-    transfers: null
-  },
-  generated_at: Date.now(),
-  message: 'Failed'
-} as unknown as TransferRequest;
+function nullifier(requested: string) {
+  return {
+    code: 0,
+    data: {
+      count: 0,
+      transfers: null
+    },
+    for: requested,
+    generated_at: Date.now(),
+    message: 'Failed'
+  } as unknown as TransferRequest;
+}
 
 export async function getTxTransfers(chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
-  if (!chainName) {
-    return (await Promise.resolve(nullObject));
-  }
-
+  const requested = `${address} - ${chainName}`;
   const network = getSubscanChainName(chainName) as unknown as string;
 
   if (network === 'pendulum') {
-    return (await Promise.resolve(nullObject));
+    return (await Promise.resolve(nullifier(requested)));
   }
 
   const transferRequest = await fetchFromSubscan<TransferRequest>(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {
@@ -34,7 +34,7 @@ export async function getTxTransfers(chainName: string, address: string, pageNum
     row: pageSize
   });
 
-  transferRequest.for = `${address} - ${chainName}`;
+  transferRequest.for = requested; // Checks with requested information in the useTransactionFetching hook
 
   return transferRequest;
 }

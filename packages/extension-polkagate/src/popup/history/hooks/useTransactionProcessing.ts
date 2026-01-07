@@ -19,8 +19,8 @@ interface UseTransactionProcessingProps {
 }
 
 interface UseTransactionProcessingResult {
-  processedReceived: TransactionDetail[];
-  processedExtrinsics: TransactionDetail[];
+  processedReceived: TransactionDetail[] | undefined;
+  processedExtrinsics: TransactionDetail[] | undefined;
 }
 
 /**
@@ -28,8 +28,8 @@ interface UseTransactionProcessingResult {
  * Tracks initial fetch completion
  */
 export function useTransactionProcessing({ chain, decimal, extrinsicsTx, onInitialLoadComplete, receivedTx, token }: UseTransactionProcessingProps): UseTransactionProcessingResult {
-  const [processedReceived, setProcessedReceived] = useState<TransactionDetail[]>([]);
-  const [processedExtrinsics, setProcessedExtrinsics] = useState<TransactionDetail[]>([]);
+  const [processedReceived, setProcessedReceived] = useState<TransactionDetail[] | undefined>(undefined);
+  const [processedExtrinsics, setProcessedExtrinsics] = useState<TransactionDetail[] | undefined>(undefined);
 
   // Track initial fetch completion
   const initialFetchDoneRef = useRef({
@@ -54,7 +54,12 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, onIniti
 
   // Process transfer transactions
   useEffect(() => {
-    if (!receivedTx?.transactions?.length) {
+    // fetching done and there is no receive items
+    if (!receivedTx.hasMore && !receivedTx.isFetching && !receivedTx.transactions?.length) {
+      return setProcessedReceived([]);
+    }
+
+    if (!receivedTx.transactions?.length) {
       return;
     }
 
@@ -94,10 +99,15 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, onIniti
       log('Initial received fetch complete');
       checkAndNotifyComplete();
     }
-  }, [chain, receivedTx.transactions, receivedTx.pageNum, checkAndNotifyComplete]);
+  }, [chain, checkAndNotifyComplete, receivedTx.hasMore, receivedTx.isFetching, receivedTx.pageNum, receivedTx.transactions]);
 
   // Process extrinsics
   useEffect(() => {
+    // fetching done and there is no extrinsic items
+    if (!extrinsicsTx.hasMore && !extrinsicsTx.isFetching && !extrinsicsTx.transactions?.length) {
+      return setProcessedExtrinsics([]);
+    }
+
     if (!extrinsicsTx?.transactions?.length || !decimal) {
       return;
     }
@@ -152,7 +162,7 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, onIniti
       log('Initial extrinsics fetch complete');
       checkAndNotifyComplete();
     }
-  }, [decimal, extrinsicsTx.transactions, extrinsicsTx.pageNum, token, chain, checkAndNotifyComplete]);
+  }, [chain, checkAndNotifyComplete, decimal, extrinsicsTx.hasMore, extrinsicsTx.isFetching, extrinsicsTx.pageNum, extrinsicsTx.transactions, token]);
 
   return {
     processedExtrinsics,

@@ -148,15 +148,19 @@ interface ParamTypesMapping {
 
 const SUPPORTED_MODULES = ['balances', 'nominationpools', 'utility', 'proxy', 'staking', 'convictionvoting'];
 const PAGE_SIZE = 60;
-const nullObject = {
-  code: 0,
-  data: {
-    count: 0,
-    extrinsics: null
-  },
-  generated_at: Date.now(),
-  message: 'Success'
-} as unknown as ExtrinsicsRequest;
+
+function nullifier(requested: string) {
+  return {
+    code: 0,
+    data: {
+      count: 0,
+      extrinsics: null
+    },
+    for: requested,
+    generated_at: Date.now(),
+    message: 'Success'
+  } as unknown as ExtrinsicsRequest;
+}
 
 /**
  * Fetches TXs history for a given address on a given chainName
@@ -167,8 +171,10 @@ const nullObject = {
  * @returns Promise resolving to ExtrinsicsRequest
  */
 export async function getTXsHistory(chainName: string, address: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
-  if (!chainName || prefix === undefined) {
-    return Promise.resolve(nullObject);
+  const requested = `${address} - ${chainName}`;
+
+  if (prefix === undefined) {
+    return Promise.resolve(nullifier(requested));
   }
 
   const network = getSubscanChainName(chainName) as unknown as string;
@@ -180,14 +186,14 @@ export async function getTXsHistory(chainName: string, address: string, pageNum:
   });
 
   if (!extrinsics.data.extrinsics) {
-    return nullObject;
+    return nullifier(requested);
   }
 
   const filteredModules = extrinsics.data.extrinsics.filter((extrinsic) => SUPPORTED_MODULES.includes(extrinsic.call_module));
 
   // Fetch details for each extrinsic using fetchFromSubscan
   const extrinsicsInfo = await Promise.all(
-    filteredModules.map(async (extrinsic) => {
+    filteredModules.map(async(extrinsic) => {
       try {
         const functionName = extrinsic.call_module_function as keyof ParamTypesMapping;
 
@@ -224,7 +230,7 @@ export async function getTXsHistory(chainName: string, address: string, pageNum:
       count: extrinsics.data.count,
       extrinsics: extrinsicsInfo
     },
-    for: `${address} - ${chainName}`
+    for: requested
   };
 }
 

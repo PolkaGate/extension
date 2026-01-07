@@ -13,13 +13,13 @@ import { log } from '../hookUtils/utils';
 interface UseTransactionStorageProps {
   address: string | undefined;
   genesisHash: string | undefined;
-  processedReceived: TransactionDetail[];
-  processedExtrinsics: TransactionDetail[];
+  processedReceived: TransactionDetail[] | undefined;
+  processedExtrinsics: TransactionDetail[] | undefined;
 }
 
 interface UseTransactionStorageResult {
-  localHistories: TransactionDetail[];
-  allHistories: TransactionDetail[];
+  localHistories: TransactionDetail[] | null | undefined;
+  allHistories: TransactionDetail[] | null | undefined;
 }
 
 /**
@@ -27,8 +27,8 @@ interface UseTransactionStorageResult {
  * Combines local and fetched transactions, removing duplicates
  */
 export function useTransactionStorage({ address, genesisHash, processedExtrinsics, processedReceived }: UseTransactionStorageProps): UseTransactionStorageResult {
-  const [localHistories, setLocalHistories] = useState<TransactionDetail[]>([]);
-  const [allHistories, setAllHistories] = useState<TransactionDetail[]>([]);
+  const [localHistories, setLocalHistories] = useState<TransactionDetail[] | null | undefined>(undefined);
+  const [allHistories, setAllHistories] = useState<TransactionDetail[] | null | undefined>(undefined);
 
   // Load transactions from local storage
   useEffect(() => {
@@ -41,7 +41,7 @@ export function useTransactionStorage({ address, genesisHash, processedExtrinsic
     getHistoryFromStorage(String(address), String(genesisHash))
       .then((history) => {
         log(`Loaded ${history?.length || 0} transactions from storage`);
-        setLocalHistories(history || []);
+        setLocalHistories(history || null);
       })
       .catch((error) => {
         console.error('Error loading history from storage:', error);
@@ -50,22 +50,30 @@ export function useTransactionStorage({ address, genesisHash, processedExtrinsic
 
   // Combine all transaction sources and deduplicate
   useEffect(() => {
-    if (!localHistories?.length &&
-        !processedReceived.length &&
-        !processedExtrinsics.length) {
+    if (localHistories === undefined || processedReceived === undefined || processedExtrinsics === undefined) {
+      return;
+    }
+
+    const nothingToShow = localHistories === null && processedReceived.length === 0 && processedExtrinsics.length === 0;
+
+    if (nothingToShow) {
+      setAllHistories(null);
+    }
+
+    if (!localHistories?.length && !processedReceived.length && !processedExtrinsics.length) {
       return;
     }
 
     log('Combining transaction histories', {
       extrinsicsCount: processedExtrinsics.length,
-      localCount: localHistories.length,
+      localCount: localHistories?.length ?? 0,
       receivedCount: processedReceived.length
     });
 
     const combined = deduplicateTransactions([
       ...processedReceived,
       ...processedExtrinsics,
-      ...localHistories
+      ...(localHistories ?? [])
     ]);
 
     // Sort by date (newest first)

@@ -9,7 +9,7 @@ import { useMemo } from 'react';
 import { log } from '../hookUtils/utils';
 
 interface UseTransactionGroupingProps {
-    allHistories: TransactionDetail[];
+    allHistories: TransactionDetail[] | null | undefined;
     receivedTx: RecordTabStatus;
     extrinsicsTx: RecordTabStatusGov;
     filterOptions?: FilterOptions;
@@ -23,7 +23,9 @@ interface UseTransactionGroupingProps {
 export function useTransactionGrouping({ allHistories, extrinsicsTx, filterOptions, receivedTx }: UseTransactionGroupingProps): Record<string, TransactionDetail[]> | null | undefined {
     return useMemo(() => {
         // Check if we have no items
-        if (!allHistories?.length) {
+        if (allHistories === null) {
+            return null;
+        } else if (!allHistories?.length) {
             // If no more data to fetch from either source, return null
             if (!receivedTx.hasMore && !extrinsicsTx.hasMore) {
                 return null;

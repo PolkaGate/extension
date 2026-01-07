@@ -1,6 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Chain } from '@polkadot/extension-chains/types';
 import type { RecordTabStatus, RecordTabStatusGov } from '../hookUtils/types';
 
 import { type RefObject, useCallback, useEffect, useReducer, useRef } from 'react';
@@ -16,13 +17,14 @@ interface UseTransactionStateResult {
   setTransfersTx: (payload: Partial<RecordTabStatus>) => void;
   setExtrinsicsTx: (payload: Partial<RecordTabStatusGov>) => void;
   resetAllState: () => void;
+  isReadyToFetch: boolean;
 }
 
 /**
  * Manages the state for received transfers and extrinsics transactions
  * Provides refs for latest state access and convenient dispatch functions
  */
-export function useTransactionState(address: string | undefined, genesisHash: string | undefined): UseTransactionStateResult {
+export function useTransactionState(address: string | undefined, chain: Chain | null | undefined, chainName: string | undefined, genesisHash: string | undefined): UseTransactionStateResult {
   const [receivedTx, dispatchReceived] = useReducer(receivedReducer, INITIAL_STATE as RecordTabStatus);
   const [extrinsicsTx, dispatchExtrinsics] = useReducer(extrinsicsReducer, INITIAL_STATE as RecordTabStatusGov);
 
@@ -33,6 +35,9 @@ export function useTransactionState(address: string | undefined, genesisHash: st
   // Track previous values to detect changes
   const prevAddressRef = useRef<string | undefined>(undefined);
   const prevGenesisHashRef = useRef<string | undefined>(undefined);
+
+  // Check if we have all required data to start fetching
+  const isReadyToFetch = Boolean(address && genesisHash && chainName && chain);
 
   // Update refs when state changes
   useEffect(() => {
@@ -71,12 +76,19 @@ export function useTransactionState(address: string | undefined, genesisHash: st
       log(`Input changed: address: ${addressChanged}, genesisHash: ${genesisHashChanged}`);
       prevAddressRef.current = String(address);
       prevGenesisHashRef.current = genesisHash;
+
+      // If we have all data and something changed, reset state
+      if (isReadyToFetch) {
+        log('Resetting state due to input change');
+        resetAllState();
+      }
     }
-  }, [address, genesisHash]);
+  }, [address, genesisHash, isReadyToFetch, resetAllState]);
 
   return {
     extrinsicsStateRef,
     extrinsicsTx,
+    isReadyToFetch,
     receivedStateRef,
     receivedTx,
     resetAllState,

@@ -3,6 +3,8 @@
 
 import type { TransactionDetail } from '../../../util/types';
 
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+
 import { log } from './utils';
 
 // Retrieves transaction history from Chrome's local storage for a specific address and chain
@@ -14,7 +16,7 @@ export async function getHistoryFromStorage(address: string, genesisHash: string
   }
 
   return new Promise((resolve) => {
-    chrome.storage.local.get('history', (res: Record<string, unknown>) => {
+    chrome.storage.local.get(STORAGE_KEY.HISTORY, (res: Record<string, unknown>) => {
       try {
         const allHistories: Record<string, Record<string, TransactionDetail[]>> = (res?.['history'] as Record<string, Record<string, TransactionDetail[]>> ?? {});
 

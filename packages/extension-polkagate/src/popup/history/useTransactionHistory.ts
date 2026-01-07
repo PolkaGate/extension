@@ -14,7 +14,7 @@ import { useInfiniteScroll, useTransactionFetching, useTransactionGrouping, useT
  * Main hook for managing transaction history
  * Orchestrates fetching, processing, storage, and display of transaction data
  */
-export default function useTransactionHistory(address: string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
+export default function useTransactionHistory(address: string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions, withObserver = true): TransactionHistoryOutput {
   const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
 
@@ -22,10 +22,11 @@ export default function useTransactionHistory(address: string | undefined, _gene
 
   // 1. Manage transaction state (received & extrinsics)
   const { extrinsicsTx,
+    isReadyToFetch,
     receivedTx,
     resetAllState,
     setExtrinsicsTx,
-    setTransfersTx } = useTransactionState(address, genesisHash);
+    setTransfersTx } = useTransactionState(address, chain, chainName, genesisHash);
 
   // 2. Handle fetching from API
   const { getExtrinsics, getTransfers } = useTransactionFetching({
@@ -69,16 +70,18 @@ export default function useTransactionHistory(address: string | undefined, _gene
     extrinsicsTx,
     getExtrinsics,
     getTransfers,
-    receivedTx
+    isReadyToFetch,
+    receivedTx,
+    withObserver
   });
 
   // Reset state when address or chain changes
   useEffect(() => {
-    if (address && genesisHash) {
+    if (isReadyToFetch) {
       setIsLoading(true);
       resetAllState();
     }
-  }, [address, genesisHash, resetAllState]);
+  }, [isReadyToFetch, resetAllState]);
 
   return {
     allHistories,

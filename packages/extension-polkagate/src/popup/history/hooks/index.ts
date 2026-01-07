@@ -6,4 +6,4 @@ export * from './useTransactionFetching';
 export * from './useTransactionGrouping';
 export * from './useTransactionProcessing';
 export * from './useTransactionState';
-export * from './useTransactionStorageResult';
+export * from './useTransactionStorage';

@@ -60,8 +60,6 @@ export function useTransactionFetching({ address, chain, chainName, setExtrinsic
         try {
             const res = await getTxTransfers(chainName, String(address), pageNum, SINGLE_PAGE_SIZE);
 
-            console.log('RES TRANSFERS:', res);
-
             // Validate response is for current request
             if (!requested || requested !== res?.for) {
                 return;
