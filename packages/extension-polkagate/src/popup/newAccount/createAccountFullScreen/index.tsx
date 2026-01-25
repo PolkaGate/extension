@@ -41,7 +41,7 @@ export function SetNameAndPassword({ seed }: { seed: string | null }): React.Rea
 
   const onCreate = useCallback(async () => {
     try {
-      await onConfirm(seed);
+      await onConfirm({ isImport: false, seed });
     } catch (e) {
       console.error(e);
     }
