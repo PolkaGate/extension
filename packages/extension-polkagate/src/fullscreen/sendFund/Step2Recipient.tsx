@@ -74,7 +74,7 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
     selectedChain && setInputs((prevInputs) => ({
       ...(prevInputs || {}),
       fee: undefined,
-      recipientChain: selectedChain,
+      recipientChain: selectedChain
     }));
   }, [destinationOptions, selectedChain, setInputs]);
 
@@ -85,7 +85,7 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
       </Typography>
       <Stack columnGap='15px' direction='row' sx={{ my: '20px' }}>
         <RecipientAddress
-          genesisHash={genesisHash}
+          genesisHash={selectedChain?.value as string | undefined || genesisHash}
           inputs={inputs}
           setInputs={setInputs}
         />

@@ -74,7 +74,7 @@ export default function useIdentity(genesisHash: string | undefined, formatted: 
     }
 
     if (isEthereumAddress(formatted)) {
-      console.log('no identity for eth addresses atm!');
+      console.log('no identity for evm addresses atm!');
 
       return;
     }

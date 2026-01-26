@@ -192,7 +192,6 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                     isFromToAddress &&
                     <Identity2
                       address={content as string}
-                      genesisHash={POLKADOT_GENESIS}
                       identiconSize={18}
                       showSocial={false}
                       style={{ color: 'text.primary', variant: 'B-1' }}

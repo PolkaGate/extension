@@ -3,11 +3,8 @@
 
 import type { TransferRequest } from '../types';
 
-import { isEthereumAddress } from '@polkadot/util-crypto';
-
 import { getSubscanChainName } from '../chain';
 import { fetchFromSubscan } from '..';
-import { getEthTxHistory } from './getEtherscan';
 
 export const nullObject = {
   code: 0,
@@ -22,10 +19,6 @@ export const nullObject = {
 export async function getTxTransfers(chainName: string, address: string, pageNum: number, pageSize: number): Promise<TransferRequest> {
   if (!chainName) {
     return (await Promise.resolve(nullObject));
-  }
-
-  if (isEthereumAddress(address)) {
-    return await getEthTxHistory(chainName, address, pageNum, pageSize);
   }
 
   const network = getSubscanChainName(chainName) as unknown as string;

@@ -9,15 +9,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { PROXY_TYPE, TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '@polkadot/extension-polkagate/src/util/constants';
-import { getEthFee } from '@polkadot/extension-polkagate/src/util/evmUtils/getEthFee';
-import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { DecisionButtons, SignArea3 } from '../../components';
-import { useCanPayFeeAndDeposit, useChainInfo, useFormatted, useTeleport, useTranslation } from '../../hooks';
+import { useCanPayFeeAndDeposit, useFormatted, useTeleport, useTranslation } from '../../hooks';
 import { Confirmation, WaitScreen } from '../../partials';
 import { toBN } from '../../util';
 import HomeLayout from '../components/layout';
-import RecipientAddress from './partials/RecipientAddress';
 import StepsRow, { INPUT_STEPS } from './partials/StepsRow';
 import Step1Sender from './Step1Sender';
 import Step2Recipient from './Step2Recipient';
@@ -31,11 +28,11 @@ export default function SendFund(): React.ReactElement {
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
 
   const ref = useRef<HTMLDivElement | null>(null);
-  const ethFeeRef = useRef<boolean>(false);
+  // const ethFeeRef = useRef<boolean>(false);
   const teleportState = useTeleport(genesisHash);
   const navigate = useNavigate();
   const formatted = useFormatted(address, genesisHash);
-  const { chainName } = useChainInfo(genesisHash, true);
+  // const { chainName } = useChainInfo(genesisHash, true);
 
   const [inputs, setInputs] = useState<Inputs>();
   const [error, setError] = useState<string | undefined>();
@@ -49,33 +46,33 @@ export default function SendFund(): React.ReactElement {
   const { isCrossChain, paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setError);
   const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee?.originFee.fee ? toBN(inputs?.fee?.originFee.fee) : undefined);
 
-  useEffect(() => {
-    const { amount, fee, recipientAddress: to, token } = inputs ?? {};
+  // useEffect(() => {
+  //   const { amount, fee, recipientAddress: to, token } = inputs ?? {};
 
-    if (ethFeeRef.current || fee || !address || !chainName || !isEthereumAddress(address) || !amount || !to || !token || !RecipientAddress) {
-      return;
-    }
+  //   if (ethFeeRef.current || fee || !address || !chainName || !isEthereumAddress(address) || !amount || !to || !token || !RecipientAddress) {
+  //     return;
+  //   }
 
-    if (Number(amount) <= 0) {
-      return;
-    }
+  //   if (Number(amount) <= 0) {
+  //     return;
+  //   }
 
-    ethFeeRef.current = true;
+  //   ethFeeRef.current = true;
 
-    getEthFee({
-      chainName,
-      from: address,
-      to,
-      token,
-      value: amount
-    }).then((res) => {
-      //@ts-ignore
-      res && setInputs((prev) => ({
-        ...(prev || {}),
-        fee: { originFee: res }
-      }));
-    }).catch(console.error);
-  }, [address, chainName, inputs]);
+  //   getEthFee({
+  //     chainName,
+  //     from: address,
+  //     to,
+  //     token,
+  //     value: amount
+  //   }).then((res) => {
+  //     //@ts-ignore
+  //     res && setInputs((prev) => ({
+  //       ...(prev || {}),
+  //       fee: { originFee: res }
+  //     }));
+  //   }).catch(console.error);
+  // }, [address, chainName, inputs]);
 
   useEffect(() => {
     if (!genesisHash) {

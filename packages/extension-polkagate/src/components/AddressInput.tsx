@@ -41,10 +41,10 @@ export default function AddressInput({ addWithQr = false, address, chain, disabl
   const [openCamera, setOpenCamera] = useState<boolean>(false);
   const [openAccountList, setOpenAccountList] = useState<boolean>(false);
   const [invalidAddress, setInvalidAddress] = useState<boolean>(false);
-  const [enteredAddress, setEnteredAddress] = useState<string | undefined>();
+  const [enteredAddress, setEnteredAddress] = useState<string | undefined | null>();
 
   useEffect(() => {
-    if (address) {
+    if (address || address === null) {
       setEnteredAddress(address);
       setInvalidAddress(false);
     }
