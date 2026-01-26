@@ -10,7 +10,7 @@ import type { BN } from '@polkadot/util';
 
 export interface ParaspellFees {
   originFee: TXcmFeeBase & { sufficient: boolean; balanceAfter: bigint; };
-  destinationFee: TXcmFeeBase & { balanceAfter: bigint | UnableToComputeError; };
+  destinationFee?: TXcmFeeBase & { balanceAfter: bigint | UnableToComputeError; };
 }
 
 export type TransferType = 'All' | 'Normal';
@@ -19,6 +19,7 @@ export interface Inputs {
   amount?: string | undefined;
   amountAsBN?: BN | undefined;
   assetId?: string | number;
+  call?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   decimal?: number;
   error?: string;
   fee?: ParaspellFees;

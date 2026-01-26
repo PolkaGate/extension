@@ -6,6 +6,8 @@ import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
 import { useContext, useMemo } from 'react';
 
+import { isEthereumAddress } from '@polkadot/util-crypto';
+
 import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util';
 
@@ -17,12 +19,14 @@ export default function useAccount(address: string | AccountId | null | undefine
       return undefined;
     }
 
-    const substrateAddress = getSubstrateAddress(address);
+    const normalizedAddress = isEthereumAddress(String(address))
+      ? address
+      : getSubstrateAddress(address);
 
-    if (!substrateAddress) {
+    if (!normalizedAddress) {
       return undefined;
     }
 
-    return accounts.find((acc) => acc.address === substrateAddress);
+    return accounts.find(({ address }) => address === normalizedAddress);
   }, [accounts, address]);
 }

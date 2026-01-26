@@ -1,6 +1,8 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { KeypairType } from '@polkadot/util-crypto/types';
+
 import { Stack, Typography } from '@mui/material';
 import { User } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
@@ -26,13 +28,14 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
 
   const [isBusy, setIsBusy] = useState(false);
   const [realAddress, setRealAddress] = useState<string | null | undefined>();
+  const [type, setType] = useState<KeypairType | undefined>();
   const [name, setName] = useState<string | null | undefined>();
 
   const onAdd = useCallback(() => {
     if (name && realAddress) {
       setIsBusy(true);
 
-      createAccountExternal(name, realAddress, undefined)
+      createAccountExternal(name, realAddress, undefined, type)
         .then(() => {
           setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.WATCH_ONLY).catch(console.error);
         })
@@ -44,7 +47,7 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
           console.error(error);
         });
     }
-  }, [name, realAddress]);
+  }, [name, realAddress, type]);
 
   const onCancel = useCallback(() => switchToOrOpenTab('/', true), []);
   const onNameChange = useCallback((name: string | null) => setName(name), []);
@@ -65,6 +68,7 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
           address={realAddress}
           label={t('Account ID')}
           setAddress={setRealAddress}
+          setType={setType}
           style={{ m: '30px 0 0', width: '370px' }}
         />
         <MyTextField

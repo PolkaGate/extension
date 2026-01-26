@@ -9,6 +9,8 @@ import { Grid, type SxProps, type Theme } from '@mui/material';
 import { Shield } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { isEthereumAddress } from '@polkadot/util-crypto';
+
 import { useChainInfo, useSelectedAccount, useTranslation } from '../hooks';
 import { KUSAMA_GENESIS_HASH, WESTEND_GENESIS_HASH } from '../util/constants';
 import MyTooltip from './MyTooltip';
@@ -20,7 +22,7 @@ interface Props {
 
 function Recoverability({ style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const account = useSelectedAccount();
+  const address = useSelectedAccount()?.address;
   const { api: westendApi } = useChainInfo(WESTEND_GENESIS_HASH);
   const { api: kusamaApi } = useChainInfo(KUSAMA_GENESIS_HASH);
 
@@ -31,11 +33,11 @@ function Recoverability({ style = {} }: Props): React.ReactElement {
     });
 
   useEffect((): void => {
-    if (!westendApi || !account) {
+    if (!westendApi || !address || isEthereumAddress(address)) {
       return;
     }
 
-    westendApi.query?.['recovery']?.['recoverable'](account.address)
+    westendApi.query?.['recovery']?.['recoverable'](address)
       .then((result) => {
         const recoveryOpt = result as Option<PalletRecoveryRecoveryConfig>;
 
@@ -46,14 +48,14 @@ function Recoverability({ style = {} }: Props): React.ReactElement {
         });
       })
       .catch(console.error);
-  }, [account, westendApi]);
+  }, [address, westendApi]);
 
   useEffect((): void => {
-    if (!kusamaApi || !account) {
+    if (!kusamaApi || !address || isEthereumAddress(address)) {
       return;
     }
 
-    kusamaApi.query?.['recovery']?.['recoverable'](account.address)
+    kusamaApi.query?.['recovery']?.['recoverable'](address)
       .then((result) => {
         const recoveryOpt = result as Option<PalletRecoveryRecoveryConfig>;
 
@@ -64,7 +66,7 @@ function Recoverability({ style = {} }: Props): React.ReactElement {
         });
       })
       .catch(console.error);
-  }, [account, kusamaApi]);
+  }, [address, kusamaApi]);
 
   const onClick = useCallback((): void => {
     // go to proxy settings page

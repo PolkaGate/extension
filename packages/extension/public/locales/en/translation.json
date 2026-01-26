@@ -903,5 +903,8 @@
   "Manage AI models": "",
   "Processing…": "",
   "AI insight": "",
-  "Downloading and applying the {{model}} model. This may take a few minutes depending on the model size and your device performance": ""
+  "Downloading and applying the {{model}} model. This may take a few minutes depending on the model size and your device performance": "",
+  "everything": "",
+  "Choose account type": "",
+  "account type": ""
 }

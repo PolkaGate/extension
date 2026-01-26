@@ -7,6 +7,7 @@ import { createAssets } from '@polkagate/apps-config/assets';
 
 import { FETCHING_ASSETS_FUNCTION_NAMES } from '../constants';
 import { getAssetOnAssetHub } from './shared-helpers/getAssetOnAssetHub.js';
+import { getAssetOnEvm } from './shared-helpers/getAssetOnEvm.js';
 import { getAssetOnMultiAssetChain } from './shared-helpers/getAssetOnMultiAssetChain.js';
 import { getAssetOnRelayChain } from './shared-helpers/getAssetOnRelayChain.js';
 import getNFTs from './shared-helpers/getNFTs.js';
@@ -58,6 +59,12 @@ onconnect = (/** @type {{ ports: any[]; }} */ event) => {
           }
 
           getAssetOnAssetHub(...params, port).catch(console.error);
+          break;
+        }
+
+        /** to fetch ethereum balances  */
+        case FETCHING_ASSETS_FUNCTION_NAMES.EVM: {
+          getAssetOnEvm(...params, port).catch(console.error);
           break;
         }
 

@@ -110,8 +110,8 @@ export default class Extension {
     keyring.saveAccountMeta(pair, { ...pair.meta, addedTime: Date.now() });
   }
 
-  private accountsCreateExternal({ address, genesisHash, name }: RequestAccountCreateExternal): boolean {
-    const { pair } = keyring.addExternal(address, { genesisHash, name });
+  private accountsCreateExternal({ address, genesisHash, name, type }: RequestAccountCreateExternal): boolean {
+    const { pair } = keyring.addExternal(address, { genesisHash, name, type });
 
     this.applyAddedTime({ pair });
 

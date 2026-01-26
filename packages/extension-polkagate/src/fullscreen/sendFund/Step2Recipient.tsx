@@ -33,6 +33,15 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
 
   const [selectedChain, setSelectedChain] = useState<DropdownOption>({ text: inputs?.recipientChain?.text ?? chainName ?? '', value: inputs?.recipientChain?.value ?? genesisHash ?? '' });
 
+  useEffect(() => {
+    const maybeRecipientChainName = inputs?.recipientChain?.text ?? chainName;
+    const maybeRecipientGenesisHash = inputs?.recipientChain?.value ?? genesisHash;
+
+    if (maybeRecipientChainName && maybeRecipientGenesisHash) {
+      setSelectedChain({ text: maybeRecipientChainName, value: maybeRecipientGenesisHash });
+    }
+  }, [chainName, genesisHash, inputs?.recipientChain?.text, inputs?.recipientChain?.value]);
+
   const destinationOptions = useMemo((): DropdownOption[] => {
     if (!chainName || !inputs?.token) {
       return [];
@@ -65,7 +74,7 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
     selectedChain && setInputs((prevInputs) => ({
       ...(prevInputs || {}),
       fee: undefined,
-      recipientChain: selectedChain,
+      recipientChain: selectedChain
     }));
   }, [destinationOptions, selectedChain, setInputs]);
 
@@ -76,7 +85,7 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
       </Typography>
       <Stack columnGap='15px' direction='row' sx={{ my: '20px' }}>
         <RecipientAddress
-          genesisHash={genesisHash}
+          genesisHash={selectedChain?.value as string | undefined || genesisHash}
           inputs={inputs}
           setInputs={setInputs}
         />
@@ -87,7 +96,7 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
             title={t('Select recipient network')}
           />
           <SelectYourChain
-            chainName={selectedChain?.text ?? inputs?.recipientChain?.text ?? chainName}
+            chainName={selectedChain?.text || inputs?.recipientChain?.text || chainName}
             destinationOptions={destinationOptions}
             setSelectedChain={setSelectedChain}
             style={{ width: '100%' }}

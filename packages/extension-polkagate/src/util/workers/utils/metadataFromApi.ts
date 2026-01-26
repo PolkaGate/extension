@@ -18,10 +18,13 @@ export function metadataFromApi(api: ApiPromise): { metadata: MetadataDef } {
   const chainName = api.runtimeChain.toHuman();
   const apiGenesisHash = api.genesisHash.toHex();
   const color = endpoints.find(({ genesisHash, ui }) => genesisHash === apiGenesisHash && ui.color)?.ui?.color;
+  const isEvmChain =
+    api.query['evm'] !== undefined ||
+    api.tx['evm'] !== undefined;
 
   const metadata = {
     chain: chainName,
-    chainType: 'substrate' as 'ethereum' | 'substrate',
+    chainType: (isEvmChain ? 'ethereum' : 'substrate') as 'ethereum' | 'substrate',
     color,
     genesisHash: apiGenesisHash,
     icon: getSystemIcon(chainName, api.runtimeVersion.specName.toString()),

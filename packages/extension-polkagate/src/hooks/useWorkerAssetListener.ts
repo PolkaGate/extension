@@ -119,7 +119,7 @@ export default function useWorkerAssetListener(
           });
         }
 
-        if ([FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET].includes(functionName)) {
+        if ([FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET, FETCHING_ASSETS_FUNCTION_NAMES.EVM].includes(functionName)) {
           Object.keys(results).forEach((address) => {
             _assets[address] = results[address].map(
               (message: MessageBody) => {

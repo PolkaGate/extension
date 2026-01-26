@@ -33,16 +33,16 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
   const navigate = useNavigate();
   const pricesInCurrencies = usePrices();
   const { currency } = useContext(CurrencyContext);
-  const accountAssets = useAccountAssets(account?.address);
-  const savedSelectedChain = useAccountSelectedChain(account?.address);
+  const { address, type } = account ?? {};
+
+  const accountAssets = useAccountAssets(address);
+  const savedSelectedChain = useAccountSelectedChain(address);
 
   const nftManager = useMemo(() => new NftManager(), []);
 
   const [myNfts, setNfts] = useState<ItemInformation[] | null | undefined>();
 
   useEffect(() => {
-    const address = account?.address;
-
     if (!address) {
       return;
     }
@@ -68,7 +68,7 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
     return () => {
       nftManager.unsubscribe(handleNftUpdate);
     };
-  }, [account?.address, nftManager]);
+  }, [address, nftManager]);
 
   const valueInCurrency = useMemo(() => {
     if (accountAssets && pricesInCurrencies && currency) {
@@ -151,26 +151,28 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
     }
 
     setDefaultGenesisAndAssetId?.(`${accountAssets[0].genesisHash}/${accountAssets[0].assetId}`);
-  }, [account?.address, accountAssets, pricesInCurrencies?.prices, savedSelectedChain, setDefaultGenesisAndAssetId]);
+  }, [address, accountAssets, pricesInCurrencies?.prices, savedSelectedChain, setDefaultGenesisAndAssetId]);
 
   const extraTokensCount = useMemo(() => assetsToShow ? assetsToShow.length - 4 : 0, [assetsToShow]);
 
   const goToNft = useCallback(() => {
-    if (!account?.address) {
+    if (!address) {
       return;
     }
 
-    setStorage(STORAGE_KEY.SELECTED_ACCOUNT, account.address)
+    setStorage(STORAGE_KEY.SELECTED_ACCOUNT, address)
       .finally(() =>
-        navigate(`/nft/${account.address}`) as void
+        navigate(`/nft/${address}`) as void
       ).catch(console.error);
-  }, [account, navigate]);
+  }, [address, navigate]);
+
+  const _genesisHash = type === 'ethereum' ? undefined : account?.genesisHash ?? POLKADOT_GENESIS;
 
   return (
     <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ ml: '5px', width: '100%', ...style }}>
       <Identity2
-        address={account?.address}
-        genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
+        address={address}
+        genesisHash={_genesisHash}
         nameStyle={{ maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis' }}
         noIdenticon
         onClick={onClick}

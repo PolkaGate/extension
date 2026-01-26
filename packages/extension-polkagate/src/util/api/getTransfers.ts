@@ -6,7 +6,7 @@ import type { TransferRequest } from '../types';
 import { getSubscanChainName } from '../chain';
 import { fetchFromSubscan } from '..';
 
-const nullObject = {
+export const nullObject = {
   code: 0,
   data: {
     count: 0,

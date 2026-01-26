@@ -5,7 +5,6 @@ import type { FeeInfo } from '../fullscreen/sendFund/types';
 import type { TransactionDetail } from '../util/types';
 
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -192,7 +191,6 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                     isFromToAddress &&
                     <Identity2
                       address={content as string}
-                      genesisHash={POLKADOT_GENESIS}
                       identiconSize={18}
                       showSocial={false}
                       style={{ color: 'text.primary', variant: 'B-1' }}

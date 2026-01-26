@@ -28,9 +28,11 @@ export default function SendFund(): React.ReactElement {
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
 
   const ref = useRef<HTMLDivElement | null>(null);
+  // const ethFeeRef = useRef<boolean>(false);
   const teleportState = useTeleport(genesisHash);
   const navigate = useNavigate();
   const formatted = useFormatted(address, genesisHash);
+  // const { chainName } = useChainInfo(genesisHash, true);
 
   const [inputs, setInputs] = useState<Inputs>();
   const [error, setError] = useState<string | undefined>();
@@ -43,6 +45,34 @@ export default function SendFund(): React.ReactElement {
   const isReadyToMakeTx = inputStep === INPUT_STEPS.SUMMARY;
   const { isCrossChain, paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setError);
   const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee?.originFee.fee ? toBN(inputs?.fee?.originFee.fee) : undefined);
+
+  // useEffect(() => {
+  //   const { amount, fee, recipientAddress: to, token } = inputs ?? {};
+
+  //   if (ethFeeRef.current || fee || !address || !chainName || !isEthereumAddress(address) || !amount || !to || !token || !RecipientAddress) {
+  //     return;
+  //   }
+
+  //   if (Number(amount) <= 0) {
+  //     return;
+  //   }
+
+  //   ethFeeRef.current = true;
+
+  //   getEthFee({
+  //     chainName,
+  //     from: address,
+  //     to,
+  //     token,
+  //     value: amount
+  //   }).then((res) => {
+  //     //@ts-ignore
+  //     res && setInputs((prev) => ({
+  //       ...(prev || {}),
+  //       fee: { originFee: res }
+  //     }));
+  //   }).catch(console.error);
+  // }, [address, chainName, inputs]);
 
   useEffect(() => {
     if (!genesisHash) {
@@ -224,7 +254,7 @@ export default function SendFund(): React.ReactElement {
             <SignArea3
               address={address}
               direction='horizontal'
-              disabled={!inputs?.paraSpellTransaction}
+              disabled={!(inputs?.paraSpellTransaction || inputs?.call)}
               extraProps={{
                 decisionButtonProps: {
                   primaryButtonProps: { style: { width: '148%' } },
@@ -247,7 +277,7 @@ export default function SendFund(): React.ReactElement {
               showProxySelection={showProxySelection}
               signerOption={inputs?.feeInfo?.assetId ? { assetId: inputs.feeInfo.assetId } : undefined}
               style={{ position: 'unset', width: '73%' }}
-              transaction={inputs?.paraSpellTransaction}
+              transaction={inputs?.paraSpellTransaction ?? inputs?.call}
               withCancel
             />
           </div>

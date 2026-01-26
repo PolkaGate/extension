@@ -13,6 +13,8 @@ import type { ExtrinsicPayloadValue, ISubmittableResult } from '@polkadot/types/
 import type { HexString } from '@polkadot/util/types';
 import type { TxResult } from '../types';
 
+import { signatureVerify } from '@polkadot/util-crypto';
+
 async function getAppliedFee(api: ApiPromise, signedBlock: SignedBlock, txHashHex: HexString): Promise<string | undefined> {
   const apiAt = await api.at(signedBlock.block.hash);
   const allEvents = await apiAt.query['system']['events']() as Vec<FrameSystemEventRecord>;
@@ -137,6 +139,12 @@ export async function send(
 ): Promise<TxResult> {
   return new Promise((resolve) => {
     console.log('✈️ Sending the transaction ...');
+    console.log('Signature:', signature);
+    console.log('payload', payload);
+    console.log('signer', from);
+    const check = signatureVerify(String(payload), signature, from);
+
+    console.log('signatureVerify result:', check);
 
     extrinsic.addSignature(from, signature, payload);
 
