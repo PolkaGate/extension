@@ -898,10 +898,10 @@
   "Choose the AI model for transaction analysis. You can switch models based on speed, accuracy, and resource usage.": "",
   "Download and Apply": "",
   "Loading...": "",
-  "AI Transaction Details": "",
-  "Enable AI transaction details on dapp signing": "",
   "Manage AI models": "",
   "Processing…": "",
   "AI insight": "",
-  "Downloading and applying the {{model}} model. This may take a few minutes depending on the model size and your device performance": ""
+  "Downloading and applying the {{model}} model. This may take a few minutes depending on the model size and your device performance": "",
+  "AI Transaction Insights": "",
+  "Enable AI transaction insights during dApp signing": ""
 }
