@@ -4,7 +4,7 @@
 import { Grid, type SxProps, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { useIsDark, useIsExtensionPopup } from '../../../hooks';
+import { useIsDark, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { Docs, Email, Github, Telegram, Web, XIcon, YoutubeIcon } from '../icons';
 import SocialIcon from './SocialIcon';
 
@@ -21,6 +21,7 @@ export default function Socials({ buttonSize, columnGap = '8px', iconSize = 18, 
   const theme = useTheme();
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
+  const { t } = useTranslation();
 
   const bgColor = short && !isDark ? '#CCD2EA' : undefined;
 
@@ -38,15 +39,15 @@ export default function Socials({ buttonSize, columnGap = '8px', iconSize = 18, 
         </Typography>
       }
       <Grid columnGap={columnGap} container item sx={{ flexWrap: 'nowrap', width: 'fit-content' }}>
-        <SocialIcon Icon={<YoutubeIcon color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={buttonSize} />
-        <SocialIcon Icon={<XIcon color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://x.com/polkagate' size={buttonSize} />
-        <SocialIcon Icon={<Github color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://github.com/PolkaGate/' size={buttonSize} />
-        <SocialIcon Icon={<Telegram color={theme.palette.icon.secondary} width={`${iconSize + 10}px`} />} bgColor={bgColor} link='https://t.me/polkagate' size={buttonSize} />
+        <SocialIcon Icon={<YoutubeIcon color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={buttonSize} tooltip='Youtube' />
+        <SocialIcon Icon={<XIcon color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://x.com/polkagate' size={buttonSize} tooltip={t('Follow us')} />
+        <SocialIcon Icon={<Github color={theme.palette.icon.secondary} width={`${iconSize}px`} />} bgColor={bgColor} link='https://github.com/PolkaGate/' size={buttonSize} tooltip={t('Source code')} />
+        <SocialIcon Icon={<Telegram color={theme.palette.icon.secondary} width={`${iconSize + 10}px`} />} bgColor={bgColor} link='https://t.me/polkagate' size={buttonSize} tooltip={'Telegram'} />
         {!short &&
           <>
-            <SocialIcon Icon={<Email color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='mailto:support@polkagate.xyz' size={buttonSize} />
-            <SocialIcon Icon={<Docs color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='https://docs.polkagate.xyz/' size={buttonSize} />
-            <SocialIcon Icon={<Web color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='https://polkagate.xyz/' size={buttonSize} />
+            <SocialIcon Icon={<Email color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='mailto:support@polkagate.xyz' size={buttonSize} tooltip={t('Contact us')} />
+            <SocialIcon Icon={<Docs color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='https://docs.polkagate.xyz/' size={buttonSize} tooltip={t('Need help?')} />
+            <SocialIcon Icon={<Web color={theme.palette.icon.secondary} width={`${iconSize}px`} />} link='https://polkagate.xyz/' size={buttonSize} tooltip={t('Website')} />
           </>
         }
       </Grid>

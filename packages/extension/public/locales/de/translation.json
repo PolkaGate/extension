@@ -903,5 +903,9 @@
   "AI insight": "KI-Einblick",
   "Downloading and applying the {{model}} model. This may take a few minutes depending on the model size and your device performance": "Das Modell {{model}} wird heruntergeladen und angewendet. Dies kann je nach Modellgröße und Geräteleistung einige Minuten dauern.",
   "AI Transaction Insights": "KI-Transaktionseinblicke",
-  "Enable AI transaction insights during dApp signing": "KI-Transaktionseinblicke während der dApp-Signierung aktivieren"
+  "Enable AI transaction insights during dApp signing": "KI-Transaktionseinblicke während der dApp-Signierung aktivieren",
+  "Need help?": "Brauchen Sie Hilfe?",
+  "Follow us": "Folgen Sie uns",
+  "Source code": "Quellcode",
+  "Website": "Webseite"
 }

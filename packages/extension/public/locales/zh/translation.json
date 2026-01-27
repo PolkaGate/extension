@@ -903,5 +903,9 @@
   "AI insight": "AI 洞察",
   "Downloading and applying the {{model}} model. This may take a few minutes depending on the model size and your device performance": "正在下载并应用 {{model}} 模型。根据模型大小和设备性能，可能需要几分钟。",
   "AI Transaction Insights": "AI 交易洞察",
-  "Enable AI transaction insights during dApp signing": "在 dApp 签名时启用 AI 交易洞察"
+  "Enable AI transaction insights during dApp signing": "在 dApp 签名时启用 AI 交易洞察",
+  "Need help?": "需要帮助吗？",
+  "Follow us": "关注我们",
+  "Source code": "源代码",
+  "Website": "网站"
 }

@@ -903,5 +903,9 @@
   "AI insight": "Análisis de IA",
   "Downloading and applying the {{model}} model. This may take a few minutes depending on the model size and your device performance": "Descargando y aplicando el modelo {{model}}. Esto puede tardar unos minutos según el tamaño del modelo y el rendimiento de tu dispositivo.",
   "AI Transaction Insights": "Información de transacciones con IA",
-  "Enable AI transaction insights during dApp signing": "Habilitar información de transacciones con IA durante la firma de dApps"
+  "Enable AI transaction insights during dApp signing": "Habilitar información de transacciones con IA durante la firma de dApps",
+  "Need help?": "¿Necesitas ayuda?",
+  "Follow us": "Síguenos",
+  "Source code": "Código fuente",
+  "Website": "Sitio web"
 }

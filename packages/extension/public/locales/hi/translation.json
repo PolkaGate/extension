@@ -903,5 +903,9 @@
   "AI insight": "AI इनसाइट",
   "Downloading and applying the {{model}} model. This may take a few minutes depending on the model size and your device performance": "{{model}} मॉडल डाउनलोड और लागू किया जा रहा है। मॉडल के आकार और डिवाइस के प्रदर्शन के अनुसार इसमें कुछ मिनट लग सकते हैं।",
   "AI Transaction Insights": "AI लेन-देन इनसाइट्स",
-  "Enable AI transaction insights during dApp signing": "dApp साइनिंग के दौरान AI लेन-देन इनसाइट्स सक्षम करें"
+  "Enable AI transaction insights during dApp signing": "dApp साइनिंग के दौरान AI लेन-देन इनसाइट्स सक्षम करें",
+  "Need help?": "मदद चाहिए?",
+  "Follow us": "हमें फॉलो करें",
+  "Source code": "स्रोत कोड",
+  "Website": "वेबसाइट"
 }
