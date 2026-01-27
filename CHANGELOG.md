@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.24.2](https://github.com/polkagate/extension/compare/v1.24.1...v1.24.2) (2026-01-27)
+
+
+### Bug Fixes
+
+* update latest translations ([7b3a249](https://github.com/polkagate/extension/commit/7b3a249245e4c2a91030cdf59ee4f83524221b86))
+
 ## [1.24.1](https://github.com/polkagate/extension/compare/v1.24.0...v1.24.1) (2026-01-06)
 
 
