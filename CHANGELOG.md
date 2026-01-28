@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.24.3](https://github.com/polkagate/extension/compare/v1.24.2...v1.24.3) (2026-01-28)
+
+
+### Bug Fixes
+
+* resolve Ledger issue related to runtime version handling ([#2104](https://github.com/polkagate/extension/issues/2104)) ([250e5d2](https://github.com/polkagate/extension/commit/250e5d29039e4a70384589c8e0e4eb9f18f14924))
+
 ## [1.24.2](https://github.com/polkagate/extension/compare/v1.24.1...v1.24.2) (2026-01-27)
 
 
