@@ -107,7 +107,7 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
         assetId: signerOption?.assetId,
         blockHash: lastHeader.hash,
         blockNumber: api.registry.createType('BlockNumber', lastHeader.number.toNumber()),
-        era: api.registry.createType('ExtrinsicEra', { current: lastHeader.number.toNumber(), period: 64 }),
+        era: api.registry.createType('ExtrinsicEra', { current: lastHeader.number.toNumber(), period: 256 }),
         genesisHash: api.genesisHash,
         method: api.createType('Call', preparedTransaction), // TODO: DOES SUPPORT nested calls, batches , ...
         nonce: api.registry.createType('Compact<Index>', rawNonce),

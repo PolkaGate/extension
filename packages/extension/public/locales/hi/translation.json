@@ -907,5 +907,8 @@
   "Need help?": "मदद चाहिए?",
   "Follow us": "हमें फॉलो करें",
   "Source code": "स्रोत कोड",
-  "Website": "वेबसाइट"
+  "Website": "वेबसाइट",
+  "Loading proof...": "प्रमाण लोड हो रहा है...",
+  "Ledger is locked": "लेजर लॉक है",
+  "Ledger app is not open": "लेजर ऐप खुला नहीं है"
 }

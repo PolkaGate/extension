@@ -907,5 +907,8 @@
   "Need help?": "Precisa de ajuda?",
   "Follow us": "Siga-nos",
   "Source code": "Código-fonte",
-  "Website": "Website"
+  "Website": "Website",
+  "Loading proof...": "Carregando prova...",
+  "Ledger is locked": "Ledger está bloqueado",
+  "Ledger app is not open": "O aplicativo Ledger não está aberto"
 }

@@ -907,5 +907,8 @@
   "Need help?": "需要帮助吗？",
   "Follow us": "关注我们",
   "Source code": "源代码",
-  "Website": "网站"
+  "Website": "网站",
+  "Loading proof...": "正在加载证明...",
+  "Ledger is locked": "Ledger 已锁定",
+  "Ledger app is not open": "Ledger 应用未打开"
 }
