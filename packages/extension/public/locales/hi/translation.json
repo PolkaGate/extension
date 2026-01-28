@@ -249,9 +249,6 @@
   "Total": "कुल",
   "Selected": "चयनित",
   "Accounts' balances updated!": "खातों का बैलेंस अपडेट हुआ!",
-  "Is your ledger locked?": "क्या आपका लेजर लॉक है?",
-  "App does not seem to be open": "ऐप खुला हुआ नहीं लगता",
-  "Ledger error: {{errorMessage}}": "लेजर त्रुटि: {{errorMessage}}",
   "Unable to fetch NFT/Unique items!": "NFT/विशिष्ट वस्तुएँ लाने में असमर्थ!",
   "Unlock date unknown": "अनलॉक तिथि अज्ञात",
   "Locked in ongoing referenda": "चल रहे जनमत संग्रह में लॉक",
@@ -907,5 +904,8 @@
   "Need help?": "मदद चाहिए?",
   "Follow us": "हमें फॉलो करें",
   "Source code": "स्रोत कोड",
-  "Website": "वेबसाइट"
+  "Website": "वेबसाइट",
+  "Loading proof...": "प्रमाण लोड हो रहा है...",
+  "Ledger is locked": "लेजर लॉक है",
+  "Ledger app is not open": "लेजर ऐप खुला नहीं है"
 }

@@ -25,7 +25,7 @@ function LedgerSign({ account, disabled, error, genesisHash, onCancel, onSignatu
   const [isBusy, setIsBusy] = useState(false);
   const { accountIndex, addressOffset } = account;
 
-  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useLedger(genesisHash, accountIndex, addressOffset);
+  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh } = useLedger(genesisHash, accountIndex, addressOffset);
 
   useEffect(() => {
     if (ledgerError) {
@@ -63,7 +63,6 @@ function LedgerSign({ account, disabled, error, genesisHash, onCancel, onSignatu
       error={error}
       isBusy={isBusy || ledgerLoading}
       ledgerLocked={ledgerLocked}
-      ledgerWarning={ledgerWarning}
       onCancel={onCancel}
       onRefresh={onRefresh}
       onSignLedger={onSignLedger}

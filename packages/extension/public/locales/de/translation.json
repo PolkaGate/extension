@@ -249,9 +249,6 @@
   "Total": "Gesamt",
   "Selected": "Ausgewählt",
   "Accounts' balances updated!": "Kontostände aktualisiert!",
-  "Is your ledger locked?": "Ist Ihr Ledger gesperrt?",
-  "App does not seem to be open": "Die App scheint nicht geöffnet zu sein",
-  "Ledger error: {{errorMessage}}": "Ledger-Fehler: {{errorMessage}}",
   "Unable to fetch NFT/Unique items!": "NFT-/Unikat-Elemente konnten nicht abgerufen werden!",
   "Unlock date unknown": "Entsperrdatum unbekannt",
   "Locked in ongoing referenda": "In laufenden Referenden gesperrt",
@@ -907,5 +904,8 @@
   "Need help?": "Brauchen Sie Hilfe?",
   "Follow us": "Folgen Sie uns",
   "Source code": "Quellcode",
-  "Website": "Webseite"
+  "Website": "Webseite",
+  "Loading proof...": "Nachweis wird geladen...",
+  "Ledger is locked": "Ledger ist gesperrt",
+  "Ledger app is not open": "Die Ledger-App ist nicht geöffnet"
 }

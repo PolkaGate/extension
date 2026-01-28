@@ -249,9 +249,6 @@
   "Total": "Итого",
   "Selected": "Выбрано",
   "Accounts' balances updated!": "Балансы аккаунтов обновлены!",
-  "Is your ledger locked?": "Ваш Ledger заблокирован?",
-  "App does not seem to be open": "Похоже, приложение не открыто",
-  "Ledger error: {{errorMessage}}": "Ошибка Ledger: {{errorMessage}}",
   "Unable to fetch NFT/Unique items!": "Не удалось загрузить NFT/уникальные предметы!",
   "Unlock date unknown": "Дата разблокировки неизвестна",
   "Locked in ongoing referenda": "Заблокировано в текущих референдумах",
@@ -907,5 +904,8 @@
   "Need help?": "Нужна помощь?",
   "Follow us": "Подписывайтесь на нас",
   "Source code": "Исходный код",
-  "Website": "Вебсайт"
+  "Website": "Вебсайт",
+  "Loading proof...": "Загрузка доказательства...",
+  "Ledger is locked": "Ledger заблокирован",
+  "Ledger app is not open": "Приложение Ledger не открыто"
 }

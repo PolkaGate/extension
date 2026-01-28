@@ -249,9 +249,6 @@
   "Total": "",
   "Selected": "",
   "Accounts' balances updated!": "",
-  "Is your ledger locked?": "",
-  "App does not seem to be open": "",
-  "Ledger error: {{errorMessage}}": "",
   "Unable to fetch NFT/Unique items!": "",
   "Unlock date unknown": "",
   "Locked in ongoing referenda": "",
@@ -907,5 +904,8 @@
   "Need help?": "",
   "Follow us": "",
   "Source code": "",
-  "Website": ""
+  "Website": "",
+  "Loading proof...": "",
+  "Ledger is locked": "",
+  "Ledger app is not open": ""
 }
