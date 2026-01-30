@@ -78,6 +78,7 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
         updateMeta(String(address), metaData)
           .then(() => {
             setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
+            setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
             openOrFocusTab('/', true);
           })
           .catch(console.error);

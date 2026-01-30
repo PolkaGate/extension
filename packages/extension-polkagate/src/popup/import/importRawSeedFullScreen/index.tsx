@@ -87,7 +87,7 @@ export default function ImportRawSeed(): React.ReactElement {
 
   const onImport = useCallback(async () => {
     try {
-      await onConfirm(account?.suri);
+      await onConfirm({ seed: account?.suri });
     } catch (e) {
       console.error(e);
     }

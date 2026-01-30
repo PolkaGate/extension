@@ -110,8 +110,10 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
 
         updateMeta(String(address), metaData)
           .then(() => {
+            setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
+            setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
+
             if (isAdvancedMode) {
-              setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
               switchToOrOpenTab('/', true);
             } else {
               finishedCountRef.current++;
@@ -121,9 +123,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
                 !hasNavigatedRef.current
               ) {
                 hasNavigatedRef.current = true;
-                setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER)
-                  .then(() => navigate('/'))
-                  .catch(console.error);
+                navigate('/') as void;
               }
             }
           }

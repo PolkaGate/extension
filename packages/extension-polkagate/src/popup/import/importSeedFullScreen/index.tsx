@@ -65,7 +65,7 @@ export default function ImportSeed(): React.ReactElement {
     }
 
     try {
-      await onConfirm(account.suri);
+      await onConfirm({ seed: account.suri });
     } catch (e) {
       console.error(e);
     }

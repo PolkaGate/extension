@@ -11,21 +11,29 @@ import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/conte
 import { useNotifications } from '@polkadot/extension-polkagate/src/hooks';
 import useAssetsBalances from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import useNFT from '@polkadot/extension-polkagate/src/hooks/useNFT';
+import { getAndWatchStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 export default function AccountAssetProvider({ children }: { children: React.ReactNode }) {
   const { accounts } = useContext(AccountContext);
-  const genesisHashOptions = useContext(GenesisHashOptionsContext);
-  const userAddedChainCtx = useContext(UserAddedChainContext);
+  const genesisOptions = useContext(GenesisHashOptionsContext);
+  const userAddedEndpoints = useContext(UserAddedChainContext);
   const worker = useContext(WorkerContext);
 
   useNotifications(false); // fetches and saves notification in the local storage
 
   const [accountsAssets, setAccountsAssets] = useState<SavedAssets | null | undefined>();
+  const [checkAllChains, setCheckAll] = useState<boolean>();
   const { isExtensionLocked } = useExtensionLockContext();
-  const assetsOnChains = useAssetsBalances(accounts, genesisHashOptions, userAddedChainCtx, worker, isExtensionLocked);
+  const assetsOnChains = useAssetsBalances({ accounts, checkAllChains, genesisOptions, isExtensionLocked, userAddedEndpoints, worker });
 
   useNFT(accounts);
+
+  useEffect(() => {
+    const unsubscribe = getAndWatchStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, setCheckAll);
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     assetsOnChains && setAccountsAssets({ ...assetsOnChains });
