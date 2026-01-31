@@ -18,7 +18,7 @@ export interface RecordTabStatusGov {
 }
 
 export interface TransactionHistoryOutput {
-  allHistories: TransactionDetail[] | null;
+  allHistories: TransactionDetail[] | null | undefined;
   count: number;
   grouped: Record<string, TransactionDetail[]> | null | undefined;
   isLoading: boolean;

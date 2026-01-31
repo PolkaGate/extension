@@ -35,7 +35,7 @@ export async function saveHistoryToStorage(address: string, genesisHash: string,
     const success = await setStorage(STORAGE_KEY.HISTORY, allHistories);
 
     if (success) {
-      log('History saved successfully to chrome storage, items:');
+      log('History saved successfully to chrome storage!');
     }
   } catch (error) {
     console.error('Error in saveHistoryToStorage:', error);
