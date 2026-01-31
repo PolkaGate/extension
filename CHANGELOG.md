@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.24.4](https://github.com/polkagate/extension/compare/v1.24.3...v1.24.4) (2026-01-31)
+
+
+### Bug Fixes
+
+* resolve issue where “hide balance” did not apply to token balance ([#2106](https://github.com/polkagate/extension/issues/2106)) ([51b0ac9](https://github.com/polkagate/extension/commit/51b0ac91c21b27736f17350f3a24096d1ea44364))
+
 ## [1.24.3](https://github.com/polkagate/extension/compare/v1.24.2...v1.24.3) (2026-01-28)
 
 
