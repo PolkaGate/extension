@@ -8,6 +8,8 @@ import { Magicpen } from 'iconsax-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { explainTransactionWithAi } from '@polkadot/extension-polkagate/src/messaging';
+import { getAndWatchStorage } from '@polkadot/extension-polkagate/src/util';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { MyTooltip, Progress } from '../../../components';
 import { useChainInfo, useTranslation } from '../../../hooks';
@@ -23,15 +25,20 @@ const CALLS_TO_PROCESS = ['utility.batch', 'utility.batchAll', 'utility.forceBat
 
 function AiInsight({ decoded, genesisHash, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
-
   const generatingRef = useRef(false);
-
   const { chain, chainName, decimal, token } = useChainInfo(genesisHash, true);
-
+  
+  const [enabled, setEnabled] = useState<boolean>(false);
   const [aiInfo, setInfo] = useState<string>();
 
   useEffect(() => {
-    if (decoded.method === null || generatingRef.current || !chain) {
+    const unsubscribe = getAndWatchStorage(STORAGE_KEY.AI_TX_INFO, setEnabled);
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (decoded.method === null || generatingRef.current || !chain || !enabled) {
       return;
     }
 
@@ -64,12 +71,12 @@ function AiInsight({ decoded, genesisHash, url }: Props): React.ReactElement<Pro
       .finally(() => {
         generatingRef.current = false;
       });
-  }, [chain, chainName, decimal, decoded.method, token, url]);
+  }, [chain, chainName, decimal, decoded.method, enabled, token, url]);
 
   return (
-    <MyTooltip content={aiInfo ?? t('Processing…')}>
+    <MyTooltip content={!enabled ? t('Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.') : aiInfo ?? t('Processing…')}>
       <Stack alignItems='center' columnGap='5px' direction='row' style={{ flexWrap: 'nowrap' }}>
-        {aiInfo
+        {aiInfo || !enabled
           ? <Magicpen color='#AA83DC' size={16} variant='Bold' />
           : <Progress
             size={15}
