@@ -294,7 +294,7 @@ export function getNotificationItemTitle(t: TFunction, type: NotificationType, r
       const status = referenda?.status ?? '';
 
       if (['approved', 'executed', 'confirm'].includes(status)) {
-        return t('Referendum executed');
+        return t('Referendum Executed');
       }
 
       if (['ongoing', 'decision', 'submitted'].includes(status)) {
