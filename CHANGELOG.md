@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.24.5](https://github.com/polkagate/extension/compare/v1.24.4...v1.24.5) (2026-02-02)
+
+
+### Bug Fixes
+
+* resolve issue with unread notifications icon ([1f4cf17](https://github.com/polkagate/extension/commit/1f4cf174d76b1bf524401c0976d2e83042280b85)), closes [#2097](https://github.com/polkagate/extension/issues/2097)
+
 ## [1.24.4](https://github.com/polkagate/extension/compare/v1.24.3...v1.24.4) (2026-01-31)
 
 
