@@ -52,7 +52,9 @@ function TitleTime({ address, hovered, noName, read, time, title }: { address: s
             textStyle={{ color: '#AA83DC', ...theme.typography['B-1'] }}
             width={100}
           />}
-        {!read && <Grid sx={{ bgcolor: theme.palette.menuIcon.hover, borderRadius: '999px', height: '8px', width: '8px' }} />}
+        {!read &&
+          <Grid sx={{ bgcolor: theme.palette.menuIcon.hover, borderRadius: '999px', height: '8px', width: '8px' }} />
+        }
       </Grid>
       <Grid container item sx={{ width: 'fit-content' }}>
         <Typography color='#674394' variant='B-1'>

@@ -28,7 +28,7 @@ export const PASEO_NOTIFICATION_CHAIN = { text: 'Paseo Relay Chain', value: PASE
 export const SET_UP_SUPPORTED_CHAINS = [POLKADOT_NOTIFICATION_CHAIN.value, KUSAMA_NOTIFICATION_CHAIN.value];
 export const SUPPORTED_CHAINS = [POLKADOT_NOTIFICATION_CHAIN, KUSAMA_NOTIFICATION_CHAIN];
 
-export const AUTO_MARK_AS_READ_DELAY = 5000; // 5 seconds
+export const AUTO_MARK_AS_READ_DELAY = 20000; // 20 seconds
 
 export const DEFAULT_NOTIFICATION_SETTING = {
   accounts: [],
