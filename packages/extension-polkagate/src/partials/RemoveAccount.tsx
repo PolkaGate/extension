@@ -10,10 +10,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { info } from '../assets/gif';
 import { Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } from '../components';
-import { useAccount, useAlerts, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
+import { useAccount, useAccountsOrder, useAlerts, useIsExtensionPopup, useProfileAccounts, useSelectedAccount, useSelectedProfile, useTranslation } from '../hooks';
 import { forgetAccount, validateAccount } from '../messaging';
 import WarningBox from '../popup/settings/partials/WarningBox';
-import { cleanupAuthorizedAccount, cleanupNotificationAccount } from '../util';
+import { cleanupAuthorizedAccount, cleanupNotificationAccount, setStorage } from '../util';
+import { PROFILE_TAGS, STORAGE_KEY } from '../util/constants';
 import { SharePopup } from '.';
 
 interface Props {
@@ -58,6 +59,10 @@ function TopPageElement({ isExtension }: { isExtension: boolean }) {
 function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
+  const selectedProfile = useSelectedProfile();
+  const initialAccountList = useAccountsOrder();
+  const profileAccounts = useProfileAccounts(initialAccountList, selectedProfile);
+
   const { address: _address, isExternal, name } = useAccount(address) ?? selectedAccount ?? {};
   const navigate = useNavigate();
   const isExtension = useIsExtensionPopup();
@@ -102,13 +107,15 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
   const canRemoveAccount =
     (isExternal && acknowledged) || (!isExternal && !!password);
 
-  const onRemove = useCallback(async () => {
+  const onRemove = useCallback(async() => {
     try {
       if (!_address || !canRemoveAccount) {
         return;
       }
 
       setIsBusy(true);
+      const willProfileBeEmpty = (profileAccounts?.length ?? 0) <= 1;
+
       await new Promise(requestAnimationFrame);
 
       if (!isExternal && password) {
@@ -126,6 +133,10 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
           cleanupNotificationAccount(_address),
           cleanupAuthorizedAccount(_address)
         ]);
+
+        if (willProfileBeEmpty) {
+          setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.ALL).catch(console.error);
+        }
       }
 
       notifier(true);
@@ -135,7 +146,7 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
       setIsBusy(false);
       console.error('Error while removing the account:', error);
     }
-  }, [_address, handleClose, isExtension, isExternal, canRemoveAccount, notifier, password]);
+  }, [_address, canRemoveAccount, profileAccounts?.length, isExternal, password, notifier, isExtension, handleClose]);
 
   const onPassChange = useCallback((pass: string | null): void => {
     setPasswordError(false);
