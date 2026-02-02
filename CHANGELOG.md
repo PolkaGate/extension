@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.24.6](https://github.com/polkagate/extension/compare/v1.24.5...v1.24.6) (2026-02-02)
+
+
+### Bug Fixes
+
+* select ALL if last account in profile is removed ([b962e15](https://github.com/polkagate/extension/commit/b962e15fe06dc21ea69ac7b140d00d2f3b6027b3)), closes [#2100](https://github.com/polkagate/extension/issues/2100)
+
 ## [1.24.5](https://github.com/polkagate/extension/compare/v1.24.4...v1.24.5) (2026-02-02)
 
 
