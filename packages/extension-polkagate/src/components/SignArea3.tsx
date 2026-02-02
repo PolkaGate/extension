@@ -3,10 +3,7 @@
 
 import type { SignerOptions } from '@polkadot/api/types';
 import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
-import type { Header } from '@polkadot/types/interfaces';
-// @ts-ignore
-import type { FrameSystemAccountInfo } from '@polkadot/types/lookup';
-import type { ISubmittableResult } from '@polkadot/types/types';
+import type { ISubmittableResult, SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
@@ -16,7 +13,7 @@ import React, { memo, type ReactNode, useCallback, useEffect, useMemo, useState 
 
 import { noop } from '@polkadot/util';
 
-import { useAccount, useAccountDisplay, useChainInfo, useFormatted, useProxies, useTranslation } from '../hooks';
+import { useAccount, useAccountDisplay, useAlerts, useChainInfo, useFormatted, useProxies, useTranslation } from '../hooks';
 import { getSubstrateAddress } from '../util';
 import { send } from '../util/api';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
@@ -57,9 +54,18 @@ interface Props {
 }
 
 /**
- *  @description
- * This puts usually at the end of review page where user can do enter password,
- * choose proxy or use other alternatives like signing using ledger
+ * @description
+ * Final step of the transaction flow where the user signs and submits a prepared
+ * Substrate transaction. This component is responsible for:
+ *
+ * - Building a correct `SignerPayload` (era, nonce, runtime version, extensions)
+ * - Supporting multiple signing methods:
+ *   - Password-based local accounts
+ *   - Ledger hardware wallets
+ *   - QR-based offline signing
+ *   - Proxy-based signing
+ * - Handling proxy wrapping of the original transaction
+ * - Submitting the signed extrinsic and tracking the result
  *
 */
 function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingQRProps, signerOption, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
@@ -68,13 +74,13 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
   const account = useAccount(address);
   const { api, chain, token } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
+  const { notify } = useAlerts();
 
   const senderName = useAccountDisplay(address, genesisHash);
   const proxies = useProxies(genesisHash, formatted);
 
   const [showQR, setShowQR] = useState<boolean>(false);
-  const [lastHeader, setLastHeader] = useState<Header>();
-  const [rawNonce, setRawNonce] = useState<number>();
+  const [signerPayload, setSignerPayload] = useState<SignerPayloadJSON>();
 
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxy?.delegate), genesisHash);
   const from = selectedProxy?.delegate ?? formatted ?? address;
@@ -92,39 +98,29 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
     return selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, transaction) : transaction;
   }, [api, formatted, selectedProxy, transaction]);
 
-  const signerPayload = useMemo(() => {
-    if (!api || !preparedTransaction || !lastHeader || rawNonce === undefined) {
+  useEffect(() => {
+    if (!api || !from || !preparedTransaction || signerPayload) {
       return;
     }
 
-    const paymentExt = api.registry.signedExtensions.includes('ChargeAssetTxPayment')
-      ? 'ChargeAssetTxPayment'
-      : 'ChargeTransactionPayment';
+    (async() => {
+      const [{ hash, number }, nonce] = await Promise.all([
+        api.rpc.chain.getHeader(),
+        api.rpc.system.accountNextIndex(from)
+      ]);
+      const current = number.toNumber();
 
-    const current = lastHeader.number.toNumber();
-
-    try {
       const _payload = {
         address: from,
         assetId: signerOption?.assetId,
-        blockHash: lastHeader.hash,
+        blockHash: hash,
         blockNumber: api.registry.createType('BlockNumber', current),
         era: api.registry.createType('ExtrinsicEra', { current, period: 256 }),
         genesisHash: api.genesisHash,
-        method: api.createType('Call', preparedTransaction), // TODO: DOES SUPPORT nested calls, batches , ...
-        nonce: api.registry.createType('Compact<Index>', rawNonce),
+        method: api.createType('Call', preparedTransaction),
+        nonce,
         runtimeVersion: api.runtimeVersion,
-        signedExtensions: [
-          'CheckNonZeroSender',
-          'CheckSpecVersion',
-          'CheckTxVersion',
-          'CheckGenesis',
-          'CheckMortality',
-          'CheckNonce',
-          'CheckWeight',
-          paymentExt,
-          'CheckMetadataHash'
-        ],
+        signedExtensions: api.registry.signedExtensions,
         tip: 0,
         version: preparedTransaction.version
       };
@@ -133,13 +129,11 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
         version: _payload.version
       });
 
-      return raw.toPayload();
-    } catch (error) {
-      console.error('Something went wrong when making payload:', error);
-
-      return undefined;
-    }
-  }, [api, preparedTransaction, lastHeader, rawNonce, from, signerOption?.assetId]);
+      setSignerPayload(raw.toPayload());
+    })().catch((error) =>
+      notify('Something went wrong when making payload:' + error, 'warning')
+    );
+  }, [api, preparedTransaction, from, signerOption?.assetId, signerPayload, notify]);
 
   const extrinsicPayload = useMemo(() => {
     if (!api || !signerPayload) {
@@ -150,13 +144,6 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
   }, [api, signerPayload]);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-
-  useEffect((): void => {
-    if (api && from) {
-      api.rpc.chain.getHeader().then(setLastHeader).catch(console.error);
-      api.query['system']['account'](from).then((res) => setRawNonce((res as FrameSystemAccountInfo)?.nonce.toNumber() || 0)).catch(console.error);
-    }
-  }, [api, formatted, from, selectedProxy]);
 
   const toggleSelectProxy = useCallback(() => setShowProxySelection((show) => !show), [setShowProxySelection]);
   const toggleQrScan = useCallback(() => setShowQR((show) => !show), []);
@@ -234,7 +221,7 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
     }
   }, [api, chain, formatted, selectedProxyAddress, selectedProxyName, senderName, setTxInfo, token]);
 
-  const onSignature = useCallback(async ({ signature }: { signature: HexString }) => {
+  const onSignature = useCallback(async({ signature }: { signature: HexString }) => {
     if (!api || !extrinsicPayload || !signature || !preparedTransaction || !from) {
       return;
     }
@@ -280,7 +267,7 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
             {...extraProps}
             api={api}
             direction={direction}
-            disabled={disabled}
+            disabled={disabled || !signerPayload}
             onCancel={onClose}
             onSignature={onSignature}
             onUseProxy={selectedProxy ? undefined : toggleSelectProxy}

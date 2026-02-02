@@ -907,5 +907,6 @@
   "Website": "Site Web",
   "Loading proof...": "Chargement de la preuve...",
   "Ledger is locked": "Ledger est verrouillé",
-  "Ledger app is not open": "L’application Ledger n’est pas ouverte"
+  "Ledger app is not open": "L’application Ledger n’est pas ouverte",
+  "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": "Activez les analyses de transaction par IA dans les paramètres en plein écran pour obtenir des explications basées sur l’IA pour cette demande de transaction."
 }
