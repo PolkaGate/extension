@@ -294,7 +294,7 @@ export function getNotificationItemTitle(t: TFunction, type: NotificationType, r
       const status = referenda?.status ?? '';
 
       if (['approved', 'executed', 'confirm'].includes(status)) {
-        return t('Referendum executed');
+        return t('Referendum Executed');
       }
 
       if (['ongoing', 'decision', 'submitted'].includes(status)) {
@@ -366,7 +366,7 @@ export function getNotificationDescription(item: NotificationMessageType, t: TFu
     }
 
     case 'stakingReward': {
-      const assetAmount = formatNumber(item.payout?.amount, 2, decimal);
+      const assetAmount = formatNumber(item.payout?.amount, 3, decimal);
       const currencyAmount = formatNumber(assetAmount * (price.price ?? 0));
 
       const amountSection = `${assetAmount} ${token} (${currencySign}${currencyAmount})`;

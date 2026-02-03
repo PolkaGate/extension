@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { GenericExtrinsicPayload, Option, u16, u32 } from '@polkadot/types';
+import type { GenericExtrinsicPayload, Option, u16 } from '@polkadot/types';
 import type { OpaqueMetadata } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 
@@ -27,29 +27,20 @@ export default function useMetadataProof(api: ApiPromise | undefined | null, pay
         return;
       }
 
-      if (!payload.signedExtensions.includes('CheckMetadataHash')) {
-        payload.signedExtensions.push('CheckMetadataHash');
-      }
+      const signedExtensions = payload.signedExtensions.includes('CheckMetadataHash')
+        ? payload.signedExtensions
+        : [...payload.signedExtensions, 'CheckMetadataHash'];
 
-      let latestMetadataVersion = new BN(15);
+      const maybeMetadataV15 = await api.call['metadata']['metadataAtVersion']<Option<OpaqueMetadata>>(new BN(15));
 
-      const versions = await api.call['metadata']['metadataVersions']() as unknown as u32[]; // may returns: [14, 15, 4294967295] not on all chains
-      const maybeLatestVersion = versions.at(-1);
-
-      if (maybeLatestVersion?.lten(99)) {
-        latestMetadataVersion = new BN(maybeLatestVersion);
-      }
-
-      const maybeHexMetadata = await api.call['metadata']['metadataAtVersion']<Option<OpaqueMetadata>>(latestMetadataVersion);
-
-      if (maybeHexMetadata.isNone) {
+      if (maybeMetadataV15.isNone) {
         throw new Error('metadata not found');
       }
 
       const { specName, specVersion } = api.runtimeVersion;
 
       const merkleizedMetadata = merkleizeMetadata(
-        maybeHexMetadata.toHex(),
+        maybeMetadataV15.unwrap().toHex(),
         {
           base58Prefix: (api.consts['system']['ss58Prefix'] as u16).toNumber(),
           decimals: api.registry.chainDecimals[0],
@@ -60,7 +51,12 @@ export default function useMetadataProof(api: ApiPromise | undefined | null, pay
       );
 
       const metadataHash = u8aToHex(merkleizedMetadata.digest());
-      const newPayload = objectSpread({}, payload, { metadataHash, mode: 1 });
+      const newPayload = objectSpread({}, payload, {
+        metadataHash,
+        mode: 1,
+        signedExtensions
+      });
+
       const raw = api.registry.createType('ExtrinsicPayload', newPayload);
 
       const txMetadata = merkleizedMetadata.getProofForExtrinsicPayload(u8aToHex(raw.toU8a(true)));

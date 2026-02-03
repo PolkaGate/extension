@@ -1,5 +1,40 @@
 # Change Log
 
+## [1.24.6](https://github.com/polkagate/extension/compare/v1.24.5...v1.24.6) (2026-02-02)
+
+
+### Bug Fixes
+
+* select ALL if last account in profile is removed ([b962e15](https://github.com/polkagate/extension/commit/b962e15fe06dc21ea69ac7b140d00d2f3b6027b3)), closes [#2100](https://github.com/polkagate/extension/issues/2100)
+
+## [1.24.5](https://github.com/polkagate/extension/compare/v1.24.4...v1.24.5) (2026-02-02)
+
+
+### Bug Fixes
+
+* resolve issue with unread notifications icon ([1f4cf17](https://github.com/polkagate/extension/commit/1f4cf174d76b1bf524401c0976d2e83042280b85)), closes [#2097](https://github.com/polkagate/extension/issues/2097)
+
+## [1.24.4](https://github.com/polkagate/extension/compare/v1.24.3...v1.24.4) (2026-01-31)
+
+
+### Bug Fixes
+
+* resolve issue where “hide balance” did not apply to token balance ([#2106](https://github.com/polkagate/extension/issues/2106)) ([51b0ac9](https://github.com/polkagate/extension/commit/51b0ac91c21b27736f17350f3a24096d1ea44364))
+
+## [1.24.3](https://github.com/polkagate/extension/compare/v1.24.2...v1.24.3) (2026-01-28)
+
+
+### Bug Fixes
+
+* resolve Ledger issue related to runtime version handling ([#2104](https://github.com/polkagate/extension/issues/2104)) ([250e5d2](https://github.com/polkagate/extension/commit/250e5d29039e4a70384589c8e0e4eb9f18f14924))
+
+## [1.24.2](https://github.com/polkagate/extension/compare/v1.24.1...v1.24.2) (2026-01-27)
+
+
+### Bug Fixes
+
+* update latest translations ([7b3a249](https://github.com/polkagate/extension/commit/7b3a249245e4c2a91030cdf59ee4f83524221b86))
+
 ## [1.24.1](https://github.com/polkagate/extension/compare/v1.24.0...v1.24.1) (2026-01-06)
 
 

@@ -138,13 +138,7 @@ export async function send(
   signature: HexString
 ): Promise<TxResult> {
   return new Promise((resolve) => {
-    console.log('✈️ Sending the transaction ...');
-    console.log('Signature:', signature);
-    console.log('payload', payload);
-    console.log('signer', from);
-    const check = signatureVerify(String(payload), signature, from);
-
-    console.log('signatureVerify result:', check);
+    console.log('✈️ Sending the transaction ... 🌥️');
 
     extrinsic.addSignature(from, signature, payload);
 

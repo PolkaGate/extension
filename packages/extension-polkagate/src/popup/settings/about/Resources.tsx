@@ -31,8 +31,8 @@ export default function Resources({ style = {} }: Props): React.ReactElement {
         {t('Resources')}
       </Typography>
       <Grid columnGap='8px' container justifyContent={'flex-start'}>
-        <SocialIcon Icon={<Docs color={theme.palette.icon.secondary} width='18px' />} bgColor={isDark ? undefined : '#CCD2EA'} link='https://docs.polkagate.xyz/' />
-        <SocialIcon Icon={<Web color={theme.palette.icon.secondary} width='18px' />} bgColor={isDark ? undefined : '#CCD2EA'} link='https://polkagate.xyz/' />
+        <SocialIcon Icon={<Docs color={theme.palette.icon.secondary} width='18px' />} bgColor={isDark ? undefined : '#CCD2EA'} link='https://docs.polkagate.xyz/' tooltip= {t('Need help?')} />
+        <SocialIcon Icon={<Web color={theme.palette.icon.secondary} width='18px' />} bgColor={isDark ? undefined : '#CCD2EA'} link='https://polkagate.xyz/' tooltip= {t('Website')} />
       </Grid>
     </Stack>
   );
