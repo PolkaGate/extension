@@ -65,8 +65,8 @@ function Notifications(): React.ReactElement {
   const [hasNewNotification, setHasNewNotification] = useState<boolean>(false);
 
   useEffect(() => {
-    const unsubscribe = getAndWatchStorage(STORAGE_KEY.NOTIFICATIONS, (result: NotificationsType) => {
-      setHasNewNotification(Object.values(result.notificationMessages ?? []).flat().some(({ read }) => !read));
+    const unsubscribe = getAndWatchStorage(STORAGE_KEY.NOTIFICATIONS, (result: NotificationsType | undefined) => {
+      setHasNewNotification(Object.values(result?.notificationMessages ?? []).flat().some(({ read }) => !read));
     });
 
     return unsubscribe;
