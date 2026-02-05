@@ -6,14 +6,14 @@
 import type { BN } from '@polkadot/util';
 
 import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { isBn } from '@polkadot/util';
 
 import { info } from '../../../assets/gif';
 import { BackWithLabel, Motion, ShowValue } from '../../../components';
-import { useBackground, useChainInfo, usePoolStakingInfo, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useBackground, useChainInfo, usePoolStakingInfo, useSelectedAccount, useStakingInfoPool, useTranslation } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import { amountToHuman } from '../../../util';
 import StakingMenu from '../partial/StakingMenu';
@@ -47,27 +47,9 @@ export default function Info(): React.ReactElement {
   const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const stakingInfo = usePoolStakingInfo(address, genesisHash);
-  const { decimal, token } = useChainInfo(genesisHash, true);
+  const { decimal } = useChainInfo(genesisHash, true);
 
-  const getValue = useCallback((value: number | undefined) => {
-    if (value === undefined) {
-      return '-';
-    }
-
-    return value === -1
-      ? t('unlimited')
-      : value;
-  }, [t]);
-
-  const stakingStats = useMemo(() => ([
-    { label: t('Min {{token}} to join a pool', { replace: { token: token ?? '' } }), value: stakingInfo.poolStakingConsts?.minJoinBond },
-    { label: t('Min {{token}} to create a pool', { replace: { token: token ?? '' } }), value: stakingInfo.poolStakingConsts?.minCreationBond },
-    { label: t('Number of existing pools'), value: stakingInfo.poolStakingConsts?.lastPoolId.toString() },
-    { label: t('Max possible pools'), value: getValue(stakingInfo.poolStakingConsts?.maxPools) },
-    { label: t('Max possible pool members'), value: getValue(stakingInfo.poolStakingConsts?.maxPoolMembers) },
-    { label: t('Max pool members per pool'), value: getValue(stakingInfo.poolStakingConsts?.maxPoolMembersPerPool) }
-  ]), [getValue, stakingInfo.poolStakingConsts?.lastPoolId, stakingInfo.poolStakingConsts?.maxPoolMembers, stakingInfo.poolStakingConsts?.maxPoolMembersPerPool, stakingInfo.poolStakingConsts?.maxPools, stakingInfo.poolStakingConsts?.minCreationBond, stakingInfo.poolStakingConsts?.minJoinBond, t, token]);
-
+  const stakingStats = useStakingInfoPool(stakingInfo, genesisHash);
   const onBack = useCallback(() => navigate('/pool/' + genesisHash) as void, [genesisHash, navigate]);
 
   return (

@@ -1,8 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Icon } from 'iconsax-react';
-import type { PoolInfo } from '../../../util/types';
+import type { PoolInfo } from '@polkadot/extension-polkagate/util/types';
 
 import { useCallback, useState } from 'react';
 
@@ -60,13 +59,6 @@ export function useStakingPopups() {
   const popupCloser: PopupCloser = useCallback(() => setStakingPopup(StakingPopUps.NONE), []);
 
   return { popupCloser, popupOpener, stakingPopup };
-}
-
-export interface Stats {
-  value: number | string | BN | undefined;
-  label: string;
-  InfoIcon?: Icon;
-  withLogo?: boolean;
 }
 
 export const FULLSCREEN_STAKING_TX_FLOW = {
