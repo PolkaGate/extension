@@ -66,7 +66,7 @@ function applyFormat(
 }
 
 interface DisplayBalanceProps {
-  api?: ApiPromise;
+  api?: ApiPromise | null;
   balance: Balance | Compact<u128 | u64 | INumber> | string | BN | null | undefined;
   decimal?: number;
   decimalColor?: string;
@@ -126,6 +126,16 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
 
   const isLoading = balance === undefined || balance === null || !resolvedDecimal || !resolvedToken;
 
+const _balance = useMemo<Balance | undefined>(() => {
+  // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+  if (!api || balance === undefined || balance === null) {
+    return undefined;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+  return api.registry.createType('Balance', balance) as Balance;
+}, [api, balance]);
+
   if (isLoading) {
     return (
       <MySkeleton
@@ -151,7 +161,10 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
           )
           : (
             <Typography sx={{ ...theme.typography['B-1'], width: 'fit-content', ...style }}>
-              {applyFormat(resolvedDecimalPoint, balance, resolvedDecimal, resolvedToken, withCurrency, withSi, isShort, tokenColor)}
+              {
+                _balance?.toHuman() ??
+                applyFormat(resolvedDecimalPoint, balance, resolvedDecimal, resolvedToken, withCurrency, withSi, isShort, tokenColor)
+              }
             </Typography>
           )
         }

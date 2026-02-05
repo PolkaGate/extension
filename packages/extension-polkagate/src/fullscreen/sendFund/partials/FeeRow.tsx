@@ -162,6 +162,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
               <UnableToPayFee warningText={canPayFee.warning} />
             } */}
             <DisplayBalance
+              api={api}
               balance={feeInfo.fee}
               decimal={feeInfo.decimal}
               style={{
