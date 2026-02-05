@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.24.7](https://github.com/polkagate/extension/compare/v1.24.6...v1.24.7) (2026-02-05)
+
+
+### Bug Fixes
+
+* handle undefined watch storage when notifications are not enabled ([4ea8ad4](https://github.com/polkagate/extension/commit/4ea8ad4f28c28f0066ad2b555a0260e6acebe6b0))
+
 ## [1.24.6](https://github.com/polkagate/extension/compare/v1.24.5...v1.24.6) (2026-02-02)
 
 
