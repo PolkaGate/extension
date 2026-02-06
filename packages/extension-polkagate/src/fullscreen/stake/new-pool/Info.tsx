@@ -2,14 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolStakingInfo } from '../../../hooks/usePoolStakingInfo';
-import type { PopupCloser, Stats } from '../util/utils';
+import type { PopupCloser } from '../util/utils';
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
-import { Bank, Hierarchy, People, UserEdit } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 
 import { GradientButton } from '../../../components';
-import { useChainInfo, useTranslation } from '../../../hooks';
+import { useChainInfo, useStakingInfoPool, useTranslation } from '../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { InfoBox } from '../partials/InfoBox';
 
@@ -22,26 +21,9 @@ interface Props {
 export default function Info({ genesisHash, onClose, stakingInfo }: Props): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
-  const { decimal, token } = useChainInfo(genesisHash, true);
+  const { decimal } = useChainInfo(genesisHash, true);
 
-  const getValue = useCallback((value: number | undefined) => {
-    if (value === undefined) {
-      return '-';
-    }
-
-    return value === -1
-      ? t('unlimited')
-      : value;
-  }, [t]);
-
-  const stakingStats: Stats[] = useMemo(() => ([
-    { label: t('Min {{token}} to join a pool', { replace: { token: token ?? '' } }), value: stakingInfo.poolStakingConsts?.minJoinBond, withLogo: true },
-    { label: t('Min {{token}} to create a pool', { replace: { token: token ?? '' } }), value: stakingInfo.poolStakingConsts?.minCreationBond, withLogo: true },
-    { InfoIcon: Bank, label: t('Number of existing pools'), value: stakingInfo.poolStakingConsts?.lastPoolId.toString() },
-    { InfoIcon: Hierarchy, label: t('Max possible pools'), value: getValue(stakingInfo.poolStakingConsts?.maxPools) },
-    { InfoIcon: People, label: t('Max possible pool members'), value: getValue(stakingInfo.poolStakingConsts?.maxPoolMembers) },
-    { InfoIcon: UserEdit, label: t('Max pool members per pool'), value: getValue(stakingInfo.poolStakingConsts?.maxPoolMembersPerPool) }
-  ]), [getValue, stakingInfo.poolStakingConsts?.lastPoolId, stakingInfo.poolStakingConsts?.maxPoolMembers, stakingInfo.poolStakingConsts?.maxPoolMembersPerPool, stakingInfo.poolStakingConsts?.maxPools, stakingInfo.poolStakingConsts?.minCreationBond, stakingInfo.poolStakingConsts?.minJoinBond, t, token]);
+  const stakingStats = useStakingInfoPool(stakingInfo, genesisHash);
 
   return (
     <DraggableModal
