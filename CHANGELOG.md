@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.24.8](https://github.com/polkagate/extension/compare/v1.24.7...v1.24.8) (2026-02-06)
+
+
+### Bug Fixes
+
+* correct min stake value for rewards eligibility using on-chain data ([#2109](https://github.com/polkagate/extension/issues/2109)) ([f778589](https://github.com/polkagate/extension/commit/f7785895be9e88c408241546cecf19876500eb96))
+
 ## [1.24.7](https://github.com/polkagate/extension/compare/v1.24.6...v1.24.7) (2026-02-05)
 
 
