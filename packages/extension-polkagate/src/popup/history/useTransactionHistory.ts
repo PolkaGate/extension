@@ -36,10 +36,12 @@ export default function useTransactionHistory(address: string | undefined, _gene
   const { allHistories,
     extrinsicsTx,
     isReadyToFetch,
+    localHistories,
     receivedTx,
     resetAllState,
     setAllHistories,
     setExtrinsicsTx,
+    setLocalHistories,
     setTransfersTx } = useTransactionState(address, chain);
 
   // 2. Handle fetching from API
@@ -66,10 +68,12 @@ export default function useTransactionHistory(address: string | undefined, _gene
     address,
     allHistories,
     chain,
+    localHistories,
     processedExtrinsics,
     processedReceived,
     requested,
-    setAllHistories
+    setAllHistories,
+    setLocalHistories
   });
 
   // 5. Group transactions by date with filtering

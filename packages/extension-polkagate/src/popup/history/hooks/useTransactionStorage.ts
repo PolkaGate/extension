@@ -4,7 +4,7 @@
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { TransactionDetail } from '../../../util/types';
 
-import { type Dispatch, type RefObject, type SetStateAction, useEffect, useState } from 'react';
+import { type Dispatch, type RefObject, type SetStateAction, useEffect } from 'react';
 
 import { MAX_LOCAL_HISTORY_ITEMS } from '../hookUtils/consts';
 import { getHistoryFromStorage } from '../hookUtils/getHistoryFromStorage';
@@ -17,7 +17,9 @@ interface UseTransactionStorageProps {
   processedReceived: TransactionDetail[] | undefined;
   processedExtrinsics: TransactionDetail[] | undefined;
   setAllHistories: Dispatch<SetStateAction<TransactionDetail[] | null | undefined>>;
+  setLocalHistories: Dispatch<SetStateAction<TransactionDetail[] | null | undefined>>;
   allHistories: TransactionDetail[] | null | undefined;
+  localHistories: TransactionDetail[] | null | undefined;
   requested: RefObject<string | undefined>;
 }
 
@@ -29,9 +31,7 @@ interface UseTransactionStorageResult {
  * Manages loading from and saving to local storage
  * Combines local and fetched transactions, removing duplicates
  */
-export function useTransactionStorage({ address, allHistories, chain, processedExtrinsics, processedReceived, requested, setAllHistories }: UseTransactionStorageProps): UseTransactionStorageResult {
-  const [localHistories, setLocalHistories] = useState<TransactionDetail[] | null | undefined>(undefined);
-
+export function useTransactionStorage({ address, allHistories, chain, localHistories, processedExtrinsics, processedReceived, requested, setAllHistories, setLocalHistories }: UseTransactionStorageProps): UseTransactionStorageResult {
   // Load transactions from local storage
   useEffect(() => {
     if (!address || !chain?.genesisHash) {
@@ -65,7 +65,7 @@ export function useTransactionStorage({ address, allHistories, chain, processedE
       .catch((error) => {
         console.error('Error loading history from storage:', error);
       });
-  }, [address, chain?.genesisHash, requested]);
+  }, [address, chain?.genesisHash, requested, setLocalHistories]);
 
   // Combine all transaction sources and deduplicate
   useEffect(() => {

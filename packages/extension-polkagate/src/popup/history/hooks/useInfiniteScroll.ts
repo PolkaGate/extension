@@ -126,10 +126,6 @@ export function useInfiniteScroll({ extrinsicsTx, getExtrinsics, getTransfers, i
 /**
  * Determine if should fetch more data
  */
-function shouldFetchMore(
-    state: RecordTabStatus | RecordTabStatusGov
-): boolean {
-    return Boolean(state.hasMore &&
-        !state.isFetching &&
-        !state.pageNum);
+function shouldFetchMore(state: RecordTabStatus | RecordTabStatusGov): boolean {
+    return Boolean(state.hasMore && !state.isFetching);
 }

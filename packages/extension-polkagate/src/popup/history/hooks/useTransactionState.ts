@@ -21,6 +21,8 @@ interface UseTransactionStateResult {
   isReadyToFetch: boolean;
   setAllHistories: Dispatch<SetStateAction<TransactionDetail[] | null | undefined>>;
   allHistories: TransactionDetail[] | null | undefined;
+  setLocalHistories: Dispatch<SetStateAction<TransactionDetail[] | null | undefined>>;
+  localHistories: TransactionDetail[] | null | undefined;
 }
 
 /**
@@ -32,6 +34,7 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
   const [extrinsicsTx, dispatchExtrinsics] = useReducer(extrinsicsReducer, INITIAL_STATE as RecordTabStatusGov);
 
   const [allHistories, setAllHistories] = useState<TransactionDetail[] | null | undefined>(undefined);
+  const [localHistories, setLocalHistories] = useState<TransactionDetail[] | null | undefined>(undefined);
 
   // Refs for accessing latest state in callbacks
   const receivedStateRef = useRef<RecordTabStatus>(receivedTx);
@@ -70,6 +73,7 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
     dispatchReceived({ type: 'RESET' });
     dispatchExtrinsics({ type: 'RESET' });
     setAllHistories(undefined);
+    setLocalHistories(undefined);
     log('All transaction state reset');
   }, []);
 
@@ -100,11 +104,13 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
     extrinsicsStateRef,
     extrinsicsTx,
     isReadyToFetch,
+    localHistories,
     receivedStateRef,
     receivedTx,
     resetAllState,
     setAllHistories,
     setExtrinsicsTx,
+    setLocalHistories,
     setTransfersTx
   };
 }

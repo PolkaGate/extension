@@ -226,7 +226,7 @@ export async function getTXsHistory(address: string, genesisHash: string, pageNu
     })
   );
 
-  for (const item of extrinsicsInfo) {
+  for (const item of (extrinsicsInfo || [])) {
     item.forAccount = address;
   }
 

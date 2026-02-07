@@ -53,6 +53,10 @@ export async function getTxTransfers(address: string, genesisHash: string, pageN
     row: pageSize
   });
 
+  if (!transferRequest.data.transfers) {
+    return nullifier(requested);
+  }
+
   for (const item of transferRequest.data.transfers) {
     item.forAccount = address;
   }
