@@ -52,7 +52,7 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ 
     }
   }, [validator]);
 
-  const onConfirm = useCallback(async (seed: string | undefined | null) => {
+  const onConfirm = useCallback(async({ isImport = true, seed, type }: {seed: string | undefined | null, type?: KeypairType, isImport?:boolean}) => {
     if (!name || !password || !seed) {
       return;
     }
@@ -94,6 +94,8 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ 
 
       const okProfile = await setStorage(STORAGE_KEY.SELECTED_PROFILE, toProfile);
       const okMigrated = await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true);
+
+      isImport && setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true) as unknown as void;
 
       if (!okProfile || !okMigrated) {
         console.warn('Failed to persist profile or migration flag');

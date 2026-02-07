@@ -323,6 +323,7 @@ export const STORAGE_KEY = {
   AI_TX_INFO: 'aiTransactionInfo',
   ASSETS: 'migratedAssets',
   AUTO_LOCK: 'autoLock',
+  CHECK_BALANCE_ON_ALL_CHAINS: 'checkBalancesOnAllChains',
   CURRENCY: 'currency',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   HISTORY: 'history',

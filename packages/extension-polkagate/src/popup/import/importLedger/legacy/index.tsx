@@ -61,6 +61,7 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
       createAccountHardware(address, 'ledger', accountIndex, addressOffset, name(accountIndex, addressOffset), genesis as HexString)
         .then(() => {
           setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
+          setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
           openOrFocusTab('/', true);
         })
         .catch((error: Error) => {

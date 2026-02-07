@@ -46,7 +46,7 @@ export function SetNameAndPassword({ accountType, seed }: { accountType: Keypair
 
   const onCreate = useCallback(async () => {
     try {
-      await onConfirm(seed);
+      await onConfirm({ isImport: false, seed });
     } catch (e) {
       console.error(e);
     }

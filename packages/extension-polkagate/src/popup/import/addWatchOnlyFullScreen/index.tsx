@@ -38,6 +38,7 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
       createAccountExternal(name, realAddress, undefined, type)
         .then(() => {
           setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.WATCH_ONLY).catch(console.error);
+          setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
         })
         .finally(() =>
           switchToOrOpenTab('/', true)
