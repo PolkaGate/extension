@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.24.9](https://github.com/polkagate/extension/compare/v1.24.8...v1.24.9) (2026-02-07)
+
+
+### Bug Fixes
+
+* check balances on all supported chains regardless of selected chains during account import ([#2103](https://github.com/polkagate/extension/issues/2103)) ([ae49033](https://github.com/polkagate/extension/commit/ae49033c58588e5e7ec9dacfad0afd5545ff9038)), closes [#2102](https://github.com/polkagate/extension/issues/2102)
+
 ## [1.24.8](https://github.com/polkagate/extension/compare/v1.24.7...v1.24.8) (2026-02-06)
 
 
