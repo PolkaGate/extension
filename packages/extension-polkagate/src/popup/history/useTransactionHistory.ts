@@ -3,7 +3,7 @@
 
 import type { FilterOptions, TransactionHistoryOutput } from './hookUtils/types';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
@@ -30,17 +30,17 @@ export default function useTransactionHistory(address: string | undefined, _gene
     requested.current = keyMaker(address, chain.genesisHash);
   }, [address, chain?.genesisHash]);
 
-  const [isLoading, setIsLoading] = useState(false);
-
   // 1. Manage transaction state (received & extrinsics)
   const { allHistories,
     extrinsicsTx,
+    isLoading,
     isReadyToFetch,
     localHistories,
     receivedTx,
     resetAllState,
     setAllHistories,
     setExtrinsicsTx,
+    setIsLoading,
     setLocalHistories,
     setTransfersTx } = useTransactionState(address, chain);
 
@@ -58,8 +58,8 @@ export default function useTransactionHistory(address: string | undefined, _gene
     chain,
     decimal,
     extrinsicsTx,
-    onInitialLoadComplete: () => setIsLoading(false),
     receivedTx,
+    setIsLoading,
     token
   });
 
@@ -99,7 +99,7 @@ export default function useTransactionHistory(address: string | undefined, _gene
       setIsLoading(true);
       resetAllState();
     }
-  }, [isReadyToFetch, resetAllState]);
+  }, [isReadyToFetch, resetAllState, setIsLoading]);
 
   return {
     allHistories,

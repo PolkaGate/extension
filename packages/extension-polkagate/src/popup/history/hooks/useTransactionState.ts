@@ -23,6 +23,8 @@ interface UseTransactionStateResult {
   allHistories: TransactionDetail[] | null | undefined;
   setLocalHistories: Dispatch<SetStateAction<TransactionDetail[] | null | undefined>>;
   localHistories: TransactionDetail[] | null | undefined;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  isLoading: boolean;
 }
 
 /**
@@ -35,6 +37,8 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
 
   const [allHistories, setAllHistories] = useState<TransactionDetail[] | null | undefined>(undefined);
   const [localHistories, setLocalHistories] = useState<TransactionDetail[] | null | undefined>(undefined);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   // Refs for accessing latest state in callbacks
   const receivedStateRef = useRef<RecordTabStatus>(receivedTx);
@@ -74,6 +78,7 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
     dispatchExtrinsics({ type: 'RESET' });
     setAllHistories(undefined);
     setLocalHistories(undefined);
+    setIsLoading(true);
     log('All transaction state reset');
   }, []);
 
@@ -103,6 +108,7 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
     allHistories,
     extrinsicsStateRef,
     extrinsicsTx,
+    isLoading,
     isReadyToFetch,
     localHistories,
     receivedStateRef,
@@ -110,6 +116,7 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
     resetAllState,
     setAllHistories,
     setExtrinsicsTx,
+    setIsLoading,
     setLocalHistories,
     setTransfersTx
   };

@@ -14,12 +14,13 @@ function nullifier(requested: string) {
     code: 0,
     data: {
       count: 0,
+      list: 0,
       transfers: null
     },
     for: requested,
     generated_at: Date.now(),
     message: 'Success'
-  } as unknown as TransferRequest;
+  };
 }
 
 /**
@@ -40,7 +41,11 @@ export async function getTxTransfers(address: string, genesisHash: string, pageN
   const requested = keyMaker(address, genesisHash);
 
   const chainName = getChainName(genesisHash);
-  const network = getSubscanChainName(chainName) as unknown as string;
+  const network = getSubscanChainName(chainName);
+
+  if (!network) {
+    return nullifier(requested);
+  }
 
   if (network === 'pendulum') {
     return (await Promise.resolve(nullifier(requested)));

@@ -214,7 +214,7 @@ export interface TransferRequest {
   data: {
     list: unknown;
     count: number;
-    transfers: Transfers[];
+    transfers: Transfers[] | null;
   };
   generated_at: number;
   message: string;
@@ -225,7 +225,7 @@ export interface ExtrinsicsRequest {
   code: number;
   data: {
     count: number;
-    extrinsics: Extrinsics[];
+    extrinsics: Extrinsics[] | null;
   };
   generated_at: number;
   message: string;

@@ -161,7 +161,7 @@ function nullifier(requested: string) {
     for: requested,
     generated_at: Date.now(),
     message: 'Success'
-  } as unknown as ExtrinsicsRequest;
+  };
 }
 
 /**
@@ -180,7 +180,11 @@ export async function getTXsHistory(address: string, genesisHash: string, pageNu
   }
 
   const chainName = getChainName(genesisHash);
-  const network = getSubscanChainName(chainName) as unknown as string;
+  const network = getSubscanChainName(chainName);
+
+  if (!network) {
+    return nullifier(requested);
+  }
 
   const extrinsics = await fetchFromSubscan<ExtrinsicsRequest>(`https://${network}.api.subscan.io/api/v2/scan/extrinsics`, {
     address,

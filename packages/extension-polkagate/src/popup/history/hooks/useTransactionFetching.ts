@@ -77,8 +77,7 @@ export function useTransactionFetching({ address, chain, requested, setExtrinsic
             console.error('Error fetching transfers:', error);
             setTransfersTx({
                 hasMore: false,
-                isFetching: false,
-                transactions: []
+                isFetching: false
             });
         }
     }, [address, chain?.genesisHash, requested, setTransfersTx]);
@@ -130,8 +129,7 @@ export function useTransactionFetching({ address, chain, requested, setExtrinsic
             console.error('Error fetching extrinsics history:', error);
             setExtrinsicsTx({
                 hasMore: false,
-                isFetching: false,
-                transactions: []
+                isFetching: false
             });
         }
     }, [address, chain?.genesisHash, chain?.ss58Format, requested, setExtrinsicsTx]);

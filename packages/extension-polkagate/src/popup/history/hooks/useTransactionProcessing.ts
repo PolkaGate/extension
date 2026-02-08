@@ -5,7 +5,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { Extrinsics, TransactionDetail, Transfers } from '../../../util/types';
 import type { RecordTabStatus, RecordTabStatusGov } from '../hookUtils/types';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 
 import { formatString, log } from '../hookUtils/utils';
 
@@ -15,7 +15,7 @@ interface UseTransactionProcessingProps {
   chain: Chain | null | undefined;
   decimal: number | undefined;
   token: string | undefined;
-  onInitialLoadComplete: () => void;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 interface UseTransactionProcessingResult {
@@ -27,7 +27,7 @@ interface UseTransactionProcessingResult {
  * Processes raw transaction data from APIs into standardized format
  * Tracks initial fetch completion
  */
-export function useTransactionProcessing({ chain, decimal, extrinsicsTx, onInitialLoadComplete, receivedTx, token }: UseTransactionProcessingProps): UseTransactionProcessingResult {
+export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receivedTx, setIsLoading, token }: UseTransactionProcessingProps): UseTransactionProcessingResult {
   const [processedReceived, setProcessedReceived] = useState<TransactionDetail[] | undefined>(undefined);
   const [processedExtrinsics, setProcessedExtrinsics] = useState<TransactionDetail[] | undefined>(undefined);
 
@@ -37,26 +37,27 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, onIniti
     received: false
   });
 
-  // Store callback in ref to avoid dependency issues
-  const onInitialLoadCompleteRef = useRef(onInitialLoadComplete);
-
-  useEffect(() => {
-    onInitialLoadCompleteRef.current = onInitialLoadComplete;
-  }, [onInitialLoadComplete]);
-
   // Stable callback to check if both fetches are complete
   const checkAndNotifyComplete = useCallback(() => {
     if (initialFetchDoneRef.current.received && initialFetchDoneRef.current.extrinsics) {
-      onInitialLoadCompleteRef.current();
+      setIsLoading(false);
       log('All initial data loaded');
     }
-  }, []);
+  }, [setIsLoading]);
 
   // Process transfer transactions
   useEffect(() => {
     // fetching done and there is no receive items
     if (!receivedTx.hasMore && !receivedTx.isFetching && !receivedTx.transactions?.length) {
-      return setProcessedReceived([]);
+      setProcessedReceived([]);
+
+      if (!initialFetchDoneRef.current.received) {
+        initialFetchDoneRef.current.received = true;
+        log('Initial received fetch complete (empty)');
+        checkAndNotifyComplete();
+      }
+
+      return;
     }
 
     if (!receivedTx.transactions?.length) {
@@ -106,7 +107,15 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, onIniti
   useEffect(() => {
     // fetching done and there is no extrinsic items
     if (!extrinsicsTx.hasMore && !extrinsicsTx.isFetching && !extrinsicsTx.transactions?.length) {
-      return setProcessedExtrinsics([]);
+      setProcessedExtrinsics([]);
+
+      if (!initialFetchDoneRef.current.extrinsics) {
+        initialFetchDoneRef.current.extrinsics = true;
+        log('Initial extrinsics fetch complete (empty)');
+        checkAndNotifyComplete();
+      }
+
+      return;
     }
 
     if (!extrinsicsTx?.transactions?.length || !decimal) {
