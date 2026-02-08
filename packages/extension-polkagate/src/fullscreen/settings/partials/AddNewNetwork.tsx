@@ -149,30 +149,30 @@ function PolkadotJsUrlPicture({ show }: { show: boolean | undefined }): React.Re
   );
 }
 
-function GetPriceId({ chainName, isCheckingPriceId, price, setCheckingPriceId, setPrice }:
+function GetPriceId({ chainName, isCheckingPriceId, price, priceId, setCheckingPriceId, setPrice, setPriceId }:
   {
     chainName: string | undefined;
     isCheckingPriceId: boolean | undefined;
     price: number | null | undefined;
     setCheckingPriceId: React.Dispatch<React.SetStateAction<boolean | undefined>>;
     setPrice: React.Dispatch<React.SetStateAction<number | null | undefined>>;
+    priceId: string | undefined;
+    setPriceId: React.Dispatch<React.SetStateAction<string | undefined>>;
   }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const { currency } = useContext(CurrencyContext);
 
-  const [priceId, setPriceId] = useState<string>();
-
   const onPriceIdChange = useCallback((input: string) => {
     setPriceId(input);
     setPrice(undefined);
-  }, [setPrice]);
+  }, [setPrice, setPriceId]);
 
-  const getPrice = useCallback(async (priceId: string) => {
-    if (priceId) {
-      const maybePriceInfo = await getPrices([priceId], currency?.code?.toLowerCase());
+  const getPrice = useCallback(async (pId: string) => {
+    if (pId) {
+      const maybePriceInfo = await getPrices([pId], currency?.code?.toLowerCase());
 
-      return maybePriceInfo.prices?.[priceId.toLowerCase()]?.value;
+      return maybePriceInfo.prices?.[pId.toLowerCase()]?.value;
     }
 
     return null;
@@ -435,8 +435,10 @@ function AddNewNetwork({ closePopup }: Props): React.ReactElement {
               chainName={metadata?.chain}
               isCheckingPriceId={isCheckingPriceId}
               price={price}
+              priceId={priceId}
               setCheckingPriceId={setCheckingPriceId}
               setPrice={setPrice}
+              setPriceId={setPriceId}
             />
           }
           <DecisionButtons
