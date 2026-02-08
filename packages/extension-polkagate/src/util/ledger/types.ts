@@ -19,5 +19,9 @@ export type LedgerErrorStatus = 'warning' | 'error';
 
 export interface ConvertLedgerError {
   status: LedgerErrorStatus;
+  needCloseLedger?: boolean;
   message: string;
 }
+
+export type SignTransactionLedger = (message: Uint8Array, metadata: Uint8Array, accountOffset?: number, addressOffset?: number, address?: string, accountOptions?: Partial<AccountOptions>) => Promise<LedgerSignature>;
+export type SignMessageLedger = (message: Uint8Array, accountOffset?: number, addressOffset?: number, address?: string, accountOptions?: Partial<AccountOptions>) => Promise<LedgerSignature>;

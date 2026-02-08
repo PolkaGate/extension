@@ -1,7 +1,7 @@
 {
-  "author": "Jaco Greeff <jacogr@gmail.com>",
+  "author": "Kami Ekbatanifard <ekbatanifard@gmail.com>",
   "bugs": "https://github.com/polkagate/extension/issues",
-  "description": "A sample signer extension for the @polkadot/api",
+  "description": "A user-friendly wallet for seamless browser-based interaction with Polkadot/Substrate-based blockchains.",
   "engines": {
     "node": ">=18.18"
   },
@@ -15,9 +15,9 @@
   },
   "sideEffects": false,
   "type": "module",
-  "version": "1.24.1",
+  "version": "1.24.7",
   "dependencies": {
-    "@polkadot/api": "^16.4.8",
+    "@polkadot/api": "^16.5.4",
     "@polkadot/extension-base": "^0.47.5",
     "@polkadot/extension-inject": "^0.47.5",
     "@polkadot/extension-ui": "^0.47.5",

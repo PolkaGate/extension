@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
-import { watchStorage } from '@polkadot/extension-polkagate/src/util';
+import { getAndWatchStorage } from '@polkadot/extension-polkagate/src/util';
 import { ExtensionPopups, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
@@ -65,8 +65,8 @@ function Notifications(): React.ReactElement {
   const [hasNewNotification, setHasNewNotification] = useState<boolean>(false);
 
   useEffect(() => {
-    const unsubscribe = watchStorage(STORAGE_KEY.NOTIFICATIONS, (result: NotificationsType) => {
-      setHasNewNotification(Object.values(result.notificationMessages ?? []).flat().some(({ read }) => !read));
+    const unsubscribe = getAndWatchStorage(STORAGE_KEY.NOTIFICATIONS, (result: NotificationsType | undefined) => {
+      setHasNewNotification(Object.values(result?.notificationMessages ?? []).flat().some(({ read }) => !read));
     });
 
     return unsubscribe;

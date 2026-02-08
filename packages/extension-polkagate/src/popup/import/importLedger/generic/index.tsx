@@ -65,7 +65,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
   const [error, setError] = useState<string | null>(null);
   const [isAdvancedMode, setAdvancedMode] = useState<boolean>(false);
 
-  const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, POLKADOT_SLIP44);
+  const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh } = useGenericLedger(accountIndex, addressOffset, POLKADOT_SLIP44);
 
   const selectedAddresses = useMemo(() =>
     Object.entries(addressList).filter(([_, options]) => options.selected),
@@ -110,8 +110,10 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
 
         updateMeta(String(address), metaData)
           .then(() => {
+            setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
+            setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
+
             if (isAdvancedMode) {
-              setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
               switchToOrOpenTab('/', true);
             } else {
               finishedCountRef.current++;
@@ -121,9 +123,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
                 !hasNavigatedRef.current
               ) {
                 hasNavigatedRef.current = true;
-                setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER)
-                  .then(() => navigate('/'))
-                  .catch(console.error);
+                navigate('/') as void;
               }
             }
           }
@@ -178,7 +178,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
     setAddressList({ ..._addressList });
   }, [addressList]);
 
-  const hasError = !!ledgerWarning || !!error || !!ledgerError;
+  const hasError = !!error || !!ledgerError;
 
   return (
     <Stack direction='column' sx={{ maxHeight: 'calc(100vh - 260px)', minHeight: '545px', position: 'relative', width: '500px' }}>
@@ -242,9 +242,6 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
             src={ledgerErrorImage as string}
             sx={{ my: '65px' }}
           />}
-        {!!ledgerWarning &&
-          <LedgerErrorMessage error={ledgerWarning} />
-        }
         {(!!error || !!ledgerError) &&
           <LedgerErrorMessage error={error || ledgerError || ''} />
         }

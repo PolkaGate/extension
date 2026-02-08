@@ -33,7 +33,7 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
   useEffect(() => {
     const _recipientChainName = recipientChain?.text;
 
-    if (!isReadyToMakeTx || assetId === undefined || !senderChainName || !amountAsBN || !api || amountAsBN?.isZero() || !address || !token || !_recipientChainName || !recipientAddress || !address) {
+    if (!address || !amountAsBN || amountAsBN?.isZero() || !api || assetId === undefined || !isReadyToMakeTx || !senderChainName || !token || !_recipientChainName || !recipientAddress) {
       return;
     }
 

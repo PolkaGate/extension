@@ -45,7 +45,7 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
       : null
     , [newChain]);
 
-  const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
+  const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
 
   const networkOps = useRef(
     [{
@@ -78,6 +78,7 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
         updateMeta(String(address), metaData)
           .then(() => {
             setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
+            setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
             openOrFocusTab('/', true);
           })
           .catch(console.error);
@@ -117,7 +118,7 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
           value={genesis}
         />
       </Grid>
-      {!!chainSlip44 && !ledgerWarning && !ledgerError &&
+      {!!chainSlip44 && !ledgerError &&
         <ManualLedgerImport
           accountIndex={accountIndex}
           address={address}
@@ -130,9 +131,6 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
           setAddressOffset={setAddressOffset}
           style={{ marginTop: 0 }}
         />
-      }
-      {!!ledgerWarning &&
-        <LedgerErrorMessage error={ledgerWarning} />
       }
       {(!!error || !!ledgerError) && chainSlip44 &&
         <LedgerErrorMessage error={error || ledgerError || ''} />

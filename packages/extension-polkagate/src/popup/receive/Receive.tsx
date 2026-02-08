@@ -123,7 +123,7 @@ function SelectNetwork({ setSelectedChain }: SelectChainProp) {
           placeholder={t('🔍 Search networks')}
         />
       </Grid>
-      <Grid container item sx={{ maxHeight: '395px', minHeight: '395px', my: '10px', overflowY: 'auto' }}>
+      <Grid container item sx={{ display: 'block', maxHeight: '395px', minHeight: '395px', my: '10px', overflowY: 'auto' }}>
         {
           chainsToShow.map((chain, index) => {
             const chainName = chain.name;

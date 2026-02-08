@@ -47,7 +47,7 @@ function LedgerSignGeneric({ account, disabled, error, onCancel, onSignature, pa
     return null;
   }, [isGeneric, payloadGenesis]);
 
-  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
+  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
 
   useEffect(() => {
     if (ledgerError) {
@@ -95,8 +95,8 @@ function LedgerSignGeneric({ account, disabled, error, onCancel, onSignature, pa
       disabled={disabled}
       error={error}
       isBusy={isBusy || ledgerLoading}
+      isMetadataProofReady = { !!metadataProof}
       ledgerLocked={ledgerLocked}
-      ledgerWarning={ledgerWarning}
       onCancel={onCancel}
       onRefresh={onRefresh}
       onSignLedger={onSignLedger}
