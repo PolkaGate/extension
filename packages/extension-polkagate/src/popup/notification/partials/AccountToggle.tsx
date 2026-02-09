@@ -12,9 +12,10 @@ interface Props {
   checked: boolean;
   onSelect: (newSelect: string) => void;
   withDivider?: boolean;
+  showShortAddressID?: boolean;
 }
 
-function AccountToggle({ address, checked, onSelect, withDivider = true }: Props) {
+function AccountToggle({ address, checked, onSelect, showShortAddressID, withDivider = true }: Props) {
   const handleSelect = useCallback((event: ChangeEvent<HTMLInputElement>, _checked: boolean) => {
     const selected = event.target.value;
 
@@ -29,6 +30,7 @@ function AccountToggle({ address, checked, onSelect, withDivider = true }: Props
           genesisHash={POLKADOT_GENESIS_HASH}
           identiconSize={24}
           nameStyle={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+          showShortAddress={showShortAddressID}
           socialStyles={{ mt: 0 }}
           style={{
             fontSize: '12px',

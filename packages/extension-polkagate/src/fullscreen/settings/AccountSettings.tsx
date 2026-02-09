@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { Broom, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, Notification as NotificationIcon, ShieldSecurity } from 'iconsax-react';
+import { Broom, ColorSwatch, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, Notification as NotificationIcon, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ import DeriveAccount from '../home/DeriveAccount';
 import ExportAllAccounts from '../home/ExportAllAccounts';
 import RenameAccount from '../home/RenameAccount';
 import NotificationSettingsFS from '../notification/NotificationSettingsFS';
+import AddProxied from './addProxied/AddProxied';
 
 interface ActionBoxProps {
   Icon: Icon;
@@ -97,6 +98,13 @@ function AccountSettings(): React.ReactElement {
           />
         );
 
+      case ExtensionPopups.ADD_PROXIED:
+        return (
+          <AddProxied
+            closePopup={extensionPopupCloser}
+          />
+        );
+
       default:
         return null;
     }
@@ -110,6 +118,11 @@ function AccountSettings(): React.ReactElement {
             {t('Actions')}
           </Typography>
           <VelvetBox childrenStyle={{ columnGap: '4px', display: 'flex', flexDirection: 'row' }} style={{ margin: '20px 0', width: 'fit-content' }}>
+            <ActionBox
+              Icon={ColorSwatch}
+              label={t('Add Proxied')}
+              onClick={extensionPopupOpener(ExtensionPopups.ADD_PROXIED)}
+            />
             <ActionBox
               Icon={NotificationIcon}
               label={t('Notification')}
