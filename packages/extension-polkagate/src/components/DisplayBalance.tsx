@@ -62,6 +62,28 @@ function applyFormat(
     );
   }
 
+  // Check if formatBalance returned a SI unit for small values (micro, milli, etc.)
+  const formattedWithSi = formatBalance(value, { decimals: decimal, withSi: withSi ?? true, withUnit: false });
+  const parts = formattedWithSi.split(' ');
+
+  // If there's a SI unit suffix (second part exists and is a unit like 'm', 'µ', 'k', etc.)
+  if (parts.length > 1 && parts[1]) {
+    const siUnit = parts[1];
+    const [numPrefix, numPostfix] = parts[0].split('.');
+    const minor = numPostfix?.substring(0, decimalPoint) || '';
+
+    return (
+      <>
+        {numPrefix}{!isShort && minor ? '.' : ''}
+        {!isShort && minor && (
+          <span className='ui--FormatBalance-postfix'>{`00${minor}`.slice(-decimalPoint)}</span>
+        )}
+        <span className='ui--FormatBalance-unit' style={{ color: tokenColor ?? 'inherit' }}> {siUnit}{unitPost}</span>
+      </>
+    );
+  }
+
+  // Default formatting for regular values without SI units
   return createElement(prefix, postfix, unitPost, isShort, decimalPoint, tokenColor);
 }
 
