@@ -279,7 +279,7 @@ export const KODADOT_URL = 'https://kodadot.xyz';
 export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
 export enum ExtensionPopups {
-  ADD_PROXIED,
+  IMPORT_PROXIED,
   DAPPS,
   DERIVE,
   EXPORT,

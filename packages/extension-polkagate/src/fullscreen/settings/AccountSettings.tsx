@@ -1,8 +1,8 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack, Typography } from '@mui/material';
-import { Broom, ColorSwatch, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, Notification as NotificationIcon, ShieldSecurity } from 'iconsax-react';
+import { Container, Stack, Typography } from '@mui/material';
+import { Broom, Data2, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, Notification as NotificationIcon, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,7 +18,7 @@ import DeriveAccount from '../home/DeriveAccount';
 import ExportAllAccounts from '../home/ExportAllAccounts';
 import RenameAccount from '../home/RenameAccount';
 import NotificationSettingsFS from '../notification/NotificationSettingsFS';
-import AddProxied from './addProxied/AddProxied';
+import ImportProxied from './importProxied/ImportProxied';
 
 interface ActionBoxProps {
   Icon: Icon;
@@ -37,12 +37,14 @@ function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactE
   }, [navigate, onClick, path]);
 
   return (
-    <Stack direction='column' justifyContent='start' onClick={_onClick} rowGap='8px' sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-4px)' }, bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', height: '86px', minWidth: '141px', px: '10px', transition: 'all 250ms ease-out', width: 'fit-content' }}>
-      <Icon color='#AA83DC' size='24' style={{ marginTop: '17px' }} variant='Bulk' />
-      <Typography sx={{ display: 'flex', fontWeight: 700, width: 'fit-content' }} variant='B-2'>
-        {label}
-      </Typography>
-    </Stack>
+    <VelvetBox style={{ margin: 0, width: 'fit-content' }}>
+      <Stack direction='column' justifyContent='start' onClick={_onClick} rowGap='8px' sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-4px)' }, bgcolor: '#05091C', borderRadius: '14px', height: '86px', minWidth: '141px', px: '10px', transition: 'all 250ms ease-out', width: 'fit-content' }}>
+        <Icon color='#AA83DC' size='24' style={{ marginTop: '17px' }} variant='Bulk' />
+        <Typography sx={{ display: 'flex', fontWeight: 700, width: 'fit-content' }} variant='B-2'>
+          {label}
+        </Typography>
+      </Stack>
+    </VelvetBox>
   );
 }
 
@@ -98,9 +100,9 @@ function AccountSettings(): React.ReactElement {
           />
         );
 
-      case ExtensionPopups.ADD_PROXIED:
+      case ExtensionPopups.IMPORT_PROXIED:
         return (
-          <AddProxied
+          <ImportProxied
             closePopup={extensionPopupCloser}
           />
         );
@@ -117,17 +119,7 @@ function AccountSettings(): React.ReactElement {
           <Typography color='text.primary' fontSize='22px' mt='30px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
             {t('Actions')}
           </Typography>
-          <VelvetBox childrenStyle={{ columnGap: '4px', display: 'flex', flexDirection: 'row' }} style={{ margin: '20px 0', width: 'fit-content' }}>
-            <ActionBox
-              Icon={ColorSwatch}
-              label={t('Add Proxied')}
-              onClick={extensionPopupOpener(ExtensionPopups.ADD_PROXIED)}
-            />
-            <ActionBox
-              Icon={NotificationIcon}
-              label={t('Notification')}
-              onClick={extensionPopupOpener(ExtensionPopups.NOTIFICATION)}
-            />
+          <Container style={{ columnGap: '12px', display: 'flex', flexDirection: 'row', margin: 0, marginTop: '20px', width: 'fit-content' }}>
             <ActionBox
               Icon={Edit2}
               label={t('Rename Account')}
@@ -143,18 +135,33 @@ function AccountSettings(): React.ReactElement {
               label={t('Import Accounts')}
               path='/account/have-wallet'
             />
-            <ActionBox
-              Icon={ShieldSecurity}
-              label={t('Manage Website Access')}
-              onClick={extensionPopupOpener(ExtensionPopups.DAPPS)}
-            />
             {!selectedAccount?.isExternal &&
               <ActionBox
                 Icon={Broom}
                 label={t('Derive from Account')}
                 onClick={extensionPopupOpener(ExtensionPopups.DERIVE)}
               />}
-          </VelvetBox>
+          </Container>
+          <Typography color='text.primary' fontSize='22px' mt='30px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
+            {t('Options')}
+          </Typography>
+          <Container style={{ columnGap: '12px', display: 'flex', flexDirection: 'row', margin: 0, marginTop: '15px', width: 'fit-content' }}>
+            <ActionBox
+              Icon={Data2}
+              label={t('Import Proxied')}
+              onClick={extensionPopupOpener(ExtensionPopups.IMPORT_PROXIED)}
+            />
+            <ActionBox
+              Icon={NotificationIcon}
+              label={t('Notification')}
+              onClick={extensionPopupOpener(ExtensionPopups.NOTIFICATION)}
+            />
+            <ActionBox
+              Icon={ShieldSecurity}
+              label={t('Manage Website Access')}
+              onClick={extensionPopupOpener(ExtensionPopups.DAPPS)}
+            />
+          </Container>
           <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)} sx={{ bottom: '20px', cursor: 'pointer', position: 'absolute' }}>
             <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />
             <Typography sx={{ '&:hover': { color: '#AA83DC' }, color: '#BEAAD8', transition: 'all 250ms ease-out' }} variant='B-1'>

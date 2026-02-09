@@ -22,11 +22,11 @@ interface Props {
 }
 
 /**
- * AddProxied component provides a modal interface to check if the selected account on the selected chain has any proxied accounts.
+ * ImportProxied component provides a modal interface to check if the selected account on the selected chain has any proxied accounts.
  *
  * Only has been used in full-screen mode!
  */
-function AddProxied({ closePopup }: Props): React.ReactElement {
+function ImportProxied({ closePopup }: Props): React.ReactElement {
     const { t } = useTranslation();
     const { accounts } = useContext(AccountContext);
     const selectedAddress = useSelectedAccount()?.address;
@@ -104,7 +104,7 @@ function AddProxied({ closePopup }: Props): React.ReactElement {
             onClose={closePopup}
             open
             style={{ minHeight: '200px', padding: '16px' }}
-            title={t('Add Proxied')}
+            title={t('Import Proxied')}
         >
             <>
                 <Typography color='text.secondary' py='20px' textAlign='left' variant='B-4'>
@@ -168,4 +168,4 @@ function AddProxied({ closePopup }: Props): React.ReactElement {
     );
 }
 
-export default React.memo(AddProxied);
+export default React.memo(ImportProxied);
