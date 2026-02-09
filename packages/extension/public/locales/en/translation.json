@@ -908,5 +908,6 @@
   "Loading proof...": "",
   "Ledger is locked": "",
   "Ledger app is not open": "",
-  "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": ""
+  "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": "",
+  "Transferable balance is insufficient to cover the required fees.": ""
 }

@@ -6,7 +6,7 @@ import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/type
 import type { AnyNumber } from '@polkadot/types-codec/types';
 import type { BN } from '@polkadot/util';
 
-import { getSupportedAssets } from '@paraspell/sdk-pjs';
+import { CHAINS, getNativeAssets, getSupportedAssets, hasSupportForAsset, type TChain } from '@paraspell/sdk-pjs';
 import { Foreign, ForeignAbstract, getParaId, getRelayChainSymbol, isTLocation, Native, SUBSTRATE_CHAINS, type TCurrencyCore, type TSubstrateChain } from '@paraspell/sdk-pjs';
 
 import { decodeMultiLocation, isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
@@ -36,6 +36,16 @@ export function normalizeChainName(name: string): string {
 
   return name; // return unchanged if it doesn't match known pattern
 }
+
+export const isParaspellSupportedAsset = (chainName: string | undefined, symbol: string | undefined) => {
+  if (!chainName || !symbol) {
+    return;
+  }
+
+  const _chainName = normalizeChainName(chainName) as TSubstrateChain;
+
+  return hasSupportForAsset(_chainName, symbol);
+};
 
 export const isOnSameChain = (senderChainName: string | undefined, recipientChainName: string | undefined) => {
   if (!senderChainName || !recipientChainName) {
@@ -89,8 +99,12 @@ export function isNativeAsset(api: ApiPromise, token: string, assetId: number | 
   return nativeTokens.includes(token);
 }
 
-export function getCurrency(api: ApiPromise, token: string, assetId: number | string): TCurrencyCore {
-  if (isNativeAsset(api, token, assetId)) {
+export function getCurrency(chainName: string, token: string, assetId: number | string): TCurrencyCore {
+  const _chainName = normalizeChainName(chainName) as TChain;
+  const nativeAssets = getNativeAssets(_chainName);
+  const isNative = nativeAssets.find(({ symbol }) => symbol === token);
+
+  if (isNative) {
     return { symbol: Native(token) };
   }
 
@@ -110,8 +124,6 @@ export function getCurrency(api: ApiPromise, token: string, assetId: number | st
     const parsed = JSON.parse(assetId) as Record<string, unknown>;
 
     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      console.log('parsed:', parsed);
-
       const key = Object.keys(parsed)[0];
 
       const map = {
@@ -149,4 +161,14 @@ export const getLocation = (api: ApiPromise, id: BN): AnyNumber | object | undef
     interior: { X2: [palletInstance, generalIndex] },
     parents: 0
   };
+};
+
+export const isParaspellSupportedChain = (chain: string | undefined): boolean | undefined => {
+  if (!chain) {
+    return;
+  }
+
+  const normalized = chain.toLowerCase().replace(/\s+/g, '');
+
+  return !!CHAINS.find((c) => c.toLowerCase() === normalized);
 };
