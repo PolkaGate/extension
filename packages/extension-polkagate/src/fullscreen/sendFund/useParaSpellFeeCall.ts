@@ -57,6 +57,8 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
     transferType } = inputs ?? {};
 
   useEffect(() => {
+    setParaSpellState({});
+
     const _recipientChainName = recipientChain?.text;
     const amount = transferType === 'All'
       ? 'ALL'
