@@ -168,7 +168,7 @@ export const isParaspellSupportedChain = (chain: string | undefined): boolean | 
     return;
   }
 
-  const normalized = chain.toLowerCase().replace(/\s+/g, '');
+  const normalized = normalizeChainName(chain).toLowerCase().replace(/\s+/g, '');
 
   return !!CHAINS.find((c) => c.toLowerCase() === normalized);
 };

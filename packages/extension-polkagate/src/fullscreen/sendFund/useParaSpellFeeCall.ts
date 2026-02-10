@@ -33,7 +33,7 @@ interface ParaSpellState {
  * @param isReadyToMakeTx - Indicates whether inputs are finalized and tx can be prepared.
  * @param genesisHash - Genesis hash used to resolve chain API and sender chain.
  * @param inputs - Transfer inputs including amount, token, assetId, recipient and transfer type.
- * @param setError - State dispatcher used to report fee calculation or builder errors.
+ * @param setInputs
  * @param isSupportedByParaspell - Whether the current transfer flow is supported by Paraspell.
  *
  * @returns ParaSpellState containing:
@@ -45,7 +45,7 @@ interface ParaSpellState {
  * - Automatically sets `keepAlive(false)` for "All" transfers on same-chain operations.
  * - Normalizes chain names before building Paraspell transactions.
  */
-export default function useParaSpellFeeCall(address: string | undefined, isReadyToMakeTx: boolean | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, setError: React.Dispatch<React.SetStateAction<string | undefined>>, isSupportedByParaspell: boolean) {
+export default function useParaSpellFeeCall(address: string | undefined, isReadyToMakeTx: boolean | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>, isSupportedByParaspell: boolean) {
   const { chainName: senderChainName } = useChainInfo(genesisHash, true);
   const [paraSpellState, setParaSpellState] = useState<ParaSpellState>({});
 
@@ -111,7 +111,10 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
           });
         }).catch((err) => {
           if (!cancelled) {
-            setError('Something went wrong while calculating estimated fee!');
+            setInputs((prevInputs) => ({
+              ...prevInputs,
+              error: 'Something went wrong while calculating estimated fee!'
+            }));
           }
 
           console.error('fee calc error', err);
@@ -121,13 +124,14 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
         cancelled = true;
       };
     } catch (error: any) {
-      setError('Something went wrong while calculating estimated fee, try again later!');
-      console.log('Something went wrong:', error?.message);
+      setInputs((prevInputs) => ({
+        ...prevInputs,
+        error: 'Something went wrong while calculating estimated fee, try again later!'
+      }));
 
-      // eslint-disable-next-line no-useless-return
-      return;
+      return console.log('Something went wrong:', error?.message);
     }
-  }, [address, amountAsBN, assetId, isReadyToMakeTx, recipientChain?.text, recipientAddress, senderChainName, setError, token, transferType, isSupportedByParaspell, inputs?.transferType]);
+  }, [address, amountAsBN, assetId, isReadyToMakeTx, recipientChain?.text, recipientAddress, senderChainName, setInputs, token, transferType, isSupportedByParaspell, inputs?.transferType]);
 
   return paraSpellState;
 }

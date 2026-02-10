@@ -34,7 +34,6 @@ export default function SendFund(): React.ReactElement {
   const accountAssets = useAccountAssets(address);
 
   const [inputs, setInputs] = useState<Inputs>();
-  const [error, setError] = useState<string | undefined>();
   const [inputStep, setInputStep] = useState<INPUT_STEPS>(INPUT_STEPS.SENDER);
   const [flowStep, setFlowStep] = useState<TransactionFlowStep>(TRANSACTION_FLOW_STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
@@ -44,7 +43,7 @@ export default function SendFund(): React.ReactElement {
   const assetToTransfer = useMemo(() => accountAssets?.find((asset) => asset.genesisHash === genesisHash && String(asset.assetId) === assetId), [accountAssets, assetId, genesisHash]);
 
   const isReadyToMakeTx = inputStep === INPUT_STEPS.SUMMARY;
-  const { fee, isCrossChain, tx } = useFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setError, assetToTransfer, teleportState);
+  const { fee, isCrossChain, tx } = useFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setInputs, assetToTransfer, teleportState);
   const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee?.originFee.fee ? toBN(inputs?.fee?.originFee.fee) : undefined);
 
   useEffect(() => {
@@ -60,16 +59,6 @@ export default function SendFund(): React.ReactElement {
       };
     });
   }, [genesisHash, isCrossChain, fee, setInputs]);
-
-  useEffect(() => {
-    if (error) {
-      return;
-    }
-
-    setInputs((prevInputs) => {
-      return { ...prevInputs, error };
-    });
-  }, [error, setInputs]);
 
   useEffect(() => {
     tx && setInputs((prevInputs) => ({

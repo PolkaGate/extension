@@ -12,7 +12,7 @@ import { useChainInfo } from '@polkadot/extension-polkagate/src/hooks';
 
 import useLimitedFeeCall from './useLimitedFeeCall';
 import useParaSpellFeeCall from './useParaSpellFeeCall';
-import { isParaspellSupportedAsset, isParaspellSupportedChain } from './utils';
+import { isParaspellSupportedAsset, isParaspellSupportedChain, normalizeChainName } from './utils';
 
 /**
  * Unified fee + transaction preparation hook.
@@ -31,7 +31,7 @@ import { isParaspellSupportedAsset, isParaspellSupportedChain } from './utils';
  * @param isReadyToMakeTx - Indicates whether inputs are finalized and tx building can start.
  * @param genesisHash - Sender chain genesis hash used to resolve chain info/API.
  * @param inputs - Transfer form inputs (amount, token, assetId, recipient, chains, transfer type).
- * @param setError - React state dispatcher used to report builder/fee errors.
+ * @param setInputs -
  * @param assetToTransfer - Asset balance/metadata for the selected token.
  * @param teleportState - Teleport configuration/state used for cross-chain limited transfers.
  *
@@ -45,11 +45,11 @@ import { isParaspellSupportedAsset, isParaspellSupportedChain } from './utils';
  * - Returns partial/empty values until fees and tx are resolved.
  * - Memoizes output to avoid unnecessary downstream renders.
  */
-export default function useFeeCall(address: string | undefined, isReadyToMakeTx: boolean | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, setError: React.Dispatch<React.SetStateAction<string | undefined>>, assetToTransfer: FetchedBalance | undefined, teleportState: Teleport) {
-  const { chainName: senderChainName } = useChainInfo(genesisHash);
+export default function useFeeCall(address: string | undefined, isReadyToMakeTx: boolean | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>, assetToTransfer: FetchedBalance | undefined, teleportState: Teleport) {
+  const { chainName: senderChainName } = useChainInfo(genesisHash, true);
 
   const isCrossChain = useMemo(() => senderChainName && inputs?.recipientChain?.text
-    ? senderChainName !== inputs?.recipientChain?.text
+    ? normalizeChainName(senderChainName) !== normalizeChainName(inputs?.recipientChain?.text)
     : undefined
     , [inputs?.recipientChain?.text, senderChainName]);
 
@@ -58,7 +58,7 @@ export default function useFeeCall(address: string | undefined, isReadyToMakeTx:
     isParaspellSupportedAsset(senderChainName, inputs?.token)
     , [inputs?.token, senderChainName]);
 
-  const { paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setError, !!isSupportedByParaspell);
+  const { paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setInputs, !!isSupportedByParaspell);
   const { fee, tx } = useLimitedFeeCall(address, inputs?.assetId?.toString(), assetToTransfer, inputs, genesisHash, teleportState, isCrossChain, !!isSupportedByParaspell);
 
   return useMemo(() => ({
