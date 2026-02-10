@@ -43,8 +43,8 @@ function ShowChainInfo({ currencySign, metadata, price }: ShowChainInfoProps): R
   return (
     <Collapse in={true} orientation='vertical' sx={{ m: '20px 0 20px', width: '100%' }}>
       {metadata &&
-        <Stack alignItems='start' direction='column' sx={{ bgcolor: 'background.paper', borderRadius: '14px', display: 'felx', width: '100%' }}>
-          <Stack alignItems='start' direction='column' sx={{ display: 'felx', p: '20px 20px 10px', width: '100%' }}>
+        <Stack alignItems='start' direction='column' sx={{ bgcolor: 'background.paper', borderRadius: '14px', width: '100%' }}>
+          <Stack alignItems='start' direction='column' sx={{ p: '20px 20px 10px', width: '100%' }}>
             <Typography color='#7956A5' fontSize='11px' fontWeight={400} sx={{ alignItems: 'center', display: 'flex', letterSpacing: 1, mb: '15px', textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='S-1'>
               {t('Network information')}
             </Typography>
