@@ -19,7 +19,7 @@ export const getPrice = async (priceIds: string[] | undefined, currencyCode: str
     const priceId = Object.keys(maybePriceInfo.prices)[0];
 
     const price = priceId
-      ? maybePriceInfo.prices?.[priceId.toLowerCase()].value
+      ? maybePriceInfo.prices?.[priceId.toLowerCase()]?.value
       : undefined;
 
     return price

@@ -103,7 +103,11 @@ function AddNewNetwork({ closePopup }: Props): React.ReactElement {
       setLoading(false);
     };
 
-    getInfo().catch(console.error);
+    getInfo().catch((error) => {
+      console.error(error);
+      setLoading(false);
+      setError(true);
+    });
 
     return () => {
       if (api) {
@@ -123,7 +127,7 @@ function AddNewNetwork({ closePopup }: Props): React.ReactElement {
     }
   }, [endpoint]);
 
-  const handleSavings = useCallback(async(toSaveInfo: Record<string, UserAddedEndpoint>) => {
+  const handleSavings = useCallback(async (toSaveInfo: Record<string, UserAddedEndpoint>) => {
     await updateStorage(STORAGE_KEY.USER_ADDED_ENDPOINT, toSaveInfo).catch(console.error);
     await updateMetadata(metadata as unknown as MetadataDef).catch(console.error);
     metadata && await updateStorage(STORAGE_KEY.SELECTED_CHAINS, [metadata.genesisHash], true).catch(console.error);
@@ -131,7 +135,7 @@ function AddNewNetwork({ closePopup }: Props): React.ReactElement {
   }, [metadata]);
 
   const onAdd = useCallback(() => {
-    if (!metadata || !endpoint) {
+    if (!metadata || !endpoint || chainAlreadyExist) {
       return;
     }
 
@@ -152,7 +156,7 @@ function AddNewNetwork({ closePopup }: Props): React.ReactElement {
     };
 
     handleSavings(toSaveInfo).catch(console.error);
-  }, [endpoint, handleSavings, metadata, priceId]);
+  }, [chainAlreadyExist, endpoint, handleSavings, metadata, priceId]);
 
   const onClose = useCallback(() => {
     if (showSnackbar) { // is used to detect if a chain has been added
@@ -223,7 +227,7 @@ function AddNewNetwork({ closePopup }: Props): React.ReactElement {
           <DecisionButtons
             cancelButton
             direction='horizontal'
-            disabled={!endpoint}
+            disabled={!endpoint || chainAlreadyExist}
             isBusy={isLoading}
             onPrimaryClick={metadata ? onAdd : onCheck}
             onSecondaryClick={onClose}
