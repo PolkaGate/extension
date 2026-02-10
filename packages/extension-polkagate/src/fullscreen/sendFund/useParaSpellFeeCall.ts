@@ -36,7 +36,7 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
   useEffect(() => {
     const _recipientChainName = recipientChain?.text;
 
-    if (!isSupportedByParaspell || !isReadyToMakeTx || assetId === undefined || !senderChainName || !amountAsBN || !api || amountAsBN?.isZero() || !address || !token || !_recipientChainName || !recipientAddress || !address) {
+    if (!isSupportedByParaspell || !address || !amountAsBN || amountAsBN?.isZero() || !api || assetId === undefined || !isReadyToMakeTx || !senderChainName || !token || !_recipientChainName || !recipientAddress) {
       return;
     }
 
@@ -120,7 +120,7 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
       // eslint-disable-next-line no-useless-return
       return;
     }
-  }, [address, amountAsBN, api, assetId, isReadyToMakeTx, recipientChain?.text, recipientAddress, senderChainName, setError, token, transferType]);
+  }, [address, amountAsBN, api, assetId, isReadyToMakeTx, recipientChain?.text, recipientAddress, senderChainName, setError, token, transferType, isSupportedByParaspell]);
 
   return {
     isCrossChain,
