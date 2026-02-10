@@ -60,7 +60,8 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
     setParaSpellState({});
 
     const _recipientChainName = recipientChain?.text;
-    const amount = transferType === 'All'
+    const isTransferAll = transferType === 'All';
+    const amount = isTransferAll
       ? 'ALL'
       : isReadyToMakeTx
         ? amountAsBN?.toString() // may need to consider amountAsBN?.isZero()
@@ -80,7 +81,7 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
     // const feeCurrency = feeAssetId ? { location: feeAssetId } : { symbol: Native(nativeToken) };
 
     try {
-      const builder = !isCrossChain && inputs?.transferType === 'All'
+      const builder = !isCrossChain && isTransferAll
         ? Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
           .from(fromChain as TSubstrateChain)
           .to(toChain as TDestination)
@@ -133,7 +134,7 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
 
       return console.log('Something went wrong:', error?.message);
     }
-  }, [address, amountAsBN, assetId, isReadyToMakeTx, recipientChain?.text, recipientAddress, senderChainName, setInputs, token, transferType, isSupportedByParaspell, inputs?.transferType]);
+  }, [address, amountAsBN, assetId, isReadyToMakeTx, recipientChain?.text, recipientAddress, senderChainName, setInputs, token, transferType, isSupportedByParaspell]);
 
   return paraSpellState;
 }
