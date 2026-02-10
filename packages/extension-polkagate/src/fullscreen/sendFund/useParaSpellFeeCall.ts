@@ -11,6 +11,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { useChainInfo } from '@polkadot/extension-polkagate/src/hooks';
 import { BN_ZERO } from '@polkadot/util';
+import { evmToAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 import { getCurrency, isParaspellSupportedChain, normalizeChainName } from './utils';
 
@@ -24,7 +25,7 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
   const [isCrossChain, setIsCrossChain] = useState<boolean>();
   const [paraSpellState, setParaSpellState] = useState<ParaSpellState>({});
 
-  const isSupportedByParaspell = useMemo(() => senderChainName && isParaspellSupportedChain(senderChainName), [senderChainName]);
+  const isSupportedByParaspell = useMemo(() => !!senderChainName && isParaspellSupportedChain(senderChainName), [senderChainName]);
 
   const { amountAsBN,
     assetId,
@@ -53,6 +54,15 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
     const amount = transferType === 'All' ? 'ALL' : amountAsBN.toString();
 
     try {
+      console.log(
+        'address:', address,
+        'recipientAddress:', recipientAddress,
+        'fromChain:', fromChain,
+        'toChain:', toChain,
+        'amount:', amount,
+        'currency:', currency,
+      );
+
       const builder = Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
         .from(fromChain as TSubstrateChain)
         .to(toChain as TDestination)
@@ -60,6 +70,12 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
         // .feeAsset(feeCurrency) // - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
         .address(recipientAddress)
         .senderAddress(address);
+
+      // if (isEthereumAddress(address)) {
+      //   const substrateAddress = evmToAddress(address);
+
+      //   builder.ahAddress(substrateAddress);
+      // }
 
       let cancelled = false;
 
@@ -86,6 +102,9 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
           if (cancelled) {
             return;
           }
+
+          console.log('destination', info.destination.xcmFee.toString());
+          console.log('origin', info.origin.xcmFee.toString());
 
           setParaSpellState((pre) => ({
             ...(pre || {}),
