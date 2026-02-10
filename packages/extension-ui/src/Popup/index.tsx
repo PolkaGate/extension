@@ -25,12 +25,12 @@ export default function Popup(): React.ReactElement {
                     <ApiProvider>
                       <AlertProvider>
                         <FetchingProvider>
-                          <CurrencyProvider>
-                            <PricesProvider>
-                              <ReferendaProvider>
-                                <RequestsProvider>
-                                  <MediaProvider>
-                                    <UserAddedChainsProvider>
+                          <UserAddedChainsProvider>
+                            <CurrencyProvider>
+                              <PricesProvider>
+                                <ReferendaProvider>
+                                  <RequestsProvider>
+                                    <MediaProvider>
                                       <SelectedProvider>
                                         <AccountAssetProvider>
                                           <Loading>
@@ -38,12 +38,12 @@ export default function Popup(): React.ReactElement {
                                           </Loading>
                                         </AccountAssetProvider>
                                       </SelectedProvider>
-                                    </UserAddedChainsProvider>
-                                  </MediaProvider>
-                                </RequestsProvider>
-                              </ReferendaProvider>
-                            </PricesProvider>
-                          </CurrencyProvider>
+                                    </MediaProvider>
+                                  </RequestsProvider>
+                                </ReferendaProvider>
+                              </PricesProvider>
+                            </CurrencyProvider>
+                          </UserAddedChainsProvider>
                         </FetchingProvider>
                       </AlertProvider>
                     </ApiProvider>

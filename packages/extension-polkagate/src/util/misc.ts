@@ -112,7 +112,7 @@ export const getPriceIdByChainName = (chainName?: string, useAddedChains?: UserA
   }
 
   if (useAddedChains) {
-    const maybeUserAddedPriceId = Object.entries(useAddedChains).find(([_, { chain }]) => chain?.replace(/\s/g, '')?.toLowerCase() === chainName.toLowerCase())?.[1]?.priceId;
+    const maybeUserAddedPriceId = Object.entries(useAddedChains).find(([_, { chain }]) => sanitizeChainName(chain)?.toLowerCase() === chainName.toLowerCase())?.[1]?.priceId;
 
     if (maybeUserAddedPriceId) {
       return maybeUserAddedPriceId;
