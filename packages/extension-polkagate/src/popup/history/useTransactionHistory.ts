@@ -1,6 +1,8 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable camelcase */
+
 import type { AccountId } from '@polkadot/types/interfaces';
 import type { Extrinsics, TransactionDetail, Transfers } from '../../util/types';
 import type { FilterOptions, RecordTabStatus, RecordTabStatusGov, TransactionHistoryOutput } from './hookUtils/types';
@@ -125,42 +127,44 @@ export default function useTransactionHistory(address: AccountId | string | unde
     log(`Processing ${extrinsicsTx.transactions.length} extrinsics`);
 
     const extrinsicsHistoryFromSubscan: TransactionDetail[] = extrinsicsTx.transactions.map((extrinsic: Extrinsics): TransactionDetail => {
-      const action = extrinsic.call_module === 'nominationpools'
+      const { amount, call_module, calls, conviction, delegatee, fee, nominators, poolId, refId, success, voteType } = extrinsic;
+      const action = call_module === 'nominationpools'
         ? 'pool staking'
-        : extrinsic.call_module === 'convictionvoting'
+        : call_module === 'convictionvoting'
           ? 'governance'
-          : extrinsic.call_module === 'staking'
+          : call_module === 'staking'
             ? 'solo staking'
-            : extrinsic.call_module;
+            : call_module;
       const subAction = action === 'balances' ? 'send' : formatString(extrinsic.call_module_function);
-      const isAlreadyInHuman = (extrinsic.amount && typeof extrinsic.amount === 'string' && extrinsic.amount.indexOf('.') >= 0) || false;
-      const amount = extrinsic.amount !== undefined
+
+      const isAlreadyInHuman = typeof amount === 'string' && (amount.includes('.') || amount.length <= decimal);
+      const _amount = amount !== undefined
         ? isAlreadyInHuman
-          ? extrinsic.amount
-          : (Number(extrinsic.amount) / (10 ** decimal)).toString()
+          ? amount
+          : (Number(amount) / (10 ** decimal)).toString()
         : undefined;
 
       return {
         action,
-        amount,
+        amount: _amount,
         block: extrinsic.block_num,
-        calls: extrinsic.calls,
+        calls,
         chain,
         class: extrinsic.class,
-        conviction: extrinsic.conviction,
+        conviction,
         date: extrinsic.block_timestamp * 1000, // to be consistent with locally saved times
-        delegatee: extrinsic.delegatee,
-        fee: extrinsic.fee,
+        delegatee,
+        fee,
         from: { address: extrinsic.account_display.address, name: '' },
-        nominators: extrinsic.nominators,
-        poolId: extrinsic.poolId,
-        refId: extrinsic.refId,
+        nominators,
+        poolId,
+        refId,
         subAction,
-        success: extrinsic.success,
+        success,
         to: extrinsic.to ? { address: extrinsic.to, name: extrinsic.to_account_display?.display ?? '' } : undefined,
         token,
         txHash: extrinsic.extrinsic_hash,
-        voteType: extrinsic.voteType
+        voteType
       };
     });
 
