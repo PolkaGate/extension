@@ -17,7 +17,7 @@ export default function usePartialFee(
 ): BN | undefined | null {
   const [partialFee, setPartialFee] = useState<BN | null>();
 
-  const inputTransaction = inputs?.paraSpellTransaction;
+  const inputTransaction = inputs?.tx;
 
   useEffect((): void => {
     assetId && api && formatted && inputTransaction && inputTransaction.hasPaymentInfo &&

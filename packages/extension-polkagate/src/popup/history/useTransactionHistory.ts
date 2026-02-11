@@ -133,7 +133,7 @@ export default function useTransactionHistory(address: AccountId | string | unde
             ? 'solo staking'
             : extrinsic.call_module;
       const subAction = action === 'balances' ? 'send' : formatString(extrinsic.call_module_function);
-      const isAlreadyInHuman = (extrinsic.amount && extrinsic.amount.indexOf('.') >= 0) || false;
+      const isAlreadyInHuman = (extrinsic.amount && typeof extrinsic.amount === 'string' && extrinsic.amount.indexOf('.') >= 0) || false;
       const amount = extrinsic.amount !== undefined
         ? isAlreadyInHuman
           ? extrinsic.amount
