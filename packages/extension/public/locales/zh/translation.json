@@ -908,5 +908,6 @@
   "Loading proof...": "正在加载证明...",
   "Ledger is locked": "Ledger 已锁定",
   "Ledger app is not open": "Ledger 应用未打开",
-  "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": "在全屏设置中启用 AI 交易洞察，以获取对此交易请求的 AI 驱动说明。"
+  "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": "在全屏设置中启用 AI 交易洞察，以获取对此交易请求的 AI 驱动说明。",
+  "Transferable balance is insufficient to cover the required fees.": "可转账余额不足以支付所需费用。"
 }

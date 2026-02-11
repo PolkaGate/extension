@@ -908,5 +908,6 @@
   "Loading proof...": "Загрузка доказательства...",
   "Ledger is locked": "Ledger заблокирован",
   "Ledger app is not open": "Приложение Ledger не открыто",
-  "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": "Включите AI-анализ транзакций в полноэкранных настройках, чтобы получить объяснения этой транзакции с помощью ИИ."
+  "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": "Включите AI-анализ транзакций в полноэкранных настройках, чтобы получить объяснения этой транзакции с помощью ИИ.",
+  "Transferable balance is insufficient to cover the required fees.": "Переводимого баланса недостаточно для покрытия требуемых комиссий."
 }
