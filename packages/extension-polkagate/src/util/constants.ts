@@ -319,7 +319,7 @@ export const STORAGE_KEY = {
   CHECK_BALANCE_ON_ALL_CHAINS: 'checkBalancesOnAllChains',
   CURRENCY: 'currency',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
-  HISTORY: 'history',
+  HISTORY: 'txHistory',
   ICON_THEME: 'identiconType',
   IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN: 'accountsMigratedToAnyChain',
   IS_FORGOTTEN: 'isForgotten',

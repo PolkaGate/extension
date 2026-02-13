@@ -9,6 +9,7 @@ import type { FilterOptions, RecordTabStatus, RecordTabStatusGov, TransactionHis
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
+import { amountToHuman } from '@polkadot/extension-polkagate/src/util';
 import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { useChainInfo } from '../../hooks';
@@ -137,11 +138,11 @@ export default function useTransactionHistory(address: AccountId | string | unde
             : call_module;
       const subAction = action === 'balances' ? 'send' : formatString(extrinsic.call_module_function);
 
-      const isAlreadyInHuman = typeof amount === 'string' && (amount.includes('.') || amount.length <= decimal);
+      const isAlreadyInHuman = typeof amount === 'string' && (amount.includes('.') || amount.length < decimal);
       const _amount = amount !== undefined
         ? isAlreadyInHuman
           ? amount
-          : (Number(amount) / (10 ** decimal)).toString()
+          : amountToHuman(amount, decimal)
         : undefined;
 
       return {
