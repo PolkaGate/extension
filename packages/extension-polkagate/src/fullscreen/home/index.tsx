@@ -10,6 +10,7 @@ import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/conte
 import { AccountContext } from '../../components';
 import { useAlerts, useTranslation } from '../../hooks';
 import HomeLayout from '../components/layout';
+import CheckProxied from '../settings/importProxied/CheckProxied';
 import AccountList from './AccountList';
 import AccountsAdd from './AccountsAdd';
 import AssetsBars from './assetBars';
@@ -45,6 +46,7 @@ function HomePageFullScreen(): React.ReactElement {
         <AccountsAdd />
         <AccountList />
       </Stack>
+      <CheckProxied />
     </HomeLayout>
   );
 }

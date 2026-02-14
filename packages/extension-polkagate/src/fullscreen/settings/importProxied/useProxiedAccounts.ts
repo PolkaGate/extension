@@ -72,6 +72,8 @@ export function filterProxiedAccountsForDelegate(
             return delegateFormatted === delegateAddress;
         });
 
+        console.log('FOUND PROXIED :', foundProxies);
+
         if (foundProxies) {
             proxiedAccounts.push(...proxy[0].toHuman() as string);
         }
