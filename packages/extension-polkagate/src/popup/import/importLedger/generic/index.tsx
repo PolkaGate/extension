@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import LedgerErrorMessage from '@polkadot/extension-polkagate/src/popup/signing/ledger/LedgerErrorMessage';
+import { updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { POLKADOT_SLIP44, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import settings from '@polkadot/ui-settings';
@@ -112,6 +113,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
           .then(() => {
             setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
             setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
+            updateStorage(STORAGE_KEY.CHECK_PROXIED, [String(address)], true).catch(console.error);
 
             if (isAdvancedMode) {
               switchToOrOpenTab('/', true);
@@ -232,7 +234,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
                 ref={ref}
                 setAccountIndex={setAccountIndex}
                 setAddressOffset={setAddressOffset}
-              />
+                />
             }
           </Grid>
         }
