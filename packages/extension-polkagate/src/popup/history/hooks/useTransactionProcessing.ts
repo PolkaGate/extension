@@ -7,6 +7,8 @@ import type { RecordTabStatus, RecordTabStatusGov } from '../hookUtils/types';
 
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 
+import { amountToHuman } from '@polkadot/extension-polkagate/src/util';
+
 import { formatString, log } from '../hookUtils/utils';
 
 interface UseTransactionProcessingProps {
@@ -201,11 +203,11 @@ function parseAmount(amount: string | undefined, decimal: number): string | unde
     return undefined;
   }
 
-  const isAlreadyInHuman = amount.indexOf('.') >= 0;
+  const isAlreadyInHuman = typeof amount === 'string' && (amount.includes('.') || amount.length < decimal);
 
   if (isAlreadyInHuman) {
     return amount;
   }
 
-  return (Number(amount) / (10 ** decimal)).toString();
+  return amountToHuman(amount, decimal);
 }
