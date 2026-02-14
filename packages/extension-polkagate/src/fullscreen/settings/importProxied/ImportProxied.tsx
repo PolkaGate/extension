@@ -45,7 +45,7 @@ function ImportProxied({ closePopup }: Props): React.ReactElement {
         return proxiedAddresses.filter((proxiedAddress) => {
             const substrateAccountAddress = getSubstrateAddress(proxiedAddress);
 
-            return !accountAddressLookup.has(substrateAccountAddress ?? '');
+            return substrateAccountAddress && !accountAddressLookup.has(substrateAccountAddress);
         });
     }, [accounts, proxiedAddresses]);
 
@@ -84,19 +84,19 @@ function ImportProxied({ closePopup }: Props): React.ReactElement {
         }
 
         setIsBusy(true);
-        selectedProxied.forEach((address) => {
+
+        const promises = selectedProxied.map((address) => {
             const proxiedName = `Proxied ${toShortAddress(address)}`;
 
-            createAccountExternal(proxiedName, address, selectedGenesis)
-                .then(() => {
-                    setIsBusy(false);
-                    closePopup();
-                })
-                .catch((error: Error) => {
-                    setIsBusy(false);
-                    console.error(error);
-                });
+            return createAccountExternal(proxiedName, address, selectedGenesis);
         });
+
+        Promise.all(promises)
+            .finally(() => {
+                setIsBusy(false);
+                closePopup();
+            })
+            .catch(console.error);
     }, [closePopup, selectedAddress, selectedGenesis, selectedProxied]);
 
     return (

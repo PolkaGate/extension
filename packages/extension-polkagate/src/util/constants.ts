@@ -42,7 +42,7 @@ export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet
 
 export const ACALA_GENESIS_HASH = '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c';
 
-export const WESTMINT_GENESIS_HASH = '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9';
+export const WESTMINT_GENESIS_HASH = '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9'; // POLKADOT ASSET HUB
 export const STATEMINE_GENESIS_HASH = '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a'; // KUSAMA ASSET HUB
 export const STATEMINT_GENESIS_HASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f';
 export const PASEO_ASSET_HUB_GENESIS_HASH = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
@@ -279,6 +279,7 @@ export const KODADOT_URL = 'https://kodadot.xyz';
 export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
 export enum ExtensionPopups {
+  CHECK_PROXIED,
   IMPORT_PROXIED,
   DAPPS,
   DERIVE,
@@ -318,6 +319,7 @@ export const STORAGE_KEY = {
   ASSETS: 'migratedAssets',
   AUTO_LOCK: 'autoLock',
   CHECK_BALANCE_ON_ALL_CHAINS: 'checkBalancesOnAllChains',
+  CHECK_PROXIED: 'checkProxied',
   CURRENCY: 'currency',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   HISTORY: 'history',

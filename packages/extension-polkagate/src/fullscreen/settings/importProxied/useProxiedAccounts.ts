@@ -10,6 +10,7 @@ import type { HexString } from '@polkadot/util/types';
 import { useEffect, useState } from 'react';
 
 import { useChainInfo, useFormatted } from '@polkadot/extension-polkagate/src/hooks';
+import { getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
 
 /**
  * Fetches all proxy entries from the blockchain.
@@ -50,7 +51,8 @@ export async function fetchAllProxies(api: ApiPromise) {
  */
 export function filterProxiedAccountsForDelegate(
     proxies: [StorageKey<AnyTuple>, Codec][],
-    delegateAddress: string
+    delegateAddress: string,
+    convertToSubstrate?: boolean
 ): string[] {
     // Early return if no proxies exist
     if (proxies.length === 0) {
@@ -64,7 +66,11 @@ export function filterProxiedAccountsForDelegate(
         // Extract the proxy data structure: [Proxy[], reserved_balance]
         const fetchedProxy = (proxy[1].toPrimitive() as [Proxy[], number])[0];
 
-        const foundProxies = fetchedProxy.find(({ delegate }) => delegate === delegateAddress);
+        const foundProxies = fetchedProxy.find(({ delegate }) => {
+            const delegateFormatted = convertToSubstrate ? getSubstrateAddress(delegate) : delegate;
+
+            return delegateFormatted === delegateAddress;
+        });
 
         if (foundProxies) {
             proxiedAccounts.push(...proxy[0].toHuman() as string);
