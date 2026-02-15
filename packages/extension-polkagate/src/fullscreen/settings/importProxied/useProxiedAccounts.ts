@@ -72,8 +72,6 @@ export function filterProxiedAccountsForDelegate(
             return delegateFormatted === delegateAddress;
         });
 
-        console.log('FOUND PROXIED :', foundProxies);
-
         if (foundProxies) {
             proxiedAccounts.push(...proxy[0].toHuman() as string);
         }
@@ -117,8 +115,14 @@ export default function useProxiedAccounts(address: string | undefined, genesisH
             });
         }
 
+        let cancelled = false;
+
         fetchAllProxies(api)
             .then((proxies) => {
+                if (cancelled) { // To cancel setting if api, formatted, or genesisHash change while fetchAllProxies is in-flight
+                    return;
+                }
+
                 const proxiedAccounts = filterProxiedAccountsForDelegate(proxies, formatted);
 
                 setProxied({
@@ -128,6 +132,10 @@ export default function useProxiedAccounts(address: string | undefined, genesisH
                 });
             })
             .catch(console.error);
+
+            return () => {
+                cancelled = true;
+            };
     }, [api, formatted, genesisHash]);
 
     return proxied;

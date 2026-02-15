@@ -36,6 +36,8 @@ function useCheckProxied(accounts: AccountJson[]) {
 
                 setAccountsToCheck(toCheck);
                 setStorage(STORAGE_KEY.CHECK_PROXIED, toCheck).catch(console.error);
+
+                return;
             }
 
             setAccountsToCheck(accountsToFetch);
@@ -190,11 +192,11 @@ function CheckProxied() {
         });
 
         Promise.all(promises)
+            .catch(console.error)
             .finally(() => {
                 setIsBusy(false);
                 onClose();
-            })
-            .catch(console.error);
+            });
     }, [allFoundProxiedAccounts, onClose, selectedProxied]);
 
     const onSelectDeselectAll = useCallback(() => {
