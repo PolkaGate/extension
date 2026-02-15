@@ -40,3 +40,7 @@ export const extrinsicsReducer = (state: RecordTabStatusGov, action: ExtrinsicsA
       return state;
   }
 };
+
+export const keyMaker = (address: string, genesisHash: string) => {
+  return `${address}-${genesisHash}`;
+};

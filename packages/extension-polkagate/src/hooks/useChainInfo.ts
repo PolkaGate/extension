@@ -61,15 +61,20 @@ export default function useChainInfo(genesisHash: string | null | undefined, noA
       };
     }
 
-    const hasMatchingGenesis = api?.genesisHash?.toHex() === genesisHash;
+    const hasMatchingGenesisForAPI = api?.genesisHash?.toHex() === genesisHash;
+    const hasMatchingGenesisForChain = chain?.genesisHash === genesisHash;
 
     return {
       api: api === null
         ? null
-        : hasMatchingGenesis
+        : hasMatchingGenesisForAPI
           ? api
           : undefined,
-      chain,
+      chain: chain === null
+        ? null
+        : hasMatchingGenesisForChain
+          ? chain
+          : undefined,
       chainName,
       decimal: decimal ?? chain?.tokenDecimals,
       displayName,
