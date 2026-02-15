@@ -104,6 +104,7 @@ function HistoryFs(): React.ReactElement {
   useEffect(() => { // reset
     setExtraFilters(DEFAULT_EXTRA_FILTERS);
     setCount(0);
+    setPage(1);
   }, [tab, savedSelectedChain, selectedAccount]);
 
   return (

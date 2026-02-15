@@ -908,5 +908,6 @@
   "Loading proof...": "प्रमाण लोड हो रहा है...",
   "Ledger is locked": "लेजर लॉक है",
   "Ledger app is not open": "लेजर ऐप खुला नहीं है",
-  "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": "इस लेन-देन अनुरोध के लिए AI द्वारा संचालित व्याख्याएँ प्राप्त करने हेतु पूर्ण-स्क्रीन सेटिंग्स में AI ट्रांज़ैक्शन इनसाइट्स सक्षम करें।"
+  "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": "इस लेन-देन अनुरोध के लिए AI द्वारा संचालित व्याख्याएँ प्राप्त करने हेतु पूर्ण-स्क्रीन सेटिंग्स में AI ट्रांज़ैक्शन इनसाइट्स सक्षम करें।",
+  "Transferable balance is insufficient to cover the required fees.": "स्थानांतरित की जा सकने वाली शेष राशि आवश्यक शुल्क को कवर करने के लिए पर्याप्त नहीं है।"
 }

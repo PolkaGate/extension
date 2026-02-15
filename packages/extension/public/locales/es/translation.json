@@ -908,5 +908,6 @@
   "Loading proof...": "Cargando prueba...",
   "Ledger is locked": "Ledger está bloqueado",
   "Ledger app is not open": "La aplicación de Ledger no está abierta",
-  "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": "Activa los análisis de transacciones con IA en la configuración de pantalla completa para obtener explicaciones impulsadas por IA para esta solicitud de transacción."
+  "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": "Activa los análisis de transacciones con IA en la configuración de pantalla completa para obtener explicaciones impulsadas por IA para esta solicitud de transacción.",
+  "Transferable balance is insufficient to cover the required fees.": "El saldo transferible es insuficiente para cubrir las tarifas requeridas."
 }
