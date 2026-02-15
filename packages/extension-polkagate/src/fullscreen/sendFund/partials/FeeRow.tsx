@@ -6,8 +6,10 @@ import type { FeeInfo, Inputs } from '../types';
 
 import { Box, ClickAwayListener, Stack, Typography } from '@mui/material';
 import { deepEqual, type TAssetInfo } from '@paraspell/sdk-pjs';
+import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { encodeLocation } from '@polkadot/extension-polkagate/src/util';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { BN } from '@polkadot/util';
@@ -31,11 +33,17 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const { api, chainName, decimal, token } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
   const accountAssetsOnOrigin = useAccountAssets(address, genesisHash);
   const account = useAccount(address);
-  const { api, chainName, decimal, token } = useChainInfo(genesisHash);
   const feeAssets = usePayWithAsset(chainName);
+  const assetToTransfer = useMemo(() =>
+    accountAssetsOnOrigin?.find((asset) =>
+      asset.genesisHash === genesisHash && String(asset.assetId) === String(inputs.assetId)
+    ),
+    [accountAssetsOnOrigin, genesisHash, inputs.assetId]);
+  const transferableBalance = useMemo(() => getValue('transferable', assetToTransfer), [assetToTransfer]);
 
   const feeAssetsWithBalance = useMemo(() => {
     if (!feeAssets || !accountAssetsOnOrigin) {
@@ -139,6 +147,39 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
       : undefined
     , [feeInfo.destinationFee?.token, inputs.recipientChain?.text]);
 
+  useEffect(() => {
+    if (!feeInfo?.fee || !transferableBalance || inputs.transferType !== 'All') {
+      return;
+    }
+
+    if (feeInfo.token === inputs.token) {
+      let totalFeeInSendingToken = feeInfo.fee;
+
+      if (feeInfo.destinationFee && feeInfo.destinationFee.token === inputs.token) {
+        totalFeeInSendingToken = totalFeeInSendingToken.add(feeInfo.destinationFee.fee);
+      }
+
+      const amountToTransfer = transferableBalance.sub(totalFeeInSendingToken);
+      const isAvailableZero = transferableBalance.isZero();
+      const canNotTransfer = isAvailableZero || totalFeeInSendingToken.gte(transferableBalance);
+
+      if (canNotTransfer) {
+        setInputs((pre) => ({
+          ...(pre || {}),
+          error: t('Transferable balance is insufficient to cover the required fees.')
+        }));
+
+        return;
+      }
+
+      setInputs((pre) => ({
+        ...(pre || {}),
+        amountAsBN: amountToTransfer,
+        error: undefined
+      }));
+    }
+  }, [decimal, feeInfo, feeInfo.destinationFee, feeInfo.fee, feeInfo.token, inputs.token, inputs.transferType, setInputs, t, transferableBalance]);
+
   const onToggleTokenSelection = useCallback(() => {
     setOpenTokenList(!openTokenList);
   }, [openTokenList]);
@@ -220,6 +261,14 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
           </Stack>
           <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', my: '10px', width: '766px' }} />
         </>
+      }
+      {inputs?.error &&
+        <Stack alignItems='center' columnGap='4px' direction='row' paddingTop='2px'>
+          <Warning2 color='#FF4FB9' size='18px' variant='Bold' />
+          <Typography color='#FF4FB9' variant='B-4'>
+            {inputs.error}
+          </Typography>
+        </Stack>
       }
     </Stack>);
 }

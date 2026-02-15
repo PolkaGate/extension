@@ -12,14 +12,12 @@ import { useParams } from 'react-router-dom';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util';
-import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
-import { BN, BN_ZERO, noop } from '@polkadot/util';
+import { BN, noop } from '@polkadot/util';
 
 import { ActionButton, AssetLogo, DisplayBalance, Motion, MyTextField } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
 import NumberedTitle from './partials/NumberedTitle';
-import useLimitedFeeCall from './useLimitedFeeCall';
 import useWarningMessage from './useWarningMessage';
 import { getCurrency, normalizeChainName } from './utils';
 
@@ -29,12 +27,12 @@ interface Props {
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
 }
 
-export default function Step3Amount({ inputs, setInputs, teleportState }: Props): React.ReactElement {
+export default function Step3Amount({ inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const accountAssets = useAccountAssets(address);
-  const { api, chainName: senderChainName } = useChainInfo(genesisHash);
+  const { chainName: senderChainName } = useChainInfo(genesisHash, true);
   const decimal = inputs?.decimal;
 
   const [error, setError] = useState<string | undefined>();
@@ -42,10 +40,8 @@ export default function Step3Amount({ inputs, setInputs, teleportState }: Props)
   const assetToTransfer = useMemo(() => accountAssets?.find((asset) => asset.genesisHash === genesisHash && String(asset.assetId) === assetId), [accountAssets, assetId, genesisHash]);
   const transferableBalance = useMemo(() => getValue('transferable', assetToTransfer), [assetToTransfer]);
   const logoInfo = useMemo(() => getLogo2(genesisHash, assetToTransfer?.token), [assetToTransfer?.token, genesisHash]);
-  const isNativeToken = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
   const amountAsBN = useMemo(() => decimal ? amountToMachine(amount, decimal) : undefined, [amount, decimal]);
 
-  const { maxFee } = useLimitedFeeCall(address, assetId, assetToTransfer, inputs, genesisHash, teleportState);
   const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, inputs?.transferType ?? 'Normal', new BN(inputs?.fee?.originFee?.fee || 0));
 
   useEffect(() => {
@@ -56,14 +52,11 @@ export default function Step3Amount({ inputs, setInputs, teleportState }: Props)
   }, [amountAsBN, setInputs]);
 
   const onMaxClick = useCallback(() => {
-    if (!transferableBalance || !maxFee || !assetToTransfer) {
+    if (!transferableBalance || !assetToTransfer) {
       return setError(t('We’re updating your balance — please wait a moment and try again.'));
     }
 
-    const isAvailableZero = transferableBalance.isZero();
-    const _maxFee = isNativeToken ? maxFee : BN_ZERO;
-    const canNotTransfer = isAvailableZero || _maxFee.gte(transferableBalance);
-    const allAmount = canNotTransfer ? '0' : amountToHuman(transferableBalance.sub(_maxFee).toString(), decimal);
+    const allAmount = amountToHuman(transferableBalance.toString(), decimal);
 
     setError(undefined);
 
@@ -71,9 +64,10 @@ export default function Step3Amount({ inputs, setInputs, teleportState }: Props)
     setInputs((prevInputs) => ({
       ...(prevInputs || {}),
       amount: allAmount,
+      error: undefined,
       transferType: 'All'
     }));
-  }, [assetToTransfer, decimal, isNativeToken, maxFee, setInputs, t, transferableBalance]);
+  }, [assetToTransfer, decimal, setInputs, t, transferableBalance]);
 
   const onAmountChange = useCallback((value: string) => {
     if (!assetToTransfer || !decimal) {
@@ -92,6 +86,7 @@ export default function Step3Amount({ inputs, setInputs, teleportState }: Props)
     setInputs((prevInputs) => ({
       ...(prevInputs || {}),
       amount: value,
+      error: undefined,
       transferType: 'Normal'
     }));
   }, [assetToTransfer, decimal, setInputs, t, transferableBalance]);
@@ -102,9 +97,9 @@ export default function Step3Amount({ inputs, setInputs, teleportState }: Props)
     try {
       const { assetId, token } = inputs || {};
 
-      if (senderChainName && assetId !== undefined && token && api) {
+      if (senderChainName && assetId !== undefined && token) {
+        const currency = getCurrency(senderChainName, token, assetId);
         const _senderChainName = normalizeChainName(senderChainName);
-        const currency = getCurrency(api, token, assetId);
         const mayBeEDasBN = getExistentialDeposit(_senderChainName as TChain, currency);
 
         if (mayBeEDasBN && decimal !== undefined) {
@@ -118,7 +113,7 @@ export default function Step3Amount({ inputs, setInputs, teleportState }: Props)
 
       return maybeED;
     }
-  }, [api, decimal, inputs?.token, inputs?.assetId, senderChainName]);
+  }, [decimal, inputs, senderChainName]);
 
   const onMinClick = useCallback(() => {
     setError(undefined);
@@ -126,6 +121,7 @@ export default function Step3Amount({ inputs, setInputs, teleportState }: Props)
     setInputs((prevInputs) => ({
       ...(prevInputs || {}),
       amount: ED,
+      error: undefined,
       transferType: 'Normal'
     }));
   }, [ED, setInputs]);

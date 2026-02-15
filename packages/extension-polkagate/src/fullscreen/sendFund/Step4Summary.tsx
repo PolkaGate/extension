@@ -53,6 +53,7 @@ export default function Step4Summary({ canPayFee, inputs, setInputs }: Props): R
             token={inputs?.token}
             tokenColor={theme.palette.text.secondary}
             useAdaptiveDecimalPoint
+            withSi={false}
           />
         </Stack>
       </Stack>
