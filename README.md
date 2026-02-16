@@ -63,15 +63,15 @@ Steps to build the extension and view your changes in a browser:
     - if developing, after making changes - reload the extension
 
 
-Once added, you can create an account or import via multiple options. To view helpful videos follow our channel on [Youtube](https://youtube.com/@polkagate);
+Once added, you can create an account or import via multiple options. To view helpful docs visit our documents on [Gitbook](https://docs.polkagate.xyz);
 
 
 ### Testing
 
 * To run unit tests, first install dependencies using `yarn` then use: `yarn test`
 
-* Test on Westend blockchain:
+* Test on test networks:
 
-   - It is possible via the extension. To receive some westies (Westend's native token) for a created account use [Westend Faucet](https://matrix.to/#/#westend_faucet:matrix.org)
+   - To receive some test tokens visit [Polkadot Faucet](https://faucet.polkadot.io/)
 
-   - Note that you need to check 'Enable testnet chains' in the Menu/Settings to be able to work with Westend.
+   - Note that you need to enable 'Show Test Networks' in the Settings/Extension Settings to be able to work with test networks.
