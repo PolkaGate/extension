@@ -25,7 +25,7 @@ export interface Inputs {
   fee?: ParaspellFees;
   feeInfo?: FeeInfo | undefined; // fee extra info
   isCrossChain?: boolean;
-  paraSpellTransaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
+  tx?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   recipientAddress?: string | undefined;
   recipientChain?: DropdownOption | undefined; // NOTE: value cold be genesishash or para id!
   recipientGenesisHashOrParaId?: string | undefined;

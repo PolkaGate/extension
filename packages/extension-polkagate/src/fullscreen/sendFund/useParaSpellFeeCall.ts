@@ -7,25 +7,48 @@ import type { ISubmittableResult } from '@polkadot/types/types';
 import type { Inputs, ParaspellFees } from './types';
 
 import { Builder, type TDestination, type TSubstrateChain } from '@paraspell/sdk-pjs';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useChainInfo } from '@polkadot/extension-polkagate/src/hooks';
 import { BN_ZERO } from '@polkadot/util';
-import { evmToAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
-import { getCurrency, isParaspellSupportedChain, normalizeChainName } from './utils';
+import { getCurrency, normalizeChainName } from './utils';
 
 interface ParaSpellState {
   paraSpellFee?: ParaspellFees;
   paraSpellTransaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
 }
 
-export default function useParaSpellFeeCall(address: string | undefined, isReadyToMakeTx: boolean | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, setError: React.Dispatch<React.SetStateAction<string | undefined>>) {
-  const { api, chainName: senderChainName } = useChainInfo(genesisHash);
-  const [isCrossChain, setIsCrossChain] = useState<boolean>();
+/**
+ * Hook to build a Paraspell transfer transaction and estimate origin/destination
+ * XCM fees when the selected chain and transfer are supported by Paraspell.
+ *
+ * Uses `@paraspell/sdk-pjs` Builder to:
+ * - construct the transfer extrinsic
+ * - fetch transfer info including XCM fee estimates
+ *
+ * The hook runs only when all required parameters are available and the transfer
+ * is marked as Paraspell-supported.
+ *
+ * @param address - Sender account address.
+ * @param isReadyToMakeTx - Indicates whether inputs are finalized and tx can be prepared.
+ * @param genesisHash - Genesis hash used to resolve chain API and sender chain.
+ * @param inputs - Transfer inputs including amount, token, assetId, recipient and transfer type.
+ * @param setInputs
+ * @param isSupportedByParaspell - Whether the current transfer flow is supported by Paraspell.
+ *
+ * @returns ParaSpellState containing:
+ * - `paraSpellFee`: estimated origin and destination XCM fees
+ * - `paraSpellTransaction`: prepared SubmittableExtrinsic ready for signing/submission
+ *
+ * Notes:
+ * - Returns an empty object until fees and transaction are resolved.
+ * - Automatically sets `keepAlive(false)` for "All" transfers on same-chain operations.
+ * - Normalizes chain names before building Paraspell transactions.
+ */
+export default function useParaSpellFeeCall(address: string | undefined, isReadyToMakeTx: boolean | undefined, genesisHash: string | undefined, inputs: Inputs | undefined, setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>, isSupportedByParaspell: boolean) {
+  const { chainName: senderChainName } = useChainInfo(genesisHash, true);
   const [paraSpellState, setParaSpellState] = useState<ParaSpellState>({});
-
-  const isSupportedByParaspell = useMemo(() => !!senderChainName && isParaspellSupportedChain(senderChainName), [senderChainName]);
 
   const { amountAsBN,
     assetId,
@@ -35,41 +58,45 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
     transferType } = inputs ?? {};
 
   useEffect(() => {
-    const _recipientChainName = recipientChain?.text;
+    setParaSpellState({});
 
-    if (!isSupportedByParaspell || !address || !amountAsBN || amountAsBN?.isZero() || !api || assetId === undefined || !isReadyToMakeTx || !senderChainName || !token || !_recipientChainName || !recipientAddress) {
+    const _recipientChainName = recipientChain?.text;
+    const isTransferAll = transferType === 'All';
+    const amount = isTransferAll
+      ? 'ALL'
+      : isReadyToMakeTx
+        ? amountAsBN?.toString() // may need to consider amountAsBN?.isZero()
+        : undefined;
+
+    if (!isSupportedByParaspell || !amount || assetId === undefined || !senderChainName || !address || !token || !_recipientChainName || !recipientAddress) {
       return;
     }
 
     const fromChain = normalizeChainName(senderChainName);
     const toChain = normalizeChainName(_recipientChainName);
-
-    setIsCrossChain(fromChain !== toChain);
-    const currency = getCurrency(api, token, assetId);
+    const isCrossChain = fromChain !== toChain;
+    const currency = getCurrency(senderChainName, token, assetId);
 
     // const nativeToken = api.registry.chainTokens[0];
     // const feeAssetId = inputs?.feeInfo?.assetId;
     // const feeCurrency = feeAssetId ? { location: feeAssetId } : { symbol: Native(nativeToken) };
 
-    const amount = transferType === 'All' ? 'ALL' : amountAsBN.toString();
-
     try {
-      console.log(
-        'address:', address,
-        'recipientAddress:', recipientAddress,
-        'fromChain:', fromChain,
-        'toChain:', toChain,
-        'amount:', amount,
-        'currency:', currency,
-      );
-
-      const builder = Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
-        .from(fromChain as TSubstrateChain)
-        .to(toChain as TDestination)
-        .currency({ amount, ...currency })
-        // .feeAsset(feeCurrency) // - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
-        .address(recipientAddress)
-        .senderAddress(address);
+      const builder = !isCrossChain && isTransferAll
+        ? Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
+          .from(fromChain as TSubstrateChain)
+          .to(toChain as TDestination)
+          .currency({ amount, ...currency })
+          // .feeAsset(feeCurrency) // - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
+          .address(recipientAddress)
+          .senderAddress(address)
+          .keepAlive(false) // to drain the account completely
+        : Builder({ abstractDecimals: false })
+          .from(fromChain as TSubstrateChain)
+          .to(toChain as TDestination)
+          .currency({ amount, ...currency })
+          .address(recipientAddress)
+          .senderAddress(address);
 
       // if (isEthereumAddress(address)) {
       //   const substrateAddress = evmToAddress(address);
@@ -90,9 +117,9 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
             paraSpellTransaction: tx
           }));
         }).catch((err) => {
-          if (!cancelled) {
-            setError('Something went wrong while building transaction!');
-          }
+          // if (!cancelled) {
+          //   setError('Something went wrong while building transaction!');
+          // }
 
           console.error('building transaction error', err);
         });
@@ -115,7 +142,10 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
           }));
         }).catch((err) => {
           if (!cancelled) {
-            setError('Something went wrong while calculating estimated fee!');
+            setInputs((prevInputs) => ({
+              ...prevInputs,
+              error: 'Something went wrong while calculating estimated fee!'
+            }));
           }
 
           // @ts-ignore
@@ -133,16 +163,14 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
         cancelled = true;
       };
     } catch (error: any) {
-      setError('Something went wrong while calculating estimated fee, try again later!');
-      console.log('Something went wrong:', error?.message);
+      setInputs((prevInputs) => ({
+        ...prevInputs,
+        error: 'Something went wrong while calculating estimated fee, try again later!'
+      }));
 
-      // eslint-disable-next-line no-useless-return
-      return;
+      return console.log('Something went wrong:', error?.message);
     }
-  }, [address, amountAsBN, api, assetId, isReadyToMakeTx, recipientChain?.text, recipientAddress, senderChainName, setError, token, transferType, isSupportedByParaspell]);
+  }, [address, amountAsBN, assetId, isReadyToMakeTx, recipientChain?.text, recipientAddress, senderChainName, setInputs, token, transferType, isSupportedByParaspell]);
 
-  return {
-    isCrossChain,
-    ...paraSpellState
-  };
+  return paraSpellState;
 }

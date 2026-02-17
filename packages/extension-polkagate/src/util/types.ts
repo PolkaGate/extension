@@ -167,6 +167,7 @@ export interface TransactionDetail extends TxResult {
   delegatee?: string;
   deposit?: string;
   extra?: Record<string, string>;
+  forAccount: string;
   from: NameAddress;
   nominators?: string[];
   poolId?: string;
@@ -213,7 +214,7 @@ export interface TransferRequest {
   data: {
     list?: unknown;
     count: number;
-    transfers: Transfers[];
+    transfers: Transfers[] | null;
   };
   generated_at?: number;
   message?: string;
@@ -224,7 +225,7 @@ export interface ExtrinsicsRequest {
   code: number;
   data: {
     count: number;
-    extrinsics: Extrinsics[];
+    extrinsics: Extrinsics[] | null;
   };
   generated_at: number;
   message: string;
@@ -253,6 +254,7 @@ export interface Extrinsics {
   success: boolean,
   fee: string,
   fee_used: string,
+  forAccount: string;
   tip: string,
   finalized: true,
   account_display: {
@@ -278,7 +280,8 @@ export interface Transfers {
   block_num: number;
   block_timestamp: number;
   extrinsic_index: string;
-  fee: string | BN;
+  fee: string;
+  forAccount: string;
   from: string;
   from_account_display?: AccountDisplay;
   hash: string;

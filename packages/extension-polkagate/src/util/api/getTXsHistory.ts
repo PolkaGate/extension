@@ -8,11 +8,14 @@
 
 import type { Extrinsics, ExtrinsicsRequest } from '../types';
 
+import { keyMaker } from '@polkadot/extension-polkagate/src/popup/history/hookUtils/utils';
 import { hexToU8a } from '@polkadot/util';
 import { encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 import { getSubscanChainName } from '../chain';
+import getChainName from '../getChainName';
 import { fetchFromSubscan } from '..';
+import { nullObject } from './getGovHistory';
 
 // Common types
 interface AccountId {
@@ -148,34 +151,45 @@ interface ParamTypesMapping {
 
 const SUPPORTED_MODULES = ['balances', 'nominationpools', 'utility', 'proxy', 'staking', 'convictionvoting'];
 const PAGE_SIZE = 60;
-const nullObject = {
-  code: 0,
-  data: {
-    count: 0,
-    extrinsics: null
-  },
-  generated_at: Date.now(),
-  message: 'Success'
-} as unknown as ExtrinsicsRequest;
+
+function nullifier(requested: string) {
+  return {
+    code: 0,
+    data: {
+      count: 0,
+      extrinsics: null
+    },
+    for: requested,
+    generated_at: Date.now(),
+    message: 'Success'
+  };
+}
 
 /**
  * Fetches TXs history for a given address on a given chainName
- * @param chainName - Name of the blockchain
  * @param address - Account address
+ * @param genesisHash - genesis hash of the blockchain
  * @param pageNum - Page number for pagination
  * @param prefix - chain prefix
  * @returns Promise resolving to ExtrinsicsRequest
  */
-export async function getTXsHistory(chainName: string, address: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
-  if (!chainName || prefix === undefined) {
-    return Promise.resolve(nullObject);
+export async function getTXsHistory(address: string, genesisHash: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
+  const requested = keyMaker(address, genesisHash);
+
+  if (prefix === undefined) {
+    return Promise.resolve(nullifier(requested));
   }
 
   if (isEthereumAddress(address)) {
     return nullObject;
   }
 
-  const network = getSubscanChainName(chainName) as unknown as string;
+  const chainName = getChainName(genesisHash);
+  const network = getSubscanChainName(chainName);
+
+  if (!network) {
+    return nullifier(requested);
+  }
 
   const extrinsics = await fetchFromSubscan<ExtrinsicsRequest>(`https://${network}.api.subscan.io/api/v2/scan/extrinsics`, {
     address,
@@ -184,14 +198,14 @@ export async function getTXsHistory(chainName: string, address: string, pageNum:
   });
 
   if (!extrinsics.data.extrinsics) {
-    return nullObject;
+    return nullifier(requested);
   }
 
   const filteredModules = extrinsics.data.extrinsics.filter((extrinsic) => SUPPORTED_MODULES.includes(extrinsic.call_module));
 
   // Fetch details for each extrinsic using fetchFromSubscan
   const extrinsicsInfo = await Promise.all(
-    filteredModules.map(async (extrinsic) => {
+    filteredModules.map(async(extrinsic) => {
       try {
         const functionName = extrinsic.call_module_function as keyof ParamTypesMapping;
 
@@ -221,6 +235,10 @@ export async function getTXsHistory(chainName: string, address: string, pageNum:
     })
   );
 
+  for (const item of (extrinsicsInfo || [])) {
+    item.forAccount = address;
+  }
+
   return {
     ...extrinsics,
     data: {
@@ -228,7 +246,7 @@ export async function getTXsHistory(chainName: string, address: string, pageNum:
       count: extrinsics.data.count,
       extrinsics: extrinsicsInfo
     },
-    for: `${address} - ${chainName}`
+    for: requested
   };
 }
 

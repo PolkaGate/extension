@@ -1,5 +1,19 @@
 # Change Log
 
+## [1.24.11](https://github.com/polkagate/extension/compare/v1.24.10...v1.24.11) (2026-02-17)
+
+
+### Bug Fixes
+
+* remove unresponsive RPC endpoints from apps config ([#2117](https://github.com/polkagate/extension/issues/2117)) ([23de197](https://github.com/polkagate/extension/commit/23de197e726a8c8f0d8228c98bf047d472d90a8e))
+
+## [1.24.10](https://github.com/polkagate/extension/compare/v1.24.9...v1.24.10) (2026-02-10)
+
+
+### Bug Fixes
+
+* properly handle UserAddedChains by stripping extra words in chain names to ensure consistent processing ([#2112](https://github.com/polkagate/extension/issues/2112)) ([7d58905](https://github.com/polkagate/extension/commit/7d58905151d4be8c40db013c57623e4c89ad1baf))
+
 ## [1.24.9](https://github.com/polkagate/extension/compare/v1.24.8...v1.24.9) (2026-02-07)
 
 
