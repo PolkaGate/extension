@@ -13,7 +13,7 @@ import { AccountContext, ActionButton, DecisionButtons } from '@polkadot/extensi
 import { useChainInfo, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { createAccountExternal } from '@polkadot/extension-polkagate/src/messaging';
 import AccountToggle from '@polkadot/extension-polkagate/src/popup/notification/partials/AccountToggle';
-import { getAndWatchStorage, getSubstrateAddress, setStorage, toShortAddress } from '@polkadot/extension-polkagate/src/util';
+import { getAndWatchStorage, getSubstrateAddress, toShortAddress, updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { ExtensionPopups, STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
@@ -179,7 +179,7 @@ function CheckProxied() {
     }, []);
 
     const onClose = useCallback(() => {
-        setStorage(STORAGE_KEY.CHECK_PROXIED, { checkedAddresses: accountsToCheck ?? [], timestamp: Date.now() })
+        updateStorage(STORAGE_KEY.CHECK_PROXIED, { checkedAddresses: accountsToCheck ?? [], timestamp: Date.now() })
             .then(() => extensionPopupCloser())
             .catch(console.error);
     }, [accountsToCheck, extensionPopupCloser]);
