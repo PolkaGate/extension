@@ -8,8 +8,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
-import { updateStorage } from '@polkadot/extension-polkagate/src/util';
-import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { DecisionButtons, MatchPasswordField, Motion, MyTextField, PasswordInput } from '../../../components';
 import { useLocalAccounts, useTranslation } from '../../../hooks';
@@ -68,7 +66,6 @@ export default function ImportSeed(): React.ReactElement {
 
     try {
       await onConfirm({ seed: account.suri });
-      await updateStorage(STORAGE_KEY.CHECK_PROXIED, [account.address], true);
     } catch (e) {
       console.error(e);
     }

@@ -10,7 +10,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
-import { updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import settings from '@polkadot/ui-settings';
 
@@ -63,7 +62,6 @@ export default function LegacyApps({ setMode }: Props): React.ReactElement {
         .then(() => {
           setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
           setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
-          updateStorage(STORAGE_KEY.CHECK_PROXIED, [address], true).catch(console.error);
           openOrFocusTab('/', true);
         })
         .catch((error: Error) => {

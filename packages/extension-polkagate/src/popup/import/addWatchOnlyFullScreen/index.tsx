@@ -7,7 +7,7 @@ import React, { useCallback, useState } from 'react';
 
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
-import { setStorage, updateStorage } from '@polkadot/extension-polkagate/src/util';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 
@@ -36,7 +36,6 @@ export default function AddWatchOnlyFullScreen(): React.ReactElement {
         .then(() => {
           setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.WATCH_ONLY).catch(console.error);
           setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
-          updateStorage(STORAGE_KEY.CHECK_PROXIED, [realAddress], true).catch(console.error);
         })
         .finally(() =>
           switchToOrOpenTab('/', true)

@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
-import { updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { AUTO_LOCK_PERIOD_DEFAULT, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { stringToU8a, u8aToString } from '@polkadot/util';
 import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
@@ -138,13 +137,11 @@ export default function RestoreJson(): React.ReactElement {
     await batchRestore(encryptFile, password);
     const updateMetaList = accountToAddTime.map((address) => updateMeta(address, JSON.stringify({ addedTime: Date.now(), genesisHash: null })));
 
-    await updateStorage(STORAGE_KEY.CHECK_PROXIED, selected, true);
     await Promise.all(updateMetaList);
   }, [accountsInfo, filterAndEncryptFile, password, selectedAccountsInfo]);
 
   const handleRegularJson = useCallback(async(jsonFile: KeyringPair$Json) => {
     await jsonRestore(jsonFile, password);
-    await updateStorage(STORAGE_KEY.CHECK_PROXIED, [jsonFile.address], true);
   }, [password]);
 
   const onRestore = useCallback(async(): Promise<void> => {

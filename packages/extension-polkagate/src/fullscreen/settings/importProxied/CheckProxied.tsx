@@ -20,6 +20,8 @@ import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handl
 import { DraggableModal } from '../../components/DraggableModal';
 import { fetchAllProxies, filterProxiedAccountsForDelegate } from './useProxiedAccounts';
 
+const PROXIED_CHECK_INTERVAL = 6 * 60 * 60 * 1000; // 6 hours
+
 function useCheckProxied(accounts: AccountJson[]) {
     const { api: polkadotAPI } = useChainInfo(STATEMINT_GENESIS_HASH);
     const { api: kusamaAPI } = useChainInfo(STATEMINE_GENESIS_HASH);
@@ -29,18 +31,23 @@ function useCheckProxied(accounts: AccountJson[]) {
 
     useEffect(() => {
         const unsubscribe = getAndWatchStorage(STORAGE_KEY.CHECK_PROXIED, (load) => {
-            const accountsToFetch = load as string[] | undefined;
+            const checkProxied = load as { checkedAddresses: string[]; timestamp: number } | undefined;
+            const checkedAccounts = checkProxied?.checkedAddresses;
 
-            if (!accountsToFetch) { // if it is undefined means this feature is for the first time published
-                const toCheck = accounts.map(({ address }) => address);
+            let toCheck: string[] = [];
+            const isTimeExpired = ((checkProxied?.timestamp ?? 0) + PROXIED_CHECK_INTERVAL) < Date.now();
+
+            if (!checkedAccounts || isTimeExpired) { // if it is undefined means this feature is for the first time published
+                toCheck = accounts.map(({ address }) => address);
 
                 setAccountsToCheck(toCheck);
-                setStorage(STORAGE_KEY.CHECK_PROXIED, toCheck).catch(console.error);
 
                 return;
             }
 
-            setAccountsToCheck(accountsToFetch);
+            toCheck = accounts.filter(({ address }) => !checkedAccounts.includes(address)).map(({ address }) => address);
+
+            setAccountsToCheck(toCheck);
         });
 
         return unsubscribe;
@@ -116,13 +123,13 @@ function useCheckProxied(accounts: AccountJson[]) {
             .catch(console.error);
     }, [accountsToCheck, checkForProxied, kusamaAPI]);
 
-    return allFoundProxiedAccounts;
+    return { accountsToCheck, allFoundProxiedAccounts };
 }
 
 function CheckProxied() {
     const { t } = useTranslation();
     const { accounts } = useContext(AccountContext);
-    const allFoundProxiedAccounts = useCheckProxied(accounts);
+    const { accountsToCheck, allFoundProxiedAccounts } = useCheckProxied(accounts);
 
     const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
@@ -152,12 +159,12 @@ function CheckProxied() {
     const areAllSelected = selectedProxied.length === selectableProxiedAddresses?.length;
 
     useEffect(() => {
-        if (extensionPopup === ExtensionPopups.CHECK_PROXIED || !selectableProxiedAddresses || selectableProxiedAddresses.length === 0) {
+        if (extensionPopup === ExtensionPopups.CHECK_PROXIED || !selectableProxiedAddresses || selectableProxiedAddresses.length === 0 || accountsToCheck?.length === 0) {
             return;
         }
 
         extensionPopupOpener(ExtensionPopups.CHECK_PROXIED)();
-    }, [selectableProxiedAddresses, extensionPopup, extensionPopupOpener]);
+    }, [selectableProxiedAddresses, extensionPopup, extensionPopupOpener, accountsToCheck?.length]);
 
     const handleSelect = useCallback((newSelected: string) => {
         setSelectedProxied((prev) => {
@@ -172,10 +179,10 @@ function CheckProxied() {
     }, []);
 
     const onClose = useCallback(() => {
-        setStorage(STORAGE_KEY.CHECK_PROXIED, []) // when its done the to-check must set to []
+        setStorage(STORAGE_KEY.CHECK_PROXIED, { checkedAddresses: accountsToCheck ?? [], timestamp: Date.now() })
             .then(() => extensionPopupCloser())
             .catch(console.error);
-    }, [extensionPopupCloser]);
+    }, [accountsToCheck, extensionPopupCloser]);
 
     const onAdd = useCallback(() => {
         if (selectedProxied.length === 0) {
