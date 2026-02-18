@@ -130,7 +130,7 @@ function ImportProxied({ closePopup }: Props): React.ReactElement {
                     })}
                     {selectableProxiedAddresses && selectableProxiedAddresses.length === 0 && (
                         <Typography color='text.secondary' m='auto' textAlign='center' variant='B-4'>
-                            {t('No proxied accounts found for the selected account on this chain.')}
+                            {t('No proxied account found')}!
                         </Typography>
                     )}
                 </Stack>
