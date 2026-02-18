@@ -65,7 +65,7 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
     selectedChain && setInputs((prevInputs) => ({
       ...(prevInputs || {}),
       fee: undefined,
-      recipientChain: selectedChain,
+      recipientChain: selectedChain
     }));
   }, [destinationOptions, selectedChain, setInputs]);
 
