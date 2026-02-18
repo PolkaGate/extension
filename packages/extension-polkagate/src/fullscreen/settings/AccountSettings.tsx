@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { Broom, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, Notification as NotificationIcon, ShieldSecurity } from 'iconsax-react';
+import { Broom, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, Notification as NotificationIcon, ShieldSecurity, UserAdd } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ import DeriveAccount from '../home/DeriveAccount';
 import ExportAllAccounts from '../home/ExportAllAccounts';
 import RenameAccount from '../home/RenameAccount';
 import NotificationSettingsFS from '../notification/NotificationSettingsFS';
+import AddressBook from './addressBook';
 
 interface ActionBoxProps {
   Icon: Icon;
@@ -97,6 +98,13 @@ function AccountSettings(): React.ReactElement {
           />
         );
 
+      case ExtensionPopups.ADDRESS_BOOK:
+        return (
+          <AddressBook
+            closePopup={extensionPopupCloser}
+          />
+        );
+
       default:
         return null;
     }
@@ -134,6 +142,11 @@ function AccountSettings(): React.ReactElement {
               Icon={ShieldSecurity}
               label={t('Manage Website Access')}
               onClick={extensionPopupOpener(ExtensionPopups.DAPPS)}
+            />
+            <ActionBox
+              Icon={UserAdd}
+              label={t('Address Book')}
+              onClick={extensionPopupOpener(ExtensionPopups.ADDRESS_BOOK)}
             />
             {!selectedAccount?.isExternal &&
               <ActionBox

@@ -279,6 +279,7 @@ export const KODADOT_URL = 'https://kodadot.xyz';
 export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
 export enum ExtensionPopups {
+  ADDRESS_BOOK,
   DAPPS,
   DERIVE,
   EXPORT,
@@ -313,6 +314,7 @@ export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 
 export const STORAGE_KEY = {
   ACCOUNT_SELECTED_CHAIN: 'accountSelectedChain',
+  ADDRESS_BOOK: 'addressBook',
   AI_TX_INFO: 'aiTransactionInfo',
   ASSETS: 'migratedAssets',
   AUTO_LOCK: 'autoLock',
