@@ -144,6 +144,7 @@ function CreateAccount(): React.ReactElement {
               />
             </Typography>
             <ModeSwitch
+              accountType={accountType}
               isDefault={accountType === DEFAULT_TYPE}
               setAccountType={setAccountType}
             />

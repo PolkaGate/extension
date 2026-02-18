@@ -13,6 +13,7 @@ import { useChainInfo } from '@polkadot/extension-polkagate/src/hooks';
 import { BN_ZERO } from '@polkadot/util';
 
 import { getCurrency, normalizeChainName } from './utils';
+import { evmToAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 interface ParaSpellState {
   paraSpellFee?: ParaspellFees;
@@ -82,6 +83,9 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
     // const feeCurrency = feeAssetId ? { location: feeAssetId } : { symbol: Native(nativeToken) };
 
     try {
+
+      const substrateAddress = evmToAddress(address);
+
       const builder = !isCrossChain && isTransferAll
         ? Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
           .from(fromChain as TSubstrateChain)
@@ -91,18 +95,20 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
           .address(recipientAddress)
           .senderAddress(address)
           .keepAlive(false) // to drain the account completely
-        : Builder({ abstractDecimals: false })
-          .from(fromChain as TSubstrateChain)
-          .to(toChain as TDestination)
-          .currency({ amount, ...currency })
-          .address(recipientAddress)
-          .senderAddress(address);
-
-      // if (isEthereumAddress(address)) {
-      //   const substrateAddress = evmToAddress(address);
-
-      //   builder.ahAddress(substrateAddress);
-      // }
+        : isEthereumAddress(address)
+          ? Builder({ abstractDecimals: false })
+            .from(fromChain as TSubstrateChain)
+            .to(toChain as TDestination)
+            .currency({ amount, ...currency })
+            .address(recipientAddress)
+            .senderAddress(address)
+            .ahAddress(substrateAddress)
+          : Builder({ abstractDecimals: false })
+            .from(fromChain as TSubstrateChain)
+            .to(toChain as TDestination)
+            .currency({ amount, ...currency })
+            .address(recipientAddress)
+            .senderAddress(address);
 
       let cancelled = false;
 

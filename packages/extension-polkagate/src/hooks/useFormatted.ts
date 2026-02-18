@@ -27,7 +27,7 @@ export default function useFormatted(address: AccountId | string | undefined, ge
       let strAddress = String(address);
 
       if (isEthereumAddress(strAddress)) {
-        if (chainType === 'ethereum') {
+        if (!chainType || chainType === 'ethereum') {
         return strAddress;
         }
 

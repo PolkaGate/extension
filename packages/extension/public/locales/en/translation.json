@@ -909,5 +909,10 @@
   "Ledger is locked": "",
   "Ledger app is not open": "",
   "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": "",
-  "Transferable balance is insufficient to cover the required fees.": ""
+  "Transferable balance is insufficient to cover the required fees.": "",
+  "everything": "",
+  "Choose account type": "",
+  "account type": "",
+  "Polkadot & parachains": "",
+  "Moonbeam & other EVM networks": ""
 }

@@ -23,9 +23,10 @@ interface ChooseAccountMenuProps {
   onApply?: () => void;
   isSelectedAccountApplicable?: boolean; // to let enable apply on selected account
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>> | undefined;
+  showAll?: boolean;
 }
 
-export default function AccountListModal({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress }: ChooseAccountMenuProps): React.ReactElement {
+export default function AccountListModal({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress, showAll }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef<HTMLDivElement>(null);
@@ -121,7 +122,7 @@ export default function AccountListModal({ genesisHash, handleClose, isSelectedA
                           const isFirstAccount = accIndex === 0;
                           const isLast = accIndex === accounts.length - 1;
 
-                          if (isEvmChain !== (account.type === 'ethereum')) {
+                          if (!showAll && isEvmChain !== (account.type === 'ethereum')) {
                             return null;
                           }
 

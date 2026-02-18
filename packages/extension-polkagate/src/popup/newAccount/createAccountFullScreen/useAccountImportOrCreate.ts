@@ -52,7 +52,7 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ 
     }
   }, [validator]);
 
-  const onConfirm = useCallback(async({ isImport = true, seed, type }: {seed: string | undefined | null, type?: KeypairType, isImport?:boolean}) => {
+  const onConfirm = useCallback(async({ isImport = true, seed }: {seed: string | undefined | null, isImport?: boolean}) => {
     if (!name || !password || !seed) {
       return;
     }
