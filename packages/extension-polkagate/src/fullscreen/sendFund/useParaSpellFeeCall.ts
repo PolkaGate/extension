@@ -10,10 +10,9 @@ import { Builder, type TDestination, type TSubstrateChain } from '@paraspell/sdk
 import { useEffect, useState } from 'react';
 
 import { useChainInfo } from '@polkadot/extension-polkagate/src/hooks';
-import { BN_ZERO } from '@polkadot/util';
+import { evmToAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 import { getCurrency, normalizeChainName } from './utils';
-import { evmToAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 interface ParaSpellState {
   paraSpellFee?: ParaspellFees;
@@ -78,20 +77,14 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
     const isCrossChain = fromChain !== toChain;
     const currency = getCurrency(senderChainName, token, assetId);
 
-    // const nativeToken = api.registry.chainTokens[0];
-    // const feeAssetId = inputs?.feeInfo?.assetId;
-    // const feeCurrency = feeAssetId ? { location: feeAssetId } : { symbol: Native(nativeToken) };
-
     try {
-
-      const substrateAddress = evmToAddress(address);
+       const substrateAddress = evmToAddress(address);
 
       const builder = !isCrossChain && isTransferAll
         ? Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
           .from(fromChain as TSubstrateChain)
           .to(toChain as TDestination)
           .currency({ amount, ...currency })
-          // .feeAsset(feeCurrency) // - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
           .address(recipientAddress)
           .senderAddress(address)
           .keepAlive(false) // to drain the account completely
@@ -112,40 +105,19 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
 
       let cancelled = false;
 
-      builder.build()
-        .then((tx) => {
+      Promise.all([builder.build(), builder.getTransferInfo()])
+        .then(([tx, info]) => {
           if (cancelled) {
             return;
           }
 
-          setParaSpellState((pre) => ({
-            ...(pre || {}),
-            paraSpellTransaction: tx
-          }));
-        }).catch((err) => {
-          // if (!cancelled) {
-          //   setError('Something went wrong while building transaction!');
-          // }
-
-          console.error('building transaction error', err);
-        });
-
-      builder.getTransferInfo()
-        .then((info) => {
-          if (cancelled) {
-            return;
-          }
-
-          console.log('destination', info.destination.xcmFee.toString());
-          console.log('origin', info.origin.xcmFee.toString());
-
-          setParaSpellState((pre) => ({
-            ...(pre || {}),
+          setParaSpellState({
             paraSpellFee: {
               destinationFee: info.destination.xcmFee,
               originFee: info.origin.xcmFee
-            }
-          }));
+            },
+            paraSpellTransaction: tx
+          });
         }).catch((err) => {
           if (!cancelled) {
             setInputs((prevInputs) => ({
@@ -153,14 +125,6 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
               error: 'Something went wrong while calculating estimated fee!'
             }));
           }
-
-          // @ts-ignore
-          setParaSpellState((pre) => ({
-            ...(pre || {}),
-            paraSpellFee: {
-              originFee: { fee: BN_ZERO }
-            }
-          }));
 
           console.error('fee calc error', err);
         });
