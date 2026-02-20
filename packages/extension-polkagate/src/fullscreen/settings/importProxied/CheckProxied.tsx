@@ -223,6 +223,7 @@ function CheckProxied() {
             <DraggableModal
                 onClose={onClose}
                 open
+                showBackIconAsClose
                 style={{ minHeight: '200px', padding: '16px' }}
                 title={t('Import Proxied')}
             >

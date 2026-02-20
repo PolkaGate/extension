@@ -3,9 +3,11 @@
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
+import { idKey } from '@polkadot/extension-polkagate/src/assets/animations';
 import { AccountContext, ActionButton, DecisionButtons } from '@polkadot/extension-polkagate/src/components';
 import { useSelectedAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
@@ -103,17 +105,19 @@ function ImportProxied({ closePopup }: Props): React.ReactElement {
         <DraggableModal
             onClose={closePopup}
             open
-            style={{ minHeight: '200px', padding: '16px' }}
+            showBackIconAsClose
+            style={{ marginBottom: 0, minHeight: '200px', padding: '16px' }}
             title={t('Import Proxied')}
         >
-            <>
-                <Typography color='text.secondary' py='20px' textAlign='left' variant='B-4'>
+            <Grid container justifyContent='center'>
+                <DotLottieReact autoplay loop={ selectableProxiedAddresses === undefined } src={idKey as string} style={{ height: 110 }} />
+                <Typography color='text.secondary' pb='10px' textAlign='left' variant='B-4'>
                     {t('The accounts below are proxied by accounts already added to your extension. Select any to import as watch-only.')}
                 </Typography>
-                <Stack direction='column' sx={{ background: '#05091C', borderRadius: '14px', gap: '12px', height: '250px', m: '16px 6px', maxHeight: '250px', overflowY: 'auto', p: '16px' }}>
+                <Stack direction='column' sx={{ background: '#05091C', borderRadius: '14px', gap: '12px', height: '250px', m: '5px 09px 16px', maxHeight: '250px', overflowY: 'auto', p: '16px', width: '100%' }}>
                     {selectableProxiedAddresses === undefined &&
-                        Array.from({ length: 4 }).map((_, index) => (
-                            <StyledSkeleton key={index} />
+                        Array.from({ length: 6 }).map((_, index) => (
+                            <StyledSkeleton index={index} key={index} />
                         ))}
                     {selectableProxiedAddresses?.map((address) => {
                         const isSelected = selectedProxied.includes(address);
@@ -160,10 +164,10 @@ function ImportProxied({ closePopup }: Props): React.ReactElement {
                     isBusy={isBusy}
                     onPrimaryClick={onAdd}
                     onSecondaryClick={closePopup}
-                    primaryBtnText={t('Add to Extension ({{num}})', { replace: { num: selectedProxied.length } })}
+                    primaryBtnText={ selectedProxied.length ? t('Add to Extension ({{num}})', { replace: { num: selectedProxied.length } }) : t('Add to Extension')}
                     secondaryBtnText={t('Cancel')}
                 />
-            </>
+            </Grid>
         </DraggableModal>
     );
 }
