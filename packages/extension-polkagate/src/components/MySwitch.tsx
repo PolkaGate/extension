@@ -113,7 +113,7 @@ const StyledSwitch = styled(Switch, {
     '&.Mui-checked': {
       background: showHidden ? undefined : isDark ? '#EAEBF1' : '#3988FF',
       padding: showHidden ? 0 : 2,
-      transform: `translateX(${showHidden ? 10 : 13}px)`,
+      transform: showHidden ? 'translate(10px, 5%)' : 'translate(13px, 20%)', // horizontal + vertical for checked
       '& .MuiSwitch-thumb': {
         background: isDark ? '#EAEBF1' : '#3988FF'
       },
@@ -148,6 +148,7 @@ const StyledSwitch = styled(Switch, {
     background: isDark ? '#674394' : '#CCD2EA',
     boxSizing: 'border-box',
     height: 10.29,
+    transform: 'translateY(50%)', // proper vertical center
     transition: theme.transitions.create(['background-color', 'transform'], {
       duration: 300,
       easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
