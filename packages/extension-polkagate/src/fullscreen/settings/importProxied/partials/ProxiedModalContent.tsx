@@ -113,7 +113,7 @@ function ProxiedModalContent({ areAllSelected,
             }
             <DecisionButtons
                 cancelButton
-                direction='vertical'
+                direction='horizontal'
                 disabled={selectedProxied.length === 0}
                 isBusy={isBusy}
                 onPrimaryClick={onAdd}

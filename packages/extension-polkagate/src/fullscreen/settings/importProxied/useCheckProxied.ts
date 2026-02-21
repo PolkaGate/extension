@@ -21,13 +21,19 @@ const PROXIED_CHECK_INTERVAL = 6 * 60 * 60 * 1000; // 6 hours
  * accounts that haven't been checked yet (or whose check interval has expired).
  */
 export default function useCheckProxied(accounts: AccountJson[]) {
-    const { api: polkadotAPI } = useChainInfo(STATEMINT_GENESIS_HASH);
-    const { api: kusamaAPI } = useChainInfo(STATEMINE_GENESIS_HASH);
+    const emptyArray = accounts.length === 0;
+
+    const { api: polkadotAPI } = useChainInfo(emptyArray ? undefined : STATEMINT_GENESIS_HASH);
+    const { api: kusamaAPI } = useChainInfo(emptyArray ? undefined : STATEMINE_GENESIS_HASH);
 
     const [accountsToCheck, setAccountsToCheck] = useState<string[] | undefined>(undefined);
     const [allFoundProxiedAccounts, setAllFoundProxiedAccounts] = useState<ProxiedAccounts[] | undefined>(undefined);
 
     useEffect(() => {
+        if (emptyArray) {
+            return;
+        }
+
         const unsubscribe = getAndWatchStorage(STORAGE_KEY.CHECK_PROXIED, (load) => {
             const checkProxied = load as { checkedAddresses: string[]; timestamp: number } | undefined;
             const checkedAccounts = checkProxied?.checkedAddresses;
@@ -41,7 +47,7 @@ export default function useCheckProxied(accounts: AccountJson[]) {
         });
 
         return unsubscribe;
-    }, [accounts]);
+    }, [accounts, emptyArray]);
 
     const checkForProxied = useCallback(async(api: ApiPromise) => {
         if (!accountsToCheck) {

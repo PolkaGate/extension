@@ -11,8 +11,8 @@ import { AccountContext } from '@polkadot/extension-polkagate/src/components';
 import { useSelectedAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import { createAccountExternal, updateMeta } from '@polkadot/extension-polkagate/src/messaging';
-import { getSubstrateAddress, toShortAddress, updateStorage } from '@polkadot/extension-polkagate/src/util';
-import { ExtensionPopups, STATEMINE_GENESIS_HASH, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { getSubstrateAddress, setStorage, toShortAddress, updateStorage } from '@polkadot/extension-polkagate/src/util';
+import { ExtensionPopups, PROFILE_TAGS, STATEMINE_GENESIS_HASH, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { DraggableModal } from '../../components/DraggableModal';
@@ -37,14 +37,14 @@ interface CheckModeProps {
 
 type Props = ImportModeProps | CheckModeProps;
 
-const PROXIED_PROFILE_NAME = 'Proxied';
-
 const addProxied = async(address: string, genesisHash: HexString) => {
-    const proxiedName = `Proxied ${toShortAddress(address)}`;
+    const proxiedName = toShortAddress(address);
+
+    const metaData = JSON.stringify({ profile: PROFILE_TAGS.PROXIED });
 
     return Promise.all([
         createAccountExternal(proxiedName, address, genesisHash),
-        updateMeta(address, PROXIED_PROFILE_NAME)
+        updateMeta(address, metaData)
     ]);
 };
 
@@ -73,7 +73,7 @@ function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactEleme
         isImportMode ? selectedGenesis : undefined
     )?.proxied;
 
-    const { accountsToCheck, allFoundProxiedAccounts } = useCheckProxied(accounts);
+    const { accountsToCheck, allFoundProxiedAccounts } = useCheckProxied(isImportMode ? [] : accounts);
     const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
     const selectableProxiedAddresses = useMemo<SelectableProxied[] | undefined>(() => {
@@ -178,6 +178,7 @@ function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactEleme
             Promise.all(promises)
                 .finally(() => {
                     setIsBusy(false);
+                    setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.PROXIED).catch(console.error);
                     closePopup?.();
                 })
                 .catch(console.error);
@@ -198,6 +199,7 @@ function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactEleme
                 .catch(console.error)
                 .finally(() => {
                     setIsBusy(false);
+                    setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.PROXIED).catch(console.error);
                     onClose();
                 });
         }
