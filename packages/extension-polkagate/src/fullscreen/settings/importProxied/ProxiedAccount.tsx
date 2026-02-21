@@ -68,7 +68,7 @@ function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactEleme
 
     const selectedAddress = useSelectedAccount()?.address;
     const selectedGenesis = useAccountSelectedChain(selectedAddress);
-    const importedProxiedAddresses = useProxiedAccounts(
+    const fetchedProxiedAddresses = useProxiedAccounts(
         isImportMode ? selectedAddress : undefined,
         isImportMode ? selectedGenesis : undefined
     )?.proxied;
@@ -80,11 +80,11 @@ function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactEleme
         const accountAddressLookup = new Set(accounts.map(({ address }) => address));
 
         if (isImportMode) {
-            if (!importedProxiedAddresses) {
+            if (!fetchedProxiedAddresses) {
                 return undefined;
             }
 
-            return importedProxiedAddresses
+            return fetchedProxiedAddresses
                 .filter((addr) => { // Exclude accounts that are already proxied in the extension
                     const substrate = getSubstrateAddress(addr);
 
@@ -103,7 +103,7 @@ function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactEleme
                 .filter((addr) => !accountAddressLookup.has(getSubstrateAddress(addr) ?? ''))
                 .map((address) => ({ address, genesisHash }))
         );
-    }, [accounts, allFoundProxiedAccounts, importedProxiedAddresses, isImportMode, selectedGenesis]);
+    }, [accounts, allFoundProxiedAccounts, fetchedProxiedAddresses, isImportMode, selectedGenesis]);
 
     const [selectedProxied, setSelectedProxied] = useState<string[]>([]);
     const [isBusy, setIsBusy] = useState<boolean>(false);
