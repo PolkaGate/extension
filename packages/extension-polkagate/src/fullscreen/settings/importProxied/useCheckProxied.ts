@@ -11,7 +11,8 @@ import { useChainInfo } from '@polkadot/extension-polkagate/src/hooks';
 import { getAndWatchStorage } from '@polkadot/extension-polkagate/src/util';
 import { STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { fetchAllProxies, filterProxiedAccountsForDelegate } from './useProxiedAccounts';
+import { fetchAllProxies } from './utils/fetchAllProxies';
+import { filterProxiedAccountsForDelegate } from './utils/filterProxiedAccountsForDelegate';
 
 const PROXIED_CHECK_INTERVAL = 6 * 60 * 60 * 1000; // 6 hours
 
