@@ -25,16 +25,6 @@ function Tab({ initialAccountList, label }: { initialAccountList: AccountJson[] 
   const toggleHover = useCallback(() => setHovered(!hovered), [hovered]);
   const isSelected = selectedProfile === label;
 
-  // Since we may have display 'Address Book' as a label in Send Fund page,
-  // so we have to reset the selected profile to all, because there are now Address Book profile anywhere else!
-  useEffect(() => {
-    return () => {
-      if (selectedProfile === ADDRESS_BOOK_LABEL) {
-        setStorage(STORAGE_KEY.SELECTED_PROFILE, 'All').catch(console.error);
-      }
-    };
-  }, [selectedProfile]);
-
   const onClick = useCallback(() => {
     setStorage(STORAGE_KEY.SELECTED_PROFILE, label).catch(console.error);
   }, [label]);
@@ -66,10 +56,25 @@ function Tab({ initialAccountList, label }: { initialAccountList: AccountJson[] 
 function ProfileTabsFS({ initialAccountList, showAddressBook = false, width = '535px' }: { initialAccountList: AccountJson[] | undefined; showAddressBook?: boolean; width?: string; }): React.ReactElement {
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
   const containerRef = useRef<HTMLDivElement>(null);
+  const selectedProfile = useSelectedProfile();
+  const selectedProfileRef = useRef<string | undefined | null>(selectedProfile);
 
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [hovered, setIsHovered] = useState('');
+
+  useEffect(() => {
+    selectedProfileRef.current = selectedProfile;
+  }, [selectedProfile]);
+
+  // On unmount (modal close), reset if Address Book was the active profile.
+  useEffect(() => {
+    return () => {
+     if (selectedProfileRef.current === ADDRESS_BOOK_LABEL) {
+        setStorage(STORAGE_KEY.SELECTED_PROFILE, 'All').catch(console.error);
+      }
+    };
+ }, []); // empty deps — cleanup runs only on unmount
 
   const checkScroll = () => {
     const container = containerRef.current;

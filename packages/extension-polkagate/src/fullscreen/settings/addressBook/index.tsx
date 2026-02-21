@@ -78,13 +78,15 @@ function AddressBook({ closePopup }: Props): React.ReactElement {
     }, [reset]);
 
     const onAddContact = useCallback(() => {
-        if (!contactAddress || !name) {
+        const trimmedName = name?.trim();
+
+        if (!contactAddress || !trimmedName) {
             return;
         }
 
         const address = getSubstrateAddress(contactAddress) ?? contactAddress;
 
-        const newList = [...(addresses ?? []), { address, name }];
+        const newList = [...(addresses ?? []), { address, name: trimmedName }];
 
         setStorage(STORAGE_KEY.ADDRESS_BOOK, newList)
             .then(() => {
@@ -168,7 +170,7 @@ function AddressBook({ closePopup }: Props): React.ReactElement {
                         <ActionButton
                             StartIcon={Add}
                             contentPlacement='center'
-                            disabled={!name || !contactAddress || duplicatedError}
+                            disabled={!name?.trim() || !contactAddress || duplicatedError}
                             onClick={onAddContact}
                             style={{
                                 borderRadius: '8px',

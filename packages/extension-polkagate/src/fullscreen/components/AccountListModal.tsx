@@ -30,7 +30,7 @@ export default function AccountListModal({ genesisHash, handleClose, isSelectedA
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef<HTMLDivElement>(null);
-  const { categorizedAccounts: initialCategorizedAccounts, initialAccountList } = useCategorizedAccountsInProfiles(showAddressBook);
+  const { categorizedAccounts: initialCategorizedAccounts, initialAccountList } = useCategorizedAccountsInProfiles();
 
   const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountJson[]>>({});
   const [maybeSelected, setMayBeSelected] = useState<string | undefined>(isSelectedAccountApplicable ? selectedAccount?.address : undefined);

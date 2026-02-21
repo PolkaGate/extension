@@ -11,7 +11,6 @@ import useAccountsOrder from './useAccountsOrder';
 import useProfileAccounts from './useProfileAccounts';
 import useProfiles from './useProfiles';
 import useSelectedProfile from './useSelectedProfile';
-import { useAddressBook } from '.';
 
 export const ADDRESS_BOOK_LABEL = 'Address Book';
 
@@ -27,12 +26,11 @@ export const ADDRESS_BOOK_LABEL = 'Address Book';
  *
  * @returns {Record<string, any[]>} A dictionary mapping profile tags to lists of matching account entries.
  */
-export default function useCategorizedAccountsInProfiles(showAddressBook?: boolean): { initialAccountList: AccountJson[] | undefined, categorizedAccounts: Record<string, AccountJson[]> } {
+export default function useCategorizedAccountsInProfiles(): { initialAccountList: AccountJson[] | undefined, categorizedAccounts: Record<string, AccountJson[]> } {
   const initialAccountList = useAccountsOrder();
   const selectedProfile = useSelectedProfile();
   const { userDefinedProfiles } = useProfiles();
   const profileAccounts = useProfileAccounts(initialAccountList, selectedProfile);
-  const contacts = useAddressBook();
 
   const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountJson[]>>({});
 
@@ -62,11 +60,6 @@ export default function useCategorizedAccountsInProfiles(showAddressBook?: boole
         });
       }
 
-      // Adds address book contacts
-      if (showAddressBook && contacts && contacts.length > 0) {
-        categorized[ADDRESS_BOOK_LABEL] = contacts as AccountJson[];
-      }
-
       Object.assign(categorized, {
         [PROFILE_TAGS.LEDGER]: initialAccountList.filter(({ isHardware }) => isHardware),
         [PROFILE_TAGS.LOCAL]: initialAccountList.filter(({ isExternal }) => !isExternal),
@@ -75,16 +68,12 @@ export default function useCategorizedAccountsInProfiles(showAddressBook?: boole
       });
 
       setCategorizedAccounts(categorized);
-    } else if (selectedProfile === ADDRESS_BOOK_LABEL && contacts) { // Adds address book contacts
-      setCategorizedAccounts({
-        [ADDRESS_BOOK_LABEL]: contacts as AccountJson[]
-      });
     } else {
       setCategorizedAccounts({
         [selectedProfile]: profileAccountsData
       });
     }
-  }, [initialAccountList?.length, contacts, showAddressBook, profileAccounts, selectedProfile, userDefinedProfiles]);
+  }, [initialAccountList?.length, profileAccounts, selectedProfile, userDefinedProfiles]);
 
   return { categorizedAccounts, initialAccountList };
 }
