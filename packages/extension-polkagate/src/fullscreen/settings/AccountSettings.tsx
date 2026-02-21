@@ -18,7 +18,7 @@ import DeriveAccount from '../home/DeriveAccount';
 import ExportAllAccounts from '../home/ExportAllAccounts';
 import RenameAccount from '../home/RenameAccount';
 import NotificationSettingsFS from '../notification/NotificationSettingsFS';
-import ImportProxied from './importProxied/ImportProxied';
+import ProxiedAccount from './importProxied/ProxiedAccount';
 
 interface ActionBoxProps {
   Icon: Icon;
@@ -100,9 +100,7 @@ function AccountSettings(): React.ReactElement {
 
       case ExtensionPopups.IMPORT_PROXIED:
         return (
-          <ImportProxied
-            closePopup={extensionPopupCloser}
-          />
+          <ProxiedAccount closePopup={extensionPopupCloser} mode='import' />
         );
 
       default:
