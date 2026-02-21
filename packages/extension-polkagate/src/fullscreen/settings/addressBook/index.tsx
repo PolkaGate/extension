@@ -5,9 +5,9 @@ import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/src/uti
 
 import { Stack, Typography } from '@mui/material';
 import { Add, User, UserAdd } from 'iconsax-react';
-import React, { type Dispatch, memo, type SetStateAction, useCallback, useEffect, useState } from 'react';
+import React, { type Dispatch, memo, type SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { ActionButton, AddressInput, MyTextField } from '@polkadot/extension-polkagate/src/components';
+import { AccountContext, ActionButton, AddressInput, MyTextField } from '@polkadot/extension-polkagate/src/components';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getAndWatchStorage, getSubstrateAddress, setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
@@ -26,12 +26,15 @@ export interface Contact {
 
 function AddressBook({ closePopup }: Props): React.ReactElement {
     const { t } = useTranslation();
+    const { accounts } = useContext(AccountContext);
 
     const [addresses, setAddresses] = useState<Contact[] | undefined>(undefined);
     const [contactAddress, setContactAddress] = useState<string | undefined>();
     const [name, setName] = useState<string | undefined>();
     const [step, setStep] = useState<1 | 2>(1);
     const [duplicatedError, setDuplicatedError] = useState<boolean>(false);
+
+    const extensionAccounts = useMemo(() => accounts.map(({ address }) => address).concat(addresses?.map(({ address }) => address) ?? []), [accounts, addresses]);
 
     useEffect(() => {
         const unsubscribe = getAndWatchStorage(STORAGE_KEY.ADDRESS_BOOK, setAddresses);
@@ -43,13 +46,13 @@ function AddressBook({ closePopup }: Props): React.ReactElement {
         if (contactAddress && addresses) {
             const substrate = getSubstrateAddress(contactAddress);
 
-            setDuplicatedError(!!addresses.find(({ address }) => address === substrate)); // duplicated, address already exists
+            setDuplicatedError(!!extensionAccounts.find((address) => address === substrate)); // duplicated, address already exists
         }
 
         if (!contactAddress) {
             setDuplicatedError(false);
         }
-    }, [addresses, contactAddress]);
+    }, [addresses, contactAddress, extensionAccounts]);
 
     const onRemove = useCallback((addressToDelete: string) => () => {
         if (!addresses) {
