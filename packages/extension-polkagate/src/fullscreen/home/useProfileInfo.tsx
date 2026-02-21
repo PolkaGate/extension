@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Book1, ColorSwatch, Eye, Folder, type Icon, KeySquare, ScanBarcode, UserOctagon } from 'iconsax-react';
+import { Book, ColorSwatch, Eye, Folder, type Icon, KeySquare, ScanBarcode, UserOctagon } from 'iconsax-react';
 import { useMemo } from 'react';
 
 import { ADDRESS_BOOK_LABEL } from '@polkadot/extension-polkagate/src/hooks/useCategorizedAccountsInProfiles';
@@ -46,7 +46,7 @@ export default function useProfileInfo(label?: string | null): IconInfo {
         };
       case ADDRESS_BOOK_LABEL:
         return {
-          Icon: Book1,
+          Icon: Book,
           bgcolor: '#74687626',
           color: '#746876'
         };
