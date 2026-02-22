@@ -76,32 +76,49 @@ function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactEleme
     const { accountsToCheck, allFoundProxiedAccounts } = useCheckProxied(isImportMode ? [] : accounts);
     const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
-    const selectableProxiedAddresses = useMemo<SelectableProxied[] | undefined>(() => {
-        const accountAddressLookup = new Set(accounts.map(({ address }) => address));
+    const selectableProxiedAddresses = useMemo(() => {
+        const existingExtensionAddresses = new Set(accounts.map(({ address }) => address));
 
+        const isNotAlreadyInExtension = (rawAddress: string): boolean => {
+            const substrateAddress = getSubstrateAddress(rawAddress);
+
+            return !!substrateAddress && !existingExtensionAddresses.has(substrateAddress);
+        };
+
+        // --- Import Mode ---
+        // Only show proxied addresses fetched from the chain that aren't already in the extension
         if (isImportMode) {
             if (!fetchedProxiedAddresses) {
                 return undefined;
             }
 
             return fetchedProxiedAddresses
-                .filter((addr) => { // Exclude accounts that are already proxied in the extension
-                    const substrate = getSubstrateAddress(addr);
-
-                    return substrate && !accountAddressLookup.has(substrate);
-                })
+                .filter(isNotAlreadyInExtension)
                 .map((address) => ({ address, genesisHash: selectedGenesis as string }));
         }
 
-        // check mode
+        // --- Check Mode ---
+        // Aggregate proxied accounts across all chains, excluding duplicates and existing extension accounts
         if (!allFoundProxiedAccounts) {
             return undefined;
         }
 
+        const seenSubstrateAddresses = new Set<string>();
+
         return allFoundProxiedAccounts.flatMap(({ genesisHash, proxied }) =>
             proxied
-                .filter((addr) => !accountAddressLookup.has(getSubstrateAddress(addr) ?? ''))
-                .map((address) => ({ address, genesisHash }))
+                .filter(isNotAlreadyInExtension)
+                .flatMap((rawAddress) => {
+                    const substrateAddress = getSubstrateAddress(rawAddress);
+
+                    if (!substrateAddress || seenSubstrateAddresses.has(substrateAddress)) {
+                        return [];
+                    }
+
+                    seenSubstrateAddresses.add(substrateAddress);
+
+                    return [{ address: rawAddress, genesisHash }];
+                })
         );
     }, [accounts, allFoundProxiedAccounts, fetchedProxiedAddresses, isImportMode, selectedGenesis]);
 
