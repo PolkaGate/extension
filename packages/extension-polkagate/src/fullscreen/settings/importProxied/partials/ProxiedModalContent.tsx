@@ -41,15 +41,13 @@ function ProxiedModalContent({ areAllSelected,
 
     return (
         <>
-            {isImportMode && (
-                <DotLottieReact
-                    autoplay
-                    loop={isLoading}
-                    src={idKey as string}
-                    style={{ height: 110 }}
-                />
-            )}
-            <Typography color='text.secondary' pb={isImportMode ? '10px' : undefined} py={isImportMode ? undefined : '20px'} textAlign='left' variant='B-4'>
+            <DotLottieReact
+                autoplay
+                loop={isLoading}
+                src={idKey as string}
+                style={{ height: 110 }}
+            />
+            <Typography color='text.secondary' p={'0 4px 10px'} textAlign='left' variant='B-4'>
                 {t('The accounts below are already proxied by accounts in your extension. Select any to import them.')}
             </Typography>
             <Stack
@@ -57,12 +55,12 @@ function ProxiedModalContent({ areAllSelected,
                 sx={{
                     background: '#05091C',
                     borderRadius: '14px',
-                    gap: isImportMode ? '12px' : '8px',
+                    gap: '12px',
                     height: '250px',
-                    ...(isImportMode ? { m: '5px 09px 16px' } : { my: '10px' }),
+                    m: '5px 0px 16px',
                     maxHeight: '250px',
                     overflowY: 'auto',
-                    p: isImportMode ? '16px' : '8px',
+                    p: '16px',
                     width: '100%'
                 }}
             >
@@ -100,7 +98,7 @@ function ProxiedModalContent({ areAllSelected,
                             borderRadius: '8px',
                             height: '32px',
                             marginBottom: '18px',
-                            ...(isImportMode ? { marginTop: '-10px' } : {}),
+                            marginTop: '-10px',
                             width: 'fit-content'
                         }}
                         text={areAllSelected

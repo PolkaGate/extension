@@ -3,6 +3,7 @@
 
 import type { StorageKey } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
+//@ts-ignore
 import type { PalletProxyProxyDefinition } from '@polkadot/types/lookup';
 import type { Vec } from '@polkadot/types-codec';
 import type { AnyTuple, Codec, ITuple } from '@polkadot/types-codec/types';
