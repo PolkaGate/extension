@@ -12,7 +12,7 @@ import { useSelectedAccount, useTranslation } from '@polkadot/extension-polkagat
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import { createAccountExternal, updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import { getSubstrateAddress, setStorage, toShortAddress, updateStorage } from '@polkadot/extension-polkagate/src/util';
-import { ExtensionPopups, PROFILE_TAGS, STATEMINE_GENESIS_HASH, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { ExtensionPopups, STATEMINE_GENESIS_HASH, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { DraggableModal } from '../../components/DraggableModal';
