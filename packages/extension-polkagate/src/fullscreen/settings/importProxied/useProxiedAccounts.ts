@@ -30,7 +30,7 @@ export default function useProxiedAccounts(address: string | undefined, genesisH
     const { api } = useChainInfo(genesisHash);
     const formatted = useFormatted(address, genesisHash);
 
-    const [proxied, setProxied] = useState<ProxiedAccounts>();
+    const [proxiedAccounts, setProxied] = useState<ProxiedAccounts>();
 
     useEffect(() => {
         if (!formatted || !genesisHash || !api) {
@@ -54,11 +54,11 @@ export default function useProxiedAccounts(address: string | undefined, genesisH
                     return;
                 }
 
-                const proxiedAccounts = filterProxiedAccountsForDelegate(proxies, formatted);
+                const proxied = filterProxiedAccountsForDelegate(proxies, formatted);
 
                 setProxied({
                     genesisHash: api.genesisHash.toHex(),
-                    proxied: proxiedAccounts,
+                    proxied,
                     proxy: formatted
                 });
             })
@@ -69,5 +69,5 @@ export default function useProxiedAccounts(address: string | undefined, genesisH
             };
     }, [api, formatted, genesisHash]);
 
-    return proxied;
+    return proxiedAccounts;
 }

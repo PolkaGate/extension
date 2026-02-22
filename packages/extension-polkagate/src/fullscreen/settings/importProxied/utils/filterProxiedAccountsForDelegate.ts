@@ -1,11 +1,15 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Proxy } from '@polkadot/extension-polkagate/src/util/types';
 import type { StorageKey } from '@polkadot/types';
-import type { AnyTuple, Codec } from '@polkadot/types-codec/types';
+import type { Balance } from '@polkadot/types/interfaces';
+import type { PalletProxyProxyDefinition } from '@polkadot/types/lookup';
+import type { Vec } from '@polkadot/types-codec';
+import type { AnyTuple, Codec, ITuple } from '@polkadot/types-codec/types';
 
 import { getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
+
+type ProxyValue = ITuple<[Vec<PalletProxyProxyDefinition>, Balance]>;
 
 /**
  * Filters proxy entries to find accounts that have delegated proxy rights to a specific address.
@@ -26,26 +30,25 @@ export function filterProxiedAccountsForDelegate(
     delegateAddress: string,
     convertToSubstrate?: boolean
 ): string[] {
-    // Early return if no proxies exist
     if (proxies.length === 0) {
         return [];
     }
 
     const proxiedAccounts: string[] = [];
 
-    // Iterate through all proxy entries
-    for (const proxy of proxies) {
-        // Extract the proxy data structure: [Proxy[], reserved_balance]
-        const fetchedProxy = (proxy[1].toPrimitive() as [Proxy[], number])[0];
+    for (const [storageKey, codec] of proxies) {
+        const value = codec as ProxyValue;
+        const proxyDefs = value[0];
 
-        const foundProxies = fetchedProxy.find(({ delegate }) => {
-            const delegateFormatted = convertToSubstrate ? getSubstrateAddress(delegate) : delegate;
+        const hasMatch = proxyDefs.some(({ delegate }) =>
+            (convertToSubstrate
+                ? getSubstrateAddress(delegate.toString())
+                : delegate.toString()
+            ) === delegateAddress
+        );
 
-            return delegateFormatted === delegateAddress;
-        });
-
-        if (foundProxies) {
-            proxiedAccounts.push(...proxy[0].toHuman() as string);
+        if (hasMatch) {
+            proxiedAccounts.push(storageKey.args[0].toString());
         }
     }
 
