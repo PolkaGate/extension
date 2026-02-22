@@ -6,6 +6,8 @@ import { useMemo } from 'react';
 
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
+import { PROXIED_PROFILE_LABEL } from '../settings/importProxied/ProxiedAccount';
+
 interface IconInfo {
   Icon: Icon;
   bgcolor?: string;
@@ -43,7 +45,7 @@ export default function useProfileInfo(label?: string | null): IconInfo {
           bgcolor: '#3988FF26',
           color: '#3988FF'
         };
-      case PROFILE_TAGS.PROXIED:
+      case PROXIED_PROFILE_LABEL:
         return {
           Icon: Data2,
           bgcolor: '#ff398826',

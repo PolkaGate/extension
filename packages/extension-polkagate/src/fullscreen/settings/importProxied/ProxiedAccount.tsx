@@ -37,10 +37,12 @@ interface CheckModeProps {
 
 type Props = ImportModeProps | CheckModeProps;
 
+export const PROXIED_PROFILE_LABEL = 'Proxied';
+
 const addProxied = async(address: string, genesisHash: HexString) => {
     const proxiedName = toShortAddress(address);
 
-    const metaData = JSON.stringify({ profile: PROFILE_TAGS.PROXIED });
+    const metaData = JSON.stringify({ profile: PROXIED_PROFILE_LABEL });
 
     return Promise.all([
         createAccountExternal(proxiedName, address, genesisHash),
@@ -195,7 +197,7 @@ function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactEleme
             Promise.all(promises)
                 .finally(() => {
                     setIsBusy(false);
-                    setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.PROXIED).catch(console.error);
+                    setStorage(STORAGE_KEY.SELECTED_PROFILE, PROXIED_PROFILE_LABEL).catch(console.error);
                     closePopup?.();
                 })
                 .catch(console.error);
@@ -214,7 +216,7 @@ function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactEleme
 
             Promise
                 .all([
-                    setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.PROXIED),
+                    setStorage(STORAGE_KEY.SELECTED_PROFILE, PROXIED_PROFILE_LABEL),
                     ...promises
                 ])
                 .then(() => {

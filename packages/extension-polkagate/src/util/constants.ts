@@ -258,7 +258,6 @@ export const PROFILE_TAGS = {
   ALL: 'All',
   LEDGER: 'Hardware',
   LOCAL: 'Local',
-  PROXIED: 'Proxied',
   QR_ATTACHED: 'QR-attached',
   WATCH_ONLY: 'Watch-only'
 };
