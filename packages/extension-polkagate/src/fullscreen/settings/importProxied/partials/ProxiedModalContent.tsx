@@ -50,7 +50,7 @@ function ProxiedModalContent({ areAllSelected,
                 />
             )}
             <Typography color='text.secondary' pb={isImportMode ? '10px' : undefined} py={isImportMode ? undefined : '20px'} textAlign='left' variant='B-4'>
-                {t('The accounts below are proxied by accounts already added to your extension. Select any to import as watch-only.')}
+                {t('The accounts below are already proxied by accounts in your extension. Select any to import them.')}
             </Typography>
             <Stack
                 direction='column'
