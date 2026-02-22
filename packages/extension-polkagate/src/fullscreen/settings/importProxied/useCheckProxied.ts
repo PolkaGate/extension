@@ -39,10 +39,11 @@ export default function useCheckProxied(accounts: AccountJson[]) {
             const checkProxied = load as { checkedAddresses: string[]; timestamp: number } | undefined;
             const checkedAccounts = checkProxied?.checkedAddresses;
             const isTimeExpired = ((checkProxied?.timestamp ?? 0) + PROXIED_CHECK_INTERVAL) < Date.now();
+            const eligibleAccounts = accounts.filter(({ isExternal, isHardware, isQR }) => !isExternal || isHardware || isQR).map(({ address }) => address);
 
             const toCheck = (!checkedAccounts || isTimeExpired)
-                ? accounts.map(({ address }) => address)
-                : accounts.filter(({ address }) => !checkedAccounts.includes(address)).map(({ address }) => address);
+                ? eligibleAccounts
+                : eligibleAccounts.filter((address) => !checkedAccounts.includes(address));
 
             setAccountsToCheck(toCheck);
         });
