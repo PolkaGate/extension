@@ -195,13 +195,16 @@ function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactEleme
                 return addProxied(address, selectedProxiedChain as HexString);
             });
 
-            Promise.all(promises)
-                .catch(console.error)
-                .finally(() => {
+            Promise
+                .all([
+                    setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.PROXIED),
+                    ...promises
+                ])
+                .then(() => {
                     setIsBusy(false);
-                    setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.PROXIED).catch(console.error);
                     onClose();
-                });
+                })
+                .catch(console.error);
         }
     }, [allFoundProxiedAccounts, closePopup, isImportMode, onClose, selectedAddress, selectedGenesis, selectedProxied]);
 
