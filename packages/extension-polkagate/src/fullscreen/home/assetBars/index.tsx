@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AssetsWithUiAndPrice } from './types';
@@ -18,7 +18,7 @@ import AssetsRows from './AssetsRows';
 import { adjustColor, getMaxBalanceAsset } from './helpers';
 import PortfolioBar from './PortfolioBar';
 
-function AssetsBars (): React.ReactElement {
+function AssetsBars(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const pricesInCurrencies = usePrices();

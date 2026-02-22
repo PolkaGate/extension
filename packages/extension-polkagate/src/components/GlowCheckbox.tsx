@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
@@ -19,7 +19,7 @@ interface Props {
   iconStyle?: SxProps<Theme> | undefined;
 }
 
-function GlowCheckbox ({ changeState, checked = false, disabled, iconStyle = {}, isBlueish, label, labelPartInColor, labelStyle, style }: Props): React.ReactElement<Props> {
+function GlowCheckbox({ changeState, checked = false, disabled, iconStyle = {}, isBlueish, label, labelPartInColor, labelStyle, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);

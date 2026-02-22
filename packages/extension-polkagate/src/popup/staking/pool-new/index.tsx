@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -41,7 +41,7 @@ export enum Review {
   Withdraw = 'Withdraw'
 }
 
-export default function Pool (): React.ReactElement {
+export default function Pool(): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();
@@ -66,7 +66,7 @@ export default function Pool (): React.ReactElement {
 
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-  , [accountAssets, genesisHash]);
+    , [accountAssets, genesisHash]);
   const staked = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.member?.points as string | undefined ?? '0'), [stakingInfo.pool]);
   const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);

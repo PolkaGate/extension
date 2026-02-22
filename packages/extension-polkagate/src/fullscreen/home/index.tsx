@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
@@ -16,7 +16,7 @@ import AssetsBars from './assetBars';
 import PortfolioFullScreen from './PortfolioFullScreen';
 import TrendingAssets from './TrendingAssets';
 
-function HomePageFullScreen (): React.ReactElement {
+function HomePageFullScreen(): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
@@ -9,7 +9,7 @@ import { logoBlackBirdTransparent, logoTransparent } from '../../assets/logos';
 import { useIsDark } from '../../hooks';
 import { EXTENSION_NAME } from '../../util/constants';
 
-function Header (): React.ReactElement {
+function Header(): React.ReactElement {
   const isDark = useIsDark();
 
   return (

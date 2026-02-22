@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import useUpdateAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useUpdateAccountSelectedChain';
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { PROXY_CHAINS, STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 import { isMigratedHub, isMigratedRelay, mapRelayToSystemGenesisIfMigrated, migratedRelays } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
@@ -27,7 +28,7 @@ interface ChooseAccountMenuProps {
   handleClose: () => void;
 }
 
-export default function ChainListModal ({ externalOptions, handleClose, open, setSelectedChain }: ChooseAccountMenuProps): React.ReactElement {
+export default function ChainListModal({ externalOptions, handleClose, open, setSelectedChain }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
@@ -151,6 +152,11 @@ export default function ChainListModal ({ externalOptions, handleClose, open, se
                 </Grid>
               );
             })}
+            <NothingFound
+              show={filteredChainsToList.length === 0}
+              style={{ pt: '80px' }}
+              text={t('Network Not Found')}
+            />
           </Stack>
         </VelvetBox>
         <GradientButton

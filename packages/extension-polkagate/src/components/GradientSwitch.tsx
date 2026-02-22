@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, styled } from '@mui/material';
@@ -55,7 +55,7 @@ const SwitchContainer = styled(Grid)<{ checked: boolean; disabled: boolean }>(({
   width: '32px'
 }));
 
-export default function GradientSwitch ({ checked, disabled = false, onChange }: Props): React.ReactElement {
+export default function GradientSwitch({ checked, disabled = false, onChange }: Props): React.ReactElement {
   return (
     <div style={{ zIndex: 1 }}>
       <SwitchContainer checked={checked} disabled={disabled} onClick={disabled ? noop : onChange}>

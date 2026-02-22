@@ -1,4 +1,4 @@
-// Copyright 2017-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2017-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as useAccount } from './useAccount';
@@ -51,6 +51,7 @@ export { default as useIsHovered } from './useIsHovered';
 export { default as useIsOnline } from './useIsOnline';
 export { default as useIsPasswordMigrated } from './useIsPasswordMigrated';
 export { default as useIsTestnetEnabled } from './useIsTestnetEnabled';
+export { default as useIsValidator } from './useIsValidator';
 export { useLedger } from './useLedger';
 export { default as useLocalAccounts } from './useLocalAccounts';
 export { default as useLockedInReferenda } from './useLockedInReferenda';
@@ -58,10 +59,13 @@ export { default as useManifest } from './useManifest';
 export { default as useMerkleScience } from './useMerkleScience';
 export { default as useMetadata } from './useMetadata';
 export { default as useMetadataProof } from './useMetadataProof';
+export { default as useMinToReceiveRewardsInSolo } from './useMinToReceiveRewardsInSolo';
 export { default as useMyAccountIdentity } from './useMyAccountIdentity';
 export { default as useNativeAssetBalances } from './useNativeAssetBalances';
 export { default as useNFT } from './useNFT';
+export { default as useNotifications } from './useNotifications';
 export { default as usePendingRewards } from './usePendingRewards';
+export { default as usePendingRewardsSolo } from './usePendingRewardsSolo';
 export { default as usePeopleChain } from './usePeopleChain';
 export { default as usePool } from './usePool';
 export { default as usePoolBalances } from './usePoolBalances';
@@ -81,12 +85,15 @@ export { default as useSelectedAccount } from './useSelectedAccount';
 export { default as useSelectedChains } from './useSelectedChains';
 export { default as useSelectedLanguage } from './useSelectedLanguage';
 export { default as useSelectedProfile } from './useSelectedProfile';
+export { default as useSoloSettings } from './useSoloSettings';
 export { default as useSoloStakingInfo } from './useSoloStakingInfo';
 export { default as useSoloStakingTotalReward } from './useSoloStakingTotalReward';
 export { default as useStakingAccount } from './useStakingAccount';
 export * from './useStakingApi';
 export { default as useStakingConstRelay } from './useStakingConstRelay';
 export { default as useStakingConsts } from './useStakingConsts';
+export { default as useStakingInfoPool } from './useStakingInfoPool';
+export { default as useStakingInfoSolo } from './useStakingInfoSolo';
 export { default as useStakingPositions } from './useStakingPositions';
 export { default as useStakingRewardDestinationAddress } from './useStakingRewardDestinationAddress';
 export { default as useStakingRewardsChart } from './useStakingRewardsChart';

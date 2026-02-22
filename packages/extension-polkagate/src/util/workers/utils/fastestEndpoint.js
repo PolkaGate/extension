@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
@@ -9,7 +9,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
  *
  * @param {{ value: string }[]} endpoints
  */
-export async function fastestEndpoint (endpoints) {
+export async function fastestEndpoint(endpoints) {
   // Filter invalid endpoints
   const validEndpoints = endpoints
     .map(({ value }) => value)

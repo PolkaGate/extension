@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
@@ -19,7 +19,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function getExpandedLabel (label: string): string {
+function getExpandedLabel(label: string): string {
   switch (label) {
     case PROFILE_TAGS.LOCAL:
       return 'Local Accounts';
@@ -30,7 +30,7 @@ function getExpandedLabel (label: string): string {
   }
 }
 
-function AccountProfileLabel ({ isInSettingMode, label, style = {} }: Props): React.ReactElement {
+function AccountProfileLabel({ isInSettingMode, label, style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { Icon, bgcolor, color } = useProfileInfo(label);
   const isDefaultProfile = Object.values(PROFILE_TAGS).includes(label);

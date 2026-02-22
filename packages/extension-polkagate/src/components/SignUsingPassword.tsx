@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -31,6 +31,8 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
     return null;
   }
 
+  const color = isBlueish ? theme.palette.text.highlight : theme.palette.primary.main;
+
   if (!proxies) {
     return (
       <Grid container item sx={{ alignItems: 'center', width: 'fit-content' }}>
@@ -39,7 +41,7 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
           placement='top'
         >
           <Grid container item sx={{ alignItems: 'center', p: '4px', width: 'fit-content' }}>
-            <BeatLoader color={theme.palette.text.highlight} loading size={5} />
+            <BeatLoader color={color} loading size={5} />
           </Grid>
         </MyTooltip>
       </Grid>
@@ -48,8 +50,8 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 
   return (
     <Grid container item onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '4px', width: 'fit-content' }}>
-      <Data color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} size='12' />
-      <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} variant='B-1'>
+      <Data color={color} size='12' />
+      <Typography color={color} variant='B-1'>
         {t('Use Proxy')}
       </Typography>
     </Grid>
@@ -57,7 +59,7 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 };
 
 export interface SignUsingPasswordProps {
-  api: ApiPromise | undefined;
+  api: ApiPromise | undefined | null;
   direction?: 'horizontal' | 'vertical';
   disabled?: boolean;
   decisionButtonProps?: Partial<DecisionButtonProps>
@@ -70,7 +72,7 @@ export interface SignUsingPasswordProps {
   signerPayload: SignerPayloadJSON | undefined;
 }
 
-function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', disabled, onCancel, onSignature, onUseProxy, proxies, signerPayload, style, withCancel }: SignUsingPasswordProps) {
+function SignUsingPassword({ api, decisionButtonProps, direction = 'vertical', disabled, onCancel, onSignature, onUseProxy, proxies, signerPayload, style, withCancel }: SignUsingPasswordProps) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 

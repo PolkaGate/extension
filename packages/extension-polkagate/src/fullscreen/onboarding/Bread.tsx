@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography } from '@mui/material';
@@ -19,7 +19,7 @@ const enum STATUS {
 const DISABLED_LINK_COLOR = '#674394';
 const ENABLED_LINK_COLOR = '#AA83DC';
 
-function Bread (): React.ReactElement {
+function Bread(): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ function Bread (): React.ReactElement {
   }, [pathname]);
 
   const onWelcomeClick = useCallback(() => {
-   ![STATUS.WELCOME, STATUS.MIGRATE_PASSWORDS].includes(status) && navigate('/onboarding') as void;
+    ![STATUS.WELCOME, STATUS.MIGRATE_PASSWORDS].includes(status) && navigate('/onboarding') as void;
   }, [navigate, status]);
 
   const onHaveWalletClick = useCallback(() => {
@@ -48,7 +48,7 @@ function Bread (): React.ReactElement {
   }, [navigate, status]);
 
   const onCreateClick = useCallback(() => {
-    status !== STATUS.CREATE_A_NEW_WALLET && navigate('/account/create')as void;
+    status !== STATUS.CREATE_A_NEW_WALLET && navigate('/account/create') as void;
   }, [navigate, status]);
 
   const pathToHuman = useMemo(() => {

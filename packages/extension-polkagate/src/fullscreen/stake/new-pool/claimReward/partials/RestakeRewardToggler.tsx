@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
@@ -15,7 +15,7 @@ export interface RestakeRewardTogglerProps {
   setRestake: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function RestakeRewardToggler ({ restake, setRestake }: RestakeRewardTogglerProps) {
+export default function RestakeRewardToggler({ restake, setRestake }: RestakeRewardTogglerProps) {
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();

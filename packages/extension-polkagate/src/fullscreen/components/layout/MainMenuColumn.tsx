@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Link, Stack } from '@mui/material';
@@ -10,7 +10,7 @@ import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/use
 import { Version } from '@polkadot/extension-polkagate/src/partials';
 import Socials from '@polkadot/extension-polkagate/src/popup/settings/partials/Socials';
 import { updateStorage } from '@polkadot/extension-polkagate/src/util';
-import { ExtensionPopups, PRIVACY_POLICY_LINK,STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { ExtensionPopups, PRIVACY_POLICY_LINK, STAKING_CHAINS, STATEMINT_GENESIS_HASH, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
@@ -22,7 +22,7 @@ import LogoWithText from './LogoWithText';
 import MenuButton from './MenuButton';
 import ReceiveGeneral from './ReceiveGeneral';
 
-function Shining (): React.ReactElement {
+function Shining(): React.ReactElement {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', position: 'absolute', top: '-100px', width: '100%' }}>
       <Box sx={{
@@ -38,7 +38,7 @@ function Shining (): React.ReactElement {
   );
 }
 
-function MainMenuColumn (): React.ReactElement {
+function MainMenuColumn(): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const navigate = useNavigate();
@@ -63,7 +63,10 @@ function MainMenuColumn (): React.ReactElement {
       stakeType = maxPositionType;
     } else {
       // Otherwise fall back to selected chain
-      genesisHashKey = mapRelayToSystemGenesisIfMigrated(selectedGenesisHash) ?? selectedGenesisHash ?? '';
+      const maybeSelectedGenesis = mapRelayToSystemGenesisIfMigrated(selectedGenesisHash) ?? selectedGenesisHash ?? '';
+
+      // Use Polkadot Hub as default when the selected chain has no staking support
+      genesisHashKey = STAKING_CHAINS.includes(maybeSelectedGenesis) ? maybeSelectedGenesis : STATEMINT_GENESIS_HASH;
       stakeType = 'solo';
     }
 
@@ -130,7 +133,7 @@ function MainMenuColumn (): React.ReactElement {
         <Grid container item justifyContent='start' width='fit-content'>
           <Version style={{ padding: 0, textAlign: 'left', width: '20%' }} variant='B-5' />
           <NeedHelp style={{ columnGap: '4px', marginLeft: '10px' }} />
-          <Link href={PRIVACY_POLICY_LINK} rel='noreferrer' sx={{ '&:hover': { color: '#AA83DC' }, color: '#674394', cursor: 'pointer', mt: '7px' }} target='_blank' underline='none' variant='B-5'>
+          <Link href={PRIVACY_POLICY_LINK} rel='noreferrer' sx={{ '&:hover': { color: '#AA83DC' }, color: '#674394', cursor: 'pointer', mt: '7px', textAlign: 'left', width: '100%' }} target='_blank' underline='none' variant='B-5'>
             {t('Privacy & Security')}
           </Link>
         </Grid>

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Proxy, ProxyItem, ProxyTypes } from '../util/types';
@@ -125,7 +125,7 @@ interface Props {
   proxyTypeFilter: ProxyTypes[] | undefined;
 }
 
-export default function SignUsingProxy ({ genesisHash, handleClose, openMenu, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props) {
+export default function SignUsingProxy({ genesisHash, handleClose, openMenu, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const refContainer = useRef(null);

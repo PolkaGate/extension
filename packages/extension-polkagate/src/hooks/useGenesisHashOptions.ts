@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { HexString } from '@polkadot/util/types';
@@ -8,12 +8,15 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { getAllMetadata } from '../messaging';
 import chains from '../util/chains';
+import { useIsTestnetEnabled } from '.';
 
 const RELAY_CHAIN = 'Relay Chain';
 
-export default function useGenesisHashOptions (showAnyChain = true): DropdownOption[] {
-  const [metadataChains, setMetadataChains] = useState<{ text: string; value: HexString }[]>([]);
+export default function useGenesisHashOptions(showAnyChain = true): DropdownOption[] {
   const metadataCache = useRef<{ text: string; value: HexString }[] | null>(null);
+  const isTestnetEnabled = useIsTestnetEnabled();
+
+  const [metadataChains, setMetadataChains] = useState<{ text: string; value: HexString }[]>([]);
 
   useEffect(() => {
     if (!metadataCache.current) {
@@ -29,14 +32,15 @@ export default function useGenesisHashOptions (showAnyChain = true): DropdownOpt
   }, []);
 
   return useMemo(() => {
+    const visibleChains = isTestnetEnabled ? chains : chains.filter(({ isTestnet }) => !isTestnet);
     const allChains = [
       // put the relay chains at the top
-      ...chains.filter(({ chain }) => chain.includes(RELAY_CHAIN))
+      ...visibleChains.filter(({ chain }) => chain.includes(RELAY_CHAIN))
         .map(({ chain, genesisHash }) => ({
           text: chain,
           value: genesisHash
         })),
-      ...chains.map(({ chain, genesisHash }) => ({
+      ...visibleChains.map(({ chain, genesisHash }) => ({
         text: chain,
         value: genesisHash
       }))
@@ -59,5 +63,5 @@ export default function useGenesisHashOptions (showAnyChain = true): DropdownOpt
     showAnyChain && allChains.unshift({ text: 'Allow use on any chain', value: '' as HexString });
 
     return allChains;
-  }, [metadataChains, showAnyChain]);
+  }, [isTestnetEnabled, metadataChains, showAnyChain]);
 }

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SigningRequest } from '@polkadot/extension-base/background/types';
@@ -7,25 +7,58 @@ import type { Balance, ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 
-import { Box, Grid } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { cubes } from '../../assets/icons';
+import { FormatPrice } from '@polkadot/extension-polkagate/src/components';
+import { useChainInfo, useTokenPrice, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { amountToHuman } from '@polkadot/extension-polkagate/src/util';
+
 import { approveSignSignature } from '../../messaging';
 import LedgerSign from './ledger/LedgerSign';
 import LedgerSignGeneric from './ledger/LedgerSignGeneric';
 import SignWithPassword from './Request/SignWithPassword';
 
+function FeeRow({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: string }) {
+  const { t } = useTranslation();
+  const { decimal } = useChainInfo(genesisHash);
+  const { price } = useTokenPrice(genesisHash);
+
+  return (
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, p: '10px', position: 'relative' }}>
+      <Typography color='#AA83DC' variant='B-1'>
+        {t('Estimated Fee')}
+      </Typography>
+      <Stack alignItems='center' columnGap='5px' direction='row' lineHeight='normal'>
+        <FormatPrice
+          commify
+          decimalColor='#EAEBF1'
+          decimalPoint={4}
+          fontFamily='Inter'
+          fontSize='13px'
+          fontWeight={500}
+          num={fee ? amountToHuman(fee?.muln(price ?? 0), decimal) : undefined}
+          textColor='#EAEBF1'
+        />
+        <Typography color='#AA83DC' variant='B-1'>
+          {fee?.toHuman()}
+        </Typography>
+      </Stack>
+    </Grid>
+  );
+}
+
 interface Props {
   onCancel: () => void;
-  fee?: Balance | undefined;
+  fee?: Balance | undefined | null;
   request: SigningRequest;
   extrinsicPayload: ExtrinsicPayload;
   onSignature: ({ signature }: { signature: HexString; }) => void;
+  signWithPasswordStyle?: React.CSSProperties;
 }
 
-export default function Confirm ({ extrinsicPayload, fee, onCancel, onSignature, request }: Props): React.ReactElement {
+export default function Confirm({ extrinsicPayload, fee, onCancel, onSignature, request, signWithPasswordStyle }: Props): React.ReactElement {
   const navigate = useNavigate();
   const { isExternal, isHardware } = request.account;
 
@@ -59,12 +92,12 @@ export default function Confirm ({ extrinsicPayload, fee, onCancel, onSignature,
   }, [payload?.address, signId, navigate]);
 
   return (
-    <Grid container display='block' height='440px' item zIndex={1}>
-      <Box
-        component='img'
-        src={cubes as string}
-        sx={{ height: 'auto', m: '30px auto 15px', width: '85.39px' }}
-      />
+    <Grid container item sx={{ bottom: 0, display: 'block', height: '160px', position: 'absolute' }}>
+      {fee !== null &&
+        <FeeRow
+          fee={fee}
+          genesisHash={payload.genesisHash}
+        />}
       {isHardware && account && (
         account?.isGeneric || account?.isMigration
           ? (
@@ -97,7 +130,7 @@ export default function Confirm ({ extrinsicPayload, fee, onCancel, onSignature,
           onCancel={onCancel}
           setError={setError}
           signId={signId}
-          withSavePassword
+          style={signWithPasswordStyle}
         />
       }
     </Grid>

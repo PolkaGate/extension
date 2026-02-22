@@ -1,13 +1,12 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { createAssets } from '@polkagate/apps-config/assets';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
-import { getStorage } from '../components/Loading';
-import allChains from '../util/chains';
-import { STORAGE_KEY, TEST_NETS } from '../util/constants';
-import getChainName from '../util/getChainName';
+import { sanitizeChainName } from '../util';
+import { TEST_NETS } from '../util/constants';
+import useAllChains from './useAllChains';
 import useSelectedChains from './useSelectedChains';
 
 const assetsChains = createAssets();
@@ -18,37 +17,23 @@ interface priceIdInfo {
   id: string;
 }
 
-export default function usePriceIds (): priceIdInfo[] | undefined | null {
+export default function usePriceIds(): priceIdInfo[] | undefined | null {
   const selectedChains = useSelectedChains();
-  const [userAddedPriceIds, setUserAddedPriceIds] = useState<priceIdInfo[]>([]);
-
-  useEffect(() => {
-    getStorage(STORAGE_KEY.USER_ADDED_ENDPOINT).then((info) => {
-      if (info) {
-        const maybePriceIds = Object.entries(info).map(([genesisHash, { priceId }]) => ({
-          genesisHash,
-          id: priceId as string
-        })).filter(Boolean);
-
-        maybePriceIds?.length && setUserAddedPriceIds(maybePriceIds);
-      }
-    }).catch(console.error);
-  }, []);
+  const allChains = useAllChains();
 
   return useMemo(() => {
     const nonTestNetSelectedChains = selectedChains?.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
     let selectedChainsChainName = nonTestNetSelectedChains?.map((genesisHash) => {
-      const maybeChainName = getChainName(genesisHash);
+      const chainInfo = allChains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
+      const id = sanitizeChainName(chainInfo?.chain)?.toLowerCase();
 
-      if (!maybeChainName) {
+      if (!id) {
         return undefined;
       }
 
-      const chainInfo = allChains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
-
       return {
         genesisHash,
-        id: maybeChainName,
+        id,
         symbol: chainInfo?.tokenSymbol ?? 'Unit'
       };
     }).filter((i) => !!i);
@@ -75,8 +60,7 @@ export default function usePriceIds (): priceIdInfo[] | undefined | null {
 
     const merged = [
       ...(selectedChainsChainName || []),
-      ...(assetsInfoOfMultiAssetSelectedChains || []),
-      ...userAddedPriceIds
+      ...(assetsInfoOfMultiAssetSelectedChains || [])
     ];
 
     // Deduplicate based on `id`, keeping the first occurrence
@@ -92,5 +76,5 @@ export default function usePriceIds (): priceIdInfo[] | undefined | null {
     });
 
     return nonDuplicatedPriceIds.length ? [...nonDuplicatedPriceIds] : null;
-  }, [selectedChains, userAddedPriceIds]);
+  }, [allChains, selectedChains]);
 }

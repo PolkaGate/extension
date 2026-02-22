@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useContext, useMemo } from 'react';
@@ -6,7 +6,7 @@ import { useCallback, useContext, useMemo } from 'react';
 import { AccountContext } from '../components';
 import { accountsValidate } from '../messaging';
 
-export default function useIsPasswordCorrect () {
+export default function useIsPasswordCorrect() {
   const { accounts } = useContext(AccountContext);
 
   const localAccounts = useMemo(

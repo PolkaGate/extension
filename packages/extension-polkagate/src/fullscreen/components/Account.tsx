@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
@@ -29,7 +29,7 @@ interface Props {
   setDefaultGenesisAndAssetId?: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
-function Account ({ account, onClick, setDefaultGenesisAndAssetId, style = {}, variant = 'B-2' }: Props): React.ReactElement {
+function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, variant = 'B-2' }: Props): React.ReactElement {
   const navigate = useNavigate();
   const pricesInCurrencies = usePrices();
   const { currency } = useContext(CurrencyContext);

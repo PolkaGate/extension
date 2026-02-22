@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
@@ -11,7 +11,7 @@ import { type BN } from '@polkadot/util';
 import { ActionButton, BackWithLabel, ChainLogo, FadeOnScroll, Motion, SearchField } from '../../components';
 import SnowFlake from '../../components/SVG/SnowFlake';
 import { useAccountAssets, useBackground, useIsDark, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
-import { HomeMenu, UserDashboardHeader } from '../../partials';
+import { HomeMenu, NothingFound, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 import { amountToHuman } from '../../util';
 import { TEST_NETS } from '../../util/constants';
@@ -70,7 +70,7 @@ interface Props {
   type: 'solo' | 'pool';
 }
 
-function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
+function PositionRow({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
   const navigate = useNavigate();
   const isDark = useIsDark();
   const hasPoolStaking = type === 'pool';
@@ -103,7 +103,7 @@ function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, price, t
   );
 }
 
-export default function StakingPositions (): React.ReactElement {
+export default function StakingPositions(): React.ReactElement {
   useBackground('default');
 
   const { t } = useTranslation();
@@ -202,6 +202,11 @@ export default function StakingPositions (): React.ReactElement {
                   </Fragment>
                 );
               })}
+              <NothingFound
+                show={filteredToken?.length === 0}
+                style={{ pb: '50px' }}
+                text={t('Token Not Found')}
+              />
               <FadeOnScroll containerRef={refContainer} />
             </Grid>
           </VelvetBox>

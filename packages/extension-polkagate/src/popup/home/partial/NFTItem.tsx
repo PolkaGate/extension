@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ItemInformation } from '../../../fullscreen/nft/utils/types';
@@ -18,7 +18,7 @@ interface NftItemProps {
   onClick?: () => void;
 }
 
-export function NFTItem ({ index, info, onClick }: NftItemProps) {
+export function NFTItem({ index, info, onClick }: NftItemProps) {
   const theme = useTheme();
   const isDark = useIsDark();
   const { t } = useTranslation();
@@ -115,7 +115,7 @@ export function NFTItem ({ index, info, onClick }: NftItemProps) {
         </Grid>
       </Grid>
       {info.isCollection
-        ? <Stack alignItems='center' columnGap= '3px' direction='row' justifyContent= 'center' sx={{ p: '8px 0 4px', width: '100%' }}>
+        ? <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='center' sx={{ p: '8px 0 4px', width: '100%' }}>
           <Typography color='text.secondary' textAlign='left' variant='B-1'>
             {t('Items')}:
           </Typography>

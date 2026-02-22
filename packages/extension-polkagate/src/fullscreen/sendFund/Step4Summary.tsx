@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
@@ -24,7 +24,7 @@ interface Props {
   teleportState: Teleport;
 }
 
-export default function Step4Summary ({ canPayFee, inputs, setInputs }: Props): React.ReactElement {
+export default function Step4Summary({ canPayFee, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -45,7 +45,7 @@ export default function Step4Summary ({ canPayFee, inputs, setInputs }: Props): 
           {t('Amount')}
         </Typography>
         <Stack alignItems='center' columnGap='8px' direction='row' justifyContent='start' sx={{ height: '45px' }}>
-          <AssetLogo assetSize='32px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+          <AssetLogo assetSize='32px' genesisHash={genesisHash} logo={logoInfo?.logo} token={inputs?.token} />
           <DisplayBalance
             balance={inputs.amountAsBN}
             decimal={inputs?.decimal}
@@ -53,6 +53,7 @@ export default function Step4Summary ({ canPayFee, inputs, setInputs }: Props): 
             token={inputs?.token}
             tokenColor={theme.palette.text.secondary}
             useAdaptiveDecimalPoint
+            withSi={false}
           />
         </Stack>
       </Stack>

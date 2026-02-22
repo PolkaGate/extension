@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtrinsicsAction, ReceivedAction, RecordTabStatus, RecordTabStatusGov } from './types';
@@ -39,4 +39,8 @@ export const extrinsicsReducer = (state: RecordTabStatusGov, action: ExtrinsicsA
     default:
       return state;
   }
+};
+
+export const keyMaker = (address: string, genesisHash: string) => {
+  return `${address}-${genesisHash}`;
 };

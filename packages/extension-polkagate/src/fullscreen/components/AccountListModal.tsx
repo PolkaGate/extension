@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -6,7 +6,9 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 import { Container, Stack } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { FadeOnScroll, GradientButton, Progress, SearchField } from '../../components';
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
+
+import { FadeOnScroll, GradientButton, SearchField } from '../../components';
 import { useCategorizedAccountsInProfiles, useFormatted, useSelectedAccount, useTranslation, useUpdateSelectedAccount } from '../../hooks';
 import { VelvetBox } from '../../style';
 import ProfileTabsFS from '../home/ProfileTabsFS';
@@ -23,7 +25,7 @@ interface ChooseAccountMenuProps {
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>> | undefined;
 }
 
-export default function AccountListModal ({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress }: ChooseAccountMenuProps): React.ReactElement {
+export default function AccountListModal({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef<HTMLDivElement>(null);
@@ -134,7 +136,7 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
                                 isLast={isLast}
                                 isSelected={account.address === selectedAccount?.address}
                                 maybeSelected={maybeSelected}
-                                onDoubleClick = {_onApply}
+                                onDoubleClick={_onApply}
                               />
                             </React.Fragment>
                           );
@@ -143,9 +145,10 @@ export default function AccountListModal ({ genesisHash, handleClose, isSelected
                     );
                   })}
                 </>
-                : <Progress
-                  style={{ marginTop: '90px' }}
-                  title={t('Loading, please wait ...')}
+                : <NothingFound
+                  show
+                  style={{ pt: '90px' }}
+                  text={t('Account Not Found')}
                 />
             }
           </Stack>

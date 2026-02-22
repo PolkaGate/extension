@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import 'chartjs-adapter-date-fns';
@@ -13,6 +13,7 @@ import { Line } from 'react-chartjs-2';
 import { useAlerts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 
 import { DraggableModal } from './DraggableModal';
+import SineWaveLoader from './SineWaveLoader';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, TimeScale);
 
@@ -51,7 +52,7 @@ const fetchWithTimeout = (url: string, timeout = 10000) => {
 };
 
 const gradientFillPlugin: Plugin<'line'> = {
-  beforeDatasetsDraw (chart) {
+  beforeDatasetsDraw(chart) {
     const { chartArea: { bottom, top }, ctx } = chart;
 
     if (!chart.data.datasets.length) {
@@ -269,7 +270,13 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
       title={`${coinId.toUpperCase()} Price — Last 7 Days`}
     >
       <>
-        <Line data={chartData} options={options} plugins={[gradientFillPlugin]} ref={chartRef} />
+        {priceData.length === 0
+          ? (
+            <SineWaveLoader height={300} width={637} />
+          )
+          : (
+            <Line data={chartData} options={options} plugins={[gradientFillPlugin]} ref={chartRef} />
+          )}
         <Typography sx={{ color: 'text.disabled', display: 'block', pr: '16px', textAlign: 'right', width: '100%' }} variant='S-2'>
           {t('powered by CoinGecko')}
         </Typography>

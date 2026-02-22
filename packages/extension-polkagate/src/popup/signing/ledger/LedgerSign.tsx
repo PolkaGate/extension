@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -21,11 +21,11 @@ interface Props {
   setError: (value: string | null) => void;
 }
 
-function LedgerSign ({ account, disabled, error, genesisHash, onCancel, onSignature, payload, setError }: Props): React.ReactElement<Props> {
+function LedgerSign({ account, disabled, error, genesisHash, onCancel, onSignature, payload, setError }: Props): React.ReactElement<Props> {
   const [isBusy, setIsBusy] = useState(false);
   const { accountIndex, addressOffset } = account;
 
-  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useLedger(genesisHash, accountIndex, addressOffset);
+  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh } = useLedger(genesisHash, accountIndex, addressOffset);
 
   useEffect(() => {
     if (ledgerError) {
@@ -63,7 +63,6 @@ function LedgerSign ({ account, disabled, error, genesisHash, onCancel, onSignat
       error={error}
       isBusy={isBusy || ledgerLoading}
       ledgerLocked={ledgerLocked}
-      ledgerWarning={ledgerWarning}
       onCancel={onCancel}
       onRefresh={onRefresh}
       onSignLedger={onSignLedger}

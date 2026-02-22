@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
@@ -13,7 +13,7 @@ import { getAssets } from './getAssets.js';
  * @param {import('../../types').UserAddedChains} userAddedEndpoints
  * @param {MessagePort} port
  */
-export async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName, userAddedEndpoints, port) {
+export async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName, userAddedEndpoints, port) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api } = await fastestEndpoint(endpoints);
 

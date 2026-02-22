@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -18,7 +18,7 @@ import useIdentity from './useIdentity';
  * This hook is going to be used for users account existing in the extension,
  * it utilizes the saved identities in the local storage if any, while fetching the online identity
  * */
-export default function useMyAccountIdentity (address: AccountId | string | undefined, genesisHash: string | null | undefined): DeriveAccountRegistration | null | undefined {
+export default function useMyAccountIdentity(address: AccountId | string | undefined, genesisHash: string | null | undefined): DeriveAccountRegistration | null | undefined {
   const { chainName } = useChainInfo(genesisHash, true);
   const account = useAccount(address);
   const formatted = useFormatted(address, genesisHash);

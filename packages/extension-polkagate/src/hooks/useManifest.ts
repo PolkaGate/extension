@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
 
-export default function useManifest (): chrome.runtime.Manifest | undefined {
+export default function useManifest(): chrome.runtime.Manifest | undefined {
   const [manifest, setManifest] = useState<chrome.runtime.Manifest>();
 
   const fetchManifest = async () => {

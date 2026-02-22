@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { bool, Bytes, Option, u8, u128 } from '@polkadot/types';
@@ -16,7 +16,7 @@ import { NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../util/constants';
 import useChainInfo from './useChainInfo';
 import useFormatted from './useFormatted';
 
-export default function useBalancesOnAssethub (address: string | undefined, genesisHash: string | undefined, assetId?: string | number): BalancesInfo | undefined {
+export default function useBalancesOnAssethub(address: string | undefined, genesisHash: string | undefined, assetId?: string | number): BalancesInfo | undefined {
   const { api, chain, chainName } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
 

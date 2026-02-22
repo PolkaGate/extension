@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
@@ -30,7 +30,7 @@ const POWERED_BY = {
   subsquare: 'OpenSquare'
 };
 
-function Item ({ chainName, name }: ItemProps): React.ReactElement {
+function Item({ chainName, name }: ItemProps): React.ReactElement {
   const { t } = useTranslation();
 
   const _name = name === 'polkassembly' ? 'PolkassemblyIo' : name;
@@ -59,7 +59,7 @@ function Item ({ chainName, name }: ItemProps): React.ReactElement {
   );
 }
 
-function GovernanceModal ({ chainName, setOpen }: Props): React.ReactElement {
+function GovernanceModal({ chainName, setOpen }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onClose = useCallback(() => {
@@ -96,7 +96,7 @@ function GovernanceModal ({ chainName, setOpen }: Props): React.ReactElement {
             height: '44px',
             marginTop: '20px'
           }}
-          text={t('Cancel')}
+          text={t('Close')}
         />
       </Grid>
     </SharePopup>

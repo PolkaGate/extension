@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ValidatorInformation } from '@polkadot/extension-polkagate/hooks/useValidatorsInformation';
@@ -23,7 +23,7 @@ interface Props {
   withCurve?: boolean
 }
 
-export const Validators = React.memo(function Validators ({ address, bgcolor, genesisHash, isActive, validators, withCurve }: Props): React.ReactElement {
+export const Validators = React.memo(function Validators({ address, bgcolor, genesisHash, isActive, validators, withCurve }: Props): React.ReactElement {
   return (
     <>
       {

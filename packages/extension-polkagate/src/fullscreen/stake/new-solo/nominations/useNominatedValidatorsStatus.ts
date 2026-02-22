@@ -1,6 +1,7 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { ValidatorInformation } from '@polkadot/extension-polkagate/hooks/useValidatorsInformation';
 import type { AccountId32 } from '@polkadot/types/interfaces';
 // @ts-ignore
 import type { SpStakingExposurePage } from '@polkadot/types/lookup';
@@ -12,7 +13,19 @@ import useNominatedValidatorsInfo from '@polkadot/extension-polkagate/src/hooks/
 
 import { getFilterValidators, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from './util';
 
-export default function useNominatedValidatorsStatus (stakingInfo: SoloStakingInfo | undefined) {
+export interface NominatedValidatorsStatus {
+  active: ValidatorInformation[];
+  elected: ValidatorInformation[];
+  isLoaded: boolean | undefined;
+  isLoading: boolean;
+  isNominated: boolean | undefined;
+  nonElected: ValidatorInformation[];
+  setSearch: (input: string) => void;
+  setSortConfig: React.Dispatch<React.SetStateAction<string>>;
+  sortConfig: string;
+}
+
+export default function useNominatedValidatorsStatus(stakingInfo: SoloStakingInfo | undefined): NominatedValidatorsStatus {
   const [sortConfig, setSortConfig] = React.useState<string>(VALIDATORS_SORTED_BY.DEFAULT);
   const [search, setSearch] = React.useState<string>('');
 

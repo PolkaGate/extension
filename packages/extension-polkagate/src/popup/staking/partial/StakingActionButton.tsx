@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Button, type SxProps, type Theme, useTheme } from '@mui/material';
@@ -16,7 +16,7 @@ interface Props {
   text?: string;
 }
 
-export default function StakingActionButton ({ buttonFontStyle, disabled, isBusy, onClick, startIcon, style = {}, text }: Props): React.ReactElement<Props> {
+export default function StakingActionButton({ buttonFontStyle, disabled, isBusy, onClick, startIcon, style = {}, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const isButtonDisabled = disabled || isBusy;
@@ -53,9 +53,9 @@ export default function StakingActionButton ({ buttonFontStyle, disabled, isBusy
       opacity: 1
     },
     background:
-    isButtonDisabled
-      ? 'linear-gradient(262.56deg, rgba(0, 148, 255, 0.3) 0%, rgba(89, 106, 255, 0.3) 45%, rgba(0, 148, 255, 0.3) 100%)'
-      : 'linear-gradient(262.56deg, #0094ff 0%, #596aff 45%, #0094ff 100%)',
+      isButtonDisabled
+        ? 'linear-gradient(262.56deg, rgba(0, 148, 255, 0.3) 0%, rgba(89, 106, 255, 0.3) 45%, rgba(0, 148, 255, 0.3) 100%)'
+        : 'linear-gradient(262.56deg, #0094ff 0%, #596aff 45%, #0094ff 100%)',
     borderRadius: '12px',
     boxShadow: 'unset',
     height: '44px',

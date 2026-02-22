@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -16,7 +16,7 @@ import usePoolBalances from './usePoolBalances';
 import { isUpToDate } from './useSavedAssetsCache';
 import useSelectedAccount from './useSelectedAccount';
 
-export default function useBalances (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: string | number): BalancesInfo | undefined {
+export default function useBalances(address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false, assetId?: string | number): BalancesInfo | undefined {
   const { api, chainName, decimal: currentDecimal, token: currentToken } = useChainInfo(genesisHash);
   const account = useSelectedAccount();
 

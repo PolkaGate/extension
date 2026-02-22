@@ -1,4 +1,4 @@
-// Copyright 2017-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2017-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DropzoneRef } from 'react-dropzone';
@@ -14,7 +14,7 @@ import { useIsDark } from '../hooks';
 import useTranslation from '../hooks/useTranslation';
 import ActionButton from './ActionButton';
 
-function formatBytes (bytes?: number, decimals = 2): string {
+function formatBytes(bytes?: number, decimals = 2): string {
   if (!bytes || bytes === 0) {
     return '0 B';
   }
@@ -26,7 +26,7 @@ function formatBytes (bytes?: number, decimals = 2): string {
   return `${value.toFixed(decimals)} ${units[i]}`;
 }
 
-function classes (...classNames: (boolean | null | string | undefined)[]): string {
+function classes(...classNames: (boolean | null | string | undefined)[]): string {
   return classNames
     .filter((className): boolean => !!className)
     .join(' ');
@@ -51,7 +51,7 @@ interface FileState {
 const BYTE_STR_0 = '0'.charCodeAt(0);
 const BYTE_STR_X = 'x'.charCodeAt(0);
 
-function convertResult (result: ArrayBuffer, convertHex?: boolean): Uint8Array {
+function convertResult(result: ArrayBuffer, convertHex?: boolean): Uint8Array {
   const data = new Uint8Array(result);
 
   // this converts the input (if detected as hex), vai the hex conversion route
@@ -66,7 +66,7 @@ function convertResult (result: ArrayBuffer, convertHex?: boolean): Uint8Array {
   return data;
 }
 
-function FileInfo ({ file, onBack }: { file: FileState | undefined, onBack: () => void }): React.ReactElement<InputFileProps> {
+function FileInfo({ file, onBack }: { file: FileState | undefined, onBack: () => void }): React.ReactElement<InputFileProps> {
   const isDark = useIsDark();
   const { t } = useTranslation();
   const truncate = (str: string, max = 40): string =>
@@ -119,7 +119,7 @@ function FileInfo ({ file, onBack }: { file: FileState | undefined, onBack: () =
   );
 }
 
-function DropZoneContent (): React.ReactElement<InputFileProps> {
+function DropZoneContent(): React.ReactElement<InputFileProps> {
   const { t } = useTranslation();
 
   return (
@@ -141,7 +141,8 @@ function DropZoneContent (): React.ReactElement<InputFileProps> {
           borderRadius: '8px',
           height: '32px',
           marginTop: '5px',
-          width: '100px'
+          minWidth: '100px',
+          width: 'fit-content'
         }}
         text={t('Browse')}
         variant='contained'
@@ -180,7 +181,7 @@ function DropZoneContent (): React.ReactElement<InputFileProps> {
  *   onChange={(data, name) => console.log('File loaded:', name, data)}
  * />
  */
-function InputFile ({ accept, convertHex, isDisabled, isError = false, onBack, onChange, reset, style }: InputFileProps): React.ReactElement<InputFileProps> {
+function InputFile({ accept, convertHex, isDisabled, isError = false, onBack, onChange, reset, style }: InputFileProps): React.ReactElement<InputFileProps> {
   const dropRef = createRef<DropzoneRef>();
 
   const [file, setFile] = useState<FileState | undefined>();

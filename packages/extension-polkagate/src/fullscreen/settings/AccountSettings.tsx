@@ -1,8 +1,8 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { Broom, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, ShieldSecurity } from 'iconsax-react';
+import { Broom, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, Notification as NotificationIcon, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,6 +17,7 @@ import { VelvetBox } from '../../style';
 import DeriveAccount from '../home/DeriveAccount';
 import ExportAllAccounts from '../home/ExportAllAccounts';
 import RenameAccount from '../home/RenameAccount';
+import NotificationSettingsFS from '../notification/NotificationSettingsFS';
 
 interface ActionBoxProps {
   Icon: Icon;
@@ -25,7 +26,7 @@ interface ActionBoxProps {
   onClick?: () => void;
 }
 
-function ActionBox ({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
+function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
   const navigate = useNavigate();
 
   const _onClick = useCallback(() => {
@@ -44,13 +45,20 @@ function ActionBox ({ Icon, label, onClick, path }: ActionBoxProps): React.React
   );
 }
 
-function AccountSettings (): React.ReactElement {
+function AccountSettings(): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   const popups = useMemo(() => {
     switch (extensionPopup) {
+      case ExtensionPopups.NOTIFICATION:
+        return (
+          <NotificationSettingsFS
+            handleClose={extensionPopupCloser}
+          />
+        );
+
       case ExtensionPopups.RENAME:
         return (
           <RenameAccount
@@ -102,6 +110,11 @@ function AccountSettings (): React.ReactElement {
             {t('Actions')}
           </Typography>
           <VelvetBox childrenStyle={{ columnGap: '4px', display: 'flex', flexDirection: 'row' }} style={{ margin: '20px 0', width: 'fit-content' }}>
+            <ActionBox
+              Icon={NotificationIcon}
+              label={t('Notification')}
+              onClick={extensionPopupOpener(ExtensionPopups.NOTIFICATION)}
+            />
             <ActionBox
               Icon={Edit2}
               label={t('Rename Account')}

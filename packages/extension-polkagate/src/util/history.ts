@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from './types';
@@ -29,7 +29,7 @@ export const getVoteType = (voteType: number | null | undefined) => {
   return undefined;
 };
 
-export function resolveActionType (historyItem: TransactionDetail): string {
+export function resolveActionType(historyItem: TransactionDetail): string {
   let action: string =
     isReward(historyItem)
       ? 'reward'
@@ -64,7 +64,7 @@ export const historyIconBgColor = (action: string) => {
   return actionColors[normalizedAction] || '#6743944D';
 };
 
-export function saveAsHistory (formatted: string, info: TransactionDetail) {
+export function saveAsHistory(formatted: string, info: TransactionDetail) {
   chrome.storage.local.get('history', (res) => {
     const k = `${formatted}`;
     const last = (res?.['history'] ?? {}) as unknown as Record<string, TransactionDetail[]>;
@@ -80,7 +80,7 @@ export function saveAsHistory (formatted: string, info: TransactionDetail) {
   });
 }
 
-export async function getHistoryFromStorage (formatted: string): Promise<TransactionDetail[] | undefined> {
+export async function getHistoryFromStorage(formatted: string): Promise<TransactionDetail[] | undefined> {
   return new Promise((resolve) => {
     chrome.storage.local.get('history', (res) => {
       const k = `${formatted}`;

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
@@ -13,7 +13,7 @@ import PrivacyPolicy from '../../partials/PrivacyPolicy';
 import SelectLanguage from '../../partials/SelectLanguage';
 import { ExtensionPopups } from '../../util/constants';
 
-function TopRightIcons (): React.ReactElement {
+function TopRightIcons(): React.ReactElement {
   const { t } = useTranslation();
   const privacyPolicyRef = useRef<HTMLDivElement>(null);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();

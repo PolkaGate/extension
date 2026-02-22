@@ -1,0 +1,5 @@
+# To Publish
+
+1- update translations
+2- yarn clean-translations
+3- yarn && yarn build:clean

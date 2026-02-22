@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -22,7 +22,7 @@ import { type ProxyFlowStep } from './types';
 
 interface Props {
   address: string | undefined;
-  api: ApiPromise | undefined;
+  api: ApiPromise | undefined | null;
   setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
   proxyItems: ProxyItem[] | null | undefined;
   chain: Chain | null | undefined;
@@ -32,7 +32,7 @@ interface Props {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
+function TransactionFlow({ address, api, chain, depositedValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const genesisHash = chain?.genesisHash;
 
@@ -160,8 +160,14 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
     return undefined;
   }, [proxyItems, depositToPay, t, fee, txInfo]);
 
+  const confirmationStep = useMemo(() => step === STEPS.CONFIRMATION && transactionDetail, [step, transactionDetail]);
+
   const extraHeight = useMemo(() => {
-    const basedHeight = 75;
+    if (confirmationStep) {
+      return 0;
+    }
+
+    const basedHeight = 35;
     const newProxies = proxyItems?.filter(({ status }) => status === 'new');
 
     if (newProxies?.length) {
@@ -175,7 +181,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
     }
 
     return 0;
-  }, [proxyItems]);
+  }, [confirmationStep, proxyItems]);
 
   return (
     <DraggableModal
@@ -196,9 +202,9 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
       showBackIconAsClose
       style={{
         backgroundColor: '#1B133C',
-         minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${555 + extraHeight}px`,
-         padding: '20px 15px 10px'
-        }}
+        minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${555 + extraHeight}px`,
+        padding: confirmationStep ? '20px 5px' : '20px 15px 10px'
+      }}
       title={
         [STEPS.REVIEW, STEPS.SIGN_QR].includes(step)
           ? t('Review')
@@ -230,7 +236,7 @@ function TransactionFlow ({ address, api, chain, depositedValue, proxyItems, set
           <WaitScreen />
         }
         {
-          step === STEPS.CONFIRMATION && transactionDetail &&
+          confirmationStep && transactionDetail &&
           <Confirmation
             address={address ?? ''}
             backToHome={handleClose}

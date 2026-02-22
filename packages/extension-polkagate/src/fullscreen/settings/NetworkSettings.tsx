@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
@@ -9,6 +9,7 @@ import { Add } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
 import { ExtensionPopups, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '@polkadot/extension-polkagate/src/util/defaultSelectedChains';
@@ -17,7 +18,7 @@ import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handl
 import { ChainLogo, Motion, MySwitch, SearchField } from '../../components';
 import { useGenesisHashOptions, useTranslation } from '../../hooks';
 import { getStorage, setStorage } from '../../util';
-import AddNewNetwork from './partials/AddNewNetwork';
+import AddNewNetwork from './AddNewNetwork';
 import Endpoints from './partials/Endpoints';
 
 interface ItemProps {
@@ -29,7 +30,7 @@ interface ItemProps {
   chainEndpoints: (value: string) => () => void;
 }
 
-function Item ({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: ItemProps): React.ReactElement {
+function Item({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: ItemProps): React.ReactElement {
   return (
     <Grid
       alignItems='center' container item justifyContent='space-between' key={value} sx={{
@@ -68,14 +69,14 @@ function Item ({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: Ite
   );
 }
 
-function AddButton (): React.ReactElement {
+function AddButton(): React.ReactElement {
   const { t } = useTranslation();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   return (
     <>
-      <VelvetBox style={{ minWidth: '165px', width: 'fit-content' }}>
-        <Stack direction='row' onClick={extensionPopupOpener(ExtensionPopups.NEW_NETWORK)} sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-1px)' }, alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', columnGap: '3px', cursor: 'pointer', height: '40px', px: '5px', transition: 'all 250ms ease-out' }}>
+      <VelvetBox style={{ minWidth: 'fit-content', width: 'auto' }}>
+        <Stack direction='row' onClick={extensionPopupOpener(ExtensionPopups.NEW_NETWORK)} sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-1px)' }, alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', columnGap: '3px', cursor: 'pointer', height: '40px', p: '0 15px 0 5px', transition: 'all 250ms ease-out', width: '100%' }}>
           <Add color='#FF4FB9' size='24' variant='Linear' />
           <Typography color='text.primary' sx={{ textWrap: 'nowrap', width: 'fit-content' }} variant='B-6'>
             {t('Add New Network')}
@@ -91,7 +92,7 @@ function AddButton (): React.ReactElement {
   );
 }
 
-function NetworkSettings (): React.ReactElement {
+function NetworkSettings(): React.ReactElement {
   const { t } = useTranslation();
   const allChains = useGenesisHashOptions(false);
 
@@ -206,7 +207,7 @@ function NetworkSettings (): React.ReactElement {
 
   return (
     <Motion variant='slide'>
-      <Stack alignItems='flex-start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', maxHeight: 'calc(100vh - 195px)', minHeight: '600px', m: '5px', overflow: 'auto', p: '0 0 30px 20px', width: 'fill-available' }}>
+      <Stack alignItems='flex-start' direction='column' justifyContent='flex-start' sx={{ backgroundColor: 'background.paper', borderRadius: '14px', m: '5px', maxHeight: 'calc(100vh - 195px)', minHeight: '600px', overflow: 'auto', p: '0 0 30px 20px', width: 'fill-available' }}>
         <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ my: '5px' }} width='95.5%'>
           <Typography color='text.primary' fontSize='22px' m='22px 0 12px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='H-4'>
             {t('Networks to view assets')}
@@ -232,6 +233,12 @@ function NetworkSettings (): React.ReactElement {
               value={String(value)}
             />
           ))}
+          <NothingFound
+            show={chainsToList.length === 0}
+            size={200}
+            style={{ pt: '100px' }}
+            text={t('Network Not Found')}
+          />
         </Grid>
         {chainToShowEndpoints &&
           <Endpoints

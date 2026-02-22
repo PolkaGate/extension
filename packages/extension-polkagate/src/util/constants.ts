@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ProxyTypes } from './types';
@@ -36,7 +36,7 @@ export const MAX_AMOUNT_LENGTH = 15;
 export const TIME_TO_SHAKE_ICON = 5000;// msec
 
 export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'KusamaAssetHub', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
-export const TOKENS_WITH_BLACK_LOGO = ['BILL', 'BILLCOIN', 'CFG', 'INTR', 'KSM', 'PEN', 'ZTG'];
+export const TOKENS_WITH_BLACK_LOGO = ['BILL', 'BILLCOIN', 'BNC', 'CFG', 'INTR', 'KSM', 'PEN', 'ZTG'];
 export const CHAINS_ON_POLKAHOLIC = ['Pendulum', 'Pendulum chain', 'Amplitude', 'Amplitude chain'];
 export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet', 'Stafi', 'Peaq Network', 'Genshiro Network'];
 
@@ -279,21 +279,22 @@ export const KODADOT_URL = 'https://kodadot.xyz';
 export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
 export enum ExtensionPopups {
-  LANGUAGE,
-  GOVERNANCE,
-  NEW_NETWORK,
-  NONE,
-  PASSWORD,
-  PRIVACY,
-  WARNING,
-  // Account Popups
   DAPPS,
   DERIVE,
   EXPORT,
+  GOVERNANCE,
+  LANGUAGE,
+  NEW_NETWORK,
+  NONE,
+  NOTIFICATION,
+  PASSWORD,
+  PRIVACY,
+  // Account Popups
   IMPORT,
   RECEIVE,
   RENAME,
   REMOVE,
+  WARNING
 }
 
 export const TRANSACTION_FLOW_STEPS = {
@@ -312,8 +313,10 @@ export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
 
 export const STORAGE_KEY = {
   ACCOUNT_SELECTED_CHAIN: 'accountSelectedChain',
+  AI_TX_INFO: 'aiTransactionInfo',
   ASSETS: 'migratedAssets',
   AUTO_LOCK: 'autoLock',
+  CHECK_BALANCE_ON_ALL_CHAINS: 'checkBalancesOnAllChains',
   CURRENCY: 'currency',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   HISTORY: 'history',
@@ -324,13 +327,15 @@ export const STORAGE_KEY = {
   LAST_PASS_CHANGE: 'lastPasswordChange',
   LOGIN_INFO: 'loginInfo',
   MY_POOL: 'MyPool',
+  NOTIFICATIONS: 'notificationsV2',
+  NOTIFICATION_SETTINGS: 'notificationSetting',
   PRICE_IN_CURRENCIES: 'pricesInCurrencies',
   SELECTED_ACCOUNT: 'selectedAccount',
   SELECTED_CHAINS: 'selectedChains',
   SELECTED_PROFILE: 'profile',
   TEST_NET_ENABLED: 'testnet_enabled',
   USER_ADDED_ENDPOINT: 'userAddedEndpoint',
-  VALIDATORS_INFO: 'validatorsInfo',
+  VALIDATORS_INFO: 'validatorsInfo'
 };
 
 // Function names for asset fetching worker calls

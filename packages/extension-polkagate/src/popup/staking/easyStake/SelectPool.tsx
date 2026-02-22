@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolInfo } from '../../../util/types';
@@ -22,7 +22,7 @@ interface Props {
   setSide: React.Dispatch<React.SetStateAction<EasyStakeSide>>;
 }
 
-export default function SelectPool ({ genesisHash, selectedStakingType, setSelectedStakingType, setSide }: Props) {
+export default function SelectPool({ genesisHash, selectedStakingType, setSelectedStakingType, setSide }: Props) {
   const { t } = useTranslation();
   const refContainer = useRef(null);
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -20,7 +20,7 @@ import useFormatted from './useFormatted';
 import useSelectedAccount from './useSelectedAccount';
 import useStakingAccount from './useStakingAccount';
 
-export default function useNativeAssetBalances (address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
+export default function useNativeAssetBalances(address: string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>, onlyNew = false): BalancesInfo | undefined {
   const stakingAccount = useStakingAccount(address, genesisHash, undefined, undefined);
   const { api, chainName, decimal: currentDecimal, token: currentToken } = useChainInfo(genesisHash);
   const account = useSelectedAccount();
@@ -35,7 +35,7 @@ export default function useNativeAssetBalances (address: string | undefined, gen
   const token = api?.registry.chainTokens[0];
   const decimal = api?.registry.chainDecimals[0];
 
-  const getBalances = useCallback(() => {
+  const _getBalances = useCallback(() => {
     if (!chainName || !genesisHash || api?.genesisHash?.toString() !== genesisHash || !decimal || !token || !formatted) {
       return;
     }
@@ -85,10 +85,10 @@ export default function useNativeAssetBalances (address: string | undefined, gen
 
       isFetching.fetching[String(formatted)]['balances'] = true;
       isFetching.set(isFetching.fetching);
-      getBalances();
+      _getBalances();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, genesisHash, chainName, decimal, formatted, getBalances, isFetching.fetching[String(formatted)]?.['length'], token]);
+  }, [api, genesisHash, chainName, decimal, formatted, _getBalances, isFetching.fetching[String(formatted)]?.['length'], token]);
 
   useEffect(() => {
     if (refresh) {
@@ -100,10 +100,10 @@ export default function useNativeAssetBalances (address: string | undefined, gen
       }
 
       isFetching.set(isFetching.fetching);
-      getBalances();
+      _getBalances();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(isFetching?.fetching ?? {})?.length, formatted, getBalances, refresh]);
+  }, [Object.keys(isFetching?.fetching ?? {})?.length, formatted, _getBalances, refresh]);
 
   // TODO - account?.balances won't work!!!!!! because since now accounts are on substrate mode!!! @AMIRKHANEF @Nick-1979
   useEffect(() => {

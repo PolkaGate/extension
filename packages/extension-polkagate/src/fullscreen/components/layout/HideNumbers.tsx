@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
@@ -7,7 +7,7 @@ import React from 'react';
 
 import { useIsDark, useIsHideNumbers } from '../../../hooks';
 
-function HideNumbers (): React.ReactElement {
+function HideNumbers(): React.ReactElement {
   const isDark = useIsDark();
 
   const eyeColor = isDark ? '#AA83DC' : '#745D8B';

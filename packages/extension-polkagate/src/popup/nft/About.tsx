@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -13,7 +13,7 @@ import { text } from '../../assets/icons';
 import { CopyAddressButton, Identity2 } from '../../components';
 import { useTranslation } from '../../hooks';
 
-function AccountRow ({ address, genesisHash, label }: { label: string, address: string, genesisHash: string }): React.ReactElement {
+function AccountRow({ address, genesisHash, label }: { label: string, address: string, genesisHash: string }): React.ReactElement {
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between' lineHeight='35px'>
       <Stack alignItems='baseline' columnGap='3px' direction='row'>
@@ -33,7 +33,7 @@ function AccountRow ({ address, genesisHash, label }: { label: string, address: 
   );
 }
 
-export default function About ({ nft }: { nft: ItemInformation | undefined }): React.ReactElement {
+export default function About({ nft }: { nft: ItemInformation | undefined }): React.ReactElement {
   const { t } = useTranslation();
 
   return (

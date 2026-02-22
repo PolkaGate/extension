@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -30,7 +30,7 @@ interface Props {
   setNewDepositedValue: React.Dispatch<React.SetStateAction<BN | undefined>>;
 }
 
-export default function AddProxy ({ chain, proxiedAddress, proxyItems, setNewDepositedValue, setProxyItems, setStep, step }: Props): React.ReactElement {
+export default function AddProxy({ chain, proxiedAddress, proxyItems, setNewDepositedValue, setProxyItems, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
   const formatted = useFormatted(proxiedAddress, chain?.genesisHash);
   const accountDisplayName = useAccountDisplay(proxiedAddress, chain?.genesisHash);
@@ -117,11 +117,11 @@ export default function AddProxy ({ chain, proxiedAddress, proxyItems, setNewDep
       noDivider
       onClose={onCancel}
       open={step === STEPS.ADD_PROXY}
-      style={{ backgroundColor: '#1B133C', minHeight: '478px', padding: '20px 15px 10px' }}
+      style={{ backgroundColor: '#1B133C', minHeight: '460px', padding: '20px 15px' }}
       title={t('Add proxy')}
     >
       <Grid container item sx={{ px: '5px' }}>
-        <Typography color='#BEAAD8' p='20px 10px 0px' variant='B-4'>
+        <Typography color='#BEAAD8' sx={{ padding: '20px 10px 0px', textAlign: 'left' }} variant='B-4'>
           {t("You can add an account included in this extension as a proxy of {{accountDisplayName}} to sign certain types of transactions on {{accountDisplayName}}'s behalf.", { replace: { accountDisplayName } })}
         </Typography>
         <AddressInput

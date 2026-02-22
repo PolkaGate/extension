@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Avatar, Grid, useTheme } from '@mui/material';
@@ -18,7 +18,7 @@ interface Props {
   token?: string | undefined;
 }
 
-export default function AssetDualLogo ({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px', logoRoundness = '50%', style = {}, token }: Props): React.ReactElement {
+export default function AssetDualLogo({ asset, assetSize = '40px', baseLogo, baseLogoPosition, baseLogoSize = '20px', logoRoundness = '50%', style = {}, token }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const filter = isDark

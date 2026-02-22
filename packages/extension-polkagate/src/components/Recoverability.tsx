@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Option } from '@polkadot/types';
@@ -18,7 +18,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function Recoverability ({ style = {} }: Props): React.ReactElement {
+function Recoverability({ style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
   const { api: westendApi } = useChainInfo(WESTEND_GENESIS_HASH);

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -9,15 +9,15 @@ import { useEffect, useState } from 'react';
 
 import { BN, nextTick } from '@polkadot/util';
 
-export default function usePartialFee (
-  api: ApiPromise | undefined,
+export default function usePartialFee(
+  api: ApiPromise | undefined | null,
   inputs: Inputs | undefined,
   formatted: string | undefined,
   assetId: object | AnyNumber | undefined
 ): BN | undefined | null {
   const [partialFee, setPartialFee] = useState<BN | null>();
 
-  const inputTransaction = inputs?.paraSpellTransaction;
+  const inputTransaction = inputs?.tx;
 
   useEffect((): void => {
     assetId && api && formatted && inputTransaction && inputTransaction.hasPaymentInfo &&

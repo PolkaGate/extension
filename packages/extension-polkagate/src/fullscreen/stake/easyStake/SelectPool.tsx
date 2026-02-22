@@ -1,10 +1,12 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolInfo } from '@polkadot/extension-polkagate/util/types';
 
 import { Stack } from '@mui/material';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
+
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 
 import { DecisionButtons, FadeOnScroll, Progress, SearchField } from '../../../components';
 import { usePools, useTranslation } from '../../../hooks';
@@ -19,7 +21,7 @@ interface Props {
   setSide: React.Dispatch<React.SetStateAction<EasyStakeSide>>;
 }
 
-export default function SelectPool ({ genesisHash, setSelectedStakingType, setSide }: Props) {
+export default function SelectPool({ genesisHash, setSelectedStakingType, setSide }: Props) {
   const { t } = useTranslation();
   const refContainer = useRef(null);
   const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools(genesisHash);
@@ -102,6 +104,11 @@ export default function SelectPool ({ genesisHash, setSelectedStakingType, setSi
             setSelectedPool={setSelectedPool}
           />
         }
+        <NothingFound
+          show={incrementalPools !== undefined && (poolsToShow === null || poolsToShow?.length === 0)}
+          style={{ pt: '100px' }}
+          text={t('Pool Not Found')}
+        />
         <DecisionButtons
           cancelButton
           direction='horizontal'

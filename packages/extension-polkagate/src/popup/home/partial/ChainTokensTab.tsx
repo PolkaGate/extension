@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TabProps } from './AssetTabs';
@@ -11,7 +11,7 @@ import CustomCommand from '../../../components/SVG/CustomCommand';
 import { useTranslation } from '../../../hooks';
 import { TAB } from './AssetsBox';
 
-function ChainTokensTab ({ setTab, tab }: TabProps) {
+function ChainTokensTab({ setTab, tab }: TabProps) {
   const { t } = useTranslation();
   const theme = useTheme();
   const fadeTimerRef = useRef<number | null>(null);

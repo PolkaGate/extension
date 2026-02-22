@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FeeInfo } from '../fullscreen/sendFund/types';
@@ -75,7 +75,7 @@ const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
   const { accounts, amount, assetDecimal, description, failureText, nominators, success, token } = transactionDetail;
 
   return (
-    <GlowBox isBlueish={isBlueish} style={{ m: 0, width: '100%' }}>
+    <GlowBox isBlueish={isBlueish} style={{ m: 0, minHeight: '120px', width: '100%' }}>
       <FailSuccessIcon
         description={description}
         failureText={failureText}
@@ -95,7 +95,7 @@ const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
                   ? <ProxyAccounts
                     accounts={accounts}
                     genesisHash={genesisHash}
-                    />
+                  />
                   : <Identity2
                     address={accounts[0]}
                     addressStyle={{ color: '#AA83DC', variant: 'B-1' }}
@@ -105,7 +105,7 @@ const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
                     noIdenticon
                     style={{ maxWidth: '170px', overflow: 'hidden', padding: '10px 0 18px', textOverflow: 'ellipsis', variant: 'B-3' }}
                     withShortAddress
-                    />
+                  />
               }
             </>
             : amount &&
@@ -251,7 +251,7 @@ interface ButtonsProps {
   success: boolean;
 }
 
-function Buttons ({ address, backToHome, backToHomeText, genesisHash, goToHistory, isBlueish, success }: ButtonsProps) {
+function Buttons({ address, backToHome, backToHomeText, genesisHash, goToHistory, isBlueish, success }: ButtonsProps) {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
 
@@ -301,7 +301,7 @@ function Buttons ({ address, backToHome, backToHomeText, genesisHash, goToHistor
             />}
           style={{ width: '100%' }}
           text={t('View on Explorer')}
-          />
+        />
         : <GradientButton
           onClick={goToExplorer}
           startIconNode={
@@ -313,7 +313,7 @@ function Buttons ({ address, backToHome, backToHomeText, genesisHash, goToHistor
           }
           style={{ ...btnStyle, zIndex: 2 }}
           text={t('View on Explorer')}
-          />
+        />
       }
     </Stack>
   );
@@ -332,7 +332,7 @@ interface ContentProps {
   transactionDetail: TransactionDetail;
 }
 
-function Content ({ address, backToHome, backToHomeText, genesisHash, isModal, onClose, showDate, showHistoryButton, showStakingHome, transactionDetail }: ContentProps) {
+function Content({ address, backToHome, backToHomeText, genesisHash, isModal, onClose, showDate, showHistoryButton, showStakingHome, transactionDetail }: ContentProps) {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const isBlueish = useIsBlueish();
@@ -433,7 +433,7 @@ interface Props {
   transactionDetail: TransactionDetail;
 }
 
-export default function Confirmation ({ address, backToHome, backToHomeText, genesisHash, isModal, onClose, showDate, showHistoryButton = true, showStakingHome = true, transactionDetail }: Props) {
+export default function Confirmation({ address, backToHome, backToHomeText, genesisHash, isModal, onClose, showDate, showHistoryButton = true, showStakingHome = true, transactionDetail }: Props) {
   const { t } = useTranslation();
 
   const [openModal, setOpenModal] = useState(true);

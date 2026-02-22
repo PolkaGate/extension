@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
@@ -7,14 +7,14 @@ import React, { useMemo } from 'react';
 
 import useSelectedLanguage from '@polkadot/extension-polkagate/src/hooks/useSelectedLanguage';
 import { getLanguageOptions } from '@polkadot/extension-polkagate/src/util/getLanguageOptions';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { useTranslation } from '../../../components/translate';
 import useIsDark from '../../../hooks/useIsDark';
 import SelectLanguage from '../../../partials/SelectLanguage';
 import { ExtensionPopups } from '../../../util/constants';
-import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
-export default function Language (): React.ReactElement {
+export default function Language(): React.ReactElement {
   const { t } = useTranslation();
   const languageTicker = useSelectedLanguage();
   const isDark = useIsDark();

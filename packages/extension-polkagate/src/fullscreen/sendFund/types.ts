@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TLocation, TXcmFeeBase, UnableToComputeError } from '@paraspell/sdk-pjs';
@@ -24,7 +24,7 @@ export interface Inputs {
   fee?: ParaspellFees;
   feeInfo?: FeeInfo | undefined; // fee extra info
   isCrossChain?: boolean;
-  paraSpellTransaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
+  tx?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   recipientAddress?: string | undefined;
   recipientChain?: DropdownOption | undefined; // NOTE: value cold be genesishash or para id!
   recipientGenesisHashOrParaId?: string | undefined;

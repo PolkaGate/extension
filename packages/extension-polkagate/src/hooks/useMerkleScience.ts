@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { POLKADOT_GENESIS_HASH } from '../util/constants';
 import { getJsonFileFromRepo } from '../util/getMS';
 
-export default function useMerkleScience (address: string | AccountId | null | undefined, chain: Chain | null | undefined, initialize?: boolean): MsData | undefined {
+export default function useMerkleScience(address: string | AccountId | null | undefined, chain: Chain | null | undefined, initialize?: boolean): MsData | undefined {
   const [data, setData] = useState<MsData>();
 
   useEffect(() => {

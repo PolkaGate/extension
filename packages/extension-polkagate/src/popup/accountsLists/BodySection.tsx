@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -8,6 +8,7 @@ import { AddCircle, Trash } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext, ActionButton, ActionContext, FadeOnScroll, GradientButton, MyTooltip } from '../../components';
@@ -17,7 +18,7 @@ import { VelvetBox } from '../../style';
 import AccountRow from './AccountRowSimple';
 import { PROFILE_MODE } from './type';
 
-function BackDrop ({ setMode }: { setMode: React.Dispatch<React.SetStateAction<PROFILE_MODE>> }): React.ReactElement {
+function BackDrop({ setMode }: { setMode: React.Dispatch<React.SetStateAction<PROFILE_MODE>> }): React.ReactElement {
   return (
     <Box
       // eslint-disable-next-line react/jsx-no-bind
@@ -45,7 +46,7 @@ interface Props {
   setShowDeleteConfirmation: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConfirmation }: Props): React.ReactElement {
+function BodySection({ mode, onApply, searchKeyword, setMode, setShowDeleteConfirmation }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { accounts: flatAccounts } = useContext(AccountContext);
   const onAction = useContext(ActionContext);
@@ -141,7 +142,7 @@ function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConf
                               isInSettingMode={isInSettingMode}
                               isLast={isLast}
                               isSelected={account.address === selectedAccount?.address}
-                              showDrag ={isInSettingMode}
+                              showDrag={isInSettingMode}
                             />
                           </React.Fragment>
                         );
@@ -151,6 +152,10 @@ function BodySection ({ mode, onApply, searchKeyword, setMode, setShowDeleteConf
                 })}
               </>
             )}
+            <NothingFound
+              show={Object.keys(filteredCategorizedAccounts).length === 0}
+              text={t('Account Not Found')}
+            />
           </Stack>
           <FadeOnScroll containerRef={refContainer} height='30px' ratio={0.3} />
         </VelvetBox>

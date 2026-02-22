@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 export { default as GradientDivider } from '../style/GradientDivider';
@@ -73,6 +73,7 @@ export { default as MySwitch } from './MySwitch';
 export { default as MyTextField } from './MyTextField';
 export { default as MyTooltip } from './MyTooltip';
 export { default as NeonButton } from './NeonButton';
+export { default as NoInfoYet } from './NoInfoYet';
 export { default as OnActionToolTip } from './OnActionToolTip';
 export { default as PasswordInput } from './PasswordInput';
 export { default as PButton } from './PButton';

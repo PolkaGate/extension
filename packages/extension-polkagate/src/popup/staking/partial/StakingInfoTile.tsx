@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -8,10 +8,11 @@ import { Box, Container, Grid, Stack, type SxProps, type Theme, Typography, useT
 import { ArrowCircleDown, type Icon } from 'iconsax-react';
 import React, { useMemo, useRef } from 'react';
 
+import { PENDING_REWARDS_TEXT } from '@polkadot/extension-polkagate/src/fullscreen/stake/partials/StakingPortfolioAndTiles';
 import { type BN, noop } from '@polkadot/util';
 
 import { CryptoFiatBalance, DisplayBalance, FormatPrice, MySkeleton, MyTooltip } from '../../../components';
-import { useIsDark, useIsHideNumbers, useIsHovered } from '../../../hooks';
+import { useIsDark, useIsHideNumbers, useIsHovered, useTranslation } from '../../../hooks';
 
 interface TileActionButtonProps {
   text: string;
@@ -26,7 +27,7 @@ interface TileActionButtonProps {
   isFullScreen?: boolean;
 }
 
-export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = false, isFullScreen, isLoading = false, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
+export function TileActionButton({ Icon, iconVariant = 'Bulk', isDisabled = false, isFullScreen, isLoading = false, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(containerRef);
@@ -39,7 +40,7 @@ export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = fal
         : isFullScreen
           ? '#AA83DC'
           : theme.palette.text.highlight
-  , [hovered, isDisabled, isFullScreen, theme.palette.text.highlight]);
+    , [hovered, isDisabled, isFullScreen, theme.palette.text.highlight]);
 
   const isLoadingOnFullscreen = isFullScreen && isLoading;
 
@@ -163,8 +164,9 @@ export interface Props {
   isFullScreen?: boolean;
 }
 
-export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, icon, isFullScreen, layoutDirection = 'column', onExpand, style, title, token }: Props): React.ReactElement {
+export default function StakingInfoTile({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, icon, isFullScreen, layoutDirection = 'column', onExpand, style, title, token }: Props): React.ReactElement {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const isDisabled = useMemo(() => Boolean(cryptoAmount?.isZero()), [cryptoAmount]);
   const isRow = useMemo(() => layoutDirection === 'row', [layoutDirection]);
@@ -268,7 +270,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
               <TileActionButton
                 Icon={button.Icon}
                 iconVariant={button.iconVariant}
-                isDisabled={isDisabled}
+                isDisabled={button.text !== t(PENDING_REWARDS_TEXT) && isDisabled}
                 isFullScreen={isFullScreen}
                 isLoading={cryptoAmount === undefined}
                 isRow={isRow}

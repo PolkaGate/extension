@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
@@ -101,7 +101,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function SelectAccount ({ genesisHash, selectedAccount, setSelectedAccount, style = {} }: Props): React.ReactElement {
+export default function SelectAccount({ genesisHash, selectedAccount, setSelectedAccount, style = {} }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);

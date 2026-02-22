@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -8,13 +8,13 @@
 
 import type { Extrinsics, ExtrinsicsRequest } from '../types';
 
-import request from 'umi-request';
-
+import { keyMaker } from '@polkadot/extension-polkagate/src/popup/history/hookUtils/utils';
 import { hexToU8a } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
 
 import { getSubscanChainName } from '../chain';
-import { backoffSleep, BATCH_SIZE, MAX_RETRIES, RETRY_DELAY } from './utils';
+import getChainName from '../getChainName';
+import { fetchFromSubscan } from '..';
 
 // Common types
 interface AccountId {
@@ -150,79 +150,57 @@ interface ParamTypesMapping {
 
 const SUPPORTED_MODULES = ['balances', 'nominationpools', 'utility', 'proxy', 'staking', 'convictionvoting'];
 const PAGE_SIZE = 60;
-const nullObject = {
-  code: 0,
-  data: {
-    count: 0,
-    extrinsics: null
-  },
-  generated_at: Date.now(),
-  message: 'Success'
-} as unknown as ExtrinsicsRequest;
 
-/**
- * Enhanced POST request with retry logic for rate limiting
- * @param api API endpoint
- * @param data Request data
- * @param option Additional options
- * @param retryCount Current retry count
- * @returns Promise resolving to the response
- */
-export async function postReq<T> (
-  api: string,
-  data: Record<string, unknown> = {},
-  option?: Record<string, unknown>,
-  retryCount = 0
-): Promise<T> {
-  try {
-    const response = await request.post(api, { data, ...option }) as T;
-
-    return response;
-  } catch (error) {
-    if (retryCount < MAX_RETRIES) {
-      await backoffSleep(RETRY_DELAY, retryCount);
-
-      return postReq<T>(api, data, option, retryCount + 1);
-    }
-
-    throw error;
-  }
+function nullifier(requested: string) {
+  return {
+    code: 0,
+    data: {
+      count: 0,
+      extrinsics: null
+    },
+    for: requested,
+    generated_at: Date.now(),
+    message: 'Success'
+  };
 }
 
 /**
- * Processes an array in batches
- * @param array Array to process
- * @param batchSize Size of each batch
- * @param processor Function to process each batch
+ * Fetches TXs history for a given address on a given chainName
+ * @param address - Account address
+ * @param genesisHash - genesis hash of the blockchain
+ * @param pageNum - Page number for pagination
+ * @param prefix - chain prefix
+ * @returns Promise resolving to ExtrinsicsRequest
  */
-async function processBatch<T> (array: T[], batchSize: number, processor: (items: T[]) => Promise<T[]>): Promise<T[]> {
-  const results: T[] = [];
+export async function getTXsHistory(address: string, genesisHash: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
+  const requested = keyMaker(address, genesisHash);
 
-  for (let i = 0; i < array.length; i += batchSize) {
-    const batch = array.slice(i, i + batchSize);
-    const batchResults = await processor(batch);
-
-    results.push(...batchResults);
-
-    // Add delay between batches if not the last batch
-    if (i + batchSize < array.length) {
-      await backoffSleep(RETRY_DELAY, i / batchSize);
-    }
+  if (prefix === undefined) {
+    return Promise.resolve(nullifier(requested));
   }
 
-  return results;
-}
+  const chainName = getChainName(genesisHash);
+  const network = getSubscanChainName(chainName);
 
-/**
- * Process a batch of extrinsics in order to get extrinsic details
- * @param extrinsics Array of extrinsics
- * @param network Network name
- * @param prefix Chain prefix
- * @returns Promise resolving to an array of Extrinsics
- */
-async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string, prefix: number) {
-  return Promise.all(
-    extrinsics.map(async (extrinsic) => {
+  if (!network) {
+    return nullifier(requested);
+  }
+
+  const extrinsics = await fetchFromSubscan<ExtrinsicsRequest>(`https://${network}.api.subscan.io/api/v2/scan/extrinsics`, {
+    address,
+    page: pageNum,
+    row: PAGE_SIZE
+  });
+
+  if (!extrinsics.data.extrinsics) {
+    return nullifier(requested);
+  }
+
+  const filteredModules = extrinsics.data.extrinsics.filter((extrinsic) => SUPPORTED_MODULES.includes(extrinsic.call_module));
+
+  // Fetch details for each extrinsic using fetchFromSubscan
+  const extrinsicsInfo = await Promise.all(
+    filteredModules.map(async(extrinsic) => {
       try {
         const functionName = extrinsic.call_module_function as keyof ParamTypesMapping;
 
@@ -233,7 +211,7 @@ async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string
           };
         }
 
-        const txDetail = await postReq<ResponseType>(
+        const txDetail = await fetchFromSubscan<ResponseType>(
           `https://${network}.api.subscan.io/api/scan/extrinsic`,
           { hash: extrinsic.extrinsic_hash }
         );
@@ -251,41 +229,10 @@ async function processExtrinsicsBatch (extrinsics: Extrinsics[], network: string
       }
     })
   );
-}
 
-/**
- * Fetches TXs history for a given address on a given chainName
- * @param chainName - Name of the blockchain
- * @param address - Account address
- * @param pageNum - Page number for pagination
- * @param prefix - chain prefix
- * @returns Promise resolving to ExtrinsicsRequest
- */
-export async function getTXsHistory (chainName: string, address: string, pageNum: number, prefix: number | undefined): Promise<ExtrinsicsRequest> {
-  if (!chainName || prefix === undefined) {
-    return Promise.resolve(nullObject);
+  for (const item of (extrinsicsInfo || [])) {
+    item.forAccount = address;
   }
-
-  const network = getSubscanChainName(chainName) as unknown as string;
-
-  const extrinsics = await postReq<ExtrinsicsRequest>(`https://${network}.api.subscan.io/api/v2/scan/extrinsics`, {
-    address,
-    page: pageNum,
-    row: PAGE_SIZE
-  });
-
-  if (!extrinsics.data.extrinsics) {
-    return nullObject;
-  }
-
-  const filteredModules = extrinsics.data.extrinsics.filter((extrinsic) => SUPPORTED_MODULES.includes(extrinsic.call_module));
-
-  // Process extrinsics in batches
-  const extrinsicsInfo = await processBatch<Extrinsics>(
-    filteredModules,
-    BATCH_SIZE,
-    (batch) => processExtrinsicsBatch(batch, network, prefix)
-  );
 
   return {
     ...extrinsics,
@@ -294,11 +241,11 @@ export async function getTXsHistory (chainName: string, address: string, pageNum
       count: extrinsics.data.count,
       extrinsics: extrinsicsInfo
     },
-    for: `${address} - ${chainName}`
+    for: requested
   };
 }
 
-function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; transfer: { amount: string; from: string; to: string; } } }, prefix: number) {
+function getAdditionalInfo(functionName: keyof ParamTypesMapping, txDetail: { data: { params: ParamTypesMapping[typeof functionName]; transfer: { amount: string; from: string; to: string; } } }, prefix: number) {
   try {
     const params = txDetail.data.params;
     const transfer = txDetail.data?.transfer;
@@ -326,16 +273,16 @@ function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { d
         };
 
       case 'vote':
-      {
-        const voteBalance = ((params?.[1]?.value as VotesType)?.Standard?.balance ?? (params?.[1]?.value as VotesType)?.SplitAbstain?.abstain);
-        const voteType = ((params?.[1]?.value as VotesType)?.Standard?.vote ?? null);
+        {
+          const voteBalance = ((params?.[1]?.value as VotesType)?.Standard?.balance ?? (params?.[1]?.value as VotesType)?.SplitAbstain?.abstain);
+          const voteType = ((params?.[1]?.value as VotesType)?.Standard?.vote ?? null);
 
-        return {
-          amount: voteBalance,
-          refId: params?.[0]?.value,
-          voteType
-        };
-      }
+          return {
+            amount: voteBalance,
+            refId: params?.[0]?.value,
+            voteType
+          };
+        }
 
       case 'remove_vote':
         return {
@@ -347,86 +294,86 @@ function getAdditionalInfo (functionName: keyof ParamTypesMapping, txDetail: { d
       case 'force_batch':
 
       case 'batch_all':
-      {
-        const calls = (params?.[0].value as CallsParam[]).map(({ call_module, call_name }) => `${call_module} (${call_name})`);
+        {
+          const calls = (params?.[0].value as CallsParam[]).map(({ call_module, call_name }) => `${call_module} (${call_name})`);
 
-        return { calls };
-      }
+          return { calls };
+        }
 
       case 'transfer_keep_alive':
       case 'transfer_allow_death':
       case 'transfer_all':
 
       case 'transfer':
-      {
-        const toId = (params?.[0].value as AccountId | undefined)?.Id;
-        const paramTo = toId ? encodeAddress(hexToU8a(toId), prefix) : '';
-        const paramAmount = params?.[1].value as string | undefined;
+        {
+          const toId = (params?.[0].value as AccountId | undefined)?.Id;
+          const paramTo = toId ? encodeAddress(hexToU8a(toId), prefix) : '';
+          const paramAmount = params?.[1].value as string | undefined;
 
-        const { amount = paramAmount, from = '', to = paramTo } = transfer ?? {};
+          const { amount = paramAmount, from = '', to = paramTo } = transfer ?? {};
 
-        return {
-          amount,
-          from,
-          to
-        };
-      }
+          return {
+            amount,
+            from,
+            to
+          };
+        }
 
       case 'rebond':
 
       case 'unbond':
-      {
-        const amount = (params?.[1]?.value || params?.[1]?.value) as string | undefined;
+        {
+          const amount = (params?.[1]?.value || params?.[1]?.value) as string | undefined;
 
-        return { amount };
-      }
+          return { amount };
+        }
 
       case 'bond':
-      {
-        const amount = params?.[0].value as string | undefined;
+        {
+          const amount = params?.[0].value as string | undefined;
 
-        return { amount };
-      }
+          return { amount };
+        }
 
       case 'bond_extra':
-      {
-        const bondAmount =
+        {
+          const bondAmount =
             (params?.[0]?.value as BondExtraRewards)?.Rewards ||
             (params?.[0]?.value as BondExtraFreeBalance)?.FreeBalance ||
             (params?.[0]?.value as string | undefined) ||
             '0';
 
-        const amount = isNaN(Number(bondAmount)) ? '0' : bondAmount;
+          const amount = isNaN(Number(bondAmount)) ? '0' : bondAmount;
 
-        return { amount };
-      }
+          return { amount };
+        }
 
       case 'nominate':
-      {
-        const nominatorsRaw = params?.[0]?.value;
-        const nominatorsArr = Array.isArray(nominatorsRaw) ? nominatorsRaw : [];
-        const nominators = nominatorsArr.map(({ Id }) => encodeAddress(hexToU8a(Id), prefix));
+        {
+          const nominatorsRaw = params?.[0]?.value;
+          const nominatorsArr = Array.isArray(nominatorsRaw) ? nominatorsRaw : [];
+          const nominators = nominatorsArr.map(({ Id }) => encodeAddress(hexToU8a(Id), prefix));
 
-        return { nominators };
-      }
+          return { nominators };
+        }
 
       case 'join':
-      {
-        const amount = params?.[0].value as string | undefined;
-        const poolId = params?.[1].value as string | undefined;
+        {
+          const amount = params?.[0].value as string | undefined;
+          const poolId = params?.[1].value as string | undefined;
 
-        return { amount, poolId };
-      }
+          return { amount, poolId };
+        }
 
       case 'proxy':
-      {
-        const call_name = (params?.[2].value as CallsParam).call_name;
-        const call_module = (params?.[2].value as CallsParam).call_module;
+        {
+          const call_name = (params?.[2].value as CallsParam).call_name;
+          const call_module = (params?.[2].value as CallsParam).call_module;
 
-        const calls = [`${call_module} (${call_name})`];
+          const calls = [`${call_module} (${call_name})`];
 
-        return { calls };
-      }
+          return { calls };
+        }
 
       default:
         return {};

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { KeypairType } from '@polkadot/util-crypto/types';
@@ -22,7 +22,7 @@ import { type AccountInfo, STEP } from '../../newAccount/createAccountFullScreen
 import { useAccountImportOrCreate } from '../../newAccount/createAccountFullScreen/useAccountImportOrCreate';
 import MyPhraseArea from '../importSeedFullScreen/MyPhraseArea';
 
-export default function ImportRawSeed (): React.ReactElement {
+export default function ImportRawSeed(): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const localAccounts = useLocalAccounts();
@@ -87,7 +87,7 @@ export default function ImportRawSeed (): React.ReactElement {
 
   const onImport = useCallback(async () => {
     try {
-      await onConfirm(account?.suri);
+      await onConfirm({ seed: account?.suri });
     } catch (e) {
       console.error(e);
     }

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -24,7 +24,7 @@ interface ActionBoxProps {
   onClick?: () => void;
 }
 
-function ActionBox ({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
+function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
   const navigate = useNavigate();
 
   const _onClick = useCallback(() => {
@@ -36,7 +36,7 @@ function ActionBox ({ Icon, label, onClick, path }: ActionBoxProps): React.React
   return (
     <Stack direction='column' justifyContent='start' onClick={_onClick} rowGap='7px' sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-4px)' }, bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', height: '100%', minWidth: '90px', px: '10px', transition: 'all 250ms ease-out', width: '100%' }}>
       <Icon color='#AA83DC' size='24' style={{ marginTop: '20px' }} variant='Bulk' />
-      <Typography sx={{ display: 'flex', fontWeight: 700, width: '100%' }} variant='B-2'>
+      <Typography sx={{ display: 'flex', fontWeight: 700, whiteSpace: 'nowrap', width: '100%' }} variant='B-2'>
         {label}
       </Typography>
     </Stack>
@@ -49,7 +49,7 @@ interface Props {
   assetId: string | undefined;
 }
 
-function ActionButtons ({ address, assetId, genesisHash }: Props): React.ReactElement {
+function ActionButtons({ address, assetId, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash);
   const { maxPosition, maxPositionType } = useStakingPositions(address, true);

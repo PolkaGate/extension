@@ -1,23 +1,25 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AccountContext } from '@polkadot/extension-polkagate/src/components';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useIsPasswordCorrect from '@polkadot/extension-polkagate/src/hooks/useIsPasswordCorrect';
-import { createAccountSuri } from '@polkadot/extension-polkagate/src/messaging';
+import { createAccountExternal, createAccountSuri } from '@polkadot/extension-polkagate/src/messaging';
 import { setStorage } from '@polkadot/extension-polkagate/src/util';
-import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { DEMO_ACCOUNT, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
 import { resetOnForgotPassword } from './resetAccounts';
 import { type AccountInfo, STEP } from './types';
 
-export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo> ({ onSuccessPath = '/',
+export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ onSuccessPath = '/',
   validator }: { onSuccessPath?: string; validator?: (suri: string, type?: KeypairType) => Promise<T> }) {
+  const { accounts } = useContext(AccountContext);
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { hasNoLocalAccounts, validatePasswordAsync } = useIsPasswordCorrect();
@@ -50,7 +52,7 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo> ({
     }
   }, [validator]);
 
-  const onConfirm = useCallback(async (seed: string | undefined | null, type?: KeypairType) => {
+  const onConfirm = useCallback(async({ isImport = true, seed, type }: {seed: string | undefined | null, type?: KeypairType, isImport?:boolean}) => {
     if (!name || !password || !seed) {
       return;
     }
@@ -69,12 +71,12 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo> ({
       const resetOk = await resetOnForgotPassword();
 
       if (!resetOk) {
-         setIsBusy(false);
+        setIsBusy(false);
 
-         return setError(t('Failed to reset accounts'));
-       }
+        return setError(t('Failed to reset accounts'));
+      }
 
-       const created = await createAccountSuri(name, password, seed, type || DEFAULT_TYPE);
+      const created = await createAccountSuri(name, password, seed, type || DEFAULT_TYPE);
 
       if (!created) {
         setIsBusy(false);
@@ -82,8 +84,18 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo> ({
         return setError(t('Failed to create account'));
       }
 
-      const okProfile = await setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LOCAL);
+      const isFirstAccount = accounts?.length === 0;
+
+      if (isFirstAccount) {
+        await createAccountExternal('Demo account', DEMO_ACCOUNT, undefined);
+      }
+
+      const toProfile = isFirstAccount ? PROFILE_TAGS.ALL : PROFILE_TAGS.LOCAL;
+
+      const okProfile = await setStorage(STORAGE_KEY.SELECTED_PROFILE, toProfile);
       const okMigrated = await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true);
+
+      isImport && setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true) as unknown as void;
 
       if (!okProfile || !okMigrated) {
         console.warn('Failed to persist profile or migration flag');
@@ -95,7 +107,7 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo> ({
       setIsBusy(false);
       console.error(error);
     }
-  }, [name, password, validatePasswordAsync, t, navigate, onSuccessPath]);
+  }, [name, password, accounts?.length, validatePasswordAsync, t, navigate, onSuccessPath]);
 
   return {
     error,

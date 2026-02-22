@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Extrinsics, TransactionDetail, Transfers } from '../../../util/types';
@@ -18,7 +18,7 @@ export interface RecordTabStatusGov {
 }
 
 export interface TransactionHistoryOutput {
-  allHistories: TransactionDetail[] | null;
+  allHistories: TransactionDetail[] | null | undefined;
   count: number;
   grouped: Record<string, TransactionDetail[]> | null | undefined;
   isLoading: boolean;

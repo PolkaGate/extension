@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Inputs } from '../types';
@@ -23,7 +23,7 @@ interface Props {
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
 }
 
-export default function SelectToken ({ address, assetId, genesisHash, inputs, setInputs }: Props): React.ReactElement {
+export default function SelectToken({ address, assetId, genesisHash, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const accountAssets = useAccountAssets(address);

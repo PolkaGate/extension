@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { StorageKey } from '@polkadot/types';
@@ -67,6 +67,7 @@ export type EraUnclaimedPayouts = Record<string, [number, BN]>;
 
 export const PAGED_REWARD_START_ERA: Record<string, number> = {
   Kusama: 6514,
+  Paseo: 2236,
   Polkadot: 1420,
   Westend: 7167
 };
@@ -83,12 +84,12 @@ const isRewardsPaged = (chainName: string | undefined, era: number): boolean => 
 
 export const MAX_SUPPORTED_PAYOUT_ERAS = 7; // TODO: can increase adaptively to more if needed after enough tests
 
-export default function usePendingRewards (address: string | undefined, genesisHash: string | undefined): UnclaimedPayouts | undefined {
+export default function usePendingRewards(address: string | undefined, genesisHash: string | undefined): UnclaimedPayouts | undefined {
   const { api, chainName } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
   const activeEra = useActiveEraIndex(genesisHash);
 
-  const [pendingRewards, setPendingRewards] = useState<UnclaimedPayouts>();
+  const [pendingRewards, setPendingRewards] = useState<UnclaimedPayouts | null>();
 
   const endEra = activeEra ? activeEra - MAX_SUPPORTED_PAYOUT_ERAS - 1 : 1;
 
@@ -173,8 +174,7 @@ export default function usePendingRewards (address: string | undefined, genesisH
         allExposures.push(eraExposureInfo);
       }
 
-      console.log('eraExposureInfo:', eraExposureInfo);
-      window.dispatchEvent(new CustomEvent('percentOfErasCheckedForPendingRewards', { detail: (MAX_SUPPORTED_PAYOUT_ERAS - (currentEra - endEra) + 1) / MAX_SUPPORTED_PAYOUT_ERAS }));
+      window.dispatchEvent(new CustomEvent('percentOfErasCheckedForPendingRewards', { detail: 100 * (MAX_SUPPORTED_PAYOUT_ERAS - (currentEra - endEra) + 1) / MAX_SUPPORTED_PAYOUT_ERAS }));
 
       currentEra -= 1;
     }
@@ -323,7 +323,15 @@ export default function usePendingRewards (address: string | undefined, genesisH
     }
 
     getAllExposures().then((allExposures) => {
-      allExposures?.length && handleUnclaimedRewards(allExposures).catch(console.error);
+      if (allExposures) {
+        if (!allExposures.length) {
+          setPendingRewards(null);
+
+          return;
+        }
+
+        handleUnclaimedRewards(allExposures).catch(console.error);
+      }
     }).catch(console.error);
   }, [address, api, activeEra, formatted, getAllExposures, handleUnclaimedRewards]);
 

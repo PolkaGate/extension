@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SavedAssets } from '@polkadot/extension-polkagate/hooks/useAssetsBalances';
@@ -8,21 +8,32 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AccountContext, AccountsAssetsContext, GenesisHashOptionsContext, UserAddedChainContext, WorkerContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
+import { useNotifications } from '@polkadot/extension-polkagate/src/hooks';
 import useAssetsBalances from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import useNFT from '@polkadot/extension-polkagate/src/hooks/useNFT';
+import { getAndWatchStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-export default function AccountAssetProvider ({ children }: { children: React.ReactNode }) {
+export default function AccountAssetProvider({ children }: { children: React.ReactNode }) {
   const { accounts } = useContext(AccountContext);
-  const genesisHashOptions = useContext(GenesisHashOptionsContext);
-  const userAddedChainCtx = useContext(UserAddedChainContext);
+  const genesisOptions = useContext(GenesisHashOptionsContext);
+  const userAddedEndpoints = useContext(UserAddedChainContext);
   const worker = useContext(WorkerContext);
 
+  useNotifications(false); // fetches and saves notification in the local storage
+
   const [accountsAssets, setAccountsAssets] = useState<SavedAssets | null | undefined>();
- const { isExtensionLocked } = useExtensionLockContext();
-  const assetsOnChains = useAssetsBalances(accounts, genesisHashOptions, userAddedChainCtx, worker, isExtensionLocked);
+  const [checkAllChains, setCheckAll] = useState<boolean>();
+  const { isExtensionLocked } = useExtensionLockContext();
+  const assetsOnChains = useAssetsBalances({ accounts, checkAllChains, genesisOptions, isExtensionLocked, userAddedEndpoints, worker });
 
   useNFT(accounts);
+
+  useEffect(() => {
+    const unsubscribe = getAndWatchStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, setCheckAll);
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     assetsOnChains && setAccountsAssets({ ...assetsOnChains });

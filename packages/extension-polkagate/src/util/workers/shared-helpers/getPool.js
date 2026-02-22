@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { BN, BN_ZERO, bnMax, hexToString } from '@polkadot/util';
@@ -27,7 +27,7 @@ import { fastestEndpoint, getChainEndpoints } from '../utils';
  * @param {MessagePort} port
  * @param {string} genesisHash
  */
-export async function getPool (genesisHash, stakerAddress, id, port) {
+export async function getPool(genesisHash, stakerAddress, id, port) {
   const chainName = getChainName(genesisHash);
   const endpoints = getChainEndpoints(chainName ?? '');
 

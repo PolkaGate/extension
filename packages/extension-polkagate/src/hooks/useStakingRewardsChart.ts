@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ActiveElement, BubbleDataPoint, Chart, ChartData, ChartEvent, ChartTypeRegistry, PluginChartOptions, Point } from 'chart.js';
@@ -68,6 +68,7 @@ const createGradient = (ctx: CanvasRenderingContext2D, element: GradientObject, 
   return gradient;
 };
 
+type RewardStatus = 'loading' | 'error' | 'ready';
 export interface UseStakingRewards {
   chartData: ChartData<'bar', string[] | undefined, string>;
   dateInterval: string | undefined;
@@ -78,7 +79,7 @@ export interface UseStakingRewards {
   totalClaimedReward: BN | undefined;
   detail: string | undefined;
   expand: Dispatch<SetStateAction<string | undefined>>;
-  status: 'loading' | 'error' | 'ready';
+  status: RewardStatus;
 }
 
 /**
@@ -89,7 +90,7 @@ export interface UseStakingRewards {
  * @param isFullScreen - Whether the chart is displayed in full screen mode
  * @returns Object containing chart data, options, and control functions
  */
-export default function useStakingRewardsChart (address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool', isFullScreen?: boolean): UseStakingRewards {
+export default function useStakingRewardsChart(address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool', isFullScreen?: boolean): UseStakingRewards {
   const theme = useTheme();
   const { chainName, decimal, token } = useChainInfo(genesisHash, true);
 
@@ -150,10 +151,10 @@ export default function useStakingRewardsChart (address: string | undefined, gen
           setTotalClaimedReward(totalClaimedRewardAmount);
 
           return setClaimedRewardsInfo(claimedRewardsFromSubscan);
-        } else {
-          // No rewards found - set to null (different from undefined/loading)
-          return setClaimedRewardsInfo(null);
         }
+
+        // No rewards found - set to null (different from undefined/loading)
+        return setClaimedRewardsInfo(null);
       }).catch(console.error);
   }, [chainName, address, type]);
 
@@ -402,7 +403,7 @@ export default function useStakingRewardsChart (address: string | undefined, gen
 
         // Find corresponding item(s) in descSortedRewards
         const correspondingRewards = descSortedRewards?.filter((reward) => {
-        // Remove month from reward.date to match the chart label
+          // Remove month from reward.date to match the chart label
           const rewardDateWithoutMonth = reward.date?.replace(/^[A-Za-z]{3}\s/, '');
 
           return rewardDateWithoutMonth === hoveredDateLabel;
@@ -555,14 +556,16 @@ export default function useStakingRewardsChart (address: string | undefined, gen
   }, [dataToShow, pageIndex]);
 
   // Compute loading/error/ready status based on data state
-  const status = useMemo((): 'loading' | 'error' | 'ready' => {
+  const status = useMemo((): RewardStatus => {
     if (claimedRewardsInfo === undefined) {
       return 'loading'; // Still fetching data
-    } else if (claimedRewardsInfo === null) {
-      return 'error'; // No data found or API error
-    } else {
-      return 'ready'; // Data successfully loaded
     }
+
+    if (claimedRewardsInfo === null) {
+      return 'error'; // No data found or API error
+    }
+
+    return 'ready'; // Data successfully loaded
   }, [claimedRewardsInfo]);
 
   return {

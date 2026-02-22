@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, RequestSign } from '@polkadot/extension-base/background/types';
@@ -27,7 +27,7 @@ interface Props {
   url: string;
 }
 
-export default function RawData ({ account, error, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
+export default function RawData({ account, error, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dapp = new URL(url).origin;
@@ -55,13 +55,14 @@ export default function RawData ({ account, error, request, setError, setMode, s
 
   const { address, data } = request.payload as SignerPayloadRaw;
 
-  const text = useMemo(() => isAscii(data)
-    ? u8aToString(u8aUnwrapBytes(data))
-    : data
+  const text = useMemo(() =>
+    isAscii(data)
+      ? u8aToString(u8aUnwrapBytes(data))
+      : data
     , [data]);
 
   return (
-    <Grid container display='block' fontSize='16px' height='440px' justifyContent='center' justifyItems='center'>
+    <Grid container display='block' fontSize='16px' height='490px' justifyContent='center' justifyItems='center' position='relative'>
       <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: '#05091C80', borderRadius: '14px', height: '34px', pr: '5px', width: 'fit-content' }}>
         <Avatar
           src={faviconUrl ?? undefined}

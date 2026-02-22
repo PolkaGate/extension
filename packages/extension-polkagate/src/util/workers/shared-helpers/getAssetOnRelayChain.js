@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { FETCHING_ASSETS_FUNCTION_NAMES, NATIVE_TOKEN_ASSET_ID, TEST_NETS } from '../../constants';
@@ -12,7 +12,7 @@ import { getBalances } from './getBalances.js';
  * @param {import('../../types').UserAddedChains} userAddedEndpoints
  * @param {MessagePort } port
  */
-export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpoints, port) {
+export async function getAssetOnRelayChain(addresses, chainName, userAddedEndpoints, port) {
   const results = {};
 
   try {
@@ -24,7 +24,7 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
 
     const genesisHash = api.genesisHash.toString();
 
-    balanceInfo.forEach(({ address, balances, poolName, poolReward, pooledBalance, soloTotal }) => {
+    balanceInfo.forEach(({ address, balances, claimPermissions, poolName, poolReward, pooledBalance, soloTotal }) => {
       const totalBalance = balances.freeBalance.add(balances.reservedBalance);
 
       const priceId = TEST_NETS.includes(genesisHash)
@@ -36,6 +36,7 @@ export async function getAssetOnRelayChain (addresses, chainName, userAddedEndpo
         assetId: NATIVE_TOKEN_ASSET_ID,
         balanceDetails: balancify({ ...balances, poolReward, pooledBalance, soloTotal }),
         chainName,
+        claimPermissions,
         decimal: api.registry.chainDecimals[0],
         genesisHash,
         isNative: true,

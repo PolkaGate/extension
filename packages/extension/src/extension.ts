@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension authors & contributors
+// Copyright 2019-2026 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import '@polkadot/extension-inject/crossenv';
@@ -17,8 +17,6 @@ import { createView, Popup } from '@polkadot/extension-ui';
       const isProd = process.env['NODE_ENV'] === 'production';
 
       if (isProd) {
-        const SAMPLING_RATE = 0.1;
-
         Sentry.init({
           dsn: process.env['SENTRY_DSN'],
           integrations: [
@@ -26,13 +24,13 @@ import { createView, Popup } from '@polkadot/extension-ui';
             Sentry.replayIntegration()
           ],
           release: process.env['EXTENSION_VERSION'],
-          replaysOnErrorSampleRate: SAMPLING_RATE,
-          replaysSessionSampleRate: SAMPLING_RATE,
+          replaysOnErrorSampleRate: 1,
+          replaysSessionSampleRate: 0.01,
           tracePropagationTargets: [
             /^chrome-extension:\/\/mgojgfjhknpmlojihdpjikinpgcaadlj/,
             /^chrome-extension:\/\/ginchbkmljhldofnbjabmeophlhdldgp/
           ],
-          tracesSampleRate: SAMPLING_RATE
+          tracesSampleRate: 0.1
         });
       } else {
         console.log('Sentry disabled in development.');

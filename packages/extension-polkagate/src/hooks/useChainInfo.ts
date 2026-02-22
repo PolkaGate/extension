@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -22,8 +22,8 @@ import useMetadata from './useMetadata';
  * @property {number | undefined} decimal - The number of decimals for the blockchain's token. Can be undefined.
  * @property {string | undefined} token - The symbol for the blockchain's token. Can be undefined.
  */
-interface ChainInfo {
-  api: ApiPromise | undefined;
+export interface ChainInfo {
+  api: ApiPromise | null | undefined;
   chain: Chain | null | undefined;
   chainName: string | undefined;
   decimal: number | undefined;
@@ -39,14 +39,9 @@ interface ChainInfo {
  * @param {boolean} noApi - If true, prevents triggering the API connection.
  * @returns {ChainInfo} The information about the blockchain, including the API, chain metadata, name, decimals, and token symbol.
  */
-export default function useChainInfo (genesisHash: string | null | undefined, noApi = false): ChainInfo {
+export default function useChainInfo(genesisHash: string | null | undefined, noApi = false): ChainInfo {
   const chain = useMetadata(genesisHash, true);
   const api = useApi(noApi ? undefined : genesisHash);
-
-  const hasMatchingGenesis = useMemo(
-    () => api?.genesisHash?.toHex() === genesisHash,
-    [api?.genesisHash, genesisHash]
-  );
 
   return useMemo(() => {
     const chainInfo = chains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
@@ -66,13 +61,24 @@ export default function useChainInfo (genesisHash: string | null | undefined, no
       };
     }
 
+    const hasMatchingGenesisForAPI = api?.genesisHash?.toHex() === genesisHash;
+    const hasMatchingGenesisForChain = chain?.genesisHash === genesisHash;
+
     return {
-      api: hasMatchingGenesis ? api : undefined,
-      chain,
+      api: api === null
+        ? null
+        : hasMatchingGenesisForAPI
+          ? api
+          : undefined,
+      chain: chain === null
+        ? null
+        : hasMatchingGenesisForChain
+          ? chain
+          : undefined,
       chainName,
       decimal: decimal ?? chain?.tokenDecimals,
       displayName,
       token: token ?? chain?.tokenSymbol
     };
-  }, [api, chain, genesisHash, hasMatchingGenesis]);
+  }, [api, chain, genesisHash]);
 }

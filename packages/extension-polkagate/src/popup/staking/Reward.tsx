@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ClaimedRewardInfo } from '../../util/types';
@@ -10,7 +10,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { AssetLogo, BackWithLabel, DisplayBalance, FadeOnScroll, Identity2, Motion, Progress } from '../../components';
+import { AssetLogo, BackWithLabel, DisplayBalance, FadeOnScroll, Identity2, Motion, NoInfoYet, Progress } from '../../components';
 import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewardsChart, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import getLogo2 from '../../util/getLogo2';
@@ -155,7 +155,7 @@ const RewardChartTable = ({ descSortedRewards, expanded, genesisHash, onExpand }
   );
 };
 
-export default function StakingReward () {
+export default function StakingReward() {
   useBackground('staking');
 
   const { t } = useTranslation();
@@ -168,7 +168,7 @@ export default function StakingReward () {
   const poolStakingInfo = usePoolStakingInfo(address, type === 'pool' ? genesisHash : undefined);
 
   // Fetch staking rewards based on the type; for pool rewards, we must explicitly pass 'solo' to the hook
-  const rewardInfo = useStakingRewardsChart(address, genesisHash, type === 'pool' ? 'pool' : 'solo');
+  const { chartData, chartOptions, dateInterval, descSortedRewards, detail, expand, onNextPeriod, onPreviousPeriod, status } = useStakingRewardsChart(address, genesisHash, type === 'pool' ? 'pool' : 'solo');
 
   // Normalize the type for navigation purposes; if the original type is not 'solo' (stash), treat it as 'pool'
   const _type = type === 'solo' ? 'solo' : 'pool';
@@ -191,37 +191,40 @@ export default function StakingReward () {
             text={t('Received Rewards')}
           />
           <Stack direction='column' ref={containerRef} sx={{ height: 'fit-content', maxHeight: '515px', overflow: 'hidden', overflowY: 'auto', p: '15px', width: '100%' }}>
-            {rewardInfo.status === 'loading' &&
+            {status === 'loading' &&
               <Progress
                 style={{ marginTop: '90px' }}
                 title={t('Loading rewards')}
               />
             }
-            {rewardInfo.status === 'ready' && rewardInfo.descSortedRewards &&
+            {status === 'ready' && descSortedRewards &&
               <>
                 <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '10px 5px', pb: '5px', width: '100%' }}>
                   <RewardChartHeader
-                    dateInterval={rewardInfo.dateInterval}
+                    dateInterval={dateInterval}
                     genesisHash={genesisHash}
-                    onNextPeriod={rewardInfo.onNextPeriod}
-                    onPreviousPeriod={rewardInfo.onPreviousPeriod}
+                    onNextPeriod={onNextPeriod}
+                    onPreviousPeriod={onPreviousPeriod}
                   />
                   <Grid container item>
-                    <Bar data={rewardInfo.chartData} options={rewardInfo.chartOptions} />
+                    <Bar data={chartData} options={chartOptions} />
                   </Grid>
                 </Stack>
                 <RewardChartTable
-                  descSortedRewards={rewardInfo.descSortedRewards}
-                  expanded={rewardInfo.detail}
+                  descSortedRewards={descSortedRewards}
+                  expanded={detail}
                   genesisHash={genesisHash}
-                  onExpand={rewardInfo.expand}
+                  onExpand={expand}
                 />
               </>
             }
-            {rewardInfo.status === 'error' &&
-              <Typography color='text.primary' pt='40px' variant='B-2'>
-                {t('No rewards found')}
-              </Typography>
+            {status === 'error' &&
+              <NoInfoYet
+                show
+                size={120}
+                style={{ pt: '25%' }}
+                text={t('No rewards yet')}
+              />
             }
             <FadeOnScroll containerRef={containerRef} height='75px' ratio={0.8} />
           </Stack>

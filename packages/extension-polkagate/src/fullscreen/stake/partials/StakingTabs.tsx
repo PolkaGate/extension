@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -70,7 +70,7 @@ enum STAKING_TABS {
   VALIDATORS
 }
 
-function StakingTabs ({ disabled, genesisHash, popupOpener, rewardInfo, setSelectedPosition, stakingInfo, token, type }: Props) {
+function StakingTabs({ disabled, genesisHash, popupOpener, rewardInfo, setSelectedPosition, stakingInfo, token, type }: Props) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<STAKING_TABS>(STAKING_TABS.STAKING_POSITIONS);
 
@@ -97,12 +97,12 @@ function StakingTabs ({ disabled, genesisHash, popupOpener, rewardInfo, setSelec
         Icon: Discover,
         isSelected: tab === STAKING_TABS.VALIDATORS,
         onClick: tabSetter(STAKING_TABS.VALIDATORS),
-        title: t('Nominations')
+        title: stakingInfo?.isValidator ? t('Validator') : t('Nominations')
       });
     }
 
     return tabs;
-  }, [t, tab, tabSetter, type]);
+  }, [stakingInfo?.isValidator, t, tab, tabSetter, type]);
 
   const content = useMemo(() => {
     switch (tab) {

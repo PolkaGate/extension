@@ -1,8 +1,10 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
 import React, { useCallback } from 'react';
+
+import { MyTooltip } from '@polkadot/extension-polkagate/src/components';
 
 import { useIsBlueish, useIsDark } from '../../../hooks/index';
 
@@ -10,35 +12,37 @@ interface Props {
   Icon: React.JSX.Element;
   bgColor?: string;
   link: string;
+  tooltip?: string;
   size?: number;
 }
 
-function SocialIcon ({ Icon, bgColor, link, size = 32 }: Props): React.ReactElement {
+function SocialIcon({ Icon, bgColor, link, size = 32, tooltip }: Props): React.ReactElement {
   const isDark = useIsDark();
   const isBlueish = useIsBlueish();
 
   const goToLink = useCallback(() => window.open(link, '_blank', 'noopener,noreferrer'), [link]);
 
   return (
-    <Grid
-      bgcolor={bgColor || (isDark ? isBlueish ? '#809ACB33' : '#2D1E4A' : '#FFFFFF')}
-      onClick={goToLink}
-      sx={{
-        '&:hover': {
-          bgcolor: '#CC429D'
-        },
-        alignItems: 'center',
-        borderRadius: '50%',
-        cursor: 'pointer',
-        display: 'flex',
-        height: size,
-        justifyContent: 'center',
-        width: size
-      }}
-    >
-      {Icon}
-    </Grid>
-
+    <MyTooltip content={tooltip}>
+      <Grid
+        bgcolor={bgColor || (isDark ? isBlueish ? '#809ACB33' : '#2D1E4A' : '#FFFFFF')}
+        onClick={goToLink}
+        sx={{
+          '&:hover': {
+            bgcolor: '#CC429D'
+          },
+          alignItems: 'center',
+          borderRadius: '50%',
+          cursor: 'pointer',
+          display: 'flex',
+          height: size,
+          justifyContent: 'center',
+          width: size
+        }}
+      >
+        {Icon}
+      </Grid>
+    </MyTooltip>
   );
 }
 

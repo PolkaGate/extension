@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Avatar, Grid, Stack } from '@mui/material';
@@ -12,7 +12,7 @@ interface Props {
   length?: number;
 }
 
-export default function LoadingProxies ({ length = 2 }: Props): React.ReactElement {
+export default function LoadingProxies({ length = 2 }: Props): React.ReactElement {
   const isDark = useIsDark();
 
   return (
@@ -35,7 +35,7 @@ export default function LoadingProxies ({ length = 2 }: Props): React.ReactEleme
           >
             <MySkeleton
               bgcolor={isDark ? '#946CC840' : '#99A1C440'}
-              height ={18}
+              height={18}
               style={{ borderRadius: '6px', position: 'absolute', right: '8px', top: '8px' }}
               width={18}
             />

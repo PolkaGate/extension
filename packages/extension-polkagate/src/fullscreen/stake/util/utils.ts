@@ -1,8 +1,7 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Icon } from 'iconsax-react';
-import type { PoolInfo } from '../../../util/types';
+import type { PoolInfo } from '@polkadot/extension-polkagate/util/types';
 
 import { useCallback, useState } from 'react';
 
@@ -53,20 +52,13 @@ export enum EasyStakeSide {
 export type PopupOpener = (popup: StakingPopUps) => () => void;
 export type PopupCloser = () => void;
 
-export function useStakingPopups () {
+export function useStakingPopups() {
   const [stakingPopup, setStakingPopup] = useState<StakingPopUps>(StakingPopUps.NONE);
 
   const popupOpener: PopupOpener = useCallback((popup: StakingPopUps) => () => setStakingPopup(popup), []);
   const popupCloser: PopupCloser = useCallback(() => setStakingPopup(StakingPopUps.NONE), []);
 
   return { popupCloser, popupOpener, stakingPopup };
-}
-
-export interface Stats {
-  value: number | string | BN | undefined;
-  label: string;
-  InfoIcon?: Icon;
-  withLogo?: boolean;
 }
 
 export const FULLSCREEN_STAKING_TX_FLOW = {
@@ -81,7 +73,7 @@ interface CloseBehavior {
   onClose: () => void;
 }
 
-export function getCloseBehavior (
+export function getCloseBehavior(
   flowStep: FullScreenTransactionFlow,
   handleClosePopup: () => void,
   setFlowStep: (step: FullScreenTransactionFlow) => void,
@@ -193,7 +185,7 @@ export const positionsInitialState: PositionsState = {
   tab: POSITION_TABS.POSITIONS
 };
 
-export function positionsReducer (state: PositionsState, action: PositionsAction): PositionsState {
+export function positionsReducer(state: PositionsState, action: PositionsAction): PositionsState {
   switch (action.type) {
     case 'SET_STAKING_TYPE':
       return { ...state, stakingType: action.payload };
@@ -210,7 +202,7 @@ export function positionsReducer (state: PositionsState, action: PositionsAction
   }
 }
 
-export function getTokenUnit (value: number | string | BN | bigint, decimals: number, token: string): string {
+export function getTokenUnit(value: number | string | BN | bigint, decimals: number, token: string): string {
   const formatted = formatBalance(value, { decimals, withSi: true, withUnit: token });
 
   const match = formatted.match(/[\d,.]+\s*([a-zA-Z]+)$/);

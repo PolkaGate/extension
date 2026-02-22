@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
@@ -32,7 +32,7 @@ interface Props {
   type: 'solo' | 'pool';
 }
 
-function Tiles ({ address, asset, genesisHash, onClaimReward, onExpand, onRestake, onWithdraw, redeemable, rewards, toBeReleased, type, unlockingAmount }: Props) {
+function Tiles({ address, asset, genesisHash, onClaimReward, onExpand, onRestake, onWithdraw, redeemable, rewards, toBeReleased, type, unlockingAmount }: Props) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const pricesInCurrency = usePrices();

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SwitchProps } from '@mui/material/Switch';
@@ -43,7 +43,7 @@ const MySwitch = ({ checked, columnGap, label, labelStyle = {}, onChange, showHi
   const isBlueish = useIsBlueish();
 
   return (
-    <Stack alignItems= 'center' columnGap={columnGap} component='label' direction='row' sx={{ ...style }}>
+    <Stack alignItems='center' columnGap={columnGap} component='label' direction='row' sx={{ ...style }}>
       <StyledSwitch
         checked={Boolean(checked)}
         checkedIcon={showHidden ? <HiddenIcon /> : <Box sx={{ borderRadius: '50%', height: '10px', width: '10px' }} />}
@@ -55,7 +55,7 @@ const MySwitch = ({ checked, columnGap, label, labelStyle = {}, onChange, showHi
         showHidden={showHidden}
         {...props}
       />
-      <Typography color={showHidden && !checked ? 'text.secondary' : 'text.primary'} sx={{ cursor: 'pointer', width: 'max-content' }} variant='B-1' {... labelStyle}>
+      <Typography color={showHidden && !checked ? 'text.secondary' : 'text.primary'} sx={{ cursor: 'pointer', width: 'max-content' }} variant='B-1' {...labelStyle}>
         {label}
       </Typography>
     </Stack>
@@ -83,7 +83,7 @@ const StyledSwitch = styled(Switch, {
     : isDark
       ? '#6743944D'
       : '#CCD2EA'
-  }`,
+    }`,
   borderRadius: '109.71px',
   cursor: 'pointer',
   height: '24px',
@@ -113,7 +113,7 @@ const StyledSwitch = styled(Switch, {
     '&.Mui-checked': {
       background: showHidden ? undefined : isDark ? '#EAEBF1' : '#3988FF',
       padding: showHidden ? 0 : 2,
-      transform: `translateX(${showHidden ? 10 : 13}px)`,
+      transform: showHidden ? 'translate(10px, 5%)' : 'translate(13px, 20%)', // horizontal + vertical for checked
       '& .MuiSwitch-thumb': {
         background: isDark ? '#EAEBF1' : '#3988FF'
       },
@@ -148,6 +148,7 @@ const StyledSwitch = styled(Switch, {
     background: isDark ? '#674394' : '#CCD2EA',
     boxSizing: 'border-box',
     height: 10.29,
+    transform: 'translateY(50%)', // proper vertical center
     transition: theme.transitions.create(['background-color', 'transform'], {
       duration: 300,
       easing: 'cubic-bezier(0.4, 0, 0.2, 1)'

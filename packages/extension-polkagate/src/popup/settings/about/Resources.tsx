@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
@@ -12,7 +12,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function Resources ({ style = {} }: Props): React.ReactElement {
+export default function Resources({ style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
@@ -31,8 +31,8 @@ export default function Resources ({ style = {} }: Props): React.ReactElement {
         {t('Resources')}
       </Typography>
       <Grid columnGap='8px' container justifyContent={'flex-start'}>
-        <SocialIcon Icon={<Docs color={theme.palette.icon.secondary} width='18px' />} bgColor ={isDark ? undefined : '#CCD2EA'} link='https://docs.polkagate.xyz/' />
-        <SocialIcon Icon={<Web color={theme.palette.icon.secondary} width='18px' />} bgColor ={isDark ? undefined : '#CCD2EA'} link='https://polkagate.xyz/' />
+        <SocialIcon Icon={<Docs color={theme.palette.icon.secondary} width='18px' />} bgColor={isDark ? undefined : '#CCD2EA'} link='https://docs.polkagate.xyz/' tooltip= {t('Need help?')} />
+        <SocialIcon Icon={<Web color={theme.palette.icon.secondary} width='18px' />} bgColor={isDark ? undefined : '#CCD2EA'} link='https://polkagate.xyz/' tooltip= {t('Website')} />
       </Grid>
     </Stack>
   );

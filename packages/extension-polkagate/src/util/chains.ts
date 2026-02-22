@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from '@polkadot/networks/types';
@@ -8,10 +8,11 @@ import { selectableNetworks } from '@polkagate/apps-config';
 
 import { DISABLED_NETWORKS } from './constants';
 
-export interface NetworkInfo{
+export interface NetworkInfo {
   chain: string;
   genesisHash: HexString;
   icon: Icon;
+  isTestnet?: boolean;
   name: string;
   ss58Format: number;
   tokenDecimal: number;
@@ -24,6 +25,7 @@ const hashes = selectableNetworks
     chain: network.displayName,
     genesisHash: network.genesisHash[0],
     icon: network.icon,
+    isTestnet: network.isTestnet,
     name: network.displayName,
     ss58Format: network.prefix,
     tokenDecimal: network.decimals[0],

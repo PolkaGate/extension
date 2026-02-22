@@ -1,7 +1,8 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
+import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 
 import { Grid, Grow, Stack, styled, Typography } from '@mui/material';
 import { DocumentCopy } from 'iconsax-react';
@@ -10,11 +11,11 @@ import { QRCode } from 'react-qrcode-logo';
 
 import { Address2, ChainLogo, DecisionButtons, GradientDivider, MySnackbar, SearchField } from '@polkadot/extension-polkagate/src/components/index';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util';
-import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
-import { useFormatted, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useFormatted, useGenesisHashOptions, useSelectedAccount, useTranslation } from '../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 
 interface Props {
@@ -43,35 +44,28 @@ const ListItem = styled(Grid)(() => ({
 }));
 
 interface SelectChainProp {
-  setSelectedChain: React.Dispatch<React.SetStateAction<NetworkInfo | undefined>>;
+  setSelectedChain: React.Dispatch<React.SetStateAction<DropdownOption | undefined>>;
 }
 
-function SelectChain ({ setSelectedChain }: SelectChainProp) {
+function SelectChain({ setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
-  const customSort = useCallback((itemA: NetworkInfo, itemB: NetworkInfo) => {
-    const hasRelay = (str: string) => str.toLowerCase().includes('relay');
+  const allChains = useGenesisHashOptions(false);
 
-    return (Number(hasRelay(itemB.name)) - Number(hasRelay(itemA.name))) || itemA.name.localeCompare(itemB.name);
-  }, []);
-
-  const networks = useMemo(() => chains.sort(customSort), [customSort]);
-
-  const [chainsToShow, setChainsToShow] = useState(networks);
+  const [keyword, setSearchKeyword] = useState<string>();
 
   const onSearch = useCallback((keyword: string) => {
+    setSearchKeyword(keyword);
+  }, []);
+
+  const chainsToShow = useMemo(() => {
     if (!keyword) {
-      return setChainsToShow(networks);
+      return allChains;
     }
 
-    keyword = keyword.trim().toLowerCase();
-    const _filtered = networks.filter(({ name }) => name.toLowerCase().includes(keyword));
+    const _keyword = keyword.trim().toLowerCase();
 
-    setChainsToShow([..._filtered]);
-  }, [networks]);
-
-  const handleChainSelect = useCallback((chain: NetworkInfo) => () => {
-    setSelectedChain(chain);
-  }, [setSelectedChain]);
+    return allChains.filter(({ text }) => text.toLowerCase().includes(_keyword));
+  }, [allChains, keyword]);
 
   return (
     <Grid container item justifyContent='center'>
@@ -82,13 +76,13 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
           placeholder={t('🔍 Search networks')}
         />
       </Grid>
-      <Grid container item sx={{ maxHeight: '395px', my: '10px', overflowY: 'auto' }}>
+      <Grid container item sx={{ display: 'block', maxHeight: '395px', minHeight: '395px', my: '10px', overflowY: 'auto' }}>
         {chainsToShow.map((chain, index) => {
-          const chainName = chain.name;
+          const chainName = chain.text;
 
           return (
             <React.Fragment key={index}>
-              <ListItem container item key={index} onClick={handleChainSelect(chain)}>
+              <ListItem container item key={index} onClick={() => setSelectedChain(chain)}>
                 <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
                   <ChainLogo chainName={chainName} size={18} />
                   <Typography color='text.primary' variant='B-2'>
@@ -103,12 +97,17 @@ function SelectChain ({ setSelectedChain }: SelectChainProp) {
             </React.Fragment>
           );
         })}
+        <NothingFound
+          show={chainsToShow.length === 0}
+          style={{ pb: '60px' }}
+          text={t('Network Not Found')}
+        />
       </Grid>
     </Grid>
   );
 }
 
-function AddressComponent ({ address, chainName, onCopy }: AddressComponentProp) {
+function AddressComponent({ address, chainName, onCopy }: AddressComponentProp) {
   const { isHovered, ref } = useIsHovered();
 
   return (
@@ -126,15 +125,15 @@ function AddressComponent ({ address, chainName, onCopy }: AddressComponentProp)
   );
 }
 
-function Receive ({ address, closePopup, onClose, setAddress }: Props): React.ReactElement {
+function Receive({ address, closePopup, onClose, setAddress }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
 
   const [showSnackbar, setShowSnackbar] = useState(false);
-  const [selectedChain, setSelectedChain] = useState<NetworkInfo | undefined>();
+  const [selectedChain, setSelectedChain] = useState<DropdownOption | undefined>();
 
-  const formattedAddress = useFormatted(address, selectedChain?.genesisHash);
-  const chainName = useMemo(() => selectedChain ? sanitizeChainName(selectedChain?.name)?.toLowerCase() : '', [selectedChain]);
+  const formattedAddress = useFormatted(address, selectedChain?.value as string | undefined);
+  const chainName = useMemo(() => selectedChain ? sanitizeChainName(selectedChain?.text)?.toLowerCase() : '', [selectedChain]);
   const chainLogo = useMemo(() => getLogo2(chainName), [chainName]);
 
   const onCopy = useCallback(() => {

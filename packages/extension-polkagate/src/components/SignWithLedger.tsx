@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -19,7 +19,7 @@ import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/consta
 
 interface Props {
   address: string | undefined;
-  api: ApiPromise | undefined;
+  api: ApiPromise | undefined | null;
   disabled?: boolean,
   from: string | undefined;
   handleTxResult: (txResult: TxResult) => void
@@ -32,7 +32,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function SignWithLedger ({ address, api, disabled, from, handleTxResult, onSecondaryClick, onSignature, payload, preparedTransaction, setFlowStep, signerPayload, style }: Props) {
+export default function SignWithLedger({ address, api, disabled, from, handleTxResult, onSecondaryClick, onSignature, payload, preparedTransaction, setFlowStep, signerPayload, style }: Props) {
   const account = useAccount(address);
 
   const [error, setError] = useState<string | null>();

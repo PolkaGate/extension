@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -19,7 +19,7 @@ interface ColumnAmountsProps {
   balanceColor?: string;
 }
 
-export const ColumnAmounts = memo(function ColumnAmounts ({ balanceColor, color, cryptoAmount, decimal, fiatAmount, placement = 'left', priceSecondColor, token }: ColumnAmountsProps) {
+export const ColumnAmounts = memo(function ColumnAmounts({ balanceColor, color, cryptoAmount, decimal, fiatAmount, placement = 'left', priceSecondColor, token }: ColumnAmountsProps) {
   const theme = useTheme();
 
   const contentPlacement = placement === 'left' ? 'flex-start' : 'flex-end';

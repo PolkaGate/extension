@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AudioPlayerProps } from '../utils/types';
@@ -7,7 +7,7 @@ import { Grid, IconButton, Slider, Stack, Typography } from '@mui/material';
 import { PauseCircle, PlayCircle } from 'iconsax-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.ReactElement {
+export default function AudioPlayer({ audioUrl }: AudioPlayerProps): React.ReactElement {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);

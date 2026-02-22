@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -87,14 +87,14 @@ interface LeftColumnContentProps {
   poolStatus: string;
 }
 
-const LeftColumnContent = memo(function LeftColumnContentMemo ({ collapse, genesisHash, handleCollapses, ids, poolDetail, poolStatus, roles, totalPoolRewardAsFiat }: LeftColumnContentProps) {
+const LeftColumnContent = memo(function LeftColumnContentMemo({ collapse, genesisHash, handleCollapses, ids, poolDetail, poolStatus, roles, totalPoolRewardAsFiat }: LeftColumnContentProps) {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 
   const getIconColor = useCallback((id: string) =>
     collapse[id] ? '#596AFF' : isExtension ? '#AA83DC' : '#FF4FB9'
-  ,
-  [collapse, isExtension]);
+    ,
+    [collapse, isExtension]);
 
   return (
     <Stack direction='column' sx={{ position: 'relative', px: '18px', width: '100%', zIndex: 1 }}>
@@ -226,7 +226,7 @@ interface Props {
   onSelect?: () => void;
 }
 
-export default function PoolDetail ({ genesisHash, onClose, onSelect, poolDetail }: Props) {
+export default function PoolDetail({ genesisHash, onClose, onSelect, poolDetail }: Props) {
   const { t } = useTranslation();
 
   const { collapse,

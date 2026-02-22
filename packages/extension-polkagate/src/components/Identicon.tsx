@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -24,7 +24,7 @@ interface Props {
   value?: AccountId | string | null;
 }
 
-function Identicon ({ className, iconTheme, isSubId, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
+function Identicon({ className, iconTheme, isSubId, judgement, onCopy, prefix, size, value }: Props): React.ReactElement<Props> {
   const { accountIconTheme } = useContext(AccountIconThemeContext);
 
   return (

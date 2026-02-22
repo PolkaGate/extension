@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
@@ -17,7 +17,7 @@ const NFT_FUNCTION_NAME = 'getNFTs';
  * @param {boolean} isNft - Whether to fetch NFT collections (true) or unique collections (false)
  * @returns {Promise<ItemInformation[]>} Array of collection information
  */
-async function fetchCollections (api, addresses, chainName, isNft) {
+async function fetchCollections(api, addresses, chainName, isNft) {
   // Determine which query method to use based on item type
   const queryMethod = isNft ? api.query.nfts.collectionAccount : api.query.uniques.classAccount;
   const requests = addresses.map(async (address) => await queryMethod.entries(address));
@@ -69,7 +69,7 @@ async function fetchCollections (api, addresses, chainName, isNft) {
  * @param {boolean} isNft - Whether to fetch NFTs (true) or uniques (false)
  * @returns {Promise<Array>} Array of item information
  */
-async function fetchItems (api, addresses, chainName, isNft) {
+async function fetchItems(api, addresses, chainName, isNft) {
   // Determine which query method to use based on item type
   const queryMethod = isNft ? api.query.nfts.account : api.query.uniques.account;
   const requests = addresses.map(async (address) => await queryMethod.entries(address));
@@ -167,7 +167,7 @@ async function fetchItems (api, addresses, chainName, isNft) {
  * @param {string} chainName - The chain identifier
  * @returns {Promise<ItemInformation[]>} Combined array of NFTs and uniques
  */
-async function fetchNFTsForChain (api, addresses, chainName) {
+async function fetchNFTsForChain(api, addresses, chainName) {
   const [nfts, uniques, nftCollections, uniqueCollections] = await Promise.all([
     fetchItems(api, addresses, chainName, true),
     fetchItems(api, addresses, chainName, false),
@@ -183,7 +183,7 @@ async function fetchNFTsForChain (api, addresses, chainName) {
  * @param {string[]} addresses - Array of addresses to fetch items for
  * @returns {Promise<Record<string, ItemInformation[]>>} Combined array of all NFT and unique items and collections across all chains, categorized by addresses
  */
-async function getNFTs (addresses) {
+async function getNFTs(addresses) {
   const chainNames = Object.entries(SUPPORTED_NFT_CHAINS);
 
   // Initialize API connections for all chainNames
@@ -235,7 +235,7 @@ async function getNFTs (addresses) {
  * @param {string[]} addresses
  * @param {MessagePort } port
  */
-export default async function getNftHandler (addresses, port) {
+export default async function getNftHandler(addresses, port) {
   if (!addresses) {
     console.warn('Shared worker, No addresses to NFTs');
 

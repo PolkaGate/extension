@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { UseStakingRewards } from '../../hooks/useStakingRewardsChart';
@@ -10,11 +10,13 @@ import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { AssetLogo, DisplayBalance, Identity2, Motion, Progress } from '../../components';
+import { AssetLogo, DisplayBalance, Identity2, Motion } from '../../components';
+import NoInfoYet from '../../components/NoInfoYet';
 import { useChainInfo, useTranslation } from '../../hooks';
 import getLogo2 from '../../util/getLogo2';
 import RewardConfigureButton from './new-solo/components/RewardConfigureButton';
 import { type PopupOpener, StakingPopUps } from './util/utils';
+import RewardsLoading from './RewardsLoading';
 
 interface WindowChangerProps {
   onNextPeriod: () => void;
@@ -112,7 +114,7 @@ const RewardSetting = ({ genesisHash, popupOpener, token, type }: RewardSettingP
         </Typography>
       </Container>
       {type === 'solo' &&
-       <RewardConfigureButton onClick={popupOpener(StakingPopUps.REWARD_DESTINATION_CONFIG)} />
+        <RewardConfigureButton onClick={popupOpener(StakingPopUps.REWARD_DESTINATION_CONFIG)} />
       }
     </Container>
   );
@@ -217,7 +219,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
               width: '330px'
             }}
             withShortAddress
-            />}
+          />}
       </Container>
     </Collapse>
   );
@@ -263,19 +265,21 @@ const RewardTable = ({ descSortedRewards, expanded, genesisHash, onExpand }: Rew
   );
 };
 
-export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token, type }: ChartHeaderProps) {
+export default function Rewards({ genesisHash, popupOpener, rewardInfo, token, type }: ChartHeaderProps) {
   const { t } = useTranslation();
+  const { descSortedRewards, detail, expand, status } = rewardInfo;
 
   return (
     <Motion variant='slide'>
-      {
-        !rewardInfo?.descSortedRewards
-          ? (
-            <Progress
-              style={{ height: '310px' }}
-              title={t('Loading rewards details')}
-              withEllipsis
-            />)
+      {status === 'error'
+        ? (
+          <NoInfoYet
+            show
+            style={{ py: '7%' }}
+            text={t('No rewards yet')}
+          />)
+        : !descSortedRewards
+          ? <RewardsLoading />
           : (
             <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
               <Stack direction='column' sx={{ bgcolor: '#1B133C', borderRadius: '18px', width: '533px' }}>
@@ -290,10 +294,10 @@ export default function Rewards ({ genesisHash, popupOpener, rewardInfo, token, 
               </Stack>
               <Grid container item sx={{ maxHeight: '324px', overflow: 'hidden', overflowY: 'auto', width: '482px' }}>
                 <RewardTable
-                  descSortedRewards={rewardInfo.descSortedRewards ?? []}
-                  expanded={rewardInfo.detail}
+                  descSortedRewards={descSortedRewards ?? []}
+                  expanded={detail}
                   genesisHash={genesisHash}
-                  onExpand={rewardInfo.expand}
+                  onExpand={expand}
                 />
               </Grid>
             </Container>)

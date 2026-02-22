@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -6,7 +6,8 @@ import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/type
 import type { AnyNumber } from '@polkadot/types-codec/types';
 import type { BN } from '@polkadot/util';
 
-import { Foreign, ForeignAbstract, getParaId, getRelayChainSymbol, hasSupportForAsset, isTLocation, Native, SUBSTRATE_CHAINS, type TCurrencyCore, type TSubstrateChain } from '@paraspell/sdk-pjs';
+import { CHAINS, getNativeAssets, getSupportedAssets, hasSupportForAsset, type TChain } from '@paraspell/sdk-pjs';
+import { Foreign, ForeignAbstract, getParaId, getRelayChainSymbol, isTLocation, Native, SUBSTRATE_CHAINS, type TCurrencyCore, type TSubstrateChain } from '@paraspell/sdk-pjs';
 
 import { decodeMultiLocation, isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
 import { NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
@@ -16,11 +17,11 @@ import { isHex } from '@polkadot/util';
 export const XCM_LOC = ['xcm', 'xcmPallet', 'polkadotXcm'];
 export const INVALID_PARA_ID = Number.MAX_SAFE_INTEGER;
 
-function capitalizeFirst (str: string): string {
+function capitalizeFirst(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-export function normalizeChainName (name: string): string {
+export function normalizeChainName(name: string): string {
   if (name.endsWith('AssetHub') || isMigratedByChainName(name)) {
     return 'AssetHub' + capitalizeFirst(name.replace('AssetHub', ''));
   }
@@ -36,6 +37,16 @@ export function normalizeChainName (name: string): string {
   return name; // return unchanged if it doesn't match known pattern
 }
 
+export const isParaspellSupportedAsset = (chainName: string | undefined, symbol: string | undefined) => {
+  if (!chainName || !symbol) {
+    return;
+  }
+
+  const _chainName = normalizeChainName(chainName) as TSubstrateChain;
+
+  return hasSupportForAsset(_chainName, symbol);
+};
+
 export const isOnSameChain = (senderChainName: string | undefined, recipientChainName: string | undefined) => {
   if (!senderChainName || !recipientChainName) {
     return;
@@ -48,7 +59,7 @@ export const isOnSameChain = (senderChainName: string | undefined, recipientChai
 };
 
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-export function getSupportedDestinations (sourceChain: TSubstrateChain | string, assetSymbol: string | undefined): DropdownOption[] {
+export function getSupportedDestinations(sourceChain: TSubstrateChain | string, assetSymbol: string | undefined): DropdownOption[] {
   if (!assetSymbol) {
     return [];
   }
@@ -59,7 +70,8 @@ export function getSupportedDestinations (sourceChain: TSubstrateChain | string,
 
   for (const chain of SUBSTRATE_CHAINS) {
     if (chain !== _sourceChainName) {
-      const isSupported = hasSupportForAsset(chain, assetSymbol);
+      const supportedAssets = getSupportedAssets(_sourceChainName, chain);
+      const isSupported = supportedAssets.find(({ symbol }) => symbol === assetSymbol);
 
       const isPolkadotKusamaBridge = _sourceChainName.toLowerCase().includes('assethub') && chain.toLowerCase().includes('assethub');
 
@@ -75,7 +87,7 @@ export function getSupportedDestinations (sourceChain: TSubstrateChain | string,
   return destinationChains;
 }
 
-export function isNativeAsset (api: ApiPromise, token: string, assetId: number | string) {
+export function isNativeAsset(api: ApiPromise, token: string, assetId: number | string) {
   const isAssetHub = isOnAssetHub(api.genesisHash.toHex());
 
   if (isAssetHub && Number(assetId) === NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB) {
@@ -87,8 +99,12 @@ export function isNativeAsset (api: ApiPromise, token: string, assetId: number |
   return nativeTokens.includes(token);
 }
 
-export function getCurrency (api: ApiPromise, token: string, assetId: number | string): TCurrencyCore {
-  if (isNativeAsset(api, token, assetId)) {
+export function getCurrency(chainName: string, token: string, assetId: number | string): TCurrencyCore {
+  const _chainName = normalizeChainName(chainName) as TChain;
+  const nativeAssets = getNativeAssets(_chainName);
+  const isNative = nativeAssets.find(({ symbol }) => symbol === token);
+
+  if (isNative) {
     return { symbol: Native(token) };
   }
 
@@ -108,8 +124,6 @@ export function getCurrency (api: ApiPromise, token: string, assetId: number | s
     const parsed = JSON.parse(assetId) as Record<string, unknown>;
 
     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      console.log('parsed:', parsed);
-
       const key = Object.keys(parsed)[0];
 
       const map = {
@@ -147,4 +161,14 @@ export const getLocation = (api: ApiPromise, id: BN): AnyNumber | object | undef
     interior: { X2: [palletInstance, generalIndex] },
     parents: 0
   };
+};
+
+export const isParaspellSupportedChain = (chain: string | undefined): boolean | undefined => {
+  if (!chain) {
+    return;
+  }
+
+  const normalized = normalizeChainName(chain).toLowerCase().replace(/\s+/g, '');
+
+  return !!CHAINS.find((c) => c.toLowerCase() === normalized);
 };

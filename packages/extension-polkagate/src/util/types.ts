@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/consistent-indexed-object-style */
@@ -17,7 +17,7 @@ import type { IconTheme as BaseIconTheme } from '@polkadot/react-identicon/types
 import type { Balance } from '@polkadot/types/interfaces';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 // @ts-ignore
-import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
+import type { PalletNominationPoolsBondedPoolInner, PalletNominationPoolsClaimPermission, PalletNominationPoolsPoolMember, PalletNominationPoolsRewardPool } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { LatestReferenda } from '../fullscreen/governance/types';
@@ -167,6 +167,7 @@ export interface TransactionDetail extends TxResult {
   delegatee?: string;
   deposit?: string;
   extra?: Record<string, string>;
+  forAccount: string;
   from: NameAddress;
   nominators?: string[];
   poolId?: string;
@@ -213,7 +214,7 @@ export interface TransferRequest {
   data: {
     list: unknown;
     count: number;
-    transfers: Transfers[];
+    transfers: Transfers[] | null;
   };
   generated_at: number;
   message: string;
@@ -224,7 +225,7 @@ export interface ExtrinsicsRequest {
   code: number;
   data: {
     count: number;
-    extrinsics: Extrinsics[];
+    extrinsics: Extrinsics[] | null;
   };
   generated_at: number;
   message: string;
@@ -253,6 +254,7 @@ export interface Extrinsics {
   success: boolean,
   fee: string,
   fee_used: string,
+  forAccount: string;
   tip: string,
   finalized: true,
   account_display: {
@@ -279,6 +281,7 @@ export interface Transfers {
   block_timestamp: number;
   extrinsic_index: string;
   fee: string;
+  forAccount: string;
   from: string;
   from_account_display: AccountDisplay;
   hash: string;
@@ -579,7 +582,7 @@ export interface ClaimedRewardInfo {
   timeStamp: number;
 }
 
-export type ProxyTypes = 'Any' | 'Assets' | 'AssetOwner'| 'AssetManager' | 'CancelProxy' | 'Collator' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'Society' | 'NominationPools';
+export type ProxyTypes = 'Any' | 'Assets' | 'AssetOwner' | 'AssetManager' | 'CancelProxy' | 'Collator' | 'IdentityJudgement' | 'Governance' | 'NonTransfer' | 'Staking' | 'SudoBalances' | 'Society' | 'NominationPools';
 
 export interface Proxy {
   delay: number;
@@ -693,11 +696,12 @@ export interface BalancesInfo extends DeriveBalancesAll {
   totalBalance?: number;
 }
 export interface AccountStakingInfo extends DeriveStakingAccount {
-  era: number;
-  decimal?: number;
-  token?: string;
   date?: number;
+  decimal?: number;
+  era: number;
   genesisHash?: string;
+  isValidator?: boolean;
+  token?: string;
 }
 export interface MemberPoints {
   accountId: string;
@@ -911,6 +915,7 @@ export interface FetchedBalance {
   availableBalance: BN,
   balanceDetails?: any,
   chainName: string,
+  claimPermissions?: PalletNominationPoolsClaimPermission['type'],
   currencyId?: any,
   date?: number,
   decimal: number,

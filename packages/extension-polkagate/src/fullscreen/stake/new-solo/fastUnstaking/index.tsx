@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography } from '@mui/material';
@@ -18,7 +18,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function FastUnstaking ({ address, genesisHash, onClose }: Props): React.ReactElement {
+export default function FastUnstaking({ address, genesisHash, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { checkDone,

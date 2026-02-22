@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Prices, PricesInCurrencies } from '@polkadot/extension-polkagate/src/util/types';
@@ -19,11 +19,11 @@ interface Props {
 /** If we need to retrieve a price, and that price was fetched within the last PRICE_VALIDITY_PERIOD in seconds,
  *  there’s no need to fetch it again; we can simply use the previously saved value.
  * */
-function isPriceUpToDate (lastFetchDate?: number): boolean | undefined {
+function isPriceUpToDate(lastFetchDate?: number): boolean | undefined {
   return lastFetchDate ? Date.now() - lastFetchDate < PRICE_VALIDITY_PERIOD : undefined;
 }
 
-export default function PricesProvider ({ children }: Props) {
+export default function PricesProvider({ children }: Props) {
   const priceIdsInfo = usePriceIds();
   const { currency } = useContext(CurrencyContext);
 

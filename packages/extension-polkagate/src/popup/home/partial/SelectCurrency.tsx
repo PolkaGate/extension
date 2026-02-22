@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { CurrencyItemType } from '../../../fullscreen/home/partials/type';
@@ -10,6 +10,7 @@ import * as flags from 'country-flag-icons/string/3x2';
 import { BuyCrypto, Coin1, Hashtag } from 'iconsax-react';
 import React, { Fragment, memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { CurrencyContext, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
@@ -70,7 +71,7 @@ const CategoryHeader = ({ type }: { type: 'crypto' | 'fiat' }) => {
   );
 };
 
-const CurrencyList = memo(function CL ({ currencyList, handleCurrencySelect, noLastDivider = false, onDoubleClick, selectedCurrency, type }: CurrencyListProps) {
+const CurrencyList = memo(function CL({ currencyList, handleCurrencySelect, noLastDivider = false, onDoubleClick, selectedCurrency, type }: CurrencyListProps) {
   const flagSVG = useCallback((currency: CurrencyItemType) => {
     const countryCode = currency.code.slice(0, 2).toUpperCase();
 
@@ -132,7 +133,7 @@ const CurrencyList = memo(function CL ({ currencyList, handleCurrencySelect, noL
   );
 });
 
-const CurrencyOptions = memo(function CO ({ handleCurrencySelect, onDoubleClick, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
+const CurrencyOptions = memo(function CO({ handleCurrencySelect, onDoubleClick, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [searchedCurrencies, setSearchedCurrencies] = useState<CurrencyItemType[]>();
@@ -165,10 +166,15 @@ const CurrencyOptions = memo(function CO ({ handleCurrencySelect, onDoubleClick,
       <Grid container item>
         <SearchField
           onInputChange={onSearch}
-          placeholder='🔍 Search currency'
+          placeholder={t('🔍 Search currency')}
         />
       </Grid>
       <Grid container item justifyContent='center' sx={{ display: 'block', height: '315px', maxHeight: '315px', mb: '60px', overflowY: 'auto', pt: '5px' }}>
+        <NothingFound
+          show={searchedCurrencies?.length === 0}
+          style={{ pt: '50px' }}
+          text={t('Crypto/Fiat Not Found')}
+        />
         <CurrencyList
           currencyList={cryptos}
           handleCurrencySelect={handleCurrencySelect}
@@ -184,16 +190,12 @@ const CurrencyOptions = memo(function CO ({ handleCurrencySelect, onDoubleClick,
           selectedCurrency={selectedCurrency}
           type='fiat'
         />
-        {[...cryptos, ...fiats].length === 0 &&
-          <Typography color='text.primary' mt='15px' variant='B-2'>
-            {t('Nothing found')}!
-          </Typography>}
       </Grid>
     </Grid>
   );
 });
 
-function Content ({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAction<boolean>> }): React.ReactElement {
+function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAction<boolean>> }): React.ReactElement {
   const { t } = useTranslation();
   const { currency, setCurrency } = useContext(CurrencyContext);
 
@@ -237,7 +239,7 @@ function Content ({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateA
   );
 }
 
-function SelectCurrency ({ openMenu, setOpenMenu }: Props): React.ReactElement {
+function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const handleClose = useCallback(() => setOpenMenu(false), [setOpenMenu]);

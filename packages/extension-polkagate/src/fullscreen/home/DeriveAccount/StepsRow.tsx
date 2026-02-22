@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DERIVATION_STEPS } from './types';
@@ -21,7 +21,7 @@ const StepItem = ({ inputStep, label, num }: { inputStep: number, num: number, l
   </Stack>
 );
 
-export default function StepsRow ({ inputStep }: { inputStep: DERIVATION_STEPS }): React.ReactElement {
+export default function StepsRow({ inputStep }: { inputStep: DERIVATION_STEPS }): React.ReactElement {
   const { t } = useTranslation();
 
   return (

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography, useTheme } from '@mui/material';
@@ -15,7 +15,7 @@ import MnemonicSeedDisplay from './components/MnemonicSeedDisplay';
 import { STEP } from './types';
 import { useAccountImportOrCreate } from './useAccountImportOrCreate';
 
-export function SetNameAndPassword ({ seed }: { seed: string | null }): React.ReactElement {
+export function SetNameAndPassword({ seed }: { seed: string | null }): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -41,7 +41,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
 
   const onCreate = useCallback(async () => {
     try {
-      await onConfirm(seed);
+      await onConfirm({ isImport: false, seed });
     } catch (e) {
       console.error(e);
     }
@@ -67,7 +67,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
           style={{ marginBottom: '20px' }}
           title1={t('Password')}
           title2={t('Repeat the password')}
-           />
+        />
         )
         : (<PasswordInput
           hasError={!!error}
@@ -75,7 +75,7 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
           onPassChange={setPassword}
           style={{ marginBottom: '25px', marginTop: '35px' }}
           title={t('Password to secure this account')}
-           />
+        />
         )
       }
       <DecisionButtons
@@ -88,13 +88,13 @@ export function SetNameAndPassword ({ seed }: { seed: string | null }): React.Re
         primaryBtnText={t('Create account')}
         secondaryBtnText={t('Cancel')}
         showChevron
-        style={{ flexDirection: 'row-reverse', marginTop: '15px', position: 'absolute', width: 'inherit' }}
+        style={{ flexDirection: 'row-reverse', marginTop: '15px', width: 'inherit' }}
       />
     </Motion>
   );
 }
 
-function CreateAccount (): React.ReactElement {
+function CreateAccount(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

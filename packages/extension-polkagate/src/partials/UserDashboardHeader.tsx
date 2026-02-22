@@ -1,12 +1,13 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SignerInformation } from '../components/SelectedProxy';
 
-import { Container, Grid } from '@mui/material';
+import { Container, Grid, Stack } from '@mui/material';
 import React, { useMemo } from 'react';
 
 import { HomeButton, SelectedProxy } from '../components';
+import Notifications from '../fullscreen/components/layout/Notifications';
 import AccountSelection from '../popup/home/partial/AccountSelection';
 import FullscreenModeButton from './FullscreenModeButton';
 import { ConnectedDapp } from '.';
@@ -19,7 +20,7 @@ interface Props {
   fullscreenURL?: string;
 }
 
-function UserDashboardHeader ({ fullscreenURL, genesisHash, homeType, noSelection = false, signerInformation }: Props) {
+function UserDashboardHeader({ fullscreenURL, genesisHash, homeType, noSelection = false, signerInformation }: Props) {
   const isConnectedDapp = useMemo(() => document.getElementsByClassName('ConnectedDapp'), []);
 
   return (
@@ -41,7 +42,10 @@ function UserDashboardHeader ({ fullscreenURL, genesisHash, homeType, noSelectio
           <SelectedProxy genesisHash={genesisHash} signerInformation={signerInformation} />
         }
       </Grid>
-      <FullscreenModeButton url={fullscreenURL} />
+      <Stack direction='row' sx={{ alignItems: 'center', gap: '4px', width: 'fit-content' }}>
+        <Notifications />
+        <FullscreenModeButton url={fullscreenURL} />
+      </Stack>
     </Container>
   );
 }

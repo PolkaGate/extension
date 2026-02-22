@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -10,7 +10,7 @@ import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import LedgerErrorMessage from '@polkadot/extension-polkagate/src/popup/signing/ledger/LedgerErrorMessage';
-import { DISABLED_NETWORKS, PROFILE_TAGS, STATEMINT_GENESIS_HASH,STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { DISABLED_NETWORKS, PROFILE_TAGS, STATEMINT_GENESIS_HASH, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { DecisionButtons, DropSelect } from '../../../../components';
 import { setStorage } from '../../../../components/Loading';
@@ -28,7 +28,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function MigrationApp ({ setMode }: Props): React.ReactElement {
+export default function MigrationApp({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
 
@@ -43,9 +43,9 @@ export default function MigrationApp ({ setMode }: Props): React.ReactElement {
     newChain?.genesisHash
       ? ledgerChains.find(({ genesisHash }) => genesisHash.includes(newChain.genesisHash as HexString))?.slip44 ?? null
       : null
-  , [newChain]);
+    , [newChain]);
 
-  const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
+  const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
 
   const networkOps = useRef(
     [{
@@ -78,6 +78,7 @@ export default function MigrationApp ({ setMode }: Props): React.ReactElement {
         updateMeta(String(address), metaData)
           .then(() => {
             setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
+            setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
             openOrFocusTab('/', true);
           })
           .catch(console.error);
@@ -117,7 +118,7 @@ export default function MigrationApp ({ setMode }: Props): React.ReactElement {
           value={genesis}
         />
       </Grid>
-      {!!chainSlip44 && !ledgerWarning && !ledgerError &&
+      {!!chainSlip44 && !ledgerError &&
         <ManualLedgerImport
           accountIndex={accountIndex}
           address={address}
@@ -130,9 +131,6 @@ export default function MigrationApp ({ setMode }: Props): React.ReactElement {
           setAddressOffset={setAddressOffset}
           style={{ marginTop: 0 }}
         />
-      }
-      {!!ledgerWarning &&
-        <LedgerErrorMessage error={ledgerWarning} />
       }
       {(!!error || !!ledgerError) && chainSlip44 &&
         <LedgerErrorMessage error={error || ledgerError || ''} />

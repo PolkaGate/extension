@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -21,7 +21,7 @@ interface Props {
   setSelectedAddresses: React.Dispatch<React.SetStateAction<Set<string>>>;
 }
 
-function ProfileAccountSelection ({ accounts, defaultProfile = '', label, maybeNewName, selectedAddresses, setSelectedAddresses }: Props): React.ReactElement {
+function ProfileAccountSelection({ accounts, defaultProfile = '', label, maybeNewName, selectedAddresses, setSelectedAddresses }: Props): React.ReactElement {
   const profileInfo = useProfileInfo(label);
 
   const [openTab, setOpen] = useState<string>(defaultProfile);

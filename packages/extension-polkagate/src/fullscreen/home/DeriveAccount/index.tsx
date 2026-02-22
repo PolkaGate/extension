@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
@@ -24,7 +24,7 @@ interface Props {
  *
  * Only has been used in full-screen mode!
  */
-function DeriveAccount ({ closePopup }: Props): React.ReactElement {
+function DeriveAccount({ closePopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const selectedGenesis = useAccountSelectedChain(selectedAccount?.address);
@@ -72,7 +72,7 @@ function DeriveAccount ({ closePopup }: Props): React.ReactElement {
             setNewParentAddress={setNewParentAddress}
             setParentPassword={setParentPassword}
             setStep={setStep}
-            />
+          />
           : <ChildInfo
             genesisHash={selectedGenesis}
             maybeChidAccount={maybeChidAccount}
@@ -81,7 +81,7 @@ function DeriveAccount ({ closePopup }: Props): React.ReactElement {
             parentPassword={parentPassword}
             setMaybeChidAccount={setMaybeChidAccount}
             setStep={setStep}
-            />
+          />
         }
       </>
     </DraggableModal>

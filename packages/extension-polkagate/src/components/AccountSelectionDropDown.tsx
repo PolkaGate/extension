@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback, useContext, useMemo } from 'react';
@@ -12,7 +12,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function AccountSelectionDropDown ({ style }: Props) {
+function AccountSelectionDropDown({ style }: Props) {
   const selectedAccount = useSelectedAccount();
   const { accounts } = useContext(AccountContext);
 

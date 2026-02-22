@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, useTheme } from '@mui/material';
@@ -16,7 +16,7 @@ interface Props {
   url?: string;
 }
 
-function FullscreenModeButton ({ url }: Props) {
+function FullscreenModeButton({ url }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();

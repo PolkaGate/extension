@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Collapse, Stack, Typography } from '@mui/material';
@@ -23,7 +23,7 @@ export interface AccountInfo {
   suri: string;
 }
 
-export default function ImportSeed (): React.ReactElement {
+export default function ImportSeed(): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const localAccounts = useLocalAccounts();
@@ -65,7 +65,7 @@ export default function ImportSeed (): React.ReactElement {
     }
 
     try {
-      await onConfirm(account.suri);
+      await onConfirm({ seed: account.suri });
     } catch (e) {
       console.error(e);
     }
