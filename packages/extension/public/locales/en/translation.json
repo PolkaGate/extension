@@ -915,5 +915,7 @@
   "No proxied account found": "",
   "Add to Extension ({{num}})": "",
   "Add to Extension": "",
-  "The accounts below are already proxied by accounts in your extension. Select any to import them.": ""
+  "The accounts below are already proxied by accounts in your extension. Select any to import them.": "",
+  "Looking for accounts that are proxied by the selected account on the {{chainName}} chain.": "",
+  "The account{{s}} below {{verb}} already proxied by the selected account on the {{chainName}} chain in your extension. Select {{selectionText}} to import.": ""
 }
