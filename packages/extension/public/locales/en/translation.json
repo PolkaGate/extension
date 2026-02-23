@@ -909,5 +909,11 @@
   "Ledger is locked": "",
   "Ledger app is not open": "",
   "Enable AI Transaction Insights in full-screen Settings to get AI-powered explanations for this transaction request.": "",
-  "Transferable balance is insufficient to cover the required fees.": ""
+  "Transferable balance is insufficient to cover the required fees.": "",
+  "Options": "",
+  "Import Proxied": "",
+  "No proxied account found": "",
+  "Add to Extension ({{num}})": "",
+  "Add to Extension": "",
+  "The accounts below are already proxied by accounts in your extension. Select any to import them.": ""
 }
