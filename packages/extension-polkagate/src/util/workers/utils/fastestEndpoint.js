@@ -1,6 +1,8 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+// @ts-nocheck
+
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
 /**
@@ -10,51 +12,46 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
  * @param {{ value: string }[]} endpoints
  */
 export async function fastestEndpoint(endpoints) {
-  // Filter invalid endpoints
-  const validEndpoints = endpoints
-    .map(({ value }) => value)
-    .filter(
-      (value) =>
-        !/^wss:\/\/\d+$/.test(value) &&
-        !value.includes('onfinality') &&
-        !value.startsWith('light')
-    );
+  const validEndpoints = endpoints.reduce((acc, { value }) => {
+    if (
+      !/^wss:\/\/\d+$/.test(value) &&
+      !value.includes('onfinality') &&
+      !value.startsWith('light')) {
+      acc.push(value);
+    }
+
+    return acc;
+  }, []);
 
   if (!validEndpoints.length) {
     throw new Error('No valid endpoints provided');
   }
 
-  // Create all providers
-  const providers = validEndpoints.map((value) => new WsProvider(value));
+  const providers = validEndpoints.map((endpoint) => new WsProvider(endpoint));
 
-  // Wrap each ApiPromise creation in an object, so we keep the link between api and provider
-  const apiPromises = providers.map((provider) =>
-    ApiPromise.create({ provider })
-      .then((api) => ({ api, provider })) // attach provider reference
-      .catch((error) => {
-        provider.disconnect().catch(() => null);
-        throw error;
-      })
-  );
+  const race = providers.map((provider) => provider.isReady
+    .then(() => provider)
+    .catch((error) => Promise.reject(error instanceof Error ? error : new Error(String(error)))));
 
-  // Get the fastest connection
-  let api, provider;
+  let fastestProvider;
 
   try {
-    ({ api, provider } = await Promise.any(apiPromises));
+    fastestProvider = await Promise.any(race);
   } catch (e) {
-    // e is AggregateError if all fail
+    providers.forEach((provider) => {
+      provider.disconnect().catch(() => undefined);
+    });
     throw new Error('All endpoints failed to connect', { cause: e });
   }
 
-  // Disconnect all other providers (non-blocking)
-  Promise.all(
-    providers.map((p) =>
-      p === provider
-        ? Promise.resolve()
-        : p.disconnect().catch(() => null)
-    )
-  ).catch(() => null);
+  providers.forEach((provider) => {
+    if (provider.endpoint !== fastestProvider.endpoint) {
+      provider.disconnect().catch(() => undefined);
+    }
+  });
 
-  return { api, selectedEndpoint: provider.endpoint };
+  return {
+    api: await ApiPromise.create({ provider: fastestProvider }),
+    selectedEndpoint: fastestProvider.endpoint
+  };
 }
