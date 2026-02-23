@@ -247,13 +247,14 @@ function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactEleme
             <Grid container justifyContent='center'>
                 <ProxiedModalContent
                     areAllSelected={areAllSelected}
+                    genesisHash = {selectedGenesis}
                     isBusy={isBusy}
                     isImportMode={isImportMode}
                     onAdd={onAdd}
                     onClose={onClose}
                     onSelect={handleSelect}
                     onSelectDeselectAll={onSelectDeselectAll}
-                    selectableProxiedAddresses={selectableProxiedAddresses}
+                    proxiedAddresses={selectableProxiedAddresses}
                     selectedProxied={selectedProxied}
                 />
             </Grid>

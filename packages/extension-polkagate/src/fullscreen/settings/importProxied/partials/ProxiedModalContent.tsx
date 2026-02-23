@@ -9,7 +9,7 @@ import React, { memo } from 'react';
 
 import { idKey } from '@polkadot/extension-polkagate/src/assets/animations';
 import { ActionButton, DecisionButtons } from '@polkadot/extension-polkagate/src/components';
-import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useChainInfo, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import AccountToggle from '@polkadot/extension-polkagate/src/popup/notification/partials/AccountToggle';
 
 import StyledSkeleton from './StyledSkeleton';
@@ -22,22 +22,27 @@ interface ProxiedModalContentProps {
     onClose: () => void;
     onSelectDeselectAll: () => void;
     onSelect: (address: string) => void;
-    selectableProxiedAddresses: SelectableProxied[] | undefined;
+    proxiedAddresses: SelectableProxied[] | undefined;
     selectedProxied: string[];
+    genesisHash: `0x${string}` | null | undefined
+
 }
 
 function ProxiedModalContent({ areAllSelected,
+    genesisHash,
     isBusy,
     isImportMode,
     onAdd,
     onClose,
     onSelect,
     onSelectDeselectAll,
-    selectableProxiedAddresses,
+    proxiedAddresses,
     selectedProxied }: ProxiedModalContentProps): React.ReactElement {
     const { t } = useTranslation();
-    const isLoading = selectableProxiedAddresses === undefined;
-    const hasAccounts = (selectableProxiedAddresses?.length ?? 0) > 0;
+    const { chainName } = useChainInfo(genesisHash, true);
+    const isLoading = proxiedAddresses === undefined;
+    const hasAccounts = (proxiedAddresses?.length ?? 0) > 0;
+    const isPlural = (proxiedAddresses?.length ?? 0) > 1;
 
     return (
         <>
@@ -48,7 +53,22 @@ function ProxiedModalContent({ areAllSelected,
                 style={{ height: 110 }}
             />
             <Typography color='text.secondary' p={'0 4px 10px'} textAlign='left' variant='B-4'>
-                {t('The accounts below are already proxied by accounts in your extension. Select any to import them.')}
+                {isLoading
+                    ? t('Looking for accounts that are proxied by the selected account on the {{chainName}} chain.', { replace: { chainName } })
+                    : isImportMode
+                        ? t(
+                            'The account{{s}} below {{verb}} already proxied by the selected account on the {{chainName}} chain in your extension. Select {{selectionText}} to import.',
+                            {
+                                replace: {
+                                    chainName,
+                                    s: isPlural ? 's' : '',
+                                    selectionText: isPlural ? 'accounts' : 'the account',
+                                    verb: isPlural ? 'are' : 'is'
+                                }
+                            }
+                        )
+                        : t('The accounts below are already proxied by accounts in your extension. Select any to import them.')
+                }
             </Typography>
             <Stack
                 direction='column'
@@ -69,7 +89,7 @@ function ProxiedModalContent({ areAllSelected,
                         <StyledSkeleton index={index} key={index} />
                     ))
                 }
-                {selectableProxiedAddresses?.map(({ address, genesisHash }) => {
+                {proxiedAddresses?.map(({ address, genesisHash }) => {
                     const isSelected = selectedProxied.includes(address);
 
                     return (
@@ -83,13 +103,13 @@ function ProxiedModalContent({ areAllSelected,
                         />
                     );
                 })}
-                {selectableProxiedAddresses && !hasAccounts && (
+                {proxiedAddresses && !hasAccounts && (
                     <Typography color='text.secondary' m='auto' textAlign='center' variant='B-4'>
                         {t('No proxied account found')}!
                     </Typography>
                 )}
             </Stack>
-            {hasAccounts && selectableProxiedAddresses &&
+            {hasAccounts && proxiedAddresses &&
                 <Grid container justifyContent='flex-end'>
                     <ActionButton
                         contentPlacement='center'
@@ -102,8 +122,8 @@ function ProxiedModalContent({ areAllSelected,
                             width: 'fit-content'
                         }}
                         text={areAllSelected
-                            ? t('Deselect all ({{num}}) accounts', { replace: { num: selectableProxiedAddresses.length } })
-                            : t('Select all ({{num}}) accounts', { replace: { num: selectableProxiedAddresses.length } })
+                            ? t('Deselect all ({{num}}) accounts', { replace: { num: proxiedAddresses.length } })
+                            : t('Select all ({{num}}) accounts', { replace: { num: proxiedAddresses.length } })
                         }
                         variant='contained'
                     />

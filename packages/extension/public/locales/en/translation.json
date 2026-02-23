@@ -912,8 +912,8 @@
   "Transferable balance is insufficient to cover the required fees.": "",
   "Options": "",
   "Import Proxied": "",
-  "The accounts below are proxied by accounts already added to your extension. Select any to import as watch-only.": "",
   "No proxied account found": "",
   "Add to Extension ({{num}})": "",
-  "Add to Extension": ""
+  "Add to Extension": "",
+  "The accounts below are already proxied by accounts in your extension. Select any to import them.": ""
 }
