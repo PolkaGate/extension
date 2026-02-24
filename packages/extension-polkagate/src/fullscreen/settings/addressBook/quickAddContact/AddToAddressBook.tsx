@@ -29,6 +29,9 @@ function AddToAddressBook({ input }: Props) {
     const substrate = getSubstrateAddress(input);
 
     useEffect(() => {
+        // We include `addingContact` to prevent the component from being removed
+        // immediately after the address is added to the address book.
+        // This allows the UI transition (fade-out) to complete smoothly.
         if (!substrate || !contacts || addingContact) {
             return;
         }
@@ -43,7 +46,10 @@ function AddToAddressBook({ input }: Props) {
         setAvailable(!!isAlreadyAdded);
     }, [accounts, addingContact, contacts, substrate]);
 
-    const togglePopper = useCallback(() => setOpen((isOpen) => !isOpen), []);
+    const togglePopper = useCallback((e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        setOpen((isOpen) => !isOpen);
+    }, []);
 
     if (alreadyExists || !substrate) {
         return null;
