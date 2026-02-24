@@ -232,7 +232,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
                 ref={ref}
                 setAccountIndex={setAccountIndex}
                 setAddressOffset={setAddressOffset}
-              />
+                />
             }
           </Grid>
         }

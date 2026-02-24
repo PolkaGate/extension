@@ -115,7 +115,7 @@ export default function RestoreJson(): React.ReactElement {
     }
   }, []);
 
-  const filterAndEncryptFile = useCallback(async (jsonFile: KeyringPairs$Json, selected: string[]) => {
+  const filterAndEncryptFile = useCallback((jsonFile: KeyringPairs$Json, selected: string[]) => {
     const decryptedFile = jsonDecrypt(jsonFile, password);
     const parsedFile = JSON.parse(u8aToString(decryptedFile)) as KeyringPair$Json[];
     const filteredAccounts = parsedFile.filter(({ address }) => selected.includes(address));
@@ -124,14 +124,14 @@ export default function RestoreJson(): React.ReactElement {
     return jsonEncrypt(fileAsU8a, jsonFile.encoding.content, password) as KeyringPairs$Json;
   }, [password]);
 
-  const handleKeyringPairsJson = useCallback(async (jsonFile: KeyringPairs$Json) => {
+  const handleKeyringPairsJson = useCallback(async(jsonFile: KeyringPairs$Json) => {
     const selected = selectedAccountsInfo.map(({ address }) => address);
     let encryptFile = jsonFile;
     let accountToAddTime = accountsInfo.map(({ address }) => address);
 
     if (selected.length !== accountsInfo.length) {
       accountToAddTime = selected;
-      encryptFile = await filterAndEncryptFile(encryptFile, selected);
+      encryptFile = filterAndEncryptFile(encryptFile, selected);
     }
 
     await batchRestore(encryptFile, password);
@@ -140,11 +140,11 @@ export default function RestoreJson(): React.ReactElement {
     await Promise.all(updateMetaList);
   }, [accountsInfo, filterAndEncryptFile, password, selectedAccountsInfo]);
 
-  const handleRegularJson = useCallback(async (jsonFile: KeyringPair$Json) => {
+  const handleRegularJson = useCallback(async(jsonFile: KeyringPair$Json) => {
     await jsonRestore(jsonFile, password);
   }, [password]);
 
-  const onRestore = useCallback(async (): Promise<void> => {
+  const onRestore = useCallback(async(): Promise<void> => {
     if (!file || (requirePassword && !password)) {
       return;
     }

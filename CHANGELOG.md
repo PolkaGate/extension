@@ -1,5 +1,19 @@
 # Change Log
 
+# [1.25.0](https://github.com/polkagate/extension/compare/v1.24.11...v1.25.0) (2026-02-22)
+
+
+### Features
+
+* add your proxied accounts to the extension ([524aa56](https://github.com/polkagate/extension/commit/524aa5626040e7db8699002d533b4601b86e7225))
+
+## [1.24.11](https://github.com/polkagate/extension/compare/v1.24.10...v1.24.11) (2026-02-17)
+
+
+### Bug Fixes
+
+* remove unresponsive RPC endpoints from apps config ([#2117](https://github.com/polkagate/extension/issues/2117)) ([23de197](https://github.com/polkagate/extension/commit/23de197e726a8c8f0d8228c98bf047d472d90a8e))
+
 ## [1.24.10](https://github.com/polkagate/extension/compare/v1.24.9...v1.24.10) (2026-02-10)
 
 

@@ -59,7 +59,7 @@ export default function ImportSeed(): React.ReactElement {
       .then((acc) => setAccount(acc)).catch(console.error);
   }, [t, seed, path, setAccount, onValidateSeed, setError]);
 
-  const onCreate = useCallback(async () => {
+  const onCreate = useCallback(async() => {
     if (!account?.suri) {
       return;
     }

@@ -1,8 +1,8 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack, Typography } from '@mui/material';
-import { Broom, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, Notification as NotificationIcon, ShieldSecurity, UserAdd } from 'iconsax-react';
+import { Container, Stack, Typography } from '@mui/material';
+import { Broom, Data2, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, Notification as NotificationIcon, ShieldSecurity, UserAdd } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,6 +18,7 @@ import DeriveAccount from '../home/DeriveAccount';
 import ExportAllAccounts from '../home/ExportAllAccounts';
 import RenameAccount from '../home/RenameAccount';
 import NotificationSettingsFS from '../notification/NotificationSettingsFS';
+import ProxiedAccount from './importProxied/ProxiedAccount';
 import AddressBook from './addressBook';
 
 interface ActionBoxProps {
@@ -98,12 +99,16 @@ function AccountSettings(): React.ReactElement {
           />
         );
 
+      case ExtensionPopups.IMPORT_PROXIED:
+        return (
+          <ProxiedAccount closePopup={extensionPopupCloser} mode='import' />
+        );
+
       case ExtensionPopups.ADDRESS_BOOK:
         return (
           <AddressBook
             closePopup={extensionPopupCloser}
-          />
-        );
+          />);
 
       default:
         return null;
@@ -117,43 +122,57 @@ function AccountSettings(): React.ReactElement {
           <Typography color='text.primary' fontSize='22px' mt='30px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
             {t('Actions')}
           </Typography>
-          <VelvetBox childrenStyle={{ columnGap: '4px', display: 'flex', flexDirection: 'row' }} style={{ margin: '20px 0', width: 'fit-content' }}>
-            <ActionBox
-              Icon={NotificationIcon}
-              label={t('Notification')}
-              onClick={extensionPopupOpener(ExtensionPopups.NOTIFICATION)}
-            />
-            <ActionBox
-              Icon={Edit2}
-              label={t('Rename Account')}
-              onClick={extensionPopupOpener(ExtensionPopups.RENAME)}
-            />
-            <ActionBox
-              Icon={ExportCurve}
-              label={t('Export Accounts')}
-              onClick={extensionPopupOpener(ExtensionPopups.EXPORT)}
-            />
-            <ActionBox
-              Icon={ImportCurve}
-              label={t('Import Accounts')}
-              path='/account/have-wallet'
-            />
-            <ActionBox
-              Icon={ShieldSecurity}
-              label={t('Manage Website Access')}
-              onClick={extensionPopupOpener(ExtensionPopups.DAPPS)}
-            />
-            <ActionBox
-              Icon={UserAdd}
-              label={t('Address Book')}
-              onClick={extensionPopupOpener(ExtensionPopups.ADDRESS_BOOK)}
-            />
-            {!selectedAccount?.isExternal &&
+          <VelvetBox style={{ margin: 0, marginTop: '20px', width: 'fit-content' }}>
+            <Container style={{ columnGap: '4px', display: 'flex', flexDirection: 'row', margin: 0, padding: 0, width: 'fit-content' }}>
               <ActionBox
-                Icon={Broom}
-                label={t('Derive from Account')}
-                onClick={extensionPopupOpener(ExtensionPopups.DERIVE)}
-              />}
+                Icon={Edit2}
+                label={t('Rename Account')}
+                onClick={extensionPopupOpener(ExtensionPopups.RENAME)}
+              />
+              <ActionBox
+                Icon={ExportCurve}
+                label={t('Export Accounts')}
+                onClick={extensionPopupOpener(ExtensionPopups.EXPORT)}
+              />
+              <ActionBox
+                Icon={ImportCurve}
+                label={t('Import Accounts')}
+                path='/account/have-wallet'
+              />
+              {!selectedAccount?.isExternal &&
+                <ActionBox
+                  Icon={Broom}
+                  label={t('Derive from Account')}
+                  onClick={extensionPopupOpener(ExtensionPopups.DERIVE)}
+                />}
+            </Container>
+          </VelvetBox>
+          <Typography color='text.primary' fontSize='22px' mt='30px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
+            {t('Options')}
+          </Typography>
+          <VelvetBox style={{ margin: 0, marginTop: '15px', width: 'fit-content' }}>
+            <Container style={{ columnGap: '4px', display: 'flex', flexDirection: 'row', margin: 0, padding: 0, width: 'fit-content' }}>
+              <ActionBox
+                Icon={Data2}
+                label={t('Import Proxied')}
+                onClick={extensionPopupOpener(ExtensionPopups.IMPORT_PROXIED)}
+              />
+              <ActionBox
+                Icon={NotificationIcon}
+                label={t('Notification')}
+                onClick={extensionPopupOpener(ExtensionPopups.NOTIFICATION)}
+              />
+              <ActionBox
+                Icon={ShieldSecurity}
+                label={t('Manage Website Access')}
+                onClick={extensionPopupOpener(ExtensionPopups.DAPPS)}
+              />
+              <ActionBox
+                Icon={UserAdd}
+                label={t('Address Book')}
+                onClick={extensionPopupOpener(ExtensionPopups.ADDRESS_BOOK)}
+              />
+            </Container>
           </VelvetBox>
           <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)} sx={{ bottom: '20px', cursor: 'pointer', position: 'absolute' }}>
             <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />

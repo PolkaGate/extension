@@ -38,7 +38,7 @@ export default function ImportRawSeed(): React.ReactElement {
     }).catch(() => null);
   }, []);
 
-  const validateSeed = useCallback(async (seed: string, type?: KeypairType): Promise<AccountInfo> => {
+  const validateSeed = useCallback(async(seed: string, type?: KeypairType): Promise<AccountInfo> => {
     if (!(seed.startsWith('0x') && seed.length === 66)) {
       throw new Error('The raw seed is invalid. It should be 66 characters long and start with 0x');
     }
@@ -85,7 +85,7 @@ export default function ImportRawSeed(): React.ReactElement {
       }).catch(console.error);
   }, [seed, onValidateSeed, setError]);
 
-  const onImport = useCallback(async () => {
+  const onImport = useCallback(async() => {
     try {
       await onConfirm({ seed: account?.suri });
     } catch (e) {
