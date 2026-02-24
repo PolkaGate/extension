@@ -7,6 +7,7 @@ import React from 'react';
 import { toTitleCase } from '@polkadot/extension-polkagate/src/util';
 
 import { ChainLogo, Identity2 } from '../../../components';
+import AddToAddressBook from '../../settings/addressBook/quickAddContact/AddToAddressBook';
 
 interface Props {
   address: string | undefined;
@@ -40,6 +41,10 @@ export default function FromToBox({ address, chainName, genesisHash, label }: Pr
         style={{ marginTop: '15px', maxWidth: '80%', variant: 'B-3' }}
         withShortAddress
       />
+      {label.toLowerCase() === 'to' &&
+        <AddToAddressBook
+          input={address}
+        />}
     </Stack>
   );
 }

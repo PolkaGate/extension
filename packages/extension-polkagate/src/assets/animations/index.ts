@@ -9,3 +9,4 @@ export { default as masterKey } from './masterKey.lottie';
 export { default as migratePassword } from './migratePassword.lottie';
 export { default as notFound } from './notFound.lottie';
 export { default as sendingLottie } from './sending.lottie';
+export { default as checked } from './checked.lottie';

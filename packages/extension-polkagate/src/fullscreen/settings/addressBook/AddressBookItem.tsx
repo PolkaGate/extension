@@ -24,7 +24,6 @@ function AddressBookItem({ address, name, onRemove }: Props) {
                     identiconSize={24}
                     name={name}
                     nameStyle={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                    showShortAddress
                     socialStyles={{ mt: 0 }}
                     style={{
                         fontSize: '12px',
@@ -32,6 +31,7 @@ function AddressBookItem({ address, name, onRemove }: Props) {
                         variant: 'B-4',
                         width: '75%'
                     }}
+                    withShortAddress
                 />
                 <IconButton
                     onClick={onRemove}
