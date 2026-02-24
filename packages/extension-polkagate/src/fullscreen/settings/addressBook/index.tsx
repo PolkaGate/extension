@@ -3,10 +3,12 @@
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Stack, Typography } from '@mui/material';
 import { Add, Edit, User, UserAdd } from 'iconsax-react';
 import React, { type Dispatch, memo, type SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
+import { contactInfo } from '@polkadot/extension-polkagate/src/assets/animations';
 import { AccountContext, ActionButton, AddressInput, MyTextField } from '@polkadot/extension-polkagate/src/components';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getAndWatchStorage, getSubstrateAddress, setStorage } from '@polkadot/extension-polkagate/src/util';
@@ -128,17 +130,23 @@ function AddressBook({ closePopup }: Props): React.ReactElement {
             // eslint-disable-next-line react/jsx-no-bind
             onClose={step === STEPS.LIST ? closePopup : () => changeStep(STEPS.LIST)}
             open
-            showBackIconAsClose={[STEPS.ADD, STEPS.EDIT].includes(step)}
+            showBackIconAsClose
             style={{ minHeight: '200px', padding: '16px' }}
             title={step === STEPS.LIST
-                    ? t('Address Book')
-                    : step === STEPS.EDIT
-                        ? t('Edit Contact')
-                        : t('Add Contact')}
+                ? t('Address Book')
+                : step === STEPS.EDIT
+                    ? t('Edit Contact')
+                    : t('Add Contact')}
         >
             <>
                 {step === STEPS.LIST &&
                     <>
+                        <DotLottieReact
+                            autoplay
+                            loop
+                            src={contactInfo as string}
+                            style={{ height: 'auto', margin: '-60px -50px', marginLeft: '-58px', width: '500px' }}
+                        />
                         <Typography color='text.secondary' pt='20px' textAlign='left' variant='B-4'>
                             {t('Save trusted addresses with a custom name to make transfers faster and safer. Contacts are stored locally in your wallet.')}
                         </Typography>
@@ -212,8 +220,8 @@ function AddressBook({ closePopup }: Props): React.ReactElement {
                                 width: 'fit-content'
                             }}
                             text={step === STEPS.ADD
-                                    ? t('Add Contact')
-                                    : t('Edit Contact')}
+                                ? t('Add Contact')
+                                : t('Edit Contact')}
                             variant='contained'
                         />
                     </>
