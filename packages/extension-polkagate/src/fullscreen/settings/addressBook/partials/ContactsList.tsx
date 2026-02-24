@@ -63,7 +63,7 @@ function ContactsList({ changeStep, contacts, setContactAddress, setContacts, se
         <>
             <DotLottieReact
                 autoplay
-                loop
+                loop={false}
                 src={contactInfo as string}
                 style={{ height: 'auto', margin: '-65px -50px', marginLeft: '-58px', width: '500px' }}
             />
