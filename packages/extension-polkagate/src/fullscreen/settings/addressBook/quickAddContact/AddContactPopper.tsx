@@ -91,9 +91,8 @@ function AddContactPopper({ addingContact, contactAddress, containerRef, open, s
                                 inputValue={name}
                                 onEnterPress={addToContacts}
                                 onTextChange={onNameChange}
-                                placeholder={t('Enter contact name')}
+                                placeholder={t('Choose a name for this contact')}
                                 style={{ width: '240px' }}
-                                title={t('Choose a name for this contact')}
                             />
                             {!addingContact &&
                                 <IconButton

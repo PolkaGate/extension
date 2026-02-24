@@ -1,12 +1,13 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import { Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
+import { BookSaved } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { AccountContext } from '@polkadot/extension-polkagate/src/components';
 import { useAddressBook, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
 
 import AddContactPopper from './AddContactPopper';
@@ -19,9 +20,8 @@ function AddToAddressBook({ input }: Props) {
     const { t } = useTranslation();
     const contacts = useAddressBook(); // default value is [], and when it's undefined means it's fetching!
     const { accounts } = useContext(AccountContext);
-
     const containerRef = useRef(null);
-
+    const { isHovered, ref } = useIsHovered();
     const [alreadyExists, setAvailable] = useState<boolean>(true);
     const [addingContact, setAddingContact] = useState<boolean>(false);
     const [openPopper, setOpen] = useState<boolean>(false);
@@ -56,7 +56,7 @@ function AddToAddressBook({ input }: Props) {
     }
 
     return (
-        <>
+        <Grid container justifyContent='end' ref={ref}>
             <Stack
                 direction='row'
                 onClick={togglePopper}
@@ -73,9 +73,8 @@ function AddToAddressBook({ input }: Props) {
                     borderColor: openPopper ? '#2D1E4A' : 'transparent',
                     borderRadius: '6px',
                     cursor: 'pointer',
-                    gap: '12px',
+                    gap: isHovered ? '12px' : 0,
                     justifyContent: 'space-between',
-                    m: 'auto',
                     mt: '7px',
                     opacity: addingContact && !openPopper ? 0 : openPopper ? 1 : 0.5,
                     p: '2px 4px',
@@ -83,10 +82,21 @@ function AddToAddressBook({ input }: Props) {
                     width: 'fit-content'
                 }}
             >
-                <Typography color='primary.main' variant='B-5'>
+                <Typography
+                    color='primary.main'
+                    sx={{
+                        maxWidth: isHovered ? '140px' : '0px',
+                        opacity: isHovered ? 1 : 0,
+                        overflow: 'hidden',
+                        transform: isHovered ? 'translateX(0)' : 'translateX(-8px)',
+                        transition: 'max-width 250ms ease, opacity 200ms ease, transform 250ms ease',
+                        whiteSpace: 'nowrap'
+                    }}
+                    variant='B-5'
+                >
                     {t('Add to address book')}
                 </Typography>
-                <KeyboardArrowRightIcon sx={{ color: 'primary.main', fontSize: '20px', opacity: 0.7 }} />
+                <BookSaved color='#AA83DC' size='20' variant='Linear' />
             </Stack>
             <AddContactPopper
                 addingContact={addingContact}
@@ -96,7 +106,7 @@ function AddToAddressBook({ input }: Props) {
                 setAddingContact={setAddingContact}
                 togglePopper={togglePopper}
             />
-        </>
+        </Grid>
     );
 }
 
