@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { toTitleCase } from '@polkadot/extension-polkagate/src/util';
+import { useAddressBook } from '@polkadot/extension-polkagate/src/hooks';
+import { getSubstrateAddress, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 
 import { ChainLogo, Identity2 } from '../../../components';
 import AddToAddressBook from '../../settings/addressBook/quickAddContact/AddToAddressBook';
@@ -17,6 +18,20 @@ interface Props {
 }
 
 export default function FromToBox({ address, chainName, genesisHash, label }: Props): React.ReactElement {
+  const contacts = useAddressBook();
+
+  const [name, setName] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (contacts) {
+      const substrateAddress = getSubstrateAddress(address);
+
+      const contactName = contacts.find((contact) => contact.address === substrateAddress)?.name;
+
+      contactName && setName(contactName);
+    }
+  }, [address, contacts]);
+
   return (
     <Stack direction='column' justifyContent='space-between' sx={{ height: 'fit-content', width: '45%' }}>
       <Stack columnGap='5px' direction='row' justifyContent='start' sx={{ mt: '3px' }}>
@@ -37,6 +52,7 @@ export default function FromToBox({ address, chainName, genesisHash, label }: Pr
         genesisHash={genesisHash ?? ''}
         identiconSize={48}
         identiconStyle={{ marginRight: '7px' }}
+        name={name}
         nameStyle={{ color: 'text.primary', maxWidth: '190px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
         style={{ marginTop: '15px', maxWidth: '80%', variant: 'B-3' }}
         withShortAddress

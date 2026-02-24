@@ -51,6 +51,13 @@ export default function useProfileInfo(label?: string | null): IconInfo {
           color: '#746876'
         };
 
+      case ADDRESS_BOOK_LABEL:
+        return {
+          Icon: Book,
+          bgcolor: '#3988FF26',
+          color: '#39ff8234'
+        };
+
       default:
         return {
           Icon: Folder,
