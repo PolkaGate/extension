@@ -26,7 +26,7 @@ export default function FromToBox({ address, chainName, genesisHash, label }: Pr
     if (contacts) {
       const substrateAddress = getSubstrateAddress(address);
 
-      const contactName = contacts.find((contact) => contact.address === substrateAddress)?.name;
+      const contactName = contacts.find((contact) => getSubstrateAddress(contact.address) === substrateAddress)?.name;
 
       contactName && setName(contactName);
     }

@@ -16,7 +16,7 @@ import { updateStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 interface Props {
-    address: string;
+    contactAddress: string;
     addingContact: boolean;
     open: boolean;
     togglePopper: () => void;
@@ -24,19 +24,19 @@ interface Props {
     setAddingContact: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function AddContactPopper({ addingContact, address, containerRef, open, setAddingContact, togglePopper }: Props) {
+function AddContactPopper({ addingContact, contactAddress, containerRef, open, setAddingContact, togglePopper }: Props) {
     const { t } = useTranslation();
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const [name, setName] = useState<string | undefined>(undefined);
 
     const addToContacts = useCallback(() => {
-        if (!address || !name) {
+        if (!contactAddress || !name) {
             return;
         }
 
         const newContact = {
-            address,
+            address: contactAddress,
             name
         } as Contact;
 
@@ -47,7 +47,7 @@ function AddContactPopper({ addingContact, address, containerRef, open, setAddin
                 timerRef.current = setTimeout(() => togglePopper(), 2_000); // after 2 seconds closes the popper
             })
             .catch(console.error);
-    }, [address, name, setAddingContact, togglePopper]);
+    }, [contactAddress, name, setAddingContact, togglePopper]);
 
     // Cleanup on unmount
     useEffect(() => {

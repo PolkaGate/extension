@@ -38,8 +38,8 @@ function AddToAddressBook({ input }: Props) {
 
         const existingAddresses = new Set<string>();
 
-        accounts.forEach(({ address }) => existingAddresses.add(address));
-        contacts.forEach(({ address }) => existingAddresses.add(address));
+        accounts.forEach(({ address }) => existingAddresses.add(getSubstrateAddress(address) ?? address));
+        contacts.forEach(({ address }) => existingAddresses.add(getSubstrateAddress(address) ?? address));
 
         const isAlreadyAdded = existingAddresses.has(substrate);
 
@@ -51,7 +51,7 @@ function AddToAddressBook({ input }: Props) {
         setOpen((isOpen) => !isOpen);
     }, []);
 
-    if (alreadyExists || !substrate) {
+    if (alreadyExists || !substrate || !input) {
         return null;
     }
 
@@ -63,12 +63,14 @@ function AddToAddressBook({ input }: Props) {
                 ref={containerRef}
                 sx={{
                     ':hover': {
+                        borderColor: '#2D1E4A',
                         opacity: 1,
                         transition: 'all 250ms ease-out'
                     },
                     alignItems: 'center',
                     bgcolor: '#1B133C',
-                    border: '1px solid #2D1E4A',
+                    border: '1px solid',
+                    borderColor: openPopper ? '#2D1E4A' : 'transparent',
                     borderRadius: '6px',
                     cursor: 'pointer',
                     gap: '12px',
@@ -88,7 +90,7 @@ function AddToAddressBook({ input }: Props) {
             </Stack>
             <AddContactPopper
                 addingContact={addingContact}
-                address={substrate}
+                contactAddress={input}
                 containerRef={containerRef}
                 open={openPopper}
                 setAddingContact={setAddingContact}
