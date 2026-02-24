@@ -4,7 +4,7 @@
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { Stack, Typography } from '@mui/material';
-import { Add, User, UserAdd } from 'iconsax-react';
+import { Add, Edit, User, UserAdd } from 'iconsax-react';
 import React, { type Dispatch, memo, type SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { AccountContext, ActionButton, AddressInput, MyTextField } from '@polkadot/extension-polkagate/src/components';
@@ -24,49 +24,67 @@ export interface Contact {
     name: string;
 }
 
+enum STEPS {
+    LIST,
+    ADD,
+    EDIT
+}
+
 function AddressBook({ closePopup }: Props): React.ReactElement {
     const { t } = useTranslation();
     const { accounts } = useContext(AccountContext);
 
-    const [addresses, setAddresses] = useState<Contact[] | undefined>(undefined);
+    const [contacts, setContacts] = useState<Contact[] | undefined>(undefined);
     const [contactAddress, setContactAddress] = useState<string | undefined>();
     const [name, setName] = useState<string | undefined>();
-    const [step, setStep] = useState<1 | 2>(1);
-    const [duplicatedError, setDuplicatedError] = useState<boolean>(false);
+    const [step, setStep] = useState<STEPS>(STEPS.LIST);
 
-    const extensionAccounts = useMemo(() => accounts.map(({ address }) => address).concat(addresses?.map(({ address }) => address) ?? []), [accounts, addresses]);
+    const existingAccounts = useMemo(() => accounts.map(({ address }) => address).concat(contacts?.map(({ address }) => address) ?? []), [accounts, contacts]);
+    const substrateContactAddress = getSubstrateAddress(contactAddress) ?? contactAddress;
 
     useEffect(() => {
-        const unsubscribe = getAndWatchStorage(STORAGE_KEY.ADDRESS_BOOK, setAddresses);
+        const unsubscribe = getAndWatchStorage(STORAGE_KEY.ADDRESS_BOOK, setContacts);
 
         return unsubscribe;
     }, []);
 
-    useEffect(() => {
-        if (contactAddress && addresses) {
-            const substrate = getSubstrateAddress(contactAddress);
-
-            setDuplicatedError(!!extensionAccounts.find((address) => address === substrate)); // duplicated, address already exists
+    const duplicatedError = useMemo(() => {
+        if (substrateContactAddress && contacts && step === STEPS.ADD) {
+            return existingAccounts.includes(substrateContactAddress); // duplicated, address already exists
         }
 
-        if (!contactAddress) {
-            setDuplicatedError(false);
-        }
-    }, [addresses, contactAddress, extensionAccounts]);
+        return false;
+    }, [contacts, existingAccounts, step, substrateContactAddress]);
 
     const onRemove = useCallback((addressToDelete: string) => () => {
-        if (!addresses) {
+        if (!contacts) {
             return;
         }
 
-        const newList = addresses.filter(({ address }) => address !== addressToDelete);
+        const newList = contacts.filter(({ address }) => address !== addressToDelete);
 
         setStorage(STORAGE_KEY.ADDRESS_BOOK, newList)
             .then(() => {
-                setAddresses(newList);
+                setContacts(newList);
             })
             .catch(console.error);
-    }, [addresses]);
+    }, [contacts]);
+
+    const onEdit = useCallback((addressToEdit: string) => () => {
+        if (!contacts) {
+            return;
+        }
+
+        const contact = contacts.find(({ address }) => address === addressToEdit);
+
+        if (!contact) {
+            return;
+        }
+
+        setContactAddress(contact.address);
+        setName(contact.name);
+        setStep(STEPS.EDIT);
+    }, [contacts]);
 
     const onNameChange = useCallback((name: string) => setName(name), []);
 
@@ -75,54 +93,66 @@ function AddressBook({ closePopup }: Props): React.ReactElement {
         setName(undefined);
     }, []);
 
-    const toggleStep = useCallback(() => {
-        setStep((prev) => prev > 1 ? 1 : 2);
-        reset();
+    const changeStep = useCallback((newStep: STEPS) => {
+        setStep(newStep);
+        newStep === STEPS.LIST && reset();
     }, [reset]);
 
     const onAddContact = useCallback(() => {
         const trimmedName = name?.trim();
 
-        if (!contactAddress || !trimmedName) {
+        if (!substrateContactAddress || !trimmedName) {
             return;
         }
 
-        const address = getSubstrateAddress(contactAddress) ?? contactAddress;
+        let newList: Contact[] = [];
 
-        const newList = [...(addresses ?? []), { address, name: trimmedName }];
+        if (step === STEPS.ADD) {
+            newList = [...(contacts ?? []), { address: substrateContactAddress, name: trimmedName }];
+        } else {
+            const filtered = contacts?.filter(({ address }) => address !== substrateContactAddress) ?? [];
+
+            newList = [...filtered, { address: substrateContactAddress, name: trimmedName }];
+        }
 
         setStorage(STORAGE_KEY.ADDRESS_BOOK, newList)
             .then(() => {
-                setAddresses(newList);
-                toggleStep();
+                setContacts(newList);
+                changeStep(STEPS.LIST);
             })
             .catch(console.error);
-    }, [addresses, contactAddress, name, toggleStep]);
+    }, [name, substrateContactAddress, step, contacts, changeStep]);
 
     return (
         <DraggableModal
-            onClose={step === 1 ? closePopup : toggleStep}
+            // eslint-disable-next-line react/jsx-no-bind
+            onClose={step === STEPS.LIST ? closePopup : () => changeStep(STEPS.LIST)}
             open
-            showBackIconAsClose={step === 2}
+            showBackIconAsClose={[STEPS.ADD, STEPS.EDIT].includes(step)}
             style={{ minHeight: '200px', padding: '16px' }}
-            title={step === 1 ? t('Address Book') : t('Add Contact')}
+            title={step === STEPS.LIST
+                    ? t('Address Book')
+                    : step === STEPS.EDIT
+                        ? t('Edit Contact')
+                        : t('Add Contact')}
         >
             <>
-                {step === 1 &&
+                {step === STEPS.LIST &&
                     <>
                         <Typography color='text.secondary' pt='20px' textAlign='left' variant='B-4'>
                             {t('Save trusted addresses with a custom name to make transfers faster and safer. Contacts are stored locally in your wallet.')}
                         </Typography>
                         <Stack direction='column' sx={{ background: '#05091C', borderRadius: '14px', gap: '12px', height: '250px', m: '16px 6px', maxHeight: '250px', overflowY: 'auto', p: '16px' }}>
-                            {addresses?.map(({ address, name }) => (
+                            {contacts?.map(({ address, name }) => (
                                 <AddressBookItem
                                     address={address}
                                     key={address}
                                     name={name}
+                                    onEdit={onEdit(address)}
                                     onRemove={onRemove(address)}
                                 />
                             ))}
-                            {(!addresses || addresses.length === 0) &&
+                            {(!contacts || contacts.length === 0) &&
                                 <Typography color='text.secondary' m='auto' textAlign='center' variant='B-4'>
                                     {t('Save wallet addresses here to avoid copy-paste errors and send funds with confidence.')}
                                 </Typography>
@@ -131,7 +161,8 @@ function AddressBook({ closePopup }: Props): React.ReactElement {
                         <ActionButton
                             StartIcon={UserAdd}
                             contentPlacement='center'
-                            onClick={toggleStep}
+                            // eslint-disable-next-line react/jsx-no-bind
+                            onClick={() => changeStep(STEPS.ADD)}
                             style={{
                                 borderRadius: '8px',
                                 marginBlock: '8px',
@@ -142,7 +173,7 @@ function AddressBook({ closePopup }: Props): React.ReactElement {
                         />
                     </>
                 }
-                {step === 2 &&
+                {[STEPS.ADD, STEPS.EDIT].includes(step) &&
                     <>
                         <Typography color='text.secondary' py='20px' textAlign='left' variant='B-4'>
                             {t('Keep your trusted addresses organized.')}
@@ -171,7 +202,7 @@ function AddressBook({ closePopup }: Props): React.ReactElement {
                             title={t('Choose a name for this account')}
                         />
                         <ActionButton
-                            StartIcon={Add}
+                            StartIcon={step === STEPS.ADD ? Add : Edit}
                             contentPlacement='center'
                             disabled={!name?.trim() || !contactAddress || duplicatedError}
                             onClick={onAddContact}
@@ -180,7 +211,9 @@ function AddressBook({ closePopup }: Props): React.ReactElement {
                                 marginBlock: '8px',
                                 width: 'fit-content'
                             }}
-                            text={t('Add Contact')}
+                            text={step === STEPS.ADD
+                                    ? t('Add Contact')
+                                    : t('Edit Contact')}
                             variant='contained'
                         />
                     </>

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, IconButton } from '@mui/material';
-import { Trash } from 'iconsax-react';
+import { Edit, Trash } from 'iconsax-react';
 import React, { memo } from 'react';
 
 import { GradientDivider, Identity2 } from '@polkadot/extension-polkagate/src/components';
@@ -12,9 +12,10 @@ interface Props {
     address: string;
     name: string;
     onRemove: () => void;
+    onEdit: () => void;
 }
 
-function AddressBookItem({ address, name, onRemove }: Props) {
+function AddressBookItem({ address, name, onEdit, onRemove }: Props) {
     return (
         <>
             <Grid container item sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
@@ -28,17 +29,26 @@ function AddressBookItem({ address, name, onRemove }: Props) {
                     style={{
                         fontSize: '12px',
                         fontWeight: 500,
-                        variant: 'B-4',
+                        variant: 'B-1',
                         width: '75%'
                     }}
                     withShortAddress
                 />
-                <IconButton
-                    onClick={onRemove}
-                    sx={{ m: 0, p: '4px' }}
-                >
-                    <Trash color='#FF8A65' size='20' />
-                </IconButton>
+                <Grid container item sx={{ alignItems: 'center', gap: '8px', width: 'fit-content' }}>
+                    <IconButton
+                        onClick={onEdit}
+                        sx={{ m: 0, p: '4px' }}
+                    >
+                        <Edit color='#64B5F6' size='20' />
+                    </IconButton>
+                    <GradientDivider orientation='vertical' style={{ height: '25px' }} />
+                    <IconButton
+                        onClick={onRemove}
+                        sx={{ m: 0, p: '4px' }}
+                    >
+                        <Trash color='#FF8A65' size='20' />
+                    </IconButton>
+                </Grid>
             </Grid>
             <GradientDivider />
         </>
