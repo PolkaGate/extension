@@ -37,16 +37,16 @@ function AddressBookItem({ address, name, onEdit, onRemove }: Props) {
                 <Grid container item sx={{ alignItems: 'center', gap: '8px', width: 'fit-content' }}>
                     <IconButton
                         onClick={onEdit}
-                        sx={{ m: 0, p: '4px' }}
+                        sx={{ bgcolor: '#AA83DC26', borderRadius: '128px', m: 0, p: '6px' }}
                     >
-                        <Edit color='#64B5F6' size='20' />
+                        <Edit color='#AA83DC' size='17' variant='Bulk' />
                     </IconButton>
                     <GradientDivider orientation='vertical' style={{ height: '25px' }} />
                     <IconButton
                         onClick={onRemove}
-                        sx={{ m: 0, p: '4px' }}
+                        sx={{ bgcolor: '#FF165C26', borderRadius: '128px', m: 0, p: '6px' }}
                     >
-                        <Trash color='#FF8A65' size='20' />
+                        <Trash color='#FF165C' size='16' variant='Bulk' />
                     </IconButton>
                 </Grid>
             </Grid>

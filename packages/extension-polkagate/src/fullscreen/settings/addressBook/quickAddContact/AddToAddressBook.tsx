@@ -73,7 +73,7 @@ function AddToAddressBook({ input }: Props) {
                     borderColor: openPopper ? '#2D1E4A' : 'transparent',
                     borderRadius: '6px',
                     cursor: 'pointer',
-                    gap: isHovered ? '12px' : 0,
+                    gap: isHovered || openPopper ? '12px' : 0,
                     justifyContent: 'space-between',
                     mt: '7px',
                     opacity: addingContact && !openPopper ? 0 : openPopper ? 1 : 0.5,
@@ -85,10 +85,10 @@ function AddToAddressBook({ input }: Props) {
                 <Typography
                     color='primary.main'
                     sx={{
-                        maxWidth: isHovered ? '140px' : '0px',
-                        opacity: isHovered ? 1 : 0,
+                        maxWidth: isHovered || openPopper ? '140px' : '0px',
+                        opacity: isHovered || openPopper ? 1 : 0,
                         overflow: 'hidden',
-                        transform: isHovered ? 'translateX(0)' : 'translateX(-8px)',
+                        transform: isHovered || openPopper ? 'translateX(0)' : 'translateX(-8px)',
                         transition: 'max-width 250ms ease, opacity 200ms ease, transform 250ms ease',
                         whiteSpace: 'nowrap'
                     }}
