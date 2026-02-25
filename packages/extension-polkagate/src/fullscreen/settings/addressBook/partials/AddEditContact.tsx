@@ -23,14 +23,16 @@ interface Props {
     changeStep: (newStep: STEPS) => void;
 }
 
+const key = (name: string | undefined, address: string | undefined) => `${name}${address}`;
+
 function AddEditContact({ changeStep, contactAddress, duplicatedError, name, onAddContact, onNameChange, setContactAddress, step }: Props) {
     const { t } = useTranslation();
 
-    const changeRef = useRef(`${name} ${contactAddress}`);
+    const changeRef = useRef(key(name, contactAddress));
 
     const disabled = useMemo(() => !name?.trim() || !contactAddress || duplicatedError, [contactAddress, duplicatedError, name]);
     const genesisHash = useMemo(() => getChainFromAddress(contactAddress)?.genesisHash ?? POLKADOT_GENESIS_HASH, [contactAddress]);
-    const notChanged = useMemo(() => changeRef.current === `${name} ${contactAddress}`, [contactAddress, name]);
+    const notChanged = useMemo(() => changeRef.current === key(name, contactAddress), [contactAddress, name]);
 
     const onCancel = useCallback(() => changeStep(STEPS.LIST), [changeStep]);
 
