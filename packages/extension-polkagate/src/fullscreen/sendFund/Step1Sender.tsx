@@ -4,11 +4,11 @@
 import type { Inputs } from './types';
 
 import { Stack, Typography } from '@mui/material';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Motion } from '../../components';
-import { useChainInfo, useTranslation } from '../../hooks';
+import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
 import NumberedTitle from './partials/NumberedTitle';
 import SelectToken from './partials/SelectToken';
 import SelectYourAccount from './partials/SelectYourAccount';
@@ -23,7 +23,30 @@ export default function Step1Sender({ inputs, setInputs }: Props): React.ReactEl
   const { t } = useTranslation();
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
+  const accountAssets = useAccountAssets(address);
+
   const { chainName } = useChainInfo(genesisHash, true);
+  const accountAssetsOnCurrentChain = useMemo(() => accountAssets?.filter((asset) => asset.genesisHash === genesisHash), [accountAssets, genesisHash]);
+  const options = useMemo(() => {
+    if (!accountAssets) {
+      return [];
+    }
+
+    const seen = new Set<string>();
+
+    return accountAssets
+      .map(({ chainName, genesisHash, totalBalance }) => (totalBalance?.isZero() ? undefined : { text: chainName, value: genesisHash }))
+      .filter((a) => !!a)
+      .filter(({ value }) => {
+        if (seen.has(value)) {
+          return false;
+        }
+
+        seen.add(value);
+
+        return true;
+      });
+  }, [accountAssets]);
 
   return (
     <Motion style={{ width: 'fit-content' }} variant='fade'>
@@ -44,8 +67,10 @@ export default function Step1Sender({ inputs, setInputs }: Props): React.ReactEl
           <Stack direction='row' justifyContent='space-between'>
             <SelectYourChain
               chainName={chainName}
+              chainOptions={options}
             />
             <SelectToken
+              accountAssets={accountAssetsOnCurrentChain}
               address={address}
               assetId={assetId}
               genesisHash={genesisHash}

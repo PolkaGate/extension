@@ -33,7 +33,7 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
 
   const [selectedChain, setSelectedChain] = useState<DropdownOption>({ text: inputs?.recipientChain?.text ?? chainName ?? '', value: inputs?.recipientChain?.value ?? genesisHash ?? '' });
 
-  const destinationOptions = useMemo((): DropdownOption[] => {
+  const chainOptions = useMemo((): DropdownOption[] => {
     if (!chainName || !inputs?.token) {
       return [];
     }
@@ -67,7 +67,7 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
       fee: undefined,
       recipientChain: selectedChain
     }));
-  }, [destinationOptions, selectedChain, setInputs]);
+  }, [chainOptions, selectedChain, setInputs]);
 
   return (
     <Motion variant='slide'>
@@ -88,7 +88,7 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
           />
           <SelectYourChain
             chainName={selectedChain?.text ?? inputs?.recipientChain?.text ?? chainName}
-            destinationOptions={destinationOptions}
+            chainOptions={chainOptions}
             setSelectedChain={setSelectedChain}
             style={{ width: '100%' }}
             withTitle={false}
