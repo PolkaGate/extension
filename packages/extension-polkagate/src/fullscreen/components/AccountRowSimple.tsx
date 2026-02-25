@@ -47,6 +47,8 @@ function AccountRowSimple({ account, handleSelect, isFirstAccount, isFirstProfil
             genesisHash={_genesisHash}
             identiconSize={24}
             isSelected={maybeSelected === address || (isSelected && !maybeSelected)}
+            name={account.name}
+            showShortAddress
             style={{ color: (isSelected) ? '#EAEBF1' : '#BEAAD8', variant: 'B-2' }}
           />
         </Stack>

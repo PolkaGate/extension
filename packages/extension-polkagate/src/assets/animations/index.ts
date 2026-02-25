@@ -3,7 +3,11 @@
 
 // @ts-nocheck
 
+export { default as checked } from './checked.lottie';
+export { default as contactInfo } from './contactInfo.lottie';
 export { default as emptyState } from './emptyState.lottie';
+export { default as findID } from './findID.lottie';
+export { default as idKey } from './idKey.lottie';
 export { default as lockLottie } from './lock.lottie';
 export { default as masterKey } from './masterKey.lottie';
 export { default as migratePassword } from './migratePassword.lottie';

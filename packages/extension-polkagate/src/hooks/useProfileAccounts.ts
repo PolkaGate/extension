@@ -8,6 +8,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { getAndWatchStorage } from '../util';
+import useAddressBook from './useAddressBook';
+import { ADDRESS_BOOK_LABEL } from './useCategorizedAccountsInProfiles';
 import useTranslation from './useTranslation';
 
 /**
@@ -15,6 +17,7 @@ import useTranslation from './useTranslation';
  */
 export default function useProfileAccounts(initialAccountList: AccountJson[] | undefined, profile?: string | null) {
   const { t } = useTranslation();
+  const contacts = useAddressBook();
 
   const [_profile, setProfile] = useState<string>();
 
@@ -49,11 +52,19 @@ export default function useProfileAccounts(initialAccountList: AccountJson[] | u
       case t(PROFILE_TAGS.WATCH_ONLY):
         return initialAccountList.filter(({ isExternal, isHardware, isQR }) => isExternal && !isQR && !isHardware);
 
+      case t(ADDRESS_BOOK_LABEL): {
+        if (!contacts) {
+          return; // wait for storage to load
+        }
+
+        return contacts as AccountJson[];
+      }
+
       default:
         return initialAccountList.filter(({ profile }) => profile?.split(',').includes(_profile));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_profile, initialAccountList?.length, t]);
+  }, [_profile, contacts, initialAccountList?.length, t]);
 
   return profileAccounts &&
     (profileAccounts?.length

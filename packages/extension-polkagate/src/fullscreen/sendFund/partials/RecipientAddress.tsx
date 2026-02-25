@@ -55,6 +55,7 @@ export default function RecipientAddress({ genesisHash, inputs, setInputs }: Pro
             chain={chain}
             setAddress={setAddress}
             setIsError={setIsError}
+            showAddressBook
             style={{ mt: '10px', width: '100%' }}
             withSelect
           />

@@ -8,6 +8,7 @@ import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Record, Triangle } from
 import React, { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
 import { ExtensionPopups, GOVERNANCE_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
@@ -26,6 +27,7 @@ interface ActionBoxProps {
 
 function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
   const navigate = useNavigate();
+ const { isHovered, ref } = useIsHovered();
 
   const _onClick = useCallback(() => {
     onClick
@@ -34,8 +36,8 @@ function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactE
   }, [navigate, onClick, path]);
 
   return (
-    <Stack direction='column' justifyContent='start' onClick={_onClick} rowGap='7px' sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-4px)' }, bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', height: '100%', minWidth: '90px', px: '10px', transition: 'all 250ms ease-out', width: '100%' }}>
-      <Icon color='#AA83DC' size='24' style={{ marginTop: '20px' }} variant='Bulk' />
+    <Stack direction='column' justifyContent='start' onClick={_onClick} ref={ref} rowGap='7px' sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-4px)' }, bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', height: '100%', minWidth: '90px', px: '10px', transition: 'all 250ms ease-out', width: '100%' }}>
+      <Icon color='#AA83DC' size='24' style={{ marginTop: '20px' }} variant={isHovered ? 'Bold' : 'Bulk'}  />
       <Typography sx={{ display: 'flex', fontWeight: 700, whiteSpace: 'nowrap', width: '100%' }} variant='B-2'>
         {label}
       </Typography>

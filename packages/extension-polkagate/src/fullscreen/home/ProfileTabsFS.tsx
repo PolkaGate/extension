@@ -7,6 +7,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import { ArrowCircleLeft, ArrowCircleRight } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { ADDRESS_BOOK_LABEL } from '@polkadot/extension-polkagate/src/hooks/useCategorizedAccountsInProfiles';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
@@ -52,13 +53,28 @@ function Tab({ initialAccountList, label }: { initialAccountList: AccountJson[] 
   );
 }
 
-function ProfileTabsFS({ initialAccountList, width = '535px' }: { initialAccountList: AccountJson[] | undefined, width?: string }): React.ReactElement {
+function ProfileTabsFS({ initialAccountList, showAddressBook = false, width = '535px' }: { initialAccountList: AccountJson[] | undefined; showAddressBook?: boolean; width?: string; }): React.ReactElement {
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
   const containerRef = useRef<HTMLDivElement>(null);
+  const selectedProfile = useSelectedProfile();
+  const selectedProfileRef = useRef<string | undefined | null>(selectedProfile);
 
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [hovered, setIsHovered] = useState('');
+
+  useEffect(() => {
+    selectedProfileRef.current = selectedProfile;
+  }, [selectedProfile]);
+
+  // On unmount (modal close), reset if Address Book was the active profile.
+  useEffect(() => {
+    return () => {
+     if (selectedProfileRef.current === ADDRESS_BOOK_LABEL) {
+        setStorage(STORAGE_KEY.SELECTED_PROFILE, 'All').catch(console.error);
+      }
+    };
+ }, []); // empty deps — cleanup runs only on unmount
 
   const checkScroll = () => {
     const container = containerRef.current;
@@ -98,8 +114,14 @@ function ProfileTabsFS({ initialAccountList, width = '535px' }: { initialAccount
       return [];
     }
 
-    return defaultProfiles.concat(userDefinedProfiles);
-  }, [defaultProfiles, userDefinedProfiles]);
+    const profilesList = defaultProfiles.concat(userDefinedProfiles);
+
+    if (showAddressBook) {
+      profilesList.push(ADDRESS_BOOK_LABEL);
+    }
+
+    return profilesList;
+  }, [defaultProfiles, showAddressBook, userDefinedProfiles]);
 
   const handleHover = useCallback((input: string) => () => setIsHovered(input), []);
 
