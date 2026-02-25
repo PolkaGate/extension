@@ -31,13 +31,15 @@ function AddContactPopper({ addingContact, contactAddress, containerRef, open, s
     const [name, setName] = useState<string | undefined>(undefined);
 
     const addToContacts = useCallback(() => {
-        if (!contactAddress || !name) {
+        const trimmedName = name?.trim();
+
+        if (!contactAddress || !trimmedName) {
             return;
         }
 
         const newContact = {
             address: contactAddress,
-            name
+            name: trimmedName
         } as Contact;
 
         setAddingContact(true);
@@ -94,21 +96,22 @@ function AddContactPopper({ addingContact, contactAddress, containerRef, open, s
                                 placeholder={t('Choose a name for this contact')}
                                 style={{ width: '240px' }}
                             />
-                            {!addingContact &&
-                                <IconButton
+                            {addingContact
+                                ? <DotLottieReact
+                                    autoplay
+                                    loop={false}
+                                    src={checked as string}
+                                    style={{ height: 'auto', marginBottom: '10px', marginInline: '-7px', width: '45px' }}
+                                />
+                                : <IconButton
                                     disabled={!name}
                                     onClick={addToContacts}
                                     sx={{ m: 0, mb: '8px', p: '4px' }}
                                 >
                                     <CheckIcon sx={{ color: 'success.light' }} />
-                                </IconButton>}
-                            {addingContact &&
-                                <DotLottieReact
-                                    autoplay
-                                    loop={false}
-                                    src={checked as string}
-                                    style={{ height: 'auto', marginBottom: '10px', marginInline: '-7px', width: '45px' }}
-                                />}
+                                </IconButton>
+                            }
+
                         </Stack>
                     </Fade>
                 )}
