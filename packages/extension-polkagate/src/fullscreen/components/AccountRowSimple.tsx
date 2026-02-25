@@ -32,7 +32,7 @@ function AccountRowSimple({ account, handleSelect, isFirstAccount, isFirstProfil
       initial={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.4 }}
     >
-      <Stack alignItems='center' direction='row' justifyContent='space-between' onDoubleClick={onDoubleClick} sx={{ bgcolor: '#05091C', borderRadius: isLast ? '0 0 14px 14px' : '0px', mt: isFirstProfile && isFirstAccount ? 0 : '2px', p: '5px 8px 5px 15px', minHeight: '40px', position: 'relative', width: '100%' }}>
+      <Stack alignItems='center' direction='row' justifyContent='space-between' onDoubleClick={onDoubleClick} sx={{ bgcolor: '#05091C', borderRadius: isLast ? '0 0 14px 14px' : '0px', minHeight: '40px', mt: isFirstProfile && isFirstAccount ? 0 : '2px', p: '5px 8px 5px 15px', position: 'relative', width: '100%' }}>
         {
           isSelected &&
           <Divider orientation='vertical' sx={{ background: '#FF4FB9', borderRadius: '0 9px 9px 0', height: '24px', left: '1px', position: 'absolute', width: '3px' }} />
@@ -43,6 +43,8 @@ function AccountRowSimple({ account, handleSelect, isFirstAccount, isFirstProfil
             genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
             identiconSize={24}
             isSelected={maybeSelected === account?.address || (isSelected && !maybeSelected)}
+            name={account.name}
+            showShortAddress
             style={{ color: (isSelected) ? '#EAEBF1' : '#BEAAD8', variant: 'B-2' }}
           />
         </Stack>

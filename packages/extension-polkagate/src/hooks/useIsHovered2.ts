@@ -1,35 +1,30 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type React from 'react';
+import { useCallback, useRef, useState } from 'react';
 
-import { useEffect, useRef, useState } from 'react';
-
-export default function useIsHovered<T extends HTMLElement = HTMLDivElement>(): {
-  isHovered: boolean;
-  ref: React.RefObject<T | null>;
-} {
-  const ref = useRef<T | null>(null);
+export default function useIsHovered<T extends HTMLElement = HTMLDivElement>() {
   const [isHovered, setIsHovered] = useState(false);
+  const currentNode = useRef<T | null>(null);
 
-  useEffect(() => {
-    const element = ref.current;
+  const handleMouseEnter = useCallback(() => setIsHovered(true), []);
+  const handleMouseLeave = useCallback(() => setIsHovered(false), []);
 
-    if (!element) {
-      return;
+  const ref = useCallback((node: T | null) => {
+    // remove from previous node
+    if (currentNode.current) {
+      currentNode.current.removeEventListener('mouseenter', handleMouseEnter);
+      currentNode.current.removeEventListener('mouseleave', handleMouseLeave);
     }
 
-    const handleMouseEnter = () => setIsHovered(true);
-    const handleMouseLeave = () => setIsHovered(false);
+    // add to new node
+    if (node) {
+      node.addEventListener('mouseenter', handleMouseEnter);
+      node.addEventListener('mouseleave', handleMouseLeave);
+    }
 
-    element.addEventListener('mouseenter', handleMouseEnter);
-    element.addEventListener('mouseleave', handleMouseLeave);
-
-    return () => {
-      element.removeEventListener('mouseenter', handleMouseEnter);
-      element.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, []);
+    currentNode.current = node;
+  }, [handleMouseEnter, handleMouseLeave]);
 
   return { isHovered, ref };
 }

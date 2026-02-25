@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography } from '@mui/material';
-import { Broom, Data2, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, Notification as NotificationIcon, ShieldSecurity } from 'iconsax-react';
+import { Book, Broom, Data2, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, Notification as NotificationIcon, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import RemoveAccount from '@polkadot/extension-polkagate/src/partials/RemoveAccount';
 import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
@@ -19,6 +20,7 @@ import ExportAllAccounts from '../home/ExportAllAccounts';
 import RenameAccount from '../home/RenameAccount';
 import NotificationSettingsFS from '../notification/NotificationSettingsFS';
 import ProxiedAccount from './importProxied/ProxiedAccount';
+import AddressBook from './addressBook';
 
 interface ActionBoxProps {
   Icon: Icon;
@@ -29,6 +31,7 @@ interface ActionBoxProps {
 
 function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
   const navigate = useNavigate();
+ const { isHovered, ref } = useIsHovered();
 
   const _onClick = useCallback(() => {
     onClick
@@ -37,8 +40,8 @@ function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactE
   }, [navigate, onClick, path]);
 
   return (
-    <Stack direction='column' justifyContent='start' onClick={_onClick} rowGap='8px' sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-4px)' }, bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', height: '86px', minWidth: '141px', px: '10px', transition: 'all 250ms ease-out', width: 'fit-content' }}>
-      <Icon color='#AA83DC' size='24' style={{ marginTop: '17px' }} variant='Bulk' />
+    <Stack direction='column' justifyContent='start' onClick={_onClick} ref={ref} rowGap='8px' sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-4px)' }, bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', height: '86px', minWidth: '141px', px: '10px', transition: 'all 250ms ease-out', width: 'fit-content' }}>
+      <Icon color='#AA83DC' size='24' style={{ marginTop: '17px' }} variant={isHovered ? 'Bold' : 'Bulk'} />
       <Typography sx={{ display: 'flex', fontWeight: 700, width: 'fit-content' }} variant='B-2'>
         {label}
       </Typography>
@@ -103,6 +106,12 @@ function AccountSettings(): React.ReactElement {
           <ProxiedAccount closePopup={extensionPopupCloser} mode='import' />
         );
 
+      case ExtensionPopups.ADDRESS_BOOK:
+        return (
+          <AddressBook
+            closePopup={extensionPopupCloser}
+          />);
+
       default:
         return null;
     }
@@ -146,6 +155,11 @@ function AccountSettings(): React.ReactElement {
           <VelvetBox style={{ margin: 0, marginTop: '15px', width: 'fit-content' }}>
             <Container style={{ columnGap: '4px', display: 'flex', flexDirection: 'row', margin: 0, padding: 0, width: 'fit-content' }}>
               <ActionBox
+                Icon={Book}
+                label={t('Address Book')}
+                onClick={extensionPopupOpener(ExtensionPopups.ADDRESS_BOOK)}
+              />
+              <ActionBox
                 Icon={Data2}
                 label={t('Import Proxied')}
                 onClick={extensionPopupOpener(ExtensionPopups.IMPORT_PROXIED)}
@@ -160,6 +174,7 @@ function AccountSettings(): React.ReactElement {
                 label={t('Manage Website Access')}
                 onClick={extensionPopupOpener(ExtensionPopups.DAPPS)}
               />
+
             </Container>
           </VelvetBox>
           <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)} sx={{ bottom: '20px', cursor: 'pointer', position: 'absolute' }}>

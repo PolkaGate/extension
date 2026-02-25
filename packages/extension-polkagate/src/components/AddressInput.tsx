@@ -25,9 +25,10 @@ interface Props {
   style?: SxProps<Theme>;
   withSelect?: boolean;
   setIsError?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  showAddressBook?: boolean;
 }
 
-export default function AddressInput({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setIsError, style, withSelect }: Props): React.ReactElement<Props> {
+export default function AddressInput({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setIsError, showAddressBook, style, withSelect }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const isBlueish = useIsBlueish();
@@ -133,7 +134,7 @@ export default function AddressInput({ addWithQr = false, address, chain, disabl
                     size='18'
                     style={{ cursor: 'pointer', margin: '0 2px 0' }}
                     variant='Bulk'
-                  />
+                    />
                 }
               </InputAdornment>
             ),
@@ -199,6 +200,7 @@ export default function AddressInput({ addWithQr = false, address, chain, disabl
           handleClose={() => setOpenAccountList(false)}
           open={openAccountList}
           setAddress={setAddress}
+          showAddressBook={showAddressBook}
         />
       }
     </>
