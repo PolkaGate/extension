@@ -4,7 +4,7 @@
 import { Stack, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
 
-import { useAddressBook } from '@polkadot/extension-polkagate/src/hooks';
+import { useAddressBook, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getSubstrateAddress, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 
 import { ChainLogo, Identity2 } from '../../../components';
@@ -19,12 +19,13 @@ interface Props {
 
 export default function FromToBox({ address, chainName, genesisHash, label }: Props): React.ReactElement {
   const contacts = useAddressBook();
+  const { t } = useTranslation();
 
   const name = useMemo(() => {
     if (contacts) {
       const substrateAddress = getSubstrateAddress(address);
 
-     return contacts.find((contact) => getSubstrateAddress(contact.address) === substrateAddress)?.name;
+      return contacts.find((contact) => getSubstrateAddress(contact.address) === substrateAddress)?.name;
     }
 
     return undefined;
@@ -55,7 +56,7 @@ export default function FromToBox({ address, chainName, genesisHash, label }: Pr
         style={{ marginTop: '15px', maxWidth: '80%', variant: 'B-3' }}
         withShortAddress
       />
-      {label.toLowerCase() === 'to' &&
+      {label === t('To') &&
         <AddToAddressBook
           input={address}
         />}
