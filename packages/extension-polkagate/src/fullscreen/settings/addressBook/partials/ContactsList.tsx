@@ -65,7 +65,7 @@ function ContactsList({ changeStep, contacts, setContactAddress, setContacts, se
                 autoplay
                 loop={false}
                 src={contactInfo as string}
-                style={{ height: 'auto', margin: '-65px -50px', marginLeft: '-58px', width: '500px' }}
+                style={{ margin: '-53px -8px -45px auto' }}
             />
             <Typography color='text.secondary' pt='20px' textAlign='left' variant='B-4'>
                 {t('Save trusted addresses with a custom name to make transfers faster and safer. Contacts are stored locally in your wallet.')}
