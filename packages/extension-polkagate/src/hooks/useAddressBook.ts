@@ -12,9 +12,7 @@ export default function useAddressBook() {
     const [contacts, setContacts] = useState<Contact[] | undefined>();
 
     useEffect(() => {
-        const unsubscribe = getAndWatchStorage(STORAGE_KEY.ADDRESS_BOOK, setContacts, undefined, []);
-
-        return unsubscribe;
+       return getAndWatchStorage(STORAGE_KEY.ADDRESS_BOOK, setContacts, undefined, []);
     }, []);
 
     return contacts;
