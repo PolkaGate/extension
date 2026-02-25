@@ -13,7 +13,7 @@ import LCConnector from '@polkadot/extension-polkagate/src/util/api/lightClient-
 import { AUTO_MODE, AUTO_MODE_DEFAULT_ENDPOINT } from '@polkadot/extension-polkagate/src/util/constants';
 
 const isAutoMode = (e: string) => e === AUTO_MODE.value;
-
+const MAX_RETRIES = 3;
 const endpointManager = new EndpointManager();
 
 /**
@@ -159,15 +159,31 @@ export default function ApiProvider({ children }: { children: React.ReactNode })
   }, [handleNewApi, updateEndpoint, resolvePendingConnections]);
 
   const connectToEndpoint = useCallback(async (genesisHash: string, endpointToConnect: string) => {
+    let wsProvider;
+
     try {
-      const wsProvider = new WsProvider(endpointToConnect);
-      const newApi = await ApiPromise.create({ provider: wsProvider });
+      wsProvider = new WsProvider(endpointToConnect);
+
+      const newApi = await ApiPromise.create({ provider: wsProvider, throwOnConnect: true }); // throwOnConnect will throw error if the connection failed
 
       handleNewApi(newApi, endpointToConnect);
     } catch (error) {
       console.error('Connection error:', error);
+      wsProvider?.disconnect().catch(console.error);
+
       // Resolve pending with undefined on error
       resolvePendingConnections(genesisHash, undefined, endpointToConnect);
+
+      let endpoint = endpointManager.get(genesisHash);
+
+      // Throw an error only when the endpoint is in auto mode, to trigger a fallback API connection.
+      if (endpoint?.isAuto) {
+        endpoint = { ...AUTO_MODE_DEFAULT_ENDPOINT, timestamp: Date.now() };
+
+        endpointManager.set(genesisHash, endpoint);
+
+        throw error;
+      }
     }
   }, [handleNewApi, resolvePendingConnections]);
 
@@ -183,7 +199,7 @@ export default function ApiProvider({ children }: { children: React.ReactNode })
     }
   }, [handleNewApi, resolvePendingConnections]);
 
-  const requestApiConnection = useCallback((genesisHash: string, endpoint: EndpointType | undefined, endpoints: DropdownOption[]) => {
+  const requestApiConnection = useCallback(async (genesisHash: string, endpoint: EndpointType | undefined, endpoints: DropdownOption[]) => {
     const endpointValue = endpoint?.endpoint;
 
     if (!endpointValue || !endpointManager) {
@@ -201,23 +217,23 @@ export default function ApiProvider({ children }: { children: React.ReactNode })
 
     // If in auto mode find the fastest endpoint
     if (isAutoMode(endpointValue)) {
-      handleAutoMode(genesisHash, endpoints).catch(console.error);
+      await handleAutoMode(genesisHash, endpoints);
 
       return;
     }
 
     // Connect to a WebSocket endpoint
     if (endpointValue.startsWith('wss')) {
-      connectToEndpoint(genesisHash, endpointValue).catch(console.error);
+      await connectToEndpoint(genesisHash, endpointValue);
     }
 
     // Connect to a light client endpoint if provided
     if (endpointValue.startsWith('light')) {
-      connectToLightClient(genesisHash, endpointValue).catch(console.error);
+      await connectToLightClient(genesisHash, endpointValue);
     }
   }, [connectToEndpoint, connectToLightClient, handleAutoMode]);
 
-  const getApi = useCallback(async (genesisHash: string | null | undefined, endpoints: DropdownOption[]): Promise<ApiPromise | undefined> => {
+  const getApi = useCallback(async (genesisHash: string | null | undefined, endpoints: DropdownOption[], retryCount = 0): Promise<ApiPromise | undefined> => {
     if (!genesisHash) {
       return Promise.resolve(undefined);
     }
@@ -266,10 +282,31 @@ export default function ApiProvider({ children }: { children: React.ReactNode })
       resolve: resolvePromise
     };
 
-    // Start connection
-    requestApiConnection(genesisHash, endpoint, endpoints);
+    try {
+      // Start connection
+      await requestApiConnection(genesisHash, endpoint, endpoints);
 
-    return promise;
+      return promise;
+    } catch (error) {
+      console.error(`Connection failed for ${endpointValue}`, error);
+
+      // Retry with exponential backoff
+      if (retryCount < MAX_RETRIES) {
+        const delay = 500 * Math.pow(2, retryCount); // 500ms, 1000ms, 2000ms...
+
+        console.warn(
+          `Retrying connection for ${endpointValue} (attempt ${retryCount + 1}/${MAX_RETRIES}) after ${delay}ms`
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, delay));
+
+        return getApi(genesisHash, endpoints, retryCount + 1);
+      }
+
+      console.error(`❌ Max retry attempts reached for ${endpointValue}`);
+
+      return Promise.resolve(undefined);
+    }
   }, [requestApiConnection]);
 
   return (
