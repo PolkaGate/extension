@@ -75,6 +75,10 @@ module.exports = (entry, alias = {}) => ({
             }
           }
         ]
+      },
+       {
+        test: /\.(wav|mp3|ogg)$/,
+        type: 'asset/resource'
       }
     ]
   },

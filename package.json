@@ -102,7 +102,8 @@
     "rehype-raw": "^6.1.1",
     "semver": "^7.6.3",
     "style-loader": "^3.3.2",
-    "umi-request": "^1.4.0"
+    "umi-request": "^1.4.0",
+    "use-sound": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.18.2",
