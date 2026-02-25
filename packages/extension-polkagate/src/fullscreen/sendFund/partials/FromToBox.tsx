@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import { useAddressBook } from '@polkadot/extension-polkagate/src/hooks';
 import { getSubstrateAddress, toTitleCase } from '@polkadot/extension-polkagate/src/util';
@@ -20,16 +20,14 @@ interface Props {
 export default function FromToBox({ address, chainName, genesisHash, label }: Props): React.ReactElement {
   const contacts = useAddressBook();
 
-  const [name, setName] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
+  const name = useMemo(() => {
     if (contacts) {
       const substrateAddress = getSubstrateAddress(address);
 
-      const contactName = contacts.find((contact) => getSubstrateAddress(contact.address) === substrateAddress)?.name;
-
-      contactName && setName(contactName);
+     return contacts.find((contact) => getSubstrateAddress(contact.address) === substrateAddress)?.name;
     }
+
+    return undefined;
   }, [address, contacts]);
 
   return (
