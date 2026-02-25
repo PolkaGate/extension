@@ -123,6 +123,7 @@ function AddressBook({ closePopup }: Props): React.ReactElement {
                 }
                 {[STEPS.ADD, STEPS.EDIT].includes(step) &&
                     <AddEditContact
+                        changeStep={changeStep}
                         contactAddress={contactAddress}
                         duplicatedError={duplicatedError}
                         name={contactName}

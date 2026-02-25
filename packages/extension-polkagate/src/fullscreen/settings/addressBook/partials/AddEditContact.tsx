@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Typography } from '@mui/material';
-import { Add, Edit, User } from 'iconsax-react';
-import React, { type Dispatch, memo, type SetStateAction, useMemo } from 'react';
+import { Add, User } from 'iconsax-react';
+import React, { type Dispatch, memo, type SetStateAction, useCallback, useMemo, useRef } from 'react';
 
-import { ActionButton, AddressInput, Identity2, MyTextField } from '@polkadot/extension-polkagate/src/components';
+import { ActionButton, AddressInput, DecisionButtons, Identity2, MyTextField } from '@polkadot/extension-polkagate/src/components';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import { getChainFromAddress } from '@polkadot/extension-polkagate/src/util/getChainFromAddress';
@@ -20,12 +20,19 @@ interface Props {
     setContactAddress: Dispatch<SetStateAction<string | undefined>>;
     step: STEPS;
     duplicatedError: boolean;
+    changeStep: (newStep: STEPS) => void;
 }
 
-function AddEditContact({ contactAddress, duplicatedError, name, onAddContact, onNameChange, setContactAddress, step }: Props) {
+function AddEditContact({ changeStep, contactAddress, duplicatedError, name, onAddContact, onNameChange, setContactAddress, step }: Props) {
     const { t } = useTranslation();
 
+    const changeRef = useRef(`${name} ${contactAddress}`);
+
+    const disabled = useMemo(() => !name?.trim() || !contactAddress || duplicatedError, [contactAddress, duplicatedError, name]);
     const genesisHash = useMemo(() => getChainFromAddress(contactAddress)?.genesisHash ?? POLKADOT_GENESIS_HASH, [contactAddress]);
+    const notChanged = useMemo(() => changeRef.current === `${name} ${contactAddress}`, [contactAddress, name]);
+
+    const onCancel = useCallback(() => changeStep(STEPS.LIST), [changeStep]);
 
     return (
         <>
@@ -64,21 +71,32 @@ function AddEditContact({ contactAddress, duplicatedError, name, onAddContact, o
                 style={{ margin: '20px 0', width: '370px' }}
                 title={t('Choose a name for this account')}
             />
-            <ActionButton
-                StartIcon={step === STEPS.ADD ? Add : Edit}
-                contentPlacement='center'
-                disabled={!name?.trim() || !contactAddress || duplicatedError}
-                onClick={onAddContact}
-                style={{
-                    borderRadius: '8px',
-                    marginBlock: '8px',
-                    width: 'fit-content'
-                }}
-                text={step === STEPS.ADD
-                    ? t('Add Contact')
-                    : t('Edit Contact')}
-                variant='contained'
-            />
+            {step === STEPS.ADD &&
+                <ActionButton
+                    StartIcon={Add}
+                    contentPlacement='center'
+                    disabled={disabled}
+                    onClick={onAddContact}
+                    style={{
+                        borderRadius: '8px',
+                        marginBlock: '8px',
+                        width: 'fit-content'
+                    }}
+                    text={t('Add Contact')}
+                    variant='contained'
+                />}
+            {step === STEPS.EDIT &&
+                <DecisionButtons
+                    cancelButton
+                    direction='horizontal'
+                    disabled={disabled || notChanged}
+                    onPrimaryClick={onAddContact}
+                    onSecondaryClick={onCancel}
+                    primaryBtnText={t('Apply')}
+                    secondaryBtnText={t('Cancel')}
+                    style={{ marginTop: '50px' }}
+                />
+            }
         </>
     );
 }
