@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Typography } from '@mui/material';
-import { Add, User } from 'iconsax-react';
+import { User } from 'iconsax-react';
 import React, { type Dispatch, memo, type SetStateAction, useCallback, useMemo, useRef } from 'react';
 
-import { ActionButton, AddressInput, DecisionButtons, Identity2, MyTextField } from '@polkadot/extension-polkagate/src/components';
+import { AddressInput, DecisionButtons, Identity2, MyTextField } from '@polkadot/extension-polkagate/src/components';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import { getChainFromAddress } from '@polkadot/extension-polkagate/src/util/getChainFromAddress';
@@ -73,32 +73,16 @@ function AddEditContact({ changeStep, contactAddress, duplicatedError, name, onA
                 style={{ margin: '20px 0', width: '370px' }}
                 title={t('Choose a name for this account')}
             />
-            {step === STEPS.ADD &&
-                <ActionButton
-                    StartIcon={Add}
-                    contentPlacement='center'
-                    disabled={disabled}
-                    onClick={onAddContact}
-                    style={{
-                        borderRadius: '8px',
-                        marginBlock: '8px',
-                        width: 'fit-content'
-                    }}
-                    text={t('Add Contact')}
-                    variant='contained'
-                />}
-            {step === STEPS.EDIT &&
-                <DecisionButtons
-                    cancelButton
-                    direction='horizontal'
-                    disabled={disabled || notChanged}
-                    onPrimaryClick={onAddContact}
-                    onSecondaryClick={onCancel}
-                    primaryBtnText={t('Apply')}
-                    secondaryBtnText={t('Cancel')}
-                    style={{ marginTop: '50px' }}
-                />
-            }
+            <DecisionButtons
+                cancelButton
+                direction='vertical'
+                disabled={disabled || notChanged}
+                onPrimaryClick={onAddContact}
+                onSecondaryClick={onCancel}
+                primaryBtnText={step === STEPS.ADD ? t('Add') : t('Apply')}
+                secondaryBtnText={t('Cancel')}
+                style={{ marginTop: '50px' }}
+            />
         </>
     );
 }
