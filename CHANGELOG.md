@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.26.0](https://github.com/polkagate/extension/compare/v1.25.0...v1.26.0) (2026-02-25)
+
+
+### Features
+
+* add Address Book for frequently used addresses ([185300d](https://github.com/polkagate/extension/commit/185300d959e8feecdb9ff2f6c2ff735dc924d602))
+
 # [1.25.0](https://github.com/polkagate/extension/compare/v1.24.11...v1.25.0) (2026-02-22)
 
 

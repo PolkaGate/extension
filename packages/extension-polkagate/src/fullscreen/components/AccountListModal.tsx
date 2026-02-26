@@ -23,9 +23,10 @@ interface ChooseAccountMenuProps {
   onApply?: () => void;
   isSelectedAccountApplicable?: boolean; // to let enable apply on selected account
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>> | undefined;
+  showAddressBook?: boolean;
 }
 
-export default function AccountListModal({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress }: ChooseAccountMenuProps): React.ReactElement {
+export default function AccountListModal({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress, showAddressBook }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef<HTMLDivElement>(null);
@@ -105,7 +106,11 @@ export default function AccountListModal({ genesisHash, handleClose, isSelectedA
           onInputChange={onSearch}
           placeholder={t('🔍 Search accounts')}
         />
-        <ProfileTabsFS initialAccountList={initialAccountList} width='99%' />
+        <ProfileTabsFS
+          initialAccountList={initialAccountList}
+          showAddressBook={showAddressBook}
+          width='99%'
+        />
         <VelvetBox style={{ margin: '5px 0 15px' }}>
           <Stack ref={refContainer} style={{ maxHeight: '345px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
             {

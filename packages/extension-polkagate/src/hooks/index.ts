@@ -11,6 +11,7 @@ export { default as useAccountSelectedChain } from './useAccountSelectedChain';
 export { default as useAccountsOrder } from './useAccountsOrder';
 export { default as useActiveEraIndex } from './useActiveEraIndex';
 export { default as useActiveRecoveries } from './useActiveRecoveries';
+export { default as useAddressBook } from './useAddressBook';
 export { default as useAlerts } from './useAlerts';
 export { default as useAllChains } from './useAllChains';
 export { default as useAnimateOnce } from './useAnimateOnce';
