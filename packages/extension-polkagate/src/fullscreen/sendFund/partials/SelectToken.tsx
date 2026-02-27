@@ -67,10 +67,12 @@ export default function SelectToken({ accountAssets, address, assetId, genesisHa
     setOpenTokenList(false);
   }, []);
 
+  const hasAssets = Boolean(accountAssets?.length);
+
   return (
     <>
       <ClickAwayListener onClickAway={handleClickAway}>
-        <Stack alignItems='end' direction='row' justifyContent='space-between' mt='15px' onClick={accountAssets?.length ? onToggleTokenSelection : noop} ref={containerRef} sx={{ cursor: accountAssets?.length ? 'pointer' : 'default' }} width='150px'>
+        <Stack alignItems='end' direction='row' justifyContent='space-between' mt='15px' onClick={hasAssets ? onToggleTokenSelection : noop} ref={containerRef} sx={{ cursor: hasAssets ? 'pointer' : 'default' }} width='150px'>
           <Stack alignItems='end' direction='row' justifyContent='start'>
             {logoInfo &&
               <AssetLogo assetSize='36px' genesisHash={genesisHash} logo={logoInfo?.logo} token={asset?.token} />
@@ -84,12 +86,12 @@ export default function SelectToken({ accountAssets, address, assetId, genesisHa
               </Typography>
             </Stack>
           </Stack>
-          {!!accountAssets?.length &&
+          {hasAssets &&
             <OpenerButton flip />
           }
         </Stack>
       </ClickAwayListener>
-      {!!accountAssets?.length && openTokenList &&
+      {hasAssets && accountAssets && openTokenList &&
         <CustomizedDropDown
           assets={accountAssets}
           containerRef={containerRef}
