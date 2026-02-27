@@ -5,7 +5,7 @@ import { BN, BN_ZERO, bnMax, hexToString } from '@polkadot/util';
 
 import getChainName from '../../getChainName';
 import getPoolAccounts from '../../getPoolAccounts';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
+import { fastestEndpoint, getChainEndpoints } from '../utils';
 
 /**
  * Get all information regarding a pool
@@ -31,7 +31,7 @@ export async function getPool(genesisHash, stakerAddress, id, port) {
   const chainName = getChainName(genesisHash);
   const endpoints = getChainEndpoints(chainName ?? '');
 
-  const { api, connections } = await fastestEndpoint(endpoints);
+  const { api } = await fastestEndpoint(endpoints);
 
   console.log(`getPool is called for ${stakerAddress} on chain ${chainName}`);
   id && console.log('getPool is called to fetch the pool with poolId:', id);
@@ -133,5 +133,5 @@ export async function getPool(genesisHash, stakerAddress, id, port) {
 
   port.postMessage(JSON.stringify({ functionName: 'getPool', results: JSON.stringify(poolInfo) }));
 
-  closeWebsockets(connections);
+  api.disconnect().catch(console.error);
 }

@@ -17,7 +17,7 @@ import { getStakingBalances } from './getStakingBalances';
  */
 export async function getBalances(chainName, addresses, userAddedEndpoints, port) {
   const chainEndpoints = getChainEndpoints(chainName, userAddedEndpoints);
-  const { api, connections } = await fastestEndpoint(chainEndpoints);
+  const { api } = await fastestEndpoint(chainEndpoints);
 
   if (api.isConnected && api.derive.balances) {
     const { metadata } = metadataFromApi(api);
@@ -25,7 +25,7 @@ export async function getBalances(chainName, addresses, userAddedEndpoints, port
     console.info(chainName, 'metadata : fetched and saved.');
     port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.RELAY, metadata }));
 
-    const requests = addresses.map(async (address) => {
+    const requests = addresses.map(async(address) => {
       const allBalances = await api.derive.balances.all(address);
       const systemBalance = await api.query['system']['account'](address);
       const existentialDeposit = api.consts['balances']['existentialDeposit'];
@@ -50,11 +50,7 @@ export async function getBalances(chainName, addresses, userAddedEndpoints, port
       };
     });
 
-    return {
-      api,
-      balanceInfo: await Promise.all(requests),
-      connectionsToBeClosed: connections
-    };
+    return { api, balanceInfo: await Promise.all(requests) };
   }
 
   return undefined;

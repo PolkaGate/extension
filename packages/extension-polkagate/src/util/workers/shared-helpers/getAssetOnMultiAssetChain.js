@@ -8,7 +8,7 @@ import { getSubstrateAddress } from '../../address';
 import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
 import { toTitleCase } from '../../string';
 // eslint-disable-next-line import/extensions
-import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
+import { balancifyAsset, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
 
 /**
  *
@@ -20,7 +20,7 @@ import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, me
  */
 export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, chainName, userAddedEndpoints, port) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
-  const { api, connections } = await fastestEndpoint(endpoints);
+  const { api } = await fastestEndpoint(endpoints);
 
   const { metadata } = metadataFromApi(api);
 
@@ -37,7 +37,6 @@ export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, ch
       return;
     }
 
-    // @ts-ignore
     const [formatted, assetIdRaw] = entry[0].toHuman() ?? [];
 
     let assetId;
@@ -51,7 +50,6 @@ export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, ch
 
     const storageKey = entry[0].toString();
 
-    // @ts-ignore
     let maybeAssetInfo = assetsToBeFetched.find((_asset) => {
       const currencyId = _asset?.extras?.['currencyIdScale'].replace('0x', '');
 
@@ -79,7 +77,6 @@ export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, ch
     }
 
     if (maybeAssetInfo) {
-      // @ts-ignore
       const totalBalance = balance.free.add(balance.reserved);
 
       const asset = {
@@ -97,7 +94,6 @@ export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, ch
 
       const address = getSubstrateAddress(formatted);
 
-      // @ts-ignore
       results[address]?.push(asset) ?? (results[address] = [asset]);
     } else {
       console.info(`NOTE: There is an asset on ${chainName} for ${formatted} which is not whitelisted. assetInfo`, storageKey, balance?.toHuman());
@@ -106,5 +102,6 @@ export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, ch
 
   console.info(chainName, ': account assets fetched.');
   port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET, results }));
-  closeWebsockets(connections);
+
+  api.disconnect().catch(console.error);
 }

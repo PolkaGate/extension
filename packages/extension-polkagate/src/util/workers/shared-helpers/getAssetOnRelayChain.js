@@ -3,7 +3,7 @@
 
 import { FETCHING_ASSETS_FUNCTION_NAMES, NATIVE_TOKEN_ASSET_ID, TEST_NETS } from '../../constants';
 import { getPriceIdByChainName } from '../../misc';
-import { balancify, closeWebsockets } from '../utils';
+import { balancify } from '../utils';
 import { getBalances } from './getBalances.js';
 
 /**
@@ -16,9 +16,9 @@ export async function getAssetOnRelayChain(addresses, chainName, userAddedEndpoi
   const results = {};
 
   try {
-    const { api, balanceInfo, connectionsToBeClosed } = await getBalances(chainName, addresses, userAddedEndpoints, port) ?? {};
+    const { api, balanceInfo } = await getBalances(chainName, addresses, userAddedEndpoints, port) ?? {};
 
-    if (!api || !balanceInfo || !connectionsToBeClosed) {
+    if (!api || !balanceInfo) {
       return;
     }
 
@@ -47,7 +47,7 @@ export async function getAssetOnRelayChain(addresses, chainName, userAddedEndpoi
       }];
     });
 
-    closeWebsockets(connectionsToBeClosed);
+    api.disconnect().catch(console.error);
   } catch (error) {
     console.error(`getAssetOnRelayChain: Error fetching balances for ${chainName}:`, error);
   } finally {
