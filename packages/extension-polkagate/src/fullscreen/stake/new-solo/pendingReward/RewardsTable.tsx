@@ -27,7 +27,7 @@ export const TableHeader = ({ checked, disabled, onSelectAll }: TableHeaderProp)
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', ml: '7px', width: '100%' }}>
-      <Grid alignItems='center' container item sx={{ gap: '6px' }} xs={4}>
+      <Grid alignItems='center' container item sx={{ gap: '6px' }} xs={5}>
         <GlowCheckbox
           changeState={handleAllSelect}
           checked={checked}
@@ -110,7 +110,7 @@ export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect
           return (
             <Fragment key={index}>
               <Container disableGutters key={index} sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', p: '5px 8px' }}>
-                <Grid container item sx={{ alignItems: 'center', gap: '6px' }} xs={4}>
+                <Grid container item sx={{ alignItems: 'center', gap: '6px' }} xs={5}>
                   <Grid item>
                     <GlowCheckbox
                       changeState={handleSelect(info, isChecked)}
@@ -135,7 +135,7 @@ export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect
                     <AssetLogo assetSize='16px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} token={token} />
                   </Grid>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={5}>
                   <Identity2
                     address={validator}
                     genesisHash={genesisHash ?? ''}
