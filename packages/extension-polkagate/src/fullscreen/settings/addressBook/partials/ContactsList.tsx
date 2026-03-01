@@ -13,7 +13,7 @@ import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import AddressBookItem from '../AddressBookItem';
-import { type Contact, STEPS } from '..';
+import { type Contact, STEPS } from '../types';
 
 interface Props {
     contacts: Contact[] | undefined;

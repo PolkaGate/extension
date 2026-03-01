@@ -7,7 +7,7 @@ import { Stack, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
 import { AddressInput } from '../../../components';
-import { useChainInfo, useTranslation } from '../../../hooks';
+import { useAddressBook, useChainInfo, useTranslation } from '../../../hooks';
 import NumberedTitle from './NumberedTitle';
 
 interface Props {
@@ -19,6 +19,7 @@ interface Props {
 export default function RecipientAddress({ genesisHash, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { chain } = useChainInfo(genesisHash, true);
+  const contacts = useAddressBook();
 
   const [address, setAddress] = useState<string | null | undefined>(inputs?.recipientAddress);
   const [isError, setIsError] = useState<boolean>();
@@ -55,7 +56,7 @@ export default function RecipientAddress({ genesisHash, inputs, setInputs }: Pro
             chain={chain}
             setAddress={setAddress}
             setIsError={setIsError}
-            showAddressBook
+            showAddressBook={contacts && contacts.length > 0}
             style={{ mt: '10px', width: '100%' }}
             withSelect
           />

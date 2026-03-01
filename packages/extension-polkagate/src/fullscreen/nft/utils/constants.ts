@@ -16,8 +16,8 @@ export const HARDBIN_IPFS_GATEWAY = 'https://hardbin.com/ipfs/';
 export const FOREVERLAND_IPFS_GATEWAY = 'https://4everland.io/ipfs/';
 
 export const IPFS_GATEWAYS = [
-  KODADOT_IPFS_GATEWAY,
   IPFS_GATEWAY,
+  KODADOT_IPFS_GATEWAY,
   INFURA_IPFS_GATEWAY,
   PINATA_IPFS_GATEWAY,
   CLOUDFLARE_IPFS_GATEWAY,

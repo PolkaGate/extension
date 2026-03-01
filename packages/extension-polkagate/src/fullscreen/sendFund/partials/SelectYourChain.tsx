@@ -14,14 +14,14 @@ import ChainListModal from '../../components/ChainListModal';
 import OpenerButton from './OpenerButton';
 
 interface Props {
-  destinationOptions?: DropdownOption[];
+  chainOptions?: DropdownOption[];
   chainName: string | undefined;
   withTitle?: boolean;
   setSelectedChain?: React.Dispatch<React.SetStateAction<DropdownOption>>;
   style?: React.CSSProperties;
 }
 
-export default function SelectYourChain({ chainName, destinationOptions, setSelectedChain, style = {}, withTitle = true }: Props): React.ReactElement {
+export default function SelectYourChain({ chainName, chainOptions, setSelectedChain, style = {}, withTitle = true }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const [openChainList, setOpenChainList] = useState<boolean>(false);
@@ -55,7 +55,7 @@ export default function SelectYourChain({ chainName, destinationOptions, setSele
       </Stack>
       {openChainList &&
         <ChainListModal
-          externalOptions={destinationOptions}
+          externalOptions={chainOptions}
           handleClose={onClose}
           open={openChainList}
           setSelectedChain={setSelectedChain}

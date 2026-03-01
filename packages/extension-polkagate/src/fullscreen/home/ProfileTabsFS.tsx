@@ -7,8 +7,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import { ArrowCircleLeft, ArrowCircleRight } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ADDRESS_BOOK_LABEL } from '@polkadot/extension-polkagate/src/hooks/useCategorizedAccountsInProfiles';
-import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { ADDRESS_BOOK_LABEL, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
 import { setStorage } from '../../util';

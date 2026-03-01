@@ -5,11 +5,10 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { ADDRESS_BOOK_LABEL, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { getAndWatchStorage } from '../util';
 import useAddressBook from './useAddressBook';
-import { ADDRESS_BOOK_LABEL } from './useCategorizedAccountsInProfiles';
 import useTranslation from './useTranslation';
 
 /**

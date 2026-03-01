@@ -265,6 +265,8 @@ export const PROFILE_COLORS = [
   { light: '#FCF0CC', dark: '#5F4842' }
 ];
 
+export const ADDRESS_BOOK_LABEL = 'Address Book';
+
 export const PROFILE_TAGS = {
   ALL: 'All',
   LEDGER: 'Hardware',

@@ -12,8 +12,6 @@ import useProfileAccounts from './useProfileAccounts';
 import useProfiles from './useProfiles';
 import useSelectedProfile from './useSelectedProfile';
 
-export const ADDRESS_BOOK_LABEL = 'Address Book';
-
 /**
  * Custom React hook that returns a categorized mapping of accounts based on profile tags.
  *

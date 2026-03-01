@@ -1,6 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Inputs } from '../types';
 
 import { ClickAwayListener, Stack, Typography } from '@mui/material';
@@ -11,7 +12,7 @@ import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { noop } from '@polkadot/util';
 
 import { AssetLogo } from '../../../components';
-import { useAccountAssets, useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../hooks';
 import CustomizedDropDown from './CustomizedDropDown';
 import OpenerButton from './OpenerButton';
 
@@ -21,24 +22,23 @@ interface Props {
   genesisHash: string | undefined;
   inputs: Inputs | undefined;
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
+  accountAssets: FetchedBalance[] | undefined
+
 }
 
-export default function SelectToken({ address, assetId, genesisHash, inputs, setInputs }: Props): React.ReactElement {
+export default function SelectToken({ accountAssets, address, assetId, genesisHash, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
-  const accountAssets = useAccountAssets(address);
 
   const [openTokenList, setOpenTokenList] = useState<boolean>(false);
   const [selectedAssetId, setSelectedAsset] = useState<string>();
 
-  const accountAssetsOnCurrentChain = useMemo(() => accountAssets?.filter((asset) => asset.genesisHash === genesisHash), [accountAssets, genesisHash]);
-
   const asset = useMemo(() => {
-    const list = accountAssetsOnCurrentChain ?? [];
+    const list = accountAssets ?? [];
     const id = selectedAssetId ?? assetId;
 
     return list.find((a) => String(a.assetId) === String(id)) ?? list[0];
-  }, [accountAssetsOnCurrentChain, assetId, selectedAssetId]);
+  }, [accountAssets, assetId, selectedAssetId]);
 
   const _urlAssetId = useMemo(() => selectedAssetId ?? asset?.assetId, [asset?.assetId, selectedAssetId]);
 
@@ -67,10 +67,12 @@ export default function SelectToken({ address, assetId, genesisHash, inputs, set
     setOpenTokenList(false);
   }, []);
 
+  const hasAssets = Boolean(accountAssets?.length);
+
   return (
     <>
       <ClickAwayListener onClickAway={handleClickAway}>
-        <Stack alignItems='end' direction='row' justifyContent='space-between' mt='15px' onClick={accountAssetsOnCurrentChain?.length ? onToggleTokenSelection : noop} ref={containerRef} sx={{ cursor: accountAssetsOnCurrentChain?.length ? 'pointer' : 'default' }} width='150px'>
+        <Stack alignItems='end' direction='row' justifyContent='space-between' mt='15px' onClick={hasAssets ? onToggleTokenSelection : noop} ref={containerRef} sx={{ cursor: hasAssets ? 'pointer' : 'default' }} width='150px'>
           <Stack alignItems='end' direction='row' justifyContent='start'>
             {logoInfo &&
               <AssetLogo assetSize='36px' genesisHash={genesisHash} logo={logoInfo?.logo} token={asset?.token} />
@@ -84,14 +86,14 @@ export default function SelectToken({ address, assetId, genesisHash, inputs, set
               </Typography>
             </Stack>
           </Stack>
-          {!!accountAssetsOnCurrentChain?.length &&
+          {hasAssets &&
             <OpenerButton flip />
           }
         </Stack>
       </ClickAwayListener>
-      {!!accountAssetsOnCurrentChain?.length && openTokenList &&
+      {hasAssets && accountAssets && openTokenList &&
         <CustomizedDropDown
-          assets={accountAssetsOnCurrentChain}
+          assets={accountAssets}
           containerRef={containerRef}
           open={openTokenList}
           setSelectedAsset={setSelectedAsset}

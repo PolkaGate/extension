@@ -4,8 +4,7 @@
 import { Book, ColorSwatch, Data2, Eye, Folder, type Icon, KeySquare, ScanBarcode, UserOctagon } from 'iconsax-react';
 import { useMemo } from 'react';
 
-import { ADDRESS_BOOK_LABEL } from '@polkadot/extension-polkagate/src/hooks/useCategorizedAccountsInProfiles';
-import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
+import { ADDRESS_BOOK_LABEL, PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { PROXIED_PROFILE_LABEL } from '../settings/importProxied/ProxiedAccount';
 
