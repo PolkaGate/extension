@@ -31,7 +31,7 @@ interface Props {
   charsCount?: number;
   columnGap?: string;
   direction?: 'row' | 'column';
-  genesisHash: string;
+  genesisHash?: string | undefined;
   identiconSize?: number;
   identiconStyle?: SxProps<Theme> | CSSProperties;
   identiconType?: string;

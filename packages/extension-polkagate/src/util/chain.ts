@@ -16,6 +16,7 @@ export const sanitizeChainName = (chainName: string | undefined, withMigration?:
     .replace(' Chain', '')
     .replace(' Finance', '')
     .replace(' Testnet', '')
+    .replace(' Mainnet', '')
     .replace(' Main', '')
     .replace(/\s/g, '');
 
@@ -49,6 +50,10 @@ export const getSubscanChainName = (chainName?: string): string | undefined => {
 
   if (lc.includes('people')) {
     return lc.replace(/^(.*)people$/, 'people-$1');
+  }
+
+  if (lc === 'moonbasealpha') {
+    return 'moonbase';
   }
 
   return lc;

@@ -17,10 +17,10 @@ import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType
 import { resetOnForgotPassword } from './resetAccounts';
 import { type AccountInfo, STEP } from './types';
 
-export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ onSuccessPath = '/',
-  validator }: { onSuccessPath?: string; validator?: (suri: string, type?: KeypairType) => Promise<T> }) {
-  const { accounts } = useContext(AccountContext);
+export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ accountType, onSuccessPath = '/',
+  validator }: { accountType?: KeypairType, onSuccessPath?: string; validator?: (suri: string, type?: KeypairType) => Promise<T> }) {
   const navigate = useNavigate();
+  const { accounts } = useContext(AccountContext);
   const { t } = useTranslation();
   const { hasNoLocalAccounts, validatePasswordAsync } = useIsPasswordCorrect();
 
@@ -52,7 +52,7 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ 
     }
   }, [validator]);
 
-  const onConfirm = useCallback(async({ isImport = true, seed, type }: {seed: string | undefined | null, type?: KeypairType, isImport?:boolean}) => {
+  const onConfirm = useCallback(async({ isImport = true, seed }: {seed: string | undefined | null, isImport?: boolean}) => {
     if (!name || !password || !seed) {
       return;
     }
@@ -76,7 +76,7 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ 
         return setError(t('Failed to reset accounts'));
       }
 
-      const created = await createAccountSuri(name, password, seed, type || DEFAULT_TYPE);
+      const created = await createAccountSuri(name, password, seed, accountType || DEFAULT_TYPE);
 
       if (!created) {
         setIsBusy(false);
@@ -107,7 +107,7 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ 
       setIsBusy(false);
       console.error(error);
     }
-  }, [name, password, accounts?.length, validatePasswordAsync, t, navigate, onSuccessPath]);
+  }, [name, password, validatePasswordAsync, t, accountType, accounts?.length, navigate, onSuccessPath]);
 
   return {
     error,

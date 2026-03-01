@@ -30,7 +30,7 @@ interface Props {
   url: string;
 }
 
-function Request ({ account, error, hexBytes, onSignature, payload, setError, setMode, signId, signingRequest, url }: Props): React.ReactElement<Props> | null {
+function Request({ account, error, hexBytes, onSignature, payload, setError, setMode, signId, signingRequest, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const navigate = useNavigate();
 

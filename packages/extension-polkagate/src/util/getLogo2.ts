@@ -1,11 +1,13 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type React from 'react';
-
 import { createWsEndpoints, externalLinks } from '@polkagate/apps-config';
 import { createAssets } from '@polkagate/apps-config/assets';
+import { TokenETH } from '@web3icons/react';
+import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 
+import { EVM_CHAINS_GENESISHASH, TOKEN_MAP } from './evmUtils/constantsEth';
 import { sanitizeChainName } from './chain';
 import getChainName from './getChainName';
 import getNetworkMap from './getNetworkMap';
@@ -22,24 +24,56 @@ export interface LogoInfo {
 }
 
 /**
- * Returns logo information (including optional square logo, color, and subLogo)
- * for a given chain or token based on its genesis hash or name.
- *
- * @param info - The genesis hash or chain identifier.
- * @param token - Optional token symbol to fetch specific asset logo info.
- * @returns LogoInfo object containing logo details or undefined if not found.
- *
- * @example
- * ```ts
- * const logo = getLogo2('0x1234...', 'DOT');
- * if (logo) {
- *   console.log(logo.logo, logo.color);
- * }
- * ```
+ * Generate a deterministic color from a string.
+ * @param input - The string to base the color on (e.g., dataUri)
+ * @returns A CSS color string in HSL format
  */
+export function colorFromString(input: string): string {
+  let hash = 0;
+
+  // Simple hash function
+  for (let i = 0; i < input.length; i++) {
+    hash = input.charCodeAt(i) + ((hash << 5) - hash);
+    hash |= 0; // convert to 32bit integer
+  }
+
+  // Map hash to hue [0-360]
+  const hue = Math.abs(hash) % 360;
+
+  return `hsl(${hue}, 100%, 50%)`;
+}
+
+function getEthereumLogos(lcInfo: string, token?: string): LogoInfo | undefined {
+  const iconComponent =
+    lcInfo === 'ethereum' || token === 'ETH'
+      ? TokenETH
+      : token
+        ? (TOKEN_MAP[token.toUpperCase()] || TokenETH)
+        : TokenETH;
+
+  const svgString = ReactDOMServer.renderToStaticMarkup(
+    React.createElement(iconComponent, { size: 40 })
+  );
+  const base64 = btoa(svgString);
+  const dataUri = `data:image/svg+xml;base64,${base64}`;
+
+  // Generate a color based on the dataUri
+  const color = colorFromString(dataUri);
+
+  return { color, logo: dataUri, logoSquare: dataUri };
+}
+
+const evmChainsWithEthLogo = ['ethereum', 'sepolia', 'goerli'];
+
 export default function getLogo2(info: string | undefined | null, token?: string): LogoInfo | undefined {
   if (!info) {
     return;
+  }
+
+  const lcInfo = info.toLowerCase();
+
+  if (evmChainsWithEthLogo.includes(lcInfo) || EVM_CHAINS_GENESISHASH.includes(info)) {
+    return getEthereumLogos(lcInfo, token);
   }
 
   let chainNameFromGenesisHash;

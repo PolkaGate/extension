@@ -3,6 +3,8 @@
 
 import type { ProxyTypes } from './types';
 
+import { ETHEREUM_TEST_CHAINS_GENESISHASH } from './evmUtils/constantsEth';
+
 export const EXTENSION_NAME = 'PolkaGate';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
 export const SUPPORT_EMAIL = 'support@polkagate.xyz';
@@ -60,6 +62,9 @@ export const KUSAMA_GENESIS_HASH = '0xb0a8d493285c2df73290dfb7e61f870f17b4180119
 export const WESTEND_GENESIS_HASH = '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e';
 export const PASEO_GENESIS_HASH = '0x77afd6190f1554ad45fd0d31aee62aacc33c6db0ea801129acb813f913e0764f';
 
+// evm chains
+export const MOONBASE_GENESIS = '0x91bc6e169807aaa54802737e1c504b2577d4fafedd5a02c10293b1cd60e39527';
+
 export const RELAY_CHAINS_GENESISHASH = [
   POLKADOT_GENESIS_HASH,
   KUSAMA_GENESIS_HASH,
@@ -74,13 +79,18 @@ export const ASSET_HUBS = [
   PASEO_ASSET_HUB_GENESIS_HASH
 ];
 
-export const TEST_NETS = [
+export const POLKADOT_TEST_NETS = [
   WESTEND_GENESIS_HASH,
   WESTMINT_GENESIS_HASH,
   WESTEND_PEOPLE_GENESIS_HASH,
   PASEO_GENESIS_HASH,
   PASEO_ASSET_HUB_GENESIS_HASH,
   PASEO_PEOPLE_GENESIS_HASH
+];
+
+export const TEST_NETS = [
+  ...POLKADOT_TEST_NETS,
+  ...ETHEREUM_TEST_CHAINS_GENESISHASH
 ];
 
 export const PROXY_CHAINS = [
@@ -114,7 +124,8 @@ export const NFT_CHAINS = [
 
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
-  ...ASSET_HUBS
+  ...ASSET_HUBS,
+  // MOONBASE_GENESIS
 ];
 
 export const PEOPLE_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'PolkadotPeople', 'KusamaPeople', 'WestendPeople'];
@@ -348,6 +359,7 @@ export const STORAGE_KEY = {
 // Function names for asset fetching worker calls
 export const FETCHING_ASSETS_FUNCTION_NAMES = {
   ASSET_HUB: 'getAssetOnAssetHub',
+  EVM: 'getEvmAssets',
   MULTI_ASSET: 'getAssetOnMultiAssetChain',
   RELAY: 'getAssetOnRelayChain'
 };

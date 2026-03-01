@@ -7,7 +7,7 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 
 import { hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import { decodeAddress, encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 import allChains from './chains';
 import { SHORT_ADDRESS_CHARACTERS, WESTEND_GENESIS_HASH } from './constants';
@@ -16,6 +16,10 @@ export function isValidAddress(address: string | undefined): boolean {
   try {
     if (!address || address === 'undefined') {
       return false;
+    }
+
+    if (isEthereumAddress(address)) {
+      return true;
     }
 
     encodeAddress(
@@ -40,6 +44,10 @@ export function getFormattedAddress(_address: string | null | undefined, _chain:
 export function getSubstrateAddress(address: AccountId | string | null | undefined): string | undefined {
   if (!address) {
     return undefined;
+  }
+
+  if (isEthereumAddress(String(address))) { // TODO: can be removed
+    return String(address);
   }
 
   let substrateAddress;

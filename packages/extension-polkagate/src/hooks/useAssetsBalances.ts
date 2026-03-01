@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 import { setStorage, toCamelCase, updateStorage } from '../util';
 import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH, STORAGE_KEY, TEST_NETS } from '../util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '../util/defaultSelectedChains';
+import { EVM_CHAINS_GENESISHASH } from '../util/evmUtils/constantsEth';
 import getChainName from '../util/getChainName';
 import { isMigratedRelay, mapHubToRelay } from '../util/migrateHubUtils';
 import useFetchAssetsOnChains from './useFetchAssetsOnChains';
@@ -242,15 +243,17 @@ export default function useAssetsBalances({ accounts,
       _selectedChains.includes(value as string) &&
       !ASSET_HUBS.includes(value as string) &&
       !RELAY_CHAINS_GENESISHASH.includes(value as string) &&
+      !EVM_CHAINS_GENESISHASH.includes(value as string) &&
       !multipleAssetsChainsNames.includes(toCamelCase(text) || '')
     );
 
     /** Fetch assets for all the selected chains by default */
     _selectedChains?.forEach((genesisHash) => {
       const isSingleTokenChain = !!singleAssetChains.find(({ value }) => value === genesisHash);
+      const isEvmChain = EVM_CHAINS_GENESISHASH.includes(genesisHash);
       const maybeMultiAssetChainName = multipleAssetsChainsNames.find((chainName) => chainName === getChainName(genesisHash));
 
-      const call = fetchAssets(genesisHash, isSingleTokenChain, maybeMultiAssetChainName);
+      const call = fetchAssets(genesisHash, isSingleTokenChain, isEvmChain, maybeMultiAssetChainName);
 
       workerCallsCount.current += call;
     });

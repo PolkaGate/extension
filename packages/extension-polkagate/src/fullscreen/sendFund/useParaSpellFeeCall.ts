@@ -10,6 +10,7 @@ import { Builder, type TDestination, type TSubstrateChain } from '@paraspell/sdk
 import { useEffect, useState } from 'react';
 
 import { useChainInfo } from '@polkadot/extension-polkagate/src/hooks';
+import { evmToAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 import { getCurrency, normalizeChainName } from './utils';
 
@@ -76,26 +77,31 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
     const isCrossChain = fromChain !== toChain;
     const currency = getCurrency(senderChainName, token, assetId);
 
-    // const nativeToken = api.registry.chainTokens[0];
-    // const feeAssetId = inputs?.feeInfo?.assetId;
-    // const feeCurrency = feeAssetId ? { location: feeAssetId } : { symbol: Native(nativeToken) };
-
     try {
+       const substrateAddress = evmToAddress(address);
+
       const builder = !isCrossChain && isTransferAll
         ? Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
           .from(fromChain as TSubstrateChain)
           .to(toChain as TDestination)
           .currency({ amount, ...currency })
-          // .feeAsset(feeCurrency) // - Optional parameter when origin === AssetHubPolkadot and TX is supposed to be paid in same fee asset as selected currency.*/
           .address(recipientAddress)
           .senderAddress(address)
           .keepAlive(false) // to drain the account completely
-        : Builder({ abstractDecimals: false })
-          .from(fromChain as TSubstrateChain)
-          .to(toChain as TDestination)
-          .currency({ amount, ...currency })
-          .address(recipientAddress)
-          .senderAddress(address);
+        : isEthereumAddress(address)
+          ? Builder({ abstractDecimals: false })
+            .from(fromChain as TSubstrateChain)
+            .to(toChain as TDestination)
+            .currency({ amount, ...currency })
+            .address(recipientAddress)
+            .senderAddress(address)
+            .ahAddress(substrateAddress)
+          : Builder({ abstractDecimals: false })
+            .from(fromChain as TSubstrateChain)
+            .to(toChain as TDestination)
+            .currency({ amount, ...currency })
+            .address(recipientAddress)
+            .senderAddress(address);
 
       let cancelled = false;
 

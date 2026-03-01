@@ -1,13 +1,14 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
+// @ts-nocheck
 import type { DeriveAccountInfo } from '@polkadot/api-derive/types';
 import type { PalletIdentityRegistration } from '@polkadot/types/lookup';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { hexToString } from '@polkadot/util';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import getChainGenesisHash from '../util/getChainGenesisHash';
 import useApi from './useApi';
@@ -70,6 +71,12 @@ export default function useIdentity(genesisHash: string | undefined, formatted: 
   useEffect(() => {
     if (accountInfo && accountInfo.accountId?.toString() === formatted) {
       return setInfo(accountInfo);
+    }
+
+    if (isEthereumAddress(formatted)) {
+      console.log('no identity for evm addresses atm!');
+
+      return;
     }
 
     api && formatted && getIdentityOf(formatted).then((identity) => {

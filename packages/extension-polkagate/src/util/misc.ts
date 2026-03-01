@@ -169,6 +169,8 @@ export async function fastestConnection(endpoints: DropdownOption[]): Promise<Fa
     const urls = endpoints.map(({ value }) => ({ value: value as string }));
     const { api, connections } = await fastestEndpoint(urls);
 
+    console.log('fastestConnection:', api);
+
     // @ts-ignore
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const selectedEndpoint = api.registry.knownTypes.provider.endpoint as string;

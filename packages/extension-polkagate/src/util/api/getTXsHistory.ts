@@ -10,11 +10,12 @@ import type { Extrinsics, ExtrinsicsRequest } from '../types';
 
 import { keyMaker } from '@polkadot/extension-polkagate/src/popup/history/hookUtils/utils';
 import { hexToU8a } from '@polkadot/util';
-import { encodeAddress } from '@polkadot/util-crypto';
+import { encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 import { getSubscanChainName } from '../chain';
 import getChainName from '../getChainName';
 import { fetchFromSubscan } from '..';
+import { nullObject } from './getGovHistory';
 
 // Common types
 interface AccountId {
@@ -177,6 +178,10 @@ export async function getTXsHistory(address: string, genesisHash: string, pageNu
 
   if (prefix === undefined) {
     return Promise.resolve(nullifier(requested));
+  }
+
+  if (isEthereumAddress(address)) {
+    return nullObject;
   }
 
   const chainName = getChainName(genesisHash);
