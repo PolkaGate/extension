@@ -10,7 +10,7 @@ import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import { getChainFromAddress } from '@polkadot/extension-polkagate/src/util/getChainFromAddress';
 
-import { STEPS } from '..';
+import { STEPS } from '../types';
 
 interface Props {
     contactAddress?: string;

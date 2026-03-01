@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
+import type { Contact } from './types';
 
 import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
@@ -13,20 +14,10 @@ import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { DraggableModal } from '../../components/DraggableModal';
 import AddEditContact from './partials/AddEditContact';
 import ContactsList from './partials/ContactsList';
+import { STEPS } from './types';
 
 interface Props {
     closePopup: ExtensionPopupCloser;
-}
-
-export interface Contact {
-    address: string;
-    name: string;
-}
-
-export enum STEPS {
-    LIST,
-    ADD,
-    EDIT
 }
 
 function AddressBook({ closePopup }: Props): React.ReactElement {

@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Contact } from '..';
+import type { Contact } from '../types';
 
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import CheckIcon from '@mui/icons-material/Check';
