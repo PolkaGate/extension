@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.26.1](https://github.com/polkagate/extension/compare/v1.26.0...v1.26.1) (2026-03-01)
+
+
+### Bug Fixes
+
+* display only assets with a non-zero total balance in the allocation section ([7139038](https://github.com/polkagate/extension/commit/7139038fd078f95c22523a23aebcfec0c0d4772b))
+
 # [1.26.0](https://github.com/polkagate/extension/compare/v1.25.0...v1.26.0) (2026-02-25)
 
 
