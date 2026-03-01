@@ -34,7 +34,7 @@ function AssetsBars(): React.ReactElement {
       Object.entries(byChain)
         .filter(([genesisHash]) => !TEST_NETS.includes(genesisHash))
         .flatMap(([, assets]) => assets as unknown as AssetsWithUiAndPrice[])
-    );
+    ).filter((asset) => new BN(asset.totalBalance).isZero() === false);
 
     const groupedAssets = allAccountsAssets.reduce((acc, asset) => {
       const key = asset.priceId; // Group by priceId
