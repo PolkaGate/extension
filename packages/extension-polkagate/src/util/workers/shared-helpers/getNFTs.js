@@ -5,9 +5,8 @@
 
 import { SUPPORTED_NFT_CHAINS } from '../../../fullscreen/nft/utils/constants';
 import { getFormattedAddress } from '../../address';
+import { WORKER_TASKS } from '../../constants';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
-
-const NFT_FUNCTION_NAME = 'getNFTs';
 
 /**
  * Fetches NFT or unique collections for a given chain and set of addresses
@@ -237,7 +236,7 @@ export default async function getNftHandler(addresses, port) {
   if (!addresses) {
     console.warn('Shared worker, No addresses to NFTs');
 
-    return port.postMessage(JSON.stringify({ functionName: NFT_FUNCTION_NAME, results: undefined }));
+    return port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.GET_NFTS, results: undefined }));
   }
 
   for (let tryCount = 1; tryCount <= 5; tryCount++) {
@@ -245,7 +244,7 @@ export default async function getNftHandler(addresses, port) {
       const allItems = await getNFTs(addresses);
 
       console.info('Shared worker, accounts NFTs fetched!');
-      port.postMessage(JSON.stringify({ functionName: NFT_FUNCTION_NAME, results: allItems }));
+      port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.GET_NFTS, results: allItems }));
 
       return;
     } catch (error) {

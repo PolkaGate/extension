@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import NftManager from '../class/nftManager';
 import { useTranslation } from '../components/translate';
+import { WORKER_TASKS } from '../util/constants';
 import useAlerts from './useAlerts';
 import { useWorker } from './useWorker';
 
@@ -17,7 +18,6 @@ export interface NftItemsWorker {
 }
 
 const nftManager = new NftManager();
-const NFT_FUNCTION_NAME = 'getNFTs';
 
 export default function useNFT(accountsFromContext: AccountJson[] | null) {
   const { t } = useTranslation();
@@ -35,7 +35,7 @@ export default function useNFT(accountsFromContext: AccountJson[] | null) {
 
   const fetchNFTs = useCallback((addresses: string[]) => {
     setFetching(true);
-    worker.postMessage({ functionName: NFT_FUNCTION_NAME, parameters: { addresses } });
+    worker.postMessage({ functionName: WORKER_TASKS.GET_NFTS, parameters: { addresses } });
 
     const handleMessage = (messageEvent: MessageEvent<string>) => {
       const NFTs = messageEvent.data;
@@ -51,7 +51,7 @@ export default function useNFT(accountsFromContext: AccountJson[] | null) {
       try {
         parsedNFTsInfo = JSON.parse(NFTs) as NftItemsWorker;
 
-        if (parsedNFTsInfo.functionName !== NFT_FUNCTION_NAME) {
+        if (parsedNFTsInfo.functionName !== WORKER_TASKS.GET_NFTS) {
           return;
         }
       } catch (error) {

@@ -9,10 +9,8 @@ import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect,
 
 import { FetchingContext, WorkerContext } from '../components';
 import { getStorage, isHexToBn, setStorage } from '../util';
-import { STORAGE_KEY } from '../util/constants';
+import { STORAGE_KEY, WORKER_TASKS } from '../util/constants';
 import useFormatted from './useFormatted';
-
-const MY_POOL_SHARED_WORKER_KEY = 'getPool';
 
 interface WorkerMessage {
   functionName?: string;
@@ -35,7 +33,7 @@ export default function usePool(address: string | undefined, genesisHash: string
 
     // the sort in this object is important because the getPool use the params as they pass
     // eslint-disable-next-line sort-keys
-    worker.postMessage({ functionName: MY_POOL_SHARED_WORKER_KEY, parameters: { genesisHash, stakerAddress: formatted, id } });
+    worker.postMessage({ functionName: WORKER_TASKS.GET_POOL, parameters: { genesisHash, stakerAddress: formatted, id } });
   }, [formatted, genesisHash, id, worker]);
 
   useEffect(() => {
@@ -57,7 +55,7 @@ export default function usePool(address: string | undefined, genesisHash: string
       }
 
       /** reset isFetching */
-      isFetching.fetching[String(formatted)][id ? 'id' : MY_POOL_SHARED_WORKER_KEY] = false;
+      isFetching.fetching[String(formatted)][id ? 'id' : WORKER_TASKS.GET_POOL] = false;
       isFetching.set(isFetching.fetching);
 
       if (!results || results === 'null') {
@@ -66,7 +64,7 @@ export default function usePool(address: string | undefined, genesisHash: string
         return;
       }
 
-      if (functionName === MY_POOL_SHARED_WORKER_KEY) {
+      if (functionName === WORKER_TASKS.GET_POOL) {
         const receivedMessage = JSON.parse(results) as MyPoolInfo;
 
         /** convert hex strings to BN strings*  MUST be string since nested BNs can not be saved in local storage safely*/
@@ -131,12 +129,12 @@ export default function usePool(address: string | undefined, genesisHash: string
       return;
     }
 
-    if (!isFetching.fetching[String(formatted)]?.['getPool']) {
+    if (!isFetching.fetching[String(formatted)]?.[WORKER_TASKS.GET_POOL]) {
       if (!isFetching.fetching[String(formatted)]) {
         isFetching.fetching[String(formatted)] = {}; // to initialize
       }
 
-      isFetching.fetching[String(formatted)]['getPool'] = true;
+      isFetching.fetching[String(formatted)][WORKER_TASKS.GET_POOL] = true;
       isFetching.set(isFetching.fetching);
 
       fetchPoolInformation();
