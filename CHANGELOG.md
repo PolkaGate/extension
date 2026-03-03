@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.26.2](https://github.com/polkagate/extension/compare/v1.26.1...v1.26.2) (2026-03-03)
+
+
+### Bug Fixes
+
+* **nominations:** resolve missing validator identities in tab ([5de7cb8](https://github.com/polkagate/extension/commit/5de7cb86958d17e09b0e1ea3fd7bf9c86d29f356))
+
 ## [1.26.1](https://github.com/polkagate/extension/compare/v1.26.0...v1.26.1) (2026-03-01)
 
 
