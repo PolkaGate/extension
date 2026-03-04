@@ -5,7 +5,7 @@ import 'chartjs-adapter-date-fns';
 
 import type { ChartOptions, Plugin } from 'chart.js';
 
-import { Typography, useTheme } from '@mui/material';
+import { ToggleButton, ToggleButtonGroup, Typography, useTheme } from '@mui/material';
 import { CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement, TimeScale, Tooltip } from 'chart.js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Line } from 'react-chartjs-2';
@@ -16,7 +16,15 @@ import { DraggableModal } from './DraggableModal';
 import SineWaveLoader from './SineWaveLoader';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, TimeScale);
+interface MarketsResponse {
+  sparkline_in_7d?: {
+    price: number[];
+  };
+}
 
+interface MarketChartResponse {
+  prices: [number, number][];
+}
 interface PricePoint {
   time: number; // timestamp in milliseconds
   value: number;
@@ -116,11 +124,21 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
   const { notify } = useAlerts();
 
   const [priceData, setPriceData] = useState<PricePoint[]>([]);
+  const [selectedRange, setSelectedRange] = useState<number>(7);
 
   const fetchPriceData = useCallback(async () => {
     try {
+      const days = selectedRange;
+      const interval = 'daily'; // can also be hourly, but needs API key
+
+      const needsSparkline = selectedRange === 7;
+
+      const url = needsSparkline
+        ? `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vsCurrency}&ids=${coinId.toLowerCase()}&sparkline=true`
+        : `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=${vsCurrency}&days=${days}&interval=${interval}`;
+
       const res = await fetchWithTimeout(
-        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vsCurrency}&ids=${coinId.toLowerCase()}&sparkline=true`
+        url
       );
 
       if (!res.ok) {
@@ -133,30 +151,58 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
         return;
       }
 
-      const data = await res.json();
+      const raw = await res.json();
+      let maybePrices;
 
-      if (!data || !Array.isArray(data) || data.length === 0) {
-        notify(t('Something went wrong while fetching token data!'), 'info');
+      if (needsSparkline) {
+        const data = raw as MarketsResponse[];
 
-        return;
+        if (!Array.isArray(data) || data.length === 0) {
+          notify(t('Something went wrong while fetching token data!'), 'info');
+
+          return;
+        }
+
+        maybePrices = data[0]?.sparkline_in_7d?.price;
+
+        if (!maybePrices) {
+          notify(t('Sparkline data not available for this token.'), 'info');
+
+          return;
+        }
+      } else {
+        const data = raw as MarketChartResponse;
+
+        if (!data.prices || !Array.isArray(data.prices)) {
+          notify(t('Something went wrong while fetching token data!'), 'info');
+
+          return;
+        }
+
+        maybePrices = data.prices;
       }
 
-      const sparkLinePrices = data[0].sparkline_in_7d?.price as number[];
-
-      if (!sparkLinePrices) {
+      if (!maybePrices) {
         notify(t('Sparkline data not available for this token.'), 'info');
 
         return;
       }
 
-      // Build time series for last 7 days
-      const now = Date.now();
-      const prices: { time: number; value: number }[] = sparkLinePrices.map(
-        (p: number, i: number, arr: number[]) => ({
-          time: now - (arr.length - 1 - i) * 60 * 60 * 1000, // approximate hourly timestamps
+      let prices: PricePoint[] = [];
+
+      if (needsSparkline && Array.isArray(maybePrices) && typeof maybePrices[0] === 'number') {
+        const now = Date.now();
+
+        prices = (maybePrices as number[]).map((p, i, arr) => ({
+          time: now - (arr.length - 1 - i) * 60 * 60 * 1000,
           value: p
-        })
-      );
+        }));
+      } else if (!needsSparkline && Array.isArray(maybePrices)) {
+        prices = (maybePrices as [number, number][]).map(([time, value]) => ({
+          time,
+          value
+        }));
+      }
 
       setPriceData(prices);
     } catch (err: unknown) {
@@ -169,11 +215,13 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
 
       notify(message, isTimeOut ? 'warning' : 'error');
     }
-  }, [coinId, notify, t, vsCurrency]);
+  }, [coinId, notify, selectedRange, t, vsCurrency]);
 
   useEffect(() => {
     fetchPriceData().catch(console.error);
-    const id = window.setInterval(fetchPriceData, intervalSec * 1000);
+    const id = window.setInterval(() => {
+      fetchPriceData().catch(console.error);
+    }, intervalSec * 1000);
 
     return () => {
       clearInterval(id);
@@ -220,7 +268,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
           source: 'auto' // calculates tick positions automatically
         },
         time: { tooltipFormat: 'pp', unit: 'day' },
-        title: { color: theme.palette.text.secondary, display: true, font: { family: 'Inter', size: 12, weight: 400 }, text: 'Date' },
+        // title: { color: theme.palette.text.secondary, display: true, font: { family: 'Inter', size: 12, weight: 400 }, text: 'Date' },
         type: 'time' as const
       },
       y: {
@@ -259,6 +307,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
   }, [priceData]);
 
   const _onClose = useCallback(() => onClose(undefined), [onClose]);
+  const btnStyle = { color: theme.palette.text.secondary, fontFamily: 'Inter', fontSize: 12, fontWeight: 400 };
 
   return (
     <DraggableModal
@@ -267,7 +316,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
       open={true}
       showBackIconAsClose
       style={{ left: (window.innerWidth - 677) / 2, minHeight: '400px', padding: '20px 20px 6px', width: '677px' }}
-      title={`${coinId.toUpperCase()} Price — Last 7 Days`}
+      title={`${coinId.toUpperCase()} Price — Last ${selectedRange} Days`}
     >
       <>
         {priceData.length === 0
@@ -277,7 +326,20 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
           : (
             <Line data={chartData} options={options} plugins={[gradientFillPlugin]} ref={chartRef} />
           )}
-        <Typography sx={{ color: 'text.disabled', display: 'block', pr: '16px', textAlign: 'right', width: '100%' }} variant='S-2'>
+        <ToggleButtonGroup
+          aria-label='Time range'
+          exclusive
+          // eslint-disable-next-line react/jsx-no-bind, @typescript-eslint/no-unsafe-return
+          onChange={(_e, value) => value && setSelectedRange(value as number)}
+          size='small'
+          sx={{ mt: '10px' }}
+          value={selectedRange}
+        >
+          <ToggleButton sx={btnStyle} value={7}>Week</ToggleButton>
+          <ToggleButton sx={btnStyle} value={30}>Month</ToggleButton>
+          <ToggleButton sx={btnStyle} value={365}>Year</ToggleButton>
+        </ToggleButtonGroup>
+        <Typography sx={{ color: 'text.disabled', display: 'block', mt: '-10px', pr: '16px', textAlign: 'right', width: '100%' }} variant='S-2'>
           {t('powered by CoinGecko')}
         </Typography>
       </>
