@@ -14,13 +14,9 @@ import { useAlerts, useTranslation } from '@polkadot/extension-polkagate/src/hoo
 
 import { DraggableModal } from './DraggableModal';
 import SineWaveLoader from './SineWaveLoader';
+import { fetchWithTimeout } from './utils';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, TimeScale);
-interface MarketsResponse {
-  sparkline_in_7d?: {
-    price: number[];
-  };
-}
 
 interface MarketChartResponse {
   prices: [number, number][];
@@ -36,28 +32,6 @@ interface TokenChartProps {
   onClose: React.Dispatch<React.SetStateAction<string | undefined>>;
   intervalSec?: number; // update interval
 }
-
-const fetchWithTimeout = (url: string, timeout = 10000) => {
-  const controller = new AbortController();
-  const signal = controller.signal;
-
-  return new Promise<Response>((resolve, reject) => {
-    const timer = setTimeout(() => {
-      controller.abort();
-      reject(new Error(`Request timeout after ${timeout}ms`));
-    }, timeout);
-
-    fetch(url, { signal })
-      .then((res) => {
-        clearTimeout(timer);
-        resolve(res);
-      })
-      .catch((err) => {
-        clearTimeout(timer);
-        reject(err);
-      });
-  });
-};
 
 const gradientFillPlugin: Plugin<'line'> = {
   beforeDatasetsDraw(chart) {
@@ -126,14 +100,9 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
   const fetchPriceData = useCallback(async () => {
     try {
       const days = selectedRange;
-      const needsSparkline = selectedRange === 7;
-
-      const url = needsSparkline
-        ? `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vsCurrency}&ids=${coinId.toLowerCase()}&sparkline=true`
-        : `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=${vsCurrency}&days=${days}`;
 
       const res = await fetchWithTimeout(
-        url
+        `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=${vsCurrency}&days=${days}`
       );
 
       if (!res.ok) {
@@ -146,36 +115,16 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
         return;
       }
 
-      const raw = await res.json();
-      let maybePrices;
+      const raw: unknown = await res.json();
+      const data = raw as MarketChartResponse;
 
-      if (needsSparkline) {
-        const data = raw as MarketsResponse[];
+      if (!data.prices || !Array.isArray(data.prices)) {
+        notify(t('Something went wrong while fetching token data!'), 'info');
 
-        if (!Array.isArray(data) || data.length === 0) {
-          notify(t('Something went wrong while fetching token data!'), 'info');
-
-          return;
-        }
-
-        maybePrices = data[0]?.sparkline_in_7d?.price;
-
-        if (!maybePrices) {
-          notify(t('Sparkline data not available for this token.'), 'info');
-
-          return;
-        }
-      } else {
-        const data = raw as MarketChartResponse;
-
-        if (!data.prices || !Array.isArray(data.prices)) {
-          notify(t('Something went wrong while fetching token data!'), 'info');
-
-          return;
-        }
-
-        maybePrices = data.prices;
+        return;
       }
+
+      const maybePrices = data.prices;
 
       if (!maybePrices) {
         notify(t('Sparkline data not available for this token.'), 'info');
@@ -185,15 +134,8 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
 
       let prices: PricePoint[] = [];
 
-      if (needsSparkline && Array.isArray(maybePrices) && typeof maybePrices[0] === 'number') {
-        const now = Date.now();
-
-        prices = (maybePrices as number[]).map((p, i, arr) => ({
-          time: now - (arr.length - 1 - i) * 60 * 60 * 1000,
-          value: p
-        }));
-      } else if (!needsSparkline && Array.isArray(maybePrices)) {
-        prices = (maybePrices as [number, number][]).map(([time, value]) => ({
+      if (Array.isArray(maybePrices)) {
+        prices = maybePrices.map(([time, value]) => ({
           time,
           value
         }));
