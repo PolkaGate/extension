@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.27.0](https://github.com/polkagate/extension/compare/v1.26.2...v1.27.0) (2026-03-04)
+
+
+### Features
+
+* add week/month/year range selector to token price chart ([#2121](https://github.com/polkagate/extension/issues/2121)) ([5820a3e](https://github.com/polkagate/extension/commit/5820a3e7a998ddf0f5e9f965b3e116e0b8a15585))
+
 ## [1.26.2](https://github.com/polkagate/extension/compare/v1.26.1...v1.26.2) (2026-03-03)
 
 
