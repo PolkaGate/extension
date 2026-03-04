@@ -18,26 +18,26 @@ import TransactionFlow from '../partials/TransactionFlow';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, getCloseBehavior } from '../util/utils';
 
 interface Props extends Partial<DraggableModalProps> {
+  _onClose?: () => void;
   address: string | undefined;
-  title: string;
-  genesisHash: string | undefined;
-  onClose: () => void;
   children?: React.ReactElement;
-  setValue?: React.Dispatch<React.SetStateAction<BN | null | undefined>>;
-  transaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
-  transactionInformation: Content[];
+  extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
+  flowStep: FullScreenTransactionFlow;
+  genesisHash: string | undefined;
   maxHeight?: number;
   minHeight?: number;
-  setFlowStep: React.Dispatch<React.SetStateAction<FullScreenTransactionFlow>>;
-  flowStep: FullScreenTransactionFlow;
+  onClose: () => void;
   pool?: PoolInfo | undefined;
-  style?: React.CSSProperties;
-  _onClose?: () => void;
-  showBack?: boolean | undefined;
   proxyTypeFilter: ProxyTypes[] | undefined;
-  extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
   reviewHeader?: React.ReactNode;
+  setValue?: React.Dispatch<React.SetStateAction<BN | null | undefined>>;
+  setFlowStep: React.Dispatch<React.SetStateAction<FullScreenTransactionFlow>>;
   showAccountBoxInReview?: boolean;
+  showBack?: boolean | undefined;
+  style?: React.CSSProperties;
+  title: string;
+  transaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
+  transactionInformation: Content[];
 }
 
 export default function StakingPopup({ _onClose, address, children, extraDetailConfirmationPage, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, proxyTypeFilter, reviewHeader, setFlowStep, setValue, showAccountBoxInReview, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
@@ -89,7 +89,7 @@ export default function StakingPopup({ _onClose, address, children, extraDetailC
           ? (
             <TransactionFlow
               address={address}
-              closeReview={closeReview}
+              closeReview={_onClose ?? closeReview}
               extraDetailConfirmationPage={extraDetailConfirmationPage}
               flowStep={flowStep}
               genesisHash={genesisHash}
