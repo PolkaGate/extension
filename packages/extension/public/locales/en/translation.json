@@ -929,5 +929,8 @@
   "Choose a name for this contact": "",
   "Add to address book": "",
   "Looking for accounts that are proxied by the selected account on the {{chainName}} chain.": "",
-  "The account{{s}} below {{verb}} already proxied by the selected account on the {{chainName}} chain in your extension. Select {{selectionText}} to import.": ""
+  "The account{{s}} below {{verb}} already proxied by the selected account on the {{chainName}} chain in your extension. Select {{selectionText}} to import.": "",
+  "Week": "",
+  "Month": "",
+  "Year": ""
 }

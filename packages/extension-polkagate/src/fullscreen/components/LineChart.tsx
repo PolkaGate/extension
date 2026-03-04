@@ -3,7 +3,7 @@
 
 import 'chartjs-adapter-date-fns';
 
-import type { ChartOptions, Plugin } from 'chart.js';
+import type { ChartOptions, Plugin, TooltipItem } from 'chart.js';
 
 import { ToggleButton, ToggleButtonGroup, Typography, useTheme } from '@mui/material';
 import { CategoryScale, Chart as ChartJS, LinearScale, LineElement, PointElement, TimeScale, Tooltip } from 'chart.js';
@@ -126,13 +126,11 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
   const fetchPriceData = useCallback(async () => {
     try {
       const days = selectedRange;
-      const interval = 'daily'; // can also be hourly, but needs API key
-
       const needsSparkline = selectedRange === 7;
 
       const url = needsSparkline
         ? `https://api.coingecko.com/api/v3/coins/markets?vs_currency=${vsCurrency}&ids=${coinId.toLowerCase()}&sparkline=true`
-        : `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=${vsCurrency}&days=${days}&interval=${interval}`;
+        : `https://api.coingecko.com/api/v3/coins/${coinId}/market_chart?vs_currency=${vsCurrency}&days=${days}`;
 
       const res = await fetchWithTimeout(
         url
@@ -232,7 +230,6 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
         borderColor: '#4caf50',
         data: priceData.map((p) => p.value),
         fill: false, // no fill here, plugin will handle gradient fill
-        label: `${coinId.toUpperCase()} Price (${vsCurrency.toUpperCase()})`,
         pointRadius: 0,
         segment: {
           borderColor: (ctx: { p1: { parsed: { y: number; }; }; p0: { parsed: { y: number; }; }; }) => (ctx.p1.parsed.y >= ctx.p0.parsed.y ? '#4caf50' : '#FF3864')
@@ -241,7 +238,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
       }
     ],
     labels: priceData.map((p) => new Date(p.time))
-  }), [priceData, coinId, vsCurrency]);
+  }), [priceData]);
 
   const options: ChartOptions<'line'> = {
     interaction: { intersect: false, mode: 'nearest' },
@@ -249,7 +246,27 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
       legend: {
         display: false
       },
-      tooltip: { intersect: false, mode: 'index' }
+      tooltip: {
+        callbacks: {
+          label: (context: TooltipItem<'line'>) => {
+            const value = context.parsed.y.toFixed(2);
+            const currency = vsCurrency.toUpperCase();
+
+            return ` ${value} ${currency}`;
+          },
+          title: (items: TooltipItem<'line'>[]) => {
+            if (!items.length) {
+              return '';
+            }
+
+            const date = new Date(items[0].parsed.x);
+
+            return date.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+          }
+        },
+        intersect: false,
+        mode: 'index'
+      }
     },
     responsive: true,
     scales: {
@@ -261,10 +278,14 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
           },
           color: theme.palette.text.highlight,
           font: { family: 'Inter', size: 11, weight: 400 },
-          maxTicksLimit: 7, // force exactly 7 labels
-          source: 'auto' // calculates tick positions automatically
+          maxTicksLimit: selectedRange === 7
+            ? 7
+            : selectedRange === 30
+              ? 6
+              : 12,
+          source: 'data'
         },
-        time: { tooltipFormat: 'pp', unit: 'day' },
+        time: { tooltipFormat: 'PPP', unit: 'day' },
         // title: { color: theme.palette.text.secondary, display: true, font: { family: 'Inter', size: 12, weight: 400 }, text: 'Date' },
         type: 'time' as const
       },
@@ -295,9 +316,11 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
         return;
       }
 
+      const point = el as PointElement;
+
       chart.tooltip.setActiveElements(
         [{ datasetIndex: 0, index: maxIndex }],
-        { x: (el as any).x, y: (el as any).y }
+        { x: point.x, y: point.y }
       );
       chart.update();
     }
