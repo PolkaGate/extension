@@ -194,7 +194,7 @@ function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: 
           onPrimaryClick={handleNext}
           onSecondaryClick={handleBack}
           primaryBtnText={!initialPool ? t('Loading ...') : side === EasyStakeSide.INPUT ? t('Continue') : t('Apply')}
-          secondaryBtnText={t('Back')}
+          secondaryBtnText={t('Close')}
           style={{ display: [EasyStakeSide.SELECT_POOL, EasyStakeSide.SELECT_VALIDATORS].includes(side) ? 'none' : 'flex', paddingInline: '18px' }}
         />
       </>
