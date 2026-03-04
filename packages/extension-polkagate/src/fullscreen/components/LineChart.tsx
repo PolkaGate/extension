@@ -114,10 +114,7 @@ const gradientFillPlugin: Plugin<'line'> = {
   id: 'gradientFillPlugin'
 };
 
-const TokenChart: React.FC<TokenChartProps> = ({ coinId,
-  intervalSec = 60,
-  onClose,
-  vsCurrency = 'usd' }) => {
+const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClose, vsCurrency = 'usd' }) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const chartRef = useRef<ChartJS<'line'>>(null);
@@ -335,9 +332,9 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId,
           sx={{ mt: '10px' }}
           value={selectedRange}
         >
-          <ToggleButton sx={btnStyle} value={7}>Week</ToggleButton>
-          <ToggleButton sx={btnStyle} value={30}>Month</ToggleButton>
-          <ToggleButton sx={btnStyle} value={365}>Year</ToggleButton>
+          <ToggleButton sx={btnStyle} value={7}>{t('Week')}</ToggleButton>
+          <ToggleButton sx={btnStyle} value={30}>{t('Month')}</ToggleButton>
+          <ToggleButton sx={btnStyle} value={365}>{t('Year')}</ToggleButton>
         </ToggleButtonGroup>
         <Typography sx={{ color: 'text.disabled', display: 'block', mt: '-10px', pr: '16px', textAlign: 'right', width: '100%' }} variant='S-2'>
           {t('powered by CoinGecko')}
