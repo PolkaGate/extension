@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.27.1](https://github.com/polkagate/extension/compare/v1.27.0...v1.27.1) (2026-03-05)
+
+
+### Bug Fixes
+
+* resolve proxy signing issue for transactions initiated from the extension ([85fcea2](https://github.com/polkagate/extension/commit/85fcea20821994a5c5bd5fe6c1e72997437ab490))
+
 # [1.27.0](https://github.com/polkagate/extension/compare/v1.26.2...v1.27.0) (2026-03-04)
 
 
