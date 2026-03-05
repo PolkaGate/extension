@@ -97,7 +97,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
   const [priceData, setPriceData] = useState<PricePoint[]>([]);
   const [selectedRange, setSelectedRange] = useState<number>(7);
 
-  const fetchPriceData = useCallback(async () => {
+  const fetchPriceData = useCallback(async() => {
     try {
       const days = selectedRange;
 
@@ -214,7 +214,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
     scales: {
       x: {
         ticks: {
-          callback: function (value: string | number | Date, _index: unknown, _ticks: unknown) {
+          callback: function(value: string | number | Date, _index: unknown, _ticks: unknown) {
             // Show only the day and month
             return new Date(value).toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
           },
@@ -235,7 +235,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
         ticks: {
           color: theme.palette.text.highlight
         },
-        title: { color: theme.palette.text.secondary, display: true, font: { family: 'Inter', size: 12, weight: 400 }, text: `Price (${vsCurrency.toUpperCase()})` }
+        title: { color: theme.palette.text.secondary, display: true, font: { family: 'Inter', size: 12, weight: 400 }, text: t('Price ({{currency}})', { replace: { currency: vsCurrency.toUpperCase() } }) }
       }
     }
   };
@@ -278,7 +278,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
       open={true}
       showBackIconAsClose
       style={{ left: (window.innerWidth - 677) / 2, minHeight: '400px', padding: '20px 20px 6px', width: '677px' }}
-      title={`${coinId.toUpperCase()} Price — Last ${selectedRange} Days`}
+      title={t('{{coinId}} Price — Last {{selectedRange}} Days', { replace: { coinId: coinId.toUpperCase(), selectedRange } })}
     >
       <>
         {priceData.length === 0

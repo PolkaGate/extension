@@ -929,5 +929,10 @@
   "Choose a name for this contact": "Выберите имя для этого контакта",
   "Add to address book": "Добавить в адресную книгу",
   "Looking for accounts that are proxied by the selected account on the {{chainName}} chain.": "Поиск аккаунтов, проксируемых выбранным аккаунтом в сети {{chainName}}.",
-  "The account{{s}} below {{verb}} already proxied by the selected account on the {{chainName}} chain in your extension. Select {{selectionText}} to import.": "Аккаунт{{s}} ниже уже {{verb}} проксируется выбранным аккаунтом в сети {{chainName}} в вашем расширении. Выберите {{selectionText}} для импорта."
+  "The account{{s}} below {{verb}} already proxied by the selected account on the {{chainName}} chain in your extension. Select {{selectionText}} to import.": "Аккаунт{{s}} ниже уже {{verb}} проксируется выбранным аккаунтом в сети {{chainName}} в вашем расширении. Выберите {{selectionText}} для импорта.",
+  "Week": "Неделя",
+  "Month": "Месяц",
+  "Year": "Год",
+  "Price ({{currency}})": "Цена ({{currency}})",
+  "{{coinId}} Price — Last {{selectedRange}} Days": "Цена {{coinId}} — Последние {{selectedRange}} дней"
 }

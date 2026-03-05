@@ -929,5 +929,10 @@
   "Choose a name for this contact": "为此联系人选择名称",
   "Add to address book": "添加到地址簿",
   "Looking for accounts that are proxied by the selected account on the {{chainName}} chain.": "正在查找在 {{chainName}} 链上由所选账户代理的账户。",
-  "The account{{s}} below {{verb}} already proxied by the selected account on the {{chainName}} chain in your extension. Select {{selectionText}} to import.": "以下账户{{s}}已在您的扩展中由所选账户在 {{chainName}} 链上代理。选择 {{selectionText}} 进行导入。"
+  "The account{{s}} below {{verb}} already proxied by the selected account on the {{chainName}} chain in your extension. Select {{selectionText}} to import.": "以下账户{{s}}已在您的扩展中由所选账户在 {{chainName}} 链上代理。选择 {{selectionText}} 进行导入。",
+  "Week": "周",
+  "Month": "月",
+  "Year": "年",
+  "Price ({{currency}})": "价格 ({{currency}})",
+  "{{coinId}} Price — Last {{selectedRange}} Days": "{{coinId}} 价格 — 最近 {{selectedRange}} 天"
 }
