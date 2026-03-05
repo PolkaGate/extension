@@ -10,81 +10,23 @@ import type { DotsVariant } from './Dots';
 import { Fade, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { memo, useMemo } from 'react';
 
-import { type BN, formatBalance } from '@polkadot/util';
+import { BN, formatBalance } from '@polkadot/util';
 
 import { useChainInfo, useIsDark, useIsHideNumbers } from '../hooks';
-import { FLOATING_POINT_DIGIT } from '../util/constants';
 import { Dots, MySkeleton } from '.';
 
-const THOUSAND_LENGTH = 4;
-const DEFAULT_DECIMAL_PRECISION = 2;
-const HIGH_PRECISION_DECIMAL = 4;
+function formatAdaptive(num: string, decimalPoint = 4): string {
+  const [int, frac] = num.split('.');
 
-function createElement(prefix: string, postfix: string, unit: string, isShort = false, decimalPoint: number, tokenColor?: string): React.ReactNode {
-  return (
-    <>
-      {`${prefix}${isShort ? '' : '.'}`}
-      {!isShort &&
-        <span className='ui--FormatBalance-postfix'>
-          {`00${postfix?.slice(0, decimalPoint) || ''}`.slice(-decimalPoint)}
-        </span>
-      }
-      <span className='ui--FormatBalance-unit' style={{ color: tokenColor ?? 'inherit' }}> {unit}</span>
-    </>
-  );
-}
-
-function applyFormat(
-  decimalPoint: number,
-  value: Balance | Compact<u128 | u64 | INumber> | BN | string,
-  decimal: number,
-  token: string,
-  withCurrency = true,
-  withSi?: boolean,
-  _isShort?: boolean,
-  tokenColor?: string
-): React.ReactNode {
-  const [prefix, postfix] = formatBalance(value, { decimals: decimal, forceUnit: '-', withSi: false }).split('.');
-  const isShort = _isShort || (withSi && prefix.length >= THOUSAND_LENGTH);
-  const unitPost = withCurrency ? token : '';
-
-  if (prefix.length > THOUSAND_LENGTH) {
-    const [major, rest] = formatBalance(value, { decimals: decimal, withUnit: false }).split('.');
-    const minor = rest.substring(0, decimalPoint);
-    const unit = rest.substring(4);
-
-    return (
-      <>
-        {major}.
-        <span className='ui--FormatBalance-postfix'>{minor}</span>
-        <span className='ui--FormatBalance-unit' style={{ color: tokenColor ?? 'inherit' }}>{unit}{unit ? unitPost : ` ${unitPost}`}</span>
-      </>
-    );
+  if (!frac) {
+    return int;
   }
 
-  // Check if formatBalance returned a SI unit for small values (micro, milli, etc.)
-  const formattedWithSi = formatBalance(value, { decimals: decimal, withSi: withSi ?? true, withUnit: false });
-  const parts = formattedWithSi.split(' ');
+  const trimmed = frac
+    .slice(0, decimalPoint)
+    .replace(/0+$/, ''); // remove trailing zeros
 
-  // If there's a SI unit suffix (second part exists and is a unit like 'm', 'µ', 'k', etc.)
-  if (parts.length > 1 && parts[1]) {
-    const siUnit = parts[1];
-    const [numPrefix, numPostfix] = parts[0].split('.');
-    const minor = numPostfix?.substring(0, decimalPoint) || '';
-
-    return (
-      <>
-        {numPrefix}{!isShort && minor ? '.' : ''}
-        {!isShort && minor && (
-          <span className='ui--FormatBalance-postfix'>{`00${minor}`.slice(-decimalPoint)}</span>
-        )}
-        <span className='ui--FormatBalance-unit' style={{ color: tokenColor ?? 'inherit' }}> {siUnit}{unitPost}</span>
-      </>
-    );
-  }
-
-  // Default formatting for regular values without SI units
-  return createElement(prefix, postfix, unitPost, isShort, decimalPoint, tokenColor);
+  return trimmed ? `${int}.${trimmed}` : int;
 }
 
 interface DisplayBalanceProps {
@@ -95,7 +37,6 @@ interface DisplayBalanceProps {
   decimalPoint?: number;
   dotStyle?: DotsVariant;
   genesisHash?: string | undefined;
-  isShort?: boolean;
   skeletonStyle?: SxProps<Theme>;
   style?: SxProps<Theme>;
   token?: string;
@@ -105,48 +46,23 @@ interface DisplayBalanceProps {
   withSi?: boolean;
 }
 
-function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dotStyle, genesisHash, isShort, skeletonStyle, style, token, tokenColor, useAdaptiveDecimalPoint, withCurrency, withSi }: DisplayBalanceProps) {
+function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dotStyle, genesisHash, skeletonStyle, style, token, tokenColor, withCurrency = true, withSi }: DisplayBalanceProps) {
   const isDark = useIsDark();
   const theme = useTheme();
   const { isHideNumbers } = useIsHideNumbers();
 
   const { decimal: nativeDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
-  const { apiDecimal, apiToken } = useMemo(() => {
-    if (!api) {
-      return { apiDecimal: undefined, apiToken: undefined };
-    }
+  const resolvedDecimal = useMemo(() =>
+    decimal || nativeDecimal || api?.registry?.chainDecimals?.[0],
+    [api?.registry?.chainDecimals, decimal, nativeDecimal]);
 
-    return {
-      apiDecimal: api.registry.chainDecimals[0],
-      apiToken: api.registry.chainTokens[0]
-    };
-  }, [api]);
-
-  const resolvedDecimal = useMemo(() => decimal || nativeDecimal || apiDecimal, [apiDecimal, decimal, nativeDecimal]);
-  const resolvedToken = useMemo(() => token || nativeToken || apiToken, [apiToken, nativeToken, token]);
-
-  const adaptiveDecimalPoint = useMemo(() =>
-    balance && resolvedDecimal
-      ? (String(balance).length >= resolvedDecimal - 1
-        ? DEFAULT_DECIMAL_PRECISION
-        : HIGH_PRECISION_DECIMAL)
-      : undefined
-    , [balance, resolvedDecimal]);
-
-  const resolvedDecimalPoint = useMemo(() => {
-    if (decimalPoint) {
-      return decimalPoint;
-    }
-
-    if (useAdaptiveDecimalPoint && adaptiveDecimalPoint) {
-      return adaptiveDecimalPoint;
-    }
-
-    return FLOATING_POINT_DIGIT;
-  }, [adaptiveDecimalPoint, decimalPoint, useAdaptiveDecimalPoint]);
+  const resolvedToken = useMemo(() =>
+    token || nativeToken || api?.registry?.chainTokens?.[0],
+    [api?.registry?.chainTokens, nativeToken, token]);
 
   const isLoading = balance === undefined || balance === null || !resolvedDecimal || !resolvedToken;
+  const maybeToken = withCurrency ? resolvedToken : '';
 
   if (isLoading) {
     return (
@@ -159,13 +75,21 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
     );
   }
 
+  const formattedWithSi = formatBalance(balance, { decimals: resolvedDecimal, withSi, withUnit: maybeToken, withZero: false });
+  const [num, unit = maybeToken] = formattedWithSi.split(' ');
+
+  const isZero = !balance || new BN(String(balance)).isZero();
+  const displayNum = isZero
+    ? '0.00'
+    : decimalPoint ? formatAdaptive(num, decimalPoint) : num;
+
   return (
     <Fade in={true} timeout={1000}>
       <div>
         {isHideNumbers
           ? (
             <Dots
-              //@ts-ignore
+              // @ts-ignore
               color={style?.color as string || tokenColor}
               decimalColor={decimalColor}
               variant={dotStyle}
@@ -173,7 +97,10 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
           )
           : (
             <Typography sx={{ ...theme.typography['B-1'], width: 'fit-content', ...style }}>
-              {applyFormat(resolvedDecimalPoint, balance, resolvedDecimal, resolvedToken, withCurrency, withSi, isShort, tokenColor)}
+              {displayNum}
+              <span style={{ color: tokenColor ?? 'inherit' }}>
+                {` ${unit}`}
+              </span>
             </Typography>
           )
         }
