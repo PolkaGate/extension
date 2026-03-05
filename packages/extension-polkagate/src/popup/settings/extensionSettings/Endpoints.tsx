@@ -1,19 +1,18 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Grid, Stack, Typography } from '@mui/material';
+import { Container, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { BackWithLabel, ChainLogo } from '../../../components';
 import MySwitch from '../../../components/MySwitch';
-import Radio from '../../../components/Radio';
 import useEndpointsSetting from '../../../fullscreen/settings/partials/useEndpointsSetting';
 import { useMetadata, useTranslation } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
 import { AUTO_MODE } from '../../../util/constants';
-import DotIndicator from './components/DotIndicator';
+import EndpointRow from './EndpointRow';
 
 const BackButton = ({ genesisHash }: { genesisHash: string | undefined; }) => {
   const chain = useMetadata(genesisHash, true);
@@ -68,27 +67,16 @@ function Endpoints(): React.ReactElement {
               </Grid>
             </Grid>
             {filteredEndpoints?.map(({ delay, name, value }, index) => (
-              <Grid alignItems='start' container direction='column' item key={value} py='5px' sx={{ bgcolor: '#05091C', borderRadius: '14px', flexWrap: 'nowrap', height: index === 0 ? '100px' : '73px', mt: '4px', px: '10px' }}>
-                {index === 0 &&
-                  <Typography color='#7956A5' fontFamily='Inter' fontSize='11px' fontWeight={600} sx={{ p: '8px' }}>
-                    {t('NODES')}
-                  </Typography>}
-                <Stack alignItems='center' columnGap='10px' direction='row'>
-                  <Radio
-                    checked={maybeNewEndpoint === value}
-                    columnGap='5px'
-                    label={name}
-                    onChange={onChangeEndpoint}
-                    value={value}
-                  />
-                  <DotIndicator delay={delay} />
-                </Stack>
-                <Grid item sx={{ mt: '-5px', pl: '10px' }}>
-                  <Typography color='#674394' variant='B-5'>
-                    {value}
-                  </Typography>
-                </Grid>
-              </Grid>
+              <EndpointRow
+                checked={maybeNewEndpoint === value}
+                delay={delay}
+                isFirst={index === 0}
+                isLast={index === filteredEndpoints.length - 1}
+                key={index}
+                name={name}
+                onChangeEndpoint={onChangeEndpoint}
+                value={value}
+              />
             ))}
           </Grid>
         </Grid>
