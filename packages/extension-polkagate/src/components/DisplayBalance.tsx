@@ -5,14 +5,16 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Compact, u64, u128 } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { INumber } from '@polkadot/types-codec/types';
+import type { BN } from '@polkadot/util';
 import type { DotsVariant } from './Dots';
 
 import { Fade, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { memo, useMemo } from 'react';
 
-import { BN, formatBalance } from '@polkadot/util';
+import { formatBalance } from '@polkadot/util';
 
 import { useChainInfo, useIsDark, useIsHideNumbers } from '../hooks';
+import { toBN } from '../util';
 import { Dots, MySkeleton } from '.';
 
 function formatAdaptive(num: string, decimalPoint = 4): string {
@@ -78,7 +80,7 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
   const formattedWithSi = formatBalance(balance, { decimals: resolvedDecimal, withSi, withUnit: maybeToken, withZero: false });
   const [num, unit = maybeToken] = formattedWithSi.split(' ');
 
-  const isZero = !balance || new BN(String(balance)).isZero();
+  const isZero = !balance || toBN(balance).isZero();
   const displayNum = isZero
     ? '0.00'
     : decimalPoint ? formatAdaptive(num, decimalPoint) : num;
