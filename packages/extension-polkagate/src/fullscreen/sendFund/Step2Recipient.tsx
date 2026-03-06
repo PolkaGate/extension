@@ -33,6 +33,15 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
 
   const [selectedChain, setSelectedChain] = useState<DropdownOption>({ text: inputs?.recipientChain?.text ?? chainName ?? '', value: inputs?.recipientChain?.value ?? genesisHash ?? '' });
 
+  useEffect(() => {
+    const maybeRecipientChainName = inputs?.recipientChain?.text ?? chainName;
+    const maybeRecipientGenesisHash = inputs?.recipientChain?.value ?? genesisHash;
+
+    if (maybeRecipientChainName && maybeRecipientGenesisHash) {
+      setSelectedChain({ text: maybeRecipientChainName, value: maybeRecipientGenesisHash });
+    }
+  }, [chainName, genesisHash, inputs?.recipientChain?.text, inputs?.recipientChain?.value]);
+
   const chainOptions = useMemo((): DropdownOption[] => {
     if (!chainName || !inputs?.token) {
       return [];
@@ -76,7 +85,7 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
       </Typography>
       <Stack columnGap='15px' direction='row' sx={{ my: '20px' }}>
         <RecipientAddress
-          genesisHash={genesisHash}
+          genesisHash={selectedChain?.value as string | undefined || genesisHash}
           inputs={inputs}
           setInputs={setInputs}
         />

@@ -2,10 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
+import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { Divider, InputAdornment, Stack, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, Document, Hashtag, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import AccountListModal from '../fullscreen/components/AccountListModal';
 import { useIsBlueish, useTranslation } from '../hooks';
@@ -25,10 +28,11 @@ interface Props {
   style?: SxProps<Theme>;
   withSelect?: boolean;
   setIsError?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setType?: React.Dispatch<React.SetStateAction<KeypairType | undefined>>;
   showAddressBook?: boolean;
 }
 
-export default function AddressInput({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setIsError, showAddressBook, style, withSelect }: Props): React.ReactElement<Props> {
+export default function AddressInput({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setType, setIsError, showAddressBook, style, withSelect }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const isBlueish = useIsBlueish();
@@ -38,10 +42,10 @@ export default function AddressInput({ addWithQr = false, address, chain, disabl
   const [openCamera, setOpenCamera] = useState<boolean>(false);
   const [openAccountList, setOpenAccountList] = useState<boolean>(false);
   const [invalidAddress, setInvalidAddress] = useState<boolean>(false);
-  const [enteredAddress, setEnteredAddress] = useState<string | undefined>();
+  const [enteredAddress, setEnteredAddress] = useState<string | undefined | null>();
 
   useEffect(() => {
-    if (address) {
+    if (address || address === null) {
       setEnteredAddress(address);
       setInvalidAddress(false);
     }
@@ -51,45 +55,56 @@ export default function AddressInput({ addWithQr = false, address, chain, disabl
     setIsError && setIsError(invalidAddress);
   }, [address, invalidAddress, setIsError]);
 
+  const onReset = useCallback((): void => {
+    setAddress?.(null);
+    setEnteredAddress(undefined);
+    setInvalidAddress(false);
+  }, [setAddress]);
+
+  const onSet = useCallback((value: string): void => {
+    const isEvm = isEthereumAddress(value);
+
+    isEvm && setType?.('ethereum');
+    const isValid = isValidAddress(value);
+
+    isValid
+      ? setAddress?.(value)
+      : setAddress?.(undefined);
+
+    setEnteredAddress(value);
+    setInvalidAddress(!isValid);
+  }, [setAddress, setType]);
+
   const handleAddress = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
     if (!value) {
-      setAddress && setAddress(null);
-      setEnteredAddress(undefined);
-      setInvalidAddress(false);
+      onReset();
 
       return;
     }
 
-    setInvalidAddress(!(isValidAddress(value)));
-    setEnteredAddress(value);
-    isValidAddress(value) ? setAddress && setAddress(value) : setAddress && setAddress(undefined);
-  }, [setAddress]);
+    onSet(value);
+  }, [onReset, onSet]);
 
   // @ts-ignore
   const _selectAddress = useCallback((newAddr?: string) => handleAddress({ target: { value: newAddr } }), [handleAddress]);
-
   const openQrScanner = useCallback(() => setOpenCamera(true), []);
   const onOpenAccountList = useCallback(() => setOpenAccountList(true), []);
-
   const handleInputAddress = useCallback((value: React.ChangeEvent<HTMLInputElement>) => {
     handleAddress(value);
   }, [handleAddress]);
 
   const pasteAddress = useCallback(() => {
     if (enteredAddress || address) {
-      setAddress && setAddress(null);
-      setEnteredAddress(undefined);
-      setInvalidAddress(false);
-    } else {
-      navigator.clipboard.readText().then((clipText) => {
-        const isValid = isValidAddress(clipText);
+      onReset();
 
-        isValid ? setAddress?.(clipText) : setAddress?.(undefined);
-        setEnteredAddress(clipText);
-        setInvalidAddress(!isValid);
-      }).catch(console.error);
+      return;
     }
-  }, [address, enteredAddress, setAddress]);
+
+    navigator.clipboard.readText()
+      .then((clipText) => {
+        onSet(clipText);
+      }).catch(console.error);
+  }, [address, enteredAddress, onReset, onSet]);
 
   return (
     <>
@@ -134,7 +149,7 @@ export default function AddressInput({ addWithQr = false, address, chain, disabl
                     size='18'
                     style={{ cursor: 'pointer', margin: '0 2px 0' }}
                     variant='Bulk'
-                    />
+                  />
                 }
               </InputAdornment>
             ),

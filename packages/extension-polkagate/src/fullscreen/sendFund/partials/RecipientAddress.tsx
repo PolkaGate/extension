@@ -31,6 +31,17 @@ export default function RecipientAddress({ genesisHash, inputs, setInputs }: Pro
     }));
   }, [address, setInputs]);
 
+  useEffect(() => {
+    if (genesisHash && genesisHash !== inputs?.recipientChain?.value) {
+      setAddress(null);
+
+      setInputs((prevInputs) => ({
+        ...(prevInputs || {}),
+        recipientAddress: undefined
+      }));
+    }
+  }, [genesisHash, inputs?.recipientChain?.value, setInputs]);
+
   return (
     <Stack direction='column'>
       <Stack sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '108px', overflow: 'hidden', p: '15px', rowGap: '6px', width: '379px' }}>

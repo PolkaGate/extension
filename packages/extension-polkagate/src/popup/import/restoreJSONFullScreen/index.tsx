@@ -14,7 +14,7 @@ import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/compone
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import { AUTO_LOCK_PERIOD_DEFAULT, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { stringToU8a, u8aToString } from '@polkadot/util';
-import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
+import { ethereumEncode, jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
 import { AccountContext, ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
 import { useAlerts, useTranslation } from '../../../hooks';
@@ -97,6 +97,7 @@ export default function RestoreJson(): React.ReactElement {
         genesisHash,
         isExternal,
         name: name ?? 'Unknown'
+        // type: isEthereumAddress(address) ? 'ethereum' : undefined
       } as JsonGetAccountInfo));
 
       setAccountsInfo(accs);
@@ -135,7 +136,15 @@ export default function RestoreJson(): React.ReactElement {
     }
 
     await batchRestore(encryptFile, password);
-    const updateMetaList = accountToAddTime.map((address) => updateMeta(address, JSON.stringify({ addedTime: Date.now(), genesisHash: null })));
+    const updateMetaList = accountToAddTime.map((address) => {
+      // JSON exports may contain compressed secp256k1 public keys (0x02/0x03…);
+      // convert them to the corresponding EVM (H160) address so keyring.getPair() can resolve the account
+      if (address.startsWith('0x')) {
+        address = ethereumEncode(address);
+      }
+
+      return updateMeta(address, JSON.stringify({ addedTime: Date.now(), genesisHash: null }));
+    });
 
     await Promise.all(updateMetaList);
   }, [accountsInfo, filterAndEncryptFile, password, selectedAccountsInfo]);
@@ -185,7 +194,7 @@ export default function RestoreJson(): React.ReactElement {
 
         if (success) {
           setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
-          navigate('/') as void;
+          // navigate('/') as void;
         } else {
           navigate('/migratePasswords') as void;
         }

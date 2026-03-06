@@ -27,7 +27,11 @@ export async function fastestEndpoint(endpoints) {
     };
   }).filter((i) => !!i);
 
+  console.info('ℹ️ trying to connect to fastest endpoint ...');
+
   const api = await Promise.any(connections.map(({ connection }) => connection));
+
+  console.log('fastestEndpoint:', api)
 
   // Find the matching connection that created this API
   // @ts-ignore

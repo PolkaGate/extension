@@ -22,9 +22,13 @@ interface Props {
 }
 
 function AccountRowSimple({ account, handleSelect, isFirstAccount, isFirstProfile, isLast, isSelected, maybeSelected, onDoubleClick }: Props): React.ReactElement {
+  const { address, genesisHash, type } = account ?? {};
+
   const _onClick = useCallback(() => {
-    handleSelect(account?.address);
-  }, [account?.address, handleSelect]);
+    handleSelect(address);
+  }, [address, handleSelect]);
+
+  const _genesisHash = type === 'ethereum' ? undefined : genesisHash ?? POLKADOT_GENESIS;
 
   return (
     <motion.div
@@ -39,10 +43,10 @@ function AccountRowSimple({ account, handleSelect, isFirstAccount, isFirstProfil
         }
         <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={_onClick} sx={{ '&:hover': { padding: '0 8px' }, cursor: 'pointer', transition: 'all 250ms ease-out', width: '100%' }}>
           <Identity2
-            address={account?.address}
-            genesisHash={account?.genesisHash ?? POLKADOT_GENESIS}
+            address={address}
+            genesisHash={_genesisHash}
             identiconSize={24}
-            isSelected={maybeSelected === account?.address || (isSelected && !maybeSelected)}
+            isSelected={maybeSelected === address || (isSelected && !maybeSelected)}
             name={account.name}
             showShortAddress
             style={{ color: (isSelected) ? '#EAEBF1' : '#BEAAD8', variant: 'B-2' }}

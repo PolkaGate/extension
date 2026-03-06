@@ -149,7 +149,7 @@ interface stashAccountDisplay {
 export interface TxResult {
   block?: number;
   txHash?: string;
-  fee?: string | FeeInfo;
+  fee?: string | FeeInfo | BN;
   success: boolean;
   failureText?: string;
 }
@@ -210,14 +210,14 @@ interface Identity {
 }
 
 export interface TransferRequest {
-  code: number;
+  code?: number;
   data: {
-    list: unknown;
+    list?: unknown;
     count: number;
     transfers: Transfers[] | null;
   };
-  generated_at: number;
-  message: string;
+  generated_at?: number;
+  message?: string;
   for: string;
 }
 
@@ -283,13 +283,13 @@ export interface Transfers {
   fee: string;
   forAccount: string;
   from: string;
-  from_account_display: AccountDisplay;
+  from_account_display?: AccountDisplay;
   hash: string;
   module: string;
   nonce: number;
   success: boolean
   to: string;
-  to_account_display: AccountDisplay;
+  to_account_display?: AccountDisplay;
 }
 
 interface AccountDisplay {

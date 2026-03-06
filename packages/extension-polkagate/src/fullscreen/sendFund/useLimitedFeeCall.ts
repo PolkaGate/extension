@@ -56,7 +56,7 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
   const [originFee, setOriginFee] = useState<Balance>();
   const [xcmFee, setXcmFee] = useState<Balance>();
 
-  const { decimal, recipientAddress, token, transferType } = inputs || {};
+  const { decimal, recipientAddress, recipientChain, token, transferType } = inputs || {};
 
   const isForeignAsset = assetId ? assetId.startsWith('0x') : undefined;
   const noAssetId = assetId === undefined || assetId === 'undefined';
@@ -72,19 +72,21 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
   const amountAsBN = useMemo(() => decimal ? amountToMachine(inputs?.amount, decimal) : undefined, [decimal, inputs?.amount]);
 
   const recipientParaId = useMemo(() => {
-    const mayParaId = inputs?.recipientChain?.value;
+    const mayParaId = recipientChain?.value;
 
     try {
       return isCrossChain ? parseInt(String(mayParaId)) : INVALID_PARA_ID;
     } catch {
       return INVALID_PARA_ID;
     }
-  }, [inputs?.recipientChain, isCrossChain]);
+  }, [recipientChain, isCrossChain]);
 
   const onChainCall = useMemo(() => {
-    if (!api || !genesisHash) {
+    if (isSupportedByParaspell || !api || !genesisHash) {
       return undefined;
     }
+
+  console.log('ecalculateFee 3');
 
     try {
       const module = isNonNativeToken
@@ -113,10 +115,10 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
 
       return undefined;
     }
-  }, [api, isNonNativeToken, genesisHash, isForeignAsset, transferType]);
+  }, [isSupportedByParaspell, api, genesisHash, isNonNativeToken, isForeignAsset, transferType]);
 
   const call = useMemo((): SubmittableExtrinsicFunction<'promise'> | undefined => {
-    if (!api) {
+    if (isSupportedByParaspell || !api) {
       return;
     }
 
@@ -127,10 +129,10 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
     }
 
     return onChainCall;
-  }, [api, isCrossChain, onChainCall]);
+  }, [api, isCrossChain, isSupportedByParaspell, onChainCall]);
 
   const crossChainParams = useMemo(() => {
-    if (!api || !assetToTransfer || !teleportState || isCrossChain === false || (recipientParaId === INVALID_PARA_ID && !teleportState?.isParaTeleport) || !amountAsBN || amountAsBN.isZero()) {
+    if (isSupportedByParaspell || !api || !assetToTransfer || !teleportState || isCrossChain === false || (recipientParaId === INVALID_PARA_ID && !teleportState?.isParaTeleport) || !amountAsBN || amountAsBN.isZero()) {
       return;
     }
 
@@ -167,7 +169,7 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
       0,
       { Unlimited: null }
     ];
-  }, [api, assetToTransfer, teleportState, isCrossChain, recipientParaId, amountAsBN, recipientAddress]);
+  }, [isSupportedByParaspell, api, assetToTransfer, teleportState, isCrossChain, recipientParaId, amountAsBN, recipientAddress]);
 
   const onChainParams = useMemo((): unknown[] | undefined => {
     if (!api || !assetToTransfer || !address || !onChainCall || !recipientAddress) {
@@ -189,6 +191,8 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
     if (!api || !onChainParams || !address || !onChainCall || isSupportedByParaspell) {
       return;
     }
+
+  console.log('ecalculateFee 2');
 
     if (!api?.call?.['transactionPaymentApi']) {
       const dummyAmount = api.createType('Balance', BN_ONE) as unknown as Balance;

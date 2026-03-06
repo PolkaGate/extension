@@ -125,7 +125,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
     return {
       decimal,
       destinationFee: maybeDestinationFee,
-      fee: inputs.fee?.originFee.fee ? new BN(inputs.fee?.originFee.fee) : undefined,
+      fee: inputs.fee?.originFee.fee ? new BN(inputs.fee.originFee.fee) : undefined,
       token
     };
   }, [inputs.fee, inputs?.isCrossChain, maybeSelectedNonNativeFeeAsset, decimal, token, maybePartialFee]);
@@ -190,8 +190,9 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
 
   const showFeeSelector = !!feeOptions?.length && !account?.isExternal;
 
-  return (
+  console.log('feeInfo.fee in fee row component:', feeInfo?.fee?.toString());
 
+  return (
     <Stack direction='column' sx={{ m: '25px 10px 20px', width: '766px' }}>
       <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ height: '22px', pl: '10px', pr: showFeeSelector ? '7px' : '20px' }}>
         <Typography color='primary.main' sx={{ textAlign: 'left' }} variant='B-1'>

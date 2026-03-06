@@ -45,8 +45,8 @@ export default function Step3Amount({ inputs, setInputs }: Props): React.ReactEl
   const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, inputs?.transferType ?? 'Normal', new BN(inputs?.fee?.originFee?.fee || 0));
 
   useEffect(() => {
-    amountAsBN && setInputs((prevInputs) => ({
-      ...(prevInputs || {}),
+    amountAsBN && setInputs((pre) => ({
+      ...(pre || {}),
       amountAsBN
     }));
   }, [amountAsBN, setInputs]);
@@ -92,7 +92,8 @@ export default function Step3Amount({ inputs, setInputs }: Props): React.ReactEl
   }, [assetToTransfer, decimal, setInputs, t, transferableBalance]);
 
   const ED = useMemo(() => {
-    let maybeED = '1';
+    const DEFAULT_ED = '0.01';
+    let maybeED = DEFAULT_ED;
 
     try {
       const { assetId, token } = inputs || {};
@@ -103,7 +104,9 @@ export default function Step3Amount({ inputs, setInputs }: Props): React.ReactEl
         const mayBeEDasBN = getExistentialDeposit(_senderChainName as TChain, currency);
 
         if (mayBeEDasBN && decimal !== undefined) {
-          maybeED = amountToHuman(mayBeEDasBN, decimal);
+          const EDinHuman = amountToHuman(mayBeEDasBN, decimal);
+
+          maybeED = EDinHuman === '0' ? DEFAULT_ED : EDinHuman;
         }
       }
 

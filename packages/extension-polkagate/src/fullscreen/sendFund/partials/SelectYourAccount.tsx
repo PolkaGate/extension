@@ -52,8 +52,9 @@ export default function SelectYourAccount({ address, genesisHash }: Props): Reac
           genesisHash={genesisHash}
           handleClose={onToggleAccountSelection}
           open={openAccountList}
+          showAll
         />
-      }</>
-
+      }
+    </>
   );
 }

@@ -77,7 +77,7 @@ interface ParamTypesMapping {
   unlock: UnlockParams;
 }
 
-const nullObject = {
+export const nullObject = {
   code: 0,
   data: {
     count: 0,
