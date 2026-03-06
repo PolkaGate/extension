@@ -350,9 +350,7 @@ export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props)
 
   return (
     <SharePopup
-      modalProps={{
-        noDivider: true
-      }}
+      modalProps={{ noDivider: true, showBackIconAsClose: true }}
       modalStyle={{ minHeight: '500px', overflow: 'hidden', paddingTop: '33px' }}
       onClose={handleClose}
       open={openPopup}

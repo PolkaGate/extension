@@ -23,6 +23,7 @@ export default function Withdraw({ address, genesisHash, onClose }: Props): Reac
 
   return (
     <StakingPopup
+      _onClose={onClose}
       address={address}
       flowStep={flowStep}
       genesisHash={genesisHash}

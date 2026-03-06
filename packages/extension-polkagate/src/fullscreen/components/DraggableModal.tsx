@@ -10,22 +10,22 @@ import { modalEffect } from '@polkadot/extension-polkagate/src/assets/img/index'
 export interface DraggableModalProps {
   blurBackdrop?: boolean;
   children: React.ReactElement;
+  closeOnAnyWhereClick?: boolean;
   dividerStyle?: React.CSSProperties;
   draggable?: boolean;
   maxHeight?: number;
   minHeight?: number | string;
+  noCloseButton?: boolean;
   noDivider?: boolean;
   open: boolean;
   onClose: () => void
+  RightItem?: React.ReactNode;
+  rightItemStyle?: React.CSSProperties;
   showBackIconAsClose?: boolean;
   style?: React.CSSProperties;
   title?: string;
   TitleLogo?: React.ReactNode;
   width?: number;
-  RightItem?: React.ReactNode;
-  rightItemStyle?: React.CSSProperties;
-  noCloseButton?: boolean;
-  closeOnAnyWhereClick?: boolean;
 }
 
 export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, children, closeOnAnyWhereClick = false, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noCloseButton, noDivider, onClose, open, rightItemStyle, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {

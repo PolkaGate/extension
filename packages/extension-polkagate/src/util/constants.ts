@@ -364,4 +364,10 @@ export const FETCHING_ASSETS_FUNCTION_NAMES = {
   RELAY: 'getAssetOnRelayChain'
 };
 
+export const WORKER_TASKS = {
+  GET_NFTS: 'getNFTs',
+  GET_POOL: 'getPool',
+  VALIDATORS_INFO: 'getValidatorsInformation'
+};
+
 export const PROCESSING_TITLE = 'Processing';

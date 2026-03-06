@@ -14,6 +14,7 @@ import { isHexToBn } from '../util';
 import { FETCHING_ASSETS_FUNCTION_NAMES } from '../util/constants';
 
 interface WorkerMessage { functionName?: string, metadata?: MetadataDef, results?: Record<string, MessageBody[]> }
+const FUNCTIONS = Object.values(FETCHING_ASSETS_FUNCTION_NAMES);
 
 interface BalancesDetails {
   ED: BN,
@@ -84,6 +85,12 @@ export default function useWorkerAssetListener(
 
       try {
         const { functionName, metadata, results } = JSON.parse(message) as WorkerMessage;
+
+        if (!FUNCTIONS.includes(functionName ?? '')) {
+          console.log('unrelated message received in useWorkerAssetListener:', functionName);
+
+          return;
+        }
 
         if (metadata) {
           updateMetadata(metadata).catch(console.error);

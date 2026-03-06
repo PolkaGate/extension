@@ -929,5 +929,10 @@
   "Choose a name for this contact": "Wählen Sie einen Namen für diesen Kontakt",
   "Add to address book": "Zum Adressbuch hinzufügen",
   "Looking for accounts that are proxied by the selected account on the {{chainName}} chain.": "Suche nach Konten, die vom ausgewählten Konto in der {{chainName}}-Chain als Proxy verwendet werden.",
-  "The account{{s}} below {{verb}} already proxied by the selected account on the {{chainName}} chain in your extension. Select {{selectionText}} to import.": "Die untenstehenden Konto{{s}} {{verb}} bereits vom ausgewählten Konto in der {{chainName}}-Chain in Ihrer Erweiterung als Proxy verwendet. Wählen Sie {{selectionText}}, um sie zu importieren."
+  "The account{{s}} below {{verb}} already proxied by the selected account on the {{chainName}} chain in your extension. Select {{selectionText}} to import.": "Die untenstehenden Konto{{s}} {{verb}} bereits vom ausgewählten Konto in der {{chainName}}-Chain in Ihrer Erweiterung als Proxy verwendet. Wählen Sie {{selectionText}}, um sie zu importieren.",
+  "Week": "Woche",
+  "Month": "Monat",
+  "Year": "Jahr",
+  "Price ({{currency}})": "Preis ({{currency}})",
+  "{{coinId}} Price — Last {{selectedRange}} Days": "{{coinId}} Preis — Letzte {{selectedRange}} Tage"
 }

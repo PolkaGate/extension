@@ -18,8 +18,8 @@ import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handl
 import { ChainLogo, Motion, MySwitch, SearchField } from '../../components';
 import { useGenesisHashOptions, useTranslation } from '../../hooks';
 import { getStorage, setStorage } from '../../util';
-import AddNewNetwork from './AddNewNetwork';
 import Endpoints from './partials/Endpoints';
+import AddNewNetwork from './AddNewNetwork';
 
 interface ItemProps {
   isLast: boolean;

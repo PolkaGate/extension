@@ -75,3 +75,10 @@ Once added, you can create an account or import via multiple options. To view he
    - To receive some test tokens visit [Polkadot Faucet](https://faucet.polkadot.io/)
 
    - Note that you need to enable 'Show Test Networks' in the Settings/Extension Settings to be able to work with test networks.
+
+### Stay connected
+  
+* Twitter: https://twitter.com/polkagate
+* Matrix: https://matrix.to/#/#polkagate:matrix.org
+* Telegram: https://t.me/polkagate
+* YouTube: https://youtube.com/@polkagate

@@ -3,7 +3,7 @@
 
 import type { DropdownOption } from './types';
 
-import { ACALA_GENESIS_HASH, KUSAMA_GENESIS_HASH, PASEO_ASSET_HUB_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_GENESIS_HASH, STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH, WESTEND_GENESIS_HASH, WESTMINT_GENESIS_HASH } from './constants';
+import { ACALA_GENESIS_HASH, KUSAMA_GENESIS_HASH, PASEO_ASSET_HUB_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_GENESIS_HASH, STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH } from './constants';
 
 export const DEFAULT_SELECTED_CHAINS: DropdownOption[] = [
   {
@@ -38,14 +38,14 @@ export const DEFAULT_SELECTED_CHAINS: DropdownOption[] = [
     text: 'Hydration',
     value: '0xafdc188f45c71dacbaa0b62e16a91f726c7b8699a9748cdf715459de6b7f366d'
   },
-  {
-    text: 'Westend',
-    value: WESTEND_GENESIS_HASH
-  },
-  {
-    text: 'Westend Asset Hub',
-    value: WESTMINT_GENESIS_HASH
-  },
+  // {
+  //   text: 'Westend',
+  //   value: WESTEND_GENESIS_HASH
+  // },
+  // {
+  //   text: 'Westend Asset Hub',
+  //   value: WESTMINT_GENESIS_HASH
+  // },
   {
     text: 'Paseo',
     value: PASEO_GENESIS_HASH

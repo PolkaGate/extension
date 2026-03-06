@@ -1,5 +1,33 @@
 # Change Log
 
+## [1.27.1](https://github.com/polkagate/extension/compare/v1.27.0...v1.27.1) (2026-03-05)
+
+
+### Bug Fixes
+
+* resolve proxy signing issue for transactions initiated from the extension ([85fcea2](https://github.com/polkagate/extension/commit/85fcea20821994a5c5bd5fe6c1e72997437ab490))
+
+# [1.27.0](https://github.com/polkagate/extension/compare/v1.26.2...v1.27.0) (2026-03-04)
+
+
+### Features
+
+* add week/month/year range selector to token price chart ([#2121](https://github.com/polkagate/extension/issues/2121)) ([5820a3e](https://github.com/polkagate/extension/commit/5820a3e7a998ddf0f5e9f965b3e116e0b8a15585))
+
+## [1.26.2](https://github.com/polkagate/extension/compare/v1.26.1...v1.26.2) (2026-03-03)
+
+
+### Bug Fixes
+
+* **nominations:** resolve missing validator identities in tab ([5de7cb8](https://github.com/polkagate/extension/commit/5de7cb86958d17e09b0e1ea3fd7bf9c86d29f356))
+
+## [1.26.1](https://github.com/polkagate/extension/compare/v1.26.0...v1.26.1) (2026-03-01)
+
+
+### Bug Fixes
+
+* display only assets with a non-zero total balance in the allocation section ([7139038](https://github.com/polkagate/extension/commit/7139038fd078f95c22523a23aebcfec0c0d4772b))
+
 # [1.26.0](https://github.com/polkagate/extension/compare/v1.25.0...v1.26.0) (2026-02-25)
 
 

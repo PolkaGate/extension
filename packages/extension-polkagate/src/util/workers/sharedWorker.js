@@ -5,7 +5,7 @@
 
 import { createAssets } from '@polkagate/apps-config/assets';
 
-import { FETCHING_ASSETS_FUNCTION_NAMES } from '../constants';
+import { FETCHING_ASSETS_FUNCTION_NAMES, WORKER_TASKS } from '../constants';
 import { getAssetOnAssetHub } from './shared-helpers/getAssetOnAssetHub.js';
 import { getAssetOnEvm } from './shared-helpers/getAssetOnEvm.js';
 import { getAssetOnMultiAssetChain } from './shared-helpers/getAssetOnMultiAssetChain.js';
@@ -68,15 +68,15 @@ onconnect = (/** @type {{ ports: any[]; }} */ event) => {
           break;
         }
 
-        case 'getNFTs':
+        case WORKER_TASKS.GET_NFTS:
           getNFTs(...params, port).catch(console.error);
           break;
 
-        case 'getValidatorsInformation':
+        case WORKER_TASKS.VALIDATORS_INFO:
           getValidatorsInformation(...params, port).catch(console.error);
           break;
 
-        case 'getPool':
+        case WORKER_TASKS.GET_POOL:
           getPool(...params, port).catch(console.error);
           break;
 

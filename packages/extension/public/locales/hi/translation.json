@@ -929,5 +929,10 @@
   "Choose a name for this contact": "इस संपर्क के लिए एक नाम चुनें",
   "Add to address book": "पता पुस्तिका में जोड़ें",
   "Looking for accounts that are proxied by the selected account on the {{chainName}} chain.": "चयनित खाते द्वारा {{chainName}} चेन पर प्रॉक्सी किए गए खातों की तलाश की जा रही है।",
-  "The account{{s}} below {{verb}} already proxied by the selected account on the {{chainName}} chain in your extension. Select {{selectionText}} to import.": "नीचे दिए गए खाता{{s}} पहले से {{verb}} आपके एक्सटेंशन में चयनित खाते द्वारा {{chainName}} चेन पर प्रॉक्सी किए गए हैं। आयात करने के लिए {{selectionText}} चुनें।"
+  "The account{{s}} below {{verb}} already proxied by the selected account on the {{chainName}} chain in your extension. Select {{selectionText}} to import.": "नीचे दिए गए खाता{{s}} पहले से {{verb}} आपके एक्सटेंशन में चयनित खाते द्वारा {{chainName}} चेन पर प्रॉक्सी किए गए हैं। आयात करने के लिए {{selectionText}} चुनें।",
+  "Week": "सप्ताह",
+  "Month": "महीना",
+  "Year": "साल",
+  "Price ({{currency}})": "कीमत ({{currency}})",
+  "{{coinId}} Price — Last {{selectedRange}} Days": "{{coinId}} की कीमत — पिछले {{selectedRange}} दिन"
 }

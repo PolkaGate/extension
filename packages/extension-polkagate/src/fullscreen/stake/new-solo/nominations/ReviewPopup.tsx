@@ -65,6 +65,7 @@ export default function ReviewPopup({ address, genesisHash, newSelectedValidator
 
   return (
     <StakingPopup
+      _onClose={handleClose}
       address={address}
       extraDetailConfirmationPage={extraDetailConfirmationPage}
       flowStep={flowStep}
@@ -72,6 +73,7 @@ export default function ReviewPopup({ address, genesisHash, newSelectedValidator
       onClose={handleClose}
       proxyTypeFilter={PROXY_TYPE.STAKING}
       setFlowStep={setFlowStep}
+      showBack
       title={t('Manage Nominations')}
       transaction={tx}
       transactionInformation={transactionInformation}

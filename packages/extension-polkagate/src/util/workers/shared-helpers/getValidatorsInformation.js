@@ -4,26 +4,12 @@
 // @ts-nocheck
 import { hexToString } from '@polkadot/util';
 
-import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '../../constants';
+import { WORKER_TASKS } from '../../constants';
 import getChainName from '../../getChainName';
+import { getPeopleChainName } from '../../peopleChainUtils';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
 
 const BATCH_SIZE = 50;
-
-/**
- * Fetches the chain name based on the genesis hash
- * @param {string} genesisHash - The genesis hash of the chain
- * @returns {string} The name of the chain
-*/
-const getPeopleChainName = (genesisHash) => {
-  if (genesisHash === POLKADOT_GENESIS_HASH) {
-    return 'PolkadotPeople';
-  } else if (genesisHash === KUSAMA_GENESIS_HASH) {
-    return 'KusamaPeople';
-  } else {
-    return 'WestendPeople';
-  }
-};
 
 /**
  * Extended version of DeriveStakingQuery which includes identity information
@@ -64,7 +50,7 @@ export default async function getValidatorsInformation(genesisHash, port) {
 
   if (!chainName) {
     console.error('Invalid genesisHash provided:', genesisHash);
-    port.postMessage(JSON.stringify({ functionName: 'getValidatorsInformation', results: null }));
+    port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.VALIDATORS_INFO, results: null }));
 
     return;
   }
@@ -88,7 +74,6 @@ export default async function getValidatorsInformation(genesisHash, port) {
     closeWebsockets(connections);
 
     // Start connect to the People chain endpoints in order to fetch identities
-    console.log('Connecting to People chain endpoints...');
     const peopleChainName = getPeopleChainName(genesisHash);
     const peopleEndpoints = getChainEndpoints(peopleChainName);
     const { api: peopleApi, connections: peopleConnections } = await fastestEndpoint(peopleEndpoints);
@@ -147,11 +132,11 @@ export default async function getValidatorsInformation(genesisHash, port) {
       }
     };
 
-    port.postMessage(JSON.stringify({ functionName: 'getValidatorsInformation', results: JSON.stringify(results) }));
+    port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.VALIDATORS_INFO, results: JSON.stringify(results) }));
   } catch (e) {
     console.error('Something went wrong while fetching validators', e);
 
-    port.postMessage(JSON.stringify({ functionName: 'getValidatorsInformation', results: null }));
+    port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.VALIDATORS_INFO, results: null }));
   }
 }
 
@@ -179,7 +164,7 @@ async function processDirectIdentities(api, validatorsInfo, validatorsInformatio
       // Process results
       const processedBatch = currentBatch.map((validatorInfo, index) => {
         const identityOption = identityEntries[index];
-        const identity = !identityOption.isSome ? undefined : identityOption.unwrap();
+        const identity = identityOption.isSome ? identityOption.unwrap() : undefined;
 
         return {
           ...validatorInfo,

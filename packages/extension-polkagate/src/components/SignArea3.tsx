@@ -99,7 +99,7 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
   }, [api, formatted, selectedProxy, transaction]);
 
   useEffect(() => {
-    if (!api || !from || !preparedTransaction || signerPayload) {
+    if (!api || !from || !preparedTransaction) {
       return;
     }
 
@@ -133,7 +133,7 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
     })().catch((error) =>
       notify('Something went wrong when making payload:' + error, 'warning')
     );
-  }, [api, preparedTransaction, from, signerOption?.assetId, signerPayload, notify]);
+  }, [api, preparedTransaction, from, signerOption?.assetId, notify]);
 
   const extrinsicPayload = useMemo(() => {
     if (!api || !signerPayload) {

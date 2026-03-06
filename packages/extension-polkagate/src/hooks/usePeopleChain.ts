@@ -7,7 +7,7 @@ import { createWsEndpoints } from '@polkagate/apps-config';
 import { useMemo } from 'react';
 
 import { sanitizeChainName } from '../util';
-import { KUSAMA_PEOPLE_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_PEOPLE_GENESIS_HASH, RELAY_CHAINS_NAMES, WESTEND_PEOPLE_GENESIS_HASH } from '../util/constants';
+import { getPeopleChainGenesisHash } from '../util/peopleChainUtils';
 import useChainInfo from './useChainInfo';
 import useMetadata from './useMetadata';
 
@@ -15,28 +15,6 @@ interface PeopleChainInfo {
   peopleChain: Chain | null | undefined;
   endpoint: string | undefined;
 }
-/**
- * @description To provide people chain if its already available for that chain
- * @param genesisHash
- * @returns endpoint and chain
- */
-
-const getPeopleChainGenesisHash = (chainName: string | undefined) => {
-  const startWith = RELAY_CHAINS_NAMES.find((name) => chainName?.startsWith(name)) || undefined;
-
-  switch (startWith) {
-    case 'Westend':
-      return WESTEND_PEOPLE_GENESIS_HASH;
-    case 'Kusama':
-      return KUSAMA_PEOPLE_GENESIS_HASH;
-    case 'Polkadot':
-      return POLKADOT_PEOPLE_GENESIS_HASH;
-    case 'Paseo':
-      return PASEO_GENESIS_HASH;
-    default:
-      return undefined;
-  }
-};
 
 const allEndpoints = createWsEndpoints();
 

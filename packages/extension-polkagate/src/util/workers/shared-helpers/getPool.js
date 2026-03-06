@@ -3,6 +3,7 @@
 
 import { BN, BN_ZERO, bnMax, hexToString } from '@polkadot/util';
 
+import { WORKER_TASKS } from '../../constants';
 import getChainName from '../../getChainName';
 import getPoolAccounts from '../../getPoolAccounts';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
@@ -51,7 +52,7 @@ export async function getPool(genesisHash, stakerAddress, id, port) {
     if (!member) {
       console.log(`can not find member for ${stakerAddress}`);
 
-      port.postMessage(JSON.stringify({ functionName: 'getPool', results: JSON.stringify(null) }));
+      port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.GET_POOL, results: JSON.stringify(null) }));
 
       return;
     }
@@ -64,7 +65,7 @@ export async function getPool(genesisHash, stakerAddress, id, port) {
   if (!accounts) {
     console.log(`can not find a pool with id:${poolId}`);
 
-    port.postMessage(JSON.stringify({ functionName: 'getPool', results: JSON.stringify(null) }));
+    port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.GET_POOL, results: JSON.stringify(null) }));
 
     return;
   }
@@ -108,7 +109,7 @@ export async function getPool(genesisHash, stakerAddress, id, port) {
     token
   };
 
-  port.postMessage(JSON.stringify({ functionName: 'getPool', results: JSON.stringify(poolInfo) }));
+  port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.GET_POOL, results: JSON.stringify(poolInfo) }));
 
   const allPoolMembers = await api.query['nominationPools']['poolMembers'].entries();
 
@@ -131,7 +132,7 @@ export async function getPool(genesisHash, stakerAddress, id, port) {
 
   poolInfo.poolMembers = poolMembers;
 
-  port.postMessage(JSON.stringify({ functionName: 'getPool', results: JSON.stringify(poolInfo) }));
+  port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.GET_POOL, results: JSON.stringify(poolInfo) }));
 
   closeWebsockets(connections);
 }
