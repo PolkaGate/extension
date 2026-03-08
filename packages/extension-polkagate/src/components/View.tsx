@@ -46,7 +46,14 @@ function View({ children }: Props): React.ReactElement<Props> {
     }
   }), [mode]);
 
-  const theme = useMemo(() => createTheme(mode === 'light' ? light : dark), [mode]);
+  const theme = useMemo(() => {
+    const base = mode === 'light' ? light : dark;
+
+    return createTheme({
+      ...base,
+      components: base.components
+    });
+  }, [mode]);
 
   return (
     <ColorContext.Provider value={colorMode}>
@@ -65,6 +72,7 @@ const BodyTheme = createGlobalStyle<{ theme: Theme }>`
   body {
     background-color: ${(props) => props.theme.palette.background.paper};
     position: relative;
+    cursor: default;
   }
 
   div#root{
