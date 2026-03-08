@@ -20,9 +20,9 @@ export async function getBalances(chainName, addresses, userAddedEndpoints, port
   const { api, connections } = await fastestEndpoint(chainEndpoints);
 
   if (api.isConnected && api.derive.balances) {
-    const { metadata } = metadataFromApi(api);
+    const { metadata } = await metadataFromApi(api);
 
-    console.info(chainName, 'metadata : fetched and saved.');
+    console.info(chainName, 'metadata : fetched and saved.(getBalances)');
     port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.RELAY, metadata }));
 
     const requests = addresses.map(async (address) => {

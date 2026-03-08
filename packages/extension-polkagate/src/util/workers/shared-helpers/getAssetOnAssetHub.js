@@ -17,30 +17,35 @@ export async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
   const { api, connections } = await fastestEndpoint(endpoints);
 
-  const { metadata } = metadataFromApi(api);
+  let results = {};
 
-  console.info(chainName, 'metadata : fetched and saved.');
-  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, metadata }));
+  if (api.isConnected) {
+    const { metadata } = await metadataFromApi(api);
 
-  const results = await toGetNativeToken(addresses, api, chainName);
+    console.info(chainName, 'metadata : fetched and saved. (getAssetOnAssetHub)');
+    port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, metadata }));
 
-  // @ts-ignore
-  const nonNativeAssets = (assetsToBeFetched || []).filter((asset) => !asset.extras?.isNative);
+    results = await toGetNativeToken(addresses, api, chainName);
 
-  /** to calculate a new Foreign Token like MYTH asset id based on its XCM multi-location */
-  // const allForeignAssets = await api.query.foreignAssets.asset.entries();
-  // for (const [key, _others] of allForeignAssets) {
-  //   const id = key.args[0];
-  //   const assetMetaData = await api.query.foreignAssets.metadata(id);
+    // @ts-ignore
+    const nonNativeAssets = (assetsToBeFetched || []).filter((asset) => !asset.extras?.isNative);
 
-  //   if (assetMetaData.toHuman().symbol === 'MYTH') {
-  //     console.log('new foreign asset id:', encodeLocation(id));
-  //   }
-  // }
+    /** to calculate a new Foreign Token like MYTH asset id based on its XCM multi-location */
+    // const allForeignAssets = await api.query.foreignAssets.asset.entries();
+    // for (const [key, _others] of allForeignAssets) {
+    //   const id = key.args[0];
+    //   const assetMetaData = await api.query.foreignAssets.metadata(id);
 
-  await getAssets(addresses, api, nonNativeAssets, chainName, results);
+    //   if (assetMetaData.toHuman().symbol === 'MYTH') {
+    //     console.log('new foreign asset id:', encodeLocation(id));
+    //   }
+    // }
 
-  console.info(chainName, ': account assets fetched.');
+    await getAssets(addresses, api, nonNativeAssets, chainName, results);
+
+    console.info(chainName, ': account assets fetched.');
+  }
+
   port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, results }));
   closeWebsockets(connections);
 }

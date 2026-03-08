@@ -12,19 +12,32 @@ import { base64Encode } from '@polkadot/util-crypto';
 
 const endpoints = createWsEndpoints();
 
-export function metadataFromApi(api: ApiPromise): { metadata: MetadataDef } {
-  const DEFAULT_DECIMALS = api.registry.createType('u32', 12);
-  const DEFAULT_SS58 = api.registry.createType('u32', 42);
-  const chainName = api.runtimeChain.toHuman();
-  const apiGenesisHash = api.genesisHash.toHex();
-  const color = endpoints.find(({ genesisHash, ui }) => genesisHash === apiGenesisHash && ui.color)?.ui?.color;
+const isEvmCompatible = async(api: ApiPromise): Promise<boolean> => {
   const isEvmChain =
     api.query['evm'] !== undefined ||
     api.tx['evm'] !== undefined;
 
+  const props = await api.rpc.system.properties();
+
+  return (
+    props?.isEthereum?.isTrue ||
+    isEvmChain
+  );
+};
+
+export async function metadataFromApi(api: ApiPromise): Promise<{ metadata: MetadataDef; }> {
+  const DEFAULT_DECIMALS = api.registry.createType('u32', 12);
+  const DEFAULT_SS58 = api.registry.createType('u32', 42);
+  const chainName = api.runtimeChain.toHuman();
+  const apiGenesisHash = api.genesisHash.toHex();
+
+  const color = endpoints.find(({ genesisHash, ui }) => genesisHash === apiGenesisHash && ui.color)?.ui?.color;
+
+  const isEthereum = await isEvmCompatible(api);
+
   const metadata = {
     chain: chainName,
-    chainType: (isEvmChain ? 'ethereum' : 'substrate') as 'ethereum' | 'substrate',
+    chainType: isEthereum ? 'ethereum' : 'substrate',
     color,
     genesisHash: apiGenesisHash,
     icon: getSystemIcon(chainName, api.runtimeVersion.specName.toString()),

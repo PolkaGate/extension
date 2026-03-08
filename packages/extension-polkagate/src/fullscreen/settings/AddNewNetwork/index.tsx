@@ -77,7 +77,7 @@ function AddNewNetwork({ closePopup }: Props): React.ReactElement {
 
       api = await ApiPromise.create({ provider: wsProvider });
 
-      const { metadata } = metadataFromApi(api);
+      const { metadata } = await metadataFromApi(api);
 
       if (!metadata.color) {
         metadata.color = getRandomColor();
