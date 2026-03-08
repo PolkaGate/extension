@@ -256,7 +256,7 @@ export default async function getNftHandler(addresses, port) {
 
       if (tryCount === 5) {
         console.warn('Shared worker, Unable to fetch NFTs');
-        port.postMessage(JSON.stringify({ functionName: NFT_FUNCTION_NAME, results: undefined }));
+        port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.GET_NFTS, results: undefined }));
       } else {
         // Wait for a delay before retrying (e.g., exponential backoff)
         await new Promise((resolve) => setTimeout(resolve, tryCount * 1000));
