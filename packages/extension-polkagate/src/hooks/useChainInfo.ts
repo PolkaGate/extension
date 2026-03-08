@@ -7,8 +7,8 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import { useMemo } from 'react';
 
 import { sanitizeChainName } from '../util';
-import chains from '../util/chains';
 import { isMigrated } from '../util/migrateHubUtils';
+import useAllChains from './useAllChains';
 import useApi from './useApi';
 import useMetadata from './useMetadata';
 
@@ -42,14 +42,9 @@ export interface ChainInfo {
 export default function useChainInfo(genesisHash: string | null | undefined, noApi = false): ChainInfo {
   const chain = useMetadata(genesisHash, true);
   const api = useApi(noApi ? undefined : genesisHash);
+  const allChains = useAllChains();
 
   return useMemo(() => {
-    const chainInfo = chains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
-    const chainName = sanitizeChainName(chainInfo?.chain ?? chain?.name, true);
-    const decimal = chainInfo?.tokenDecimal;
-    const token = chainInfo?.tokenSymbol;
-    const displayName = isMigrated(genesisHash ?? '') ? chainName : chainInfo?.name ?? chainName;
-
     if (!genesisHash) {
       return {
         api: undefined,
@@ -60,6 +55,12 @@ export default function useChainInfo(genesisHash: string | null | undefined, noA
         token: undefined
       };
     }
+
+    const chainInfo = allChains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
+    const chainName = sanitizeChainName(chainInfo?.chain ?? chain?.name, true);
+    const decimal = chainInfo?.tokenDecimal;
+    const token = chainInfo?.tokenSymbol;
+    const displayName = isMigrated(genesisHash ?? '') ? chainName : chainInfo?.name ?? chainName;
 
     const hasMatchingGenesisForAPI = api?.genesisHash?.toHex() === genesisHash;
     const hasMatchingGenesisForChain = chain?.genesisHash === genesisHash;
@@ -80,5 +81,5 @@ export default function useChainInfo(genesisHash: string | null | undefined, noA
       displayName,
       token: token ?? chain?.tokenSymbol
     };
-  }, [api, chain, genesisHash]);
+  }, [allChains, api, chain, genesisHash]);
 }
