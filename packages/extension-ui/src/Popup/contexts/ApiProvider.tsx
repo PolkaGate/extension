@@ -145,11 +145,9 @@ export default function ApiProvider({ children }: { children: React.ReactNode })
 
   const handleAutoMode = useCallback(async (genesisHash: string, endpoints: DropdownOption[]) => {
     const wssEndpoints = endpoints.filter(({ value }) => String(value).startsWith('wss'));
-    console.info('ℹ️ handling auto mode connection...!');
     const { api, selectedEndpoint } = await fastestConnection(wssEndpoints);
 
     if (!api || !selectedEndpoint) {
-      console.warn('Failed to initiate api!');
       resolvePendingConnections(genesisHash, undefined, AUTO_MODE.value);
 
       return;
@@ -161,7 +159,6 @@ export default function ApiProvider({ children }: { children: React.ReactNode })
   const connectToEndpoint = useCallback(async (genesisHash: string, endpointToConnect: string) => {
     try {
       const wsProvider = new WsProvider(endpointToConnect);
-      console.info('ℹ️ connecting to ...! endpoint:', endpointToConnect);
       const newApi = await ApiPromise.create({ provider: wsProvider });
 
       handleNewApi(newApi, endpointToConnect);
@@ -186,8 +183,6 @@ export default function ApiProvider({ children }: { children: React.ReactNode })
 
   const requestApiConnection = useCallback((genesisHash: string, endpoint: EndpointType | undefined, endpoints: DropdownOption[]) => {
     const endpointValue = endpoint?.endpoint;
-
-    console.info('ℹ️ request api Connection...! endpoint:', endpointValue);
 
     if (!endpointValue || !endpointManager) {
       console.warn('No endpoint in requestApiConnection!');
@@ -223,8 +218,6 @@ export default function ApiProvider({ children }: { children: React.ReactNode })
   }, [connectToEndpoint, connectToLightClient, handleAutoMode]);
 
   const getApi = useCallback(async (genesisHash: string | null | undefined, endpoints: DropdownOption[]): Promise<ApiPromise | undefined> => {
-    console.info('ℹ️ getting api...!');
-
     if (!genesisHash) {
       return Promise.resolve(undefined);
     }

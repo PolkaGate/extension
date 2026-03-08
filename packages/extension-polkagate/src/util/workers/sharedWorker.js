@@ -20,8 +20,6 @@ const assetsChains = createAssets();
 onconnect = (/** @type {{ ports: any[]; }} */ event) => {
   const port = event.ports[0]; // Get the MessagePort from the connection
 
-  console.info('Shared worker: port connected');
-
   port.onmessage = (/** @type {{ data: { functionName: any; parameters: any; }; }} */ e) => {
     const { functionName, parameters } = e.data;
 
