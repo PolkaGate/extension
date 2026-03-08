@@ -33,7 +33,7 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
   const { pathname } = useLocation();
 
   const selectedChains = useSelectedChains();
-  const allChains = useGenesisHashOptions(false);
+  const allChains = useGenesisHashOptions();
   const selectedAccount = useSelectedAccount();
   const selectedAccountChain = useAccountSelectedChain(selectedAccount?.address);
   const refContainer = useRef<HTMLDivElement>(null);

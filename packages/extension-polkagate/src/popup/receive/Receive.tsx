@@ -20,6 +20,7 @@ import { useFormatted, useGenesisHashOptions, useSelectedAccount, useTranslation
 import { GradientDivider, RedGradient } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util';
 import BackButton from '../accountsLists/BackButton';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 const ListItem = styled(Grid)(() => ({
   '&:hover': {
@@ -78,11 +79,12 @@ function AddressComponent({ address, chain }: AddressComponentProp) {
 
 interface SelectChainProp {
   setSelectedChain: React.Dispatch<React.SetStateAction<DropdownOption | undefined>>;
+  isEthereum: boolean;
 }
 
-function SelectNetwork({ setSelectedChain }: SelectChainProp) {
+function SelectNetwork({ isEthereum, setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
-  const allChains = useGenesisHashOptions(false);
+  const allChains = useGenesisHashOptions(isEthereum);
 
   const customSort = useCallback((itemA: DropdownOption, itemB: DropdownOption) => {
     const hasRelay = (str: string) => str.toLowerCase().includes('relay');
@@ -238,12 +240,6 @@ export default function Receive({ openPopup, setOpenPopup }: Props) {
 
   const [selectedChain, setSelectedChain] = useState<DropdownOption | undefined>();
 
-  // useEffect(() => {
-  //   if (isEthereumAddress(selectedAddress?.address)) {
-  //     setSelectedChain({ genesisHash: ETHEREUM_GENESISHASH, name: 'Ethereum' } as unknown as NetworkInfo);
-  //   }
-  // }, [selectedAddress?.address]);
-
   const handleClose = useCallback(() => {
     setOpenPopup();
     setSelectedChain(undefined);
@@ -279,6 +275,7 @@ export default function Receive({ openPopup, setOpenPopup }: Props) {
           <div style={{ position: 'relative', zIndex: 1 }}>
             {!selectedChain &&
               <SelectNetwork
+                isEthereum = {isEthereumAddress(selectedAddress?.address || '')}
                 setSelectedChain={setSelectedChain}
               />
             }

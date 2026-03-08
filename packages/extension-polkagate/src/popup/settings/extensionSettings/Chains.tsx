@@ -24,7 +24,7 @@ export default function Chains(): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const allChains = useGenesisHashOptions(false);
+  const allChains = useGenesisHashOptions();
 
   const [searchedChain, setSearchedChain] = useState<DropdownOption[]>();
   const [selectedChains, setSelectedChains] = useState<Set<string>>(new Set());

@@ -86,7 +86,7 @@ export default function useNotifications(justLoadData = true) {
   const { accounts, enable: isNotificationEnable, governance: governanceChains, receivedFunds: isReceivedFundsEnable, stakingRewards: stakingRewardChains } = notificationSetting;
 
   const selectedChains = useSelectedChains();
-  const allChains = useGenesisHashOptions(false);
+  const allChains = useGenesisHashOptions();
 
   // fetchState to avoid duplicate network calls and redundant state updates
   const [fetchState, setFetchState] = useReducer(FUNCTION, INITIALIZE);

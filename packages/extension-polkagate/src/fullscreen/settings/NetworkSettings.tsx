@@ -94,7 +94,7 @@ function AddButton(): React.ReactElement {
 
 function NetworkSettings(): React.ReactElement {
   const { t } = useTranslation();
-  const allChains = useGenesisHashOptions(false);
+  const allChains = useGenesisHashOptions();
 
   const [searchedChain, setSearchedChain] = useState<DropdownOption[]>();
   const [selectedChains, setSelectedChains] = useState<Set<string>>(new Set());

@@ -14,6 +14,7 @@ import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2'
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { useFormatted, useGenesisHashOptions, useSelectedAccount, useTranslation } from '../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
@@ -45,11 +46,12 @@ const ListItem = styled(Grid)(() => ({
 
 interface SelectChainProp {
   setSelectedChain: React.Dispatch<React.SetStateAction<DropdownOption | undefined>>;
+  isEthereum: boolean;
 }
 
-function SelectChain({ setSelectedChain }: SelectChainProp) {
+function SelectChain({ isEthereum, setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
-  const allChains = useGenesisHashOptions(false);
+  const allChains = useGenesisHashOptions(isEthereum);
 
   const [keyword, setSearchKeyword] = useState<string>();
 
@@ -176,8 +178,11 @@ function Receive({ address, closePopup, onClose, setAddress }: Props): React.Rea
       <Grow in>
         <Grid container>
           {!selectedChain
-            ? <SelectChain setSelectedChain={setSelectedChain} />
-            : <>
+            ? (<SelectChain
+              isEthereum={isEthereumAddress(address || '')}
+              setSelectedChain={setSelectedChain}
+               />)
+            : (<>
               <Stack direction='column' justifyItems='center' sx={{ display: 'block', width: '100%' }}>
                 <Address2
                   address={address}
@@ -225,7 +230,7 @@ function Receive({ address, closePopup, onClose, setAddress }: Props): React.Rea
                 open={showSnackbar}
                 text={t('{{chainName}} address copied!', { replace: { chainName } })}
               />
-            </>
+            </>)
           }
         </Grid>
       </Grow>
