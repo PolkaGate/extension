@@ -37,7 +37,7 @@ export async function metadataFromApi(api: ApiPromise): Promise<{ metadata: Meta
 
   const metadata = {
     chain: chainName,
-    chainType: isEthereum ? 'ethereum' : 'substrate',
+    chainType: (isEthereum ? 'ethereum' : 'substrate') as 'ethereum' | 'substrate',
     color,
     genesisHash: apiGenesisHash,
     icon: getSystemIcon(chainName, api.runtimeVersion.specName.toString()),
