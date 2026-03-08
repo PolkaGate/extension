@@ -38,6 +38,7 @@ function ReceiveGeneral({ closePopup, openPopup }: Props): React.ReactElement {
         onApply={onApply}
         open={!address}
         setAddress={setAddress}
+        showAll
       />
       {address &&
         <Receive

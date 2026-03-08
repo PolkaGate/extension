@@ -24,7 +24,7 @@ interface ChooseAccountMenuProps {
   isSelectedAccountApplicable?: boolean; // to let enable apply on selected account
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>> | undefined;
   showAll?: boolean;
-    showAddressBook?: boolean;
+  showAddressBook?: boolean;
 }
 
 export default function AccountListModal({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress, showAddressBook, showAll }: ChooseAccountMenuProps): React.ReactElement {
