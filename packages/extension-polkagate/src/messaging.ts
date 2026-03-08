@@ -219,7 +219,6 @@ export async function getMetadata(genesisHash?: string | null, isPartial = false
         ...chain,
         specVersion: 0,
         tokenDecimals: 15,
-        tokenSymbol: 'Unit',
         types: {}
       } as MetadataDef, isPartial);
     }
