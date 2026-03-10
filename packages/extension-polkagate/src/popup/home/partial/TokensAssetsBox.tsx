@@ -251,7 +251,7 @@ function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
       if (baseToken) {
         genesisHash = baseToken.genesisHash.toString();
         decimal = baseToken.decimal;
-      } else { // @AMIRKHANEF does this fallback really needed?
+      } else { // is this fallback really needed?
         const baseTokenFallback = allChains.find(({ name, tokenSymbol }) => !/Asset Hub|People/.test(name) && tokenSymbol.toLowerCase() === token.toLowerCase());
 
         genesisHash = baseTokenFallback?.genesisHash;
