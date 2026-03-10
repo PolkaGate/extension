@@ -934,5 +934,10 @@
   "Month": "",
   "Year": "",
   "Price ({{currency}})": "",
-  "{{coinId}} Price — Last {{selectedRange}} Days": ""
+  "{{coinId}} Price — Last {{selectedRange}} Days": "",
+  "everything": "",
+  "Choose account type": "",
+  "account type": "",
+  "Polkadot & parachains": "",
+  "Moonbeam & other EVM networks": ""
 }

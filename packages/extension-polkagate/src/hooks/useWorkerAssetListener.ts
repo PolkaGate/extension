@@ -11,10 +11,10 @@ import { isObject } from '@polkadot/util';
 
 import { updateMetadata } from '../messaging';
 import { isHexToBn } from '../util';
-import { FETCHING_ASSETS_FUNCTION_NAMES } from '../util/constants';
+import { FETCHING_ASSETS_FN } from '../util/constants';
 
 interface WorkerMessage { functionName?: string, metadata?: MetadataDef, results?: Record<string, MessageBody[]> }
-const FUNCTIONS = Object.values(FETCHING_ASSETS_FUNCTION_NAMES);
+const FUNCTIONS = Object.values(FETCHING_ASSETS_FN);
 
 interface BalancesDetails {
   ED: BN,
@@ -110,7 +110,7 @@ export default function useWorkerAssetListener(
 
         const _assets: Record<string, FetchedBalance[]> = {};
 
-        if (functionName === FETCHING_ASSETS_FUNCTION_NAMES.RELAY) {
+        if (functionName === FETCHING_ASSETS_FN.SINGLE_ASSET) {
           Object.keys(results).forEach((address) => {
             _assets[address] = [
               {
@@ -126,7 +126,12 @@ export default function useWorkerAssetListener(
           });
         }
 
-        if ([FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET, FETCHING_ASSETS_FUNCTION_NAMES.EVM].includes(functionName)) {
+        if ([
+          FETCHING_ASSETS_FN.ASSET_HUB,
+          FETCHING_ASSETS_FN.MULTI_ASSET,
+          FETCHING_ASSETS_FN.ETH,
+          FETCHING_ASSETS_FN.EVM
+        ].includes(functionName)) {
           Object.keys(results).forEach((address) => {
             _assets[address] = results[address].map(
               (message: MessageBody) => {

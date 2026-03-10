@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
+import { FETCHING_ASSETS_FN } from '../../constants';
 import { closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
 import { getAssets } from './getAssets.js';
 
@@ -23,7 +23,7 @@ export async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName
     const { metadata } = await metadataFromApi(api);
 
     console.info(chainName, 'metadata : fetched and saved. (getAssetOnAssetHub)');
-    port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, metadata }));
+    port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.ASSET_HUB, metadata }));
 
     results = await toGetNativeToken(addresses, api, chainName);
 
@@ -46,6 +46,6 @@ export async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName
     console.info(chainName, ': account assets fetched.');
   }
 
-  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, results }));
+  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.ASSET_HUB, results }));
   closeWebsockets(connections);
 }

@@ -357,11 +357,13 @@ export const STORAGE_KEY = {
 };
 
 // Function names for asset fetching worker calls
-export const FETCHING_ASSETS_FUNCTION_NAMES = {
+export const FETCHING_ASSETS_FN = {
   ASSET_HUB: 'getAssetOnAssetHub',
-  EVM: 'getEvmAssets',
+  ETH: 'getAssetOnEthereum',
+  EVM: 'getAssetOnEVMChain',
   MULTI_ASSET: 'getAssetOnMultiAssetChain',
-  RELAY: 'getAssetOnRelayChain'
+  RELAY: 'getAssetOnRelayChain',
+  SINGLE_ASSET: 'getAssetOnSingleAssetChain'
 };
 
 export const WORKER_TASKS = {

@@ -9,11 +9,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { setStorage, toCamelCase, updateStorage } from '../util';
-import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH, STORAGE_KEY, TEST_NETS } from '../util/constants';
+import { ASSET_HUBS, FETCHING_ASSETS_FN, RELAY_CHAINS_GENESISHASH, STORAGE_KEY, TEST_NETS } from '../util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '../util/defaultSelectedChains';
-import { EVM_CHAINS_GENESISHASH } from '../util/evmUtils/constantsEth';
+import { ETH_CHAINS_GENESISHASH } from '../util/evmUtils/constantsEth';
 import getChainName from '../util/getChainName';
 import { isMigratedRelay, mapHubToRelay } from '../util/migrateHubUtils';
+import useAllChains from './useAllChains';
 import useFetchAssetsOnChains from './useFetchAssetsOnChains';
 import useIsTestnetEnabled from './useIsTestnetEnabled';
 import useSavedAssetsCache from './useSavedAssetsCache';
@@ -30,85 +31,67 @@ export const DEFAULT_SAVED_ASSETS = { balances: {} as AssetsBalancesPerAddress, 
 
 const assetsChains = createAssets();
 
-const FUNCTIONS = Object.values(FETCHING_ASSETS_FUNCTION_NAMES);
+const FUNCTIONS = Object.values(FETCHING_ASSETS_FN);
 
- /*
- * @description
- * React hook for fetching, combining, caching, and managing asset balances
- * across multiple Polkadot ecosystem chains for one or more accounts.
- *
- * It supports:
- * - Multi-chain asset fetching via workers
- * - AssetHub → RelayChain mapping
- * - Testnet filtering
- * - Auto-selection of chains with non-zero balances
- * - Caching and storage sync
- * - Incremental worker-based updates
- *
- * @param {Object} params
- * @param {AccountJson[] | null} params.accounts
- *        List of user accounts to fetch balances for.
- *
- * @param {DropdownOption[]} params.genesisOptions
- *        All available chain options (genesisHash-based).
- *
- * @param {UserAddedChains} params.userAddedEndpoints
- *        User-defined custom chain endpoints.
- *
- * @param {MessagePort} [params.worker]
- *        Web worker port used for parallel asset fetching.
- *
- * @param {boolean} [params.isExtensionLocked]
- *        Whether the extension is currently locked.
- *
- * @param {boolean} [params.checkAllChains]
- *        If true, fetches balances on all chains and automatically
- *        updates selected chains based on non-zero balances.
- *
- * @returns {SavedAssets | undefined | null}
- * - `SavedAssets` when balances are available
- * - `undefined` while loading
- * - `null` if fetching is disabled or not applicable
- *
- * @example
- * const assets = useAssetsBalances({
- *   accounts,
- *   genesisOptions,
- *   userAddedEndpoints,
- *   worker,
- *   isExtensionLocked,
- *   checkAllChains: true
- * });
- *
- * if (assets?.balances) {
- *   console.log(assets.timeStamp);
- * }
- */
-export default function useAssetsBalances({ accounts,
-  checkAllChains,
-  genesisOptions,
-  isExtensionLocked,
-  userAddedEndpoints,
-  worker }: {
-    accounts: AccountJson[] | null;
-    genesisOptions: DropdownOption[];
-    userAddedEndpoints: UserAddedChains;
-    worker?: MessagePort;
-    isExtensionLocked?: boolean;
-    checkAllChains?: boolean;
-  }): SavedAssets | undefined | null {
+/*
+* @description
+* React hook for fetching, combining, caching, and managing asset balances
+* across multiple Polkadot ecosystem chains for one or more accounts.
+*
+* It supports:
+* - Multi-chain asset fetching via workers
+* - AssetHub → RelayChain mapping
+* - Testnet filtering
+* - Auto-selection of chains with non-zero balances
+* - Caching and storage sync
+* - Incremental worker-based updates
+*
+* @param {Object} params
+* @param {AccountJson[] | null} params.accounts
+*        List of user accounts to fetch balances for.
+*
+* @param {DropdownOption[]} params.genesisOptions
+*        All available chain options (genesisHash-based).
+*
+* @param {UserAddedChains} params.userAddedEndpoints
+*        User-defined custom chain endpoints.
+*
+* @param {MessagePort} [params.worker]
+*        Web worker port used for parallel asset fetching.
+*
+* @param {boolean} [params.isExtensionLocked]
+*        Whether the extension is currently locked.
+*
+* @param {boolean} [params.checkAllChains]
+*        If true, fetches balances on all chains and automatically
+*        updates selected chains based on non-zero balances.
+*/
+export default function useAssetsBalances({ accounts, checkAllChains, genesisOptions, isExtensionLocked, userAddedEndpoints, worker }: {
+  accounts: AccountJson[] | null;
+  genesisOptions: DropdownOption[];
+  userAddedEndpoints: UserAddedChains;
+  worker?: MessagePort;
+  isExtensionLocked?: boolean;
+  checkAllChains?: boolean;
+}): SavedAssets | undefined | null {
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const workerCallsCount = useRef<number>(0);
+  const evmChains = useAllChains('ethereum');
 
   const isTestnetEnabled = useIsTestnetEnabled();
   const selectedChains = useSelectedChains();
-  const chainsToFetchAssets = (checkAllChains ? genesisOptions.map(({ value }) => value).filter(Boolean) : selectedChains) as string[];
-  const workerCallsCount = useRef<number>(0);
+
+  const chainsToFetchAssets = (checkAllChains
+    ? genesisOptions.map(({ value }) => value).filter(Boolean)
+    : selectedChains) as string[];
 
   /** To limit calling of this heavy call on just home and account details */
   const shouldFetchAssets = !isExtensionLocked && (pathname === '/' || pathname.startsWith('/accountfs'));
 
-  /** We need to trigger address change when a new address is added, without affecting other account fields. Therefore, we use the length of the accounts array as a dependency. */
+  /** We need to trigger address change when a new address is added, without affecting other account fields.
+   * Therefore, we use the length of the accounts array as a dependency.
+   */
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const addresses = useMemo(() => accounts?.map(({ address }) => address), [accounts?.length]);
 
@@ -169,8 +152,6 @@ export default function useAssetsBalances({ accounts,
 
       return;
     }
-
-    // console.log('setFetchedAssets in combineAndSetAssets:', assets);
 
     setFetchedAssets((prev) => {
       const combinedAsset = {
@@ -236,28 +217,35 @@ export default function useAssetsBalances({ accounts,
       return;
     }
 
-    const _selectedChains = isTestnetEnabled ? chainsToFetchAssets : chainsToFetchAssets.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
+    const evmChainsGenesisHashes = evmChains.map(({ genesisHash }) => genesisHash as string);
+
+    const _selectedChains = isTestnetEnabled
+      ? chainsToFetchAssets
+      : chainsToFetchAssets.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
+
     const multipleAssetsChainsNames = Object.keys(assetsChains);
 
     const singleAssetChains = genesisOptions.filter(({ text, value }) =>
       _selectedChains.includes(value as string) &&
       !ASSET_HUBS.includes(value as string) &&
-      !RELAY_CHAINS_GENESISHASH.includes(value as string) &&
-      !EVM_CHAINS_GENESISHASH.includes(value as string) &&
-      !multipleAssetsChainsNames.includes(toCamelCase(text) || '')
-    );
+      !RELAY_CHAINS_GENESISHASH.includes(value as string) && // do not check relay chains after migration
+      !ETH_CHAINS_GENESISHASH.includes(value as string) &&
+      !multipleAssetsChainsNames.includes(toCamelCase(text) || '') &&
+      !evmChainsGenesisHashes.includes(value as string)
+    ).map(({ value }) => value as string);
 
-    /** Fetch assets for all the selected chains by default */
+    /** Loop to fetch assets for all the chosen chains */
     _selectedChains?.forEach((genesisHash) => {
-      const isSingleTokenChain = !!singleAssetChains.find(({ value }) => value === genesisHash);
-      const isEvmChain = EVM_CHAINS_GENESISHASH.includes(genesisHash);
+      const isSingleTokenChain = singleAssetChains.includes(genesisHash);
+      const isEthChain = ETH_CHAINS_GENESISHASH.includes(genesisHash);
+      const isEvmChain = evmChainsGenesisHashes.includes(genesisHash);
       const maybeMultiAssetChainName = multipleAssetsChainsNames.find((chainName) => chainName === getChainName(genesisHash));
 
-      const call = fetchAssets(genesisHash, isSingleTokenChain, isEvmChain, maybeMultiAssetChainName);
+      const call = fetchAssets(genesisHash, isSingleTokenChain, isEthChain, maybeMultiAssetChainName, isEvmChain);
 
       workerCallsCount.current += call;
     });
-  }, [shouldFetchAssets, addresses, fetchAssets, worker, isTestnetEnabled, isUpdate, chainsToFetchAssets, genesisOptions]);
+  }, [shouldFetchAssets, addresses, fetchAssets, worker, isTestnetEnabled, isUpdate, chainsToFetchAssets, genesisOptions, evmChains]);
 
   return fetchedAssets;
 }

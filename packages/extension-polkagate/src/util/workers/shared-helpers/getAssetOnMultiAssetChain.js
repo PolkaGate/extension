@@ -5,7 +5,7 @@
 import { getAssetsObject } from '@paraspell/sdk-pjs';
 
 import { getSubstrateAddress } from '../../address';
-import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
+import { FETCHING_ASSETS_FN } from '../../constants';
 import { toTitleCase } from '../../string';
 // eslint-disable-next-line import/extensions
 import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
@@ -28,7 +28,7 @@ export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, ch
     const { metadata } = await metadataFromApi(api);
 
     console.info(chainName, 'metadata : fetched and saved.(getAssetOnMultiAssetChain)');
-    port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET, metadata }));
+    port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.MULTI_ASSET, metadata }));
 
     results = await toGetNativeToken(addresses, api, chainName);
 
@@ -109,6 +109,6 @@ export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, ch
   }
 
   console.info(chainName, ': account assets fetched.');
-  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET, results }));
+  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.MULTI_ASSET, results }));
   closeWebsockets(connections);
 }

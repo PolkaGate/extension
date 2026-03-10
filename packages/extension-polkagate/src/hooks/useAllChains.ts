@@ -6,7 +6,7 @@ import { useContext, useMemo } from 'react';
 import { UserAddedChainContext } from '../components';
 import chains, { type NetworkInfo } from '../util/chains';
 
-export default function useAllChains(): NetworkInfo[] {
+export default function useAllChains(chainType?: 'ethereum' | 'substrate'): NetworkInfo[] {
   const userAddedChainCtx = useContext(UserAddedChainContext);
 
   return useMemo(() => {
@@ -21,6 +21,15 @@ export default function useAllChains(): NetworkInfo[] {
           })) as unknown as NetworkInfo[];
     }
 
-    return chains.concat(temp);
-  }, [userAddedChainCtx]);
+    const allChains = chains.concat(temp);
+
+    switch (chainType) {
+      case 'ethereum':
+        return allChains.filter(({ isEthereum }) => isEthereum);
+      case 'substrate':
+        return allChains.filter(({ isEthereum }) => !isEthereum);
+      default:
+        return allChains;
+    }
+  }, [chainType, userAddedChainCtx]);
 }
