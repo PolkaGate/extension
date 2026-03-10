@@ -100,9 +100,7 @@ function getTokenLogoOnMultiAssetChain(chainName: string | undefined, info: stri
     ? getLogo2(chainName)?.logo
     : undefined;
 
-  if (found) {
-    return { ...found, subLogo };
-  }
+  return found ? { ...found, subLogo } : undefined;
 }
 
 function getTokenLogoOnSingleAssetChain(iconName: string | undefined): LogoInfo | undefined {
