@@ -1,5 +1,12 @@
 # Change Log
 
+# [1.28.0](https://github.com/polkagate/extension/compare/v1.27.1...v1.28.0) (2026-03-15)
+
+
+### Features
+
+* add Subscan API key to retrieve transaction history ([#2122](https://github.com/polkagate/extension/issues/2122)) ([62fa6df](https://github.com/polkagate/extension/commit/62fa6df1d55cd063c1c1bd175cb4429fd2f906f0))
+
 ## [1.27.1](https://github.com/polkagate/extension/compare/v1.27.0...v1.27.1) (2026-03-05)
 
 

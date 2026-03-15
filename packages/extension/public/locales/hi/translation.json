@@ -934,5 +934,11 @@
   "Month": "महीना",
   "Year": "साल",
   "Price ({{currency}})": "कीमत ({{currency}})",
-  "{{coinId}} Price — Last {{selectedRange}} Days": "{{coinId}} की कीमत — पिछले {{selectedRange}} दिन"
+  "{{coinId}} Price — Last {{selectedRange}} Days": "{{coinId}} की कीमत — पिछले {{selectedRange}} दिन",
+  "A Subscan API key is required. Please add it in settings.": "एक Subscan API कुंजी आवश्यक है। कृपया इसे सेटिंग्स में जोड़ें।",
+  "API key saved successfully": "API कुंजी सफलतापूर्वक सहेजी गई",
+  "Subscan API Key": "Subscan API कुंजी",
+  "Getting an API key from Subscan is easy and free! Just visit https://pro.subscan.io/ and follow the simple steps.": "Subscan से API कुंजी प्राप्त करना आसान और मुफ्त है! बस https://pro.subscan.io/ पर जाएँ और सरल चरणों का पालन करें।",
+  "Invalid API key format.": "API कुंजी का स्वरूप अमान्य है।",
+  "Paste your Subscan API key": "अपनी Subscan API कुंजी पेस्ट करें"
 }

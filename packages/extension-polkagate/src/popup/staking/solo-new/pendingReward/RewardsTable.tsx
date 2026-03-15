@@ -28,7 +28,7 @@ export const TableHeader = ({ checked, onSelectAll }: TableHeaderProp) => {
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', width: '100%' }}>
-      <Grid alignItems='center' container item sx={{ gap: '6px' }} xs={4}>
+      <Grid alignItems='center' container item sx={{ gap: '6px' }} xs={4.5}>
         <CheckBox
           checked={checked}
           onChange={handleAllSelect}
@@ -104,7 +104,7 @@ export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect
           return (
             <Fragment key={index}>
               <Container disableGutters key={index} sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row' }}>
-                <Grid container item sx={{ alignItems: 'center', gap: '6px' }} xs={4}>
+                <Grid container item sx={{ alignItems: 'center', gap: '6px' }} xs={4.5}>
                   <Grid item>
                     <CheckBox
                       checked={isChecked}
@@ -129,11 +129,11 @@ export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect
                     <AssetLogo assetSize='16px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} token={token} />
                   </Grid>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs>
                   <Identity2
                     address={validator}
                     genesisHash={genesisHash ?? ''}
-                    identiconSize={18}
+                    noIdenticon
                     showShortAddress
                     showSocial={false}
                     style={{
