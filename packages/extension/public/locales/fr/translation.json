@@ -939,5 +939,6 @@
   "API key saved successfully": "Clé API enregistrée avec succès",
   "Subscan API Key": "Clé API Subscan",
   "Getting an API key from Subscan is easy and free! Just visit https://pro.subscan.io/ and follow the simple steps.": "Obtenir une clé API de Subscan est facile et gratuit ! Visitez https://pro.subscan.io/ et suivez les étapes simples.",
-  "Invalid API key format.": "Format de clé API invalide."
+  "Invalid API key format.": "Format de clé API invalide.",
+  "Paste your Subscan API key": "Collez votre clé API Subscan"
 }

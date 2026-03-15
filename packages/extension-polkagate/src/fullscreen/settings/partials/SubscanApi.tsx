@@ -71,7 +71,7 @@ export default function SubscanApi(): React.ReactElement {
         errorMessage={isError ? t('Invalid API key format.') : ''}
         hasError={isError}
         onPassChange={onChange}
-        placeholder={'Paste your Subscan API key'}
+        placeholder={t('Paste your Subscan API key')}
         value={apiKey ?? ''}
       />
     </Stack>

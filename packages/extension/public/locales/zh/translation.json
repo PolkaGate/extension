@@ -939,5 +939,6 @@
   "API key saved successfully": "API 密钥已成功保存",
   "Subscan API Key": "Subscan API 密钥",
   "Getting an API key from Subscan is easy and free! Just visit https://pro.subscan.io/ and follow the simple steps.": "从 Subscan 获取 API 密钥既简单又免费！只需访问 https://pro.subscan.io/ 并按照简单步骤操作。",
-  "Invalid API key format.": "API 密钥格式无效。"
+  "Invalid API key format.": "API 密钥格式无效。",
+  "Paste your Subscan API key": "粘贴您的 Subscan API 密钥"
 }
