@@ -4,13 +4,23 @@
 import request from 'umi-request';
 
 import { subscanQueue } from '../class/subscanQueue';
+import { STORAGE_KEY } from './constants';
+import { getStorage } from './storage';
 
 export async function postReq<T>(
   api: string,
   data: Record<string, unknown> = {},
   option?: Record<string, unknown>
 ): Promise<T> {
-  return await request.post(api, { data, ...option }) as T;
+  const apiKey = await getStorage(STORAGE_KEY.SUBSCAN_API_KEY) as string | undefined;
+
+  return await request.post(api, {
+    data,
+    headers: {
+      'x-api-key': apiKey || process.env['SUBSCAN_DEFAULT_KEY'] || ''
+    },
+    ...option
+  }) as T;
 }
 
 export async function fetchFromSubscan<T>(url: string, options?: Record<string, unknown>): Promise<T> {

@@ -16,6 +16,7 @@ import EnableCamera from './partials/EnableCamera';
 import EnableTestNet from './partials/EnableTestNet';
 import Language from './partials/Language';
 import Password from './partials/Password';
+import SubscanApi from './partials/SubscanApi';
 
 function ExtensionSettings(): React.ReactElement {
   return (
@@ -37,6 +38,7 @@ function ExtensionSettings(): React.ReactElement {
             <DappRequests />
             <Appearance />
             <AutoLockTimerAdjustment />
+            <SubscanApi />
           </Stack>
         </Stack>
       </VelvetBox>

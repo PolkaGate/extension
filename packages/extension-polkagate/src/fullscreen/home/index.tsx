@@ -6,6 +6,8 @@ import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
+import { getStorage } from '@polkadot/extension-polkagate/src/util';
+import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { AccountContext } from '../../components';
 import { useAlerts, useTranslation } from '../../hooks';
@@ -30,7 +32,15 @@ function HomePageFullScreen(): React.ReactElement {
       notify(t('No accounts found!'), 'info');
 
       navigate('/onboarding') as void;
+
+      return;
     }
+
+    getStorage(STORAGE_KEY.SUBSCAN_API_KEY).then((key) => {
+      if (!key) {
+        notify(t('A Subscan API key is required. Please add it in settings.'), 'info');
+      }
+    }).catch(console.error);
   }, [accounts, notify, navigate, t, isExtensionLocked]);
 
   return (

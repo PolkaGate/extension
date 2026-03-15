@@ -934,5 +934,11 @@
   "Month": "Mes",
   "Year": "Año",
   "Price ({{currency}})": "Precio ({{currency}})",
-  "{{coinId}} Price — Last {{selectedRange}} Days": "Precio de {{coinId}} — Últimos {{selectedRange}} días"
+  "{{coinId}} Price — Last {{selectedRange}} Days": "Precio de {{coinId}} — Últimos {{selectedRange}} días",
+  "A Subscan API key is required. Please add it in settings.": "Se requiere una clave API de Subscan. Por favor, agréguela en la configuración.",
+  "API key saved successfully": "Clave API guardada con éxito",
+  "Subscan API Key": "Clave API de Subscan",
+  "Getting an API key from Subscan is easy and free! Just visit https://pro.subscan.io/ and follow the simple steps.": "¡Obtener una clave API de Subscan es fácil y gratuito! Solo visite https://pro.subscan.io/ y siga los pasos sencillos.",
+  "Invalid API key format.": "Formato de clave API inválido.",
+  "Paste your Subscan API key": "Pegue su clave API de Subscan"
 }
