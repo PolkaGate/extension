@@ -1,6 +1,8 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Icon } from 'iconsax-react';
+
 import { Grid, IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
 import { Check, Eye, EyeSlash } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -57,16 +59,19 @@ const StyledTextField = styled(TextField, {
 }));
 
 interface Props {
+  errorMessage?: string;
   title?: string;
+  Icon?: Icon;
   onPassChange: (pass: string) => void;
   onEnterPress?: () => unknown;
   style?: React.CSSProperties;
   focused?: boolean;
   hasError?: boolean;
   value?: string;
+  placeholder?: string;
 }
 
-function PasswordInput({ focused = false, hasError = false, onEnterPress, onPassChange, style, title, value }: Props): React.ReactElement {
+function PasswordInput({ Icon, errorMessage, focused = false, hasError = false, onEnterPress, onPassChange, placeholder, style, title, value }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
@@ -92,6 +97,8 @@ function PasswordInput({ focused = false, hasError = false, onEnterPress, onPass
   const commonColor = useMemo(() => isDark
     ? isBlueish ? theme.palette.text.highlight : '#AA83DC'
     : '#8F97B8', [isBlueish, isDark, theme.palette.text.highlight]);
+
+  const InputIcon = Icon ?? Check;
 
   return (
     <Grid container item sx={style}>
@@ -120,7 +127,7 @@ function PasswordInput({ focused = false, hasError = false, onEnterPress, onPass
           ),
           startAdornment: (
             <InputAdornment position='start'>
-              <Check
+              <InputIcon
                 color={hasError ? '#FF4FB9' : focusing ? '#3988FF' : commonColor}
                 size='22'
                 variant={focusing ? 'Bold' : 'Bulk'}
@@ -137,14 +144,14 @@ function PasswordInput({ focused = false, hasError = false, onEnterPress, onPass
         onChange={onChange}
         onFocus={toggle}
         onKeyDown={handleKeyDown}
-        placeholder={t('Password')}
+        placeholder={placeholder || t('Password')}
         theme={theme}
         type={showPassword ? 'text' : 'password'}
         value={value}
       />
       {hasError &&
         <Typography color='#FF4FB9' sx={{ display: 'flex', height: '6px' }} variant='B-1'>
-          {t('Wrong password.')}
+          { errorMessage ?? t('Wrong password.')}
         </Typography>
       }
     </Grid>

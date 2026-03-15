@@ -934,5 +934,10 @@
   "Month": "月",
   "Year": "年",
   "Price ({{currency}})": "价格 ({{currency}})",
-  "{{coinId}} Price — Last {{selectedRange}} Days": "{{coinId}} 价格 — 最近 {{selectedRange}} 天"
+  "{{coinId}} Price — Last {{selectedRange}} Days": "{{coinId}} 价格 — 最近 {{selectedRange}} 天",
+  "A Subscan API key is required. Please add it in settings.": "需要 Subscan API 密钥。请在设置中添加。",
+  "API key saved successfully": "API 密钥已成功保存",
+  "Subscan API Key": "Subscan API 密钥",
+  "Getting an API key from Subscan is easy and free! Just visit https://pro.subscan.io/ and follow the simple steps.": "从 Subscan 获取 API 密钥既简单又免费！只需访问 https://pro.subscan.io/ 并按照简单步骤操作。",
+  "Invalid API key format.": "API 密钥格式无效。"
 }
