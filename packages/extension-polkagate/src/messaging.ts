@@ -106,6 +106,10 @@ export async function getSignature(payload: SignerPayloadJSON): Promise<HexStrin
   return sendMessage('pri(signing.getSignature)', { payload });
 }
 
+export async function signEthereumRaw(address: string, data: string): Promise<HexString | null> {
+  return sendMessage('pri(signing.signEthereumRaw)', { address, data });
+}
+
 export async function unlockAllAccounts(password: string, cacheTime: number, lazy = false): Promise<boolean> {
   return sendMessage('pri(accounts.unlockAll)', { cacheTime, lazy, password });
 }

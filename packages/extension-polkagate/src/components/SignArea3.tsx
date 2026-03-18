@@ -1,6 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Transaction } from 'ethers';
 import type { SignerOptions } from '@polkadot/api/types';
 import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
 import type { ISubmittableResult, SignerPayloadJSON } from '@polkadot/types/types';
@@ -15,7 +16,7 @@ import { noop } from '@polkadot/util';
 
 import { useAccount, useAccountDisplay, useAlerts, useChainInfo, useFormatted, useProxies, useTranslation } from '../hooks';
 import { getSubstrateAddress } from '../util';
-import { send } from '../util/api';
+import { send, sendErc20 } from '../util/api';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
 import NoPrivateKeySigningButton from './NoPrivateKeySigningButton';
 import SignUsingPassword, { type SignUsingPasswordProps } from './SignUsingPassword';
@@ -35,6 +36,7 @@ interface Props {
   address: string | undefined;
   direction?: 'horizontal' | 'vertical';
   disabled?: boolean;
+  unsignedEthTx?: Transaction;
   genesisHash: string | null | undefined;
   ledgerStyle?: React.CSSProperties;
   onClose: () => void
@@ -68,7 +70,7 @@ interface Props {
  * - Submitting the signed extrinsic and tracking the result
  *
 */
-function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingQRProps, signerOption, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
+function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingQRProps, signerOption, style = {}, transaction, unsignedEthTx, withCancel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
@@ -94,6 +96,7 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
     if (!transaction || !api) {
       return;
     }
+    // TODO: add moonbeam chains to proxy supported chains ...
 
     return selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, transaction) : transaction;
   }, [api, formatted, selectedProxy, transaction]);
@@ -200,7 +203,7 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
 
       const _token = token || api.registry.chainTokens[0];
       const decimal = api.registry.chainDecimals[0];
-      const { block = 0, failureText, success, txHash = '' } = txResult;
+      const { block = 0, failureText, fee, success, txHash = '' } = txResult;
 
       const info = {
         block,
@@ -208,6 +211,7 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
         date: Date.now(),
         decimal, // in cross chain transfer this will be the sending chain decimal
         failureText,
+        fee,
         from: { address: String(formatted), name: senderName },
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -222,18 +226,25 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
   }, [api, chain, formatted, selectedProxyAddress, selectedProxyName, senderName, setTxInfo, token]);
 
   const onSignature = useCallback(async({ signature }: { signature: HexString }) => {
-    if (!api || !extrinsicPayload || !signature || !preparedTransaction || !from) {
+    const isContract = unsignedEthTx;
+    const isSubstrate = extrinsicPayload && preparedTransaction && from;
+
+    if (!api || !(isContract || isSubstrate) || !signature) {
       return;
     }
 
     setFlowStep(TRANSACTION_FLOW_STEPS.WAIT_SCREEN);
 
-    const txResult = await send(from, api, preparedTransaction, extrinsicPayload.toHex(), signature);
+    const txResult = isContract
+      ? await sendErc20(api, unsignedEthTx, signature)
+      : isSubstrate
+      ? await send(from, api, preparedTransaction, extrinsicPayload.toHex(), signature)
+      : {} as TxResult;
 
     setFlowStep(TRANSACTION_FLOW_STEPS.CONFIRMATION);
 
     handleTxResult(txResult);
-  }, [api, from, handleTxResult, extrinsicPayload, preparedTransaction, setFlowStep]);
+  }, [unsignedEthTx, extrinsicPayload, preparedTransaction, api, from, setFlowStep, handleTxResult]);
 
   return (
     <>
@@ -265,14 +276,16 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
         {(selectedProxy || !noPrivateKeyAccount) &&
           <SignUsingPassword
             {...extraProps}
+            address={address}
             api={api}
             direction={direction}
-            disabled={disabled || !signerPayload}
+            disabled={disabled || !(signerPayload || unsignedEthTx)}
             onCancel={onClose}
             onSignature={onSignature}
             onUseProxy={selectedProxy ? undefined : toggleSelectProxy}
             proxies={proxies}
             signerPayload={signerPayload}
+            unsignedEthTx={unsignedEthTx}
             withCancel={withCancel}
           />
         }

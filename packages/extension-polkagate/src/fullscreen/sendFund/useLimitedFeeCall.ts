@@ -8,6 +8,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 import type { Inputs } from './types';
 
+import { ethers, Interface } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { amountToMachine, decodeMultiLocation, isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
@@ -15,6 +16,7 @@ import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polka
 import { BN_ONE, BN_ZERO, isFunction } from '@polkadot/util';
 
 import { useChainInfo } from '../../hooks';
+import { ERC20_ABI } from '../../util/evmUtils/constantsEth';
 import { INVALID_PARA_ID, XCM_LOC } from './utils';
 
 /**
@@ -53,6 +55,60 @@ import { INVALID_PARA_ID, XCM_LOC } from './utils';
 export default function useLimitedFeeCall(address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, inputs: Inputs | undefined, genesisHash: string | undefined, teleportState: Teleport, isCrossChain: boolean | undefined, isSupportedByParaspell: boolean) {
   const { api } = useChainInfo(genesisHash);
 
+  const [unsignedEthTx, setUnsignedEthTx] = useState<ethers.Transaction>();
+  const [isContract, setIsContract] = useState<boolean>();
+
+  useEffect(() => {
+    assetId?.startsWith('0x') && api?.rpc.eth?.getCode?.(assetId).then((code) => {
+      setIsContract(code.toHex() !== '0x');
+    }).catch(console.error);
+  }, [address, api, assetId, inputs]);
+
+  useEffect(() => {
+    const { amountAsBN, recipientAddress } = inputs || {};
+
+    if (!address || !api || !isContract || !recipientAddress || !amountAsBN || amountAsBN?.isZero()) {
+      return;
+    }
+
+    const getErc20Call = async () => {
+      const iface = new Interface(ERC20_ABI);
+      const data = iface.encodeFunctionData(
+        'transfer',
+        [recipientAddress, amountAsBN.toString()]
+      );
+
+      const estimatedGas = await api.rpc.eth.estimateGas({
+        data,
+        from: address,
+        to: assetId
+      });
+
+      const nonce = await api.rpc.eth.getTransactionCount(address);
+      const chainId = await api.rpc.eth.chainId();
+      const gasPrice = await api.rpc.eth.gasPrice();
+      const gasLimitBig = BigInt(estimatedGas.toString());
+
+      const unsignedEthTx = ethers.Transaction.from({
+        accessList: [],
+        chainId: Number(chainId),
+        data,
+        gasLimit: gasLimitBig,
+        maxFeePerGas: BigInt(gasPrice.toString()),
+        maxPriorityFeePerGas: 0n,
+        nonce: Number(nonce),
+        to: assetId,
+        type: 2,
+        value: 0n
+      });
+
+      setUnsignedEthTx(unsignedEthTx);
+      setOriginFee(api.createType('Balance', estimatedGas.mul(gasPrice)) as unknown as Balance);
+    };
+
+    getErc20Call().catch(console.error);
+  }, [address, api, assetId, inputs, isContract]);
+
   const [originFee, setOriginFee] = useState<Balance>();
   const [xcmFee, setXcmFee] = useState<Balance>();
 
@@ -86,8 +142,6 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
       return undefined;
     }
 
-  console.log('ecalculateFee 3');
-
     try {
       const module = isNonNativeToken
         ? isOnAssetHub(genesisHash)
@@ -111,7 +165,7 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
             : api.tx[module]['transferAll']
       );
     } catch (e) {
-      console.log('Something wrong while making on network call!', e);
+      console.log('Something wrong while making on-chain call!', e);
 
       return undefined;
     }
@@ -192,15 +246,16 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
       return;
     }
 
-  console.log('ecalculateFee 2');
-
     if (!api?.call?.['transactionPaymentApi']) {
       const dummyAmount = api.createType('Balance', BN_ONE) as unknown as Balance;
 
       return setOriginFee(dummyAmount);
     }
 
-    onChainCall(...onChainParams).paymentInfo(address).then((i) => setOriginFee(i?.partialFee)).catch(console.error);
+    onChainCall(...onChainParams)
+      .paymentInfo(address)
+      .then((i) => setOriginFee(i?.partialFee))
+      .catch(console.error);
   }, [address, api, isSupportedByParaspell, onChainCall, onChainParams]);
 
   useEffect(() => {
@@ -217,35 +272,35 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
       return {};
     }
 
+    const tx = isCrossChain
+      ? crossChainParams && call
+        ? call?.(...crossChainParams)
+        : undefined
+      : onChainParams && onChainCall
+        ? onChainCall?.(...onChainParams)
+        : undefined;
+
+    const asset = {
+      assetId,
+      decimals: decimal,
+      isNative: isNativeToken,
+      symbol: token
+    };
+
     return {
       fee: {
         destinationFee: {
-          asset: {
-            assetId,
-            decimals: decimal,
-            isNative: isNativeToken,
-            symbol: token
-          },
+          asset,
           fee: BN_ZERO
         },
         isCrossChain,
         originFee: {
-          asset: {
-            assetId,
-            decimals: decimal,
-            isNative: isNativeToken,
-            symbol: token
-          },
+          asset,
           fee: isCrossChain ? xcmFee : originFee
         }
       },
-      tx: isCrossChain
-        ? crossChainParams && call
-          ? call?.(...crossChainParams)
-          : undefined
-        : onChainParams && onChainCall
-          ? onChainCall?.(...onChainParams)
-          : undefined
+      tx,
+      unsignedEthTx
     };
-  }, [assetId, call, crossChainParams, decimal, isCrossChain, isNativeToken, onChainCall, onChainParams, originFee, token, xcmFee]);
+  }, [assetId, call, crossChainParams, decimal, unsignedEthTx, isCrossChain, isNativeToken, onChainCall, onChainParams, originFee, token, xcmFee]);
 }

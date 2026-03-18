@@ -78,8 +78,6 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
     const currency = getCurrency(senderChainName, token, assetId);
 
     try {
-       const substrateAddress = evmToAddress(address);
-
       const builder = !isCrossChain && isTransferAll
         ? Builder({ abstractDecimals: false }/* node api/ws_url_string/ws_url_array - optional*/)
           .from(fromChain as TSubstrateChain)
@@ -95,7 +93,7 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
             .currency({ amount, ...currency })
             .address(recipientAddress)
             .senderAddress(address)
-            .ahAddress(substrateAddress)
+            .ahAddress(evmToAddress(address))
           : Builder({ abstractDecimals: false })
             .from(fromChain as TSubstrateChain)
             .to(toChain as TDestination)

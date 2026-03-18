@@ -100,9 +100,9 @@ function DropSelect({ Icon, contentDropWidth, defaultValue, disabled, displayCon
                 text={selectedValueText}
               />
             }
-            {displayContentType === 'account' && selectedValueText &&
+            {displayContentType === 'account' && selectedValue &&
               <PolkaGateIdenticon
-                address={selectedValueText}
+                address={selectedValue as string}
                 size={18}
               />
             }

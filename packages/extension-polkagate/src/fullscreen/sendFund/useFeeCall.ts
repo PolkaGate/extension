@@ -59,11 +59,12 @@ export default function useFeeCall(address: string | undefined, isReadyToMakeTx:
     , [inputs?.token, senderChainName]);
 
   const { paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setInputs, !!isSupportedByParaspell);
-  const { fee, tx } = useLimitedFeeCall(address, inputs?.assetId?.toString(), assetToTransfer, inputs, genesisHash, teleportState, isCrossChain, !!isSupportedByParaspell);
+  const { fee, tx, unsignedEthTx } = useLimitedFeeCall(address, inputs?.assetId?.toString(), assetToTransfer, inputs, genesisHash, teleportState, isCrossChain, !!isSupportedByParaspell);
 
   return useMemo(() => ({
     fee: (isSupportedByParaspell ? paraSpellFee : fee) as ParaspellFees,
     isCrossChain,
-    tx: isSupportedByParaspell ? paraSpellTransaction : tx
-  }), [fee, isCrossChain, isSupportedByParaspell, paraSpellFee, paraSpellTransaction, tx]);
+    tx: isSupportedByParaspell ? paraSpellTransaction : tx,
+    unsignedEthTx
+  }), [unsignedEthTx, fee, isCrossChain, isSupportedByParaspell, paraSpellFee, paraSpellTransaction, tx]);
 }

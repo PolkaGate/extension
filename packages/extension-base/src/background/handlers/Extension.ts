@@ -9,7 +9,7 @@ import type { KeyringAddress } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 // added for plus to import RequestUpdateMeta
-import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountsSetUnlockExpiry, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestCreateAgent, RequestDeriveCreate, RequestDeriveValidate, RequestExplainTx, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountsSetUnlockExpiry, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestCreateAgent, RequestDeriveCreate, RequestDeriveValidate, RequestExplainTx, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningEthereumRawSignature, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 import type State from './State';
 
 import { ALLOWED_PATH, START_WITH_PATH } from '@polkadot/extension-base/defaults';
@@ -17,7 +17,7 @@ import { metadataExpand } from '@polkadot/extension-chains';
 import { TypeRegistry } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
 import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
-import { assert, isHex } from '@polkadot/util';
+import { assert, hexToU8a,isHex, u8aToHex } from '@polkadot/util';
 import { keyExtractSuri, mnemonicGenerate, mnemonicValidate } from '@polkadot/util-crypto';
 
 import { withErrorLog } from './helpers';
@@ -630,9 +630,7 @@ export default class Extension {
       throw new Error('Invalid payload: missing required fields.');
     }
 
-    const { address } = payload;
-
-    const pair = keyring.getPair(address);
+    const pair = keyring.getPair(payload.address);
 
     this.refreshAccountPasswordCache(pair); // check if auto lock duration is expired
 
@@ -645,6 +643,28 @@ export default class Extension {
     const { signature } = registry.createType('ExtrinsicPayload', payload, { version: payload.version }).sign(pair);
 
     return signature;
+  }
+
+  private signEthereumRaw({ address, data }: RequestSigningEthereumRawSignature): HexString | null {
+    const pair = keyring.getPair(address);
+
+    this.refreshAccountPasswordCache(pair);
+
+    if (pair.isLocked) {
+      return null;
+    }
+
+    const bytes = hexToU8a(data);
+    const sigBytes = pair.sign(bytes);
+
+    const v = (sigBytes[64] & 1) + 27;
+    const serialized = new Uint8Array(65);
+
+    serialized.set(sigBytes.slice(0, 32), 0);
+    serialized.set(sigBytes.slice(32, 64), 32);
+    serialized[64] = v;
+
+    return u8aToHex(serialized);
   }
 
   private signingApproveSignature({ id, signature, signedTransaction }: RequestSigningApproveSignature): boolean {
@@ -810,6 +830,9 @@ export default class Extension {
 
       case 'pri(signing.getSignature)':
         return this.getSignature(request as RequestSigningSignature);
+
+      case 'pri(signing.signEthereumRaw)':
+        return this.signEthereumRaw(request as RequestSigningEthereumRawSignature);
 
       case 'pri(accounts.unlockAll)':
         return this.accountsUnlockAll(request as RequestUnlockAllAccounts);

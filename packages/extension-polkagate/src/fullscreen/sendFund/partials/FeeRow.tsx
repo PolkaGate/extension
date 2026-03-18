@@ -1,6 +1,8 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { ISubmittableResult } from '@polkadot/types/types';
 import type { CanPayFee } from '../../../util/types';
 import type { FeeInfo, Inputs } from '../types';
 
@@ -26,10 +28,11 @@ interface Props {
   canPayFee?: CanPayFee; // TODO: Needs a fix to be used since it only works for. native assets
   inputs: Inputs;
   genesisHash: string | undefined;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
+  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
+  transaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
 }
 
-export default function FeeRow({ address, genesisHash, inputs, setInputs }: Props): React.ReactElement {
+export default function FeeRow({ address, genesisHash, inputs, setInputs, transaction }: Props): React.ReactElement {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +72,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
     )
     , [feeAssetsWithBalance, selectedAssetId]);
 
-  const maybePartialFee = usePartialFee(api, inputs, formatted, maybeSelectedNonNativeFeeAsset?.location);
+  const maybePartialFee = usePartialFee(api, transaction, formatted, maybeSelectedNonNativeFeeAsset?.location);
 
   const feeOptions = useMemo(() => {
     if (!feeAssetsWithBalance) {
@@ -189,8 +192,6 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
   }, []);
 
   const showFeeSelector = !!feeOptions?.length && !account?.isExternal;
-
-  console.log('feeInfo.fee in fee row component:', feeInfo?.fee?.toString());
 
   return (
     <Stack direction='column' sx={{ m: '25px 10px 20px', width: '766px' }}>

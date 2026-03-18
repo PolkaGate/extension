@@ -1,6 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Transaction, TransactionLike } from 'ethers';
 import type { ApiPromise } from '@polkadot/api';
 import type { SignerOptions } from '@polkadot/api/submittable/types';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -12,6 +13,10 @@ import type { FrameSystemEventRecord } from '@polkadot/types/lookup';
 import type { ExtrinsicPayloadValue, ISubmittableResult } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 import type { TxResult } from '../types';
+
+import { ethers } from 'ethers';
+
+import { BN_ZERO } from '@polkadot/util';
 
 async function getAppliedFee(api: ApiPromise, signedBlock: SignedBlock, txHashHex: HexString): Promise<string | undefined> {
   const apiAt = await api.at(signedBlock.block.hash);
@@ -119,7 +124,7 @@ export async function signAndSend(
   return new Promise((resolve) => {
     console.log('signing and sending a tx ...');
 
-    extrinsic.signAndSend(pair, options ?? {}, async (result) => {
+    extrinsic.signAndSend(pair, options ?? {}, async(result) => {
       await handleResult(api, resolve, result);
     }).catch((e) => {
       console.log('⚠️ Catch error', e);
@@ -142,7 +147,7 @@ export async function send(
 
     let unsub: (() => void) | undefined;
 
-    const onResult = async (result: ISubmittableResult) => {
+    const onResult = async(result: ISubmittableResult) => {
       const { status } = result;
 
       await handleResult(api, resolve, result);
@@ -170,5 +175,63 @@ export async function send(
         console.log('⚠️ Catch error', e);
         resolve({ block: 0, failureText: String(e), fee: '', success: false, txHash: '' });
       });
+  });
+}
+
+export async function sendErc20(
+  api: ApiPromise,
+  unsignedEthTx: Transaction,
+  signature: HexString
+): Promise<TxResult> {
+  return new Promise((resolve) => {
+    (async() => {
+      try {
+        console.log('✈️ Sending ERC20 transaction ... 🌥️');
+
+        const signedTx = ethers.Transaction.from({
+          ...(unsignedEthTx.toJSON() as TransactionLike<string>),
+          signature: ethers.Signature.from(signature)
+        });
+        const rawSignedTx = signedTx.serialized;
+
+        const txHash = await api.rpc.eth.sendRawTransaction(rawSignedTx);
+        const event = new CustomEvent('transactionState', { detail: 'Broadcast' });
+
+        window.dispatchEvent(event);
+
+        const pollReceipt = async(): Promise<TxResult> => {
+          const receipt = await api.rpc.eth.getTransactionReceipt(txHash);
+
+          if (!receipt || receipt.transactionHash.isNone) {
+            await new Promise((_resolve) => setTimeout(_resolve, 2000));
+
+            return pollReceipt();
+          }
+
+          const blockNumber = receipt.blockNumber.isSome ? receipt.blockNumber.unwrap().toNumber() : 0;
+          const success = receipt.blockNumber.isSome;
+          const gasPrice = await api.rpc.eth.gasPrice();
+          const gasUsed = receipt.gasUsed.isSome ? receipt.gasUsed.unwrap().toBn() : BN_ZERO;
+          const fee = gasUsed.mul(gasPrice).toString();
+
+          const event = new CustomEvent('transactionState', { detail: 'Finalized' });
+
+          window.dispatchEvent(event);
+
+          return {
+            block: blockNumber,
+            failureText: success ? '' : 'ERC20 transfer failed',
+            fee,
+            success,
+            txHash: txHash.toString()
+          };
+        };
+
+        resolve(await pollReceipt());
+      } catch (e) {
+        console.log('⚠️ Catch error', e);
+        resolve({ block: 0, failureText: String(e), fee: '', success: false, txHash: '' });
+      }
+    })().catch(console.error);
   });
 }

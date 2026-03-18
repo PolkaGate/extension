@@ -1,7 +1,9 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
+import type { ISubmittableResult } from '@polkadot/types/types';
 import type { CanPayFee } from '../../util/types';
 import type { Inputs } from './types';
 
@@ -22,9 +24,10 @@ interface Props {
   inputs: Inputs;
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
   teleportState: Teleport;
+  transaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
 }
 
-export default function Step4Summary({ canPayFee, inputs, setInputs }: Props): React.ReactElement {
+export default function Step4Summary({ canPayFee, inputs, setInputs, transaction }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -81,6 +84,7 @@ export default function Step4Summary({ canPayFee, inputs, setInputs }: Props): R
         genesisHash={genesisHash}
         inputs={inputs}
         setInputs={setInputs}
+        transaction={transaction}
       />
     </Motion>
   );

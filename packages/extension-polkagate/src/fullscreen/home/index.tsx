@@ -17,7 +17,7 @@ import AccountList from './AccountList';
 import AccountsAdd from './AccountsAdd';
 import AssetsBars from './assetBars';
 import PortfolioFullScreen from './PortfolioFullScreen';
-import TrendingAssets from './TrendingAssets';
+import TrendingAssets from './trendingAssets';
 
 function HomePageFullScreen(): React.ReactElement {
   const { t } = useTranslation();
