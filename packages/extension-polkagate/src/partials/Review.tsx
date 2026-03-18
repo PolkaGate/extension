@@ -14,7 +14,7 @@ import React, { memo, useMemo } from 'react';
 import { type BN, isBn, noop } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 
-import { AssetLogo, DisplayBalance, GradientDivider, Identity2, MySkeleton, MyTooltip, SignArea3 } from '../components';
+import { AssetLogo, DisplayBalance, GradientDivider, Identity, MySkeleton, MyTooltip, SignArea3 } from '../components';
 import RestakeRewardToggler from '../fullscreen/stake/new-pool/claimReward/partials/RestakeRewardToggler';
 import { RewardHeaderAmount } from '../fullscreen/stake/new-pool/claimReward/partials/Review';
 import { useChainInfo, useFormatted, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
@@ -58,7 +58,7 @@ const RowAccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', borderRadius: '14px', display: 'flex', gap: '12px', mb: '8px', p: '12px 8px' }}>
-      <Identity2
+      <Identity
         address={selectedAccount?.address}
         addressStyle={{ color: isExtension ? 'text.highlight' : '#AA83DC', variant: 'B-4' }}
         charsCount={12}
@@ -147,7 +147,7 @@ export const ContentItem = memo(function ContentItemMemo({ Icon, content, decima
                 />)
               : isAddress(content)
                 ? (
-                  <Identity2
+                  <Identity
                     address={content}
                     genesisHash={genesisHash}
                     identiconSize={22}

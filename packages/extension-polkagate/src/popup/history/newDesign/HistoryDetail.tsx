@@ -11,7 +11,7 @@ import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { BN_ZERO } from '@polkadot/util';
 
-import { DisplayBalance, FadeOnScroll, FormatPrice, GradientButton, Identity2, Transition } from '../../../components';
+import { DisplayBalance, FadeOnScroll, FormatPrice, GradientButton, Identity, Transition } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsExtensionPopup, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
@@ -201,7 +201,7 @@ function DetailCard({ historyItem }: Props) {
                 <Typography color={color} sx={{ bgcolor: isHash ? '#C6AECC26' : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
                   {isBlock && '#'}
                   {isAddress
-                    ? <Identity2
+                    ? <Identity
                       address={value.toString()}
                       addressStyle={{ backgroundColor: '#C6AECC26', borderRadius: '9px', marginTop: '-3%', padding: '2px 3px' }}
                       charsCount={4}

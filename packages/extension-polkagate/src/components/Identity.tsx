@@ -266,7 +266,7 @@ function SocialLinks({ accountInfo, socialStyles }: SocialProps): React.ReactEle
   );
 }
 
-function Identity2({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, inTitleCase, isSelected, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
+function Identity({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, inTitleCase, isSelected, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { chain } = useChainInfo(genesisHash, true);
   const _formatted = useFormatted(address, genesisHash);
   const msData = useMerkleScience(_formatted, chain);
@@ -351,4 +351,4 @@ function Identity2({ accountInfo, address, addressStyle, charsCount = 6, directi
   );
 }
 
-export default React.memo(Identity2);
+export default React.memo(Identity);

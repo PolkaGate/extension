@@ -10,7 +10,7 @@ import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { AssetLogo, DisplayBalance, Identity2, Motion } from '../../components';
+import { AssetLogo, DisplayBalance, Identity, Motion } from '../../components';
 import NoInfoYet from '../../components/NoInfoYet';
 import { useChainInfo, useTranslation } from '../../hooks';
 import getLogo2 from '../../util/getLogo2';
@@ -208,7 +208,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
           ? <Typography color={theme.palette.text.primary} sx={{ pl: '15px' }} variant='H-4' width='fit-content'>
             {t('Pool #{{poolId}}', { poolId: reward.poolId })}
           </Typography>
-          : <Identity2
+          : <Identity
             address={reward.address}
             charsCount={10}
             genesisHash={genesisHash ?? ''}

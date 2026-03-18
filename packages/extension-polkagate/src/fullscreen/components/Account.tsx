@@ -17,7 +17,7 @@ import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, CurrencyContext, FormatPrice, Identity2, MySkeleton } from '../../components';
+import { AssetLogo, CurrencyContext, FormatPrice, Identity, MySkeleton } from '../../components';
 import { useAccountAssets, useAccountSelectedChain, usePrices } from '../../hooks';
 import { setStorage } from '../../util';
 
@@ -170,7 +170,7 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
 
   return (
     <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ ml: '5px', width: '100%', ...style }}>
-      <Identity2
+      <Identity
         address={address}
         genesisHash={_genesisHash}
         nameStyle={{ maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis' }}

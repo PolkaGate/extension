@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import AccountDropDown from '@polkadot/extension-polkagate/src/fullscreen/home/AccountDropDown';
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
 
-import { Identity2 } from '../../components';
+import { Identity } from '../../components';
 import { useUpdateSelectedAccount } from '../../hooks';
 
 interface Props {
@@ -74,7 +74,7 @@ function AccountRowSimple({ account, isFirstAccount, isFirstProfile, isInSetting
               address={address}
               size={identiconSize}
             />
-            <Identity2
+            <Identity
               address={address}
               genesisHash={_genesisHash}
               nameStyle={{ width: `${MAX_ACCOUNT_NAME_WIDTH - OFFSET}px` }}

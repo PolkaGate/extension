@@ -5,7 +5,7 @@ import { Grid, Typography } from '@mui/material';
 import { User } from 'iconsax-react';
 import React, { type Dispatch, memo, type SetStateAction, useCallback, useMemo, useRef } from 'react';
 
-import { AddressInput, DecisionButtons, Identity2, MyTextField } from '@polkadot/extension-polkagate/src/components';
+import { AddressInput, DecisionButtons, Identity, MyTextField } from '@polkadot/extension-polkagate/src/components';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 import { getChainFromAddress } from '@polkadot/extension-polkagate/src/util/getChainFromAddress';
@@ -43,7 +43,7 @@ function AddEditContact({ changeStep, contactAddress, duplicatedError, name, onA
             </Typography>
             {step === STEPS.EDIT &&
                 <Grid container item sx={{ alignItems: 'center', backgroundColor: 'background.paper', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', my: '20px', p: '12px 20px' }}>
-                    <Identity2
+                    <Identity
                         address={contactAddress}
                         genesisHash={genesisHash}
                         name={name}

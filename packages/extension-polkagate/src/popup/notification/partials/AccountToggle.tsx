@@ -4,7 +4,7 @@
 import { Stack } from '@mui/material';
 import React, { type ChangeEvent, memo, useCallback } from 'react';
 
-import { GradientDivider, Identity2, MySwitch } from '@polkadot/extension-polkagate/src/components';
+import { GradientDivider, Identity, MySwitch } from '@polkadot/extension-polkagate/src/components';
 import { POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 
 interface Props {
@@ -26,7 +26,7 @@ function AccountToggle({ address, checked, genesisHash, onSelect, showShortAddre
   return (
     <>
       <Stack alignItems='center' direction='row' justifyContent='space-between'>
-        <Identity2
+        <Identity
           address={address}
           genesisHash={genesisHash ?? POLKADOT_GENESIS_HASH}
           identiconSize={24}

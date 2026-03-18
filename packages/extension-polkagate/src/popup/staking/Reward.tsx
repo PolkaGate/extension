@@ -10,7 +10,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { AssetLogo, BackWithLabel, DisplayBalance, FadeOnScroll, Identity2, Motion, NoInfoYet, Progress } from '../../components';
+import { AssetLogo, BackWithLabel, DisplayBalance, FadeOnScroll, Identity, Motion, NoInfoYet, Progress } from '../../components';
 import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewardsChart, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import getLogo2 from '../../util/getLogo2';
@@ -97,7 +97,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
               {t('Pool #{{poolId}}', { poolId: reward.poolId })}
             </Typography>)
           : (
-            <Identity2
+            <Identity
               address={reward.address}
               addressStyle={{ color: 'text.highlight', variant: 'B-4' }}
               genesisHash={genesisHash ?? ''}

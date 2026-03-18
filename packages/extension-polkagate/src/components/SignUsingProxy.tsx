@@ -15,7 +15,7 @@ import Radio from '../popup/staking/components/Radio';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { PolkaGateIdenticon } from '../style';
 import { getSubstrateAddress } from '../util';
-import { AccountContext, FadeOnScroll, GradientButton, Identity2, Progress } from '.';
+import { AccountContext, FadeOnScroll, GradientButton, Identity, Progress } from '.';
 
 const ResetSelection = ({ onReset }: { onReset: () => void }) => {
   const { t } = useTranslation();
@@ -87,7 +87,7 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, proxyTypeFilter, selectedPr
           size={32}
         />
         <Grid container flexDirection='column' item sx={{ width: 'fit-content' }}>
-          <Identity2
+          <Identity
             address={proxy.proxy.delegate}
             genesisHash={genesisHash ?? ''}
             noIdenticon

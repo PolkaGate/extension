@@ -14,7 +14,7 @@ import React, { useMemo } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
-import { ChainLogo, DisplayBalance, Identity2, TwoToneText } from '../../../components';
+import { ChainLogo, DisplayBalance, Identity, TwoToneText } from '../../../components';
 import { useAccountAssets, useAllChains, useChainInfo, useEstimatedFee, useFavIcon, useIsExtensionPopup, useMetadata, useSelectedChains, useTranslation } from '../../../hooks';
 import { getSubstrateAddress, isOnAssetHub } from '../../../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
@@ -93,7 +93,7 @@ function SignerContext({ address, genesisHash, showBalance = true }: SignerConte
 
   return (
     <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='space-between'>
-      <Identity2
+      <Identity
         address={address}
         addressStyle={{ color: 'text.secondary', variant: 'B-4' }}
         charsCount={4}

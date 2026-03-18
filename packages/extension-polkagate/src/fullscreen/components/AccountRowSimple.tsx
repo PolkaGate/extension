@@ -8,7 +8,7 @@ import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { motion } from 'framer-motion';
 import React, { useCallback } from 'react';
 
-import { Identity2 } from '../../components';
+import { Identity } from '../../components';
 
 interface Props {
   account: AccountWithChildren;
@@ -42,7 +42,7 @@ function AccountRowSimple({ account, handleSelect, isFirstAccount, isFirstProfil
           <Divider orientation='vertical' sx={{ background: '#FF4FB9', borderRadius: '0 9px 9px 0', height: '24px', left: '1px', position: 'absolute', width: '3px' }} />
         }
         <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' onClick={_onClick} sx={{ '&:hover': { padding: '0 8px' }, cursor: 'pointer', transition: 'all 250ms ease-out', width: '100%' }}>
-          <Identity2
+          <Identity
             address={address}
             genesisHash={_genesisHash}
             identiconSize={24}

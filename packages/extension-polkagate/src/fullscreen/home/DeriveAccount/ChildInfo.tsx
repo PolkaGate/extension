@@ -11,7 +11,7 @@ import React, { useCallback, useState } from 'react';
 
 import { deriveAccount } from '@polkadot/extension-polkagate/src/messaging';
 
-import { DecisionButtons, Identity2, MySnackbar, MyTextField } from '../../../components';
+import { DecisionButtons, Identity, MySnackbar, MyTextField } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { DERIVATION_STEPS } from './types';
 
@@ -86,7 +86,7 @@ function ChildInfo({ genesisHash, maybeChidAccount, onClose, parentAddress, pare
         <Typography color='#BEAAD8' sx={{ lineHeight: '16.8px', mx: '15px' }} textAlign='center' variant='B-4'>
           {t('This child account will be created from your parent account. Give it a name.')}
         </Typography>
-        <Identity2
+        <Identity
           address={maybeChidAccount?.address}
           addressStyle={{ color: 'primary.main', variant: 'B-1' }}
           charsCount={14}

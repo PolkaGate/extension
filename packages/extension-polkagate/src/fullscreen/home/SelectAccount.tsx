@@ -7,7 +7,7 @@ import React, { useCallback, useContext, useMemo, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { AccountContext, GradientButton, GradientDivider, Identity2, Motion, Radio } from '../../components';
+import { AccountContext, GradientButton, GradientDivider, Identity, Motion, Radio } from '../../components';
 import { useTranslation } from '../../hooks';
 import { DraggableModal } from '../components/DraggableModal';
 
@@ -51,7 +51,7 @@ const AccountsListToSelect = ({ genesisHash, handleClose, openMenu, selectedAcco
             return (
               <div key={address}>
                 <Container disableGutters onClick={handleSelect(address)} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Identity2
+                  <Identity
                     address={address}
                     addressStyle={{ color: theme.palette.primary.main }}
                     genesisHash={genesisHash ?? ''}
@@ -112,7 +112,7 @@ export default function SelectAccount({ genesisHash, selectedAccount, setSelecte
   return (
     <>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px', ...style }}>
-        <Identity2
+        <Identity
           address={selectedAccount}
           addressStyle={{ color: 'primary.main', variant: 'B-1' }}
           charsCount={14}

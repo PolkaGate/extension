@@ -5,6 +5,7 @@ import { Box, Container, Grid, LinearProgress, Stack, Typography, useTheme } fro
 import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { RewardsTable,TableHeader } from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/pendingReward/RewardsTable';
 import usePendingRewardsProgress from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/pendingReward/usePendingRewardsProgress';
 
 import { Badge } from '../../../../assets/gif';
@@ -12,7 +13,6 @@ import { BackWithLabel, DecisionButtons, DisplayBalance, GradientDivider, Motion
 import { useBackground, useChainInfo, usePendingRewardsSolo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import { PROXY_TYPE } from '../../../../util/constants';
-import { RewardsTable, TableHeader } from './RewardsTable';
 
 export default function PendingReward() {
   useBackground('staking');
@@ -81,6 +81,7 @@ export default function PendingReward() {
             <GradientDivider isBlueish />
             <TableHeader
               checked={!!expandedRewards?.length && selectedToPayout?.length === expandedRewards?.length}
+              disabled={!expandedRewards?.length}
               onSelectAll={onSelectAll}
             />
             <RewardsTable

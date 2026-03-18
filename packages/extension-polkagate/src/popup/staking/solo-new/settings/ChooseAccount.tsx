@@ -7,7 +7,7 @@ import React, { Fragment, useCallback, useContext, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { AccountContext, GradientDivider, Identity2, VariantButton } from '../../../../components';
+import { AccountContext, GradientDivider, Identity, VariantButton } from '../../../../components';
 import { useChainInfo, useTranslation } from '../../../../hooks';
 import { SharePopup } from '../../../../partials';
 import { getFormattedAddress } from '../../../../util';
@@ -59,7 +59,7 @@ const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, se
             return (
               <Fragment key={index}>
                 <Container disableGutters onClick={handleSelect(formatted)} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Identity2
+                  <Identity
                     address={address}
                     addressStyle={{ color: isBlueish ? '#809ACB' : 'primary.main' }}
                     genesisHash={genesisHash ?? ''}
@@ -112,7 +112,7 @@ export default function ChooseAccount({ genesisHash, isBlueish, setSpecificAccou
   return (
     <>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px' }}>
-        <Identity2
+        <Identity
           address={specificAccount}
           addressStyle={{ color: isBlueish ? '#809ACB' : 'primary.main', fontSize: '12px', fontWeight: 500, variant: 'B-4' }}
           genesisHash={genesisHash ?? ''}

@@ -11,7 +11,7 @@ import React, { memo, useCallback, useMemo, useState } from 'react';
 import HistoryDetail from '@polkadot/extension-polkagate/src/popup/history/newDesign/HistoryDetail';
 import { BN_ZERO } from '@polkadot/util';
 
-import { CryptoFiatBalance, Identity2, ScrollingTextBox } from '../../components';
+import { CryptoFiatBalance, Identity, ScrollingTextBox } from '../../components';
 import { useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import { amountToMachine, calcPrice, historyIconBgColor, resolveActionType } from '../../util';
 import { COLUMN_WIDTH } from './consts';
@@ -105,7 +105,7 @@ function HistoryItem({ historyItem }: HistoryItemProps) {
           <Grid alignItems='center' columnGap='4px' container item width={COLUMN_WIDTH.SUB_ACTION}>
             {isTransfer
               ? <Stack alignItems='center' direction='row' sx={{ columnGap: '5px', justifyContent: 'start' }} width='fit-content'>
-                <Identity2
+                <Identity
                   address={isSend ? to?.address ?? '' : from.address}
                   addressStyle={{ backgroundColor: '#C6AECC26', borderRadius: '9px', marginTop: '-3%', padding: '2px 3px' }}
                   charsCount={4}

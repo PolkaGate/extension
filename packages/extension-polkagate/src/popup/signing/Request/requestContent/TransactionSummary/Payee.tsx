@@ -9,7 +9,7 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight, MoneyRecive, Repeat } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { ChainLogo, Identity2 } from '../../../../../components';
+import { ChainLogo, Identity } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 
 interface Props {
@@ -74,7 +74,7 @@ function Payee({ genesisHash, payee }: Props): React.ReactElement<Props> {
             {text}
           </Typography>
           {account
-            ? <Identity2
+            ? <Identity
               address={account}
               addressStyle={{ color: 'text.secondary', variant: 'B-4' }}
               charsCount={4}
