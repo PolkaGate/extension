@@ -25,7 +25,7 @@ import { createView, Popup } from '@polkadot/extension-ui';
           ],
           release: process.env['EXTENSION_VERSION'],
           replaysOnErrorSampleRate: 1,
-          replaysSessionSampleRate: 0.01,
+          replaysSessionSampleRate: 0.05,
           tracePropagationTargets: [
             /^chrome-extension:\/\/mgojgfjhknpmlojihdpjikinpgcaadlj/,
             /^chrome-extension:\/\/ginchbkmljhldofnbjabmeophlhdldgp/
