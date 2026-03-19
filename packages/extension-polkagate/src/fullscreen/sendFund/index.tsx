@@ -44,7 +44,7 @@ export default function SendFund(): React.ReactElement {
   const assetToTransfer = useMemo(() => accountAssets?.find((asset) => asset.genesisHash === genesisHash && String(asset.assetId) === assetId), [accountAssets, assetId, genesisHash]);
 
   const isReadyToMakeTx = inputStep === INPUT_STEPS.SUMMARY;
-  const { fee, isCrossChain, tx, unsignedEthTx } = useFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setInputs, assetToTransfer, teleportState);
+  const { fee, isContract, isCrossChain, tx, unsignedEthTx } = useFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setInputs, assetToTransfer, teleportState);
   const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee?.originFee.fee ? toBN(inputs?.fee?.originFee.fee) : undefined);
 
   useEffect(() => {
@@ -168,6 +168,7 @@ export default function SendFund(): React.ReactElement {
           inputStep === INPUT_STEPS.AMOUNT &&
           <Step3Amount
             inputs={inputs}
+            isContract={isContract}
             setInputs={setInputs}
             teleportState={teleportState}
           />

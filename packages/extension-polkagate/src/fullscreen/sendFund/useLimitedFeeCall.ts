@@ -6,7 +6,7 @@ import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTelepo
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
-import type { Inputs } from './types';
+import type { Inputs, ParaspellFees } from './types';
 
 import { ethers, Interface } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
@@ -118,12 +118,13 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
   const noAssetId = assetId === undefined || assetId === 'undefined';
   const isNativeToken = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
   const isNonNativeToken = !noAssetId && !isNativeToken;
-  const parsedAssetId = useMemo(() => noAssetId || isNativeToken
-    ? undefined
-    : isForeignAsset
-      ? decodeMultiLocation(assetId as HexString)
-      : parseInt(assetId)
-    , [assetId, isForeignAsset, isNativeToken, noAssetId]);
+  const parsedAssetId = useMemo(() =>
+    noAssetId || isNativeToken || isContract
+      ? undefined
+      : isForeignAsset
+        ? decodeMultiLocation(assetId as HexString)
+        : parseInt(assetId)
+    , [assetId, isContract, isForeignAsset, isNativeToken, noAssetId]);
 
   const amountAsBN = useMemo(() => decimal ? amountToMachine(inputs?.amount, decimal) : undefined, [decimal, inputs?.amount]);
 
@@ -138,7 +139,7 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
   }, [recipientChain, isCrossChain]);
 
   const onChainCall = useMemo(() => {
-    if (isSupportedByParaspell || !api || !genesisHash) {
+    if (isSupportedByParaspell || !api || !genesisHash || isContract) {
       return undefined;
     }
 
@@ -153,7 +154,7 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
             : 'tokens'
         : 'balances';
 
-      if (['currencies', 'tokens'].includes(module)) {
+      if (['currencies', 'tokens'].includes(module) && api.tx[module]) {
         return api.tx[module]['transfer'];
       }
 
@@ -169,7 +170,7 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
 
       return undefined;
     }
-  }, [isSupportedByParaspell, api, genesisHash, isNonNativeToken, isForeignAsset, transferType]);
+  }, [isSupportedByParaspell, api, genesisHash, isContract, isNonNativeToken, isForeignAsset, transferType]);
 
   const call = useMemo((): SubmittableExtrinsicFunction<'promise'> | undefined => {
     if (isSupportedByParaspell || !api) {
@@ -268,10 +269,6 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
   }, [call, address, isCrossChain, crossChainParams, isSupportedByParaspell]);
 
   return useMemo(() => {
-    if (!originFee) {
-      return {};
-    }
-
     const tx = isCrossChain
       ? crossChainParams && call
         ? call?.(...crossChainParams)
@@ -287,8 +284,8 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
       symbol: token
     };
 
-    return {
-      fee: {
+    const fee = originFee
+      ? {
         destinationFee: {
           asset,
           fee: BN_ZERO
@@ -298,9 +295,14 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
           asset,
           fee: isCrossChain ? xcmFee : originFee
         }
-      },
+      } as unknown as ParaspellFees
+      : undefined;
+
+    return {
+      fee,
+      isContract,
       tx,
       unsignedEthTx
     };
-  }, [assetId, call, crossChainParams, decimal, unsignedEthTx, isCrossChain, isNativeToken, onChainCall, onChainParams, originFee, token, xcmFee]);
+  }, [originFee, isCrossChain, crossChainParams, call, onChainParams, onChainCall, assetId, decimal, isNativeToken, token, isContract, xcmFee, unsignedEthTx]);
 }

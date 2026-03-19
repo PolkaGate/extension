@@ -23,11 +23,12 @@ import { getCurrency, normalizeChainName } from './utils';
 
 interface Props {
   inputs: Inputs | undefined;
+  isContract: boolean | undefined;
   teleportState: Teleport;
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
 }
 
-export default function Step3Amount({ inputs, setInputs }: Props): React.ReactElement {
+export default function Step3Amount({ inputs, isContract, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
@@ -98,7 +99,7 @@ export default function Step3Amount({ inputs, setInputs }: Props): React.ReactEl
     try {
       const { assetId, token } = inputs || {};
 
-      if (senderChainName && assetId !== undefined && token) {
+      if (senderChainName && assetId !== undefined && token && !isContract) {
         const currency = getCurrency(senderChainName, token, assetId);
         const _senderChainName = normalizeChainName(senderChainName);
         const mayBeEDasBN = getExistentialDeposit(_senderChainName as TChain, currency);
@@ -116,7 +117,7 @@ export default function Step3Amount({ inputs, setInputs }: Props): React.ReactEl
 
       return maybeED;
     }
-  }, [decimal, inputs, senderChainName]);
+  }, [decimal, inputs, isContract, senderChainName]);
 
   const onMinClick = useCallback(() => {
     setError(undefined);

@@ -4,7 +4,7 @@
 import type React from 'react';
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
-import type { Inputs, ParaspellFees } from './types';
+import type { Inputs } from './types';
 
 import { useMemo } from 'react';
 
@@ -38,6 +38,7 @@ import { isParaspellSupportedAsset, isParaspellSupportedChain, normalizeChainNam
  * @returns Object containing:
  * - `fee`: estimated origin/destination fees (normalized across strategies)
  * - `tx`: prepared SubmittableExtrinsic ready for signing/submission
+ * - `isContract`: boolean indicating whether transfer is an ERC20
  * - `isCrossChain`: boolean indicating whether transfer is cross-chain
  *
  * Notes:
@@ -59,12 +60,13 @@ export default function useFeeCall(address: string | undefined, isReadyToMakeTx:
     , [inputs?.token, senderChainName]);
 
   const { paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setInputs, !!isSupportedByParaspell);
-  const { fee, tx, unsignedEthTx } = useLimitedFeeCall(address, inputs?.assetId?.toString(), assetToTransfer, inputs, genesisHash, teleportState, isCrossChain, !!isSupportedByParaspell);
+  const { fee, isContract, tx, unsignedEthTx } = useLimitedFeeCall(address, inputs?.assetId?.toString(), assetToTransfer, inputs, genesisHash, teleportState, isCrossChain, !!isSupportedByParaspell);
 
   return useMemo(() => ({
-    fee: (isSupportedByParaspell ? paraSpellFee : fee) as ParaspellFees,
+    fee: isSupportedByParaspell ? paraSpellFee : fee,
+    isContract,
     isCrossChain,
     tx: isSupportedByParaspell ? paraSpellTransaction : tx,
     unsignedEthTx
-  }), [unsignedEthTx, fee, isCrossChain, isSupportedByParaspell, paraSpellFee, paraSpellTransaction, tx]);
+  }), [unsignedEthTx, fee, isContract, isCrossChain, isSupportedByParaspell, paraSpellFee, paraSpellTransaction, tx]);
 }
