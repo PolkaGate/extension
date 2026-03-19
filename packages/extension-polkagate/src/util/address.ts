@@ -112,13 +112,22 @@ export const decodeHexValues = (obj: unknown) => {
 
 export const decodeMultiLocation = (hexString: HexString) => {
   const decodedU8a = hexToU8a(hexString);
-  const decodedJsonString = u8aToString(decodedU8a);
+  const decodedJsonString = u8aToString(decodedU8a).trim();
+
+  // Quick sanity check to avoid parsing random binary as JSON
+  if (!decodedJsonString.startsWith('{') && !decodedJsonString.startsWith('[')) {
+    return hexString;
+  }
+
   let decodedMultiLocation: unknown;
 
   try {
     decodedMultiLocation = JSON.parse(decodedJsonString);
   } catch (error) {
-    console.error('Error parsing JSON string in decodeMultiLocation, using the asset id as is:', (error as Error)?.message);
+    console.warn(
+      'decodeMultiLocation: invalid JSON, fallback to raw hex',
+      { decodedJsonString, error: (error as Error)?.message }
+    );
 
     return hexString;
   }
