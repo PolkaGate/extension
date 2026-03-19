@@ -99,7 +99,7 @@ function ProfileAccountSelection({ accounts, defaultProfile = '', label, maybeNe
               <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ p: '11px 17px 10px 20px' }}>
                 <Identity
                   address={address}
-                  genesisHash={genesisHash ?? POLKADOT_GENESIS}
+                  genesisHash={genesisHash ?? '' }
                   identiconSize={18}
                   style={{ color: '#EAEBF1', variant: 'B-1', width: '90%' }}
                 />
