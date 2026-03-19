@@ -60,7 +60,7 @@ function TokensItems({ onTokenClick, theme, tokenDetail }: { onTokenClick: () =>
           <Typography color='text.secondary' sx={{ bgcolor, borderRadius: '8px', px: '3px', width: 'fit-content' }} variant='B-1'>
             {token}
           </Typography>
-          <Typography color='text.secondary' variant='S-2'>
+          <Typography color='text.secondary' textAlign='left' variant='S-2'>
             {toTitleCase(chainName)}
           </Typography>
         </Grid>
