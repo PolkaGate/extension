@@ -14,8 +14,6 @@ import type { Proxy, ProxyTypes } from '../util/types';
 
 import { useCallback, useContext, useEffect, useState } from 'react';
 
-import { isEthereumAddress } from '@polkadot/util-crypto';
-
 import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util';
 import { useChainInfo } from '.';
@@ -44,10 +42,6 @@ export default function useProxies(genesisHash: string | null | undefined, proxi
   }, [api, onlyAvailableWithTypes, proxiedAddress, proxies]);
 
   useEffect(() => {
-    if (isEthereumAddress(String(proxiedAddress))) {
-      return setProxies(null);
-    }
-
     if (!proxiedAddress || !api) {
       return;
     }

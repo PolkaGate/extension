@@ -93,11 +93,6 @@ export const TEST_NETS = [
   ...ETHEREUM_TEST_CHAINS_GENESISHASH
 ];
 
-export const PROXY_CHAINS = [
-  ...RELAY_CHAINS_GENESISHASH,
-  ...ASSET_HUBS
-];
-
 export const GOVERNANCE_CHAINS = [
   'polkadot',
   'kusama',

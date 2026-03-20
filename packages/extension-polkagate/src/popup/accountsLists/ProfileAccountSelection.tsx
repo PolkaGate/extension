@@ -5,7 +5,6 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { ExpandMore } from '@mui/icons-material';
 import { Box, Collapse, Stack, Typography } from '@mui/material';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useProfileInfo from '@polkadot/extension-polkagate/src/fullscreen/home/useProfileInfo';

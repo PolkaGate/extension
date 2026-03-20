@@ -122,10 +122,14 @@ function SignUsingPassword({ address, api, decisionButtonProps, direction = 'ver
   return (
     <Stack direction='column' sx={{ width: '100%' }}>
       <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', height: '65px', justifyContent: 'end', p: '0 12px 0 5px' }}>
-        <UseProxy
-          onClick={onUseProxy}
-          proxies={proxies}
-        />
+        {!unsignedEthTx &&
+          // ERC20 transfers use eth_sendRawTransaction which bypasses the Substrate extrinsic layer,
+          // making proxy support incompatible. Proxy can be re-enabled if this is rewritten using ethereum.transact.
+          <UseProxy
+            onClick={onUseProxy}
+            proxies={proxies}
+          />
+        }
       </Container>
       {withCancel
         ? (

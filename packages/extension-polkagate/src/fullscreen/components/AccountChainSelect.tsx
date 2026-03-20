@@ -193,6 +193,7 @@ export default function AccountChainSelect({ noSelection = false }: Props): Reac
       <AccountListModal
         handleClose={onClick(MODAL_TO_OPEN.NONE)}
         open={modalToOpen === MODAL_TO_OPEN.ACCOUNTS}
+        showAll
       />
       <ChainListModal
         handleClose={onClick(MODAL_TO_OPEN.NONE)}

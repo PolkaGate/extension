@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 
 import { FadeOnScroll, GradientButton, SearchField } from '../../components';
-import { useCategorizedAccountsInProfiles, useChainInfo, useFormatted, useSelectedAccount, useTranslation, useUpdateSelectedAccount } from '../../hooks';
+import { useAccountSelectedChain, useCategorizedAccountsInProfiles, useChainInfo, useFormatted, useSelectedAccount, useTranslation, useUpdateSelectedAccount } from '../../hooks';
 import { VelvetBox } from '../../style';
 import ProfileTabsFS from '../home/ProfileTabsFS';
 import AccountRowSimple from './AccountRowSimple';
@@ -30,10 +30,13 @@ interface ChooseAccountMenuProps {
 export default function AccountListModal({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress, showAddressBook, showAll }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
+  const selectedAccountChain = useAccountSelectedChain(selectedAccount?.address);
   const refContainer = useRef<HTMLDivElement>(null);
   const { categorizedAccounts: initialCategorizedAccounts, initialAccountList } = useCategorizedAccountsInProfiles();
-  const { chain } = useChainInfo(genesisHash, true);
-  const isEvmChain = chain?.definition?.chainType === 'ethereum';
+  const { chain: chainFromProps } = useChainInfo(genesisHash, true);
+  const { chain: chainFromSelectedAccount } = useChainInfo(selectedAccountChain, true);
+  const _chain = chainFromProps || chainFromSelectedAccount; 
+  const isEvmChain = _chain?.definition?.chainType === 'ethereum';
 
   const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountJson[]>>({});
   const [maybeSelected, setMayBeSelected] = useState<string | undefined>(isSelectedAccountApplicable ? selectedAccount?.address : undefined);

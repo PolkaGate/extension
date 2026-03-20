@@ -10,15 +10,13 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { Clock, Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { isMigratedByChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
-
 import { AddressInput, DecisionButtons, DropSelect, MyTextField } from '../../components';
 import { useAccountDisplay, useFormatted, useTranslation } from '../../hooks';
-import { sanitizeChainName, toTitleCase } from '../../util';
-import { CHAIN_PROXY_TYPES, MIGRATED_PROXY_TYPES } from '../../util/constants';
+import { toTitleCase } from '../../util';
 import { DraggableModal } from '../components/DraggableModal';
 import { PROXY_ICONS, STEPS } from './consts';
 import { type ProxyFlowStep } from './types';
+import useProxyTypes from './useProxyTypes';
 
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
@@ -34,6 +32,7 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setNewDepo
   const { t } = useTranslation();
   const formatted = useFormatted(proxiedAddress, chain?.genesisHash);
   const accountDisplayName = useAccountDisplay(proxiedAddress, chain?.genesisHash);
+  const proxyTypes = useProxyTypes(chain?.genesisHash);
 
   const [proxyAddress, setProxyAddress] = useState<string | null>();
   const [delay, setDelay] = useState<number>(0);
@@ -41,25 +40,13 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setNewDepo
 
   const myselfAsProxy = useMemo(() => formatted === proxyAddress, [formatted, proxyAddress]);
 
-  const chainName = sanitizeChainName(chain?.name);
-  const proxyTypeIndex = chainName?.toLowerCase()?.includes('assethub') ? 'AssetHubs' : chainName;
-  const PROXY_TYPE = useMemo(() => {
-    const baseType = CHAIN_PROXY_TYPES[proxyTypeIndex as keyof typeof CHAIN_PROXY_TYPES];
-
-    if (chainName && isMigratedByChainName(chainName)) {
-      return baseType.concat(MIGRATED_PROXY_TYPES);
-    }
-
-    return baseType;
-  }, [chainName, proxyTypeIndex]);
-
-  const proxyTypeOptions = PROXY_TYPE.map((type: string): AdvancedDropdownOption => ({
+  const proxyTypeOptions = proxyTypes.map((type: string): AdvancedDropdownOption => ({
     Icon: PROXY_ICONS[type as ProxyTypes] as Icon,
     text: toTitleCase(type) ?? '',
     value: type
   }));
 
-  const [proxyType, setProxyType] = useState<string | number>(proxyTypeOptions[0].value);
+  const [proxyType, setProxyType] = useState<string | number>(proxyTypeOptions?.[0]?.value);
 
   useEffect(() => {
     duplicateProxy && setDuplicateProxy(false);
@@ -147,7 +134,7 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setNewDepo
               {t('Proxy type')}
             </Typography>
             <DropSelect
-              Icon={(proxyTypeOptions.find(({ value }) => value === proxyType)?.Icon ?? proxyTypeOptions[0].Icon) as Icon}
+              Icon={(proxyTypeOptions.find(({ value }) => value === proxyType)?.Icon ?? proxyTypeOptions?.[0]?.Icon) as Icon}
               contentDropWidth={300}
               displayContentType='icon'
               onChange={selectProxyType}
@@ -156,7 +143,7 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setNewDepo
               style={{
                 height: '44px'
               }}
-              value={proxyType ?? proxyTypeOptions[0].value}
+              value={proxyType ?? proxyTypeOptions?.[0]?.value}
             />
           </Stack>
           <Stack alignItems='end' columnGap='8px' direction='row' justifyContent='start' sx={{ width: '40%' }}>
