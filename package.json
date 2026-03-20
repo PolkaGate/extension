@@ -47,7 +47,7 @@
     "start": "NODE_ENV=development yarn watch",
     "test": "polkadot-dev-run-test --silent --detectOpenHandles --testPathPattern=packages/extension-polkagate/src --maxWorkers=1",
     "test:one": "polkadot-dev-run-test --detectOpenHandles",
-    "watch": "yarn copy-prod-manifest && cd packages/extension && yarn polkadot-exec-webpack --config webpack.watch.cjs --mode development --watch"
+    "watch": "yarn copy-dev-manifest && cd packages/extension && yarn polkadot-exec-webpack --config webpack.watch.cjs --mode development --watch"
   },
   "dependencies": {
     "@acala-network/api": "^6.2.0",

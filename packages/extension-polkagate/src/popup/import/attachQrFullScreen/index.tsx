@@ -14,6 +14,7 @@ import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/compone
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import { QrScanAddress } from '@polkadot/react-qr';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { ActionButton, Address, DecisionButtons, MyTextField } from '../../../components';
 import { useFullscreen, useTranslation } from '../../../hooks';
@@ -33,6 +34,7 @@ export default function AttachQrFullScreen(): React.ReactElement {
   const [account, setAccount] = useState<ScanType | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [invalidQR, setInvalidQR] = useState<boolean>();
+  const [isEthereum, setIsEthereum] = useState(false);
 
   const setQrLabelAndGoToHome = useCallback(() => {
     const metaData = JSON.stringify({ isQR: true });
@@ -46,7 +48,9 @@ export default function AttachQrFullScreen(): React.ReactElement {
 
   const onImport = useCallback(() => {
     if (account?.isAddress && name) {
-      createAccountExternal(name, account.content, account.genesisHash ?? POLKADOT_GENESIS)
+      const accountType = isEthereumAddress(account.content) ? 'ethereum' : undefined;
+
+      createAccountExternal(name, account.content, account.genesisHash ?? POLKADOT_GENESIS, accountType)
         .then(() => setQrLabelAndGoToHome())
         .catch((error: Error) => console.error(error));
     }
@@ -59,12 +63,18 @@ export default function AttachQrFullScreen(): React.ReactElement {
 
     setAccount(qrAccount);
     setInvalidQR(false);
-    setName(qrAccount?.name || null);
-  }, []);
+    setName(isEthereum ? 'Unknown' : qrAccount?.name || null);
+  }, [isEthereum]);
 
   const onCancel = useCallback(() => switchToOrOpenTab('/', true), []);
 
   const _onError = useCallback((error: Error) => {
+    if (String(error).includes('substrate')) {
+      setIsEthereum(true); // retry as ethereum
+
+      return;
+    }
+
     setInvalidQR(String(error).includes('Invalid prefix'));
   }, []);
 
@@ -98,6 +108,7 @@ export default function AttachQrFullScreen(): React.ReactElement {
           ? <>
             <Grid container sx={{ mb: '15px' }}>
               <QrScanAddress
+                isEthereum={isEthereum}
                 onError={_onError}
                 onScan={_setAccount}
                 style={{
@@ -128,6 +139,7 @@ export default function AttachQrFullScreen(): React.ReactElement {
               genesisHash={account?.genesisHash}
               name={name}
               style={{ margin: '5px auto 10px' }}
+              type={isEthereum ? 'ethereum' : undefined}
               width='100%'
             />
             <MyTextField
