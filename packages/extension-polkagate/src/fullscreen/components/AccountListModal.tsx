@@ -35,7 +35,7 @@ export default function AccountListModal({ genesisHash, handleClose, isSelectedA
   const { categorizedAccounts: initialCategorizedAccounts, initialAccountList } = useCategorizedAccountsInProfiles();
   const { chain: chainFromProps } = useChainInfo(genesisHash, true);
   const { chain: chainFromSelectedAccount } = useChainInfo(selectedAccountChain, true);
-  const _chain = chainFromProps || chainFromSelectedAccount; 
+  const _chain = chainFromProps || chainFromSelectedAccount;
   const isEvmChain = _chain?.definition?.chainType === 'ethereum';
 
   const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountJson[]>>({});
@@ -130,7 +130,9 @@ export default function AccountListModal({ genesisHash, handleClose, isSelectedA
                           const isFirstAccount = accIndex === 0;
                           const isLast = accIndex === accounts.length - 1;
 
-                          if (!showAll && isEvmChain !== (account.type === 'ethereum')) {
+                          const isAddressBookContact = !Object.hasOwn(account, 'type');
+
+                          if (!showAll && isEvmChain !== (account.type === 'ethereum') && !isAddressBookContact) {
                             return null;
                           }
 

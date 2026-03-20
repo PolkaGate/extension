@@ -6,7 +6,6 @@ import { Edit, Trash } from 'iconsax-react';
 import React, { memo } from 'react';
 
 import { GradientDivider, Identity } from '@polkadot/extension-polkagate/src/components';
-import { POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
 
 interface Props {
     address: string;
@@ -21,7 +20,6 @@ function AddressBookItem({ address, name, onEdit, onRemove }: Props) {
             <Grid container item sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
                 <Identity
                     address={address}
-                    genesisHash={POLKADOT_GENESIS_HASH}
                     identiconSize={24}
                     name={name}
                     nameStyle={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}

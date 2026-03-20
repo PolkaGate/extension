@@ -32,7 +32,7 @@ interface Props {
   showAddressBook?: boolean;
 }
 
-export default function AddressInput({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setType, setIsError, showAddressBook, style, withSelect }: Props): React.ReactElement<Props> {
+export default function AddressInput({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setIsError, setType, showAddressBook, style, withSelect }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const isBlueish = useIsBlueish();
