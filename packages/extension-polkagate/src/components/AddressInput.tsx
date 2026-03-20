@@ -59,7 +59,8 @@ export default function AddressInput({ addWithQr = false, address, chain, disabl
     setAddress?.(null);
     setEnteredAddress(undefined);
     setInvalidAddress(false);
-  }, [setAddress]);
+    setType?.((prev) => (prev === 'ethereum' ? undefined : prev));
+  }, [setAddress, setType]);
 
   const onSet = useCallback((value: string): void => {
     const isEvm = isEthereumAddress(value);
