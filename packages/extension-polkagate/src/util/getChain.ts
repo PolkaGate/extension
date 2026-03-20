@@ -19,5 +19,5 @@ export default function getChain(_genesisHash: string | undefined): NetworkInfo 
     found.name = found.chain;
   }
 
-  return found as unknown as NetworkInfo;
+  return found;
 }
