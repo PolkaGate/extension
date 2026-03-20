@@ -11,7 +11,7 @@ const SEPOLIA_GENESISHASH = '0x25a5cc106eea7138acab33231d7160d69cb777ee0c2c553fc
 
 export const ETH_GENESISHASH_MAP: Record<string, string> = {
   ethereum: ETHEREUM_GENESISHASH,
-  goreli: GOERLI_GENESISHASH,
+  goerli: GOERLI_GENESISHASH,
   sepolia: SEPOLIA_GENESISHASH
 };
 

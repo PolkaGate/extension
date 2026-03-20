@@ -5,11 +5,11 @@ import { AlchemyProvider, CloudflareProvider, FallbackProvider, InfuraProvider, 
 
 const NETWORK_MAP: Record<string, string> = {
   ethereum: 'homestead',
-  goreli: 'goerli',
+  goerli: 'goerli',
   sepolia: 'sepolia'
 };
 
-const isTestNet = (chainName: string) => ['goreli', 'sepolia'].includes(chainName?.toLowerCase() ?? '');
+const isTestNet = (chainName: string) => ['goerli', 'sepolia'].includes(chainName?.toLowerCase() ?? '');
 
 export const getEthProvider = (chainName: string, asSigner?: boolean): JsonRpcProvider | FallbackProvider => {
   const lcChainName = chainName.toLowerCase();
