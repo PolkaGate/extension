@@ -369,3 +369,4 @@ export const WORKER_TASKS = {
 };
 
 export const PROCESSING_TITLE = 'Processing';
+export const COINGECKO_WEB = 'https://www.coingecko.com/en/coins/';
