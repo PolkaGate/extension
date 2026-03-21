@@ -20,13 +20,13 @@ export default function useAccount(address: string | AccountId | null | undefine
     }
 
     const normalizedAddress = isEthereumAddress(String(address))
-      ? address
+      ? String(address)
       : getSubstrateAddress(address);
 
     if (!normalizedAddress) {
       return undefined;
     }
 
-    return accounts.find(({ address }) => address === normalizedAddress);
+    return accounts.find(({ address }) => address.toLowerCase() === normalizedAddress.toLowerCase());
   }, [accounts, address]);
 }

@@ -1,15 +1,26 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+/* eslint-disable camelcase */
+
+import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { Extrinsics, TransactionDetail, Transfers } from '../../../util/types';
 import type { RecordTabStatus, RecordTabStatusGov } from '../hookUtils/types';
 
-import { type Dispatch, type SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
-import { amountToHuman } from '@polkadot/extension-polkagate/src/util';
+import { AccountContext } from '@polkadot/extension-polkagate/src/components';
+import { amountToHuman, getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { formatString, log } from '../hookUtils/utils';
+
+const getName = (accounts: AccountJson[], address: string) => {
+  const baseAddress = isEthereumAddress(address) ? address : getSubstrateAddress(address);
+
+  return accounts.find((a) => a.address.toLowerCase() === baseAddress?.toLowerCase())?.name;
+};
 
 interface UseTransactionProcessingProps {
   receivedTx: RecordTabStatus;
@@ -32,6 +43,7 @@ interface UseTransactionProcessingResult {
 export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receivedTx, setIsLoading, token }: UseTransactionProcessingProps): UseTransactionProcessingResult {
   const [processedReceived, setProcessedReceived] = useState<TransactionDetail[] | undefined>(undefined);
   const [processedExtrinsics, setProcessedExtrinsics] = useState<TransactionDetail[] | undefined>(undefined);
+  const { accounts } = useContext(AccountContext);
 
   // Track initial fetch completion
   const initialFetchDoneRef = useRef({
@@ -69,6 +81,8 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receive
     log(`Processing ${receivedTx.transactions.length} transfer transactions`);
 
     const processed: TransactionDetail[] = receivedTx.transactions.map((tx: Transfers): TransactionDetail => {
+      const fromName = tx.from_account_display?.display ?? getName(accounts, tx.from);
+
       const txDetail: TransactionDetail = {
         action: 'balances',
         amount: tx.amount,
@@ -77,7 +91,7 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receive
         date: tx.block_timestamp * 1000,
         fee: tx.fee,
         forAccount: tx.forAccount,
-        from: { address: tx.from, name: tx.from_account_display?.display },
+        from: { address: tx.from, name: fromName },
         subAction: 'receive',
         success: tx.success,
         to: { address: tx.to, name: tx.to_account_display?.display },
@@ -103,7 +117,7 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receive
       log('Initial received fetch complete');
       checkAndNotifyComplete();
     }
-  }, [chain, checkAndNotifyComplete, receivedTx.hasMore, receivedTx.isFetching, receivedTx.pageNum, receivedTx.transactions]);
+  }, [accounts, chain, checkAndNotifyComplete, receivedTx.hasMore, receivedTx.isFetching, receivedTx.pageNum, receivedTx.transactions]);
 
   // Process extrinsics
   useEffect(() => {
@@ -127,42 +141,42 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receive
     log(`Processing ${extrinsicsTx.transactions.length} extrinsics`);
 
     const processed: TransactionDetail[] = extrinsicsTx.transactions.map((extrinsic: Extrinsics): TransactionDetail => {
+      const { account_display, amount, block_num, block_timestamp, call_module, call_module_function, calls, conviction, delegatee, extrinsic_hash, fee, forAccount, nominators, poolId, refId, success, to, to_account_display, voteType } = extrinsic;
       // Determine action type
-      const action = getActionType(extrinsic.call_module);
+      const action = getActionType(call_module);
       const subAction = action === 'balances'
         ? 'send'
-        : formatString(extrinsic.call_module_function);
+        : formatString(call_module_function);
 
-      // Parse amount
-      const amount = parseAmount(extrinsic.amount, decimal);
+      const toName = to_account_display?.display ?? (to ? getName(accounts, to) : '');
 
       return {
         action,
-        amount,
-        block: extrinsic.block_num,
-        calls: extrinsic.calls,
+        amount: parseAmount(amount, decimal),
+        block: block_num,
+        calls,
         chain,
         class: extrinsic.class,
-        conviction: extrinsic.conviction,
-        date: extrinsic.block_timestamp * 1000,
-        delegatee: extrinsic.delegatee,
-        fee: extrinsic.fee,
-        forAccount: extrinsic.forAccount,
-        from: { address: extrinsic.account_display.address, name: '' },
-        nominators: extrinsic.nominators,
-        poolId: extrinsic.poolId,
-        refId: extrinsic.refId,
+        conviction,
+        date: block_timestamp * 1000,
+        delegatee,
+        fee,
+        forAccount,
+        from: { address: account_display.address, name: '' },
+        nominators,
+        poolId,
+        refId,
         subAction,
-        success: extrinsic.success,
+        success,
         to: extrinsic.to
           ? {
             address: extrinsic.to,
-            name: extrinsic.to_account_display?.display ?? ''
+            name: toName
           }
           : undefined,
         token,
-        txHash: extrinsic.extrinsic_hash,
-        voteType: extrinsic.voteType
+        txHash: extrinsic_hash,
+        voteType
       };
     });
 
@@ -175,7 +189,7 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receive
       log('Initial extrinsics fetch complete');
       checkAndNotifyComplete();
     }
-  }, [chain, checkAndNotifyComplete, decimal, extrinsicsTx.hasMore, extrinsicsTx.isFetching, extrinsicsTx.pageNum, extrinsicsTx.transactions, token]);
+  }, [accounts, chain, checkAndNotifyComplete, decimal, extrinsicsTx.hasMore, extrinsicsTx.isFetching, extrinsicsTx.pageNum, extrinsicsTx.transactions, token]);
 
   return {
     processedExtrinsics,

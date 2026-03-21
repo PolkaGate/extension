@@ -68,7 +68,6 @@
   "Done": "",
   "Review": "",
   "Find the chain endpoint in the Polkadot.js/org/apps. After selecting your chain and endpoint, copy the URL segment starting with wss and ending before the first #. For example: wss://rpc.dotters.network/polkadot": "",
-  "Find your token on CoinGecko. The price ID is available at: https://www.coingecko.com/en/coins/[price-id]": "",
   "Edit profile": "",
   "Internet is disconnected ...": "",
   "Privacy & Security": "",
@@ -944,5 +943,6 @@
   "Choose account type": "",
   "account type": "",
   "Polkadot & parachains": "",
-  "Moonbeam & other EVM networks": ""
+  "Moonbeam & other EVM networks": "",
+  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": ""
 }
