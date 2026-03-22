@@ -35,6 +35,10 @@ export function isValidAddress(address: string | undefined): boolean {
 }
 
 export function getFormattedAddress(_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
+  if (_address && isEthereumAddress(_address)) {
+    return _address;
+  }
+
   const publicKey = decodeAddress(_address);
   const prefix = _chain ? _chain.ss58Format : (settingsPrefix === -1 ? 42 : settingsPrefix);
 
