@@ -5,60 +5,66 @@
 
 import type { NotificationsType } from '@polkadot/extension-polkagate/src/popup/notification/types';
 
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, useTheme } from '@mui/material';
 import { Notification as NotificationIcon } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
+import { useIsBlueish, useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
 import { getAndWatchStorage } from '@polkadot/extension-polkagate/src/util';
 import { ExtensionPopups, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import Notification from '../../notification';
 
-const NotificationButton = ({ hasNewNotification, onClick }: { hasNewNotification: boolean; onClick: () => void; }) => (
-  <Grid alignItems='center' container item justifyContent='center' onClick={onClick}
-    sx={{
-      '&:hover': { background: '#674394' },
-      '&:hover .notification-dot': { borderColor: '#674394' },
-      backdropFilter: 'blur(20px)',
-      background: '#2D1E4A80',
-      borderRadius: '12px',
-      boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
-      cursor: 'pointer',
-      height: '32px',
-      position: 'relative',
-      transition: 'all 250ms ease-out',
-      width: '32px'
-    }}
-  >
-    <Box className='notification-dot'
+const NotificationButton = ({ hasNewNotification, isBlueish, onClick }: { hasNewNotification: boolean; onClick: () => void; isBlueish: boolean; }) => {
+ const theme = useTheme();
+ 
+ return (
+    <Grid alignItems='center' container item justifyContent='center' onClick={onClick}
       sx={{
-        bgcolor: '#FF4FB9',
-        border: '1.5px solid #2D1E4A',
-        borderRadius: '50%',
-        display: hasNewNotification ? 'block' : 'none',
-        height: '9px',
-        position: 'absolute',
-        right: '5px',
-        top: '5px',
-        transition: 'border-color 200ms ease',
-        width: '9px',
-        zIndex: 1
+        '&:hover': { background: '#674394' },
+        '&:hover .notification-dot': { borderColor: '#674394' },
+        backdropFilter: 'blur(20px)',
+        background: '#2D1E4A80',
+        borderRadius: '12px',
+        boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
+        cursor: 'pointer',
+        height: '32px',
+        position: 'relative',
+        transition: 'all 250ms ease-out',
+        width: '32px'
       }}
-    />
-    <NotificationIcon
-      color='#AA83DC'
-      size='20'
-      style={{ cursor: 'pointer', transform: 'rotate(30deg)' }}
-      variant='Bold'
-    />
-  </Grid>
-);
+    >
+      <Box className='notification-dot'
+        sx={{
+          bgcolor: isBlueish ? '#809ACB' : '#FF4FB9',
+          border: '1.5px solid #2D1E4A',
+          borderRadius: '50%',
+          display: hasNewNotification ? 'block' : 'none',
+          height: '9px',
+          position: 'absolute',
+          right: '5px',
+          top: '5px',
+          transition: 'border-color 200ms ease',
+          width: '9px',
+          zIndex: 1
+        }}
+      />
+      <NotificationIcon
+        color={isBlueish ? theme.palette.text.highlight : '#AA83DC'}
+        size='20'
+        style={{ cursor: 'pointer', transform: 'rotate(30deg)' }}
+        variant='Bold'
+      />
+    </Grid>
+  );
+};
 
 function Notifications(): React.ReactElement {
   const isExtension = useIsExtensionPopup();
+  const isBlueish = useIsBlueish();
+
   const navigate = useNavigate();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
@@ -86,6 +92,7 @@ function Notifications(): React.ReactElement {
     <>
       <NotificationButton
         hasNewNotification={hasNewNotification}
+        isBlueish={isBlueish}
         onClick={onClick}
       />
       {extensionPopup === ExtensionPopups.NOTIFICATION &&
