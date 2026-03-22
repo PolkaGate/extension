@@ -21,7 +21,7 @@ interface Props {
 
 export default function ModeSwitch({ accountType, isDefault, setAccountType }: Props): React.ReactElement {
   const { t } = useTranslation();
-const theme = useTheme();
+  const theme = useTheme();
 
   const onModeSwitch = useCallback(() => {
     setAccountType((prev) => prev === DEFAULT_TYPE ? 'ethereum' : DEFAULT_TYPE);
@@ -46,7 +46,7 @@ const theme = useTheme();
           transition={{ damping: 30, stiffness: 300, type: 'spring' }}
         />
         <motion.div layout onClick={onModeSwitch} style={{ cursor: 'pointer', zIndex: 1 }}>
-          <Grid item sx={{ alignItems: 'center', display: 'inline-flex', position: 'relative', px: '10px', py: '5px' }}>
+          <Grid item sx={{ alignItems: 'center', display: 'inline-flex', opacity: accountType === 'ethereum' ? 0.6 : 1, position: 'relative', px: '10px', py: '5px' }}>
             <ChainLogo chainName={'polkadot'} size={19.8} />
             <Typography pl='5px' variant='B-2'>
               {'Substrate'}
@@ -54,12 +54,12 @@ const theme = useTheme();
           </Grid>
         </motion.div>
         <motion.div layout onClick={onModeSwitch} style={{ cursor: 'pointer', zIndex: 1 }}>
-          <Grid item sx={{ alignItems: 'center', display: 'inline-flex', position: 'relative', px: '10px', py: '5px' }}>
+          <Stack direction='row' sx={{ alignItems: 'center', opacity: accountType === 'ethereum' ? 1 : 0.6, position: 'relative', px: '10px', py: '5px', width: '96px' }}>
             <NetworkEthereum size={24} variant='branded' />
             <Typography pl='5px' variant='B-2'>
               {'EVM'}
             </Typography>
-          </Grid>
+          </Stack>
         </motion.div>
       </Grid>
       <Stack alignItems='center' columnGap='5px' direction='row' ml='10px'>
