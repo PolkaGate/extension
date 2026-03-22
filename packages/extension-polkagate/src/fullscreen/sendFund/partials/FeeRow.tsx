@@ -209,7 +209,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs, transa
               decimal={feeInfo.decimal}
               style={{
                 color: 'text.primary',
-                ml: '5px'
+                marginLeft: '5px'
               }}
               token={feeInfo.token}
             />
@@ -249,7 +249,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs, transa
                 decimal={feeInfo.destinationFee?.decimal}
                 style={{
                   color: 'text.primary',
-                  ml: '5px'
+                  marginLeft: '5px'
                 }}
                 token={feeInfo.destinationFee?.token}
               />
