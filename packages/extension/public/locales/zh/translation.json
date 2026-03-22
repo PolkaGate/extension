@@ -940,5 +940,10 @@
   "Subscan API Key": "Subscan API 密钥",
   "Getting an API key from Subscan is easy and free! Just visit https://pro.subscan.io/ and follow the simple steps.": "从 Subscan 获取 API 密钥既简单又免费！只需访问 https://pro.subscan.io/ 并按照简单步骤操作。",
   "Invalid API key format.": "API 密钥格式无效。",
-  "Paste your Subscan API key": "粘贴您的 Subscan API 密钥"
+  "Paste your Subscan API key": "粘贴您的 Subscan API 密钥",
+  "Choose account type": "选择账户类型",
+  "account type": "账户类型",
+  "Polkadot & parachains": "Polkadot 和平行链",
+  "Moonbeam & other EVM networks": "Moonbeam 及其他 EVM 网络",
+  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "在 CoinGecko 上查找您的代币。价格 ID 可在此获取：{{web}}[price-id]"
 }

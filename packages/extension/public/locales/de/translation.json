@@ -940,5 +940,10 @@
   "Subscan API Key": "Subscan-API-Schlüssel",
   "Getting an API key from Subscan is easy and free! Just visit https://pro.subscan.io/ and follow the simple steps.": "Einen API-Schlüssel von Subscan zu erhalten ist einfach und kostenlos! Besuchen Sie https://pro.subscan.io/ und folgen Sie den einfachen Schritten.",
   "Invalid API key format.": "Ungültiges API-Schlüssel-Format.",
-  "Paste your Subscan API key": "Fügen Sie Ihren Subscan-API-Schlüssel ein"
+  "Paste your Subscan API key": "Fügen Sie Ihren Subscan-API-Schlüssel ein",
+  "Choose account type": "Kontotyp auswählen",
+  "account type": "Kontotyp",
+  "Polkadot & parachains": "Polkadot & Parachains",
+  "Moonbeam & other EVM networks": "Moonbeam & andere EVM-Netzwerke",
+  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "Finde deinen Token auf CoinGecko. Die Preis-ID ist verfügbar unter: {{web}}[price-id]"
 }

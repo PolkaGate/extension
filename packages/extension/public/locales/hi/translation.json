@@ -940,5 +940,10 @@
   "Subscan API Key": "Subscan API कुंजी",
   "Getting an API key from Subscan is easy and free! Just visit https://pro.subscan.io/ and follow the simple steps.": "Subscan से API कुंजी प्राप्त करना आसान और मुफ्त है! बस https://pro.subscan.io/ पर जाएँ और सरल चरणों का पालन करें।",
   "Invalid API key format.": "API कुंजी का स्वरूप अमान्य है।",
-  "Paste your Subscan API key": "अपनी Subscan API कुंजी पेस्ट करें"
+  "Paste your Subscan API key": "अपनी Subscan API कुंजी पेस्ट करें",
+  "Choose account type": "खाता प्रकार चुनें",
+  "account type": "खाता प्रकार",
+  "Polkadot & parachains": "Polkadot और पैराचेन",
+  "Moonbeam & other EVM networks": "Moonbeam और अन्य EVM नेटवर्क",
+  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "अपने टोकन को CoinGecko पर खोजें। प्राइस ID यहाँ उपलब्ध है: {{web}}[price-id]"
 }
