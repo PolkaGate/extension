@@ -41,44 +41,42 @@ const ActionSubAction = memo(function SubAction({ historyItem }: { historyItem: 
   const theme = useTheme();
   const { t } = useTranslation();
 
-  return useMemo(() => {
-    const isTransfer = historyItem.action.toLowerCase() === 'balances';
-    const isSend = historyItem.subAction?.toLowerCase() === 'send';
+  const isTransfer = historyItem.action.toLowerCase() === 'balances';
+  const isSend = historyItem.subAction?.toLowerCase() === 'send';
+  const participant = isSend
+    ? (historyItem.to?.name || historyItem.to?.address) ?? ''
+    : (historyItem.from.name || historyItem.from.address) ?? '';
 
-    return (
-      <Grid alignItems='flex-start' container direction='column' item width='fit-content'>
-        <Typography color='text.primary' textTransform='capitalize' variant='B-2'>
-          {historyItem.subAction}
-        </Typography>
-        <Grid alignItems='center' columnGap='4px' container item width='fit-content'>
-          {isTransfer
-            ? (<>
-              <Typography color='text.secondary' variant='B-4'>
-                {isSend ? t('To') : t('From')}:
-              </Typography>
-              <ScrollingTextBox
-                scrollOnHover
-                style={{ lineHeight: '18px' }}
-                text={isSend
-                  ? (historyItem.to?.name || historyItem.to?.address) ?? ''
-                  : (historyItem.from.name || historyItem.from.address) ?? ''
-                }
-                textStyle={{
-                  color: '#AA83DC',
-                  ...theme.typography['B-4']
-                }}
-                width={75}
-              />
-            </>)
-            : (<Typography color='text.secondary' textTransform='capitalize' variant='B-5'>
-              {historyItem.action}
-            </Typography>)
-          }
-          <TimeOfTheDay date={historyItem.date} />
-        </Grid>
+  return (
+    <Grid alignItems='flex-start' container direction='column' item width='fit-content'>
+      <Typography color='text.primary' textTransform='capitalize' variant='B-2'>
+        {historyItem.subAction}
+      </Typography>
+      <Grid alignItems='center' columnGap='4px' container item width='fit-content'>
+        {isTransfer
+          ? (<>
+            <Typography color='text.secondary' variant='B-4'>
+              {isSend ? t('To') : t('From')}:
+            </Typography>
+            <ScrollingTextBox
+              scrollOnHover
+              style={{ lineHeight: '18px' }}
+              text={participant}
+              textStyle={{
+                color: '#AA83DC',
+                ...theme.typography['B-4']
+              }}
+              width={75}
+            />
+          </>)
+          : (<Typography color='text.secondary' textTransform='capitalize' variant='B-5'>
+            {historyItem.action}
+          </Typography>)
+        }
+        <TimeOfTheDay date={historyItem.date} />
       </Grid>
-    );
-  }, [historyItem.action, historyItem.date, historyItem.from.address, historyItem.from.name, historyItem.subAction, historyItem.to, t, theme.typography]);
+    </Grid>
+  );
 });
 
 const HistoryStatusAmount = memo(function HistoryStatusAmount({ historyItem, short }: { historyItem: TransactionDetail, short: boolean }) {
