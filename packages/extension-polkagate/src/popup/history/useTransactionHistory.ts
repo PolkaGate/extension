@@ -76,9 +76,10 @@ export default function useTransactionHistory(address: string | undefined, _gene
     setLocalHistories
   });
 
+  const _all = localHistories ?? allHistories;
   // 5. Group transactions by date with filtering
   const grouped = useTransactionGrouping({
-    allHistories,
+    allHistories: _all,
     extrinsicsTx,
     filterOptions,
     receivedTx
@@ -102,8 +103,8 @@ export default function useTransactionHistory(address: string | undefined, _gene
   }, [isReadyToFetch, resetAllState, setIsLoading]);
 
   return {
-    allHistories,
-    count: allHistories?.length || 0,
+    allHistories: _all,
+    count: _all?.length || 0,
     grouped,
     isLoading
   };
