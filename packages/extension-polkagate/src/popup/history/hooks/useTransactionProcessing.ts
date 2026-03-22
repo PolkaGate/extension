@@ -17,7 +17,17 @@ import { isEthereumAddress } from '@polkadot/util-crypto';
 import { formatString, log } from '../hookUtils/utils';
 
 const getName = (accounts: AccountJson[], address: string) => {
-  const baseAddress = isEthereumAddress(address) ? address : getSubstrateAddress(address);
+  let baseAddress: string | undefined;
+
+  try {
+    baseAddress = isEthereumAddress(address) ? address : getSubstrateAddress(address);
+  } catch {
+    baseAddress = address;
+  }
+
+  if (!baseAddress) {
+    return undefined;
+  }
 
   return accounts.find((a) => a.address.toLowerCase() === baseAddress?.toLowerCase())?.name;
 };
