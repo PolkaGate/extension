@@ -170,7 +170,7 @@ export async function getAssetOnEthereum(addresses, chainName, port) {
   } catch (error) {
     console.error(`getAssetOnEthereum: Error fetching balances for ${chainName}:`, error);
   } finally {
-    console.info(chainName, ': account assets fetched.', results);
+    console.info(chainName, ': account assets fetched.');
     Object.keys(results).length
       ? port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.ETH, results }))
       : port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.ETH, results: null }));

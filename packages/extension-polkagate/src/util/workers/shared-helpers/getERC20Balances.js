@@ -32,8 +32,6 @@ export const getERC20Balances = async(chainName, addresses, genesisHash, userAdd
     })
     .filter((i) => !!i);
 
-  console.log('Filtered ERC20 Assets:', tokenInfo);
-
   for (const rpc of rpcs) {
     try {
       const p = new ethers.JsonRpcProvider(rpc);
@@ -73,7 +71,6 @@ export const getERC20Balances = async(chainName, addresses, genesisHash, userAdd
     if (tokenInfo?.length) {
       await Promise.all(tokenInfo.map(async({ contractAddress, priceId, symbol, ui }) => {
         try {
-          console.log('Fetching', symbol, 'for', addr, 'on', chainName, 'contractAddress:', contractAddress);
           const tokenContract = new Contract(contractAddress, ERC20_ABI, provider);
           let balance;
 
@@ -122,15 +119,6 @@ export const getERC20Balances = async(chainName, addresses, genesisHash, userAdd
         }
       }));
     }
-
-    // get native asset
-    // let balance;
-    // try {
-    //   balance = await provider.getBalance(addr);
-    // } catch (err) {
-    //   console.log(`Failed to fetch native balance for ${addr} on ${chainName}:`, err?.message || err);
-    //   balance = null;
-    // }
 
     return { addr, assets };
   }));

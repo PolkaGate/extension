@@ -26,8 +26,6 @@ onconnect = (/** @type {{ ports: any[]; }} */ event) => {
 
     const params = Object.values(parameters);
 
-    console.info('Shared worker, message received for:', functionName, parameters);
-
     try {
       switch (functionName) {
         case FETCHING_ASSETS_FN.SINGLE_ASSET: {

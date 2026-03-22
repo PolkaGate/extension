@@ -19,7 +19,7 @@ export async function getAssetOnSingleAssetChain(addresses, chainName, userAdded
   } catch (error) {
     console.error(`getAssetOnSingleAssetChain: Error fetching balances for ${chainName}:`, error);
   } finally {
-    console.info(chainName, ': account assets fetched.', results);
+    console.info(chainName, ': account assets fetched.');
     Object.keys(results).length
       ? port.postMessage(JSON.stringify({ functionName, results }))
       : port.postMessage(JSON.stringify({ functionName, results: null }));

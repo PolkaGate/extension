@@ -33,7 +33,7 @@ export async function getAssetOnEvm(addresses, chainName, genesisHash, userAdded
   } catch (error) {
     console.error(`getAssetOnEvm: Error fetching balances for ${chainName}:`, error);
   } finally {
-    console.info(chainName, ': account assets fetched.', results);
+    console.info(chainName, ': account assets fetched.');
     Object.keys(results).length
       ? port.postMessage(JSON.stringify({ functionName, results }))
       : port.postMessage(JSON.stringify({ functionName, results: null }));
