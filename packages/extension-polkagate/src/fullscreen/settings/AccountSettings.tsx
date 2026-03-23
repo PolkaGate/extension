@@ -10,6 +10,7 @@ import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2'
 import RemoveAccount from '@polkadot/extension-polkagate/src/partials/RemoveAccount';
 import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { Motion } from '../../components';
 import { useSelectedAccount, useTranslation } from '../../hooks';
@@ -141,7 +142,7 @@ function AccountSettings(): React.ReactElement {
                 label={t('Import Accounts')}
                 path='/account/have-wallet'
               />
-              {!selectedAccount?.isExternal &&
+              {!selectedAccount?.isExternal && !isEthereumAddress(selectedAccount?.address) &&
                 <ActionBox
                   Icon={Broom}
                   label={t('Derive from Account')}
