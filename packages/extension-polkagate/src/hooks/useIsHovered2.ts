@@ -3,7 +3,7 @@
 
 import { useCallback, useRef, useState } from 'react';
 
-export default function useIsHovered<T extends HTMLElement = HTMLDivElement>() {
+export default function useIsHovered<T extends Element = HTMLElement>() {
   const [isHovered, setIsHovered] = useState(false);
   const currentNode = useRef<T | null>(null);
 

@@ -5,9 +5,11 @@ import { ClickAwayListener, Grid, styled, type SxProps, type Theme } from '@mui/
 import { AddCircle, ArrowDown2, Broom, ExportCurve, ImportCurve, Setting, User } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
+import { isEthereumAddress } from '@polkadot/util-crypto';
+
 import DeriveAccount from '../fullscreen/home/DeriveAccount';
 import ExportAllAccounts from '../fullscreen/home/ExportAllAccounts';
-import { useTranslation } from '../hooks';
+import { useSelectedAccount, useTranslation } from '../hooks';
 import { ExtensionPopups } from '../util/constants';
 import { useExtensionPopups } from '../util/handleExtensionPopup';
 import DropMenuContent from './DropMenuContent';
@@ -35,6 +37,8 @@ function HomeAccountDropDown({ style }: Props) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
+  const selectedAccount = useSelectedAccount();
+  const isEthereum = isEthereumAddress(selectedAccount?.address);
 
   const _options = useMemo(() => {
     const OPTIONS = [
@@ -54,19 +58,24 @@ function HomeAccountDropDown({ style }: Props) {
         value: '/settingsfs/'
       },
       {
-        Icon: Broom,
-        text: t('Derive New Account'),
-        value: extensionPopupOpener(ExtensionPopups.DERIVE)
-      },
-      {
         Icon: ExportCurve,
         text: t('Export All Accounts'),
         value: extensionPopupOpener(ExtensionPopups.EXPORT)
       }
     ];
 
+ 
+    if (!isEthereum && !selectedAccount?.isExternal) {
+      OPTIONS.push({
+        Icon: Broom,
+        text: t('Derive New Account'),
+        value: extensionPopupOpener(ExtensionPopups.DERIVE)
+      }
+      );
+    }
+
     return OPTIONS;
-  }, [extensionPopupOpener, t]);
+  }, [extensionPopupOpener, isEthereum, selectedAccount?.isExternal, t]);
 
   const [open, setOpen] = useState<boolean>(false);
 

@@ -5,7 +5,9 @@ import { Container, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown } from 'iconsax-react';
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 
+import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { noop } from '@polkadot/util';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { AccountContext, GradientButton, GradientDivider, Identity, Motion, Radio } from '../../components';
 import { useTranslation } from '../../hooks';
@@ -29,7 +31,7 @@ const AccountsListToSelect = ({ genesisHash, handleClose, openMenu, selectedAcco
   }, [setSelectedAccount]);
 
   const filteredAccounts = useMemo(() => {
-    return accounts?.filter(({ isExternal }) => !isExternal);
+    return accounts?.filter(({ address, isExternal }) => !isExternal && !isEthereumAddress(address));
   }, [accounts]);
 
   return (
@@ -103,9 +105,9 @@ interface Props {
 
 export default function SelectAccount({ genesisHash, selectedAccount, setSelectedAccount, style = {} }: Props): React.ReactElement {
   const theme = useTheme();
+  const { isHovered, ref } = useIsHovered<SVGSVGElement>();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
-  const [hovered, setHovered] = useState(false);
 
   const handleToggleMenu = useCallback(() => setOpenMenu((isMenuOpen) => !isMenuOpen), []);
 
@@ -125,10 +127,9 @@ export default function SelectAccount({ genesisHash, selectedAccount, setSelecte
           withShortAddress
         />
         <ArrowCircleDown
-          color={hovered ? '#DC45A0' : theme.palette.primary.main}
+          color={isHovered ? '#DC45A0' : theme.palette.primary.main}
           onClick={handleToggleMenu}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
+          ref={ref}
           size='32'
           style={{ cursor: 'pointer' }}
           variant='Bulk'
