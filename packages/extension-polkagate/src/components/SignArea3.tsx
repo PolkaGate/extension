@@ -96,7 +96,8 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
     if (!transaction || !api) {
       return;
     }
-    // TODO: add moonbeam chains to proxy supported chains ...
+    // TODO: Proxy accounts cannot be used here while we submit via sendRawTransaction.
+    // Proxy support may be added later by wrapping the call with transact instead.
 
     return selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, transaction) : transaction;
   }, [api, formatted, selectedProxy, transaction]);
