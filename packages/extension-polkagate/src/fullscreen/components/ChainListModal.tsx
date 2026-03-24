@@ -81,10 +81,6 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
       return selectedChains?.map((g) => mapRelayToSystemGenesisIfMigrated(g))?.filter((g) => !isMigratedRelay(g ?? ''));
     }
 
-    // if (pathname?.includes('proxyManagement')) {
-    //   return PROXY_CHAINS.filter((chain) => !migratedRelays.includes(chain));
-    // }
-
     return selectedChains;
   }, [pathname, selectedChains]);
 
