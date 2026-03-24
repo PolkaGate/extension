@@ -5,17 +5,17 @@ import type { Proxy, ProxyItem, ProxyTypes } from '../util/types';
 
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Data, Trash, Warning2 } from 'iconsax-react';
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { useIsBlueish, useTranslation } from '../hooks';
+import { useAccount, useIsBlueish, useTranslation } from '../hooks';
 import { SharePopup } from '../partials';
 import Radio from '../popup/staking/components/Radio';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { PolkaGateIdenticon } from '../style';
 import { getSubstrateAddress } from '../util';
-import { AccountContext, FadeOnScroll, GradientButton, Identity, Progress } from '.';
+import { FadeOnScroll, GradientButton, Identity, Progress } from '.';
 
 const ResetSelection = ({ onReset }: { onReset: () => void }) => {
   const { t } = useTranslation();
@@ -41,22 +41,21 @@ interface ProxiesItemProps {
 }
 
 const ProxiesItem = ({ genesisHash, onSelect, proxy, proxyTypeFilter, selectedProxyItem }: ProxiesItemProps) => {
-  const { accounts } = useContext(AccountContext);
+  const account = useAccount(getSubstrateAddress(proxy?.proxy?.delegate));
   const isBlueish = useIsBlueish();
 
   const isAvailable = useMemo(() => {
-    if (!proxy) {
+    if (!proxy || !account) {
       return false;
     }
 
-    const typeMatch = proxyTypeFilter ? proxyTypeFilter.some((type) => type.toLowerCase() === proxy.proxy.proxyType.toLowerCase()) : true;
+    const typeMatch = proxyTypeFilter
+      ? proxyTypeFilter.some((type) => type.toLowerCase() === proxy.proxy.proxyType.toLowerCase())
+      : true;
+    const hasPrivateKey = !(account.isHardware || account.isQR || account.isExternal);
 
-    const found = accounts.find((account) => account.address === getSubstrateAddress(proxy.proxy.delegate));
-
-    const condition = Boolean(!found || found.isHardware || found.isQR || found.isExternal);
-
-    return !condition && typeMatch;
-  }, [accounts, proxy, proxyTypeFilter]);
+    return hasPrivateKey && typeMatch;
+  }, [account, proxy, proxyTypeFilter]);
 
   const isChecked = useMemo(() => {
     if (!selectedProxyItem) {

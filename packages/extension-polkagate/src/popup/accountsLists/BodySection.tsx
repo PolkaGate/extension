@@ -11,9 +11,9 @@ import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { AccountContext, ActionButton, ActionContext, FadeOnScroll, GradientButton, MyTooltip } from '../../components';
+import { ActionButton, ActionContext, FadeOnScroll, GradientButton, MyTooltip } from '../../components';
 import { AccountProfileLabel } from '../../fullscreen/components';
-import { useCategorizedAccountsInProfiles, useSelectedAccount, useTranslation } from '../../hooks';
+import { useAccounts, useCategorizedAccountsInProfiles, useSelectedAccount, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import AccountRow from './AccountRowSimple';
 import { PROFILE_MODE } from './type';
@@ -48,7 +48,7 @@ interface Props {
 
 function BodySection({ mode, onApply, searchKeyword, setMode, setShowDeleteConfirmation }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const { accounts: flatAccounts } = useContext(AccountContext);
+  const flatAccounts = useAccounts();
   const onAction = useContext(ActionContext);
   const refContainer = useRef<HTMLDivElement>(null);
   const selectedAccount = useSelectedAccount();

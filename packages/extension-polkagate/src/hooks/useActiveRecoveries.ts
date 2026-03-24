@@ -6,9 +6,9 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { BN } from '@polkadot/util';
 
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { AccountContext } from '../components/contexts';
+import useAccounts from './useAccounts';
 
 export interface ActiveRecoveryFor {
   rescuer: string;
@@ -19,7 +19,7 @@ export interface ActiveRecoveryFor {
 }
 
 export default function useActiveRecoveries(api: ApiPromise | undefined | null, searchFor?: string): ActiveRecoveryFor[] | null | undefined {
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
 
   const [activeRecoveries, setActiveRecoveries] = useState<ActiveRecoveryFor[] | null>();
   const [fetching, setFetching] = useState<boolean | null>(false);
@@ -38,7 +38,7 @@ export default function useActiveRecoveries(api: ApiPromise | undefined | null, 
 
     setFetching(true);
 
-    api.query.recovery?.activeRecoveries.entries().then((actives) => {
+    api.query['recovery']?.['activeRecoveries'].entries().then((actives) => {
       const myActiveRecovery: ActiveRecoveryFor[] = [];
 
       if (actives.length === 0) {

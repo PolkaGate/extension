@@ -4,10 +4,9 @@
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 import type { Contact } from './types';
 
-import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AccountContext } from '@polkadot/extension-polkagate/src/components';
-import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useAccounts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getAndWatchStorage, getSubstrateAddress, setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
@@ -22,7 +21,7 @@ interface Props {
 
 function AddressBook({ closePopup }: Props): React.ReactElement {
     const { t } = useTranslation();
-    const { accounts } = useContext(AccountContext);
+    const accounts = useAccounts();
 
     const [contacts, setContacts] = useState<Contact[] | undefined>(undefined);
     const [contactAddress, setContactAddress] = useState<string | undefined>();

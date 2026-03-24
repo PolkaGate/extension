@@ -1,12 +1,12 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { useSelectedAccount } from '../hooks';
+import { useAccounts, useSelectedAccount } from '../hooks';
 import { setStorage } from '../util';
 import { STORAGE_KEY } from '../util/constants';
-import { AccountContext, DropSelect } from '.';
+import { DropSelect } from '.';
 
 interface Props {
   style?: React.CSSProperties;
@@ -14,7 +14,7 @@ interface Props {
 
 function AccountSelectionDropDown({ style }: Props) {
   const selectedAccount = useSelectedAccount();
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
 
   const onClick = useCallback((address: string | number) => {
     setStorage(STORAGE_KEY.SELECTED_ACCOUNT, address).catch(console.error);

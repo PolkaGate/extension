@@ -6,7 +6,7 @@ import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 
 import { Stack, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
@@ -16,8 +16,8 @@ import { AUTO_LOCK_PERIOD_DEFAULT, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/e
 import { stringToU8a, u8aToString } from '@polkadot/util';
 import { ethereumEncode, jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
-import { AccountContext, ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
-import { useAlerts, useTranslation } from '../../../hooks';
+import { ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
+import { useAccounts, useAlerts, useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore, unlockAllAccounts, updateMeta } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
@@ -33,7 +33,7 @@ export default function RestoreJson(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
-  const { accounts: maybeExistingAccounts } = useContext(AccountContext);
+  const maybeExistingAccounts = useAccounts();
   const { notify } = useAlerts();
 
   const [isBusy, setIsBusy] = useState(false);

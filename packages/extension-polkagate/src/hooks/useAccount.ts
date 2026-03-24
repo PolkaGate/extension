@@ -4,15 +4,15 @@
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
-import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util';
+import useAccounts from './useAccounts';
 
 export default function useAccount(address: string | AccountId | null | undefined): AccountJson | undefined {
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
 
   return useMemo(() => {
     if (!address) {

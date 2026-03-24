@@ -3,16 +3,10 @@
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
-import { useContext, useMemo } from 'react';
-
-import { AccountContext } from '../components';
+import useAccounts from './useAccounts';
 
 export default function useLocalAccounts(): AccountJson[] {
-  const { accounts } = useContext(AccountContext);
+  const localAccounts = useAccounts(({ isExternal }) => !isExternal);
 
-  return useMemo(
-    () => accounts.filter(({ isExternal }) => !isExternal),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [accounts?.length]
-  );
+  return localAccounts;
 }

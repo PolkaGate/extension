@@ -3,12 +3,12 @@
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, UserOctagon } from 'iconsax-react';
-import React, { Fragment, useCallback, useContext, useState } from 'react';
+import React, { Fragment, useCallback, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { AccountContext, GradientDivider, Identity, VariantButton } from '../../../../components';
-import { useChainInfo, useTranslation } from '../../../../hooks';
+import { GradientDivider, Identity, VariantButton } from '../../../../components';
+import { useAccounts, useChainInfo, useTranslation } from '../../../../hooks';
 import { SharePopup } from '../../../../partials';
 import { getFormattedAddress } from '../../../../util';
 import PRadio from '../../components/Radio';
@@ -25,7 +25,7 @@ interface ChooseAccountMenuProps {
 const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, setSpecificAccount, specificAccount }: ChooseAccountMenuProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { accounts } = useContext(AccountContext);
+  const substrateAccounts = useAccounts(({ type }) => type !== 'ethereum');
   const { chain } = useChainInfo(genesisHash, true);
 
   const handleSelect = useCallback((selectedAccount: string) => () => {
@@ -52,7 +52,7 @@ const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, se
           {t('My Accounts')}
         </Typography>
         <Stack direction='column' sx={{ maxHeight: '390px', mb: '65px', overflowY: 'auto', rowGap: '12px' }}>
-          {accounts.filter(({ type }) => type !== 'ethereum').map(({ address }, index) => {
+          {substrateAccounts.map(({ address }, index) => {
             const formatted = getFormattedAddress(address, chain, chain?.ss58Format ?? 0);
             const checked = formatted === specificAccount;
 

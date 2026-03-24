@@ -8,9 +8,9 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { Extrinsics, TransactionDetail, Transfers } from '../../../util/types';
 import type { RecordTabStatus, RecordTabStatusGov } from '../hookUtils/types';
 
-import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useRef, useState } from 'react';
 
-import { AccountContext } from '@polkadot/extension-polkagate/src/components';
+import { useAccounts } from '@polkadot/extension-polkagate/src/hooks';
 import { amountToHuman, getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
@@ -51,9 +51,10 @@ interface UseTransactionProcessingResult {
  * Tracks initial fetch completion
  */
 export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receivedTx, setIsLoading, token }: UseTransactionProcessingProps): UseTransactionProcessingResult {
+  const accounts = useAccounts();
+
   const [processedReceived, setProcessedReceived] = useState<TransactionDetail[] | undefined>(undefined);
   const [processedExtrinsics, setProcessedExtrinsics] = useState<TransactionDetail[] | undefined>(undefined);
-  const { accounts } = useContext(AccountContext);
 
   // Track initial fetch completion
   const initialFetchDoneRef = useRef({

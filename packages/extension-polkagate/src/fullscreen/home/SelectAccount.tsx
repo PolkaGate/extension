@@ -1,16 +1,18 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { AccountJson } from '@polkadot/extension-base/background/types';
+
 import { Container, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown } from 'iconsax-react';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { noop } from '@polkadot/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
-import { AccountContext, GradientButton, GradientDivider, Identity, Motion, Radio } from '../../components';
-import { useTranslation } from '../../hooks';
+import { GradientButton, GradientDivider, Identity, Motion, Radio } from '../../components';
+import { useAccounts, useTranslation } from '../../hooks';
 import { DraggableModal } from '../components/DraggableModal';
 
 interface ChooseAccountMenuProps {
@@ -24,15 +26,12 @@ interface ChooseAccountMenuProps {
 const AccountsListToSelect = ({ genesisHash, handleClose, openMenu, selectedAccount, setSelectedAccount }: ChooseAccountMenuProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { accounts } = useContext(AccountContext);
+  const accountFilter = useCallback(({ address, isExternal }: AccountJson) => !isExternal && !isEthereumAddress(address), []);
+  const filteredAccounts = useAccounts(accountFilter);
 
   const handleSelect = useCallback((acc: string) => () => {
     setSelectedAccount(acc);
   }, [setSelectedAccount]);
-
-  const filteredAccounts = useMemo(() => {
-    return accounts?.filter(({ address, isExternal }) => !isExternal && !isEthereumAddress(address));
-  }, [accounts]);
 
   return (
     <DraggableModal

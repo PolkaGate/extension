@@ -3,11 +3,11 @@
 
 import { Stack, Typography } from '@mui/material';
 import { ArrowLeft2 } from 'iconsax-react';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AccountContext, ActionButton, TwoToneText } from '../../components';
-import { useIsDark } from '../../hooks';
+import { ActionButton, TwoToneText } from '../../components';
+import { useAccounts, useIsDark } from '../../hooks';
 
 interface Props {
   url?: string;
@@ -17,7 +17,7 @@ interface Props {
 }
 
 function OnboardTitle({ label, labelPartInColor, onBack, url }: Props): React.ReactElement {
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
   const isDark = useIsDark();
   const navigate = useNavigate();
 

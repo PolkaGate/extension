@@ -5,13 +5,13 @@ import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/src/uti
 
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import saveAs from 'file-saver';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { exportAccounts } from '@polkadot/extension-polkagate/src/messaging';
 
 import { exportAccountsGif } from '../../assets/gif';
-import { AccountContext, DecisionButtons, MatchPasswordField, MySnackbar } from '../../components';
-import { useTranslation } from '../../hooks';
+import { DecisionButtons, MatchPasswordField, MySnackbar } from '../../components';
+import { useAccounts, useTranslation } from '../../hooks';
 import { DraggableModal } from '../components/DraggableModal';
 
 interface Props {
@@ -26,7 +26,7 @@ interface Props {
  */
 function ExportAllAccounts({ onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
 
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [password, setPassword] = useState<string>();

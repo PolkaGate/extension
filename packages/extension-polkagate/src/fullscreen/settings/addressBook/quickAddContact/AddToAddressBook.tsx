@@ -3,10 +3,9 @@
 
 import { Grid, Stack, Typography } from '@mui/material';
 import { BookSaved } from 'iconsax-react';
-import React, { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 
-import { AccountContext } from '@polkadot/extension-polkagate/src/components';
-import { useAddressBook, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useAccounts, useAddressBook, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
 
@@ -19,9 +18,10 @@ interface Props {
 function AddToAddressBook({ input }: Props) {
     const { t } = useTranslation();
     const contacts = useAddressBook(); // default value is [], and when it's undefined means it's fetching!
-    const { accounts } = useContext(AccountContext);
+    const accounts = useAccounts();
     const containerRef = useRef(null);
     const { isHovered, ref } = useIsHovered();
+
     const [alreadyExists, setAvailable] = useState<boolean>(true);
     const [addingContact, setAddingContact] = useState<boolean>(false);
     const [openPopper, setOpen] = useState<boolean>(false);

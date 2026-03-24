@@ -3,13 +3,13 @@
 
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Folder } from 'iconsax-react';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 
-import { AccountContext, DecisionButtons, GradientButton, MyTextField, TwoToneText } from '../../components';
-import { useCategorizedAccountsInProfiles, useTranslation } from '../../hooks';
+import { DecisionButtons, GradientButton, MyTextField, TwoToneText } from '../../components';
+import { useAccounts, useCategorizedAccountsInProfiles, useTranslation } from '../../hooks';
 import ProfileAccountSelection from './ProfileAccountSelection';
 import { PROFILE_MODE } from './type';
 import { addProfileTag } from './utils';
@@ -27,7 +27,7 @@ enum STEP {
 function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
   const { categorizedAccounts } = useCategorizedAccountsInProfiles();
 
   const [isBusy, setIsBusy] = useState<boolean>(false);

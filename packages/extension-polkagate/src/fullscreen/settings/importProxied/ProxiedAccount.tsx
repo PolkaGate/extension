@@ -5,10 +5,9 @@ import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/src/uti
 import type { HexString } from '@polkadot/util/types';
 
 import { Grid } from '@mui/material';
-import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AccountContext } from '@polkadot/extension-polkagate/src/components';
-import { useSelectedAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useAccounts, useSelectedAccount, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import { createAccountExternal, updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import { getSubstrateAddress, setStorage, toShortAddress, updateStorage } from '@polkadot/extension-polkagate/src/util';
@@ -64,7 +63,7 @@ const addProxied = async(address: string, genesisHash: HexString) => {
  */
 function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactElement | null {
     const { t } = useTranslation();
-    const { accounts } = useContext(AccountContext);
+    const accounts = useAccounts();
 
     const isImportMode = mode === 'import';
 

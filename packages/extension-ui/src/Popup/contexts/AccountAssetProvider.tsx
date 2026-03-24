@@ -5,17 +5,17 @@ import type { SavedAssets } from '@polkadot/extension-polkagate/hooks/useAssetsB
 
 import React, { useContext, useEffect, useState } from 'react';
 
-import { AccountContext, AccountsAssetsContext, GenesisHashOptionsContext, UserAddedChainContext, WorkerContext } from '@polkadot/extension-polkagate/src/components/contexts';
+import { AccountsAssetsContext, GenesisHashOptionsContext, UserAddedChainContext, WorkerContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
-import { useNotifications } from '@polkadot/extension-polkagate/src/hooks';
+import { useAccounts, useNotifications } from '@polkadot/extension-polkagate/src/hooks';
 import useAssetsBalances from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import useNFT from '@polkadot/extension-polkagate/src/hooks/useNFT';
 import { getAndWatchStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 export default function AccountAssetProvider({ children }: { children: React.ReactNode }) {
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
   const genesisOptions = useContext(GenesisHashOptionsContext);
   const userAddedEndpoints = useContext(UserAddedChainContext);
   const worker = useContext(WorkerContext);

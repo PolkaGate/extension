@@ -3,11 +3,11 @@
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { AccountContext } from '../components';
+import useAccounts from './useAccounts';
 
 interface Profiles {
   accountProfiles: string[];
@@ -30,7 +30,7 @@ interface Profiles {
  * @returns {Profiles} An object containing default, user-defined, and account-specific profiles.
  */
 export default function useProfiles(account?: AccountJson): Profiles {
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
 
   return useMemo(() => {
     if (!accounts) {

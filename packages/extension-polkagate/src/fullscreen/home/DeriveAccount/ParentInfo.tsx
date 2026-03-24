@@ -7,13 +7,13 @@ import type { HexString } from '@polkadot/util/types';
 import { Stack, Typography } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { Hashtag } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { validateAccount, validateDerivationPath } from '@polkadot/extension-polkagate/src/messaging';
 import { nextDerivationPath } from '@polkadot/extension-polkagate/src/util/nextDerivationPath';
 
-import { AccountContext, DecisionButtons, MyTextField, PasswordInput } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { DecisionButtons, MyTextField, PasswordInput } from '../../../components';
+import { useAccounts, useTranslation } from '../../../hooks';
 import SelectAccount from '../SelectAccount';
 import { DERIVATION_STEPS, type PathState } from './types';
 
@@ -34,7 +34,7 @@ interface Props {
 
 function ParentInfo({ genesisHash, newParentAddress, onClose, parentAccount, parentPassword, setMaybeChidAccount, setNewParentAddress, setParentPassword, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
 
   const parentGenesis = (genesisHash ?? POLKADOT_GENESIS) as HexString;
 

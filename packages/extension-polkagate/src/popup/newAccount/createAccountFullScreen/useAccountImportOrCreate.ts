@@ -3,11 +3,10 @@
 
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AccountContext } from '@polkadot/extension-polkagate/src/components';
-import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useAccounts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useIsPasswordCorrect from '@polkadot/extension-polkagate/src/hooks/useIsPasswordCorrect';
 import { createAccountExternal, createAccountSuri } from '@polkadot/extension-polkagate/src/messaging';
 import { setStorage } from '@polkadot/extension-polkagate/src/util';
@@ -19,9 +18,9 @@ import { type AccountInfo, STEP } from './types';
 
 export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ accountType, onSuccessPath = '/',
   validator }: { accountType?: KeypairType, onSuccessPath?: string; validator?: (suri: string, type?: KeypairType) => Promise<T> }) {
+    const { t } = useTranslation();
   const navigate = useNavigate();
-  const { accounts } = useContext(AccountContext);
-  const { t } = useTranslation();
+  const accounts = useAccounts();
   const { hasNoLocalAccounts, validatePasswordAsync } = useIsPasswordCorrect();
 
   const [isBusy, setIsBusy] = useState(false);
