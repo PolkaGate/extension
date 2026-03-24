@@ -125,10 +125,12 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs, transa
       };
     }
 
+    const mayOriginFee = inputs.fee?.originFee.fee;
+
     return {
       decimal,
       destinationFee: maybeDestinationFee,
-      fee: inputs.fee?.originFee.fee ? new BN(inputs.fee.originFee.fee) : undefined,
+      fee: mayOriginFee ? new BN(mayOriginFee) : undefined,
       token
     };
   }, [inputs.fee, inputs?.isCrossChain, maybeSelectedNonNativeFeeAsset, decimal, token, maybePartialFee]);
