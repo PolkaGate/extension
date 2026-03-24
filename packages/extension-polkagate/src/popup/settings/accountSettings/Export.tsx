@@ -50,7 +50,8 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
 
   const onSnackbarClose = useCallback(() => {
     setShowSnackbar(false);
-  }, []);
+    !isExtension && onBack?.();
+  }, [isExtension, onBack]);
 
   const onExport = useCallback(async (): Promise<void> => {
     if (!address || !password) {

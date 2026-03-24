@@ -193,7 +193,7 @@ export default function RestoreJson(): React.ReactElement {
 
         if (success) {
           setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
-          // navigate('/') as void;
+          navigate('/') as void;
         } else {
           navigate('/migratePasswords') as void;
         }
