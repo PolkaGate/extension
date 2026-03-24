@@ -97,7 +97,6 @@ export default function RestoreJson(): React.ReactElement {
         genesisHash,
         isExternal,
         name: name ?? 'Unknown'
-        // type: isEthereumAddress(address) ? 'ethereum' : undefined
       } as JsonGetAccountInfo));
 
       setAccountsInfo(accs);
