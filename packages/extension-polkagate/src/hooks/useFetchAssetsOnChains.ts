@@ -78,7 +78,7 @@ export default function useFetchAssetsOnChains({ addresses, genesisOptions, user
       chainName
     }), [postToWorker]);
 
-  const fetchEVMAssets = useCallback((genesisHash:string, chainName: string, addresses: string[]) =>
+  const fetchEVMAssets = useCallback((genesisHash: string, chainName: string, addresses: string[]) =>
     postToWorker(FETCHING_ASSETS_FN.EVM, {
       addresses,
       chainName,
@@ -120,9 +120,13 @@ export default function useFetchAssetsOnChains({ addresses, genesisOptions, user
       }
     }
 
+    if (!substrateAddresses?.length) {
+      return FAILED;
+    }
+
     // Relay chains or chains with a single token
     // FixMe, we do not get assets on relay chains any more
-    if ((RELAY_CHAINS_GENESISHASH.includes(genesisHash) || isSingleTokenChain) && substrateAddresses?.length) {
+    if (RELAY_CHAINS_GENESISHASH.includes(genesisHash) || isSingleTokenChain) {
       if (!chainName) {
         console.error('Unable to resolve chain name for relay/single-token chain:', genesisHash);
 
@@ -130,10 +134,6 @@ export default function useFetchAssetsOnChains({ addresses, genesisOptions, user
       }
 
       return fetchAssetOnSingleAssetChain(chainName, substrateAddresses);
-    }
-
-    if (!substrateAddresses?.length) {
-      return FAILED;
     }
 
     // Asset hubs (like Statemint)
@@ -153,7 +153,7 @@ export default function useFetchAssetsOnChains({ addresses, genesisOptions, user
     }
 
     return FAILED;
-  }, [addresses, fetchEthAssets, genesisOptions, fetchAssetOnSingleAssetChain, fetchAssetOnAssetHub, fetchAssetOnMultiAssetChain]);
+  }, [genesisOptions, addresses, fetchEthAssets, fetchEVMAssets, fetchAssetOnSingleAssetChain, fetchAssetOnAssetHub, fetchAssetOnMultiAssetChain]);
 
   return { fetchAssets };
 }
