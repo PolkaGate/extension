@@ -129,8 +129,8 @@ export default function SendFund(): React.ReactElement {
         recipientNetwork: inputs?.recipientChain?.text,
         to: inputs?.recipientAddress
       },
-      fee: inputs?.feeInfo,
       ...txInfo,
+      fee: txInfo?.fee ?? inputs?.feeInfo,
       token: inputs?.token // since a token other than native token might be transferred, hence we overwrite native token
     } as TransactionDetail;
   }, [formatted, inputs?.amountAsBN, inputs?.decimal, inputs?.feeInfo, inputs?.recipientAddress, inputs?.recipientChain?.text, inputs?.token, t, txInfo]);
