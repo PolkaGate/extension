@@ -11,9 +11,9 @@ import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2'
 import { noop } from '@polkadot/util';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
-import { GradientButton, GradientDivider, Identity, Motion, Radio } from '../../components';
-import { useAccounts, useTranslation } from '../../hooks';
-import { DraggableModal } from '../components/DraggableModal';
+import { GradientButton, GradientDivider, Identity, Motion, Radio } from '../../../components';
+import { useAccounts, useTranslation } from '../../../hooks';
+import { DraggableModal } from '../../components/DraggableModal';
 
 interface ChooseAccountMenuProps {
   openMenu: boolean;
@@ -102,6 +102,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
+// To select local non-ethereum accounts to be as parent account for derive account
 export default function SelectAccount({ genesisHash, selectedAccount, setSelectedAccount, style = {} }: Props): React.ReactElement {
   const theme = useTheme();
   const { isHovered, ref } = useIsHovered<SVGSVGElement>();

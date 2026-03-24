@@ -14,7 +14,7 @@ import { nextDerivationPath } from '@polkadot/extension-polkagate/src/util/nextD
 
 import { DecisionButtons, MyTextField, PasswordInput } from '../../../components';
 import { useAccounts, useTranslation } from '../../../hooks';
-import SelectAccount from '../SelectAccount';
+import SelectAccount from './SelectAccount';
 import { DERIVATION_STEPS, type PathState } from './types';
 
 // match any single slash
