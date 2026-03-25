@@ -2,29 +2,28 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 import { getStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { AccountContext } from '../../components';
-import { useAlerts, useTranslation } from '../../hooks';
+import { useAccounts, useAlerts, useTranslation } from '../../hooks';
 import HomeLayout from '../components/layout';
 import ProxiedAccount from '../settings/importProxied/ProxiedAccount';
 import AccountList from './AccountList';
 import AccountsAdd from './AccountsAdd';
 import AssetsBars from './assetBars';
 import PortfolioFullScreen from './PortfolioFullScreen';
-import TrendingAssets from './TrendingAssets';
+import TrendingAssets from './trendingAssets';
 
 function HomePageFullScreen(): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { notify } = useAlerts();
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
   const { isExtensionLocked } = useExtensionLockContext();
 
   useEffect(() => {

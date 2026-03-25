@@ -1,18 +1,13 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useContext, useMemo } from 'react';
+import { useCallback } from 'react';
 
-import { AccountContext } from '../components';
 import { accountsValidate } from '../messaging';
+import useLocalAccounts from './useLocalAccounts';
 
 export default function useIsPasswordCorrect() {
-  const { accounts } = useContext(AccountContext);
-
-  const localAccounts = useMemo(
-    () => accounts.filter(({ isExternal }) => !isExternal),
-    [accounts]
-  );
+  const localAccounts = useLocalAccounts();
 
   const firstLocal = localAccounts[0];
   const hasNoLocalAccounts = localAccounts.length === 0;

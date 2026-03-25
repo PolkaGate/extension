@@ -120,23 +120,25 @@ export function getCurrency(chainName: string, token: string, assetId: number | 
     return { id: assetId };
   }
 
-  try {
-    const parsed = JSON.parse(assetId) as Record<string, unknown>;
+  if (assetId.startsWith('{') || assetId.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(assetId) as Record<string, unknown>;
 
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      const key = Object.keys(parsed)[0];
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        const key = Object.keys(parsed)[0];
 
-      const map = {
-        ForeignAsset: Foreign,
-        Token: Native,
-        default: ForeignAbstract // TODO: handle other cases like LiquidCrowdloan, etc.
-      };
-      const fn = map[key as keyof typeof map] ?? map.default;
+        const map = {
+          ForeignAsset: Foreign,
+          Token: Native,
+          default: ForeignAbstract // TODO: handle other cases like LiquidCrowdloan, etc.
+        };
+        const fn = map[key as keyof typeof map] ?? map.default;
 
-      return { symbol: fn(token) };
+        return { symbol: fn(token) };
+      }
+    } catch (e) {
+      console.error('Failed to resolve asset Id, not an object', assetId, e);
     }
-  } catch (e) {
-    console.error('Failed to resolve asset Id, not an object', assetId, e);
   }
 
   return { id: assetId };

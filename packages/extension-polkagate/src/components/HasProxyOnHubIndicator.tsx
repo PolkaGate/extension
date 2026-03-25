@@ -2,42 +2,40 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, type SxProps, type Theme } from '@mui/material';
-import { KUSAMA_GENESIS, POLKADOT_GENESIS, WESTEND_GENESIS } from '@polkagate/apps-config';
 import { Data } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useProxies, useSelectedAccount, useTranslation } from '../hooks';
-import { KUSAMA_GENESIS_HASH, WESTEND_GENESIS_HASH } from '../util/constants';
+import { useProxies, useTranslation } from '../hooks';
+import { PASEO_ASSET_HUB_GENESIS_HASH, STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH } from '../util/constants';
 import MyTooltip from './MyTooltip';
 
 interface Props {
-  size?: string | number;
+  address: string | undefined;
   style?: React.CSSProperties;
 }
 
-function HasProxyIndicator({ style = {} }: Props): React.ReactElement {
+function HasProxyOnHubIndicator({ address, style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const account = useSelectedAccount();
   const navigate = useNavigate();
 
-  const westendProxies = useProxies(WESTEND_GENESIS_HASH, account?.address);
-  const kusamaProxies = useProxies(KUSAMA_GENESIS_HASH, account?.address);
-  const polkadotProxies = useProxies(POLKADOT_GENESIS, account?.address);
+  const paseoProxies = useProxies(PASEO_ASSET_HUB_GENESIS_HASH, address);
+  const kusamaProxies = useProxies(STATEMINE_GENESIS_HASH, address);
+  const polkadotProxies = useProxies(STATEMINT_GENESIS_HASH, address);
 
   const [hasProxy, setHasProxy] = useState(
     {
       kusama: false,
-      polkadot: false,
-      westend: false
+      paseo: false,
+      polkadot: false
     });
 
-  const hasProxyOnRelay = Object.values(hasProxy).some(Boolean);
+  const hasProxyOnAH = Object.values(hasProxy).some(Boolean);
 
   useEffect((): void => {
-    if (westendProxies?.length) {
+    if (paseoProxies?.length) {
       setHasProxy((pre) => {
-        pre.westend = true;
+        pre.paseo = true;
 
         return pre;
       });
@@ -58,18 +56,21 @@ function HasProxyIndicator({ style = {} }: Props): React.ReactElement {
         return pre;
       });
     }
-  }, [kusamaProxies, polkadotProxies, westendProxies]);
+  }, [kusamaProxies, polkadotProxies, paseoProxies]);
 
   const onClick = useCallback((): void => {
-    if (!hasProxyOnRelay) {
+    if (!hasProxyOnAH) {
       return;
     }
 
-    const genesisHash = hasProxy?.polkadot ? POLKADOT_GENESIS : hasProxy?.kusama ? KUSAMA_GENESIS : WESTEND_GENESIS;
+    const navigateGenesis = hasProxy?.polkadot
+      ? STATEMINT_GENESIS_HASH
+      : hasProxy?.kusama
+        ? STATEMINE_GENESIS_HASH
+        : PASEO_ASSET_HUB_GENESIS_HASH;
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    navigate(`/proxyManagement/${account?.address}/${genesisHash}`);
-  }, [account?.address, hasProxy, hasProxyOnRelay, navigate]);
+    navigate(`/proxyManagement/${address}/${navigateGenesis}`) as void;
+  }, [address, hasProxy, hasProxyOnAH, navigate]);
 
   const containerStyle: SxProps<Theme> = {
     '&:hover': {
@@ -92,11 +93,11 @@ function HasProxyIndicator({ style = {} }: Props): React.ReactElement {
   return (
     <>
       {
-        hasProxyOnRelay &&
+        hasProxyOnAH &&
         <MyTooltip content={t('Account has proxy on {{chains}}.',
           {
             replace:
-              { chains: `${hasProxy.polkadot ? 'Polkadot' : ''}${hasProxy.kusama && hasProxy.polkadot ? ', ' : ''}${hasProxy.kusama ? 'Kusama' : ''}${hasProxy.kusama && hasProxy.westend ? ' and ' : ''}${hasProxy.westend ? 'Westend' : ''}` }
+              { chains: `${hasProxy.polkadot ? 'Polkadot' : ''}${hasProxy.kusama && hasProxy.polkadot ? ', ' : ''}${hasProxy.kusama ? 'Kusama' : ''}${hasProxy.kusama && hasProxy.paseo ? ' and ' : ''}${hasProxy.paseo ? 'Paseo' : ''}` }
           })}
         >
           <Grid container item onClick={onClick} sx={containerStyle}>
@@ -108,4 +109,4 @@ function HasProxyIndicator({ style = {} }: Props): React.ReactElement {
   );
 }
 
-export default React.memo(HasProxyIndicator);
+export default React.memo(HasProxyOnHubIndicator);

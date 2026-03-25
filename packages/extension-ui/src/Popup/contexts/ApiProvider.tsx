@@ -64,7 +64,6 @@ const endpointManager = new EndpointManager();
  */
 export default function ApiProvider({ children }: { children: React.ReactNode }) {
   const [apis, setApis] = useState<APIs>({});
-
   const requestedQueue = useRef<Record<string, string[]>>({});
   // Store pending promises for each genesisHash
   const pendingConnections = useRef<
@@ -146,7 +145,6 @@ export default function ApiProvider({ children }: { children: React.ReactNode })
 
   const handleAutoMode = useCallback(async (genesisHash: string, endpoints: DropdownOption[]) => {
     const wssEndpoints = endpoints.filter(({ value }) => String(value).startsWith('wss'));
-
     const { api, selectedEndpoint } = await fastestConnection(wssEndpoints);
 
     if (!api || !selectedEndpoint) {
@@ -187,6 +185,8 @@ export default function ApiProvider({ children }: { children: React.ReactNode })
     const endpointValue = endpoint?.endpoint;
 
     if (!endpointValue || !endpointManager) {
+      console.warn('No endpoint in requestApiConnection!');
+
       return;
     }
 

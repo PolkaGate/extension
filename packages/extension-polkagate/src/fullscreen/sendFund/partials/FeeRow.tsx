@@ -1,6 +1,8 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
+import type { ISubmittableResult } from '@polkadot/types/types';
 import type { CanPayFee } from '../../../util/types';
 import type { FeeInfo, Inputs } from '../types';
 
@@ -26,10 +28,11 @@ interface Props {
   canPayFee?: CanPayFee; // TODO: Needs a fix to be used since it only works for. native assets
   inputs: Inputs;
   genesisHash: string | undefined;
-  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
+  setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
+  transaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
 }
 
-export default function FeeRow({ address, genesisHash, inputs, setInputs }: Props): React.ReactElement {
+export default function FeeRow({ address, genesisHash, inputs, setInputs, transaction }: Props): React.ReactElement {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +72,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
     )
     , [feeAssetsWithBalance, selectedAssetId]);
 
-  const maybePartialFee = usePartialFee(api, inputs, formatted, maybeSelectedNonNativeFeeAsset?.location);
+  const maybePartialFee = usePartialFee(api, transaction, formatted, maybeSelectedNonNativeFeeAsset?.location);
 
   const feeOptions = useMemo(() => {
     if (!feeAssetsWithBalance) {
@@ -122,10 +125,12 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
       };
     }
 
+    const mayOriginFee = inputs.fee?.originFee.fee;
+
     return {
       decimal,
       destinationFee: maybeDestinationFee,
-      fee: inputs.fee?.originFee.fee ? new BN(inputs.fee?.originFee.fee) : undefined,
+      fee: mayOriginFee ? new BN(mayOriginFee) : undefined,
       token
     };
   }, [inputs.fee, inputs?.isCrossChain, maybeSelectedNonNativeFeeAsset, decimal, token, maybePartialFee]);
@@ -191,7 +196,6 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
   const showFeeSelector = !!feeOptions?.length && !account?.isExternal;
 
   return (
-
     <Stack direction='column' sx={{ m: '25px 10px 20px', width: '766px' }}>
       <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ height: '22px', pl: '10px', pr: showFeeSelector ? '7px' : '20px' }}>
         <Typography color='primary.main' sx={{ textAlign: 'left' }} variant='B-1'>
@@ -207,7 +211,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
               decimal={feeInfo.decimal}
               style={{
                 color: 'text.primary',
-                ml: '5px'
+                marginLeft: '5px'
               }}
               token={feeInfo.token}
             />
@@ -247,7 +251,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs }: Prop
                 decimal={feeInfo.destinationFee?.decimal}
                 style={{
                   color: 'text.primary',
-                  ml: '5px'
+                  marginLeft: '5px'
                 }}
                 token={feeInfo.destinationFee?.token}
               />

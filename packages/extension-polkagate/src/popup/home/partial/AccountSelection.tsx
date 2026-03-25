@@ -3,12 +3,12 @@
 
 import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
 import { ArrowDown2 } from 'iconsax-react';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useIsBlueish, useSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
+import { useAccounts, useIsBlueish, useSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
 
-import { AccountContext, ScrollingTextBox } from '../../../components';
+import { ScrollingTextBox } from '../../../components';
 import useIsDark from '../../../hooks/useIsDark';
 import PolkaGateIdenticon from '../../../style/PolkaGateIdenticon';
 import { identiconBlue, identiconPink } from '../svg';
@@ -67,7 +67,7 @@ function AccountSelection({ noSelection = false }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const isBlueish = useIsBlueish();
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
   const location = useLocation();
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();

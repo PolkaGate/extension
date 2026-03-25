@@ -62,6 +62,12 @@ export default function PricesProvider({ children }: Props) {
                   return;
                 }
 
+                if (priceEntry?.value === undefined) {
+                  delete newPrices.prices[id];
+
+                  return;
+                }
+
                 priceEntry.genesisHash = genesisHash;
 
                 if (symbol) {
@@ -70,9 +76,9 @@ export default function PricesProvider({ children }: Props) {
               });
 
               setPrices(newPrices);
-              savedPricesInCurrencies[currency.code] = newPrices;
-              setStorage(STORAGE_KEY.PRICE_IN_CURRENCIES, savedPricesInCurrencies)
-                .catch(console.error);
+                savedPricesInCurrencies[currency.code] = newPrices;
+                setStorage(STORAGE_KEY.PRICE_IN_CURRENCIES, savedPricesInCurrencies)
+                  .catch(console.error);
             })
             .catch(console.error);
         })

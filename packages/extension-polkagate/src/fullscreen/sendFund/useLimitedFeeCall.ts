@@ -6,8 +6,9 @@ import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTelepo
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
-import type { Inputs } from './types';
+import type { Inputs, ParaspellFees } from './types';
 
+import { ethers, Interface } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { amountToMachine, decodeMultiLocation, isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
@@ -15,6 +16,7 @@ import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polka
 import { BN_ONE, BN_ZERO, isFunction } from '@polkadot/util';
 
 import { useChainInfo } from '../../hooks';
+import { ERC20_ABI } from '../../util/evmUtils/constantsEth';
 import { INVALID_PARA_ID, XCM_LOC } from './utils';
 
 /**
@@ -53,36 +55,91 @@ import { INVALID_PARA_ID, XCM_LOC } from './utils';
 export default function useLimitedFeeCall(address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, inputs: Inputs | undefined, genesisHash: string | undefined, teleportState: Teleport, isCrossChain: boolean | undefined, isSupportedByParaspell: boolean) {
   const { api } = useChainInfo(genesisHash);
 
+  const [unsignedEthTx, setUnsignedEthTx] = useState<ethers.Transaction>();
+  const [isContract, setIsContract] = useState<boolean>();
+
+  useEffect(() => {
+    assetId?.startsWith('0x') && api?.rpc.eth?.getCode?.(assetId).then((code) => {
+      setIsContract(code.toHex() !== '0x');
+    }).catch(console.error);
+  }, [address, api, assetId, inputs]);
+
+  useEffect(() => {
+    const { amountAsBN, recipientAddress } = inputs || {};
+
+    if (!address || !api || !isContract || !recipientAddress || !amountAsBN || amountAsBN?.isZero()) {
+      return;
+    }
+
+    const getErc20Call = async () => {
+      const iface = new Interface(ERC20_ABI);
+      const data = iface.encodeFunctionData(
+        'transfer',
+        [recipientAddress, amountAsBN.toString()]
+      );
+
+      const estimatedGas = await api.rpc.eth.estimateGas({
+        data,
+        from: address,
+        to: assetId
+      });
+
+      const nonce = await api.rpc.eth.getTransactionCount(address);
+      const chainId = await api.rpc.eth.chainId();
+      const gasPrice = await api.rpc.eth.gasPrice();
+      const gasLimitBig = BigInt(estimatedGas.toString());
+
+      const unsignedEthTx = ethers.Transaction.from({
+        accessList: [],
+        chainId: Number(chainId),
+        data,
+        gasLimit: gasLimitBig,
+        maxFeePerGas: BigInt(gasPrice.toString()),
+        maxPriorityFeePerGas: 0n,
+        nonce: Number(nonce),
+        to: assetId,
+        type: 2,
+        value: 0n
+      });
+
+      setUnsignedEthTx(unsignedEthTx);
+      setOriginFee(api.createType('Balance', estimatedGas.mul(gasPrice)) as unknown as Balance);
+    };
+
+    getErc20Call().catch(console.error);
+  }, [address, api, assetId, inputs, isContract]);
+
   const [originFee, setOriginFee] = useState<Balance>();
   const [xcmFee, setXcmFee] = useState<Balance>();
 
-  const { decimal, recipientAddress, token, transferType } = inputs || {};
+  const { decimal, recipientAddress, recipientChain, token, transferType } = inputs || {};
 
   const isForeignAsset = assetId ? assetId.startsWith('0x') : undefined;
   const noAssetId = assetId === undefined || assetId === 'undefined';
   const isNativeToken = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
   const isNonNativeToken = !noAssetId && !isNativeToken;
-  const parsedAssetId = useMemo(() => noAssetId || isNativeToken
-    ? undefined
-    : isForeignAsset
-      ? decodeMultiLocation(assetId as HexString)
-      : parseInt(assetId)
-    , [assetId, isForeignAsset, isNativeToken, noAssetId]);
+  const parsedAssetId = useMemo(() =>
+    noAssetId || isNativeToken || isContract
+      ? undefined
+      : isForeignAsset
+        ? decodeMultiLocation(assetId as HexString)
+        : parseInt(assetId)
+    , [assetId, isContract, isForeignAsset, isNativeToken, noAssetId]);
 
   const amountAsBN = useMemo(() => decimal ? amountToMachine(inputs?.amount, decimal) : undefined, [decimal, inputs?.amount]);
 
   const recipientParaId = useMemo(() => {
-    const mayParaId = inputs?.recipientChain?.value;
+    const mayParaId = recipientChain?.value;
 
     try {
       return isCrossChain ? parseInt(String(mayParaId)) : INVALID_PARA_ID;
     } catch {
       return INVALID_PARA_ID;
     }
-  }, [inputs?.recipientChain, isCrossChain]);
+  }, [recipientChain, isCrossChain]);
 
   const onChainCall = useMemo(() => {
-    if (!api || !genesisHash) {
+    if (isSupportedByParaspell || !api || !genesisHash || isContract) {
       return undefined;
     }
 
@@ -97,7 +154,7 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
             : 'tokens'
         : 'balances';
 
-      if (['currencies', 'tokens'].includes(module)) {
+      if (['currencies', 'tokens'].includes(module) && api.tx[module]) {
         return api.tx[module]['transfer'];
       }
 
@@ -109,14 +166,14 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
             : api.tx[module]['transferAll']
       );
     } catch (e) {
-      console.log('Something wrong while making on network call!', e);
+      console.log('Something wrong while making on-chain call!', e);
 
       return undefined;
     }
-  }, [api, isNonNativeToken, genesisHash, isForeignAsset, transferType]);
+  }, [isSupportedByParaspell, api, genesisHash, isContract, isNonNativeToken, isForeignAsset, transferType]);
 
   const call = useMemo((): SubmittableExtrinsicFunction<'promise'> | undefined => {
-    if (!api) {
+    if (isSupportedByParaspell || !api) {
       return;
     }
 
@@ -127,10 +184,10 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
     }
 
     return onChainCall;
-  }, [api, isCrossChain, onChainCall]);
+  }, [api, isCrossChain, isSupportedByParaspell, onChainCall]);
 
   const crossChainParams = useMemo(() => {
-    if (!api || !assetToTransfer || !teleportState || isCrossChain === false || (recipientParaId === INVALID_PARA_ID && !teleportState?.isParaTeleport) || !amountAsBN || amountAsBN.isZero()) {
+    if (isSupportedByParaspell || !api || !assetToTransfer || !teleportState || isCrossChain === false || (recipientParaId === INVALID_PARA_ID && !teleportState?.isParaTeleport) || !amountAsBN || amountAsBN.isZero()) {
       return;
     }
 
@@ -167,7 +224,7 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
       0,
       { Unlimited: null }
     ];
-  }, [api, assetToTransfer, teleportState, isCrossChain, recipientParaId, amountAsBN, recipientAddress]);
+  }, [isSupportedByParaspell, api, assetToTransfer, teleportState, isCrossChain, recipientParaId, amountAsBN, recipientAddress]);
 
   const onChainParams = useMemo((): unknown[] | undefined => {
     if (!api || !assetToTransfer || !address || !onChainCall || !recipientAddress) {
@@ -196,7 +253,10 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
       return setOriginFee(dummyAmount);
     }
 
-    onChainCall(...onChainParams).paymentInfo(address).then((i) => setOriginFee(i?.partialFee)).catch(console.error);
+    onChainCall(...onChainParams)
+      .paymentInfo(address)
+      .then((i) => setOriginFee(i?.partialFee))
+      .catch(console.error);
   }, [address, api, isSupportedByParaspell, onChainCall, onChainParams]);
 
   useEffect(() => {
@@ -209,39 +269,40 @@ export default function useLimitedFeeCall(address: string | undefined, assetId: 
   }, [call, address, isCrossChain, crossChainParams, isSupportedByParaspell]);
 
   return useMemo(() => {
-    if (!originFee) {
-      return {};
-    }
+    const tx = isCrossChain
+      ? crossChainParams && call
+        ? call?.(...crossChainParams)
+        : undefined
+      : onChainParams && onChainCall
+        ? onChainCall?.(...onChainParams)
+        : undefined;
 
-    return {
-      fee: {
+    const asset = {
+      assetId,
+      decimals: decimal,
+      isNative: isNativeToken,
+      symbol: token
+    };
+
+    const fee = originFee
+      ? {
         destinationFee: {
-          asset: {
-            assetId,
-            decimals: decimal,
-            isNative: isNativeToken,
-            symbol: token
-          },
+          asset,
           fee: BN_ZERO
         },
         isCrossChain,
         originFee: {
-          asset: {
-            assetId,
-            decimals: decimal,
-            isNative: isNativeToken,
-            symbol: token
-          },
+          asset,
           fee: isCrossChain ? xcmFee : originFee
         }
-      },
-      tx: isCrossChain
-        ? crossChainParams && call
-          ? call?.(...crossChainParams)
-          : undefined
-        : onChainParams && onChainCall
-          ? onChainCall?.(...onChainParams)
-          : undefined
+      } as unknown as ParaspellFees
+      : undefined;
+
+    return {
+      fee,
+      isContract,
+      tx,
+      unsignedEthTx
     };
-  }, [assetId, call, crossChainParams, decimal, isCrossChain, isNativeToken, onChainCall, onChainParams, originFee, token, xcmFee]);
+  }, [originFee, isCrossChain, crossChainParams, call, onChainParams, onChainCall, assetId, decimal, isNativeToken, token, isContract, xcmFee, unsignedEthTx]);
 }

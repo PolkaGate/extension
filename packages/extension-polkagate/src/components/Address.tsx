@@ -14,11 +14,11 @@ import CopyToClipboard from 'react-copy-to-clipboard';
 import { noop } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
 
-import { useAccountName, useIsDark, useTranslation } from '../hooks';
+import { useAccountName, useAccounts, useIsDark, useTranslation } from '../hooks';
 import useMetadata from '../hooks/useMetadata';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { DEFAULT_TYPE } from '../util/defaultType';
-import { AccountContext, ActionButton, GlowCheckbox, SettingsContext, ShortAddress } from './';
+import { ActionButton, GlowCheckbox, SettingsContext, ShortAddress } from './';
 
 export interface Props {
   actions?: React.ReactNode;
@@ -93,7 +93,7 @@ function Address({ address, backgroundColor, check, genesisHash, handleCheck, ma
   const { t } = useTranslation();
   const isDark = useIsDark();
 
-  const { accounts } = useContext(AccountContext);
+    const accounts = useAccounts();
   const accountName = useAccountName(address || '');
   const settings = useContext(SettingsContext);
   const [{ formatted, genesisHash: recodedGenesis }, setRecoded] = useState<Recoded>(defaultRecoded);

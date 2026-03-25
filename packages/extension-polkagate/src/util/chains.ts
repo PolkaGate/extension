@@ -13,6 +13,7 @@ export interface NetworkInfo {
   genesisHash: HexString;
   icon: Icon;
   isTestnet?: boolean;
+  isEthereum: boolean;
   name: string;
   ss58Format: number;
   tokenDecimal: number;
@@ -25,6 +26,7 @@ const hashes = selectableNetworks
     chain: network.displayName,
     genesisHash: network.genesisHash[0],
     icon: network.icon,
+    isEthereum: network.standardAccount === 'secp256k1',
     isTestnet: network.isTestnet,
     name: network.displayName,
     ss58Format: network.prefix,

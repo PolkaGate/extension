@@ -5,8 +5,7 @@ import { Grid, IconButton } from '@mui/material';
 import { Edit, Trash } from 'iconsax-react';
 import React, { memo } from 'react';
 
-import { GradientDivider, Identity2 } from '@polkadot/extension-polkagate/src/components';
-import { POLKADOT_GENESIS_HASH } from '@polkadot/extension-polkagate/src/util/constants';
+import { GradientDivider, Identity } from '@polkadot/extension-polkagate/src/components';
 
 interface Props {
     address: string;
@@ -19,9 +18,8 @@ function AddressBookItem({ address, name, onEdit, onRemove }: Props) {
     return (
         <>
             <Grid container item sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-                <Identity2
+                <Identity
                     address={address}
-                    genesisHash={POLKADOT_GENESIS_HASH}
                     identiconSize={24}
                     name={name}
                     nameStyle={{ maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}

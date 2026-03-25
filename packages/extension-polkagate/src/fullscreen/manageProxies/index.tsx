@@ -11,7 +11,6 @@ import { useParams } from 'react-router-dom';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useChainInfo, useTranslation, useUpdateSelectedAccount } from '../../hooks';
-import { PROXY_CHAINS } from '../../util/constants';
 import { NotSupportedBox } from '../components';
 import HomeLayout from '../components/layout';
 import AddProxy from './AddProxy';
@@ -57,12 +56,18 @@ function ManageProxies(): React.ReactElement {
   }, []);
 
   useLayoutEffect(() => {
-    if (!PROXY_CHAINS.includes(genesisHash ?? '')) {
+    if (!api) {
+      return;
+    }
+
+    const hasProxy = 'proxy' in api.tx;
+
+    if (!hasProxy) {
       return setStep(STEPS.UNSUPPORTED);
     }
 
     setStep(STEPS.INIT);
-  }, [genesisHash, chain, refresh]);
+  }, [genesisHash, chain, refresh, api]);
 
   useEffect(() => {
     // Reset UI state on chain switch while the API might still be fetching data from the old chain

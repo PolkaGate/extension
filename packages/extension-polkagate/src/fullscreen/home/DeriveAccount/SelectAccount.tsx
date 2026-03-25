@@ -1,15 +1,19 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { AccountJson } from '@polkadot/extension-base/background/types';
+
 import { Container, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown } from 'iconsax-react';
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
+import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { noop } from '@polkadot/util';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
-import { AccountContext, GradientButton, GradientDivider, Identity2, Motion, Radio } from '../../components';
-import { useTranslation } from '../../hooks';
-import { DraggableModal } from '../components/DraggableModal';
+import { GradientButton, GradientDivider, Identity, Motion, Radio } from '../../../components';
+import { useAccounts, useTranslation } from '../../../hooks';
+import { DraggableModal } from '../../components/DraggableModal';
 
 interface ChooseAccountMenuProps {
   openMenu: boolean;
@@ -22,15 +26,12 @@ interface ChooseAccountMenuProps {
 const AccountsListToSelect = ({ genesisHash, handleClose, openMenu, selectedAccount, setSelectedAccount }: ChooseAccountMenuProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { accounts } = useContext(AccountContext);
+  const accountFilter = useCallback(({ address, isExternal }: AccountJson) => !isExternal && !isEthereumAddress(address), []);
+  const filteredAccounts = useAccounts(accountFilter);
 
   const handleSelect = useCallback((acc: string) => () => {
     setSelectedAccount(acc);
   }, [setSelectedAccount]);
-
-  const filteredAccounts = useMemo(() => {
-    return accounts?.filter(({ isExternal }) => !isExternal);
-  }, [accounts]);
 
   return (
     <DraggableModal
@@ -51,7 +52,7 @@ const AccountsListToSelect = ({ genesisHash, handleClose, openMenu, selectedAcco
             return (
               <div key={address}>
                 <Container disableGutters onClick={handleSelect(address)} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                  <Identity2
+                  <Identity
                     address={address}
                     addressStyle={{ color: theme.palette.primary.main }}
                     genesisHash={genesisHash ?? ''}
@@ -101,18 +102,19 @@ interface Props {
   style?: React.CSSProperties;
 }
 
+// To select local non-ethereum accounts to be as parent account for derive account
 export default function SelectAccount({ genesisHash, selectedAccount, setSelectedAccount, style = {} }: Props): React.ReactElement {
   const theme = useTheme();
+  const { isHovered, ref } = useIsHovered<SVGSVGElement>();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
-  const [hovered, setHovered] = useState(false);
 
   const handleToggleMenu = useCallback(() => setOpenMenu((isMenuOpen) => !isMenuOpen), []);
 
   return (
     <>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px', ...style }}>
-        <Identity2
+        <Identity
           address={selectedAccount}
           addressStyle={{ color: 'primary.main', variant: 'B-1' }}
           charsCount={14}
@@ -125,10 +127,9 @@ export default function SelectAccount({ genesisHash, selectedAccount, setSelecte
           withShortAddress
         />
         <ArrowCircleDown
-          color={hovered ? '#DC45A0' : theme.palette.primary.main}
+          color={isHovered ? '#DC45A0' : theme.palette.primary.main}
           onClick={handleToggleMenu}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
+          ref={ref}
           size='32'
           style={{ cursor: 'pointer' }}
           variant='Bulk'

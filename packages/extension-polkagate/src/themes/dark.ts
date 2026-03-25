@@ -37,7 +37,7 @@ export const darkTheme: ExtendedThemeOptions = {
     text: { primary: '#EAEBF1', secondary: '#BEAAD8', disabled: '#4B4B4B', highlight: '#809ACB' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
     success: { main: '#82FFA5', light: '#46890C', contrastText: '#2ECC71' },
-    warning: { main: '#FF4FB9' },
+    warning: { main: '#FF4FB9', light: '#FFCE4F' },
     divider: 'rgba(255, 255, 255, 0.1)',
     gradient: {
       primary: `radial-gradient(

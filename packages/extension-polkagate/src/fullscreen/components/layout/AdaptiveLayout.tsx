@@ -1,9 +1,10 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 
-import { AccountContext } from '../../../components';
+import { useAccounts } from '@polkadot/extension-polkagate/src/hooks';
+
 import OnboardingLayout from '../../onboarding/OnboardingLayout';
 import HomeLayout from './index';
 
@@ -13,7 +14,7 @@ interface Props {
 }
 
 function AdaptiveLayout({ children, style = {} }: Props): React.ReactElement {
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
   const isOnboarding = useRef(!accounts?.length);
   const ChosenLayout = isOnboarding.current ? OnboardingLayout : HomeLayout;
 

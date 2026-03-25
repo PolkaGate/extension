@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { AccountContext, GradientButton, GradientDivider } from '../../../components';
-import { useIsExtensionPopup, useTranslation } from '../../../hooks';
+import { GradientButton, GradientDivider } from '../../../components';
+import { useAccounts, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { MAX_ACCOUNT_COUNT_NOTIFICATION } from '../constant';
 import AccountToggle from './AccountToggle';
 
@@ -17,7 +17,7 @@ interface Props {
 function SelectNotificationAccountsBody({ onAccounts, previousSelectedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>(previousSelectedAccounts ?? []);
 

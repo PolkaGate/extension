@@ -78,7 +78,7 @@ function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props
           my: '25px',
           padding: '3.75px',
           position: 'relative',
-          width: '85%'
+          width: 'auto'
         }}
       >
         <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '10px', height: '100%', padding: '1px', width: '100%' }}>
@@ -91,7 +91,7 @@ function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props
                   cmd={cmd}
                   genesisHash={genesisHash}
                   payload={payloadU8a}
-                  style={{ backgroundColor: '#fff', borderRadius: '8px', height: '258px', margin: '5px', overflow: 'clip', padding: '15px' }}
+                  style={{ backgroundColor: '#fff', borderRadius: '8px', height: '258px', margin: '5px', overflow: 'clip', padding: '15px', width: 'auto' }}
                 />)}
           </div>
         </Grid>

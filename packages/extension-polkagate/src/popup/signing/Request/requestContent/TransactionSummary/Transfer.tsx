@@ -4,7 +4,7 @@
 import { Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { ChainLogo, DisplayBalance, Identity2 } from '../../../../../components';
+import { ChainLogo, DisplayBalance, Identity } from '../../../../../components';
 import { useChainInfo, useTranslation } from '../../../../../hooks';
 
 interface Props {
@@ -34,7 +34,7 @@ function Transfer({ amount, genesisHash, to }: Props): React.ReactElement<Props>
           <Typography color='#BEAAD8' sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {t('Transfer to')}
           </Typography>
-          <Identity2
+          <Identity
             address={to}
             addressStyle={{ color: 'text.secondary', variant: 'B-4' }}
             charsCount={4}

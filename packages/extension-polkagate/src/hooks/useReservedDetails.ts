@@ -12,7 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ASSET_HUBS, PROXY_CHAINS } from '../util/constants';
+import { ASSET_HUBS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import useChainInfo from './useChainInfo';
 
@@ -82,7 +82,7 @@ export default function useReservedDetails(formatted: string | undefined, genesi
       });
 
       /** fetch proxy  */
-      if (api.query?.['proxy'] && PROXY_CHAINS.includes(genesisHash)) {
+      if (api.query?.['proxy']?.['proxies']) {
         setValue('proxy', undefined);
 
         api.query['proxy']['proxies'](formatted).then((proxyInformation) => {

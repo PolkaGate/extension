@@ -6,7 +6,7 @@ import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 
 import { Stack, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
@@ -14,10 +14,10 @@ import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/compone
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import { AUTO_LOCK_PERIOD_DEFAULT, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { stringToU8a, u8aToString } from '@polkadot/util';
-import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
+import { ethereumEncode, jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
-import { AccountContext, ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
-import { useAlerts, useTranslation } from '../../../hooks';
+import { ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
+import { useAccounts, useAlerts, useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore, unlockAllAccounts, updateMeta } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
@@ -33,7 +33,7 @@ export default function RestoreJson(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
-  const { accounts: maybeExistingAccounts } = useContext(AccountContext);
+  const maybeExistingAccounts = useAccounts();
   const { notify } = useAlerts();
 
   const [isBusy, setIsBusy] = useState(false);
@@ -135,7 +135,15 @@ export default function RestoreJson(): React.ReactElement {
     }
 
     await batchRestore(encryptFile, password);
-    const updateMetaList = accountToAddTime.map((address) => updateMeta(address, JSON.stringify({ addedTime: Date.now(), genesisHash: null })));
+    const updateMetaList = accountToAddTime.map((address) => {
+      // JSON exports may contain compressed secp256k1 public keys (0x02/0x03…);
+      // convert them to the corresponding EVM (H160) address so keyring.getPair() can resolve the account
+      if (address.startsWith('0x')) {
+        address = ethereumEncode(address);
+      }
+
+      return updateMeta(address, JSON.stringify({ addedTime: Date.now(), genesisHash: null }));
+    });
 
     await Promise.all(updateMetaList);
   }, [accountsInfo, filterAndEncryptFile, password, selectedAccountsInfo]);

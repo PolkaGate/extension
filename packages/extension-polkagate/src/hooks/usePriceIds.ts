@@ -1,44 +1,42 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { createAssets } from '@polkagate/apps-config/assets';
+import type { ERC20Asset } from '@polkagate/apps-config/assets/evm/types.js';
+
+import { createAssets, createErc20Assets } from '@polkagate/apps-config/assets';
 import { useMemo } from 'react';
 
 import { sanitizeChainName } from '../util';
-import { TEST_NETS } from '../util/constants';
 import useAllChains from './useAllChains';
-import useSelectedChains from './useSelectedChains';
 
 const assetsChains = createAssets();
+const erc20Assets = createErc20Assets() as ERC20Asset[];
 
 interface priceIdInfo {
-  genesisHash: string;
-  symbol?: string;
+  genesisHash?: string;
+  symbol: string;
   id: string;
 }
 
 export default function usePriceIds(): priceIdInfo[] | undefined | null {
-  const selectedChains = useSelectedChains();
   const allChains = useAllChains();
 
   return useMemo(() => {
-    const nonTestNetSelectedChains = selectedChains?.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
-    let selectedChainsChainName = nonTestNetSelectedChains?.map((genesisHash) => {
-      const chainInfo = allChains.find(({ genesisHash: chainGenesisHash }) => chainGenesisHash === genesisHash);
-      const id = sanitizeChainName(chainInfo?.chain)?.toLowerCase();
+    const chainNameBaseIds = allChains.map(({ chain, genesisHash, isTestnet, tokenSymbol: symbol }) => {
+      const id = sanitizeChainName(chain, true)?.toLowerCase();
 
-      if (!id) {
+      if (!id || !symbol || isTestnet) {
         return undefined;
       }
 
       return {
         genesisHash,
         id,
-        symbol: chainInfo?.tokenSymbol ?? 'Unit'
+        symbol
       };
     }).filter((i) => !!i);
 
-    const assetsInfoOfMultiAssetSelectedChains = selectedChainsChainName?.map(({ genesisHash, id }) =>
+    const assetsInfoOfMultiAssetSelectedChains = chainNameBaseIds?.map(({ genesisHash, id }) =>
       id && assetsChains[id]?.map((asset) => {
         if (!asset.priceId) {
           return undefined;
@@ -52,15 +50,21 @@ export default function usePriceIds(): priceIdInfo[] | undefined | null {
       }))
       ?.flat().filter((i) => !!i);
 
-    selectedChainsChainName = selectedChainsChainName?.map((item) => {
-      item.id = item.id.replace('AssetHub', '');
+    const erc20PriceIds = erc20Assets.map(({ priceId, symbol }) => {
+      if (!priceId) {
+        return undefined;
+      }
 
-      return item;
-    }); // TODO: needs double check
+      return {
+        id: priceId,
+        symbol
+      };
+    }).filter((i) => !!i);
 
     const merged = [
-      ...(selectedChainsChainName || []),
-      ...(assetsInfoOfMultiAssetSelectedChains || [])
+      ...(chainNameBaseIds || []),
+      ...(assetsInfoOfMultiAssetSelectedChains || []),
+      ...erc20PriceIds
     ];
 
     // Deduplicate based on `id`, keeping the first occurrence
@@ -76,5 +80,5 @@ export default function usePriceIds(): priceIdInfo[] | undefined | null {
     });
 
     return nonDuplicatedPriceIds.length ? [...nonDuplicatedPriceIds] : null;
-  }, [allChains, selectedChains]);
+  }, [allChains]);
 }

@@ -12,8 +12,9 @@ import { useLocation } from 'react-router-dom';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import useUpdateAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useUpdateAccountSelectedChain';
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
-import { PROXY_CHAINS, STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
-import { isMigratedHub, isMigratedRelay, mapRelayToSystemGenesisIfMigrated, migratedRelays } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
+import { isMigratedHub, isMigratedRelay, mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { ChainLogo, GlowCheck, GradientButton, SearchField } from '../../components';
 import { useGenesisHashOptions, useSelectedAccount, useSelectedChains, useTranslation } from '../../hooks';
@@ -33,8 +34,9 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
   const { pathname } = useLocation();
 
   const selectedChains = useSelectedChains();
-  const allChains = useGenesisHashOptions(false);
   const selectedAccount = useSelectedAccount();
+  const isSelectedAccountEthereum = isEthereumAddress(selectedAccount?.address);
+  const allChains = useGenesisHashOptions(isSelectedAccountEthereum);
   const selectedAccountChain = useAccountSelectedChain(selectedAccount?.address);
   const refContainer = useRef<HTMLDivElement>(null);
 
@@ -77,10 +79,6 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
 
     if (pathname?.includes('send')) {
       return selectedChains?.map((g) => mapRelayToSystemGenesisIfMigrated(g))?.filter((g) => !isMigratedRelay(g ?? ''));
-    }
-
-    if (pathname?.includes('proxyManagement')) {
-      return PROXY_CHAINS.filter((chain) => !migratedRelays.includes(chain));
     }
 
     return selectedChains;

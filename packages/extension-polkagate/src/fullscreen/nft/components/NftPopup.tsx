@@ -12,7 +12,7 @@ import ReactMarkdown from 'react-markdown';
 import { modalEffect } from '@polkadot/extension-polkagate/src/assets/img/index';
 import ActionButton from '@polkadot/extension-polkagate/src/components/ActionButton';
 import GradientButton from '@polkadot/extension-polkagate/src/components/GradientButton';
-import { ChainLogo, CopyAddressButton, Identity2 } from '@polkadot/extension-polkagate/src/components/index';
+import { ChainLogo, CopyAddressButton, Identity } from '@polkadot/extension-polkagate/src/components/index';
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
 import useIsDark from '@polkadot/extension-polkagate/src/hooks/useIsDark';
 import NftPrice from '@polkadot/extension-polkagate/src/popup/nft/NftPrice';
@@ -42,7 +42,7 @@ function AccountRow({ address, genesisHash, label }: { label: string, address: s
         </Typography>
         <CopyAddressButton address={address} padding={0} />
       </Stack>
-      <Identity2
+      <Identity
         address={address}
         genesisHash={genesisHash}
         identiconSize={14}

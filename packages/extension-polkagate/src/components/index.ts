@@ -52,7 +52,7 @@ export { default as HomeButton } from './HomeButton';
 export { default as HorizontalMenuItem } from './HorizontalMenuItem';
 export { default as IButton } from './IButton';
 export { default as Identicon } from './Identicon';
-export { default as Identity2 } from './Identity2';
+export { default as Identity } from './Identity';
 export { default as Infotip } from './Infotip';
 export { default as Infotip2 } from './Infotip2';
 export { default as InputFile } from './InputFile';

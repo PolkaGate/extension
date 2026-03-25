@@ -9,9 +9,9 @@ import React, { useCallback, useContext, useState } from 'react';
 import { noop } from '@polkadot/util';
 
 import { user } from '../../../assets/gif/index';
-import { AccountContext, ActionButton, ActionContext, Address2, BackWithLabel, GradientBox2, GradientButton, Motion, MySnackbar, PasswordInput } from '../../../components';
+import { ActionButton, ActionContext, Address2, BackWithLabel, GradientBox2, GradientButton, Motion, MySnackbar, PasswordInput } from '../../../components';
 import MySwitch from '../../../components/MySwitch';
-import { useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useAccounts, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../hooks';
 import { exportAccount, exportAccounts } from '../../../messaging';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
@@ -31,7 +31,7 @@ import HomeMenu from '../../../partials/HomeMenu';
  */
 export function ExportAccountsBody({ address, isExternal, name, onBack }: { address: string | undefined, isExternal?: boolean | undefined, name: string | undefined, onBack?: () => void }): React.ReactElement {
   const { t } = useTranslation();
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
   const isExtension = useIsExtensionPopup();
 
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -50,7 +50,8 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
 
   const onSnackbarClose = useCallback(() => {
     setShowSnackbar(false);
-  }, []);
+    !isExtension && onBack?.();
+  }, [isExtension, onBack]);
 
   const onExport = useCallback(async (): Promise<void> => {
     if (!address || !password) {

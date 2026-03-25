@@ -11,6 +11,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 
 import { useAlerts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { COINGECKO_WEB } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { DraggableModal } from './DraggableModal';
 import SineWaveLoader from './SineWaveLoader';
@@ -301,7 +302,23 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
           <ToggleButton sx={btnStyle} value={30}>{t('Month')}</ToggleButton>
           <ToggleButton sx={btnStyle} value={365}>{t('Year')}</ToggleButton>
         </ToggleButtonGroup>
-        <Typography sx={{ color: 'text.disabled', display: 'block', mt: '-10px', pr: '16px', textAlign: 'right', width: '100%' }} variant='S-2'>
+        <Typography
+          component='a'
+          href={`${COINGECKO_WEB}${coinId}`}
+          rel='noopener noreferrer'
+          sx={{
+            '&:hover': { textDecoration: 'underline' },
+            color: 'text.disabled',
+            display: 'block',
+            mt: '-10px',
+            pr: '16px',
+            textAlign: 'right',
+            textDecoration: 'none',
+            width: '100%'
+          }}
+          target='_blank'
+          variant='S-2'
+        >
           {t('powered by CoinGecko')}
         </Typography>
       </>

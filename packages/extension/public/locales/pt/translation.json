@@ -68,7 +68,6 @@
   "Done": "Pronto",
   "Review": "Revisar",
   "Find the chain endpoint in the Polkadot.js/org/apps. After selecting your chain and endpoint, copy the URL segment starting with wss and ending before the first #. For example: wss://rpc.dotters.network/polkadot": "Encontre o endpoint da cadeia em Polkadot.js/org/apps. Após selecionar sua cadeia e endpoint, copie o segmento da URL começando com wss e terminando antes do primeiro #. Exemplo: wss://rpc.dotters.network/polkadot",
-  "Find your token on CoinGecko. The price ID is available at: https://www.coingecko.com/en/coins/[price-id]": "Encontre seu token no CoinGecko. O ID do preço está disponível em: https://www.coingecko.com/en/coins/[price-id]",
   "Edit profile": "Editar perfil",
   "Internet is disconnected ...": "Internet desconectada ...",
   "Privacy & Security": "Privacidade e Segurança",
@@ -297,8 +296,6 @@
   "QR-attached": "QR anexado",
   "Watch-only": "Apenas visualização",
   "Derived from {{parentName}}": "Derivado de {{parentName}}",
-  "Click to set an AI-generated background.": "Clique para definir um fundo gerado por IA.",
-  "AI Background": "Fundo IA",
   "change log": "registro de alterações",
   "Wow, it’s great!": "Uau, isso é ótimo!",
   "Tokens": "Tokens",
@@ -940,5 +937,10 @@
   "Subscan API Key": "Chave API do Subscan",
   "Getting an API key from Subscan is easy and free! Just visit https://pro.subscan.io/ and follow the simple steps.": "Obter uma chave API do Subscan é fácil e gratuito! Basta visitar https://pro.subscan.io/ e seguir os passos simples.",
   "Invalid API key format.": "Formato de chave API inválido.",
-  "Paste your Subscan API key": "Cole sua chave API do Subscan"
+  "Paste your Subscan API key": "Cole sua chave API do Subscan",
+  "Choose account type": "Escolha o tipo de conta",
+  "account type": "tipo de conta",
+  "Polkadot & parachains": "Polkadot e parachains",
+  "Moonbeam & other EVM networks": "Moonbeam e outras redes EVM",
+  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "Encontre seu token no CoinGecko. O ID de preço está disponível em: {{web}}[price-id]"
 }

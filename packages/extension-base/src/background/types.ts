@@ -125,6 +125,7 @@ export interface RequestSignatures {
   'pri(accounts.changePassword)': [RequestAccountChangePassword, boolean];
   'pri(accounts.changePasswordAll)': [RequestAccountChangePasswordAll, boolean];
   'pri(signing.getSignature)': [RequestSigningSignature, HexString | null];
+  'pri(signing.signEthereumRaw)': [RequestSigningEthereumRawSignature, HexString | null];
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
   'pri(authorize.update)': [RequestUpdateAuthorizedAccounts, void];
   'pri(authorize.list)': [null, ResponseAuthorizeList];
@@ -213,6 +214,7 @@ export interface RequestAccountCreateExternal {
   address: string;
   genesisHash?: HexString | null;
   name: string;
+  type?: KeypairType;
 }
 
 export interface RequestAccountCreateSuri {
@@ -336,6 +338,10 @@ export interface RequestSigningApprovePassword {
 
 export interface RequestSigningSignature {
   payload: SignerPayloadJSON;
+}
+export interface RequestSigningEthereumRawSignature {
+  address: string;
+  data: string;
 }
 
 export interface RequestSigningApproveSignature {

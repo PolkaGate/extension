@@ -5,10 +5,12 @@
 
 import { createAssets } from '@polkagate/apps-config/assets';
 
-import { FETCHING_ASSETS_FUNCTION_NAMES, WORKER_TASKS } from '../constants';
+import { FETCHING_ASSETS_FN, WORKER_TASKS } from '../constants';
 import { getAssetOnAssetHub } from './shared-helpers/getAssetOnAssetHub.js';
+import { getAssetOnEthereum } from './shared-helpers/getAssetOnEthereum.js';
+import { getAssetOnEvm } from './shared-helpers/getAssetOnEvm.js';
 import { getAssetOnMultiAssetChain } from './shared-helpers/getAssetOnMultiAssetChain.js';
-import { getAssetOnRelayChain } from './shared-helpers/getAssetOnRelayChain.js';
+import { getAssetOnSingleAssetChain } from './shared-helpers/getAssetOnSingleAssetChain.js';
 import getNFTs from './shared-helpers/getNFTs.js';
 import { getPool } from './shared-helpers/getPool.js';
 import getValidatorsInformation from './shared-helpers/getValidatorsInformation.js';
@@ -19,23 +21,19 @@ const assetsChains = createAssets();
 onconnect = (/** @type {{ ports: any[]; }} */ event) => {
   const port = event.ports[0]; // Get the MessagePort from the connection
 
-  console.info('Shared worker: port connected');
-
   port.onmessage = (/** @type {{ data: { functionName: any; parameters: any; }; }} */ e) => {
     const { functionName, parameters } = e.data;
 
     const params = Object.values(parameters);
 
-    console.info('Shared worker, message received for:', functionName, parameters);
-
     try {
       switch (functionName) {
-        case FETCHING_ASSETS_FUNCTION_NAMES.RELAY: {
-          getAssetOnRelayChain(...params, port).catch(console.error);
+        case FETCHING_ASSETS_FN.SINGLE_ASSET: {
+          getAssetOnSingleAssetChain(...params, port).catch(console.error);
           break;
         }
 
-        case FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET: {
+        case FETCHING_ASSETS_FN.MULTI_ASSET: {
           // eslint-disable-next-line no-case-declarations
           const assetsToBeFetched = assetsChains[parameters.chainName];
 
@@ -50,7 +48,7 @@ onconnect = (/** @type {{ ports: any[]; }} */ event) => {
           break;
         }
 
-        case FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB: {
+        case FETCHING_ASSETS_FN.ASSET_HUB: {
           if (!parameters.assetsToBeFetched) {
             console.warn('getAssetOnAssetHub: No assets to be fetched on, but just Native Token');
 
@@ -58,6 +56,16 @@ onconnect = (/** @type {{ ports: any[]; }} */ event) => {
           }
 
           getAssetOnAssetHub(...params, port).catch(console.error);
+          break;
+        }
+
+        case FETCHING_ASSETS_FN.EVM: {
+          getAssetOnEvm(...params, port).catch(console.error);
+          break;
+        }
+
+        case FETCHING_ASSETS_FN.ETH: {
+          getAssetOnEthereum(...params, port).catch(console.error);
           break;
         }
 

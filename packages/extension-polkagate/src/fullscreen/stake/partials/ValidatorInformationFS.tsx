@@ -11,7 +11,7 @@ import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material
 import React, { type CSSProperties, memo, useCallback, useMemo, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
-import { ActionButton, DetailPanel, DisplayBalance, GradientButton, Identity2 } from '../../../components';
+import { ActionButton, DetailPanel, DisplayBalance, GradientButton, Identity } from '../../../components';
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../hooks';
 import { Email, Web, XIcon } from '../../../popup/settings/icons';
 import SocialIcon from '../../../popup/settings/partials/SocialIcon';
@@ -52,7 +52,7 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '18px' }}>
       <Stack direction='column' sx={{ width: 'max-content' }}>
-        <Identity2
+        <Identity
           address={getSubstrateAddress(nominator.who.toString())}
           genesisHash={genesisHash ?? ''}
           identiconSize={24}

@@ -12,7 +12,7 @@ import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGat
 import { toShortAddress } from '@polkadot/extension-polkagate/src/util';
 import { toTitleCase } from '@polkadot/extension-polkagate/src/util/string';
 
-import { GlowCheckbox, Identity2 } from '../../../components';
+import { GlowCheckbox, Identity } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 
 interface Props {
@@ -75,7 +75,7 @@ export default function ProxyAccountInfo({ handleDelete, proxyItem, showCheck = 
       />
       <Stack direction='column' rowGap='4px'>
         <Stack alignItems='center' columnGap='8px' direction='row'>
-          <Identity2
+          <Identity
             address={proxyItem.proxy.delegate}
             genesisHash={genesisHash ?? POLKADOT_GENESIS}
             noIdenticon

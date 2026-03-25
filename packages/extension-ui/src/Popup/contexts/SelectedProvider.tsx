@@ -4,9 +4,10 @@
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { SelectedType } from '@polkadot/extension-polkagate/src/util/types';
 
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AccountContext, SelectedContext } from '@polkadot/extension-polkagate/src/components/contexts';
+import { SelectedContext } from '@polkadot/extension-polkagate/src/components/contexts';
+import { useAccounts } from '@polkadot/extension-polkagate/src/hooks';
 import { getAndWatchStorage, getSubstrateAddress } from '@polkadot/extension-polkagate/src/util';
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
@@ -21,7 +22,7 @@ const DEFAULT_SELECTED = {
 };
 
 export default function SelectedProvider({ children }: Props) {
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
 
   const [selected, setSelected] = useState<SelectedType>(DEFAULT_SELECTED);
 

@@ -5,12 +5,11 @@ import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { ExpandMore } from '@mui/icons-material';
 import { Box, Collapse, Stack, Typography } from '@mui/material';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useProfileInfo from '@polkadot/extension-polkagate/src/fullscreen/home/useProfileInfo';
 
-import { GlowCheckbox, Identity2 } from '../../components';
+import { GlowCheckbox, Identity } from '../../components';
 
 interface Props {
   accounts: AccountJson[];
@@ -97,9 +96,9 @@ function ProfileAccountSelection({ accounts, defaultProfile = '', label, maybeNe
                 <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '337' }} />
               }
               <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ p: '11px 17px 10px 20px' }}>
-                <Identity2
+                <Identity
                   address={address}
-                  genesisHash={genesisHash ?? POLKADOT_GENESIS}
+                  genesisHash={genesisHash ?? '' }
                   identiconSize={18}
                   style={{ color: '#EAEBF1', variant: 'B-1', width: '90%' }}
                 />

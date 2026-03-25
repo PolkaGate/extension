@@ -60,7 +60,7 @@ function TokensItems({ onTokenClick, theme, tokenDetail }: { onTokenClick: () =>
           <Typography color='text.secondary' sx={{ bgcolor, borderRadius: '8px', px: '3px', width: 'fit-content' }} variant='B-1'>
             {token}
           </Typography>
-          <Typography color='text.secondary' variant='S-2'>
+          <Typography color='text.secondary' textAlign='left' variant='S-2'>
             {toTitleCase(chainName)}
           </Typography>
         </Grid>
@@ -251,7 +251,7 @@ function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
       if (baseToken) {
         genesisHash = baseToken.genesisHash.toString();
         decimal = baseToken.decimal;
-      } else { // @AMIRKHANEF does this fallback really needed?
+      } else { // is this fallback really needed?
         const baseTokenFallback = allChains.find(({ name, tokenSymbol }) => !/Asset Hub|People/.test(name) && tokenSymbol.toLowerCase() === token.toLowerCase());
 
         genesisHash = baseTokenFallback?.genesisHash;

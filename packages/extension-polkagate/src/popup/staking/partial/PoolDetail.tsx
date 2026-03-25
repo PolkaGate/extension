@@ -12,7 +12,7 @@ import React, { Fragment, memo, useCallback, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import Subscan from '../../../assets/icons/Subscan';
-import { CryptoFiatBalance, DisplayBalance, FadeOnScroll, Identity2, Progress, Transition } from '../../../components';
+import { CryptoFiatBalance, DisplayBalance, FadeOnScroll, Identity, Progress, Transition } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, useIsExtensionPopup, usePoolDetail, useTranslation } from '../../../hooks';
@@ -194,7 +194,7 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
             return (
               <React.Fragment key={index}>
                 <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
-                  <Identity2
+                  <Identity
                     address={member.accountId}
                     genesisHash={genesisHash ?? ''}
                     identiconSize={18}
@@ -319,7 +319,7 @@ export const RoleItem = ({ address, genesisHash, role }: RoleItemProps) => {
         {t(role)}
       </Typography>
       {address
-        ? <Identity2 address={address} genesisHash={genesisHash ?? ''} identiconSize={18} showShortAddress showSocial style={{ maxWidth: '175px', minWidth: '175px', variant: 'B-1' }} />
+        ? <Identity address={address} genesisHash={genesisHash ?? ''} identiconSize={18} showShortAddress showSocial style={{ maxWidth: '175px', minWidth: '175px', variant: 'B-1' }} />
         : '  ---  '
       }
       <Grid container item width='fit-content'>

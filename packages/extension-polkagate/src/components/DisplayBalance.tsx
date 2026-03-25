@@ -9,7 +9,7 @@ import type { BN } from '@polkadot/util';
 import type { DotsVariant } from './Dots';
 
 import { Fade, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import React, { memo, useMemo } from 'react';
+import React, { type CSSProperties, memo, useMemo } from 'react';
 
 import { formatBalance } from '@polkadot/util';
 
@@ -40,7 +40,7 @@ interface DisplayBalanceProps {
   dotStyle?: DotsVariant;
   genesisHash?: string | undefined;
   skeletonStyle?: SxProps<Theme>;
-  style?: SxProps<Theme>;
+  style?: CSSProperties;
   token?: string;
   tokenColor?: string;
   useAdaptiveDecimalPoint?: boolean;
@@ -85,9 +85,11 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
     ? '0.00'
     : decimalPoint ? formatAdaptive(num, decimalPoint) : num;
 
+    const { maxWidth, width, ...restStyle } = style || {};
+
   return (
     <Fade in={true} timeout={1000}>
-      <div>
+      <div style={{ maxWidth, width }}>
         {isHideNumbers
           ? (
             <Dots
@@ -98,7 +100,7 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
             />
           )
           : (
-            <Typography sx={{ ...theme.typography['B-1'], width: 'fit-content', ...style }}>
+            <Typography sx={{ ...theme.typography['B-1'], width: 'fit-content', ...restStyle }}>
               {displayNum}
               <span style={{ color: tokenColor ?? 'inherit' }}>
                 {` ${unit}`}

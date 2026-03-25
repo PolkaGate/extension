@@ -6,13 +6,13 @@
 import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { ArrowDown2 } from 'iconsax-react';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useSelectedAccount, useUpdateSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
+import { useAccounts, useSelectedAccount, useUpdateSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 
-import { AccountContext, ChainLogo, ScrollingTextBox } from '../../components';
+import { ChainLogo, ScrollingTextBox } from '../../components';
 import useIsDark from '../../hooks/useIsDark';
 import { identiconBlue, identiconPink } from '../../popup/home/svg';
 import PolkaGateIdenticon from '../../style/PolkaGateIdenticon';
@@ -105,7 +105,7 @@ function ChainSwitcher({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () => 
 function AccountSelect({ modalToOpen, noSelection = false, onClick }: { modalToOpen: MODAL_TO_OPEN, noSelection: boolean, onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
   const selectedAccount = useSelectedAccount();
   const { address } = useParams<{ address: string; genesisHash: string }>();
 
@@ -193,6 +193,7 @@ export default function AccountChainSelect({ noSelection = false }: Props): Reac
       <AccountListModal
         handleClose={onClick(MODAL_TO_OPEN.NONE)}
         open={modalToOpen === MODAL_TO_OPEN.ACCOUNTS}
+        showAll
       />
       <ChainListModal
         handleClose={onClick(MODAL_TO_OPEN.NONE)}

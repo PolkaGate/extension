@@ -7,7 +7,7 @@ import React, { useMemo } from 'react';
 import { useAddressBook, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { getSubstrateAddress, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 
-import { ChainLogo, Identity2 } from '../../../components';
+import { ChainLogo, Identity } from '../../../components';
 import AddToAddressBook from '../../settings/addressBook/quickAddContact/AddToAddressBook';
 
 interface Props {
@@ -44,7 +44,7 @@ export default function FromToBox({ address, chainName, genesisHash, label }: Pr
           </Typography>
         </Stack>
       </Stack>
-      <Identity2
+      <Identity
         address={address}
         addressStyle={{ color: '#AA83DC', paddingTop: '4px', variant: 'B-1' }}
         charsCount={12}

@@ -4,7 +4,7 @@
 import { Stack } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { Identity2 } from '../../../components';
+import { Identity } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import AccountListModal from '../../components/AccountListModal';
 import NumberedTitle from './NumberedTitle';
@@ -33,7 +33,7 @@ export default function SelectYourAccount({ address, genesisHash }: Props): Reac
           title={t('Select your account')}
         />
         <Stack alignItems='end' direction='row' justifyContent='space-between' onClick={onToggleAccountSelection} sx={{ cursor: 'pointer', mt: '7px' }} width='100%'>
-          <Identity2
+          <Identity
             address={address}
             addressStyle={{ variant: 'B-2' }}
             genesisHash={genesisHash ?? ''}
@@ -52,8 +52,9 @@ export default function SelectYourAccount({ address, genesisHash }: Props): Reac
           genesisHash={genesisHash}
           handleClose={onToggleAccountSelection}
           open={openAccountList}
+          showAll
         />
-      }</>
-
+      }
+    </>
   );
 }

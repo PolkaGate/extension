@@ -11,7 +11,7 @@ import React, { useMemo, useRef, useState } from 'react';
 
 import { getSubstrateAddress, toBN } from '@polkadot/extension-polkagate/src/util';
 
-import { FadeOnScroll, Identity2, MySkeleton, NoInfoYet } from '../../../../components';
+import { FadeOnScroll, Identity, MySkeleton, NoInfoYet } from '../../../../components';
 import { useChainInfo, useTranslation } from '../../../../hooks';
 import { MiniSocials } from '../../partials/ValidatorInformationFS';
 import Curve from '../nominations/partials/Curve';
@@ -53,7 +53,7 @@ const NominatorItem = ({ genesisHash, nominator, total }: NominatorItemProps) =>
       <Curve />
       <Stack direction='row' sx={{ alignItems: 'center', bgcolor: '#2D1E4A66', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', ml: '30px', p: '10px', width: '100%' }}>
         <Stack direction='row' sx={{ pl: '10px', width: 'max-content' }}>
-          <Identity2
+          <Identity
             address={getSubstrateAddress(nominator.who.toString())}
             genesisHash={genesisHash ?? ''}
             identiconSize={24}

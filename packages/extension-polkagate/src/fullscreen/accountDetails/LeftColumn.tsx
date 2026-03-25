@@ -5,15 +5,16 @@ import type { Lock } from '@polkadot/extension-polkagate/fullscreen/governance/t
 import type { BN } from '@polkadot/util';
 
 import { Grid, Stack } from '@mui/material';
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
-import HasProxyIndicator from '@polkadot/extension-polkagate/src/components/HasProxyIndicator';
+import HasProxyOnHubIndicator from '@polkadot/extension-polkagate/src/components/HasProxyOnHubIndicator';
 import AssetsBox from '@polkadot/extension-polkagate/src/popup/home/partial/AssetsBox';
 import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
-import { AccountContext, AccountVisibilityToggler, FadeOnScroll, Recoverability } from '../../components';
-import { useAccountProfile, useTranslation } from '../../hooks';
+import { AccountVisibilityToggler, FadeOnScroll, Recoverability } from '../../components';
+import { useAccount, useAccountProfile, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import { Account, AccountProfileLabel } from '../components';
 import AccountDropDown from '../home/AccountDropDown';
@@ -27,8 +28,7 @@ export interface UnlockInformationType {
 export default function LeftColumn(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
-  const { accounts } = useContext(AccountContext);
-  const account = accounts.find(({ address: accountAddress }) => accountAddress === address);
+  const account = useAccount(address);
   const profile = useAccountProfile(account);
   const refContainer = useRef<HTMLDivElement>(null);
 
@@ -53,7 +53,11 @@ export default function LeftColumn(): React.ReactElement {
               style={{ backgroundColor: account?.isHidden ? 'transparent' : '#05091C', borderColor: '#1B133C', borderRadius: '12px', height: '40px', margin: 0, width: '40px' }}
             />
             <Recoverability />
-            <HasProxyIndicator />
+            {!isEthereumAddress(address) &&
+              <HasProxyOnHubIndicator
+                address={address}
+              />
+            }
           </Stack>
           <AccountDropDown
             address={account?.address}

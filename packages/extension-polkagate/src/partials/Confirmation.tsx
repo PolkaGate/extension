@@ -5,7 +5,6 @@ import type { FeeInfo } from '../fullscreen/sendFund/types';
 import type { TransactionDetail } from '../util/types';
 
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -13,7 +12,7 @@ import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/par
 import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
 
 import Subscan from '../assets/icons/Subscan';
-import { ActionButton, DisplayBalance, GradientButton, Identity2, NeonButton } from '../components';
+import { ActionButton, DisplayBalance, GradientButton, Identity, NeonButton } from '../components';
 import { DraggableModal } from '../fullscreen/components/DraggableModal';
 import { useChainInfo, useIsBlueish, useIsExtensionPopup, useRouteRefresh, useStakingConsts, useTranslation } from '../hooks';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
@@ -32,7 +31,7 @@ const ProxyAccounts = ({ accounts, genesisHash }: ProxyAccountsProps) => {
   return (
     <Grid alignItems='center' container direction='row' item justifyContent='center' margin='10px 0 15px' width='90%'>
       {accounts?.map((acc, index) => (
-        <Identity2
+        <Identity
           address={acc}
           genesisHash={genesisHash}
           identiconSize={16}
@@ -96,7 +95,7 @@ const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
                     accounts={accounts}
                     genesisHash={genesisHash}
                   />
-                  : <Identity2
+                  : <Identity
                     address={accounts[0]}
                     addressStyle={{ color: '#AA83DC', variant: 'B-1' }}
                     charsCount={5}
@@ -190,9 +189,8 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                 <Stack columnGap='3px' direction='row' justifyContent='end'>
                   {
                     isFromToAddress &&
-                    <Identity2
+                    <Identity
                       address={content as string}
-                      genesisHash={POLKADOT_GENESIS}
                       identiconSize={18}
                       showSocial={false}
                       style={{ color: 'text.primary', variant: 'B-1' }}

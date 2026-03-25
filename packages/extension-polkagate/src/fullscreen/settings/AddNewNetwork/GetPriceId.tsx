@@ -6,6 +6,7 @@ import { CloseCircle, RefreshCircle, Tag2, TickCircle } from 'iconsax-react';
 import React, { useCallback, useContext, useMemo } from 'react';
 
 import { CurrencyContext, MyTextField, MyTooltip } from '@polkadot/extension-polkagate/src/components/index';
+import { COINGECKO_WEB } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { useTranslation } from '../../../hooks';
 import { getPrice } from './utils';
@@ -66,7 +67,7 @@ function GetPriceId({ chainName, isCheckingPriceId, price, priceId, setCheckingP
         placeholder={chainName}
         style={{ marginBottom: '66px', width: '100%' }}
         title={t('Network token price id')}
-        tooltip={t('Find your token on CoinGecko. The price ID is available at: https://www.coingecko.com/en/coins/[price-id]')}
+        tooltip={t('Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]', { replace: { web: COINGECKO_WEB } })}
       />
       <MyTooltip content={t('Check price ID')}>
         <IconButton onClick={onCheckPriceIdClick} sx={{ bgcolor, borderRadius: '8px', mb: '41px', padding: '3px', position: 'absolute', right: '24px' }}>

@@ -28,6 +28,7 @@ export default function SendFund(): React.ReactElement {
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
 
   const ref = useRef<HTMLDivElement | null>(null);
+  // const ethFeeRef = useRef<boolean>(false);
   const teleportState = useTeleport(genesisHash);
   const navigate = useNavigate();
   const formatted = useFormatted(address, genesisHash);
@@ -43,29 +44,26 @@ export default function SendFund(): React.ReactElement {
   const assetToTransfer = useMemo(() => accountAssets?.find((asset) => asset.genesisHash === genesisHash && String(asset.assetId) === assetId), [accountAssets, assetId, genesisHash]);
 
   const isReadyToMakeTx = inputStep === INPUT_STEPS.SUMMARY;
-  const { fee, isCrossChain, tx } = useFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setInputs, assetToTransfer, teleportState);
+  const { fee, isContract, isCrossChain, tx, unsignedEthTx } = useFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setInputs, assetToTransfer, teleportState);
   const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee?.originFee.fee ? toBN(inputs?.fee?.originFee.fee) : undefined);
 
   useEffect(() => {
-    if (!genesisHash) {
+    if (!fee) {
       return;
     }
 
-    fee && setInputs((prevInputs) => {
+    setInputs((prev) => {
+      if (String(prev?.fee) === String(fee) && prev?.isCrossChain === isCrossChain) {
+        return prev; // nothing changed, avoid loop
+      }
+
       return {
-        ...prevInputs,
+        ...(prev || {}),
         fee,
         isCrossChain
       };
     });
-  }, [genesisHash, isCrossChain, fee, setInputs]);
-
-  useEffect(() => {
-    tx && setInputs((prevInputs) => ({
-      ...(prevInputs || {}),
-      tx
-    }));
-  }, [tx, setInputs]);
+  }, [isCrossChain, fee]);
 
   const onReset = useCallback(() => {
     const RESET_INPUTS: Partial<Inputs> = {
@@ -75,8 +73,7 @@ export default function SendFund(): React.ReactElement {
       feeInfo: undefined,
       recipientAddress: undefined,
       recipientChain: undefined,
-      recipientGenesisHashOrParaId: undefined,
-      tx: undefined
+      recipientGenesisHashOrParaId: undefined
     };
 
     // Reset the entire send flow on sender/network change
@@ -133,7 +130,7 @@ export default function SendFund(): React.ReactElement {
         to: inputs?.recipientAddress
       },
       ...txInfo,
-      fee: inputs?.feeInfo,
+      fee: txInfo?.fee ?? inputs?.feeInfo,
       token: inputs?.token // since a token other than native token might be transferred, hence we overwrite native token
     } as TransactionDetail;
   }, [formatted, inputs?.amountAsBN, inputs?.decimal, inputs?.feeInfo, inputs?.recipientAddress, inputs?.recipientChain?.text, inputs?.token, t, txInfo]);
@@ -171,6 +168,7 @@ export default function SendFund(): React.ReactElement {
           inputStep === INPUT_STEPS.AMOUNT &&
           <Step3Amount
             inputs={inputs}
+            isContract={isContract}
             setInputs={setInputs}
             teleportState={teleportState}
           />
@@ -182,6 +180,7 @@ export default function SendFund(): React.ReactElement {
             inputs={inputs}
             setInputs={setInputs}
             teleportState={teleportState}
+            transaction={tx}
           />
         }
       </Grid>
@@ -216,7 +215,7 @@ export default function SendFund(): React.ReactElement {
             <SignArea3
               address={address}
               direction='horizontal'
-              disabled={!inputs?.tx}
+              disabled={!(tx || unsignedEthTx)}
               extraProps={{
                 decisionButtonProps: {
                   primaryButtonProps: { style: { width: '148%' } },
@@ -239,7 +238,8 @@ export default function SendFund(): React.ReactElement {
               showProxySelection={showProxySelection}
               signerOption={inputs?.feeInfo?.assetId ? { assetId: inputs.feeInfo.assetId } : undefined}
               style={{ position: 'unset', width: '73%' }}
-              transaction={inputs?.tx}
+              transaction={tx}
+              unsignedEthTx={unsignedEthTx}
               withCancel
             />
           </div>

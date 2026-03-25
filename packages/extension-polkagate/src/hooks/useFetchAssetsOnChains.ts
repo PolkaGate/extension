@@ -6,7 +6,9 @@ import type { DropdownOption, UserAddedChains } from '../util/types';
 import { createAssets } from '@polkagate/apps-config/assets';
 import { useCallback, useMemo } from 'react';
 
-import { ASSET_HUBS, FETCHING_ASSETS_FUNCTION_NAMES, RELAY_CHAINS_GENESISHASH } from '../util/constants';
+import { isEthereumAddress } from '@polkadot/util-crypto';
+
+import { ASSET_HUBS, FETCHING_ASSETS_FN, RELAY_CHAINS_GENESISHASH } from '../util/constants';
 import getChainName from '../util/getChainName';
 
 interface Params {
@@ -39,7 +41,7 @@ export default function useFetchAssetsOnChains({ addresses, genesisOptions, user
     return SUCCESSFUL;
   }, [worker]);
 
-  const fetchAssetOnAssetHub = useCallback((chainName: string, _addresses: string[]) => {
+  const fetchAssetOnAssetHub = useCallback((chainName: string, addresses: string[]) => {
     const assetsToBeFetched = assetsChains?.[chainName];
 
     if (!assetsToBeFetched) {
@@ -48,68 +50,110 @@ export default function useFetchAssetsOnChains({ addresses, genesisOptions, user
       return FAILED;
     }
 
-    return postToWorker(FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, {
-      addresses: _addresses,
+    return postToWorker(FETCHING_ASSETS_FN.ASSET_HUB, {
+      addresses,
       assetsToBeFetched,
       chainName,
       userAddedEndpoints
     });
   }, [assetsChains, postToWorker, userAddedEndpoints]);
 
-  const fetchAssetOnRelayChain = useCallback((chainName: string, _addresses: string[]) =>
-    postToWorker(FETCHING_ASSETS_FUNCTION_NAMES.RELAY, {
-      addresses: _addresses,
+  const fetchAssetOnSingleAssetChain = useCallback((chainName: string, addresses: string[]) =>
+    postToWorker(FETCHING_ASSETS_FN.SINGLE_ASSET, {
+      addresses,
       chainName,
       userAddedEndpoints
     }), [postToWorker, userAddedEndpoints]);
 
-  const fetchAssetOnMultiAssetChain = useCallback((chainName: string, _addresses: string[]) =>
-    postToWorker(FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET, {
-      addresses: _addresses,
+  const fetchAssetOnMultiAssetChain = useCallback((chainName: string, addresses: string[]) =>
+    postToWorker(FETCHING_ASSETS_FN.MULTI_ASSET, {
+      addresses,
       chainName,
       userAddedEndpoints
     }), [postToWorker, userAddedEndpoints]);
 
-  const fetchAssets = useCallback((genesisHash: string, isSingleTokenChain: boolean, maybeMultiAssetChainName?: string): number => {
+  const fetchEthAssets = useCallback((chainName: string, addresses: string[]) =>
+    postToWorker(FETCHING_ASSETS_FN.ETH, {
+      addresses,
+      chainName
+    }), [postToWorker]);
+
+  const fetchEVMAssets = useCallback((genesisHash: string, chainName: string, addresses: string[]) =>
+    postToWorker(FETCHING_ASSETS_FN.EVM, {
+      addresses,
+      chainName,
+      genesisHash,
+      userAddedEndpoints
+    }), [postToWorker, userAddedEndpoints]);
+
+  const fetchAssets = useCallback((genesisHash: string, isSingleTokenChain: boolean, isEthChain: boolean, maybeMultiAssetChainName?: string, isEvmChain?: boolean): number => {
+    const chainName = getChainName(genesisHash, genesisOptions);
+
     if (!addresses?.length) {
       console.warn('No addresses provided to fetch assets.');
 
       return FAILED;
     }
 
-    // Relay chains or chains with a single token
-    if (RELAY_CHAINS_GENESISHASH.includes(genesisHash) || isSingleTokenChain) {
-      const chainName = getChainName(genesisHash, genesisOptions);
+    const { evm: evmAddresses, substrate: substrateAddresses } = addresses.reduce((res, address) => {
+      (isEthereumAddress(address)
+        ? res.evm
+        : res.substrate
+      ).push(address);
 
+      return res;
+    }, { evm: [] as string[], substrate: [] as string[] });
+
+    if (evmAddresses?.length) {
+      if (!chainName) {
+        console.error('Unable to resolve chain name for evm chain:', genesisHash);
+
+        return FAILED;
+      }
+
+      if (isEthChain) {
+        return fetchEthAssets(chainName, evmAddresses);
+      }
+
+      if (isEvmChain) {
+        return fetchEVMAssets(genesisHash, chainName, evmAddresses);
+      }
+    }
+
+    if (!substrateAddresses?.length) {
+      return FAILED;
+    }
+
+    // Relay chains or chains with a single token
+    // FixMe, we do not get assets on relay chains any more
+    if (RELAY_CHAINS_GENESISHASH.includes(genesisHash) || isSingleTokenChain) {
       if (!chainName) {
         console.error('Unable to resolve chain name for relay/single-token chain:', genesisHash);
 
         return FAILED;
       }
 
-      return fetchAssetOnRelayChain(chainName, addresses);
+      return fetchAssetOnSingleAssetChain(chainName, substrateAddresses);
     }
 
     // Asset hubs (like Statemint)
     if (ASSET_HUBS.includes(genesisHash)) {
-      const chainName = getChainName(genesisHash);
-
       if (!chainName) {
         console.error('Unable to resolve chain name for asset hub:', genesisHash);
 
         return FAILED;
       }
 
-      return fetchAssetOnAssetHub(chainName, addresses);
+      return fetchAssetOnAssetHub(chainName, substrateAddresses);
     }
 
     // Other chains supporting multi-asset logic
     if (maybeMultiAssetChainName) {
-      return fetchAssetOnMultiAssetChain(maybeMultiAssetChainName, addresses);
+      return fetchAssetOnMultiAssetChain(maybeMultiAssetChainName, substrateAddresses);
     }
 
     return FAILED;
-  }, [addresses, genesisOptions, fetchAssetOnRelayChain, fetchAssetOnAssetHub, fetchAssetOnMultiAssetChain]);
+  }, [genesisOptions, addresses, fetchEthAssets, fetchEVMAssets, fetchAssetOnSingleAssetChain, fetchAssetOnAssetHub, fetchAssetOnMultiAssetChain]);
 
   return { fetchAssets };
 }

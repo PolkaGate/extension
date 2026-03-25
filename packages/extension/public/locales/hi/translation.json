@@ -68,7 +68,6 @@
   "Done": "पूरा हुआ",
   "Review": "समीक्षा",
   "Find the chain endpoint in the Polkadot.js/org/apps. After selecting your chain and endpoint, copy the URL segment starting with wss and ending before the first #. For example: wss://rpc.dotters.network/polkadot": "Polkadot.js/org/apps में चेन एंडपॉइंट खोजें। अपनी चेन और एंडपॉइंट चुनने के बाद, उस URL खंड को कॉपी करें जो wss से शुरू होता है और पहले # से पहले समाप्त होता है। उदाहरण: wss://rpc.dotters.network/polkadot",
-  "Find your token on CoinGecko. The price ID is available at: https://www.coingecko.com/en/coins/[price-id]": "CoinGecko पर अपना टोकन खोजें। मूल्य आईडी यहाँ उपलब्ध है: https://www.coingecko.com/en/coins/[price-id]",
   "Edit profile": "प्रोफ़ाइल संपादित करें",
   "Internet is disconnected ...": "इंटरनेट डिस्कनेक्ट है ...",
   "Privacy & Security": "गोपनीयता और सुरक्षा",
@@ -297,8 +296,6 @@
   "QR-attached": "QR से जुड़ा",
   "Watch-only": "सिर्फ़ देखने योग्य",
   "Derived from {{parentName}}": "{{parentName}} से व्युत्पन्न",
-  "Click to set an AI-generated background.": "AI द्वारा जनरेटेड बैकग्राउंड सेट करने के लिए क्लिक करें।",
-  "AI Background": "AI बैकग्राउंड",
   "change log": "परिवर्तन लॉग",
   "Wow, it’s great!": "वाह, यह बहुत अच्छा है!",
   "Tokens": "टोकन",
@@ -871,7 +868,7 @@
   "Who supports this validator": "इस वैलिडेटर का समर्थन कौन करता है",
   "There are no validators yet.": "अभी तक कोई वैलिडेटर नहीं हैं",
   "Select up to {{count}} accounts for activity notifications": "गतिविधि सूचनाओं के लिए अधिकतम {{count}} खाते चुनें",
-  "APR": "",
+  "APR": "APR",
   "{{chainName}} referendum #{{referendumIndex}} has been submitted": "{{chainName}} जनमत संग्रह #{{referendumIndex}} प्रस्तुत किया गया",
   "{{chainName}} referendum #{{referendumIndex}} has been approved": "{{chainName}} जनमत संग्रह #{{referendumIndex}} स्वीकृत हुआ",
   "{{chainName}} referendum #{{referendumIndex}} has been cancelled": "{{chainName}} जनमत संग्रह #{{referendumIndex}} रद्द किया गया",
@@ -940,5 +937,10 @@
   "Subscan API Key": "Subscan API कुंजी",
   "Getting an API key from Subscan is easy and free! Just visit https://pro.subscan.io/ and follow the simple steps.": "Subscan से API कुंजी प्राप्त करना आसान और मुफ्त है! बस https://pro.subscan.io/ पर जाएँ और सरल चरणों का पालन करें।",
   "Invalid API key format.": "API कुंजी का स्वरूप अमान्य है।",
-  "Paste your Subscan API key": "अपनी Subscan API कुंजी पेस्ट करें"
+  "Paste your Subscan API key": "अपनी Subscan API कुंजी पेस्ट करें",
+  "Choose account type": "खाता प्रकार चुनें",
+  "account type": "खाता प्रकार",
+  "Polkadot & parachains": "Polkadot और पैराचेन",
+  "Moonbeam & other EVM networks": "Moonbeam और अन्य EVM नेटवर्क",
+  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "अपने टोकन को CoinGecko पर खोजें। प्राइस ID यहाँ उपलब्ध है: {{web}}[price-id]"
 }

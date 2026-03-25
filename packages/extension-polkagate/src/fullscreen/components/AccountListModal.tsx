@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 
 import { FadeOnScroll, GradientButton, SearchField } from '../../components';
-import { useCategorizedAccountsInProfiles, useFormatted, useSelectedAccount, useTranslation, useUpdateSelectedAccount } from '../../hooks';
+import { useAccountSelectedChain, useCategorizedAccountsInProfiles, useChainInfo, useFormatted, useSelectedAccount, useTranslation, useUpdateSelectedAccount } from '../../hooks';
 import { VelvetBox } from '../../style';
 import ProfileTabsFS from '../home/ProfileTabsFS';
 import AccountRowSimple from './AccountRowSimple';
@@ -23,14 +23,20 @@ interface ChooseAccountMenuProps {
   onApply?: () => void;
   isSelectedAccountApplicable?: boolean; // to let enable apply on selected account
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>> | undefined;
+  showAll?: boolean;
   showAddressBook?: boolean;
 }
 
-export default function AccountListModal({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress, showAddressBook }: ChooseAccountMenuProps): React.ReactElement {
+export default function AccountListModal({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress, showAddressBook, showAll }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
+  const selectedAccountChain = useAccountSelectedChain(selectedAccount?.address);
   const refContainer = useRef<HTMLDivElement>(null);
   const { categorizedAccounts: initialCategorizedAccounts, initialAccountList } = useCategorizedAccountsInProfiles();
+  const { chain: chainFromProps } = useChainInfo(genesisHash, true);
+  const { chain: chainFromSelectedAccount } = useChainInfo(selectedAccountChain, true);
+  const _chain = chainFromProps || chainFromSelectedAccount;
+  const isEvmChain = _chain?.definition?.chainType === 'ethereum';
 
   const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountJson[]>>({});
   const [maybeSelected, setMayBeSelected] = useState<string | undefined>(isSelectedAccountApplicable ? selectedAccount?.address : undefined);
@@ -123,6 +129,12 @@ export default function AccountListModal({ genesisHash, handleClose, isSelectedA
                           const isFirstProfile = profileIndex === 0;
                           const isFirstAccount = accIndex === 0;
                           const isLast = accIndex === accounts.length - 1;
+
+                          const isAddressBookContact = !Object.hasOwn(account, 'type');
+
+                          if (!showAll && isEvmChain !== (account.type === 'ethereum') && !isAddressBookContact) {
+                            return null;
+                          }
 
                           return (
                             <React.Fragment key={account.address}>

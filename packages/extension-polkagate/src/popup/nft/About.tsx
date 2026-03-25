@@ -10,7 +10,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
 import { text } from '../../assets/icons';
-import { CopyAddressButton, Identity2 } from '../../components';
+import { CopyAddressButton, Identity } from '../../components';
 import { useTranslation } from '../../hooks';
 
 function AccountRow({ address, genesisHash, label }: { label: string, address: string, genesisHash: string }): React.ReactElement {
@@ -22,7 +22,7 @@ function AccountRow({ address, genesisHash, label }: { label: string, address: s
         </Typography>
         <CopyAddressButton address={address} padding={0} />
       </Stack>
-      <Identity2
+      <Identity
         address={address}
         genesisHash={genesisHash}
         identiconSize={14}

@@ -1,6 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
 import { Container, Dialog, Grid, styled, Typography } from '@mui/material';
@@ -10,16 +11,16 @@ import { QRCode } from 'react-qrcode-logo';
 
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
-import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
 import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
 
 import { ChainLogo, NeonButton, SearchField, Transition } from '../../components';
 import MySnackbar from '../../components/MySnackbar';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
-import { useFormatted, useSelectedAccount, useTranslation } from '../../hooks';
+import { useFormatted, useGenesisHashOptions, useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util';
 import BackButton from '../accountsLists/BackButton';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 const ListItem = styled(Grid)(() => ({
   '&:hover': {
@@ -37,7 +38,7 @@ const chainNameSanitizer = (text: string) => sanitizeChainName(text)?.toLowerCas
 
 interface AddressComponentProp {
   address: string;
-  chain: NetworkInfo;
+  chain: DropdownOption;
 }
 
 function AddressComponent({ address, chain }: AddressComponentProp) {
@@ -45,7 +46,7 @@ function AddressComponent({ address, chain }: AddressComponentProp) {
   const { isHovered, ref } = useIsHovered();
   const [showSnackbar, setShowSnackbar] = useState(false);
 
-  const chainName = useMemo(() => chainNameSanitizer(chain.name), [chain.name]);
+  const chainName = useMemo(() => chainNameSanitizer(chain.text), [chain.text]);
 
   const onCopy = useCallback(() => {
     navigator.clipboard.writeText(address).catch((err) => console.error('Error copying text: ', err));
@@ -77,21 +78,23 @@ function AddressComponent({ address, chain }: AddressComponentProp) {
 }
 
 interface SelectChainProp {
-  setSelectedChain: React.Dispatch<React.SetStateAction<NetworkInfo | undefined>>;
+  setSelectedChain: React.Dispatch<React.SetStateAction<DropdownOption | undefined>>;
+  isEthereum: boolean;
 }
 
-function SelectNetwork({ setSelectedChain }: SelectChainProp) {
+function SelectNetwork({ isEthereum, setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
+  const allChains = useGenesisHashOptions(isEthereum);
 
-  const customSort = useCallback((itemA: NetworkInfo, itemB: NetworkInfo) => {
+  const customSort = useCallback((itemA: DropdownOption, itemB: DropdownOption) => {
     const hasRelay = (str: string) => str.toLowerCase().includes('relay');
 
-    return (Number(hasRelay(itemB.name)) - Number(hasRelay(itemA.name))) || itemA.name.localeCompare(itemB.name);
+    return (Number(hasRelay(itemB.text)) - Number(hasRelay(itemA.text))) || itemA.text.localeCompare(itemB.text);
   }, []);
 
-  const networks = useMemo(() => chains.sort(customSort), [customSort]);
+  const networks = useMemo(() => allChains.sort(customSort), [allChains, customSort]);
 
-  const [chainsToShow, setChainsToShow] = useState<NetworkInfo[]>(networks);
+  const [chainsToShow, setChainsToShow] = useState<DropdownOption[]>(networks);
 
   const onSearch = useCallback((keyword: string) => {
     if (!keyword) {
@@ -99,12 +102,12 @@ function SelectNetwork({ setSelectedChain }: SelectChainProp) {
     }
 
     keyword = keyword.trim().toLowerCase();
-    const _filtered = networks.filter(({ name }) => name.toLowerCase().includes(keyword));
+    const _filtered = networks.filter(({ text }) => text.toLowerCase().includes(keyword));
 
     setChainsToShow([..._filtered]);
   }, [networks]);
 
-  const handleChainSelect = useCallback((chain: NetworkInfo) => () => {
+  const handleChainSelect = useCallback((chain: DropdownOption) => () => {
     setSelectedChain(chain);
   }, [setSelectedChain]);
 
@@ -126,7 +129,7 @@ function SelectNetwork({ setSelectedChain }: SelectChainProp) {
       <Grid container item sx={{ display: 'block', maxHeight: '395px', minHeight: '395px', my: '10px', overflowY: 'auto' }}>
         {
           chainsToShow.map((chain, index) => {
-            const chainName = chain.name;
+            const chainName = chain.text;
 
             return (
               <React.Fragment key={index}>
@@ -157,20 +160,20 @@ function SelectNetwork({ setSelectedChain }: SelectChainProp) {
 
 interface QrCodeProps {
   address: string;
-  selectedChain: NetworkInfo;
-  setSelectedChain: React.Dispatch<React.SetStateAction<NetworkInfo | undefined>>;
+  selectedChain: DropdownOption;
+  setSelectedChain: React.Dispatch<React.SetStateAction<DropdownOption | undefined>>;
   onBackToAccount: () => void;
 }
 
 function QrCode({ address, onBackToAccount, selectedChain, setSelectedChain }: QrCodeProps) {
   const { t } = useTranslation();
-  const formattedAddress = useFormatted(address, selectedChain?.genesisHash);
+  const formattedAddress = useFormatted(address, selectedChain?.value as string);
 
   const chainLogo = useMemo(() => {
-    const chainName = sanitizeChainName(selectedChain?.name)?.toLowerCase();
+    const chainName = sanitizeChainName(selectedChain?.text)?.toLowerCase();
 
     return getLogo2(chainName);
-  }, [selectedChain?.name]);
+  }, [selectedChain?.text]);
 
   const onBack = useCallback(() => setSelectedChain(undefined), [setSelectedChain]);
 
@@ -181,7 +184,7 @@ function QrCode({ address, onBackToAccount, selectedChain, setSelectedChain }: Q
           onClick={onBack}
         />
         <Grid alignItems='center' columnGap='8px' container item width='fit-content'>
-          <ChainLogo chainName={selectedChain.name} size={24} />
+          <ChainLogo chainName={selectedChain.text} size={24} />
           <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
             {t('Your Address')}
           </Typography>
@@ -235,7 +238,7 @@ interface Props {
 export default function Receive({ openPopup, setOpenPopup }: Props) {
   const selectedAddress = useSelectedAccount();
 
-  const [selectedChain, setSelectedChain] = useState<NetworkInfo | undefined>();
+  const [selectedChain, setSelectedChain] = useState<DropdownOption | undefined>();
 
   const handleClose = useCallback(() => {
     setOpenPopup();
@@ -272,6 +275,7 @@ export default function Receive({ openPopup, setOpenPopup }: Props) {
           <div style={{ position: 'relative', zIndex: 1 }}>
             {!selectedChain &&
               <SelectNetwork
+                isEthereum = {isEthereumAddress(selectedAddress?.address || '')}
                 setSelectedChain={setSelectedChain}
               />
             }

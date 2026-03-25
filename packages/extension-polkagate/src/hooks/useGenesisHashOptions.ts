@@ -12,7 +12,7 @@ import { useIsTestnetEnabled } from '.';
 
 const RELAY_CHAIN = 'Relay Chain';
 
-export default function useGenesisHashOptions(showAnyChain = true): DropdownOption[] {
+export default function useGenesisHashOptions(isEthereum = false): DropdownOption[] {
   const metadataCache = useRef<{ text: string; value: HexString }[] | null>(null);
   const isTestnetEnabled = useIsTestnetEnabled();
 
@@ -21,7 +21,9 @@ export default function useGenesisHashOptions(showAnyChain = true): DropdownOpti
   useEffect(() => {
     if (!metadataCache.current) {
       getAllMetadata().then((metadataDefs) => {
-        const res = metadataDefs.map((metadata) => ({ text: metadata.chain, value: metadata.genesisHash }));
+        const res = metadataDefs
+          .filter(({ chainType }) => isEthereum ? chainType === 'ethereum' : chainType === 'substrate')
+          .map((metadata) => ({ text: metadata.chain, value: metadata.genesisHash }));
 
         metadataCache.current = res;
         setMetadataChains(res);
@@ -29,18 +31,26 @@ export default function useGenesisHashOptions(showAnyChain = true): DropdownOpti
     } else {
       setMetadataChains(metadataCache.current);
     }
-  }, []);
+  }, [isEthereum]);
 
   return useMemo(() => {
-    const visibleChains = isTestnetEnabled ? chains : chains.filter(({ isTestnet }) => !isTestnet);
+    const testNetFiltered = isTestnetEnabled
+      ? chains
+      : chains.filter(({ isTestnet }) => !isTestnet);
+
+    const evmFiltered =
+      isEthereum
+        ? testNetFiltered.filter((chain) => chain.isEthereum === isEthereum)
+        : testNetFiltered;
+
     const allChains = [
       // put the relay chains at the top
-      ...visibleChains.filter(({ chain }) => chain.includes(RELAY_CHAIN))
+      ...evmFiltered.filter(({ chain }) => chain.includes(RELAY_CHAIN))
         .map(({ chain, genesisHash }) => ({
           text: chain,
           value: genesisHash
         })),
-      ...visibleChains.map(({ chain, genesisHash }) => ({
+      ...evmFiltered.map(({ chain, genesisHash }) => ({
         text: chain,
         value: genesisHash
       }))
@@ -60,8 +70,6 @@ export default function useGenesisHashOptions(showAnyChain = true): DropdownOpti
         .sort((a, b) => a.text.localeCompare(b.text))
     ];
 
-    showAnyChain && allChains.unshift({ text: 'Allow use on any chain', value: '' as HexString });
-
     return allChains;
-  }, [isTestnetEnabled, metadataChains, showAnyChain]);
+  }, [isEthereum, isTestnetEnabled, metadataChains]);
 }

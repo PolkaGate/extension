@@ -1,9 +1,9 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { useCallback, useContext, useEffect, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 
-import { AccountContext } from '@polkadot/extension-polkagate/src/components';
+import { useAccounts } from '@polkadot/extension-polkagate/src/hooks';
 import { getStorage, setStorage, watchStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
@@ -63,7 +63,7 @@ export enum Popups {
 }
 
 export default function useNotificationSettings(justLoadInfo = false) {
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
   const [notificationSetting, dispatch] = useReducer(notificationSettingReducer, initialNotificationState);
   const [popups, setPopup] = useState<Popups>(Popups.NONE);
 

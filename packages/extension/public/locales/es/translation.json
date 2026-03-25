@@ -68,7 +68,6 @@
   "Done": "Hecho",
   "Review": "Revisar",
   "Find the chain endpoint in the Polkadot.js/org/apps. After selecting your chain and endpoint, copy the URL segment starting with wss and ending before the first #. For example: wss://rpc.dotters.network/polkadot": "Encuentra el endpoint de la cadena en Polkadot.js/org/apps. Después de seleccionar tu cadena y endpoint, copia el segmento de la URL que empieza con wss y termina antes del primer #. Por ejemplo: wss://rpc.dotters.network/polkadot",
-  "Find your token on CoinGecko. The price ID is available at: https://www.coingecko.com/en/coins/[price-id]": "Encuentra tu token en CoinGecko. El ID de precio está disponible en: https://www.coingecko.com/en/coins/[price-id]",
   "Edit profile": "Editar perfil",
   "Internet is disconnected ...": "Internet está desconectado...",
   "Privacy & Security": "Privacidad y seguridad",
@@ -297,8 +296,6 @@
   "QR-attached": "Vinculado a QR",
   "Watch-only": "Solo lectura",
   "Derived from {{parentName}}": "Derivado de {{parentName}}",
-  "Click to set an AI-generated background.": "Haz clic para establecer un fondo generado por IA.",
-  "AI Background": "Fondo AI",
   "change log": "registro de cambios",
   "Wow, it’s great!": "¡Guau, es genial!",
   "Tokens": "Tokens",
@@ -871,7 +868,7 @@
   "Who supports this validator": "Quién apoya a este validador",
   "There are no validators yet.": "Aún no hay validadores",
   "Select up to {{count}} accounts for activity notifications": "Selecciona hasta {{count}} cuentas para notificaciones de actividad",
-  "APR": "",
+  "APR": "APR",
   "{{chainName}} referendum #{{referendumIndex}} has been submitted": "El referéndum #{{referendumIndex}} de {{chainName}} ha sido presentado",
   "{{chainName}} referendum #{{referendumIndex}} has been approved": "El referéndum #{{referendumIndex}} de {{chainName}} ha sido aprobado",
   "{{chainName}} referendum #{{referendumIndex}} has been cancelled": "El referéndum #{{referendumIndex}} de {{chainName}} ha sido cancelado",
@@ -940,5 +937,10 @@
   "Subscan API Key": "Clave API de Subscan",
   "Getting an API key from Subscan is easy and free! Just visit https://pro.subscan.io/ and follow the simple steps.": "¡Obtener una clave API de Subscan es fácil y gratuito! Solo visite https://pro.subscan.io/ y siga los pasos sencillos.",
   "Invalid API key format.": "Formato de clave API inválido.",
-  "Paste your Subscan API key": "Pegue su clave API de Subscan"
+  "Paste your Subscan API key": "Pegue su clave API de Subscan",
+  "Choose account type": "Elige el tipo de cuenta",
+  "account type": "tipo de cuenta",
+  "Polkadot & parachains": "Polkadot y parachains",
+  "Moonbeam & other EVM networks": "Moonbeam y otras redes EVM",
+  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "Encuentra tu token en CoinGecko. El ID de precio está disponible en: {{web}}[price-id]"
 }

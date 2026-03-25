@@ -12,18 +12,17 @@ import type { PalletProxyProxyDefinition } from '@polkadot/types/lookup';
 import type { u128, Vec } from '@polkadot/types-codec';
 import type { Proxy, ProxyTypes } from '../util/types';
 
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
-import { AccountContext } from '../components';
 import { getSubstrateAddress } from '../util';
-import { useChainInfo } from '.';
+import { useAccounts, useChainInfo } from '.';
 
-export default function useProxies(genesisHash: string | null | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined {
+export default function useProxies(genesisHash: string | null | undefined, proxiedAddress: string | AccountId | undefined | null, onlyAvailableWithTypes?: ProxyTypes[]): Proxy[] | undefined | null {
   const { api } = useChainInfo(genesisHash);
+  const accounts = useAccounts();
 
-  const [proxies, setProxies] = useState<Proxy[] | undefined>();
+  const [proxies, setProxies] = useState<Proxy[] | undefined | null>();
   const [proxiesWithAvailability, setProxiesWithAvailability] = useState<Proxy[] | undefined>();
-  const { accounts } = useContext(AccountContext);
 
   const getProxies = useCallback(() => {
     if (!proxies && api) {
@@ -42,7 +41,11 @@ export default function useProxies(genesisHash: string | null | undefined, proxi
   }, [api, onlyAvailableWithTypes, proxiedAddress, proxies]);
 
   useEffect(() => {
-    proxiedAddress && api && getProxies();
+    if (!proxiedAddress || !api) {
+      return;
+    }
+
+    getProxies();
   }, [api, getProxies, proxiedAddress]);
 
   useEffect(() => {

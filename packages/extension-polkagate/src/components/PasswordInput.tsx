@@ -78,10 +78,9 @@ function PasswordInput({ Icon, errorMessage, focused = false, hasError = false, 
   const isBlueish = useIsBlueish();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [focusing, setFocused] = useState<boolean>(false);
+  const [focusing, setFocused] = useState<boolean>(focused);
 
   const toggle = useCallback(() => setFocused((isFocused) => !isFocused), []);
-
   const onChange = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
     onPassChange(value ?? null);
   }, [onPassChange]);
