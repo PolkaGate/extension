@@ -1,5 +1,17 @@
 # Change Log
 
+# [2.0.0](https://github.com/polkagate/extension/compare/v1.28.0...v2.0.0) (2026-03-25)
+
+
+### Features
+
+* add support for EVM-enabled Substrate chains ([2eb65a1](https://github.com/polkagate/extension/commit/2eb65a1a37c05667fb88a415d9865193c43c9275))
+
+
+### BREAKING CHANGES
+
+* updates chain handling and account compatibility for EVM-enabled networks
+
 # [1.28.0](https://github.com/polkagate/extension/compare/v1.27.1...v1.28.0) (2026-03-15)
 
 
