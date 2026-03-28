@@ -12,7 +12,7 @@ import useChainInfo from './useChainInfo';
 import useValidatorsInformation from './useValidatorsInformation';
 
 const COMMISSION_DIVISOR = 10 ** 7;
-const MAX_POOL_LENGTH = 20;
+const MAX_POOL_NAME_LENGTH_TO_SHOW = 20;
 
 interface HighCommissionNominationAlertParams {
   genesisHash: string | undefined;
@@ -95,7 +95,7 @@ export default function useHighCommissionNominationAlert({ genesisHash, nominate
     lastAlertKeyRef.current = alertKey;
 
     const resolvedPoolName = poolName?.trim() || 'your pool';
-    const trimmedPoolName = resolvedPoolName.length > MAX_POOL_LENGTH ? `${resolvedPoolName.slice(0, MAX_POOL_LENGTH)}...` : resolvedPoolName;
+    const trimmedPoolName = resolvedPoolName.length > MAX_POOL_NAME_LENGTH_TO_SHOW ? `${resolvedPoolName.slice(0, MAX_POOL_NAME_LENGTH_TO_SHOW)}...` : resolvedPoolName;
 
     notify(
       stakingType === 'solo'
