@@ -149,6 +149,7 @@ interface stashAccountDisplay {
 
 export interface TxResult {
   block?: number;
+  extrinsicIndex?: string;
   txHash?: string;
   fee?: string | FeeInfo | BN;
   success: boolean;

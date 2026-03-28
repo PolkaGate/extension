@@ -45,6 +45,14 @@ async function getAppliedFee(api: ApiPromise, signedBlock: SignedBlock, txHashHe
   return fee;
 }
 
+function getExtrinsicIndex(signedBlock: SignedBlock, txHashHex: HexString): string | undefined {
+  const txIndex = signedBlock.block.extrinsics.findIndex((ex) => ex.hash.toHex() === txHashHex);
+
+  return txIndex >= 0
+    ? `${signedBlock.block.header.number.toString()}-${txIndex}`
+    : undefined;
+}
+
 export async function handleResult(
   api: ApiPromise,
   resolve: (value: TxResult | PromiseLike<TxResult>) => void,
@@ -90,10 +98,11 @@ export async function handleResult(
 
       const signedBlock = await api.rpc.chain.getBlock(hash);
       const blockNumber = signedBlock.block.header.number;
+      const extrinsicIndex = getExtrinsicIndex(signedBlock, txHash.toHex());
 
       const fee = await getAppliedFee(api, signedBlock, txHash.toHex());
 
-      resolve({ block: Number(blockNumber), failureText, fee, success, txHash: txHash.toString() });
+      resolve({ block: Number(blockNumber), extrinsicIndex, failureText, fee, success, txHash: txHash.toString() });
 
       return;
     }
