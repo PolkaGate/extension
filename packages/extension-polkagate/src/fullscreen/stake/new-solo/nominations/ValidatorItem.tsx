@@ -73,7 +73,6 @@ interface ValidatorInfoProp {
 const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActive, isAlreadySelected, isSelected, myShare, onSelect, reachedMaximum, style = {}, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
-  const theme = useTheme();
 
   const totalStaked = toBN((validatorInfo.exposurePaged as unknown as SpStakingExposurePage)?.pageTotal ?? 0);
   const validatorAPY = useValidatorApy(api, String(validatorInfo?.accountId), !!totalStaked?.gtn(0));

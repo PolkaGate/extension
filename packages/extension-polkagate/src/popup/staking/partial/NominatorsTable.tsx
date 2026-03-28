@@ -137,7 +137,6 @@ interface ValidatorInfoProp {
 const ValidatorInfo = memo(function VI({ genesisHash, isBlueish, isSelected, onDetailClick, onSelect, style, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
-  const theme = useTheme();
 
   const totalStaked = useMemo(() => toBN((validatorInfo.exposurePaged as unknown as SpStakingExposurePage)?.pageTotal ?? 0), [(validatorInfo.exposurePaged as unknown as SpStakingExposurePage)?.pageTotal]);
   const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);

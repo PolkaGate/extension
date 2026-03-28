@@ -23,25 +23,25 @@ interface State {
 
 // NOTE: This is the only way to do an error boundary, via extend
 class ErrorBoundary extends React.Component<Props> {
-  private isExtensionPopup: boolean;
+  // private isExtensionPopup: boolean;
 
-  constructor(props: Props) {
-    super(props);
+  // constructor(props: Props) {
+    // super(props);
 
     // Initialize extension detection in constructor
-    this.isExtensionPopup = false;
+    // this.isExtensionPopup = false;
 
-    if (chrome?.extension?.getViews) {
-      const extensionViews = chrome.extension.getViews({ type: 'popup' });
-      const isPopupOpenedByExtension = extensionViews.includes(window);
+    // if (chrome?.extension?.getViews) {
+    //   const extensionViews = chrome.extension.getViews({ type: 'popup' });
+    //   const isPopupOpenedByExtension = extensionViews.includes(window);
 
-      if (isPopupOpenedByExtension) {
-        this.isExtensionPopup = true;
-      }
-    } else {
-      this.isExtensionPopup = window.innerWidth <= 357 && window.innerHeight <= 621;
-    }
-  }
+    //   if (isPopupOpenedByExtension) {
+    //     this.isExtensionPopup = true;
+    //   }
+    // } else {
+    //   this.isExtensionPopup = window.innerWidth <= 357 && window.innerHeight <= 621;
+    // }
+  // }
 
   public override state: State = { error: null };
 
