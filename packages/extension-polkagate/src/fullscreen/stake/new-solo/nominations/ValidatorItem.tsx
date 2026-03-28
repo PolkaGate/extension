@@ -6,7 +6,7 @@ import type { SpStakingExposurePage } from '@polkadot/types/lookup';
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 
 import { Container, IconButton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import { ArrowRight2, BuyCrypto, ChartSquare, type Icon, PercentageSquare, Profile2User } from 'iconsax-react';
+import { ArrowRight2, BuyCrypto, ChartSquare, Danger, type Icon, PercentageSquare, Profile2User } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
 import { noop } from '@polkadot/util';
@@ -16,24 +16,28 @@ import { useChainInfo, useTranslation, useValidatorApy } from '../../../../hooks
 import { type StakingInfoStackProps, ValidatorIdentity } from '../../../../popup/staking/partial/NominatorsTable';
 import { ValidatorIdSocials } from '../../../../popup/staking/partial/ValidatorDetail';
 import { toBN } from '../../../../util';
+import { HIGH_COMMISSION_THRESHOLD, HIGH_COMMISSION_WARNING_COLOR } from '../../../../util/constants';
 import ValidatorInformationFS from '../../partials/ValidatorInformationFS';
 
 interface InfoProps extends StakingInfoStackProps {
   StartIcon?: Icon;
+  startIconColor?: string;
+  textColor?: string;
+  titleColor?: string;
   width?: string;
   style?: SxProps<Theme>;
 }
 
-const InfoWithIcons = memo(function InfoWithIcons({ StartIcon, amount, decimal, style, text, title, token, width = '80px' }: InfoProps) {
+const InfoWithIcons = memo(function InfoWithIcons({ StartIcon, amount, decimal, startIconColor, style, text, textColor, title, titleColor, token, width = '80px' }: InfoProps) {
   const theme = useTheme();
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width, ...style }}>
       {
         StartIcon &&
-        <StartIcon color='#AA83DC' size='20' style={{ minWidth: '20px' }} variant='Bulk' />
+        <StartIcon color={startIconColor ?? '#AA83DC'} size='20' style={{ minWidth: '20px' }} variant='Bulk' />
       }
-      <Typography color='#AA83DC' textAlign='left' variant='B-4'>
+      <Typography color={titleColor ?? '#AA83DC'} textAlign='left' variant='B-4'>
         {title}:
       </Typography>
       {amount &&
@@ -45,7 +49,7 @@ const InfoWithIcons = memo(function InfoWithIcons({ StartIcon, amount, decimal, 
           token={token}
         />}
       {text &&
-        <Typography color='text.primary' textAlign='left' variant='B-4' width='fit-content'>
+        <Typography color={textColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>
           {text}
         </Typography>
       }
@@ -83,14 +87,30 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
   const closeDetail = useCallback(() => setOpen(false), []);
 
   const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);
+  const isHighCommission = commission > HIGH_COMMISSION_THRESHOLD;
   const notElected = isActive === undefined && !onSelect;
+  const baseBgcolor = bgcolor ?? (isSelected ? '#FF4FB926' : isAlreadySelected ? '#AA83DC1A' : '#05091C');
+  const warningColor = HIGH_COMMISSION_WARNING_COLOR;
 
   return (
     <>
       <Container
         disableGutters
         onClick={onSelect}
-        sx={{ alignItems: 'center', bgcolor: bgcolor ?? (isSelected ? '#FF4FB926' : isAlreadySelected ? '#AA83DC1A' : '#05091C'), borderRadius: '14px', columnGap: '5px', cursor: onSelect ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', minHeight: '48px', p: '4px', pl: '10px', ...style }}
+        sx={{
+          alignItems: 'center',
+          bgcolor: baseBgcolor,
+          borderRadius: '14px',
+          columnGap: '5px',
+          cursor: onSelect ? 'pointer' : 'default',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          minHeight: '48px',
+          p: '4px',
+          pl: '10px',
+          ...style
+        }}
       >
         {onSelect &&
           <GlowCheckbox
@@ -126,9 +146,22 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
           width='180px'
         />
         <InfoWithIcons
-          StartIcon={PercentageSquare}
+          StartIcon={isHighCommission ? Danger : PercentageSquare}
+          startIconColor={isHighCommission ? warningColor : undefined}
+          style={isHighCommission
+            ? {
+              bgcolor: `${warningColor}1A`,
+              borderRadius: '999px',
+              boxShadow: `inset 0 0 12px 2px ${warningColor}33, 0 0 10px 0 ${warningColor}22`,
+              justifyContent: 'center',
+              px: '8px',
+              py: '2px'
+            }
+            : undefined}
           text={isNaN(commission) ? '---' : String(commission) + '%'}
+          textColor={isHighCommission ? warningColor : undefined}
           title={t('Comm.')}
+          titleColor={isHighCommission ? warningColor : undefined}
           width='105px'
         />
         <InfoWithIcons

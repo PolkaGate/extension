@@ -9,7 +9,7 @@ import type { BN } from '@polkadot/util';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
 import { Container, IconButton, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import { ArrowRight2 } from 'iconsax-react';
+import { ArrowRight2, Danger } from 'iconsax-react';
 import React, { type CSSProperties, memo, useCallback, useMemo } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
@@ -18,6 +18,7 @@ import ValidatorInformationFS from '../../../fullscreen/stake/partials/Validator
 import { useChainInfo, useIsBlueish, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { toBN, toShortAddress } from '../../../util';
+import { HIGH_COMMISSION_THRESHOLD, HIGH_COMMISSION_WARNING_COLOR } from '../../../util/constants';
 import ValidatorDetail from './ValidatorDetail';
 
 interface ValidatorIdentityProp {
@@ -48,7 +49,7 @@ export const ValidatorIdentity = memo(function ValidatorIdentity({ style, valida
       }
       {
         validatorInfo.identity?.displayParent &&
-        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} sx={{ bgcolor: isBlueish ? '#809ACB26' : '#AA83DC26', borderRadius: '6px', minWidth: '22px', p: '4px' }} textAlign='start' variant='B-5'>
+        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} sx={{ bgcolor: isBlueish ? '#809ACB26' : '#AA83DC26', borderRadius: '6px', minWidth: '22px', p: '4px' }} textAlign='center' variant='B-5'>
           {validatorInfo.identity.display}
         </Typography>
       }
@@ -64,9 +65,10 @@ export interface StakingInfoStackProps {
   amount?: string | BN | Compact<INumber> | null | undefined;
   secondaryColor?: string;
   adjustedColorForTitle?: string;
+  valueNode?: React.ReactNode;
 }
 
-export const StakingInfoStack = memo(function SIS({ adjustedColorForTitle, amount, decimal, secondaryColor, text, title, token }: StakingInfoStackProps) {
+export const StakingInfoStack = memo(function SIS({ adjustedColorForTitle, amount, decimal, secondaryColor, text, title, token, valueNode }: StakingInfoStackProps) {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
 
@@ -84,6 +86,7 @@ export const StakingInfoStack = memo(function SIS({ adjustedColorForTitle, amoun
           }}
           token={token}
         />}
+      {valueNode}
       {text &&
         <Typography color={secondaryColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>
           {text}
@@ -93,6 +96,31 @@ export const StakingInfoStack = memo(function SIS({ adjustedColorForTitle, amoun
         {title}
       </Typography>
     </Stack>
+  );
+});
+
+const CommissionPill = memo(function CommissionPill({ color, text }: { color: string; text: string }) {
+  return (
+    <Typography
+      sx={{
+        bgcolor: `${color}1A`,
+        borderRadius: '999px',
+        boxShadow: `inset 0 0 12px 2px ${color}33, 0 0 10px 0 ${color}22`,
+        color,
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '4px',
+        lineHeight: '16px',
+        px: '8px',
+        py: '2px'
+      }}
+      textAlign='left'
+      variant='B-4'
+      width='fit-content'
+    >
+      <Danger color={color} size='12' variant='Bold' />
+      {text}
+    </Typography>
   );
 });
 
@@ -112,6 +140,9 @@ const ValidatorInfo = memo(function VI({ genesisHash, isBlueish, isSelected, onD
 
   const totalStaked = useMemo(() => toBN((validatorInfo.exposurePaged as unknown as SpStakingExposurePage)?.pageTotal ?? 0), [(validatorInfo.exposurePaged as unknown as SpStakingExposurePage)?.pageTotal]);
   const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);
+  const isHighCommission = commission > HIGH_COMMISSION_THRESHOLD;
+  const baseBgcolor = isSelected ? '#BFA1FF26' : '#110F2A';
+  const warningColor = HIGH_COMMISSION_WARNING_COLOR;
 
   const handleSelect = useCallback((_value: boolean) => {
     const syntheticEvent = {
@@ -124,7 +155,17 @@ const ValidatorInfo = memo(function VI({ genesisHash, isBlueish, isSelected, onD
   }, [onSelect, validatorInfo.accountId]);
 
   return (
-    <Stack direction='column' sx={{ bgcolor: isSelected ? '#BFA1FF26' : '#110F2A', borderRadius: '14px', mb: '4px', p: '8px', width: '100%', ...style }}>
+    <Stack
+      direction='column'
+      sx={{
+        bgcolor: baseBgcolor,
+        borderRadius: '14px',
+        mb: '4px',
+        p: '8px',
+        width: '100%',
+        ...style
+      }}
+    >
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}>
         <Stack columnGap='5px' direction='row'>
           {onSelect &&
@@ -150,8 +191,15 @@ const ValidatorInfo = memo(function VI({ genesisHash, isBlueish, isSelected, onD
           token={token}
         />
         <StakingInfoStack
-          text={isNaN(commission) ? '---' : String(commission) + '%'}
+          adjustedColorForTitle={isHighCommission ? warningColor : undefined}
+          text={!isNaN(commission) && !isHighCommission ? String(commission) + '%' : undefined}
           title={t('Commission')}
+          valueNode={isHighCommission
+            ? <CommissionPill
+              color={warningColor}
+              text={isNaN(commission) ? '---' : String(commission) + '%'}
+            />
+            : undefined}
         />
         <StakingInfoStack
           text={String((validatorInfo.exposureMeta as unknown as SpStakingPagedExposureMetadata)?.nominatorCount ?? 0)}

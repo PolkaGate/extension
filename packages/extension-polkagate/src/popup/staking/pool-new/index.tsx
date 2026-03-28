@@ -11,7 +11,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useAccountAssets, useBackground, useChainInfo, useClaimRewardPool, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation, useWithdrawPool } from '../../../hooks';
+import { useAccountAssets, useBackground, useChainInfo, useClaimRewardPool, useHighCommissionNominationAlert, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation, useWithdrawPool } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import { isHexToBn } from '../../../util';
 import { PROXY_TYPE } from '../../../util/constants';
@@ -51,6 +51,13 @@ export default function Pool(): React.ReactElement {
   const { decimal, token } = useChainInfo(genesisHash, true);
   const stakingInfo = usePoolStakingInfo(address, genesisHash);
   const accountAssets = useAccountAssets(address);
+
+  useHighCommissionNominationAlert({
+    genesisHash,
+    nominatedValidatorsIds: stakingInfo.pool?.stashIdAccount?.nominators?.map((item) => item.toString()),
+    poolName: stakingInfo.pool?.metadata,
+    stakingType: 'pool'
+  });
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
   const [restakeReward, setRestakeReward] = useState<boolean>(false);
