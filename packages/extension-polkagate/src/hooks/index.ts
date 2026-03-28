@@ -41,6 +41,7 @@ export { useGenericLedger } from './useGenericLedger';
 export { default as useGenesisHashOptions } from './useGenesisHashOptions';
 export { default as useHandleNavigation } from './useHandleNavigation';
 export { default as useHasDelegated } from './useHasDelegated';
+export { default as useHighCommissionNominationAlert } from './useHighCommissionNominationAlert';
 export { default as useIdentity } from './useIdentity';
 export { default as useIsAutoEndpoint } from './useIsAutoEndpoint';
 export { default as useIsBlueish } from './useIsBlueish';
