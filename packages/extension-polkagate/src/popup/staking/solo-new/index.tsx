@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useBackground, useChainInfo, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
+import { useBackground, useChainInfo, useHighCommissionNominationAlert, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import { updateStorage } from '../../../util';
 import { PROXY_TYPE, STORAGE_KEY } from '../../../util/constants';
@@ -43,6 +43,12 @@ export default function Solo(): React.ReactElement {
 
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
   const { api, decimal, token } = useChainInfo(genesisHash);
+
+  useHighCommissionNominationAlert({
+    genesisHash,
+    nominatedValidatorsIds: stakingInfo.stakingAccount?.nominators?.map((item) => item.toString()),
+    stakingType: 'solo'
+  });
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
   const [review, setReview] = useState<boolean>(false);

@@ -322,6 +322,8 @@ export const DEFAULT_ACCOUNT_ICON_THEME = 'polkasoul';
 export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000; // 2 minutes
 
 export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
+export const HIGH_COMMISSION_THRESHOLD = 50;
+export const HIGH_COMMISSION_WARNING_COLOR = '#FFCE4F';
 
 export const STORAGE_KEY = {
   ACCOUNT_SELECTED_CHAIN: 'accountSelectedChain',

@@ -18,10 +18,15 @@ export default function useAlerts() {
     setAlerts((prev) => prev.filter(({ id }) => id !== idToRemove));
   }, [setAlerts]);
 
-  const notify = useCallback((text: string, severity?: Severity) => {
+  const notify = useCallback((text: string, severity?: Severity, persist = false) => {
     const id = random.string({ length: 10 });
 
-    setAlerts((prev) => [...prev, { id, severity: severity || 'info', text }]);
+    setAlerts((prev) => [...prev, { id, persist, severity: severity || 'info', text }]);
+
+    if (persist) {
+      return () => undefined;
+    }
+
     const timeout = setTimeout(() => removeAlert(id), TIME_TO_REMOVE_ALERT);
 
     return () => clearTimeout(timeout);

@@ -9,7 +9,7 @@ import { CloseCircle, Danger, InfoCircle, TickCircle } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { createPortal } from 'react-dom';
 
-import { useAlerts, useTranslation } from '../hooks';
+import { useAlerts, useIsExtensionPopup, useTranslation } from '../hooks';
 import { TIME_TO_REMOVE_ALERT } from '../util/constants';
 
 const progressAnimation = keyframes`
@@ -40,6 +40,7 @@ function AlertPortal({ children }: { children: React.ReactNode }) {
 function Alert({ alert }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { removeAlert } = useAlerts();
+  const isExtension = useIsExtensionPopup();
 
   const closeAlert = useCallback(() => {
     removeAlert(alert.id);
@@ -95,31 +96,33 @@ function Alert({ alert }: Props): React.ReactElement {
             zIndex: 99999
           }}
         >
-          <Typography variant='B-2'>
+          <Typography sx={{ display: 'block', textAlign: 'left' }} variant={isExtension ? 'B-1' : 'B-2'}>
             {t(alert.text)}
           </Typography>
-          <Box
-            sx={{
-              backgroundColor: 'transparent',
-              borderBottomLeftRadius: '14px',
-              borderBottomRightRadius: '14px',
-              bottom: '1px',
-              height: '3px',
-              left: '4px',
-              overflow: 'hidden',
-              position: 'absolute',
-              width: '96%'
-            }}
-          >
+          {!alert.persist &&
             <Box
               sx={{
-                animation: `${progressAnimation} ${(TIME_TO_REMOVE_ALERT / 1000) - 1}s linear`,
-                backgroundColor: '#EAEBF1',
-                height: '100%',
-                width: '100%'
+                backgroundColor: 'transparent',
+                borderBottomLeftRadius: '14px',
+                borderBottomRightRadius: '14px',
+                bottom: '1px',
+                height: '3px',
+                left: '4px',
+                overflow: 'hidden',
+                position: 'absolute',
+                width: '96%'
               }}
-            />
-          </Box>
+            >
+              <Box
+                sx={{
+                  animation: `${progressAnimation} ${(TIME_TO_REMOVE_ALERT / 1000) - 1}s linear`,
+                  backgroundColor: '#EAEBF1',
+                  height: '100%',
+                  width: '100%'
+                }}
+              />
+            </Box>
+          }
         </MuiAlert>
       </Slide>
     </AlertPortal>

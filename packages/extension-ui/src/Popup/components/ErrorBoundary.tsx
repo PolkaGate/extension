@@ -96,7 +96,6 @@ class ErrorBoundary extends React.Component<Props> {
         <>
           {children}
           {
-            !this.isExtensionPopup &&
             <AlertBox />
           }
         </>

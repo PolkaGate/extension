@@ -855,6 +855,7 @@ export type Severity = 'error' | 'warning' | 'info' | 'success'
 
 export interface AlertType {
   id: string;
+  persist?: boolean;
   text: string;
   severity: Severity
 }
