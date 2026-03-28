@@ -22,12 +22,13 @@ import ValidatorInformationFS from '../../partials/ValidatorInformationFS';
 interface InfoProps extends StakingInfoStackProps {
   StartIcon?: Icon;
   startIconColor?: string;
+  textColor?: string;
   titleColor?: string;
   width?: string;
   style?: SxProps<Theme>;
 }
 
-const InfoWithIcons = memo(function InfoWithIcons({ StartIcon, amount, decimal, startIconColor, style, text, title, titleColor, token, width = '80px' }: InfoProps) {
+const InfoWithIcons = memo(function InfoWithIcons({ StartIcon, amount, decimal, startIconColor, style, text, textColor, title, titleColor, token, width = '80px' }: InfoProps) {
   const theme = useTheme();
 
   return (
@@ -48,7 +49,7 @@ const InfoWithIcons = memo(function InfoWithIcons({ StartIcon, amount, decimal, 
           token={token}
         />}
       {text &&
-        <Typography color='text.primary' textAlign='left' variant='B-4' width='fit-content'>
+        <Typography color={textColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>
           {text}
         </Typography>
       }
@@ -147,12 +148,8 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
         <InfoWithIcons
           StartIcon={isHighCommission ? Danger : PercentageSquare}
           startIconColor={isHighCommission ? warningColor : undefined}
-          text={isNaN(commission) ? '---' : String(commission) + '%'}
           style={isHighCommission
             ? {
-              '> p': {
-                color: warningColor
-              },
               bgcolor: `${warningColor}1A`,
               borderRadius: '999px',
               boxShadow: `inset 0 0 12px 2px ${warningColor}33, 0 0 10px 0 ${warningColor}22`,
@@ -161,6 +158,8 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
               py: '2px'
             }
             : undefined}
+          text={isNaN(commission) ? '---' : String(commission) + '%'}
+          textColor={isHighCommission ? warningColor : undefined}
           title={t('Comm.')}
           titleColor={isHighCommission ? warningColor : undefined}
           width='105px'
