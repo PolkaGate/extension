@@ -7,7 +7,6 @@ import { Chance } from 'chance';
 import { useCallback, useContext, useMemo } from 'react';
 
 import { AlertContext } from '../components';
-import { TIME_TO_REMOVE_ALERT } from '../util/constants';
 
 export default function useAlerts() {
   const { alerts, setAlerts } = useContext(AlertContext);
@@ -23,13 +22,7 @@ export default function useAlerts() {
 
     setAlerts((prev) => [...prev, { id, persist, severity: severity || 'info', text }]);
 
-    if (persist) {
-      return () => undefined;
-    }
-
-    const timeout = setTimeout(() => removeAlert(id), TIME_TO_REMOVE_ALERT);
-
-    return () => clearTimeout(timeout);
+    return () => removeAlert(id);
   }, [random, removeAlert, setAlerts]);
 
   return { alerts, notify, removeAlert };
