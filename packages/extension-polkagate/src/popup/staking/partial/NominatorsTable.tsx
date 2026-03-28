@@ -49,7 +49,7 @@ export const ValidatorIdentity = memo(function ValidatorIdentity({ style, valida
       }
       {
         validatorInfo.identity?.displayParent &&
-        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} sx={{ bgcolor: isBlueish ? '#809ACB26' : '#AA83DC26', borderRadius: '6px', minWidth: '22px', p: '4px' }} textAlign='start' variant='B-5'>
+        <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} sx={{ bgcolor: isBlueish ? '#809ACB26' : '#AA83DC26', borderRadius: '6px', minWidth: '22px', p: '4px' }} textAlign='center' variant='B-5'>
           {validatorInfo.identity.display}
         </Typography>
       }
@@ -191,9 +191,9 @@ const ValidatorInfo = memo(function VI({ genesisHash, isBlueish, isSelected, onD
           token={token}
         />
         <StakingInfoStack
+          adjustedColorForTitle={isHighCommission ? warningColor : undefined}
           text={!isNaN(commission) && !isHighCommission ? String(commission) + '%' : undefined}
           title={t('Commission')}
-          adjustedColorForTitle={isHighCommission ? warningColor : undefined}
           valueNode={isHighCommission
             ? <CommissionPill
               color={warningColor}

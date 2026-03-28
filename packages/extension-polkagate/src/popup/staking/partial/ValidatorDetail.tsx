@@ -135,6 +135,13 @@ export default function ValidatorDetail({ genesisHash, handleClose, validatorDet
 
   const validatorAPY = useValidatorApy(api, String(validatorDetail?.accountId), !!(isHexToBn(validatorDetail?.stakingLedger.total as unknown as string))?.gtn(0));
 
+  if (!validatorDetail) {
+    return <></>;
+  }
+
+  const comm = Number(validatorDetail.validatorPrefs.commission) / (10 ** 7);
+  const commissionToShow = isNaN(comm) ? '--' : `${comm < 1 ? 0 : comm}%`;
+
   return (
     <Dialog
       PaperProps={{
@@ -157,44 +164,43 @@ export default function ValidatorDetail({ genesisHash, handleClose, validatorDet
       fullScreen
       open={!!validatorDetail}
     >
-      {validatorDetail &&
-        <Container disableGutters sx={{ height: '100%', width: '100%' }}>
-          <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-            <CustomCloseSquare color='#809ACB' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
-          </Grid>
-          <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#110F2A', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', pb: 0, position: 'relative', zIndex: 1 }}>
-            <BlueGradient style={{ top: '-120px' }} />
-            <DetailGradientBox />
-            <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
-              <ValidatorIdentityDetail
-                genesisHash={genesisHash}
-                validatorDetail={validatorDetail}
-              />
-              <GradientDivider style={{ mb: '12px' }} />
-              <Container disableGutters sx={{ alignItems: 'flex-end', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '0 12px 0 10px' }}>
-                <StakingInfoStack amount={validatorDetail.exposureMeta?.own ?? 0} decimal={decimal} title={t('Own')} token={token} />
-                <StakingInfoStack text={String(Number(validatorDetail.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorDetail.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
-                <StakingInfoStack amount={validatorDetail.exposureMeta?.total ?? 0} decimal={decimal} title={t('Total')} token={token} />
-                <StakingInfoStack text={validatorAPY != null ? `${validatorAPY}%` : '...'} title={t('APY')} />
-              </Container>
-              <GradientDivider style={{ my: '12px' }} />
-              <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', flexDirection: 'row', mb: '8px', pl: '6px' }}>
-                <Typography color='text.primary' variant='B-2'>
-                  {t('Nominators')}
-                </Typography>
-                <Typography color='text.highlight' sx={{ bgcolor: '#809ACB26', borderRadius: '8px', p: '2px 4px' }} variant='B-4'>
-                  {validatorDetail.exposureMeta?.nominatorCount as unknown as string ?? '0'}
-                </Typography>
-              </Container>
-              <AccountsTable
-                accounts={validatorDetail.exposurePaged?.others as unknown as SpStakingIndividualExposure[] ?? []}
-                genesisHash={genesisHash}
-                style={{ px: '6px' }}
-                totalStaked={validatorDetail.exposureMeta?.total as string ?? '0'}
-              />
-            </Stack>
-          </Grid>
-        </Container>}
+      <Container disableGutters sx={{ height: '100%', width: '100%' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
+          <CustomCloseSquare color='#809ACB' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
+        </Grid>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#110F2A', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', pb: 0, position: 'relative', zIndex: 1 }}>
+          <BlueGradient style={{ top: '-120px' }} />
+          <DetailGradientBox />
+          <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
+            <ValidatorIdentityDetail
+              genesisHash={genesisHash}
+              validatorDetail={validatorDetail}
+            />
+            <GradientDivider style={{ mb: '12px' }} />
+            <Container disableGutters sx={{ alignItems: 'flex-end', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '0 12px 0 10px' }}>
+              <StakingInfoStack amount={validatorDetail.exposureMeta?.own ?? 0} decimal={decimal} title={t('Own')} token={token} />
+              <StakingInfoStack text={commissionToShow} title={t('Commission')} />
+              <StakingInfoStack amount={validatorDetail.exposureMeta?.total ?? 0} decimal={decimal} title={t('Total')} token={token} />
+              <StakingInfoStack text={validatorAPY != null ? `${validatorAPY}%` : '...'} title={t('APY')} />
+            </Container>
+            <GradientDivider style={{ my: '12px' }} />
+            <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', flexDirection: 'row', mb: '8px', pl: '6px' }}>
+              <Typography color='text.primary' variant='B-2'>
+                {t('Nominators')}
+              </Typography>
+              <Typography color='text.highlight' sx={{ bgcolor: '#809ACB26', borderRadius: '8px', p: '2px 4px' }} variant='B-4'>
+                {validatorDetail.exposureMeta?.nominatorCount as unknown as string ?? '0'}
+              </Typography>
+            </Container>
+            <AccountsTable
+              accounts={validatorDetail.exposurePaged?.others as unknown as SpStakingIndividualExposure[] ?? []}
+              genesisHash={genesisHash}
+              style={{ px: '6px' }}
+              totalStaked={validatorDetail.exposureMeta?.total as string ?? '0'}
+            />
+          </Stack>
+        </Grid>
+      </Container>
     </Dialog>
   );
 }
