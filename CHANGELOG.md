@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.1.0](https://github.com/polkagate/extension/compare/v2.0.0...v2.1.0) (2026-03-28)
+
+
+### Features
+
+* warn on high-commission nominated validators ([#2124](https://github.com/polkagate/extension/issues/2124)) ([eb9e372](https://github.com/polkagate/extension/commit/eb9e372c08dfdfe3d88a4847f1852c05c6a9361d))
+
 # [2.0.0](https://github.com/polkagate/extension/compare/v1.28.0...v2.0.0) (2026-03-25)
 
 
