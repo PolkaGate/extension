@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.3.0](https://github.com/polkagate/extension/compare/v2.2.0...v2.3.0) (2026-03-29)
+
+
+### Features
+
+* confirm before removing all authenticated websites ([7c5b640](https://github.com/polkagate/extension/commit/7c5b640d3a2095ed04637543d92131c7de1c77c7)), closes [#2054](https://github.com/polkagate/extension/issues/2054)
+
 # [2.2.0](https://github.com/polkagate/extension/compare/v2.1.0...v2.2.0) (2026-03-29)
 
 
