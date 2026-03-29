@@ -5,11 +5,11 @@ import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/
 import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
 
 import { Box, Container, Stack, Typography } from '@mui/material';
-import { Key, Link2, Profile, Trash } from 'iconsax-react';
+import { Key, Link2, Profile, Trash, Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { emptyList } from '../assets/icons/index';
-import { ActionButton, FadeOnScroll, MySnackbar, MyTooltip, SearchField } from '../components';
+import { ActionButton, DecisionButtons, FadeOnScroll, MySnackbar, MyTooltip, SearchField } from '../components';
 import { useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { getAuthList, removeAuthorization } from '../messaging';
 import { EditDappAccess, NothingFound, SharePopup } from '.';
@@ -51,6 +51,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
 
   const [isBusy, setIsBusy] = useState<boolean>();
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [showDeleteAllConfirmation, setShowDeleteAllConfirmation] = useState(false);
 
   const onSearch = useCallback((text: string) => {
     setSearchKeyword(text);
@@ -84,10 +85,21 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
         .catch(console.error)
         .finally(() => {
           setIsBusy(false);
+          setShowDeleteAllConfirmation(false);
           setRefresh((pre) => !pre);
         });
     }
   }, [filteredAuthorizedDapps, setRefresh]);
+
+  const openDeleteAllConfirmation = useCallback(() => {
+    setShowDeleteAllConfirmation(true);
+  }, []);
+
+  const closeDeleteAllConfirmation = useCallback(() => {
+    if (!isBusy) {
+      setShowDeleteAllConfirmation(false);
+    }
+  }, [isBusy]);
 
   const dAppsToShow = (filteredAuthorizedDapps && Object.entries(filteredAuthorizedDapps)) ?? [];
 
@@ -160,7 +172,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
         iconSize={16}
         iconVariant='Bulk'
         isBusy={isBusy}
-        onClick={onDeleteAll}
+        onClick={openDeleteAllConfirmation}
         style={{
           '& .MuiButton-startIcon': {
             marginRight: '5px'
@@ -181,6 +193,40 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
         open={showSnackbar}
         text={t('Access successfully removed!')}
       />
+      <SharePopup
+        modalProps={{ showBackIconAsClose: true }}
+        modalStyle={{ minHeight: isExtension ? '170px' : '200px', padding: isExtension ? '10px 0px' : '20px 0px' }}
+        onClose={closeDeleteAllConfirmation}
+        open={showDeleteAllConfirmation}
+        popupProps={{
+          TitleIcon: Warning2,
+          contentContainerStyle: isExtension ? { height: 'fit-content', maxHeight: '260px' } : undefined,
+          iconColor: '#FFCE4F',
+          iconSize: isExtension ? 34 : 44,
+          maxHeight: isExtension ? '210px' : '250px',
+          pt: isExtension ? 12 : 20,
+          style: isExtension ? { display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' } : undefined,
+          titleDirection: 'column',
+          titleVariant: 'H-3',
+          withoutTopBorder: true
+        }}
+        title={t('Remove all access')}
+      >
+        <Stack direction='column' sx={{ alignItems: 'center', px: '20px', pb: isExtension ? '12px' : '20px' }}>
+          <Typography color='#BEAAD8' sx={{ pb: isExtension ? '16px' : '25px', textAlign: 'center' }} variant='B-4'>
+            {t('This will remove access for all authenticated websites. Are you sure you want to continue?')}
+          </Typography>
+          <DecisionButtons
+            direction='vertical'
+            isBusy={isBusy}
+            onPrimaryClick={onDeleteAll}
+            onSecondaryClick={closeDeleteAllConfirmation}
+            primaryBtnText={t('Remove all')}
+            secondaryBtnText={t('Cancel')}
+            style={{ width: '100%' }}
+          />
+        </Stack>
+      </SharePopup>
     </Stack>
   );
 }
