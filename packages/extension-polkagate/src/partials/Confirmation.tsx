@@ -15,9 +15,10 @@ import Subscan from '../assets/icons/Subscan';
 import { ActionButton, DisplayBalance, GradientButton, Identity, NeonButton } from '../components';
 import { DraggableModal } from '../fullscreen/components/DraggableModal';
 import { useChainInfo, useIsBlueish, useIsExtensionPopup, useRouteRefresh, useStakingConsts, useTranslation } from '../hooks';
+import { getLink } from '../popup/history/explorer';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../style';
-import { getSubscanChainName, isValidAddress, toShortAddress, toTitleCase, updateStorage } from '../util';
+import { isValidAddress, toShortAddress, toTitleCase, updateStorage } from '../util';
 import { STORAGE_KEY } from '../util/constants';
 import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
 import DisplayAmount from './DisplayAmount';
@@ -243,23 +244,26 @@ interface ButtonsProps {
   address: string;
   backToHome?: () => void;
   backToHomeText?: string;
+  extrinsicIndex?: string;
   genesisHash: string | undefined;
   goToHistory?: () => void;
   isBlueish: boolean;
   success: boolean;
+  txHash?: string;
 }
 
-function Buttons({ address, backToHome, backToHomeText, genesisHash, goToHistory, isBlueish, success }: ButtonsProps) {
+function Buttons({ address, backToHome, backToHomeText, extrinsicIndex, genesisHash, goToHistory, isBlueish, success, txHash }: ButtonsProps) {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
 
   const goToExplorer = useCallback(() => {
-    const network = getSubscanChainName(chainName);
-
-    const url = `https://${network}.subscan.io/account/${address}`;
+    const { link } = chainName && (extrinsicIndex || txHash)
+      ? getLink(chainName, 'extrinsic', extrinsicIndex || txHash || '')
+      : { link: undefined };
+    const url = link ?? `https://subscan.io/account/${address}`;
 
     chrome.tabs.create({ url }).catch(console.error);
-  }, [address, chainName]);
+  }, [address, chainName, extrinsicIndex, txHash]);
 
   const btnStyle = {
     height: '44px',
@@ -408,10 +412,12 @@ function Content({ address, backToHome, backToHomeText, genesisHash, isModal, on
           address={address}
           backToHome={(backToHome || showStakingHome) ? handleHome : undefined}
           backToHomeText={_backToHomeText}
+          extrinsicIndex={transactionDetail.extrinsicIndex}
           genesisHash={genesisHash}
           goToHistory={showHistoryButton ? goToHistory : undefined}
           isBlueish={isBlueish}
           success={transactionDetail.success}
+          txHash={transactionDetail.txHash}
         />
       </Stack>
     </Stack>

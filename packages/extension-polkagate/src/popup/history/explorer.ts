@@ -19,7 +19,7 @@ export function getLink(chainName: string, type: 'account' | 'extrinsic' = 'extr
         {
           const adjustedName = getSubscanChainName(chainName);
 
-          return { link: 'https://' + adjustedName + '.subscan.io/extrinsic/' + String(data), name: 'subscan' }; // data here is txHash
+          return { link: 'https://' + adjustedName + '.subscan.io/extrinsic/' + String(data), name: 'subscan' };
         }
 
       case 'polkaholic':

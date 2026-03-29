@@ -204,13 +204,14 @@ function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledg
 
       const _token = token || api.registry.chainTokens[0];
       const decimal = api.registry.chainDecimals[0];
-      const { block = 0, failureText, fee, success, txHash = '' } = txResult;
+      const { block = 0, extrinsicIndex, failureText, fee, success, txHash = '' } = txResult;
 
       const info = {
         block,
         chain,
         date: Date.now(),
         decimal, // in cross chain transfer this will be the sending chain decimal
+        extrinsicIndex,
         failureText,
         fee,
         from: { address: String(formatted), name: senderName },
