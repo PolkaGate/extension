@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.2.0](https://github.com/polkagate/extension/compare/v2.1.0...v2.2.0) (2026-03-29)
+
+
+### Features
+
+* link subscan confirmation view to the submitted extrinsic ([#2126](https://github.com/polkagate/extension/issues/2126)) ([7330ff3](https://github.com/polkagate/extension/commit/7330ff3149fdaf1b51c285d386494fad817cb7be))
+
 # [2.1.0](https://github.com/polkagate/extension/compare/v2.0.0...v2.1.0) (2026-03-28)
 
 
