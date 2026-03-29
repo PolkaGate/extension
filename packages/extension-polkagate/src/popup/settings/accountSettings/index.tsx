@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Stack, Typography } from '@mui/material';
-import { Data, Edit2, ExportCurve, ImportCurve, LogoutCurve, Notification, ShieldSecurity } from 'iconsax-react';
+import { Data, Edit2, ExportCurve, ImportCurve, LogoutCurve, More2, Notification, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -43,6 +43,7 @@ function AccountSettings(): React.ReactElement {
   const onExport = useCallback(() => navigate('/settings-account-export') as void, [navigate]);
   const onImport = useCallback(() => windowOpen('/account/have-wallet') as unknown as void, []);
   const onManageProxy = useCallback(() => windowOpen(`/proxyManagement/${address}/${selectedChain}`) as unknown as void, [address, selectedChain]);
+  const onMore = useCallback(() => windowOpen('/settingsfs/account') as unknown as void, []);
 
   const CARD_STYLE = { alignItems: 'center', height: '58px', mt: '5px' };
 
@@ -108,11 +109,19 @@ function AccountSettings(): React.ReactElement {
           style={{ ...CARD_STYLE }}
           title={t('Websites Access')}
         />
-        <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)} sx={{ cursor: 'pointer', mt: '25px' }}>
-          <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />
-          <Typography sx={{ '&:hover': { color: '#AA83DC' }, color: '#BEAAD8', transition: 'all 250ms ease-out' }} variant='B-1'>
-            {t('Remove account')}
-          </Typography>
+        <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ cursor: 'pointer', m: '19px 0 0 7px' }}>
+          <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)}>
+            <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />
+            <Typography sx={{ '&:hover': { color: '#AA83DC' }, color: '#BEAAD8', transition: 'all 250ms ease-out' }} variant='B-1'>
+              {t('Remove account')}
+            </Typography>
+          </Stack>
+          <Stack alignItems='center' columnGap='5px' direction='row' onClick={onMore}>
+            <Typography sx={{ '&:hover': { color: '#AA83DC' }, color: '#BEAAD8', transition: 'all 250ms ease-out' }} variant='B-1'>
+              {t('More')}
+            </Typography>
+            <More2 color='#AA83DC' size={18} variant='Linear' />
+          </Stack>
         </Stack>
       </Motion>
       <HomeMenu />
