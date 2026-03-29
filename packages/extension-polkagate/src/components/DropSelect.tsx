@@ -31,7 +31,7 @@ const DropSelectContainer = styled(Grid, { shouldForwardProp: (prop) => prop !==
   transition: 'all 250ms ease-out'
 }));
 
-function Logo({ text }: { text: string }) {
+function OptionLogo({ text }: { text: string }) {
   const isDark = useIsDark();
   const icon = resolveLogoInfo(text)?.logo;
 
@@ -96,7 +96,7 @@ function DropSelect({ Icon, contentDropWidth, defaultValue, disabled, displayCon
         <DropSelectContainer container disabled={disabled} focused={open} item onClick={toggleOpen} ref={containerRef} sx={style}>
           <Grid alignItems='center' container item sx={{ columnGap: style?.columnGap ?? '5px', flexWrap: 'noWrap' }} xs>
             {displayContentType === 'logo' && selectedValueText &&
-              <Logo
+              <OptionLogo
                 text={selectedValueText}
               />
             }

@@ -59,7 +59,7 @@ interface ContentDisplayProps {
   showCheckAsIcon?: boolean;
 }
 
-function Logo({ text }: { text: string }) {
+function OptionLogo({ text }: { text: string }) {
   const isDark = useIsDark();
   const icon = resolveLogoInfo(text)?.logo;
 
@@ -117,7 +117,7 @@ function LogoContentDisplay({ Icon, logoType, onChange, selectedValue, setOpen, 
       }
     }
 
-    return <Logo text={text as string} />;
+    return <OptionLogo text={text as string} />;
   };
 
   return (
