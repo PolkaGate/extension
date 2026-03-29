@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.4.0](https://github.com/polkagate/extension/compare/v2.3.0...v2.4.0) (2026-03-29)
+
+
+### Features
+
+* add inline "myself" shortcut to transfer recipient input ([d61c94d](https://github.com/polkagate/extension/commit/d61c94dafc364b2fa70edb60bbf05206baadfa54)), closes [#1933](https://github.com/polkagate/extension/issues/1933)
+
 # [2.3.0](https://github.com/polkagate/extension/compare/v2.2.0...v2.3.0) (2026-03-29)
 
 
