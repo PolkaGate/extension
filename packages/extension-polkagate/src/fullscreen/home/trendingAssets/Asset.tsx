@@ -7,9 +7,9 @@ import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
 import DailyChange from '@polkadot/extension-polkagate/src/popup/home/partial/DailyChange';
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
 
-import { AssetLogo, CurrencyContext } from '../../../components';
+import { Logo, CurrencyContext } from '../../../components';
 
 const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue, onClick: React.Dispatch<React.SetStateAction<string | undefined>> }>(({ asset, onClick }, ref) => {
   const { currency } = useContext(CurrencyContext);
@@ -28,7 +28,7 @@ const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue, onClick: Rea
     setHoveredIndex(false);
   }, []);
 
-  const logoInfo = getLogo2(asset.genesisHash, asset.symbol);
+  const logoInfo = resolveLogoInfo(asset.genesisHash, asset.symbol);
 
   return (
     <Stack
@@ -49,7 +49,7 @@ const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue, onClick: Rea
         width: 'fit-content'
       }}
     >
-      <AssetLogo assetSize='36px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} style={{ width: 'fit-content' }} token={asset?.symbol} />
+      <Logo assetSize='36px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} style={{ width: 'fit-content' }} token={asset?.symbol} />
       <Typography color='#EAEBF1' sx={{ mt: '10px', textAlign: 'left', textWrap: 'nowrap' }} variant='B-2'>
         {asset.symbol} / {currency?.code}
       </Typography>

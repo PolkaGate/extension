@@ -4,7 +4,7 @@
 import { Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { ChainLogo, DisplayBalance, Identity } from '../../../../../components';
+import { Logo, DisplayBalance, Identity } from '../../../../../components';
 import { useChainInfo, useTranslation } from '../../../../../hooks';
 
 interface Props {
@@ -21,7 +21,7 @@ function Transfer({ amount, genesisHash, to }: Props): React.ReactElement<Props>
 
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start'>
-      <ChainLogo genesisHash={genesisHash} size={36} />
+      <Logo genesisHash={genesisHash} size={36} />
       <Stack alignItems='flex-start' direction='column'>
         <DisplayBalance
           balance={amount}

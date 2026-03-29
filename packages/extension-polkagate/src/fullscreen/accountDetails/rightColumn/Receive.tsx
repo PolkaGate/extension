@@ -9,11 +9,11 @@ import { DocumentCopy } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
 
-import { Address2, ChainLogo, DecisionButtons, GradientDivider, MySnackbar, SearchField } from '@polkadot/extension-polkagate/src/components/index';
+import { Address2, Logo, DecisionButtons, GradientDivider, MySnackbar, SearchField } from '@polkadot/extension-polkagate/src/components/index';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util';
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { useFormatted, useGenesisHashOptions, useSelectedAccount, useTranslation } from '../../../hooks';
@@ -86,7 +86,7 @@ function SelectChain({ isEthereum, setSelectedChain }: SelectChainProp) {
             <React.Fragment key={index}>
               <ListItem container item key={index} onClick={() => setSelectedChain(chain)}>
                 <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-                  <ChainLogo chainName={chainName} size={18} />
+                  <Logo chainName={chainName} size={18} />
                   <Typography color='text.primary' variant='B-2'>
                     {chainName}
                   </Typography>
@@ -115,7 +115,7 @@ function AddressComponent({ address, chainName, onCopy }: AddressComponentProp) 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
       <Grid alignItems='center' columnGap='8px' container item pl='10px' width='fit-content'>
-        <ChainLogo chainName={chainName} size={18} />
+        <Logo chainName={chainName} size={18} />
         <Typography color='text.secondary' variant='B-4'>
           {toShortAddress(address, 12)}
         </Typography>
@@ -136,7 +136,7 @@ function Receive({ address, closePopup, onClose, setAddress }: Props): React.Rea
 
   const formattedAddress = useFormatted(address, selectedChain?.value as string | undefined);
   const chainName = useMemo(() => selectedChain ? sanitizeChainName(selectedChain?.text)?.toLowerCase() : '', [selectedChain]);
-  const chainLogo = useMemo(() => getLogo2(chainName), [chainName]);
+  const chainLogo = useMemo(() => resolveLogoInfo(chainName), [chainName]);
 
   const onCopy = useCallback(() => {
     formattedAddress && navigator.clipboard.writeText(formattedAddress).catch((err) => console.error('Error copying text: ', err));

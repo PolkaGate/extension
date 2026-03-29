@@ -15,7 +15,7 @@ import { ExtensionPopups, STORAGE_KEY } from '@polkadot/extension-polkagate/src/
 import { DEFAULT_SELECTED_CHAINS } from '@polkadot/extension-polkagate/src/util/defaultSelectedChains';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
-import { ChainLogo, Motion, MySwitch, SearchField } from '../../components';
+import { Logo, Motion, MySwitch, SearchField } from '../../components';
 import { useGenesisHashOptions, useTranslation } from '../../hooks';
 import { getStorage, setStorage } from '../../util';
 import Endpoints from './partials/Endpoints';
@@ -45,7 +45,7 @@ function Item({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: Item
       }}
     >
       <Stack alignItems='center' className='hoverable' direction='row' onClick={chainEndpoints(value)} sx={{ cursor: 'pointer' }}>
-        <ChainLogo genesisHash={value} size={24} />
+        <Logo genesisHash={value} size={24} />
         <Typography color={isEnabled ? 'text.primary' : 'primary.main'} ml='8px' variant='B-1'>
           {text}
         </Typography>

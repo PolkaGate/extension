@@ -14,10 +14,10 @@ import NftManager from '@polkadot/extension-polkagate/src/class/nftManager';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, CurrencyContext, FormatPrice, Identity, MySkeleton } from '../../components';
+import { Logo, CurrencyContext, FormatPrice, Identity, MySkeleton } from '../../components';
 import { useAccountAssets, useAccountSelectedChain, usePrices } from '../../hooks';
 import { setStorage } from '../../util';
 
@@ -217,11 +217,11 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
         }
         <Grid alignItems='center' container item sx={{ ml: '10px', position: 'relative' }} width='fit-content'>
           {assetsToShow?.slice(0, 4).map(({ genesisHash, token }, index) => {
-            const logoInfo = getLogo2(genesisHash, token);
+            const logoInfo = resolveLogoInfo(genesisHash, token);
 
             return (
               <Box key={`${genesisHash}+${token}+${index}`} sx={{ background: '#05091C', border: '2.57px solid #05091C', borderRadius: '50%', mb: '-4px', ml: index === 0 ? 0 : '-7px', position: 'relative', zIndex: index + 1 }}>
-                <AssetLogo assetSize='18px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+                <Logo assetSize='18px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} />
               </Box>
             );
           })}

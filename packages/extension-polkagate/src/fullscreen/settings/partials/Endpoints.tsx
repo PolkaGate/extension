@@ -4,7 +4,7 @@
 import { Grid, Stack } from '@mui/material';
 import React, { useCallback, useMemo, useRef } from 'react';
 
-import { ChainLogo, DecisionButtons, FadeOnScroll } from '@polkadot/extension-polkagate/src/components/index';
+import { Logo, DecisionButtons, FadeOnScroll } from '@polkadot/extension-polkagate/src/components/index';
 import EndpointRow from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/EndpointRow';
 
 import MySwitch from '../../../components/MySwitch';
@@ -61,7 +61,7 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
 
   return (
     <DraggableModal
-      TitleLogo={<ChainLogo genesisHash={genesisHash} showSquare size={36} />}
+      TitleLogo={<Logo genesisHash={genesisHash} showSquare size={36} />}
       onClose={_onClose}
       open={open}
       showBackIconAsClose

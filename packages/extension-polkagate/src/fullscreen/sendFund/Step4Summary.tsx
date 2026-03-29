@@ -12,9 +12,9 @@ import { ArrowCircleRight2 } from 'iconsax-react';
 import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
 
-import { AssetLogo, DisplayBalance, Motion } from '../../components';
+import { Logo, DisplayBalance, Motion } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
 import FeeRow from './partials/FeeRow';
 import FromToBox from './partials/FromToBox';
@@ -39,7 +39,7 @@ export default function Step4Summary({ canPayFee, inputs, setInputs, transaction
     accountAssets?.find((asset) => asset.genesisHash === genesisHash && String(asset.assetId) === assetId),
     [accountAssets, assetId, genesisHash]);
 
-  const logoInfo = useMemo(() => getLogo2(genesisHash, assetToTransfer?.token), [assetToTransfer?.token, genesisHash]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, assetToTransfer?.token), [assetToTransfer?.token, genesisHash]);
 
   return (
     <Motion variant='fade'>
@@ -48,7 +48,7 @@ export default function Step4Summary({ canPayFee, inputs, setInputs, transaction
           {t('Amount')}
         </Typography>
         <Stack alignItems='center' columnGap='8px' direction='row' justifyContent='start' sx={{ height: '45px' }}>
-          <AssetLogo assetSize='32px' genesisHash={genesisHash} logo={logoInfo?.logo} token={inputs?.token} />
+          <Logo assetSize='32px' genesisHash={genesisHash} logo={logoInfo?.logo} token={inputs?.token} />
           <DisplayBalance
             balance={inputs.amountAsBN}
             decimal={inputs?.decimal}

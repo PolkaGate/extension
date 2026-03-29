@@ -5,7 +5,7 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { ChainLogo, DisplayBalance } from '../../../../../components';
+import { Logo, DisplayBalance } from '../../../../../components';
 import { useChainInfo, useTranslation } from '../../../../../hooks';
 
 interface Props {
@@ -53,7 +53,7 @@ function AdjustStakeAmount({ action, amount, genesisHash }: Props): React.ReactE
 
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start'>
-      <ChainLogo genesisHash={genesisHash} size={36} />
+      <Logo genesisHash={genesisHash} size={36} />
       <Stack alignItems='flex-start' direction='column'>
         <DisplayBalance
           balance={amount}

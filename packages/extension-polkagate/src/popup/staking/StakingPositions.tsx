@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { type BN } from '@polkadot/util';
 
-import { ActionButton, BackWithLabel, ChainLogo, FadeOnScroll, Motion, SearchField } from '../../components';
+import { ActionButton, BackWithLabel, Logo, FadeOnScroll, Motion, SearchField } from '../../components';
 import SnowFlake from '../../components/SVG/SnowFlake';
 import { useAccountAssets, useBackground, useIsDark, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, NothingFound, UserDashboardHeader } from '../../partials';
@@ -82,7 +82,7 @@ function PositionRow({ balance, decimal, genesisHash, isFirst, isLast, price, to
   return (
     <Grid alignItems='center' container item justifyContent='space-between' onClick={openStaking} sx={{ ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' }, bgcolor: '#05091C', borderBottom: '1px solid #1B133C', borderBottomLeftRadius: isLast ? '14px' : 0, borderBottomRightRadius: isLast ? '14px' : 0, borderTopLeftRadius: isFirst ? '14px' : 0, borderTopRightRadius: isFirst ? '14px' : 0, cursor: 'pointer', lineHeight: '25px', p: '10px', transition: 'all 250ms ease-out' }}>
       <Stack alignItems='center' direction='row' justifyContent='start'>
-        <ChainLogo genesisHash={genesisHash} size={36} />
+        <Logo genesisHash={genesisHash} size={36} />
         <Stack alignItems='start' direction='column' sx={{ ml: '10px' }}>
           <Typography sx={{ mt: '-7px' }} variant='B-2'>
             {token}

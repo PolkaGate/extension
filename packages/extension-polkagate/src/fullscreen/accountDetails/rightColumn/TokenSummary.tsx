@@ -9,11 +9,11 @@ import React, { memo, useCallback, useMemo } from 'react';
 import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, DisplayBalance, FormatPrice } from '../../../components';
+import { Logo, DisplayBalance, FormatPrice } from '../../../components';
 import { usePrices } from '../../../hooks';
 import DailyChange from '../../../popup/home/partial/DailyChange';
 import { GlowBox } from '../../../style';
-import getLogo2 from '../../../util/getLogo2';
+import resolveLogoInfo from '../../../util/resolveLogoInfo';
 import Explorer from '../Explorer';
 
 interface Props {
@@ -35,7 +35,7 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
     token?.decimal ? calcPrice(priceOf(token?.priceId ?? '') ?? 0, token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0) : undefined
     , [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
 
-  const logoInfo = useMemo(() => getLogo2(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
 
   return (
     <GlowBox style={{ height: '187px', justifyContent: 'start', justifyItems: 'start', pl: '30px', rowGap: '5px' }}>
@@ -57,7 +57,7 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
             width: 'fit-content'
           }}
         >
-          <AssetLogo assetSize='36px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='5px -18px auto auto' />
+          <Logo assetSize='36px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='5px -18px auto auto' />
         </Grid>
       </Grow>
       <Explorer

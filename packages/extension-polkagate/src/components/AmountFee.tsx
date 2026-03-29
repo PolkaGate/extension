@@ -10,7 +10,7 @@ import React from 'react';
 
 import { useAccount, useTranslation } from '../hooks';
 import { TOTAL_STAKE_HELPER_TEXT } from '../util/constants';
-import { ChainLogo, Infotip, ShowValue } from '.';
+import { Logo, Infotip, ShowValue } from '.';
 
 interface Props {
   address: string | undefined;
@@ -43,7 +43,7 @@ function AmountFee({ address, amount, children, fee, label, showDivider = false,
       <Grid alignItems='center' container item justifyContent='center' sx={{ lineHeight: '28px' }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ fontSize: '28px', fontWeight: 400 }}>
           <Grid item>
-            <ChainLogo genesisHash={account?.genesisHash} size={31} />
+            <Logo genesisHash={account?.genesisHash} size={31} />
           </Grid>
           <Grid item sx={{ fontSize: '26px', ml: '5px' }}>
             {amount} {token}

@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { ActionButton, ChainLogo, Motion, SearchField } from '../../../components';
+import { ActionButton, Logo, Motion, SearchField } from '../../../components';
 import { getStorage, setStorage } from '../../../components/Loading';
 import MySwitch from '../../../components/MySwitch';
 import { useTranslation } from '../../../components/translate';
@@ -153,7 +153,7 @@ export default function Chains(): React.ReactElement {
               }}
             >
               <Stack alignItems='center' className='hoverable' direction='row' onClick={chainEndpoints(value as string)} sx={{ cursor: 'pointer' }}>
-                <ChainLogo genesisHash={value as string} size={24} />
+                <Logo genesisHash={value as string} size={24} />
                 <Typography color={isSelected ? 'text.primary' : 'primary.main'} ml='8px' variant='B-1'>
                   {text}
                 </Typography>

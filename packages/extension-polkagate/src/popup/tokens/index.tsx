@@ -11,12 +11,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, BackWithLabel, DisplayBalance, FadeOnScroll, FormatPrice, Motion } from '../../components';
+import { Logo, BackWithLabel, DisplayBalance, FadeOnScroll, FormatPrice, Motion } from '../../components';
 import { useAccountAssets, useBackground, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
 import { toTitleCase } from '../../util';
-import getLogo2, { type LogoInfo } from '../../util/getLogo2';
+import resolveLogoInfo, { type LogoInfo } from '../../util/resolveLogoInfo';
 import DailyChange from '../home/partial/DailyChange';
 import ReservedLockedPopup from './partial/ReservedLockedPopup';
 import TokenDetailBox from './partial/TokenDetailBox';
@@ -26,7 +26,7 @@ import { useTokenInfoDetails } from './useTokenInfoDetails';
 
 const BackButton = ({ logoInfo, token }: { token: FetchedBalance | undefined; logoInfo: LogoInfo | undefined }) => (
   <Grid alignItems='center' container item sx={{ columnGap: '6px', width: 'fit-content' }}>
-    <AssetLogo assetSize='24px' baseTokenSize='16px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={undefined} subLogoPosition='' />
+    <Logo assetSize='24px' baseTokenSize='16px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={undefined} subLogoPosition='' />
     <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
       {token?.chainName ? toTitleCase(token.chainName) : ''}
     </Typography>
@@ -48,7 +48,7 @@ function Tokens(): React.ReactElement {
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === paramAssetId)
     , [accountAssets, genesisHash, paramAssetId]);
 
-  const logoInfo = useMemo(() => getLogo2(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
 
   const { UnlockTrackElement,
     closeMenu,
@@ -84,7 +84,7 @@ function Tokens(): React.ReactElement {
         <Container disableGutters ref={refContainer} sx={{ display: 'block', height: 'fit-content', maxHeight: '504px', overflowY: 'auto', pb: '60px', pt: '15px' }}>
           <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
             <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
-              <AssetLogo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-6px -8px auto auto' />
+              <Logo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-6px -8px auto auto' />
             </Grid>
             <Typography color='text.secondary' variant='B-2'>
               {token?.token}

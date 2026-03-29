@@ -9,7 +9,7 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight, MoneyRecive, Repeat } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { ChainLogo, Identity } from '../../../../../components';
+import { Logo, Identity } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 
 interface Props {
@@ -67,7 +67,7 @@ function Payee({ genesisHash, payee }: Props): React.ReactElement<Props> {
 
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start'>
-      <ChainLogo genesisHash={genesisHash} size={36} />
+      <Logo genesisHash={genesisHash} size={36} />
       <Stack alignItems='flex-start' direction='column'>
         <Stack alignItems='center' columnGap='5px' direction='row'>
           <Typography color='#BEAAD8' sx={{ textWrapMode: 'noWrap' }} variant='B-4'>

@@ -14,10 +14,10 @@ import { useNavigate } from 'react-router-dom';
 import { calcPrice, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo } from '../../../components';
+import { Logo } from '../../../components';
 import { useIsDark, useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
 import allChains from '../../../util/chains';
-import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
+import resolveLogoInfo, { type LogoInfo } from '../../../util/resolveLogoInfo';
 import Drawer from './Drawer';
 import { TokenBalanceDisplay } from './TokenBalanceDisplay';
 import { TokenPriceInfo } from './TokenPriceInfo';
@@ -39,13 +39,13 @@ type Summary = AssetDetailType[] | null | undefined;
 function TokensItems({ onTokenClick, theme, tokenDetail }: { onTokenClick: () => void, tokenDetail: FetchedBalance & { totalPrice: number }, theme: Theme }) {
   const bgcolor = theme.palette.mode === 'dark' ? '#2D1E4A' : '#CCD2EA59';
   const { chainName, decimal, genesisHash, token, totalBalance, totalPrice } = tokenDetail;
-  const logoInfo = getLogo2(genesisHash, token);
+  const logoInfo = resolveLogoInfo(genesisHash, token);
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: bgcolor }, borderRadius: '12px', cursor: 'pointer', p: '4px 8px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
         <Grid item sx={{ border: '3px solid', borderColor: bgcolor, borderRadius: '8px' }}>
-          <AssetLogo
+          <Logo
             assetSize='26px'
             baseTokenSize='18px'
             genesisHash={genesisHash}
@@ -125,7 +125,7 @@ function TokenBox({ address, theme, tokenDetail }: { address: string | undefined
                   }
                 }}
               >
-                <AssetLogo
+                <Logo
                   assetSize='36px'
                   baseTokenSize='16px'
                   genesisHash={genesisHash}
@@ -258,7 +258,7 @@ function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
         decimal = baseTokenFallback?.tokenDecimal;
       }
 
-      const logoInfo = getLogo2(genesisHash, token);
+      const logoInfo = resolveLogoInfo(genesisHash, token);
 
       return {
         assets: sortedAssets,

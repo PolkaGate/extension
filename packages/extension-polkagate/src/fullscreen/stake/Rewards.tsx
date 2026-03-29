@@ -10,10 +10,10 @@ import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { AssetLogo, DisplayBalance, Identity, Motion } from '../../components';
+import { Logo, DisplayBalance, Identity, Motion } from '../../components';
 import NoInfoYet from '../../components/NoInfoYet';
 import { useChainInfo, useTranslation } from '../../hooks';
-import getLogo2 from '../../util/getLogo2';
+import resolveLogoInfo from '../../util/resolveLogoInfo';
 import RewardConfigureButton from './new-solo/components/RewardConfigureButton';
 import { type PopupOpener, StakingPopUps } from './util/utils';
 import RewardsLoading from './RewardsLoading';
@@ -103,12 +103,12 @@ interface RewardSettingProps {
 }
 
 const RewardSetting = ({ genesisHash, popupOpener, token, type }: RewardSettingProps) => {
-  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width: 'fit-content' }}>
       <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '6px', p: '6px', pr: '10px', width: 'fit-content' }}>
-        <AssetLogo assetSize='24px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
+        <Logo assetSize='24px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
         <Typography color='text.primary' textTransform='uppercase' variant='B-2'>
           {token}
         </Typography>

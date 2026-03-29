@@ -13,7 +13,7 @@ import Icon from '@polkadot/react-identicon';
 
 import { sanitizeChainName } from '../util';
 import { DEMO_ACCOUNT } from '../util/constants';
-import ChainLogo from './ChainLogo';
+import Logo from './Logo';
 
 interface Props {
   defaultValue: string | number | undefined;
@@ -147,7 +147,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
                         theme={v as IconTheme}
                         value={DEMO_ACCOUNT}
                       />
-                      : <ChainLogo chainName={chainName(textToShow)} genesisHash={v} size={19.8} />
+                      : <Logo chainName={chainName(textToShow)} genesisHash={v} size={19.8} />
                     }
                   </Grid>
                 }
@@ -204,7 +204,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, isDisabled = f
                         theme={value as IconTheme}
                         value={DEMO_ACCOUNT}
                       />
-                      : <ChainLogo chainName={chainName(text)} genesisHash={value as string} size={19.8} />
+                      : <Logo chainName={chainName(text)} genesisHash={value as string} size={19.8} />
                     }
                   </Grid>
                 }

@@ -7,7 +7,7 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight, MagicStar } from 'iconsax-react';
 import React from 'react';
 
-import { ChainLogo, DisplayBalance } from '../../../../../components';
+import { Logo, DisplayBalance } from '../../../../../components';
 import { useChainInfo, useTranslation } from '../../../../../hooks';
 
 interface Props {
@@ -25,7 +25,7 @@ function NominationPoolsBondExtra({ amount, genesisHash }: Props): React.ReactEl
 
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start'>
-      <ChainLogo genesisHash={genesisHash} size={36} />
+      <Logo genesisHash={genesisHash} size={36} />
       <Stack alignItems='flex-start' direction='column'>
         {maybeAmount &&
           <DisplayBalance

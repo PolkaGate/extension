@@ -5,7 +5,7 @@ import { Container, Grid, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { BackWithLabel, ChainLogo } from '../../../components';
+import { BackWithLabel, Logo } from '../../../components';
 import MySwitch from '../../../components/MySwitch';
 import useEndpointsSetting from '../../../fullscreen/settings/partials/useEndpointsSetting';
 import { useMetadata, useTranslation } from '../../../hooks';
@@ -20,7 +20,7 @@ const BackButton = ({ genesisHash }: { genesisHash: string | undefined; }) => {
 
   return (
     <Grid alignItems='center' container item sx={{ columnGap: '6px', width: 'fit-content' }}>
-      <ChainLogo genesisHash={genesisHash} size={24} />
+      <Logo genesisHash={genesisHash} size={24} />
       <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
         {chainName}
       </Typography>

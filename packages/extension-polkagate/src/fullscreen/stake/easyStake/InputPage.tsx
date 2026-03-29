@@ -15,7 +15,7 @@ import { ScrollingTextBox } from '../../../components';
 import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import StakeAmountInput from '../../../popup/staking/partial/StakeAmountInput';
 import { EXTENSION_NAME } from '../../../util/constants';
-import getLogo2 from '../../../util/getLogo2';
+import resolveLogoInfo from '../../../util/resolveLogoInfo';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
 
 interface StakingTypeOptionBoxProps {
@@ -128,7 +128,7 @@ export interface InputPageProp {
 const InputPage = ({ amount, availableBalanceToStake, errorMessage, genesisHash, loading, onChangeAmount, onMaxMinAmount, rate, selectedStakingType, setSide, stakingConsts }: InputPageProp) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
-  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
   const onTypeOption = useCallback(() => setSide(EasyStakeSide.STAKING_TYPE), [setSide]);
 

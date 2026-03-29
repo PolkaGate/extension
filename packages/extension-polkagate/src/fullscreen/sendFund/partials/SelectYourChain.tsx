@@ -8,7 +8,7 @@ import React, { useCallback, useState } from 'react';
 
 import { toTitleCase } from '@polkadot/extension-polkagate/src/util/string';
 
-import { ChainLogo } from '../../../components';
+import { Logo } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import ChainListModal from '../../components/ChainListModal';
 import OpenerButton from './OpenerButton';
@@ -38,7 +38,7 @@ export default function SelectYourChain({ chainName, chainOptions, setSelectedCh
     <>
       <Stack alignItems='center' direction='row' justifyContent='space-between' mt='15px' onClick={onChainSelection} sx={{ cursor: 'pointer', ...style }} width='230px'>
         <Stack alignItems='center' direction='row' justifyContent='start' width='80%'>
-          <ChainLogo chainName={chainName} size={36} />
+          <Logo chainName={chainName} size={36} />
           <Stack alignItems='center' direction='column' justifyContent='start' ml='7px' width='100%'>
             {
               withTitle &&

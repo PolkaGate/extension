@@ -16,7 +16,7 @@ import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants
 import { isMigratedHub, isMigratedRelay, mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
-import { ChainLogo, GlowCheck, GradientButton, SearchField } from '../../components';
+import { Logo, GlowCheck, GradientButton, SearchField } from '../../components';
 import { useGenesisHashOptions, useSelectedAccount, useSelectedChains, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import { toTitleCase } from '../../util';
@@ -137,7 +137,7 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
                   sx={{ '&:hover': { bgcolor: '#6743944D' }, borderRadius: '12px', cursor: 'pointer', p: '10px 7px' }}
                 >
                   <Stack alignItems='center' direction='row'>
-                    <ChainLogo chainName={text} genesisHash={value as string} size={24} />
+                    <Logo chainName={text} genesisHash={value as string} size={24} />
                     <Typography color='#EAEBF1' ml='8px' sx={{ userSelect: 'none' }} variant='B-1'>
                       {toTitleCase(normalizedChainName)}
                     </Typography>

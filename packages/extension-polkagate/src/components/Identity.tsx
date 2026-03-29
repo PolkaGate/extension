@@ -18,7 +18,7 @@ import { Email, Web, XIcon } from '../popup/settings/icons';
 import SocialIcon from '../popup/settings/partials/SocialIcon';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { isValidAddress, toTitleCase } from '../util';
-import { ChainLogo, GlowCheck, Identicon, Infotip, ShortAddress } from '.';
+import { Logo, GlowCheck, Identicon, Infotip, ShortAddress } from '.';
 
 interface ExtendedStyle extends CSSProperties {
   variant?: string;
@@ -344,7 +344,7 @@ function Identity({ accountInfo, address, addressStyle, charsCount = 6, directio
       {
         showChainLogo &&
         <Grid item xs={1}>
-          <ChainLogo genesisHash={genesisHash} />
+          <Logo genesisHash={genesisHash} />
         </Grid>
       }
     </Grid>

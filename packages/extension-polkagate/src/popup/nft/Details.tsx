@@ -6,7 +6,7 @@ import type { ItemInformation } from '@polkadot/extension-polkagate/fullscreen/n
 import { Avatar, Divider, Grid, Stack, type SxProps, Typography } from '@mui/material';
 import React, { type ReactElement } from 'react';
 
-import { ChainLogo } from '../../components';
+import { Logo } from '../../components';
 import AudioPlayer from '../../fullscreen/nft/components/AudioPlayer';
 import { useTranslation } from '../../hooks';
 import { GlowBox } from '../../style';
@@ -95,7 +95,7 @@ export default function Details({ nft }: { nft: ItemInformation | undefined }): 
             <ItemInfo
               label={t('Network')}
               value={<Stack alignItems='center' columnGap='3px' direction='row'>
-                <ChainLogo genesisHash={nft?.genesisHash} size={14} />
+                <Logo genesisHash={nft?.genesisHash} size={14} />
                 <Typography color='#EAEBF1' variant='B-2'>
                   {nft?.chainName}
                 </Typography>

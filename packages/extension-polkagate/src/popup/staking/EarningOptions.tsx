@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { extractRelayChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { BN_ZERO } from '@polkadot/util';
 
-import { BackWithLabel, ChainLogo, DisplayBalance, FadeOnScroll, Motion, SearchField } from '../../components';
+import { BackWithLabel, Logo, DisplayBalance, FadeOnScroll, Motion, SearchField } from '../../components';
 import { useAccountAssets, useBackground, useIsDark, useIsTestnetEnabled, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, NothingFound, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
@@ -106,7 +106,7 @@ export default function EarningOptions(): React.ReactElement {
                     }}
                   >
                     <Stack alignItems='center' direction='row' justifyContent='start'>
-                      <ChainLogo genesisHash={genesisHash} size={36} />
+                      <Logo genesisHash={genesisHash} size={36} />
                       <Stack alignItems='start' direction='column' sx={{ ml: '10px' }}>
                         <Typography sx={{ mt: '-7px' }} variant='B-2'>
                           {tokenSymbol}

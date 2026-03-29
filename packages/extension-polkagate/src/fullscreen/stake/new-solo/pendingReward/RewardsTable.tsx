@@ -6,9 +6,9 @@ import type { ExpandedRewards } from '../../type';
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { Fragment, useCallback, useMemo, useRef } from 'react';
 
-import { AssetLogo, DisplayBalance, FadeOnScroll, GlowCheckbox, GradientDivider, Identity, MySkeleton, NoInfoYet } from '../../../../components';
+import { Logo, DisplayBalance, FadeOnScroll, GlowCheckbox, GradientDivider, Identity, MySkeleton, NoInfoYet } from '../../../../components';
 import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../../hooks';
-import getLogo2 from '../../../../util/getLogo2';
+import resolveLogoInfo from '../../../../util/resolveLogoInfo';
 import { timeDiffSummary } from './timeDiffSummary';
 
 const SKELETON_HEIGHT = 24;
@@ -95,7 +95,7 @@ export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect
   const { decimal, token } = useChainInfo(genesisHash, true);
   const isExtension = useIsExtensionPopup();
 
-  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
   const isIncluded = useCallback((info: ExpandedRewards): boolean => !!selectedToPayout.find((s) => s === info), [selectedToPayout]);
 
@@ -146,7 +146,7 @@ export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect
                       tokenColor={isExtension ? theme.palette.text.highlight : theme.palette.primary.main}
                       withCurrency={false}
                     />
-                    <AssetLogo assetSize='16px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} token={token} />
+                    <Logo assetSize='16px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} token={token} />
                   </Grid>
                 </Grid>
                 <Grid item xs={COLUMNS_WIDTH.VALIDATOR}>
