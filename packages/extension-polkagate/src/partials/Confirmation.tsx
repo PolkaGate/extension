@@ -9,7 +9,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/partials/FailSuccessIcon';
-import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
 
 import Subscan from '../assets/icons/Subscan';
 import { ActionButton, DisplayBalance, GradientButton, Identity, NeonButton } from '../components';
@@ -308,7 +308,7 @@ function Buttons({ address, backToHome, backToHomeText, extrinsicIndex, genesisH
           onClick={goToExplorer}
           startIconNode={
             <Avatar
-              src={getLogo('subscan')}
+              src={resolveLogoInfo('subscan')?.logo}
               sx={{ borderRadius: '50%', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
               variant='square'
             />

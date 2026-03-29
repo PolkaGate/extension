@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIsDark } from '../hooks';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
-import getLogo from '../util/getLogo';
+import resolveLogoInfo from '../util/resolveLogoInfo';
 import { DropContent, ScrollingTextBox } from '.';
 
 const DropSelectContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'focused' })(({ disabled, focused }: { disabled: boolean | undefined, focused: boolean }) => ({
@@ -33,7 +33,7 @@ const DropSelectContainer = styled(Grid, { shouldForwardProp: (prop) => prop !==
 
 function Logo({ text }: { text: string }) {
   const isDark = useIsDark();
-  const icon = getLogo(text);
+  const icon = resolveLogoInfo(text)?.logo;
 
   return (
     <Avatar

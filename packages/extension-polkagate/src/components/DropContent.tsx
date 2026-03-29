@@ -11,7 +11,7 @@ import { useIsDark } from '../hooks';
 import { GradientDivider } from '../style';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
-import getLogo from '../util/getLogo';
+import resolveLogoInfo from '../util/resolveLogoInfo';
 import GlowCheck from './GlowCheck';
 
 const DropContentContainer = styled(Grid, {
@@ -61,7 +61,7 @@ interface ContentDisplayProps {
 
 function Logo({ text }: { text: string }) {
   const isDark = useIsDark();
-  const icon = getLogo(text);
+  const icon = resolveLogoInfo(text)?.logo;
 
   return (
     <Avatar
