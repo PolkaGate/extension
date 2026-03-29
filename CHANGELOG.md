@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.5.0](https://github.com/polkagate/extension/compare/v2.4.0...v2.5.0) (2026-03-29)
+
+
+### Features
+
+* add a fullscreen shortcut to popup account settings ([a20d03a](https://github.com/polkagate/extension/commit/a20d03a57fafc60122cbc11689a03d696245f008)), closes [#2127](https://github.com/polkagate/extension/issues/2127)
+
 # [2.4.0](https://github.com/polkagate/extension/compare/v2.3.0...v2.4.0) (2026-03-29)
 
 
