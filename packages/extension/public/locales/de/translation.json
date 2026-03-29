@@ -942,5 +942,8 @@
   "account type": "Kontotyp",
   "Polkadot & parachains": "Polkadot & Parachains",
   "Moonbeam & other EVM networks": "Moonbeam & andere EVM-Netzwerke",
-  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "Finden Sie Ihr Token auf CoinGecko. Die Preis-ID ist verfügbar unter: {{web}}[price-id]"
+  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "Finden Sie Ihr Token auf CoinGecko. Die Preis-ID ist verfügbar unter: {{web}}[price-id]",
+  "Myself": "Ich selbst",
+  "Remove all access": "Gesamten Zugriff entfernen",
+  "This will remove access for all authenticated websites. Are you sure you want to continue?": "Dadurch wird der Zugriff für alle authentifizierten Websites entfernt. Möchten Sie wirklich fortfahren?"
 }

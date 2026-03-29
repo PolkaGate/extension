@@ -942,5 +942,8 @@
   "account type": "账户类型",
   "Polkadot & parachains": "Polkadot 和平行链",
   "Moonbeam & other EVM networks": "Moonbeam 及其他 EVM 网络",
-  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "在 CoinGecko 上查找您的代币。价格 ID 可在此获取：{{web}}[price-id]"
+  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "在 CoinGecko 上查找您的代币。价格 ID 可在此获取：{{web}}[price-id]",
+  "Myself": "我自己",
+  "Remove all access": "移除所有访问权限",
+  "This will remove access for all authenticated websites. Are you sure you want to continue?": "这将移除所有已认证网站的访问权限。您确定要继续吗？"
 }

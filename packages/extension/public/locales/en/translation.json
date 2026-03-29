@@ -940,5 +940,8 @@
   "account type": "",
   "Polkadot & parachains": "",
   "Moonbeam & other EVM networks": "",
-  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": ""
+  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "",
+  "Myself": "",
+  "Remove all access": "",
+  "This will remove access for all authenticated websites. Are you sure you want to continue?": ""
 }

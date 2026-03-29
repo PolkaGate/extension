@@ -4,8 +4,8 @@
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { Divider, InputAdornment, Stack, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
-import { ArrowCircleDown, Document, Hashtag, ScanBarcode } from 'iconsax-react';
+import { Box, Divider, InputAdornment, Stack, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
+import { ArrowCircleDown, CloseCircle, Document, Hashtag, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { isEthereumAddress } from '@polkadot/util-crypto';
@@ -22,6 +22,8 @@ interface Props {
   addWithQr?: boolean;
   chain?: Chain | null;
   disabled?: boolean;
+  inlineActionLabel?: string;
+  onInlineActionClick?: () => void;
   label?: string;
   placeHolder?: string;
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>>;
@@ -32,7 +34,41 @@ interface Props {
   showAddressBook?: boolean;
 }
 
-export default function AddressInput({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setIsError, setType, showAddressBook, style, withSelect }: Props): React.ReactElement<Props> {
+interface AdornmentActionProps {
+  actionKey: 'clear' | 'inline' | 'qr' | 'select' | 'paste';
+  children: React.ReactNode;
+  hoverActionBackground: string;
+  onClick: () => void;
+  setHoveredAction: React.Dispatch<React.SetStateAction<'clear' | 'inline' | 'qr' | 'select' | 'paste' | undefined>>;
+  wide?: boolean;
+}
+
+function AdornmentAction({ actionKey, children, hoverActionBackground, onClick, setHoveredAction, wide = false }: AdornmentActionProps): React.ReactElement {
+  return (
+    <Box
+      onClick={onClick}
+      onMouseEnter={() => setHoveredAction(actionKey)}
+      onMouseLeave={() => setHoveredAction(undefined)}
+      sx={{
+        '&:hover': {
+          background: hoverActionBackground
+        },
+        alignItems: 'center',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        display: 'flex',
+        height: '24px',
+        justifyContent: 'center',
+        transition: 'all 150ms ease-out',
+        ...(wide ? { mr: '6px', px: '6px' } : { width: '24px' })
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
+
+export default function AddressInput({ addWithQr = false, address, chain, disabled = false, inlineActionLabel, onInlineActionClick, label, placeHolder, setAddress, setIsError, setType, showAddressBook, style, withSelect }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const isBlueish = useIsBlueish();
@@ -43,6 +79,13 @@ export default function AddressInput({ addWithQr = false, address, chain, disabl
   const [openAccountList, setOpenAccountList] = useState<boolean>(false);
   const [invalidAddress, setInvalidAddress] = useState<boolean>(false);
   const [enteredAddress, setEnteredAddress] = useState<string | undefined | null>();
+  const [hoveredAction, setHoveredAction] = useState<'clear' | 'inline' | 'qr' | 'select' | 'paste' | undefined>(undefined);
+  const defaultActionColor = '#AA83DC';
+  const hoverActionColor = '#EAEBF1';
+  const hoverActionBackground = 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)';
+  const getActionColor = useCallback((action: 'clear' | 'inline' | 'qr' | 'select' | 'paste') =>
+    hoveredAction === action ? hoverActionColor : defaultActionColor
+  , [defaultActionColor, hoverActionColor, hoveredAction]);
 
   useEffect(() => {
     if (address || address === null) {
@@ -93,6 +136,9 @@ export default function AddressInput({ addWithQr = false, address, chain, disabl
   const handleInputAddress = useCallback((value: React.ChangeEvent<HTMLInputElement>) => {
     handleAddress(value);
   }, [handleAddress]);
+  const handleInlineActionClick = useCallback(() => {
+    onInlineActionClick?.();
+  }, [onInlineActionClick]);
 
   const pasteAddress = useCallback(() => {
     if (enteredAddress || address) {
@@ -120,21 +166,70 @@ export default function AddressInput({ addWithQr = false, address, chain, disabl
             endAdornment: (
               <InputAdornment position='end' sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '80%', maxHeight: '80%', px: '5px' }}>
                 {!disabled && <>
-                  {addWithQr &&
+                  {!!enteredAddress
+                    ? (
+                      <AdornmentAction
+                        actionKey='clear'
+                        hoverActionBackground={hoverActionBackground}
+                        onClick={onReset}
+                        setHoveredAction={setHoveredAction}
+                      >
+                        <CloseCircle color={getActionColor('clear')} size='18' variant='Bulk' />
+                      </AdornmentAction>
+                    )
+                    : <>
+                  {!enteredAddress && inlineActionLabel && onInlineActionClick &&
                     <>
-                      <ScanBarcode color='#AA83DC' onClick={openQrScanner} size='18' style={{ cursor: 'pointer', margin: '0 5px' }} variant='Bulk' />
+                      <AdornmentAction
+                        actionKey='inline'
+                        hoverActionBackground={hoverActionBackground}
+                        onClick={handleInlineActionClick}
+                        setHoveredAction={setHoveredAction}
+                        wide
+                      >
+                        <Typography color={getActionColor('inline')} sx={{ transition: 'color 150ms ease-out' }} variant='B-4'>
+                          {inlineActionLabel}
+                        </Typography>
+                      </AdornmentAction>
                       <Divider orientation='vertical' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '18px', mx: '2px' }} />
                     </>
                   }
                   {!!withSelect &&
                     <>
-                      <ArrowCircleDown color='#AA83DC' onClick={onOpenAccountList} size='18' style={{ cursor: 'pointer', margin: '0 5px' }} variant='Bulk' />
+                      <AdornmentAction
+                        actionKey='select'
+                        hoverActionBackground={hoverActionBackground}
+                        onClick={onOpenAccountList}
+                        setHoveredAction={setHoveredAction}
+                      >
+                        <ArrowCircleDown color={getActionColor('select')} size='18' variant='Bulk' />
+                      </AdornmentAction>
                       <Divider orientation='vertical' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '18px', mx: '2px' }} />
                     </>
                   }
-                  <Document color='#AA83DC' onClick={pasteAddress} size='18' style={{ cursor: 'pointer', margin: '0 5px' }} variant='Bulk' />
+                  {addWithQr &&
+                    <>
+                      <AdornmentAction
+                        actionKey='qr'
+                        hoverActionBackground={hoverActionBackground}
+                        onClick={openQrScanner}
+                        setHoveredAction={setHoveredAction}
+                      >
+                        <ScanBarcode color={getActionColor('qr')} size='18' variant='Bulk' />
+                      </AdornmentAction>
+                      <Divider orientation='vertical' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '18px', mx: '2px' }} />
+                    </>
+                  }
+                  <AdornmentAction
+                    actionKey='paste'
+                    hoverActionBackground={hoverActionBackground}
+                    onClick={pasteAddress}
+                    setHoveredAction={setHoveredAction}
+                  >
+                    <Document color={getActionColor('paste')} size='18' variant='Bulk' />
+                  </AdornmentAction>
+                    </>}
                 </>}
-                {/* icon={enteredAddress || address ? faXmarkCircle : faPaste} */}
               </InputAdornment>
             ),
             startAdornment: (

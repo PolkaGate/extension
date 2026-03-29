@@ -942,5 +942,8 @@
   "account type": "खाता प्रकार",
   "Polkadot & parachains": "Polkadot और पैराचेन",
   "Moonbeam & other EVM networks": "Moonbeam और अन्य EVM नेटवर्क",
-  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "अपने टोकन को CoinGecko पर खोजें। प्राइस ID यहाँ उपलब्ध है: {{web}}[price-id]"
+  "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "अपने टोकन को CoinGecko पर खोजें। प्राइस ID यहाँ उपलब्ध है: {{web}}[price-id]",
+  "Myself": "मैं स्वयं",
+  "Remove all access": "सारी पहुँच हटाएँ",
+  "This will remove access for all authenticated websites. Are you sure you want to continue?": "यह सभी प्रमाणित वेबसाइटों की पहुँच हटा देगा। क्या आप वाकई जारी रखना चाहते हैं?"
 }

@@ -4,10 +4,10 @@
 import type { Inputs } from '../types';
 
 import { Stack, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { AddressInput } from '../../../components';
-import { useAddressBook, useChainInfo, useTranslation } from '../../../hooks';
+import { useAddressBook, useChainInfo, useFormatted, useSelectedAccount, useTranslation } from '../../../hooks';
 import NumberedTitle from './NumberedTitle';
 
 interface Props {
@@ -20,6 +20,8 @@ export default function RecipientAddress({ genesisHash, inputs, setInputs }: Pro
   const { t } = useTranslation();
   const { chain } = useChainInfo(genesisHash, true);
   const contacts = useAddressBook();
+  const selectedAccount = useSelectedAccount();
+  const formattedSelectedAccount = useFormatted(selectedAccount?.address, genesisHash);
 
   const [address, setAddress] = useState<string | null | undefined>(inputs?.recipientAddress);
   const [isError, setIsError] = useState<boolean>();
@@ -42,6 +44,17 @@ export default function RecipientAddress({ genesisHash, inputs, setInputs }: Pro
     }
   }, [genesisHash, inputs?.recipientChain?.value, setInputs]);
 
+  const useMyselfAsRecipient = useCallback(() => {
+    const recipientAddress = formattedSelectedAccount ?? selectedAccount?.address;
+
+    if (!recipientAddress) {
+      return;
+    }
+
+    setAddress(recipientAddress);
+    setIsError(false);
+  }, [formattedSelectedAccount, selectedAccount?.address]);
+
   return (
     <Stack direction='column'>
       <Stack sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '108px', overflow: 'hidden', p: '15px', rowGap: '6px', width: '379px' }}>
@@ -54,6 +67,8 @@ export default function RecipientAddress({ genesisHash, inputs, setInputs }: Pro
           <AddressInput
             address={address}
             chain={chain}
+            inlineActionLabel={selectedAccount?.address ? t('Myself') : undefined}
+            onInlineActionClick={useMyselfAsRecipient}
             setAddress={setAddress}
             setIsError={setIsError}
             showAddressBook={contacts && contacts.length > 0}
