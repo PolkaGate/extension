@@ -13,8 +13,6 @@ export { default as AddressInput } from './AddressInput';
 export { default as Amount } from './Amount';
 export { default as AmountFee } from './AmountFee';
 export { default as AmountWithOptions } from './AmountWithOptions';
-export { default as AssetDualLogo } from './AssetDualLogo';
-export { default as AssetLogo } from './AssetLogo';
 export { default as AssetNull } from './AssetNull';
 export { default as AutoResizeTextarea } from './AutoResizeTextarea';
 export { default as BackWithLabel } from './BackWithLabel';
