@@ -106,8 +106,12 @@ export async function getGovHistory(chainName: string, address: string, pageNum:
   const { link } = getLink(chainName, 'extrinsics');
   const { link: extrinsicLink } = getLink(chainName, 'extrinsicApi');
 
+  if (!link || !extrinsicLink) {
+    return Promise.resolve(nullObject);
+  }
+
   const extrinsics = await fetchFromSubscan<ExtrinsicsRequest>(
-    link ?? '',
+    link,
     {
       address,
       module: MODULE,
@@ -121,7 +125,7 @@ export async function getGovHistory(chainName: string, address: string, pageNum:
 
   // Fetch details for each extrinsic using fetchFromSubscan
   const extrinsicsInfo = await Promise.all(
-    extrinsics.data.extrinsics.map(async (extrinsic) => {
+    extrinsics.data.extrinsics.map(async(extrinsic) => {
       try {
         const functionName = extrinsic.call_module_function as keyof ParamTypesMapping;
 
@@ -133,7 +137,7 @@ export async function getGovHistory(chainName: string, address: string, pageNum:
         }
 
         const txDetail = await fetchFromSubscan<ResponseType>(
-          extrinsicLink ?? '',
+          extrinsicLink,
           { hash: extrinsic.extrinsic_hash }
         );
 

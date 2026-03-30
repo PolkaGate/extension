@@ -6,45 +6,52 @@ import { SUBSCAN_CHAINS_ENDPOINT } from '@polkadot/extension-polkagate/src/util/
 
 type linkType = 'account' | 'extrinsic' | 'extrinsics' | 'extrinsicApi' | 'total_reward' | 'transfers' | 'reward_slash' | 'pool_rewards';
 
+const DEFAULT_OUTPUT = { link: undefined, name: undefined };
+
 export function getLink(chainName: string | undefined, type: linkType = 'extrinsic', data?: string): { link: string | undefined, name: string | undefined, } {
   if (chainName?.toLowerCase() === 'ethereum') {
     return { link: 'https://etherscan.io/tx/' + String(data), name: 'etherscan' };
   }
 
   const subscanChainName = getSubscanChainName(chainName) as keyof typeof SUBSCAN_CHAINS_ENDPOINT | undefined;
+  const apiHost = subscanChainName ? `https://${subscanChainName}.api.subscan.io` : undefined;
 
   switch (type) {
     case 'extrinsic': {
       const endpoint = subscanChainName ? SUBSCAN_CHAINS_ENDPOINT[subscanChainName] : undefined;
 
-      return { link: 'https://' + endpoint + '/extrinsic/' + String(data), name: 'subscan' };
+      return endpoint && data
+        ? { link: `https://${endpoint}/extrinsic/${data}`, name: 'subscan' }
+        : DEFAULT_OUTPUT;
     }
 
     case 'account': {
       const pre = subscanChainName ?? 'portfolio';
 
-      return { link: `https://${pre}.subscan.io/account/` + String(data), name: 'subscan' };
+      return data
+        ? { link: `https://${pre}.subscan.io/account/${data}`, name: 'subscan' }
+        : DEFAULT_OUTPUT;
     }
 
     case 'extrinsicApi':
-      return { link: `https://${subscanChainName}.api.subscan.io/api/scan/extrinsic`, name: 'subscan' };
+      return apiHost ? { link: `${apiHost}/api/scan/extrinsic`, name: 'subscan' } : DEFAULT_OUTPUT;
 
     case 'extrinsics':
-      return { link: `https://${subscanChainName}.api.subscan.io/api/v2/scan/extrinsics`, name: 'subscan' };
+      return apiHost ? { link: `${apiHost}/api/v2/scan/extrinsics`, name: 'subscan' } : DEFAULT_OUTPUT;
 
     case 'pool_rewards':
-      return { link: `https://${subscanChainName}.api.subscan.io/api/scan/nomination_pool/rewards`, name: 'subscan' };
+      return apiHost ? { link: `${apiHost}/api/scan/nomination_pool/rewards`, name: 'subscan' } : DEFAULT_OUTPUT;
 
     case 'reward_slash':
-      return { link: `https://${subscanChainName}.api.subscan.io/api/v2/scan/account/reward_slash`, name: 'subscan' };
+      return apiHost ? { link: `${apiHost}/api/v2/scan/account/reward_slash`, name: 'subscan' } : DEFAULT_OUTPUT;
 
     case 'total_reward':
-      return { link: `https://${subscanChainName}.api.subscan.io/api/scan/staking/total_reward`, name: 'subscan' };
+      return apiHost ? { link: `${apiHost}/api/scan/staking/total_reward`, name: 'subscan' } : DEFAULT_OUTPUT;
 
     case 'transfers':
-      return { link: `https://${subscanChainName}.api.subscan.io/api/v2/scan/transfers`, name: 'subscan' };
+      return apiHost ? { link: `${apiHost}/api/v2/scan/transfers`, name: 'subscan' } : DEFAULT_OUTPUT;
 
     default:
-      return { link: undefined, name: undefined };
+      return DEFAULT_OUTPUT;
   }
 }
