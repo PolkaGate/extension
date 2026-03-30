@@ -8,7 +8,7 @@ import semver from 'semver';
 import useIsForgotten from '@polkadot/extension-polkagate/src/hooks/useIsForgotten';
 
 import { AccountContext, FadeOnScroll, Motion } from '../../components';
-import { useBackground, useManifest, useMerkleScience } from '../../hooks';
+import { useBackground, useManifest } from '../../hooks';
 import { UserDashboardHeader, WhatsNew } from '../../partials';
 import HomeMenu from '../../partials/HomeMenu';
 import Reset from '../passwordManagement/Reset';
@@ -23,8 +23,6 @@ export default function Home(): React.ReactElement {
   const manifest = useManifest();
   const { hierarchy } = useContext(AccountContext);
   const refContainer = useRef<HTMLDivElement>(null);
-
-  useMerkleScience(undefined, undefined, true); // to download the data file
 
   const [show, setShowAlert] = useState<boolean>(false);
   const isForgotten = useIsForgotten();

@@ -5,20 +5,18 @@ import type { Variant } from '@mui/material/styles/createTypography';
 import type { DeriveAccountInfo, DeriveAccountRegistration } from '@polkadot/api-derive/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
-import type { MsData } from '../util/getMS';
 import type { MyIconTheme } from '../util/types';
 
-import { Box, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import React, { type CSSProperties, useEffect, useMemo } from 'react';
 
-import { ms, msGreen, msWarning } from '../assets/icons';
-import { useAccountName, useChainInfo, useFormatted, useIdentity, useIsBlueish, useIsDark, useMerkleScience, useTranslation } from '../hooks';
+import { useAccountName, useChainInfo, useFormatted, useIdentity, useIsBlueish, useIsDark, useTranslation } from '../hooks';
 import { Email, Web, XIcon } from '../popup/settings/icons';
 import SocialIcon from '../popup/settings/partials/SocialIcon';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { isValidAddress, toTitleCase } from '../util';
-import { Logo, GlowCheck, Identicon, Infotip, ShortAddress } from '.';
+import { GlowCheck, Identicon, Logo, ShortAddress } from '.';
 
 interface ExtendedStyle extends CSSProperties {
   variant?: string;
@@ -51,63 +49,6 @@ interface Props {
   style?: ExtendedStyle;
   subIdOnly?: boolean;
   withShortAddress?: boolean;
-}
-
-interface MerkleProps {
-  msData: MsData
-}
-
-function MerkleScienceTag({ msData }: MerkleProps): React.ReactElement<Props> {
-  const { t } = useTranslation();
-
-  const { isMSgreen, isMSwarning } = useMemo(() => ({
-    isMSgreen: ['Exchange', 'Donation'].includes(msData?.tag_type_verbose ?? ''),
-    isMSwarning: ['Scam', 'High Risk Organization', 'Theft', 'Sanctions'].includes(msData?.tag_type_verbose ?? '')
-  }), [msData?.tag_type_verbose]);
-
-  const merkleScienceTooltip = useMemo(() => (msData &&
-    <Typography variant='body2'>
-      <Grid container justifyContent='flex-start'>
-        <Grid item textAlign='left' xs={12}>
-          {t('Data from Merkle Science (NOT onchain data)')}
-        </Grid>
-        <Grid item textAlign='left' xs={12}>
-          {t(` - Type: ${msData.tag_type_verbose}`)}
-        </Grid>
-        <Grid item textAlign='left' xs={12}>
-          {t(` - Subtype: ${msData.tag_subtype_verbose}`)}
-        </Grid>
-        {msData.tag_type_verbose === 'Scam' &&
-          <Grid item textAlign='left' xs={12}>
-            {t(` - Name: ${msData.tag_name_verbose}`)}
-          </Grid>
-        }
-      </Grid>
-    </Typography>
-  ), [msData, t]);
-
-  return (
-    <Grid container item sx={{ flexWrap: 'nowrap' }}>
-      <Grid display='flex' item sx={{ width: '25px' }}>
-        <Infotip text={merkleScienceTooltip}>
-          <Box
-            component='img'
-            src={
-              isMSgreen
-                ? msGreen as string
-                : isMSwarning
-                  ? msWarning as string
-                  : ms as string
-            }
-            sx={{ width: '20px' }}
-          />
-        </Infotip>
-      </Grid>
-      <Grid color={isMSgreen ? 'success.main' : isMSwarning ? 'warning.main' : ''} item sx={{ maxWidth: 'calc(100% - 25px)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-        {msData.tag_type_verbose === 'Scam' ? 'Scam (Phishing)' : msData.tag_name_verbose}
-      </Grid>
-    </Grid>
-  );
 }
 
 interface IdenticonDisplayProps extends Partial<Props> {
@@ -269,9 +210,6 @@ function SocialLinks({ accountInfo, socialStyles }: SocialProps): React.ReactEle
 function Identity({ accountInfo, address, addressStyle, charsCount = 6, direction = 'column', genesisHash, identiconSize = 40, identiconStyle = {}, identiconType = 'polkagate', inParentheses = false, inTitleCase, isSelected, judgement, name, nameStyle = {}, noIdenticon = false, onClick, returnIdentity, showChainLogo = false, showShortAddress, showSocial = true, socialStyles = {}, style, subIdOnly = false, withShortAddress }: Props): React.ReactElement<Props> {
   const { chain } = useChainInfo(genesisHash, true);
   const _formatted = useFormatted(address, genesisHash);
-  const msData = useMerkleScience(_formatted, chain);
-
-  const _showSocial = msData ? false : showSocial;
 
   const _accountInfo = useIdentity(genesisHash, _formatted, accountInfo);
 
@@ -309,20 +247,17 @@ function Identity({ accountInfo, address, addressStyle, charsCount = 6, directio
           />
         }
         <Grid container direction='column' item maxWidth='fit-content' onClick={onClick || undefined} overflow='hidden' sx={{ cursor: onClick ? 'pointer' : 'inherit', fontSize: style?.fontSize, fontWeight: style?.fontWeight, textAlign: 'left' }} textOverflow='ellipsis' whiteSpace='nowrap' xs>
-          {msData
-            ? <MerkleScienceTag msData={msData} />
-            : <DisplayName
-              accountInfo={_accountInfo}
-              address={_formatted || address}
-              inTitleCase={inTitleCase}
-              name={name}
-              nameStyle={nameStyle}
-              shortAddressProps={shortAddressProps}
-              showShortAddress={showShortAddress}
-              style={style}
-              subIdOnly={subIdOnly}
-            />
-          }
+          <DisplayName
+            accountInfo={_accountInfo}
+            address={_formatted || address}
+            inTitleCase={inTitleCase}
+            name={name}
+            nameStyle={nameStyle}
+            shortAddressProps={shortAddressProps}
+            showShortAddress={showShortAddress}
+            style={style}
+            subIdOnly={subIdOnly}
+          />
           {withShortAddress && direction === 'column' &&
             <Grid container item>
               <ShortAddress {...shortAddressProps} />
@@ -334,7 +269,7 @@ function Identity({ accountInfo, address, addressStyle, charsCount = 6, directio
             <ShortAddress {...shortAddressProps} />
           </Grid>
         }
-        {_showSocial &&
+        {showSocial &&
           <SocialLinks
             accountInfo={_accountInfo}
             socialStyles={socialStyles}
