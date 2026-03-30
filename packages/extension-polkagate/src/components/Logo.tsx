@@ -1,7 +1,8 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
+// @ts-nocheck
+
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Box, useTheme } from '@mui/material';
@@ -10,11 +11,10 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { logoWhiteTransparent } from '../assets/logos';
 import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { useIsDark } from '../hooks';
-import { sanitizeChainName } from '../util';
+import { convertToCamelCase, sanitizeChainName } from '../util';
 import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
-import { convertToCamelCase } from '../util';
-import resolveLogoInfo from '../util/resolveLogoInfo';
 import { mapHubToRelay } from '../util/migrateHubUtils';
+import resolveLogoInfo from '../util/resolveLogoInfo';
 import { GenesisHashOptionsContext } from './contexts';
 
 type LogoVariant = 'single' | 'dual';
