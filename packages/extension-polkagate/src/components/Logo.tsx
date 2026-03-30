@@ -215,7 +215,16 @@ function Logo({
 
       ctx.drawImage(img, 0, 0);
 
-      const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      let data: Uint8ClampedArray;
+
+      try {
+        ({ data } = ctx.getImageData(0, 0, canvas.width, canvas.height));
+      } catch (e) {
+        console.log('Likely a tainted canvas due to cross-origin image:', e);
+
+        return;
+      }
+
       let totalBrightness = 0;
 
       for (let i = 0; i < data.length; i += 4) {
