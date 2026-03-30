@@ -8,11 +8,11 @@
 
 import type { Extrinsics, ExtrinsicsRequest } from '../types';
 
+import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
 import { keyMaker } from '@polkadot/extension-polkagate/src/popup/history/hookUtils/utils';
 import { hexToU8a } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
 
-import { getSubscanChainName } from '../chain';
 import getChainName from '../getChainName';
 import { fetchFromSubscan } from '..';
 
@@ -180,13 +180,14 @@ export async function getTXsHistory(address: string, genesisHash: string, pageNu
   }
 
   const chainName = getChainName(genesisHash);
-  const network = getSubscanChainName(chainName);
+  const { link } = getLink(chainName, 'extrinsics');
+  const { link: extrinsicLink } = getLink(chainName, 'extrinsicApi');
 
-  if (!network) {
+  if (!link || !extrinsicLink) {
     return nullifier(requested);
   }
 
-  const extrinsics = await fetchFromSubscan<ExtrinsicsRequest>(`https://${network}.api.subscan.io/api/v2/scan/extrinsics`, {
+  const extrinsics = await fetchFromSubscan<ExtrinsicsRequest>(link, {
     address,
     page: pageNum,
     row: PAGE_SIZE
@@ -212,7 +213,7 @@ export async function getTXsHistory(address: string, genesisHash: string, pageNu
         }
 
         const txDetail = await fetchFromSubscan<ResponseType>(
-          `https://${network}.api.subscan.io/api/scan/extrinsic`,
+         extrinsicLink,
           { hash: extrinsic.extrinsic_hash }
         );
 

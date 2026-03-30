@@ -17,7 +17,8 @@ import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, useIsExtensionPopup, usePoolDetail, useTranslation } from '../../../hooks';
 import { GradientDivider } from '../../../style';
-import { getSubscanChainName, isHexToBn, toShortAddress } from '../../../util';
+import { isHexToBn, toShortAddress } from '../../../util';
+import { getLink } from '../../history/explorer';
 import { Email, Web, XIcon } from '../../settings/icons';
 import SocialIcon from '../../settings/partials/SocialIcon';
 import BlueGradient from '../stakingStyles/BlueGradient';
@@ -82,7 +83,6 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentit
   const { chainName } = useChainInfo(genesisHash, true);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const network = getSubscanChainName(chainName);
 
   const isOnEasyStake = useMemo(() => pathname.includes('easyStake'), [pathname]);
 
@@ -99,6 +99,7 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentit
   const stashId = poolDetail?.stashIdAccount?.accountId.toString() ?? '';
   // Used for easy stake, if true it comes from easy stake
   const onRewardChart = useCallback(() => navigate('/stakingReward/' + stashId + '/' + genesisHash + '/stash', { state: isOnEasyStake }) as void, [genesisHash, isOnEasyStake, navigate, stashId]);
+  const { link } = getLink(chainName, 'account', stashId);
 
   return (
     <Stack direction='column' sx={{ p: '12px', width: '100%' }}>
@@ -113,7 +114,7 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentit
         <Grid container item sx={{ gap: '4px', justifyContent: 'flex-end', width: '32%' }}>
           <Chart21 color='#809ACB' onClick={onRewardChart} size='24' style={{ backgroundColor: '#FFFFFF1A', borderRadius: '999px', cursor: 'pointer', padding: '4px' }} variant='Bulk' />
           <Link
-            href={`https://${network}.subscan.io/account/${poolDetail.stashIdAccount?.accountId.toString()}`}
+            href={link}
             rel='noreferrer'
             sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
             target='_blank'
@@ -135,7 +136,7 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentit
           </Typography>
         </Grid>
         <Typography color='#82FFA5' sx={{ fontFamily: 'JetBrainsMono', fontSize: '14px', fontWeight: 700 }}>
-          {toShortAddress(poolDetail.stashIdAccount?.accountId.toString())}
+          {toShortAddress(stashId)}
         </Typography>
       </Container>
     </Stack>
@@ -309,7 +310,7 @@ export const RoleItem = ({ address, genesisHash, role }: RoleItemProps) => {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
   const isExtension = useIsExtensionPopup();
-  const network = getSubscanChainName(chainName);
+  const { link } = getLink(chainName, 'account', address);
 
   const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
 
@@ -325,7 +326,7 @@ export const RoleItem = ({ address, genesisHash, role }: RoleItemProps) => {
       <Grid container item width='fit-content'>
         <Link
           aria-disabled={!address}
-          href={`https://${network}.subscan.io/account/${address}`}
+          href={link}
           rel='noreferrer'
           sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '20px', justifyContent: 'center', width: '20px' }}
           target='_blank'

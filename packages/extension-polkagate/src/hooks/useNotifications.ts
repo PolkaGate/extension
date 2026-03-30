@@ -7,12 +7,13 @@ import type { DropdownOption } from '../util/types';
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 
 import { getStorage, setStorage } from '../components/Loading';
-import { AUTO_MARK_AS_READ_DELAY, initialNotificationState, SUBSCAN_SUPPORTED_CHAINS } from '../popup/notification/constant';
+import { AUTO_MARK_AS_READ_DELAY, initialNotificationState } from '../popup/notification/constant';
 import { getPayoutsInformation, getReceivedFundsInformation, getReferendasInformation } from '../popup/notification/helpers';
 import useNotificationSettings from '../popup/notification/hook/useNotificationSettings';
 import { filterMessages, generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, groupNotificationsByDay, markMessagesAsRead } from '../popup/notification/util';
-import { sanitizeChainName } from '../util';
+import { getSubscanChainName, sanitizeChainName } from '../util';
 import { STORAGE_KEY } from '../util/constants';
+import { SUBSCAN_CHAINS } from '../util/subscanChains';
 import { useGenesisHashOptions, useSelectedChains } from '.';
 
 const notificationReducer = (
@@ -111,7 +112,7 @@ export default function useNotifications(justLoadData = true) {
           return false;
         }
 
-        return SUBSCAN_SUPPORTED_CHAINS.find((chainName) => chainName.toLowerCase() === sanitized);
+        return SUBSCAN_CHAINS.find((chainName) => chainName === getSubscanChainName(sanitized));
       }).map(({ value }) => value as string);
   }, [allChains, selectedChains]);
 

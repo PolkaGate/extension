@@ -7,10 +7,10 @@
 
 import type { Extrinsics, ExtrinsicsRequest } from '../types';
 
+import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
 import { hexToU8a } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
 
-import { getSubscanChainName } from '../chain';
 import { fetchFromSubscan } from '..';
 
 // Common types
@@ -103,10 +103,11 @@ export async function getGovHistory(chainName: string, address: string, pageNum:
     return Promise.resolve(nullObject);
   }
 
-  const network = getSubscanChainName(chainName) as unknown as string;
+  const { link } = getLink(chainName, 'extrinsics');
+  const { link: extrinsicLink } = getLink(chainName, 'extrinsicApi');
 
   const extrinsics = await fetchFromSubscan<ExtrinsicsRequest>(
-    `https://${network}.api.subscan.io/api/v2/scan/extrinsics`,
+    link ?? '',
     {
       address,
       module: MODULE,
@@ -120,7 +121,7 @@ export async function getGovHistory(chainName: string, address: string, pageNum:
 
   // Fetch details for each extrinsic using fetchFromSubscan
   const extrinsicsInfo = await Promise.all(
-    extrinsics.data.extrinsics.map(async(extrinsic) => {
+    extrinsics.data.extrinsics.map(async (extrinsic) => {
       try {
         const functionName = extrinsic.call_module_function as keyof ParamTypesMapping;
 
@@ -132,7 +133,7 @@ export async function getGovHistory(chainName: string, address: string, pageNum:
         }
 
         const txDetail = await fetchFromSubscan<ResponseType>(
-          `https://${network}.api.subscan.io/api/scan/extrinsic`,
+          extrinsicLink ?? '',
           { hash: extrinsic.extrinsic_hash }
         );
 

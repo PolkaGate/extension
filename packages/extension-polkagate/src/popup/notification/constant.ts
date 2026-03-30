@@ -54,33 +54,3 @@ export const SET_UP_NOTIFICATION_SETTING = {
 
 export const SUPPORTED_GOVERNANCE_NOTIFICATION_CHAIN = SUPPORTED_CHAINS;
 export const SUPPORTED_STAKING_NOTIFICATION_CHAIN = SUPPORTED_CHAINS;
-
-export const SUBSCAN_SUPPORTED_CHAINS = [
-  'Polkadot',
-  'Kusama',
-  'PolkadotAssethub',
-  'KusamaAssethub',
-  'WestendAssethub',
-  'PaseoAssethub',
-  'Acala',
-  'Ajuna',
-  'Astar',
-  'Basilisk',
-  'Bifrost',
-  'Calamari',
-  'Centrifuge',
-  'Composable',
-  'Darwinia',
-  'HydraDX',
-  'IntegriTEE',
-  'Karura',
-  'Nodle',
-  'Paseo',
-  'Phala',
-  'Picasso',
-  'Polymesh',
-  'SORA',
-  'Vara',
-  'Westend',
-  'Zeitgeist'
-];
