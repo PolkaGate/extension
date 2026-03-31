@@ -6,18 +6,20 @@ import type { DropdownOption } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { DEFAULT_SELECTED_CHAINS } from '../util/defaultSelectedChains';
-import { STORAGE_KEY } from '../util/constants';
+import EndpointManager from '../class/endpointManager';
 import { getStorage, setStorage } from '../util';
+import { AUTO_MODE_DEFAULT_ENDPOINT, STORAGE_KEY } from '../util/constants';
+import { DEFAULT_SELECTED_CHAINS } from '../util/defaultSelectedChains';
 import useGenesisHashOptions from './useGenesisHashOptions';
 
 interface UseChainSelectionSettings {
   chainsToList: DropdownOption[];
   onSearch: (keyword: string) => void;
   selectedChains: Set<string>;
-  setChainSelection: (value: string, checked: boolean) => void;
-  toggleChainSelection: (value: string) => void;
+  setChainSelection: (value: string, checked?: boolean) => void;
 }
+
+const endpointManager = new EndpointManager();
 
 export default function useChainSelectionSettings(): UseChainSelectionSettings {
   const allChains = useGenesisHashOptions();
@@ -77,6 +79,22 @@ export default function useChainSelectionSettings(): UseChainSelectionSettings {
     updateSavedAssetsInStorage(chains);
   }, [updateSavedAssetsInStorage]);
 
+  const disableChainEndpoint = useCallback((genesisHash: string) => {
+    endpointManager.set(genesisHash, {
+      checkForNewOne: false,
+      endpoint: undefined,
+      isAuto: false,
+      timestamp: Date.now()
+    });
+  }, []);
+
+  const enableChainEndpoint = useCallback((genesisHash: string) => {
+    endpointManager.set(genesisHash, {
+      ...AUTO_MODE_DEFAULT_ENDPOINT,
+      timestamp: Date.now()
+    });
+  }, []);
+
   useEffect(() => {
     return () => {
       handleChainsChanges(selectedChainsRef.current);
@@ -87,11 +105,13 @@ export default function useChainSelectionSettings(): UseChainSelectionSettings {
     initialChains.size && setSelectedChains(initialChains);
   }, [initialChains]);
 
-  const setChainSelection = useCallback((value: string, checked: boolean) => {
+  const setChainSelection = useCallback((value: string, checked?: boolean) => {
+    const isSelected = checked ?? !selectedChainsRef.current.has(value);
+
     setSelectedChains((prevChains) => {
       const updatedChains = new Set(prevChains);
 
-      if (checked) {
+      if (isSelected) {
         updatedChains.add(value);
       } else {
         updatedChains.delete(value);
@@ -99,21 +119,13 @@ export default function useChainSelectionSettings(): UseChainSelectionSettings {
 
       return updatedChains;
     });
-  }, []);
 
-  const toggleChainSelection = useCallback((value: string) => {
-    setSelectedChains((prevChains) => {
-      const updatedChains = new Set(prevChains);
-
-      if (updatedChains.has(value)) {
-        updatedChains.delete(value);
-      } else {
-        updatedChains.add(value);
-      }
-
-      return updatedChains;
-    });
-  }, []);
+    if (isSelected) {
+      enableChainEndpoint(value);
+    } else {
+      disableChainEndpoint(value);
+    }
+  }, [disableChainEndpoint, enableChainEndpoint]);
 
   const onSearch = useCallback((keyword: string) => {
     if (!keyword) {
@@ -132,7 +144,6 @@ export default function useChainSelectionSettings(): UseChainSelectionSettings {
     chainsToList,
     onSearch,
     selectedChains,
-    setChainSelection,
-    toggleChainSelection
+    setChainSelection
   };
 }

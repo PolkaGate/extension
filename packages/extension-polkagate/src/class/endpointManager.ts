@@ -9,7 +9,7 @@ const ENDPOINTS_NAME_IN_STORAGE = 'endpoints2';
 
 // Define types for saved endpoints and listener function
 type SavedEndpoints = Record<string, EndpointType>;
-type Listener = (genesisHash: string, endpoint: EndpointType) => void;
+type Listener = (genesisHash: string, endpoint: EndpointType | undefined) => void;
 
 export default class EndpointManager {
   // Store endpoints and listeners
@@ -44,8 +44,23 @@ export default class EndpointManager {
   // Handle changes in chrome storage
   private handleStorageChange = (changes: Record<string, chrome.storage.StorageChange>, areaName: string) => {
     if (areaName === 'local' && changes[ENDPOINTS_NAME_IN_STORAGE]) {
+      const previousEndpoints = this.endpoints;
+
       this.endpoints = changes[ENDPOINTS_NAME_IN_STORAGE].newValue as SavedEndpoints;
-      this.notifyListeners();
+
+      const changedGenesisHashes = new Set([
+        ...Object.keys(previousEndpoints || {}),
+        ...Object.keys(this.endpoints || {})
+      ]);
+
+      changedGenesisHashes.forEach((genesisHash) => {
+        const previousEndpoint = previousEndpoints?.[genesisHash];
+        const nextEndpoint = this.endpoints?.[genesisHash];
+
+        if (previousEndpoint !== nextEndpoint) {
+          this.listeners.forEach((listener) => listener(genesisHash, nextEndpoint));
+        }
+      });
     }
   };
 
@@ -75,6 +90,16 @@ export default class EndpointManager {
     this.endpoints[genesisHash] = endpoint;
     this.saveToStorage();
     this.notifyListeners();
+  }
+
+  remove(genesisHash: string) {
+    if (!this.endpoints[genesisHash]) {
+      return;
+    }
+
+    delete this.endpoints[genesisHash];
+    this.saveToStorage();
+    this.listeners.forEach((listener) => listener(genesisHash, undefined));
   }
 
   // Check if an endpoint should be in auto mode

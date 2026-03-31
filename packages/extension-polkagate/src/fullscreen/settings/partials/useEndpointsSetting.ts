@@ -21,7 +21,7 @@ interface State {
 
 type Action =
   | { type: 'SET_ENABLED'; }
-  | { type: 'TOGGLE_AUTO'; }
+  | { type: 'TOGGLE_AUTO'; payload?: string }
   | { type: 'SET_ENDPOINT'; payload: string | undefined }
   | { type: 'SET_ENDPOINTS_DELAY'; payload: EndpointsDelay }
   | { type: 'UPDATE_DELAY'; payload: { endpoint: string; delay: number } }
@@ -29,13 +29,25 @@ type Action =
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'SET_ENABLED':
-      return { ...state, mayBeEnabled: !state.mayBeEnabled };
+    case 'SET_ENABLED': {
+      const nextEnabled = !state.mayBeEnabled;
+
+      return {
+        ...state,
+        isOnAuto: nextEnabled,
+        mayBeEnabled: nextEnabled,
+        maybeNewEndpoint: nextEnabled ? undefined : state.maybeNewEndpoint
+      };
+    }
 
     case 'TOGGLE_AUTO': {
       const toggle = !state.isOnAuto;
 
-      return { ...state, isOnAuto: toggle, maybeNewEndpoint: toggle ? undefined : state.maybeNewEndpoint };
+      return {
+        ...state,
+        isOnAuto: toggle,
+        maybeNewEndpoint: toggle ? undefined : action.payload ?? state.maybeNewEndpoint
+      };
     }
 
     case 'SET_ENDPOINT':
@@ -64,7 +76,7 @@ const endpointManager = new EndpointManager();
 
 export default function useEndpointsSetting(genesisHash: string | undefined, isEnabled: boolean, onEnableChain?: (value: string, checked: boolean) => void, onClose?: () => void) {
   const isExtension = useIsExtensionPopup();
-  const { endpoint, isAuto } = useEndpoint(genesisHash);
+  const { endpoint, isAuto } = useEndpoint(genesisHash, undefined, isEnabled);
   const endpointOptions = useEndpoints(genesisHash);
 
   const isFetching = useRef<Record<string, boolean>>({});
@@ -79,6 +91,7 @@ export default function useEndpointsSetting(genesisHash: string | undefined, isE
   });
 
   const { endpointsDelay, isOnAuto, mayBeEnabled, maybeNewEndpoint } = state;
+  const resolvedIsOnAuto = mayBeEnabled ? (isOnAuto ?? (isEnabled ? isAuto : true)) : false;
 
   // Just to initialize
   useEffect(() => {
@@ -94,19 +107,37 @@ export default function useEndpointsSetting(genesisHash: string | undefined, isE
   }, [endpoint, isAuto, maybeNewEndpoint, isOnAuto]);
 
   const onApply = useCallback((): void => {
-    genesisHash && onEnableChain?.(genesisHash, mayBeEnabled);
+    if (!genesisHash) {
+      onClose?.();
 
-    const checkForNewOne = Boolean(maybeNewEndpoint === AUTO_MODE.value && genesisHash && endpointManager.get(genesisHash)?.isAuto);
+      return;
+    }
 
-    genesisHash && endpointManager.set(genesisHash, {
+    onEnableChain?.(genesisHash, mayBeEnabled);
+
+    if (!mayBeEnabled) {
+      endpointManager.set(genesisHash, {
+        checkForNewOne: false,
+        endpoint: undefined,
+        isAuto: false,
+        timestamp: Date.now()
+      });
+      onClose?.();
+
+      return;
+    }
+
+    const checkForNewOne = Boolean((maybeNewEndpoint || AUTO_MODE.value) === AUTO_MODE.value && endpointManager.get(genesisHash)?.isAuto);
+
+    endpointManager.set(genesisHash, {
       checkForNewOne,
       endpoint: maybeNewEndpoint || AUTO_MODE.value,
-      isAuto: isOnAuto,
+      isAuto: resolvedIsOnAuto,
       timestamp: Date.now()
     });
 
     onClose?.();
-  }, [genesisHash, onEnableChain, mayBeEnabled, maybeNewEndpoint, isOnAuto, onClose]);
+  }, [genesisHash, mayBeEnabled, maybeNewEndpoint, onClose, onEnableChain, resolvedIsOnAuto]);
 
   // If we're in the extension popup context, auto-apply behavior
   useEffect(() => {
@@ -169,13 +200,30 @@ export default function useEndpointsSetting(genesisHash: string | undefined, isE
     return endpointsDelay?.filter(({ name }) => name !== AUTO_MODE.text && !name.includes('light client'));
   }, [endpointsDelay]);
 
+  const preferredManualEndpoint = useMemo(() => {
+    const fastestEndpoint = filteredEndpoints
+      ?.filter(({ delay, value }) => delay != null && value !== AUTO_MODE.value)
+      .sort((a, b) => (a.delay ?? Number.POSITIVE_INFINITY) - (b.delay ?? Number.POSITIVE_INFINITY))[0]
+      ?.value;
+
+    return fastestEndpoint ?? filteredEndpoints?.[0]?.value;
+  }, [filteredEndpoints]);
+
   const onChangeEndpoint = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (!mayBeEnabled) {
+      return;
+    }
+
     dispatch({ payload: event.target.value, type: 'SET_ENDPOINT' });
-  }, []);
+  }, [mayBeEnabled]);
 
   const onToggleAuto = useCallback((_event: React.ChangeEvent<HTMLInputElement>): void => {
-    dispatch({ type: 'TOGGLE_AUTO' });
-  }, []);
+    if (!mayBeEnabled) {
+      return;
+    }
+
+    dispatch({ payload: preferredManualEndpoint, type: 'TOGGLE_AUTO' });
+  }, [mayBeEnabled, preferredManualEndpoint]);
 
   const onEnableNetwork = useCallback((_event: React.ChangeEvent<HTMLInputElement>, _checked: boolean): void => {
     dispatch({ type: 'SET_ENABLED' });
@@ -185,6 +233,8 @@ export default function useEndpointsSetting(genesisHash: string | undefined, isE
     ...state,
     dispatch,
     filteredEndpoints,
+    isEndpointSelectionDisabled: !mayBeEnabled,
+    isOnAuto: resolvedIsOnAuto,
     onApply,
     onChangeEndpoint,
     onEnableNetwork,
