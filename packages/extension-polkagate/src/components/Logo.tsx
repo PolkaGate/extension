@@ -1,8 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
+//@ts-nocheck
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Box, useTheme } from '@mui/material';
@@ -43,6 +42,15 @@ interface Props {
 
 function isImageSource(source: string): boolean {
   return source.startsWith('data:') || source.startsWith('http') || source.startsWith('/') || source.includes('.');
+}
+
+function getLogoFallbackText(source: string): string {
+  return source
+    .replace(/^fa;/, '')
+    .replace(/[-_]+/g, ' ')
+    .trim()
+    .charAt(0)
+    .toUpperCase();
 }
 
 function normalizeToWordSet(str: string): Set<string> {
@@ -97,6 +105,8 @@ function RenderLogoGraphic({ borderRadius, filter, imgRef, size, source, style }
     );
   }
 
+  const iconDef = fas[convertToCamelCase(source)];
+
   return (
     <Box
       sx={{
@@ -112,14 +122,30 @@ function RenderLogoGraphic({ borderRadius, filter, imgRef, size, source, style }
         ...style
       }}
     >
-      <FontAwesomeIcon
-        fontSize='15px'
-        icon={fas[convertToCamelCase(source)]}
-        style={{
-          height: size,
-          width: size
-        }}
-      />
+      {iconDef
+        ? (
+          <FontAwesomeIcon
+            fontSize='15px'
+            icon={iconDef}
+            style={{
+              height: size,
+              width: size
+            }}
+          />
+        )
+        : (
+          <Avatar
+            sx={{
+              bgcolor: 'transparent',
+              fontSize: typeof size === 'number' ? size * 0.55 : undefined,
+              height: size,
+              width: size
+            }}
+            variant='square'
+          >
+            {getLogoFallbackText(source)}
+          </Avatar>
+        )}
     </Box>
   );
 }
@@ -158,7 +184,7 @@ function Logo({
     [_genesisHash, chainName, options]
   );
   const resolvedChainName = useMemo(() => sanitizeChainName(foundChainName || chainName, true), [chainName, foundChainName]);
-  const resolvedLogoInfo = useMemo(() => resolveLogoInfo(resolvedChainName || _genesisHash, token), [_genesisHash, resolvedChainName, token]);
+  const resolvedLogoInfo = useMemo(() => resolveLogoInfo(_genesisHash || resolvedChainName, token), [_genesisHash, resolvedChainName, token]);
   const effectiveSize = assetSize ?? size;
   const effectiveSecondaryLogo = secondaryLogo ?? subLogo;
   const effectiveSecondaryLogoPosition = secondaryLogoPosition ?? subLogoPosition;
@@ -187,9 +213,9 @@ function Logo({
   }, [isDark, isDarkLogo, shouldInvertForDarkTheme]);
 
   useEffect(() => {
-    if (!effectiveLogo || !isImageSource(effectiveLogo)) {
-      setIsDarkLogo(false);
+    setIsDarkLogo(false);
 
+    if (!effectiveLogo || !isImageSource(effectiveLogo)) {
       return;
     }
 
@@ -200,7 +226,9 @@ function Logo({
     }
 
     const handleLoad = () => {
-      setIsDarkLogo(false);
+      if (!img.naturalWidth || !img.naturalHeight) {
+        return;
+      }
 
       const canvas = document.createElement('canvas');
 
@@ -236,11 +264,25 @@ function Logo({
       }
     };
 
+    const handleError = () => {
+      setIsDarkLogo(false);
+    };
+
     if (img.complete) {
-      handleLoad();
+      if (img.naturalWidth && img.naturalHeight) {
+        handleLoad();
+      } else {
+        handleError();
+      }
     } else {
       img.onload = handleLoad;
+      img.onerror = handleError;
     }
+
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
   }, [effectiveLogo]);
 
   if (effectiveLogo) {
