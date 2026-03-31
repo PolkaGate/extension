@@ -127,7 +127,7 @@ export default function resolveLogoInfo(
   }
 
   let chainNameFromGenesisHash;
-  const _info = mapRelayToSystemGenesisIfMigrated(info);
+  const _info = token ? mapRelayToSystemGenesisIfMigrated(info) : info;
 
   if (token) {
     chainNameFromGenesisHash = mayGetChainName(_info);

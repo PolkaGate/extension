@@ -12,7 +12,6 @@ import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { useIsDark } from '../hooks';
 import { convertToCamelCase, sanitizeChainName } from '../util';
 import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
-import { mapHubToRelay } from '../util/migrateHubUtils';
 import resolveLogoInfo from '../util/resolveLogoInfo';
 import { GenesisHashOptionsContext } from './contexts';
 
@@ -175,16 +174,15 @@ function Logo({
   const isDark = useIsDark();
   const imgRef = useRef<HTMLImageElement>(null);
   const options = useContext(GenesisHashOptionsContext);
-  const _genesisHash = mapHubToRelay(genesisHash);
-  const maybeUserAddedChainColor = useUserAddedChainColor(_genesisHash);
+  const maybeUserAddedChainColor = useUserAddedChainColor(genesisHash);
   const [isDarkLogo, setIsDarkLogo] = useState(false);
 
   const foundChainName = useMemo(
-    () => options.find(({ text, value }) => value === _genesisHash || (chainName && haveSameWords(text, chainName)))?.text,
-    [_genesisHash, chainName, options]
+    () => options.find(({ text, value }) => value === genesisHash || (chainName && haveSameWords(text, chainName)))?.text,
+    [genesisHash, chainName, options]
   );
   const resolvedChainName = useMemo(() => sanitizeChainName(foundChainName || chainName, true), [chainName, foundChainName]);
-  const resolvedLogoInfo = useMemo(() => resolveLogoInfo(_genesisHash || resolvedChainName, token), [_genesisHash, resolvedChainName, token]);
+  const resolvedLogoInfo = useMemo(() => resolveLogoInfo(genesisHash || resolvedChainName, token), [genesisHash, resolvedChainName, token]);
   const effectiveSize = assetSize ?? size;
   const effectiveSecondaryLogo = secondaryLogo ?? subLogo;
   const effectiveSecondaryLogoPosition = secondaryLogoPosition ?? subLogoPosition;
