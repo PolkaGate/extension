@@ -184,7 +184,7 @@ function Logo({
     [_genesisHash, chainName, options]
   );
   const resolvedChainName = useMemo(() => sanitizeChainName(foundChainName || chainName, true), [chainName, foundChainName]);
-  const resolvedLogoInfo = useMemo(() => resolveLogoInfo(resolvedChainName || _genesisHash, token), [_genesisHash, resolvedChainName, token]);
+  const resolvedLogoInfo = useMemo(() => resolveLogoInfo(_genesisHash || resolvedChainName, token), [_genesisHash, resolvedChainName, token]);
   const effectiveSize = assetSize ?? size;
   const effectiveSecondaryLogo = secondaryLogo ?? subLogo;
   const effectiveSecondaryLogoPosition = secondaryLogoPosition ?? subLogoPosition;
