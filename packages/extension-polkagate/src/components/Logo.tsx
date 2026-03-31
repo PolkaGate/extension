@@ -10,10 +10,11 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { logoWhiteTransparent } from '../assets/logos';
 import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { useIsDark } from '../hooks';
-import { convertToCamelCase, sanitizeChainName } from '../util';
+import { sanitizeChainName } from '../util';
 import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
-import { mapHubToRelay } from '../util/migrateHubUtils';
+import { convertToCamelCase } from '../util';
 import resolveLogoInfo from '../util/resolveLogoInfo';
+import { mapHubToRelay } from '../util/migrateHubUtils';
 import { GenesisHashOptionsContext } from './contexts';
 
 type LogoVariant = 'single' | 'dual';
@@ -42,15 +43,6 @@ interface Props {
 
 function isImageSource(source: string): boolean {
   return source.startsWith('data:') || source.startsWith('http') || source.startsWith('/') || source.includes('.');
-}
-
-function getLogoFallbackText(source: string): string {
-  return source
-    .replace(/^fa;/, '')
-    .replace(/[-_]+/g, ' ')
-    .trim()
-    .charAt(0)
-    .toUpperCase();
 }
 
 function normalizeToWordSet(str: string): Set<string> {
@@ -105,8 +97,6 @@ function RenderLogoGraphic({ borderRadius, filter, imgRef, size, source, style }
     );
   }
 
-  const iconDef = fas[convertToCamelCase(source)];
-
   return (
     <Box
       sx={{
@@ -122,30 +112,14 @@ function RenderLogoGraphic({ borderRadius, filter, imgRef, size, source, style }
         ...style
       }}
     >
-      {iconDef
-        ? (
-          <FontAwesomeIcon
-            fontSize='15px'
-            icon={iconDef}
-            style={{
-              height: size,
-              width: size
-            }}
-          />
-        )
-        : (
-          <Avatar
-            sx={{
-              bgcolor: 'transparent',
-              fontSize: typeof size === 'number' ? size * 0.55 : undefined,
-              height: size,
-              width: size
-            }}
-            variant='square'
-          >
-            {getLogoFallbackText(source)}
-          </Avatar>
-        )}
+      <FontAwesomeIcon
+        fontSize='15px'
+        icon={fas[convertToCamelCase(source)]}
+        style={{
+          height: size,
+          width: size
+        }}
+      />
     </Box>
   );
 }
