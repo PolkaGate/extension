@@ -1,10 +1,10 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Box, useTheme } from '@mui/material';
+import { Avatar, Box } from '@mui/material';
+import { assetsDotSVG, assetsKsmSVG, assetsPasSVG, assetsWndSVG } from '@polkagate/apps-config/ui/logos/assets/index.js';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { logoWhiteTransparent } from '../assets/logos';
@@ -12,10 +12,17 @@ import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { useIsDark } from '../hooks';
 import { convertToCamelCase, sanitizeChainName } from '../util';
 import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
-import resolveLogoInfo from '../util/resolveLogoInfo';
+import resolveLogoInfo, { resolveTokenLogoInfo } from '../util/logo/resolveLogoInfo';
 import { GenesisHashOptionsContext } from './contexts';
 
 type LogoVariant = 'single' | 'dual';
+
+const NATIVE_TOKEN_LOGOS: Record<string, string> = {
+  DOT: assetsDotSVG,
+  KSM: assetsKsmSVG,
+  PAS: assetsPasSVG,
+  WND: assetsWndSVG
+};
 
 interface Props {
   assetSize?: number | string;
@@ -39,11 +46,19 @@ interface Props {
   variant?: LogoVariant;
 }
 
-function isImageSource(source: string): boolean {
+function isImageSource(source: string | undefined): boolean {
+  if (typeof source !== 'string') {
+    return false;
+  }
+
   return source.startsWith('data:') || source.startsWith('http') || source.startsWith('/') || source.includes('.');
 }
 
-function getLogoFallbackText(source: string): string {
+function getLogoFallbackText(source: string | undefined): string {
+  if (typeof source !== 'string') {
+    return '?';
+  }
+
   return source
     .replace(/^fa;/, '')
     .replace(/[-_]+/g, ' ')
@@ -84,13 +99,15 @@ function RenderLogoGraphic({ borderRadius, filter, imgRef, size, source, style }
   filter: string;
   imgRef?: React.RefObject<HTMLImageElement | null>;
   size: number | string;
-  source: string;
+  source?: string;
   style?: React.CSSProperties;
 }) {
   if (isImageSource(source)) {
     return (
       <Avatar
-        imgProps={imgRef ? { ref: imgRef } : undefined}
+        slotProps={{
+          img: imgRef ? { ref: imgRef } : undefined
+        }}
         src={source}
         sx={{
           borderRadius,
@@ -101,6 +118,25 @@ function RenderLogoGraphic({ borderRadius, filter, imgRef, size, source, style }
         }}
         variant='square'
       />
+    );
+  }
+
+  if (typeof source !== 'string') {
+    return (
+      <Avatar
+        sx={{
+          bgcolor: 'transparent',
+          border: '0.5px solid',
+          borderRadius,
+          fontSize: typeof size === 'number' ? size * 0.55 : undefined,
+          height: size,
+          width: size,
+          ...style
+        }}
+        variant='square'
+      >
+        ?
+      </Avatar>
     );
   }
 
@@ -170,7 +206,6 @@ function Logo({
   token,
   variant = 'single'
 }: Props): React.ReactElement {
-  const theme = useTheme();
   const isDark = useIsDark();
   const imgRef = useRef<HTMLImageElement>(null);
   const options = useContext(GenesisHashOptionsContext);
@@ -182,14 +217,33 @@ function Logo({
     [genesisHash, chainName, options]
   );
   const resolvedChainName = useMemo(() => sanitizeChainName(foundChainName || chainName, true), [chainName, foundChainName]);
-  const resolvedLogoInfo = useMemo(() => resolveLogoInfo(genesisHash || resolvedChainName, token), [genesisHash, resolvedChainName, token]);
+  const logoInfoKey = typeof genesisHash === 'string' ? genesisHash : resolvedChainName;
+  const chainLogoInfo = useMemo(() => resolveLogoInfo(logoInfoKey), [logoInfoKey]);
+  const resolvedLogoInfo = useMemo(
+    () => token ? resolveTokenLogoInfo(logoInfoKey, token) : resolveLogoInfo(logoInfoKey),
+    [logoInfoKey, token]
+  );
+  const nativeTokenLogo = token ? NATIVE_TOKEN_LOGOS[token.toUpperCase()] : undefined;
   const effectiveSize = assetSize ?? size;
+  const shouldUseNativeTokenLogo = Boolean(
+    token &&
+    nativeTokenLogo &&
+    typeof resolvedLogoInfo?.subLogo === 'string' &&
+    (
+      resolvedLogoInfo?.logo === chainLogoInfo?.logo ||
+      resolvedLogoInfo?.logoSquare === chainLogoInfo?.logoSquare ||
+      !resolvedLogoInfo?.logo
+    )
+  );
   const effectiveSecondaryLogo = secondaryLogo ?? subLogo;
   const effectiveSecondaryLogoPosition = secondaryLogoPosition ?? subLogoPosition;
   const effectiveSecondaryLogoSize = baseTokenSize ?? secondaryLogoSize;
   const effectiveFallbackBackgroundColor = fallbackBackgroundColor ?? maybeUserAddedChainColor;
   const effectiveFallbackText = fallbackText ?? resolvedChainName;
-  const effectiveLogo = logo || (showSquare ? resolvedLogoInfo?.logoSquare ?? resolvedLogoInfo?.logo : resolvedLogoInfo?.logo);
+  const resolvedPrimaryLogo = showSquare ? resolvedLogoInfo?.logoSquare ?? resolvedLogoInfo?.logo : resolvedLogoInfo?.logo;
+  const effectiveLogo = shouldUseNativeTokenLogo
+    ? nativeTokenLogo
+    : logo ?? resolvedPrimaryLogo;
   const borderRadius = showSquare ? 0 : logoRoundness;
   const secondaryGraphicSize = typeof effectiveSecondaryLogoSize === 'number'
     ? effectiveSecondaryLogoSize - 2
@@ -297,7 +351,7 @@ function Logo({
           <Box
             sx={{
               alignItems: 'center',
-              bgcolor: secondaryBackgroundColor ?? (theme.palette.mode === 'light' ? '#fff' : '#000'),
+              bgcolor: secondaryBackgroundColor ?? '#fff',
               borderRadius: '50%',
               display: 'flex',
               height: effectiveSecondaryLogoSize,
