@@ -10,7 +10,19 @@ import { fetchFromSubscan } from '..';
 export function getNominationPoolsClaimedRewards(chainName: string, address: string, pageSize: number): Promise<TransferRequest> {
   const { link } = getLink(chainName, 'pool_rewards');
 
-  return fetchFromSubscan(link ?? '',
+  if (!link) {
+    return Promise.resolve({
+      code: 0,
+      data: {
+        count: 0,
+        list: null,
+        transfers: null
+      },
+      for: ''
+    });
+  }
+
+  return fetchFromSubscan(link,
     {
       address,
       row: pageSize

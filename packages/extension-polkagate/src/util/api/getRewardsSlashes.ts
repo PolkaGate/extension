@@ -10,7 +10,19 @@ import { fetchFromSubscan } from '..';
 export default function getRewardsSlashes(chainName: string, address: string, filter: 'unclaimed' | 'claimed'): Promise<TransferRequest> {
   const { link } = getLink(chainName, 'reward_slash');
 
-  return fetchFromSubscan(link ?? '', {
+  if (!link) {
+    return Promise.resolve({
+      code: 0,
+      data: {
+        count: 0,
+        list: null,
+        transfers: null
+      },
+      for: ''
+    });
+  }
+
+  return fetchFromSubscan(link, {
     address,
     category: 'Reward',
     claimed_filter: filter,
