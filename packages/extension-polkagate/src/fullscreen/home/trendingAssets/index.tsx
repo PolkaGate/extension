@@ -9,6 +9,7 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { CurrencyContext, FadeOnScrollHorizontal } from '../../../components';
 import { usePrices, useTranslation } from '../../../hooks';
 import { VelvetBox } from '../../../style';
+import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import TokenChart from '../../components/LineChart';
 import Asset from './Asset';
 import Move from './Move';
@@ -37,6 +38,18 @@ function TrendingAssets(): React.ReactElement {
   }, [chartToken, pricesInCurrencies?.prices]);
 
   const trendingAssets = useTrendingAssets(pricesInCurrencies?.prices);
+
+  const selectedAssetLogo = useMemo(() => {
+    const selectedAsset = trendingAssets?.find(({ symbol }) => symbol === chartToken);
+
+    if (!selectedAsset) {
+      return undefined;
+    }
+
+    const logoInfo = resolveLogoInfo(selectedAsset.genesisHash, selectedAsset.symbol);
+
+    return logoInfo?.logoSquare || logoInfo?.logo;
+  }, [chartToken, trendingAssets]);
 
   useEffect(() => {
     const widths = cardRefs.current.map((ref) => ref?.offsetWidth || 0);
@@ -89,6 +102,7 @@ function TrendingAssets(): React.ReactElement {
       {chartPriceId && currency?.code &&
         <TokenChart
           coinId={chartPriceId}
+          logo={selectedAssetLogo}
           onClose={setChartToken}
         // vsCurrency={currency.code} no clue why does not work
         />
