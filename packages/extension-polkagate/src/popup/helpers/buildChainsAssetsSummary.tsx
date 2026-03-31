@@ -7,7 +7,7 @@ import type { Prices } from '../../util/types';
 
 import { calcPrice, sanitizeChainName, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 
-import resolveLogoInfo, { type LogoInfo } from '../../util/resolveLogoInfo';
+import resolveLogoInfo, { type LogoInfo } from '../../util/logo/resolveLogoInfo';
 
 export interface AssetDetailType {
   assets: (FetchedBalance & { totalPrice: number })[];

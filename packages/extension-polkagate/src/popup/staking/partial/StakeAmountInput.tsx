@@ -4,7 +4,7 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { BN } from '@polkadot/util';
-import type { LogoInfo } from '../../../util/resolveLogoInfo';
+import type { LogoInfo } from '../../../util/logo/resolveLogoInfo';
 
 import { Collapse, Container, Grid, Stack, styled, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';

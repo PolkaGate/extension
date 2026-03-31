@@ -11,7 +11,7 @@ import { QRCode } from 'react-qrcode-logo';
 
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import { Logo, NeonButton, SearchField, Transition } from '../../components';
 import MySnackbar from '../../components/MySnackbar';
@@ -275,7 +275,7 @@ export default function Receive({ openPopup, setOpenPopup }: Props) {
           <div style={{ position: 'relative', zIndex: 1 }}>
             {!selectedChain &&
               <SelectNetwork
-                isEthereum = {isEthereumAddress(selectedAddress?.address || '')}
+                isEthereum={isEthereumAddress(selectedAddress?.address || '')}
                 setSelectedChain={setSelectedChain}
               />
             }

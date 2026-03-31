@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { sanitizeChainName } from '../util';
-import resolveLogoInfo from '../util/resolveLogoInfo';
+import resolveLogoInfo from '../util/logo/resolveLogoInfo';
 import Label from './Label';
 
 interface Props {

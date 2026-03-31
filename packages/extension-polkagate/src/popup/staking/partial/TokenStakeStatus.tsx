@@ -8,7 +8,7 @@ import { type BN } from '@polkadot/util';
 
 import { Logo, DisplayBalance } from '../../../components';
 import { useIsExtensionPopup } from '../../../hooks';
-import resolveLogoInfo from '../../../util/resolveLogoInfo';
+import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 
 export interface Props {
   amount: BN | undefined;

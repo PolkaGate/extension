@@ -13,7 +13,7 @@ import { Address2, Logo, DecisionButtons, GradientDivider, MySnackbar, SearchFie
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util';
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { useFormatted, useGenesisHashOptions, useSelectedAccount, useTranslation } from '../../../hooks';
@@ -181,7 +181,7 @@ function Receive({ address, closePopup, onClose, setAddress }: Props): React.Rea
             ? (<SelectChain
               isEthereum={isEthereumAddress(address || '')}
               setSelectedChain={setSelectedChain}
-               />)
+            />)
             : (<>
               <Stack direction='column' justifyItems='center' sx={{ display: 'block', width: '100%' }}>
                 <Address2

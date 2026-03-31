@@ -6,7 +6,7 @@ import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/type
 import { Grid, Popover, Stack, styled, Typography } from '@mui/material';
 import React, { type CSSProperties, useCallback, useMemo, useRef } from 'react';
 
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import { Logo } from '../../../components';
 import { useIsHovered } from '../../../hooks';

@@ -12,7 +12,7 @@ import { ArrowCircleRight2 } from 'iconsax-react';
 import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import { Logo, DisplayBalance, Motion } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';

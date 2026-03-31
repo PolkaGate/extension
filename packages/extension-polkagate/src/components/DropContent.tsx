@@ -11,7 +11,7 @@ import { useIsDark } from '../hooks';
 import { GradientDivider } from '../style';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
-import resolveLogoInfo from '../util/resolveLogoInfo';
+import resolveLogoInfo from '../util/logo/resolveLogoInfo';
 import GlowCheck from './GlowCheck';
 
 const DropContentContainer = styled(Grid, {

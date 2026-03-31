@@ -9,7 +9,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/partials/FailSuccessIcon';
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import Subscan from '../assets/icons/Subscan';
 import { ActionButton, DisplayBalance, GradientButton, Identity, NeonButton } from '../components';

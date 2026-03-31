@@ -21,7 +21,7 @@ import { useChainInfo, useFormatted, useIsExtensionPopup, useSelectedAccount, us
 import { PoolItem } from '../popup/staking/partial/PoolsTable';
 import { PolkaGateIdenticon } from '../style';
 import { toShortAddress } from '../util';
-import resolveLogoInfo from '../util/resolveLogoInfo';
+import resolveLogoInfo from '../util/logo/resolveLogoInfo';
 import UnableToPayFee from './UnableToPayFee';
 
 interface AccountBoxProps {

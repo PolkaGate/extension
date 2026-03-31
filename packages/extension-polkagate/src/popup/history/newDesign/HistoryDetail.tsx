@@ -17,7 +17,7 @@ import { useChainInfo, useIsExtensionPopup, useTokenPriceBySymbol, useTranslatio
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
 import { amountToMachine, calcPrice, countDecimalPlaces, formatTimestamp, getVoteType, isReward, toShortAddress, toTitleCase } from '../../../util';
 import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
-import resolveLogoInfo from '../../../util/resolveLogoInfo';
+import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import { getLink } from '../explorer';
 
 interface Props {

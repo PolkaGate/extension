@@ -16,7 +16,7 @@ import { useAccountAssets, useBackground, useSelectedAccount, useTranslation } f
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
 import { toTitleCase } from '../../util';
-import resolveLogoInfo, { type LogoInfo } from '../../util/resolveLogoInfo';
+import resolveLogoInfo, { type LogoInfo } from '../../util/logo/resolveLogoInfo';
 import DailyChange from '../home/partial/DailyChange';
 import ReservedLockedPopup from './partial/ReservedLockedPopup';
 import TokenDetailBox from './partial/TokenDetailBox';

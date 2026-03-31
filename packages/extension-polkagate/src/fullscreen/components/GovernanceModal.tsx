@@ -9,7 +9,7 @@ import React, { memo, useCallback } from 'react';
 
 import { GradientButton } from '@polkadot/extension-polkagate/src/components';
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import { useTranslation } from '../../hooks';
 

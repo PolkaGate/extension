@@ -6,7 +6,7 @@ import type { AssetsWithUiAndPrice } from './types';
 import { Container, LinearProgress, linearProgressClasses, Stack, styled, Typography } from '@mui/material';
 import React, { useContext, useRef } from 'react';
 
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import { CurrencyContext, FadeOnScroll, FormatPrice, Logo } from '../../../components';
 import { useTranslation } from '../../../hooks';

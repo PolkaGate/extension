@@ -12,7 +12,7 @@ import { ShowValue } from '../../../components';
 import Logo from '../../../components/Logo';
 import { useChainInfo, useIsExtensionPopup } from '../../../hooks';
 import { amountToHuman } from '../../../util';
-import resolveLogoInfo from '../../../util/resolveLogoInfo';
+import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 
 interface InfoBoxProps {
   value: number | string | BN | undefined;

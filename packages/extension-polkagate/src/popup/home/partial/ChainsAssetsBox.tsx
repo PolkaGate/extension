@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { Logo, FormatPrice } from '../../../components';
 import { useAllChains, useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
-import resolveLogoInfo from '../../../util/resolveLogoInfo';
+import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import { type AssetDetailType, buildChainsAssetsSummary } from '../../helpers/buildChainsAssetsSummary';
 import { TokenBalanceDisplay } from './TokenBalanceDisplay';
 import { TokenPriceInfo } from './TokenPriceInfo';

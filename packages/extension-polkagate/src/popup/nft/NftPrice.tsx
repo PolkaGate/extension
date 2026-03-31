@@ -6,7 +6,7 @@ import type { ItemInformation } from '../../fullscreen/nft/utils/types';
 import { Grid, Stack, type SxProps, Typography } from '@mui/material';
 import React, { memo, useMemo } from 'react';
 
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import { Logo, DisplayBalance } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';

@@ -17,7 +17,7 @@ import { windowOpen } from '../../../messaging';
 export default function Chains(): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { chainsToList, onSearch, selectedChains, toggleChainSelection } = useChainSelectionSettings();
+  const { chainsToList, onSearch, selectedChains, setChainSelection } = useChainSelectionSettings();
 
   const chainEndpoints = useCallback((genesisHash: string) => {
     return () => navigate(`/endpoints/${genesisHash}`) as void;
@@ -70,7 +70,7 @@ export default function Chains(): React.ReactElement {
               <MySwitch
                 checked={isSelected}
                 // eslint-disable-next-line react/jsx-no-bind
-                onChange={() => toggleChainSelection(value as string)}
+                onChange={() => setChainSelection(value as string)}
               />
             </Grid>
           );

@@ -17,7 +17,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { Logo } from '../../../components';
 import { useIsDark, useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
 import allChains from '../../../util/chains';
-import resolveLogoInfo, { type LogoInfo } from '../../../util/resolveLogoInfo';
+import resolveLogoInfo, { type LogoInfo } from '../../../util/logo/resolveLogoInfo';
 import Drawer from './Drawer';
 import { TokenBalanceDisplay } from './TokenBalanceDisplay';
 import { TokenPriceInfo } from './TokenPriceInfo';
