@@ -59,7 +59,6 @@ export { useLedger } from './useLedger';
 export { default as useLocalAccounts } from './useLocalAccounts';
 export { default as useLockedInReferenda } from './useLockedInReferenda';
 export { default as useManifest } from './useManifest';
-export { default as useMerkleScience } from './useMerkleScience';
 export { default as useMetadata } from './useMetadata';
 export { default as useMetadataProof } from './useMetadataProof';
 export { default as useMinToReceiveRewardsInSolo } from './useMinToReceiveRewardsInSolo';

@@ -16,7 +16,8 @@ import { Transition } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsBlueish, useTranslation, useValidatorApy } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
-import { getSubscanChainName, isHexToBn, toShortAddress } from '../../../util';
+import { isHexToBn, toShortAddress } from '../../../util';
+import { getLink } from '../../history/explorer';
 import { Discord, Email, Github, Web, XIcon } from '../../settings/icons';
 import SocialIcon from '../../settings/partials/SocialIcon';
 import BlueGradient from '../stakingStyles/BlueGradient';
@@ -84,7 +85,8 @@ interface ValidatorIdentityDetailProps {
 
 const ValidatorIdentityDetail = ({ genesisHash, validatorDetail }: ValidatorIdentityDetailProps) => {
   const { chainName } = useChainInfo(genesisHash, true);
-  const network = getSubscanChainName(chainName);
+  const accountId = validatorDetail.accountId.toString();
+  const { link } = getLink(chainName, 'account', accountId);
 
   return (
     <Stack direction='column' sx={{ p: '12px', width: '100%' }}>
@@ -92,13 +94,13 @@ const ValidatorIdentityDetail = ({ genesisHash, validatorDetail }: ValidatorIden
         <ValidatorIdSocials validatorDetail={validatorDetail} />
         <Grid container item sx={{ border: '8px solid #00000033', borderRadius: '999px', height: 'fit-content', width: 'fit-content' }}>
           <PolkaGateIdenticon
-            address={validatorDetail.accountId.toString()}
+            address={accountId}
             size={48}
           />
         </Grid>
         <Grid container item sx={{ justifyContent: 'flex-end', width: '32%' }}>
           <Link
-            href={`https://${network}.subscan.io/account/${validatorDetail.accountId.toString()}`}
+            href={link}
             rel='noreferrer'
             sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
             target='_blank'
@@ -122,7 +124,7 @@ const ValidatorIdentityDetail = ({ genesisHash, validatorDetail }: ValidatorIden
             </Typography>}
         </Grid>
         <Typography color='#82FFA5' sx={{ fontFamily: 'JetBrainsMono', fontSize: '14px', fontWeight: 700 }}>
-          {toShortAddress(validatorDetail.accountId)}
+          {toShortAddress(accountId)}
         </Typography>
       </Container>
     </Stack>

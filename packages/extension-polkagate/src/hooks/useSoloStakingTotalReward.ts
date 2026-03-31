@@ -8,7 +8,8 @@ import { useEffect, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { fetchFromSubscan, getSubscanChainName } from '../util';
+import { getLink } from '../popup/history/explorer';
+import { fetchFromSubscan } from '../util';
 import useStakingRewardDestinationAddress from './useStakingRewardDestinationAddress';
 
 export async function getStakingReward(chainName: string, address: AccountId | string | null): Promise<string | null> {
@@ -18,11 +19,17 @@ export async function getStakingReward(chainName: string, address: AccountId | s
     return null;
   }
 
-  const network = getSubscanChainName(chainName) as unknown as string;
+  const { link } = getLink(chainName, 'total_reward');
+
+  if (!link) {
+    console.log('No link available to fetch the rewards info!');
+
+    return null;
+  }
 
   try {
     const data = await fetchFromSubscan<{ message: string; data: { sum: string; }; }>(
-      `https://${network}.api.subscan.io/api/scan/staking/total_reward`, { address });
+      link, { address });
 
     if (data.message === 'Success') {
       const reward = data.data.sum;

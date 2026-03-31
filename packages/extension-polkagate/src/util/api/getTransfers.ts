@@ -3,9 +3,9 @@
 
 import type { TransferRequest } from '../types';
 
+import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
 import { keyMaker } from '@polkadot/extension-polkagate/src/popup/history/hookUtils/utils';
 
-import { getSubscanChainName } from '../chain';
 import getChainName from '../getChainName';
 import { fetchFromSubscan } from '..';
 
@@ -41,17 +41,13 @@ export async function getTxTransfers(address: string, genesisHash: string, pageN
   const requested = keyMaker(address, genesisHash);
 
   const chainName = getChainName(genesisHash);
-  const network = getSubscanChainName(chainName);
+  const { link } = getLink(chainName, 'transfers');
 
-  if (!network) {
+  if (!link) {
     return nullifier(requested);
   }
 
-  if (network === 'pendulum') {
-    return (await Promise.resolve(nullifier(requested)));
-  }
-
-  const transferRequest = await fetchFromSubscan<TransferRequest>(`https://${network}.api.subscan.io/api/v2/scan/transfers`, {
+  const transferRequest = await fetchFromSubscan<TransferRequest>(link ?? '', {
     address,
     direction: 'received',
     page: pageNum,

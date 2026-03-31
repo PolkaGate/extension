@@ -9,7 +9,7 @@ import React, { memo, useCallback, useMemo } from 'react';
 import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
-import { Logo, DisplayBalance, FormatPrice } from '../../../components';
+import { DisplayBalance, FormatPrice, Logo } from '../../../components';
 import { usePrices } from '../../../hooks';
 import DailyChange from '../../../popup/home/partial/DailyChange';
 import { GlowBox } from '../../../style';

@@ -2,33 +2,56 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { getSubscanChainName } from '@polkadot/extension-polkagate/src/util';
-import { CHAINS_ON_POLKAHOLIC } from '@polkadot/extension-polkagate/src/util/constants';
+import { SUBSCAN_CHAINS_ENDPOINT } from '@polkadot/extension-polkagate/src/util/subscanChains';
 
-export function getLink(chainName: string, type: 'account' | 'extrinsic' = 'extrinsic', data: string): { link: string | undefined, name: string | undefined, } {
-  if (chainName.toLowerCase() === 'ethereum') {
-     return { link: 'https://etherscan.io/tx/' + String(data), name: 'etherscan' };
+type linkType = 'account' | 'extrinsic' | 'extrinsics' | 'extrinsicApi' | 'total_reward' | 'transfers' | 'reward_slash' | 'pool_rewards';
+
+const DEFAULT_OUTPUT = { link: undefined, name: undefined };
+
+export function getLink(chainName: string | undefined, type: linkType = 'extrinsic', data?: string): { link: string | undefined, name: string | undefined, } {
+  if (chainName?.toLowerCase() === 'ethereum') {
+    return { link: 'https://etherscan.io/tx/' + String(data), name: 'etherscan' };
   }
 
-  if (type === 'extrinsic') {
-    const maybeTheFirstPartOfChain = chainName?.split(' ')?.[0];
+  const subscanChainName = getSubscanChainName(chainName) as keyof typeof SUBSCAN_CHAINS_ENDPOINT | undefined;
+  const apiHost = subscanChainName ? `https://${subscanChainName}.api.subscan.io` : undefined;
 
-    const explorer = CHAINS_ON_POLKAHOLIC.includes(chainName ?? '') ? 'polkaholic' : 'subscan';
+  switch (type) {
+    case 'extrinsic': {
+      const endpoint = subscanChainName ? SUBSCAN_CHAINS_ENDPOINT[subscanChainName] : undefined;
 
-    switch (explorer) {
-      case 'subscan':
-        {
-          const adjustedName = getSubscanChainName(chainName);
-
-          return { link: 'https://' + adjustedName + '.subscan.io/extrinsic/' + String(data), name: 'subscan' };
-        }
-
-      case 'polkaholic':
-        return { link: 'https://' + maybeTheFirstPartOfChain + '.polkaholic.io/tx/' + String(data), name: 'polkaholic' };
-
-      // case 'statscan':
-      //   return 'https://westmint.statescan.io/#/accounts/' + String(data); // NOTE, data here is formatted address
+      return endpoint && data
+        ? { link: `https://${endpoint}/extrinsic/${data}`, name: 'subscan' }
+        : DEFAULT_OUTPUT;
     }
-  }
 
-  return { link: undefined, name: undefined };
+    case 'account': {
+      const pre = subscanChainName ?? 'portfolio';
+
+      return data
+        ? { link: `https://${pre}.subscan.io/account/${data}`, name: 'subscan' }
+        : DEFAULT_OUTPUT;
+    }
+
+    case 'extrinsicApi':
+      return apiHost ? { link: `${apiHost}/api/scan/extrinsic`, name: 'subscan' } : DEFAULT_OUTPUT;
+
+    case 'extrinsics':
+      return apiHost ? { link: `${apiHost}/api/v2/scan/extrinsics`, name: 'subscan' } : DEFAULT_OUTPUT;
+
+    case 'pool_rewards':
+      return apiHost ? { link: `${apiHost}/api/scan/nomination_pool/rewards`, name: 'subscan' } : DEFAULT_OUTPUT;
+
+    case 'reward_slash':
+      return apiHost ? { link: `${apiHost}/api/v2/scan/account/reward_slash`, name: 'subscan' } : DEFAULT_OUTPUT;
+
+    case 'total_reward':
+      return apiHost ? { link: `${apiHost}/api/scan/staking/total_reward`, name: 'subscan' } : DEFAULT_OUTPUT;
+
+    case 'transfers':
+      return apiHost ? { link: `${apiHost}/api/v2/scan/transfers`, name: 'subscan' } : DEFAULT_OUTPUT;
+
+    default:
+      return DEFAULT_OUTPUT;
+  }
 }

@@ -56,5 +56,9 @@ export const getSubscanChainName = (chainName?: string): string | undefined => {
     return 'moonbase';
   }
 
+  if (lc === 'hydration') {
+    return 'hydradx';
+  }
+
   return lc;
 };

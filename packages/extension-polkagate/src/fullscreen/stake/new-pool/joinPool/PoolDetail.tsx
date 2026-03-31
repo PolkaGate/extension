@@ -9,6 +9,7 @@ import { Container, Grid, Link, Stack, Typography } from '@mui/material';
 import { BuyCrypto, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
 import React, { Fragment, memo, useCallback, useMemo } from 'react';
 
+import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
 import { noop } from '@polkadot/util';
 
 import { useChainInfo, useIsExtensionPopup, usePoolDetail, useTranslation } from '../../../..//hooks';
@@ -17,7 +18,7 @@ import { DetailPanel, GradientButton, GradientDivider } from '../../../../compon
 import SnowFlake from '../../../../components/SVG/SnowFlake';
 import { CollapseSection, PoolMembers, PoolReward, PoolStashIdSocials, RoleItem, StakingInfoStackWithIcon } from '../../../../popup/staking/partial/PoolDetail';
 import { PoolIdenticon } from '../../../../popup/staking/partial/PoolIdenticon';
-import { getSubscanChainName, toShortAddress } from '../../../../util';
+import { toShortAddress } from '../../../../util';
 
 interface PoolIdentityDetailProps {
   poolDetail: PoolInfo;
@@ -27,7 +28,8 @@ interface PoolIdentityDetailProps {
 
 const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentityDetailProps) => {
   const { chainName } = useChainInfo(genesisHash, true);
-  const network = getSubscanChainName(chainName);
+  const accountId = poolDetail.stashIdAccount?.accountId.toString();
+  const { link } = getLink(chainName, 'account', String(accountId));
 
   const { bgcolor, textColor } = useMemo(() => {
     const status = poolDetail.bondedPool?.state.toString();
@@ -54,12 +56,12 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentit
         </Typography>
       </Grid>
       <Typography color='#82FFA5' sx={{ fontFamily: 'JetBrainsMono', fontSize: '14px', fontWeight: 700 }}>
-        {toShortAddress(poolDetail.stashIdAccount?.accountId.toString())}
+        {toShortAddress(accountId)}
       </Typography>
       <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', m: 0, width: 'fit-content' }}>
         <PoolStashIdSocials poolDetail={poolDetail} />
         <Link
-          href={`https://${network}.subscan.io/account/${poolDetail.stashIdAccount?.accountId.toString()}`}
+          href={link}
           rel='noreferrer'
           sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
           target='_blank'
