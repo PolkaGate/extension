@@ -12,10 +12,10 @@ import { useParams } from 'react-router-dom';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util';
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
 import { BN, noop } from '@polkadot/util';
 
-import { ActionButton, AssetLogo, DisplayBalance, Motion, MyTextField } from '../../components';
+import { ActionButton, Logo, DisplayBalance, Motion, MyTextField } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
 import NumberedTitle from './partials/NumberedTitle';
 import useWarningMessage from './useWarningMessage';
@@ -40,7 +40,7 @@ export default function Step3Amount({ inputs, isContract, setInputs }: Props): R
   const [amount, setAmount] = useState<string | undefined>(inputs?.amount);
   const assetToTransfer = useMemo(() => accountAssets?.find((asset) => asset.genesisHash === genesisHash && String(asset.assetId) === assetId), [accountAssets, assetId, genesisHash]);
   const transferableBalance = useMemo(() => getValue('transferable', assetToTransfer), [assetToTransfer]);
-  const logoInfo = useMemo(() => getLogo2(genesisHash, assetToTransfer?.token), [assetToTransfer?.token, genesisHash]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, assetToTransfer?.token), [assetToTransfer?.token, genesisHash]);
   const amountAsBN = useMemo(() => decimal ? amountToMachine(amount, decimal) : undefined, [amount, decimal]);
 
   const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, inputs?.transferType ?? 'Normal', new BN(inputs?.fee?.originFee?.fee || 0));
@@ -185,7 +185,7 @@ export default function Step3Amount({ inputs, isContract, setInputs }: Props): R
           <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
             {t('Available')}
           </Typography>
-          <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} token={inputs?.token} />
+          <Logo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} token={inputs?.token} />
           <DisplayBalance
             balance={transferableBalance}
             decimal={decimal}

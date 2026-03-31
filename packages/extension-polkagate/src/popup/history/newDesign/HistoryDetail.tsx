@@ -17,7 +17,7 @@ import { useChainInfo, useIsExtensionPopup, useTokenPriceBySymbol, useTranslatio
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
 import { amountToMachine, calcPrice, countDecimalPlaces, formatTimestamp, getVoteType, isReward, toShortAddress, toTitleCase } from '../../../util';
 import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
-import getLogo from '../../../util/getLogo';
+import resolveLogoInfo from '../../../util/resolveLogoInfo';
 import { getLink } from '../explorer';
 
 interface Props {
@@ -266,7 +266,7 @@ function Content({ historyItem, style = {} }: { historyItem: TransactionDetail |
             onClick={openExplorer}
             startIconNode={
               <Avatar
-                src={getLogo(name)}
+                src={resolveLogoInfo(name)?.logo}
                 sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(name ?? '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
                 variant='square'
               />

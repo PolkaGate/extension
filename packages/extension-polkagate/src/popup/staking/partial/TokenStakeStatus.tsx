@@ -6,9 +6,9 @@ import React, { useMemo } from 'react';
 
 import { type BN } from '@polkadot/util';
 
-import { AssetLogo, DisplayBalance } from '../../../components';
+import { Logo, DisplayBalance } from '../../../components';
 import { useIsExtensionPopup } from '../../../hooks';
-import getLogo2 from '../../../util/getLogo2';
+import resolveLogoInfo from '../../../util/resolveLogoInfo';
 
 export interface Props {
   amount: BN | undefined;
@@ -21,14 +21,14 @@ export interface Props {
 
 export default function TokenStakeStatus({ amount, decimal, genesisHash, style, text, token }: Props): React.ReactElement {
   const theme = useTheme();
-  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
   const isExtension = useIsExtensionPopup();
 
   const textColor = isExtension ? theme.palette.text.highlight : theme.palette.primary.main;
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', borderRadius: '14px', columnGap: '10px', display: 'flex', p: '8.5px 10px', width: '100%', ...style }}>
-      <AssetLogo assetSize='36px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
+      <Logo assetSize='36px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
       <Container disableGutters sx={{ display: 'flex', flexDirection: 'column' }}>
         <DisplayBalance
           balance={amount}

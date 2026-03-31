@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIsDark } from '../hooks';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
-import getLogo from '../util/getLogo';
+import resolveLogoInfo from '../util/resolveLogoInfo';
 import { DropContent, ScrollingTextBox } from '.';
 
 const DropSelectContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'focused' })(({ disabled, focused }: { disabled: boolean | undefined, focused: boolean }) => ({
@@ -31,9 +31,9 @@ const DropSelectContainer = styled(Grid, { shouldForwardProp: (prop) => prop !==
   transition: 'all 250ms ease-out'
 }));
 
-function Logo({ text }: { text: string }) {
+function OptionLogo({ text }: { text: string }) {
   const isDark = useIsDark();
-  const icon = getLogo(text);
+  const icon = resolveLogoInfo(text)?.logo;
 
   return (
     <Avatar
@@ -96,7 +96,7 @@ function DropSelect({ Icon, contentDropWidth, defaultValue, disabled, displayCon
         <DropSelectContainer container disabled={disabled} focused={open} item onClick={toggleOpen} ref={containerRef} sx={style}>
           <Grid alignItems='center' container item sx={{ columnGap: style?.columnGap ?? '5px', flexWrap: 'noWrap' }} xs>
             {displayContentType === 'logo' && selectedValueText &&
-              <Logo
+              <OptionLogo
                 text={selectedValueText}
               />
             }

@@ -6,9 +6,9 @@ import type { ItemInformation } from '../../fullscreen/nft/utils/types';
 import { Grid, Stack, type SxProps, Typography } from '@mui/material';
 import React, { memo, useMemo } from 'react';
 
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
 
-import { AssetLogo, DisplayBalance } from '../../components';
+import { Logo, DisplayBalance } from '../../components';
 import { useChainInfo, useTranslation } from '../../hooks';
 import { amountToMachine } from '../../util';
 
@@ -21,13 +21,13 @@ function NftPrice({ nft, style = {} }: { nft: ItemInformation, style?: SxProps }
 
   const priceAsBN = useMemo(() => convertedAmount ? amountToMachine(String(convertedAmount), decimal) : null, [convertedAmount, decimal]);
   const notListed = price === null;
-  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
   return (
     <Grid alignItems='center' container item sx={{ ...style }}>
       {price &&
         <Stack alignItems='center' columnGap='2px' direction='row'>
-          <AssetLogo assetSize='12px' baseTokenSize='24px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+          <Logo assetSize='12px' baseTokenSize='24px' genesisHash={genesisHash} logo={logoInfo?.logo} />
           <DisplayBalance
             balance={priceAsBN}
             decimal={decimal}

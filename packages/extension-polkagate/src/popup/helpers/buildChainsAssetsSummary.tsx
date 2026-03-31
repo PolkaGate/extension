@@ -7,7 +7,7 @@ import type { Prices } from '../../util/types';
 
 import { calcPrice, sanitizeChainName, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 
-import getLogo2, { type LogoInfo } from '../../util/getLogo2';
+import resolveLogoInfo, { type LogoInfo } from '../../util/resolveLogoInfo';
 
 export interface AssetDetailType {
   assets: (FetchedBalance & { totalPrice: number })[];
@@ -38,7 +38,7 @@ export function buildChainsAssetsSummary(
 
     const network = chains.find(({ genesisHash: networkGenesisHash, tokenSymbol }) => genesisHash === networkGenesisHash && tokenSymbol);
     const token = network?.tokenSymbol;
-    const logoInfo = getLogo2(genesisHash);
+    const logoInfo = resolveLogoInfo(genesisHash);
     const chainName = toTitleCase(sanitizeChainName(network?.name, true));
 
     return {

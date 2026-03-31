@@ -9,19 +9,19 @@ import React, { useMemo } from 'react';
 
 import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 
-import { AssetLogo, DisplayBalance, FormatPrice, MySkeleton } from '../../../components';
+import { Logo, DisplayBalance, FormatPrice, MySkeleton } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, usePrices, useTokenPrice, useTranslation } from '../../../hooks';
 import { GlowBox } from '../../../style';
 import { GlowBall } from '../../../style/VelvetBox';
-import getLogo2 from '../../../util/getLogo2';
+import resolveLogoInfo from '../../../util/resolveLogoInfo';
 import PortfolioActionButton, { type PortfolioActionButtonProps } from './PortfolioActionButton';
 
 const StakedToken = ({ genesisHash, isFullScreen, token }: { genesisHash: string; isFullScreen: boolean; token: string | undefined; }) => {
   const { t } = useTranslation();
 
-  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
   if (!token) {
     return;
@@ -29,7 +29,7 @@ const StakedToken = ({ genesisHash, isFullScreen, token }: { genesisHash: string
 
   return (
     <Grid alignItems='center' container item sx={{ columnGap: '4px', width: 'fit-content' }}>
-      <AssetLogo assetSize='16px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
+      <Logo assetSize='16px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
       <Typography color={isFullScreen ? '#AA83DC' : 'text.highlight'} variant='B-2'>
         {t('Staked {{token}}', { replace: { token } })}
       </Typography>

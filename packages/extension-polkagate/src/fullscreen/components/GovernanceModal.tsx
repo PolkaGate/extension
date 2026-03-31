@@ -9,7 +9,7 @@ import React, { memo, useCallback } from 'react';
 
 import { GradientButton } from '@polkadot/extension-polkagate/src/components';
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
 
 import { useTranslation } from '../../hooks';
 
@@ -34,7 +34,7 @@ function Item({ chainName, name }: ItemProps): React.ReactElement {
   const { t } = useTranslation();
 
   const _name = name === 'polkassembly' ? 'PolkassemblyIo' : name;
-  const logo = getLogo2(_name)?.logo;
+  const logo = resolveLogoInfo(_name)?.logo;
 
   return (
     <Link href={`https://${chainName ?? 'polkadot'}.${name}.io/`} rel='noreferrer' sx={{ bgcolor: 'background.default', borderRadius: '14px', my: '5px', width: '100%' }} target='_blank' underline='none'>

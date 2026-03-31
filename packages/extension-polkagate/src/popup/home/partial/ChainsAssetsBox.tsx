@@ -9,9 +9,9 @@ import { motion } from 'framer-motion';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { AssetLogo, ChainLogo, FormatPrice } from '../../../components';
+import { Logo, FormatPrice } from '../../../components';
 import { useAllChains, useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
-import getLogo2 from '../../../util/getLogo2';
+import resolveLogoInfo from '../../../util/resolveLogoInfo';
 import { type AssetDetailType, buildChainsAssetsSummary } from '../../helpers/buildChainsAssetsSummary';
 import { TokenBalanceDisplay } from './TokenBalanceDisplay';
 import { TokenPriceInfo } from './TokenPriceInfo';
@@ -32,7 +32,7 @@ function ChainHeader({ chainName, chainTotalBalance, genesisHash, theme, token }
   return (
     <Grid alignItems='center' container item justifyContent='space-between'>
       <Grid alignItems='center' container item sx={{ bgcolor: 'secondary.contrastText', borderRadius: '9px', columnGap: '4px', p: '2px 3px', pr: '4px', width: 'fit-content' }}>
-        <ChainLogo genesisHash={genesisHash} showSquare size={18} token={token} />
+        <Logo genesisHash={genesisHash} showSquare size={18} token={token} />
         <Typography color='text.secondary' variant='B-2'>
           {chainName}
         </Typography>
@@ -69,7 +69,7 @@ function AssetsDetail({ address, asset, isExtension, theme }: AssetDetailProps) 
   const isSelected = useMemo(() => params?.genesisHash === asset.genesisHash && params?.paramAssetId === String(asset.assetId), [asset.assetId, asset.genesisHash, params]);
 
   const onHoverColor = theme.palette.mode === 'dark' ? '#1B133C' : '#f4f7ff';
-  const logoInfo = getLogo2(asset.genesisHash, asset.token);
+  const logoInfo = resolveLogoInfo(asset.genesisHash, asset.token);
 
   const onTokenClick = useCallback(() => {
     isExtension
@@ -80,7 +80,7 @@ function AssetsDetail({ address, asset, isExtension, theme }: AssetDetailProps) 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: onHoverColor, px: '8px' }, background: isSelected ? onHoverColor : undefined, borderRadius: '12px', cursor: 'pointer', px: isSelected ? '8px' : undefined, py: '4px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-        <AssetLogo assetSize='36px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} token={asset.token} />
+        <Logo assetSize='36px' baseTokenSize='16px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} token={asset.token} />
         <TokenPriceInfo
           priceId={asset.priceId}
           token={asset.token}

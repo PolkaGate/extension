@@ -12,7 +12,7 @@ import ReactMarkdown from 'react-markdown';
 import { modalEffect } from '@polkadot/extension-polkagate/src/assets/img/index';
 import ActionButton from '@polkadot/extension-polkagate/src/components/ActionButton';
 import GradientButton from '@polkadot/extension-polkagate/src/components/GradientButton';
-import { ChainLogo, CopyAddressButton, Identity } from '@polkadot/extension-polkagate/src/components/index';
+import { Logo, CopyAddressButton, Identity } from '@polkadot/extension-polkagate/src/components/index';
 import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
 import useIsDark from '@polkadot/extension-polkagate/src/hooks/useIsDark';
 import NftPrice from '@polkadot/extension-polkagate/src/popup/nft/NftPrice';
@@ -215,7 +215,7 @@ function NftDetails({ gifHash, gifSource, info }: { gifHash: string | undefined,
           <ItemInfo
             label={t('Network')}
             value={<Stack alignItems='center' columnGap='3px' direction='row'>
-              <ChainLogo genesisHash={info?.genesisHash} size={14} />
+              <Logo genesisHash={info?.genesisHash} size={14} />
               <Typography color='#EAEBF1' variant='B-2'>
                 {info?.chainName}
               </Typography>

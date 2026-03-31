@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 import { useAccounts, useSelectedAccount, useUpdateSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 
-import { ChainLogo, ScrollingTextBox } from '../../components';
+import { Logo, ScrollingTextBox } from '../../components';
 import useIsDark from '../../hooks/useIsDark';
 import { identiconBlue, identiconPink } from '../../popup/home/svg';
 import PolkaGateIdenticon from '../../style/PolkaGateIdenticon';
@@ -94,7 +94,7 @@ function ChainSwitcher({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () => 
         width: '28px'
       }}
     >
-      <ChainLogo
+      <Logo
         genesisHash={genesisHash ?? POLKADOT_GENESIS}
         size={20}
       />

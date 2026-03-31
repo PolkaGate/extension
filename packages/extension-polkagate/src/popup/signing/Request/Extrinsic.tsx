@@ -14,7 +14,7 @@ import React, { useMemo } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
-import { ChainLogo, DisplayBalance, Identity, TwoToneText } from '../../../components';
+import { Logo, DisplayBalance, Identity, TwoToneText } from '../../../components';
 import { useAccountAssets, useAllChains, useChainInfo, useEstimatedFee, useFavIcon, useIsExtensionPopup, useMetadata, useSelectedChains, useTranslation } from '../../../hooks';
 import { getSubstrateAddress, isOnAssetHub } from '../../../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
@@ -116,7 +116,7 @@ function SignerContext({ address, genesisHash, showBalance = true }: SignerConte
         {t('on')}
       </Typography>
       <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>
-        <ChainLogo genesisHash={genesisHash} size={36} />
+        <Logo genesisHash={genesisHash} size={36} />
         <Stack alignItems='flex-start' width='90px'>
           <Typography color='#EAEBF1' sx={{ overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', width: '95%' }} variant='B-2'>
             {chainName || t('Unknown')}

@@ -10,10 +10,10 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { AssetLogo, BackWithLabel, DisplayBalance, FadeOnScroll, Identity, Motion, NoInfoYet, Progress } from '../../components';
+import { Logo, BackWithLabel, DisplayBalance, FadeOnScroll, Identity, Motion, NoInfoYet, Progress } from '../../components';
 import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewardsChart, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
-import getLogo2 from '../../util/getLogo2';
+import resolveLogoInfo from '../../util/resolveLogoInfo';
 import StakingMenu from './partial/StakingMenu';
 
 interface RewardChartHeaderProps {
@@ -26,12 +26,12 @@ interface RewardChartHeaderProps {
 const RewardChartHeader = ({ dateInterval, genesisHash, onNextPeriod, onPreviousPeriod }: RewardChartHeaderProps) => {
   const theme = useTheme();
   const { token } = useChainInfo(genesisHash, true);
-  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', my: '6px', px: '10px', width: '100%' }}>
       <Grid alignItems='center' container item sx={{ alignItems: 'center', columnGap: '4px', width: 'fit-content' }}>
-        <AssetLogo assetSize='24px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
+        <Logo assetSize='24px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
         <Typography color='text.primary' textTransform='uppercase' variant='B-3'>
           {token}
         </Typography>

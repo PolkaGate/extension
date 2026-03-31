@@ -6,7 +6,7 @@ import type { Variant } from '@mui/material/styles/createTypography';
 import { Stack, Typography } from '@mui/material';
 import React from 'react';
 
-import { ChainLogo, ShortAddress } from '../../../../../components';
+import { Logo, ShortAddress } from '../../../../../components';
 import { useAccountName, useTranslation } from '../../../../../hooks';
 import PolkaGateIdenticon from '../../../../../style/PolkaGateIdenticon';
 import { toTitleCase } from '../../../../../util/string';
@@ -22,7 +22,7 @@ function TransferAll({ genesisHash, to }: Props): React.ReactElement<Props> {
 
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start'>
-      <ChainLogo genesisHash={genesisHash} size={36} />
+      <Logo genesisHash={genesisHash} size={36} />
       <Stack alignItems='flex-start' direction='column'>
         <Typography color='#EAEBF1' sx={{ textWrapMode: 'noWrap' }} variant='B-2'>
           {t('Entire balance')}

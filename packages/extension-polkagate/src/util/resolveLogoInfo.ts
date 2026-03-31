@@ -25,24 +25,19 @@ export interface LogoInfo {
   subLogo?: string;
 }
 
-/**
- * Generate a deterministic color from a string.
- * @param input - The string to base the color on (e.g., dataUri)
- * @returns A CSS color string in HSL format
- */
+interface ResolveLogoInfoOptions {
+  externalLogo?: LogoInfo | undefined;
+}
+
 export function colorFromString(input: string): string {
   let hash = 0;
 
-  // Simple hash function
   for (let i = 0; i < input.length; i++) {
     hash = input.charCodeAt(i) + ((hash << 5) - hash);
-    hash |= 0; // convert to 32bit integer
+    hash |= 0;
   }
 
-  // Map hash to hue [0-360]
-  const hue = Math.abs(hash) % 360;
-
-  return `hsl(${hue}, 100%, 50%)`;
+  return `hsl(${Math.abs(hash) % 360}, 100%, 50%)`;
 }
 
 function getEthereumLogos(lcInfo: string, token?: string): LogoInfo | undefined {
@@ -56,13 +51,9 @@ function getEthereumLogos(lcInfo: string, token?: string): LogoInfo | undefined 
   const svgString = ReactDOMServer.renderToStaticMarkup(
     React.createElement(iconComponent, { size: 40 })
   );
-  const base64 = btoa(svgString);
-  const dataUri = `data:image/svg+xml;base64,${base64}`;
+  const dataUri = `data:image/svg+xml;base64,${btoa(svgString)}`;
 
-  // Generate a color based on the dataUri
-  const color = colorFromString(dataUri);
-
-  return { color, logo: dataUri, logoSquare: dataUri };
+  return { color: colorFromString(dataUri), logo: dataUri, logoSquare: dataUri };
 }
 
 const ETHChainsWithEthLogo = ['ethereum', 'sepolia', 'goerli'];
@@ -82,7 +73,6 @@ function mayGetChainName(info: string | undefined | null): string | undefined {
   let chainNameFromGenesisHash = networkMap.get(info || '');
 
   if (!chainNameFromGenesisHash) {
-    // check if info  is a chain name and exists. in the map
     const entry = Array.from(networkMap.entries())
       .find(([, value]) => value.toLowerCase() === (info || '').toLowerCase());
 
@@ -93,11 +83,11 @@ function mayGetChainName(info: string | undefined | null): string | undefined {
 }
 
 function getTokenLogoOnMultiAssetChain(chainName: string | undefined, info: string | undefined, token: string): LogoInfo | undefined {
-  const assets = createAssets(); // to fetch assets list from multi-asset chains
+  const assets = createAssets();
   const chainAssets = assets[toCamelCase(sanitizeChainName(chainName) || '')];
   const found = chainAssets?.find(({ symbol }) => symbol.toUpperCase() === token.toUpperCase())?.ui;
   const subLogo = found?.subLogo && !isMigratedHub(info)
-    ? getLogo2(chainName)?.logo
+    ? resolveLogoInfo(chainName)?.logo
     : undefined;
 
   return found ? { ...found, subLogo } : undefined;
@@ -112,14 +102,20 @@ function getTokenLogoOnSingleAssetChain(iconName: string | undefined): LogoInfo 
 function getExternalLogo(iconName: string | undefined): LogoInfo | undefined {
   const maybeExternalLogo = Object
     .entries(externalLinks)
-    .find(([name]): React.ReactNode | null =>
-      name.toLowerCase() === iconName
-    );
+    .find(([name]): React.ReactNode | null => name.toLowerCase() === iconName);
 
   return iconName ? maybeExternalLogo?.[1]?.ui : undefined;
 }
 
-export default function getLogo2(info: string | undefined | null, token?: string): LogoInfo | undefined {
+export default function resolveLogoInfo(
+  info: string | undefined | null,
+  token?: string,
+  options?: ResolveLogoInfoOptions
+): LogoInfo | undefined {
+  if (options?.externalLogo) {
+    return options.externalLogo;
+  }
+
   if (!info) {
     return checkIfErc20(token);
   }
@@ -131,7 +127,6 @@ export default function getLogo2(info: string | undefined | null, token?: string
   }
 
   let chainNameFromGenesisHash;
-
   const _info = mapRelayToSystemGenesisIfMigrated(info);
 
   if (token) {
@@ -147,10 +142,10 @@ export default function getLogo2(info: string | undefined | null, token?: string
       return multiAssetLogo;
     }
 
-    const ERC20Logo = checkIfErc20(token);
+    const erc20Logo = checkIfErc20(token);
 
-    if (ERC20Logo) {
-      return ERC20Logo;
+    if (erc20Logo) {
+      return erc20Logo;
     }
 
     const relayGenesis = mapSystemToRelay(info, false);
@@ -162,7 +157,6 @@ export default function getLogo2(info: string | undefined | null, token?: string
 
   const chainName = chainNameFromGenesisHash || getChainName(_info) || _info;
   const iconName = sanitizeChainName(chainName)?.toLowerCase();
-
   const chainLogo = getTokenLogoOnSingleAssetChain(iconName);
 
   if (chainLogo) {

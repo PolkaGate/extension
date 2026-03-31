@@ -4,7 +4,7 @@
 import { Stack, Typography } from '@mui/material';
 import React, { type ChangeEvent, memo, useCallback } from 'react';
 
-import { ChainLogo, MySwitch } from '@polkadot/extension-polkagate/src/components';
+import { Logo, MySwitch } from '@polkadot/extension-polkagate/src/components';
 
 interface Props {
   checked: boolean;
@@ -23,7 +23,7 @@ function ChainToggle({ checked, genesis, onSelect, text }: Props) {
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between'>
       <Stack alignItems='center' direction='row' gap='8px'>
-        <ChainLogo genesisHash={genesis} size={24} />
+        <Logo genesisHash={genesis} size={24} />
         <Typography color={checked ? 'text.primary' : 'primary.main'} ml='8px' variant='B-1'>
           {text}
         </Typography>

@@ -12,7 +12,7 @@ import React, { useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { ChainLogo, DisplayBalance, FadeOnScroll, SignArea3 } from '../../components';
+import { Logo, DisplayBalance, FadeOnScroll, SignArea3 } from '../../components';
 import { useCanPayFeeAndDeposit, useChainInfo, useTranslation } from '../../hooks';
 import { UnableToPayFee } from '../../partials';
 import { PROXY_TYPE, type TransactionFlowStep } from '../../util/constants';
@@ -52,7 +52,7 @@ function DisplayValue({ balance, canPayFee, decimal, genesisHash, label, token }
         {canPayFee?.isAbleToPay === false && canPayFee?.warning &&
           <UnableToPayFee warningText={canPayFee.warning} />
         }
-        <ChainLogo genesisHash={genesisHash} size={18} />
+        <Logo genesisHash={genesisHash} size={18} />
         <DisplayBalance
           balance={balance}
           decimal={decimal}

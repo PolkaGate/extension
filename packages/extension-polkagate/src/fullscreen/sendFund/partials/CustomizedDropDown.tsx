@@ -6,9 +6,9 @@ import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/type
 import { Grid, Popover, Stack, styled, Typography } from '@mui/material';
 import React, { type CSSProperties, useCallback, useMemo, useRef } from 'react';
 
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
 
-import { AssetLogo } from '../../../components';
+import { Logo } from '../../../components';
 import { useIsHovered } from '../../../hooks';
 
 const DropContentContainer = styled(Grid,
@@ -42,7 +42,7 @@ function Row({ assetId, genesisHash, isSmall, setSelectedAsset, token }: RowProp
   const refContainer = useRef(null);
   const hovered = useIsHovered(refContainer);
 
-  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
   const onClick = useCallback(() => {
     setSelectedAsset(assetId);
@@ -53,7 +53,7 @@ function Row({ assetId, genesisHash, isSmall, setSelectedAsset, token }: RowProp
       alignItems='center' columnGap='5px' direction='row' justifyContent='space-between' onClick={onClick} ref={refContainer}
       sx={{ backgroundColor: hovered ? '#6743944D' : 'transparent', borderRadius: '8px', cursor: 'pointer', height: '40px', px: '5px', width: '100%' }}
     >
-      <AssetLogo assetSize={isSmall ? '18px' : '28px'} genesisHash={genesisHash} logo={logoInfo?.logo} token={token} />
+      <Logo assetSize={isSmall ? '18px' : '28px'} genesisHash={genesisHash} logo={logoInfo?.logo} token={token} />
       <Typography color={hovered ? '#FF4FB9' : '#EAEBF1'} sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }} variant={isSmall ? 'B-1' : 'B-2'}>
         {token}
       </Typography>

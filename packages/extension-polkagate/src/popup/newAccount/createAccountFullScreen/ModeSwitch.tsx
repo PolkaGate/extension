@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
-import { ChainLogo } from '@polkadot/extension-polkagate/src/components';
+import { Logo } from '@polkadot/extension-polkagate/src/components';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { DEFAULT_TYPE } from '@polkadot/extension-polkagate/src/util/defaultType';
 
@@ -47,7 +47,7 @@ export default function ModeSwitch({ accountType, isDefault, setAccountType }: P
         />
         <motion.div layout onClick={onModeSwitch} style={{ cursor: 'pointer', zIndex: 1 }}>
           <Grid item sx={{ alignItems: 'center', display: 'inline-flex', opacity: accountType === 'ethereum' ? 0.6 : 1, position: 'relative', px: '10px', py: '5px' }}>
-            <ChainLogo chainName={'polkadot'} size={19.8} />
+            <Logo chainName={'polkadot'} size={19.8} />
             <Typography pl='5px' variant='B-2'>
               {'Substrate'}
             </Typography>

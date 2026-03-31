@@ -8,7 +8,7 @@ import React, { useContext, useMemo } from 'react';
 
 import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountsAssetsContext, AssetNull } from '../../../components';
@@ -50,7 +50,7 @@ function AssetsBars(): React.ReactElement {
 
     const aggregatedAssets = Object.keys(groupedAssets).map((index) => {
       const assetSample = getMaxBalanceAsset(groupedAssets[index]);
-      const ui = getLogo2(assetSample?.genesisHash, assetSample?.token);
+      const ui = resolveLogoInfo(assetSample?.genesisHash, assetSample?.token);
       const assetPrice = pricesInCurrencies.prices[assetSample.priceId]?.value;
 
       const accumulatedBalancePerPriceId = groupedAssets[index].reduce((sum, { totalBalance }) => sum.add(new BN(totalBalance)), BN_ZERO);

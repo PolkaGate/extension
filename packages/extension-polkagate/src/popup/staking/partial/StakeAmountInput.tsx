@@ -4,12 +4,12 @@
 /* eslint-disable react/jsx-max-props-per-line */
 
 import type { BN } from '@polkadot/util';
-import type { LogoInfo } from '../../../util/getLogo2';
+import type { LogoInfo } from '../../../util/resolveLogoInfo';
 
 import { Collapse, Container, Grid, Stack, styled, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { AssetLogo, DisplayBalance, GradientDivider, TwoToneText } from '../../../components';
+import { Logo, DisplayBalance, GradientDivider, TwoToneText } from '../../../components';
 import { useIsExtensionPopup } from '../../../hooks';
 import { amountToHuman } from '../../../util';
 
@@ -128,7 +128,7 @@ const SubAmount = ({ amount, decimal, dividerStyle, genesisHash, isExtension, lo
         <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} variant='B-1'>
           {title}
         </Typography>
-        <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+        <Logo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} />
         <DisplayBalance
           balance={amount}
           decimal={decimal}

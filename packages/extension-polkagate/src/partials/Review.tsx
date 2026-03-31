@@ -14,14 +14,14 @@ import React, { memo, useMemo } from 'react';
 import { type BN, isBn, noop } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 
-import { AssetLogo, DisplayBalance, GradientDivider, Identity, MySkeleton, MyTooltip, SignArea3 } from '../components';
+import { Logo, DisplayBalance, GradientDivider, Identity, MySkeleton, MyTooltip, SignArea3 } from '../components';
 import RestakeRewardToggler from '../fullscreen/stake/new-pool/claimReward/partials/RestakeRewardToggler';
 import { RewardHeaderAmount } from '../fullscreen/stake/new-pool/claimReward/partials/Review';
 import { useChainInfo, useFormatted, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { PoolItem } from '../popup/staking/partial/PoolsTable';
 import { PolkaGateIdenticon } from '../style';
 import { toShortAddress } from '../util';
-import getLogo2 from '../util/getLogo2';
+import resolveLogoInfo from '../util/resolveLogoInfo';
 import UnableToPayFee from './UnableToPayFee';
 
 interface AccountBoxProps {
@@ -111,7 +111,7 @@ interface ContentItemProps extends Content {
 export const ContentItem = memo(function ContentItemMemo({ Icon, content, decimal, description, genesisHash, noDivider = false, title, token, warningText, withLogo }: ContentItemProps) {
   const isExtension = useIsExtensionPopup();
 
-  const logoInfo = useMemo(() => withLogo ? getLogo2(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
+  const logoInfo = useMemo(() => withLogo ? resolveLogoInfo(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
   const color = useMemo(() => isExtension ? 'text.highlight' : '#BEAAD8', [isExtension]);
 
   return (
@@ -131,7 +131,7 @@ export const ContentItem = memo(function ContentItemMemo({ Icon, content, decima
             <Icon color='#AA83DC' size={18} variant='Bulk' />
           }
           {withLogo &&
-            <AssetLogo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
+            <Logo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
           }
           {content
             ? isBn(content)

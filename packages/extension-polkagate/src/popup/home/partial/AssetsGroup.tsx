@@ -9,10 +9,10 @@ import { AvatarGroup, Container, Grid, useTheme } from '@mui/material';
 import { Wordpress } from 'better-react-spinkit';
 import React, { useCallback, useMemo } from 'react';
 
-import { AssetLogo } from '../../../components';
+import { Logo } from '../../../components';
 import { useAccountAssets, usePrices } from '../../../hooks';
 import { amountToHuman } from '../../../util';
-import getLogo2 from '../../../util/getLogo2';
+import resolveLogoInfo from '../../../util/resolveLogoInfo';
 import { getValue } from '../../account/util';
 
 const MAX_ASSETS_TO_SHOW = 4; // we're gonna display up to 2 assets if they were available!
@@ -67,12 +67,12 @@ function AssetsGroup({ address }: AssetsGroupProps): React.ReactElement {
         }}
       >
         {assetsToShow?.slice(0, MAX_ASSETS_TO_SHOW).map(({ genesisHash, token }, index) => (
-          <AssetLogo
+          <Logo
             assetSize='15px'
             baseTokenSize='8px'
             genesisHash={genesisHash}
             key={index}
-            logo={getLogo2(genesisHash, token)?.subLogo ?? getLogo2(genesisHash, token)?.logo}
+            logo={resolveLogoInfo(genesisHash, token)?.subLogo ?? resolveLogoInfo(genesisHash, token)?.logo}
             subLogo={undefined}
           />
         ))}

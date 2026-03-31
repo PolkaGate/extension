@@ -6,9 +6,9 @@ import type { AssetsWithUiAndPrice } from './types';
 import { Container, LinearProgress, linearProgressClasses, Stack, styled, Typography } from '@mui/material';
 import React, { useContext, useRef } from 'react';
 
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
 
-import { AssetLogo, CurrencyContext, FadeOnScroll, FormatPrice } from '../../../components';
+import { CurrencyContext, FadeOnScroll, FormatPrice, Logo } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { normalizePercent, truncateToMaxYDecimals } from './helpers';
 
@@ -69,12 +69,12 @@ function AssetsRows({ assets }: { assets: AssetsWithUiAndPrice[] }): React.React
       </Stack>
       <Container disableGutters ref={refContainer} sx={{ maxHeight: 'calc(100vh - 515px)', minHeight: '255px', overflowY: 'auto' }}>
         {assets.map(({ genesisHash, percent, price, token, totalBalance, ui }, index) => {
-          const logoInfo = getLogo2(genesisHash, token);
+          const logoInfo = resolveLogoInfo(genesisHash, token);
 
           return (
             <Stack alignItems='center' direction='row' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '47px', my: '4px', px: '10px' }}>
               <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' width={`${WIDTHS[1]}%`}>
-                <AssetLogo assetSize='18px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} token={token} />
+                <Logo assetSize='18px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} token={token} />
                 <Typography
                   sx={{
                     fontSize: 'clamp(10px, 1.2vw, 14px)',

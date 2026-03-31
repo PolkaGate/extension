@@ -11,9 +11,9 @@ import { QRCode } from 'react-qrcode-logo';
 
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
 
-import { ChainLogo, NeonButton, SearchField, Transition } from '../../components';
+import { Logo, NeonButton, SearchField, Transition } from '../../components';
 import MySnackbar from '../../components/MySnackbar';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useFormatted, useGenesisHashOptions, useSelectedAccount, useTranslation } from '../../hooks';
@@ -59,7 +59,7 @@ function AddressComponent({ address, chain }: AddressComponentProp) {
     <>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
         <Grid alignItems='center' columnGap='8px' container item pl='10px' width='fit-content'>
-          <ChainLogo chainName={chainName} size={18} />
+          <Logo chainName={chainName} size={18} />
           <Typography color='text.secondary' variant='B-4'>
             {toShortAddress(address, 12)}
           </Typography>
@@ -135,7 +135,7 @@ function SelectNetwork({ isEthereum, setSelectedChain }: SelectChainProp) {
               <React.Fragment key={index}>
                 <ListItem container item onClick={handleChainSelect(chain)}>
                   <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-                    <ChainLogo chainName={chainName} size={18} />
+                    <Logo chainName={chainName} size={18} />
                     <Typography color='text.primary' variant='B-2'>
                       {chainName}
                     </Typography>
@@ -172,7 +172,7 @@ function QrCode({ address, onBackToAccount, selectedChain, setSelectedChain }: Q
   const chainLogo = useMemo(() => {
     const chainName = sanitizeChainName(selectedChain?.text)?.toLowerCase();
 
-    return getLogo2(chainName);
+    return resolveLogoInfo(chainName);
   }, [selectedChain?.text]);
 
   const onBack = useCallback(() => setSelectedChain(undefined), [setSelectedChain]);
@@ -184,7 +184,7 @@ function QrCode({ address, onBackToAccount, selectedChain, setSelectedChain }: Q
           onClick={onBack}
         />
         <Grid alignItems='center' columnGap='8px' container item width='fit-content'>
-          <ChainLogo chainName={selectedChain.text} size={24} />
+          <Logo chainName={selectedChain.text} size={24} />
           <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
             {t('Your Address')}
           </Typography>

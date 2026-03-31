@@ -8,7 +8,7 @@ import React from 'react';
 
 import { mapHubToRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
-import { ChainLogo } from '../../../components/index';
+import { Logo } from '../../../components/index';
 
 interface Props {
   selectedPosition: PositionInfo | undefined;
@@ -35,7 +35,7 @@ function Title({ selectedPosition }: Props): React.ReactElement {
           {selectedPosition?.tokenSymbol}
         </Typography>
         <span style={{ marginBottom: '5px' }}>
-          <ChainLogo genesisHash={genesisHash} size={24} />
+          <Logo genesisHash={genesisHash} size={24} />
         </span>
         <Typography color='text.primary' sx={{ ml: '2px' }} textTransform='uppercase' variant='H-3'>
           {'tokens per year'}

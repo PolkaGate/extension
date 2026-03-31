@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { ChainLogo, DisplayBalance, GradientButton } from '../../components';
+import { Logo, DisplayBalance, GradientButton } from '../../components';
 import { useTranslation } from '../../hooks';
 import { SelectionStatus } from '../stake/partials/FooterControls';
 import ProxyList from './components/ProxyList';
@@ -132,7 +132,7 @@ export default function Manage({ api, chain, decimal, depositedValue, isDisabled
           <Typography color='#AA83DC' variant='B-1'>
             {t('Deposit')}
           </Typography>
-          <ChainLogo genesisHash={chain?.genesisHash} size={18} />
+          <Logo genesisHash={chain?.genesisHash} size={18} />
           <DisplayBalance
             balance={proxyItems === undefined ? undefined : depositedValue ?? newDepositValue ?? BN_ZERO}
             decimal={decimal}

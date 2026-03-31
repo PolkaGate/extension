@@ -12,7 +12,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { CHAINS_WITH_BLACK_LOGO } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { sanitizeChainName } from '../util';
-import getLogo from '../util/getLogo';
+import resolveLogoInfo from '../util/resolveLogoInfo';
 import Label from './Label';
 
 interface Props {
@@ -171,7 +171,7 @@ function CustomizedSelect({ _mt = 0, defaultValue, disabledItems, fullWidthDropd
                 </Grid>
                 {showLogo && text !== 'Allow use on any chain' &&
                   <Grid alignItems='center' container item pl='15px' width='fit-content'>
-                    {<Avatar src={getLogo(chainName(text))} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(text) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 29, width: 29 }} variant='square' />}
+                    {<Avatar src={resolveLogoInfo(chainName(text))?.logo} sx={{ filter: (CHAINS_WITH_BLACK_LOGO.includes(text) && theme.palette.mode === 'dark') ? 'invert(1)' : '', borderRadius: '50%', height: 29, width: 29 }} variant='square' />}
                   </Grid>
                 }
               </Grid>

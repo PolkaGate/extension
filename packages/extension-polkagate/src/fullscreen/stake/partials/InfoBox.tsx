@@ -9,10 +9,10 @@ import React, { type ReactNode, useMemo } from 'react';
 import { type BN, isBn } from '@polkadot/util';
 
 import { ShowValue } from '../../../components';
-import AssetLogo from '../../../components/AssetLogo';
+import Logo from '../../../components/Logo';
 import { useChainInfo, useIsExtensionPopup } from '../../../hooks';
 import { amountToHuman } from '../../../util';
-import getLogo2 from '../../../util/getLogo2';
+import resolveLogoInfo from '../../../util/resolveLogoInfo';
 
 interface InfoBoxProps {
   value: number | string | BN | undefined;
@@ -28,7 +28,7 @@ export const InfoBox = ({ Amount, InfoIcon, decimal, genesisHash, label, style, 
   const { token } = useChainInfo(genesisHash, true);
   const isExtension = useIsExtensionPopup();
 
-  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
   return (
     <Box sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', p: '17px 24px', pr: '15px', rowGap: isExtension ? '6px' : 0, width: '154px', ...style }}>
@@ -39,7 +39,7 @@ export const InfoBox = ({ Amount, InfoIcon, decimal, genesisHash, label, style, 
         }
         {
           logoInfo &&
-          <AssetLogo assetSize='24px' genesisHash={genesisHash} logo={logoInfo.logo} subLogo={undefined} token={token} />
+          <Logo assetSize='24px' genesisHash={genesisHash} logo={logoInfo.logo} subLogo={undefined} token={token} />
         }
         {Amount}
         <Typography color='text.primary' fontFamily='OdibeeSans' variant='H-2'>
