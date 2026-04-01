@@ -11,18 +11,23 @@ const ENDPOINTS_NAME_IN_STORAGE = 'endpoints2';
 type SavedEndpoints = Record<string, EndpointType>;
 type Listener = (genesisHash: string, endpoint: EndpointType | undefined) => void;
 
+function areEndpointsEqual(a?: EndpointType, b?: EndpointType): boolean {
+  return a?.checkForNewOne === b?.checkForNewOne &&
+    a?.endpoint === b?.endpoint &&
+    a?.isAuto === b?.isAuto &&
+    a?.timestamp === b?.timestamp;
+}
+
 export default class EndpointManager {
   // Store endpoints and listeners
   private endpoints: SavedEndpoints = {};
   private listeners = new Set<Listener>();
 
   constructor() {
-    // Load endpoints from storage and set up storage change listener
     this.loadFromStorage();
     chrome.storage.onChanged.addListener(this.handleStorageChange);
   }
 
-  // Load endpoints from chrome storage
   private loadFromStorage() {
     chrome.storage.local.get(ENDPOINTS_NAME_IN_STORAGE, (result: { [ENDPOINTS_NAME_IN_STORAGE]?: SavedEndpoints }) => {
       if (result[ENDPOINTS_NAME_IN_STORAGE]) {
@@ -32,7 +37,6 @@ export default class EndpointManager {
     });
   }
 
-  // Save endpoints to chrome storage
   private saveToStorage() {
     try {
       chrome.storage.local.set({ [ENDPOINTS_NAME_IN_STORAGE]: this.endpoints }).catch(console.error);
@@ -41,12 +45,11 @@ export default class EndpointManager {
     }
   }
 
-  // Handle changes in chrome storage
   private handleStorageChange = (changes: Record<string, chrome.storage.StorageChange>, areaName: string) => {
     if (areaName === 'local' && changes[ENDPOINTS_NAME_IN_STORAGE]) {
-      const previousEndpoints = this.endpoints;
+      const previousEndpoints = (changes[ENDPOINTS_NAME_IN_STORAGE].oldValue ?? {}) as SavedEndpoints;
 
-      this.endpoints = changes[ENDPOINTS_NAME_IN_STORAGE].newValue as SavedEndpoints;
+      this.endpoints = (changes[ENDPOINTS_NAME_IN_STORAGE].newValue ?? {}) as SavedEndpoints;
 
       const changedGenesisHashes = new Set([
         ...Object.keys(previousEndpoints || {}),
@@ -57,14 +60,13 @@ export default class EndpointManager {
         const previousEndpoint = previousEndpoints?.[genesisHash];
         const nextEndpoint = this.endpoints?.[genesisHash];
 
-        if (previousEndpoint !== nextEndpoint) {
+        if (!areEndpointsEqual(previousEndpoint, nextEndpoint)) {
           this.listeners.forEach((listener) => listener(genesisHash, nextEndpoint));
         }
       });
     }
   };
 
-  // Notify all listeners about endpoint changes
   private notifyListeners() {
     Object.entries(this.endpoints).forEach(([genesisHash, endpointInfo]) => {
       this.listeners.forEach((listener) => listener(genesisHash, endpointInfo));
@@ -81,7 +83,6 @@ export default class EndpointManager {
     return this.endpoints;
   }
 
-  // Set a specific endpoint
   set(genesisHash: string, endpoint: EndpointType) {
     if (!this.endpoints[genesisHash]) {
       this.endpoints[genesisHash] = {} as EndpointType;
@@ -102,7 +103,6 @@ export default class EndpointManager {
     this.listeners.forEach((listener) => listener(genesisHash, undefined));
   }
 
-  // Check if an endpoint should be in auto mode
   shouldBeOnAutoMode(endpoint: EndpointType) {
     return endpoint.isAuto && (Date.now() - (endpoint.timestamp ?? 0) > ENDPOINT_TIMEOUT);
   }
