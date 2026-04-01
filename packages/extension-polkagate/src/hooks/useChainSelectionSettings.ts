@@ -52,9 +52,11 @@ export default function useChainSelectionSettings(): UseChainSelectionSettings {
     const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
 
     getStorage(STORAGE_KEY.SELECTED_CHAINS).then((res) => {
-      (res as string[])?.length
-        ? setInitialChains(new Set(res as string[]))
-        : setInitialChains(new Set(defaultSelectedGenesisHashes));
+      if (Array.isArray(res)) {
+        setInitialChains(new Set(res as string[]));
+      } else {
+        setInitialChains(new Set(defaultSelectedGenesisHashes));
+      }
     }).catch(console.error);
   }, []);
 
@@ -102,7 +104,7 @@ export default function useChainSelectionSettings(): UseChainSelectionSettings {
   }, [handleChainsChanges]);
 
   useEffect(() => {
-    initialChains.size && setSelectedChains(initialChains);
+    setSelectedChains(initialChains);
   }, [initialChains]);
 
   const setChainSelection = useCallback((value: string, checked?: boolean) => {
