@@ -127,11 +127,21 @@ export default function useEndpointsSetting(genesisHash: string | undefined, isE
       return;
     }
 
-    const checkForNewOne = Boolean((maybeNewEndpoint || AUTO_MODE.value) === AUTO_MODE.value && endpointManager.get(genesisHash)?.isAuto);
+    const resolvedEndpoint = resolvedIsOnAuto
+      ? AUTO_MODE.value
+      : maybeNewEndpoint;
+
+    if (!resolvedEndpoint) {
+      onClose?.();
+
+      return;
+    }
+
+    const checkForNewOne = Boolean(resolvedEndpoint === AUTO_MODE.value && endpointManager.get(genesisHash)?.isAuto);
 
     endpointManager.set(genesisHash, {
       checkForNewOne,
-      endpoint: maybeNewEndpoint || AUTO_MODE.value,
+      endpoint: resolvedEndpoint,
       isAuto: resolvedIsOnAuto,
       timestamp: Date.now()
     });
@@ -222,8 +232,12 @@ export default function useEndpointsSetting(genesisHash: string | undefined, isE
       return;
     }
 
+    if (resolvedIsOnAuto && !preferredManualEndpoint) {
+      return;
+    }
+
     dispatch({ payload: preferredManualEndpoint, type: 'TOGGLE_AUTO' });
-  }, [mayBeEnabled, preferredManualEndpoint]);
+  }, [mayBeEnabled, preferredManualEndpoint, resolvedIsOnAuto]);
 
   const onEnableNetwork = useCallback((_event: React.ChangeEvent<HTMLInputElement>, _checked: boolean): void => {
     dispatch({ type: 'SET_ENABLED' });
