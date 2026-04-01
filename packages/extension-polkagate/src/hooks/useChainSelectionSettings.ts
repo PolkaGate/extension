@@ -28,6 +28,7 @@ export default function useChainSelectionSettings(): UseChainSelectionSettings {
   const [selectedChains, setSelectedChains] = useState<Set<string>>(new Set());
   const [initialChains, setInitialChains] = useState<Set<string>>(new Set());
   const selectedChainsRef = useRef(selectedChains);
+  const assetsWriteQueueRef = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
     selectedChainsRef.current = selectedChains;
@@ -61,19 +62,22 @@ export default function useChainSelectionSettings(): UseChainSelectionSettings {
   }, []);
 
   const updateSavedAssetsInStorage = useCallback((chains: Set<string>) => {
-    getStorage(STORAGE_KEY.ASSETS, true).then((info) => {
-      const assets = info as SavedAssets | undefined;
+    assetsWriteQueueRef.current = assetsWriteQueueRef.current
+      .then(async() => {
+        const info = await getStorage(STORAGE_KEY.ASSETS, true);
+        const assets = info as SavedAssets | undefined;
 
-      assets?.balances && Object.keys(assets.balances).forEach((addresses) => {
-        Object.keys(assets.balances[addresses]).forEach((genesisHash) => {
-          if (!chains.has(genesisHash)) {
-            assets.balances[addresses][genesisHash] && delete assets.balances[addresses][genesisHash];
-          }
+        assets?.balances && Object.keys(assets.balances).forEach((addresses) => {
+          Object.keys(assets.balances[addresses]).forEach((genesisHash) => {
+            if (!chains.has(genesisHash)) {
+              assets.balances[addresses][genesisHash] && delete assets.balances[addresses][genesisHash];
+            }
+          });
         });
-      });
 
-      setStorage(STORAGE_KEY.ASSETS, assets, true).catch(console.error);
-    }).catch(console.error);
+        await setStorage(STORAGE_KEY.ASSETS, assets, true);
+      })
+      .catch(console.error);
   }, []);
 
   const handleChainsChanges = useCallback((chains: Set<string>) => {
