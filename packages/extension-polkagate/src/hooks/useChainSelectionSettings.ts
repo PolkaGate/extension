@@ -107,25 +107,24 @@ export default function useChainSelectionSettings(): UseChainSelectionSettings {
 
   const setChainSelection = useCallback((value: string, checked?: boolean) => {
     const isSelected = checked ?? !selectedChainsRef.current.has(value);
+    const updatedChains = new Set(selectedChainsRef.current);
 
-    setSelectedChains((prevChains) => {
-      const updatedChains = new Set(prevChains);
+    if (isSelected) {
+      updatedChains.add(value);
+    } else {
+      updatedChains.delete(value);
+    }
 
-      if (isSelected) {
-        updatedChains.add(value);
-      } else {
-        updatedChains.delete(value);
-      }
-
-      return updatedChains;
-    });
+    selectedChainsRef.current = updatedChains;
+    handleChainsChanges(updatedChains);
+    setSelectedChains(updatedChains);
 
     if (isSelected) {
       enableChainEndpoint(value);
     } else {
       disableChainEndpoint(value);
     }
-  }, [disableChainEndpoint, enableChainEndpoint]);
+  }, [disableChainEndpoint, enableChainEndpoint, handleChainsChanges]);
 
   const onSearch = useCallback((keyword: string) => {
     if (!keyword) {
