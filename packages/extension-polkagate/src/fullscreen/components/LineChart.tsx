@@ -101,24 +101,36 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, logo,
   const [selectedRange, setSelectedRange] = useState<number>(7);
 
   useEffect(() => {
+    let cancelled = false;
+
     if (!logo) {
       setLogoImage(null);
 
       return;
     }
 
+    setLogoImage(null);
+
     const img = new Image();
 
     img.onload = () => {
-      setLogoImage(img);
+      if (!cancelled) {
+        setLogoImage(img);
+      }
     };
+
     img.onerror = () => {
-      setLogoImage(null);
+      if (!cancelled) {
+        setLogoImage(null);
+      }
     };
+
     img.src = logo;
 
     return () => {
-      setLogoImage(null);
+      cancelled = true;
+      img.onload = null;
+      img.onerror = null;
     };
   }, [logo]);
 
@@ -303,9 +315,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, logo,
       return;
     }
 
-    if (logoImage) {
-      chart.update();
-    }
+    chart.update();
   }, [logoImage]);
 
   useEffect(() => {
