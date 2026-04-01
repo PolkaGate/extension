@@ -12,6 +12,7 @@ import { resolveChainLogoInfo } from './chain';
 import { erc20Assets, ETHChainsWithEthLogo, substrateAssets } from './constants';
 import { getEthereumLogos } from './ethereum';
 import { mayGetChainName } from './helpers';
+import { getNativeTokenLogo } from './native';
 
 function checkIfErc20(token?: string): LogoInfo | undefined {
   if (token) {
@@ -22,6 +23,12 @@ function checkIfErc20(token?: string): LogoInfo | undefined {
 }
 
 function getTokenOnlyLogo(token?: string): LogoInfo | undefined {
+  const nativeLogo = getNativeTokenLogo(token);
+
+  if (nativeLogo) {
+    return { logo: nativeLogo, logoSquare: nativeLogo };
+  }
+
   return checkIfErc20(token);
 }
 

@@ -4,7 +4,6 @@
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Box } from '@mui/material';
-import { assetsDotSVG, assetsKsmSVG, assetsPasSVG, assetsWndSVG } from '@polkagate/apps-config/ui/logos/assets/index.js';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { logoWhiteTransparent } from '../assets/logos';
@@ -12,17 +11,11 @@ import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { useIsDark } from '../hooks';
 import { convertToCamelCase, sanitizeChainName } from '../util';
 import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
+import { getNativeTokenLogo } from '../util/logo/native';
 import resolveLogoInfo, { resolveTokenLogoInfo } from '../util/logo/resolveLogoInfo';
 import { GenesisHashOptionsContext } from './contexts';
 
 type LogoVariant = 'single' | 'dual';
-
-const NATIVE_TOKEN_LOGOS: Record<string, string> = {
-  DOT: assetsDotSVG,
-  KSM: assetsKsmSVG,
-  PAS: assetsPasSVG,
-  WND: assetsWndSVG
-};
 
 interface Props {
   assetSize?: number | string;
@@ -223,7 +216,7 @@ function Logo({
     () => token ? resolveTokenLogoInfo(logoInfoKey, token) : resolveLogoInfo(logoInfoKey),
     [logoInfoKey, token]
   );
-  const nativeTokenLogo = token ? NATIVE_TOKEN_LOGOS[token.toUpperCase()] : undefined;
+  const nativeTokenLogo = getNativeTokenLogo(token);
   const effectiveSize = assetSize ?? size;
   const shouldUseNativeTokenLogo = Boolean(
     token &&

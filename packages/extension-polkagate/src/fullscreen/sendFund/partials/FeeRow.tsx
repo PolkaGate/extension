@@ -7,13 +7,13 @@ import type { CanPayFee } from '../../../util/types';
 import type { FeeInfo, Inputs } from '../types';
 
 import { Box, ClickAwayListener, Stack, Typography } from '@mui/material';
-import { assetsDotSVG, assetsKsmSVG, assetsPasSVG, assetsWndSVG } from '@polkagate/apps-config/ui/logos/assets/index.js';
 import { deepEqual, type TAssetInfo } from '@paraspell/sdk-pjs';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { encodeLocation } from '@polkadot/extension-polkagate/src/util';
+import { getNativeTokenLogo } from '@polkadot/extension-polkagate/src/util/logo/native';
 import resolveLogoInfo, { resolveTokenLogoInfo } from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 import { BN } from '@polkadot/util';
 
@@ -23,13 +23,6 @@ import usePartialFee from '../usePartialFee';
 import usePayWithAsset from '../usePayWithAsset';
 import CustomizedDropDown from './CustomizedDropDown';
 import OpenerButton from './OpenerButton';
-
-const NATIVE_DESTINATION_TOKEN_LOGOS: Record<string, string> = {
-  DOT: assetsDotSVG,
-  KSM: assetsKsmSVG,
-  PAS: assetsPasSVG,
-  WND: assetsWndSVG
-};
 
 interface Props {
   address: string | undefined;
@@ -161,9 +154,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs, transa
     , [feeInfo.destinationFee?.token, inputs.recipientChain?.text]);
 
   const destinationFeeLogo = useMemo(() => {
-    const tokenLogo = feeInfo.destinationFee?.token
-      ? NATIVE_DESTINATION_TOKEN_LOGOS[feeInfo.destinationFee.token.toUpperCase()]
-      : undefined;
+    const tokenLogo = getNativeTokenLogo(feeInfo.destinationFee?.token);
 
     return tokenLogo ?? maybeDestinationChainFeeLogoInfo?.logo;
   }, [feeInfo.destinationFee?.token, maybeDestinationChainFeeLogoInfo?.logo]);
