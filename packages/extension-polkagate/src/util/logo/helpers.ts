@@ -11,7 +11,7 @@ export function colorFromString(input: string): string {
     hash |= 0;
   }
 
-  return `hsl(${Math.abs(hash) % 360}, 100%, 50%)`;
+  return `hsl(${(hash >>> 0) % 360}, 100%, 50%)`;
 }
 
 export function normalizeToWordKey(input: string | undefined): string {
