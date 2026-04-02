@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util';
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 import { BN, noop } from '@polkadot/util';
 
 import { ActionButton, Logo, DisplayBalance, Motion, MyTextField } from '../../components';

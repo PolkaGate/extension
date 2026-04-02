@@ -8,7 +8,7 @@ import React, { Fragment, useCallback, useMemo, useRef } from 'react';
 
 import { Logo, DisplayBalance, FadeOnScroll, GlowCheckbox, GradientDivider, Identity, MySkeleton, NoInfoYet } from '../../../../components';
 import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../../hooks';
-import resolveLogoInfo from '../../../../util/resolveLogoInfo';
+import resolveLogoInfo from '../../../../util/logo/resolveLogoInfo';
 import { timeDiffSummary } from './timeDiffSummary';
 
 const SKELETON_HEIGHT = 24;

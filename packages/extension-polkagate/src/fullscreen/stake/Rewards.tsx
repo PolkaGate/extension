@@ -13,7 +13,7 @@ import { Bar } from 'react-chartjs-2';
 import { Logo, DisplayBalance, Identity, Motion } from '../../components';
 import NoInfoYet from '../../components/NoInfoYet';
 import { useChainInfo, useTranslation } from '../../hooks';
-import resolveLogoInfo from '../../util/resolveLogoInfo';
+import resolveLogoInfo from '../../util/logo/resolveLogoInfo';
 import RewardConfigureButton from './new-solo/components/RewardConfigureButton';
 import { type PopupOpener, StakingPopUps } from './util/utils';
 import RewardsLoading from './RewardsLoading';

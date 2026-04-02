@@ -8,7 +8,7 @@ import { ClickAwayListener, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import useUpdateAccountSelectedAsset from '@polkadot/extension-polkagate/src/hooks/useUpdateAccountSelectedAsset';
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 import { noop } from '@polkadot/util';
 
 import { Logo } from '../../../components';

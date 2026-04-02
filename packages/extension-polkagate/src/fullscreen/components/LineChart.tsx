@@ -29,6 +29,7 @@ interface PricePoint {
 
 interface TokenChartProps {
   coinId: string; // e.g., 'bitcoin'
+  logo?: string;
   vsCurrency?: string; // e.g., 'usd'
   onClose: React.Dispatch<React.SetStateAction<string | undefined>>;
   intervalSec?: number; // update interval
@@ -89,14 +90,49 @@ const gradientFillPlugin: Plugin<'line'> = {
   id: 'gradientFillPlugin'
 };
 
-const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClose, vsCurrency = 'usd' }) => {
+const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, logo, onClose, vsCurrency = 'usd' }) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const chartRef = useRef<ChartJS<'line'>>(null);
   const { notify } = useAlerts();
 
+  const [logoImage, setLogoImage] = useState<HTMLImageElement | null>(null);
   const [priceData, setPriceData] = useState<PricePoint[]>([]);
   const [selectedRange, setSelectedRange] = useState<number>(7);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!logo) {
+      setLogoImage(null);
+
+      return;
+    }
+
+    setLogoImage(null);
+
+    const img = new Image();
+
+    img.onload = () => {
+      if (!cancelled) {
+        setLogoImage(img);
+      }
+    };
+
+    img.onerror = () => {
+      if (!cancelled) {
+        setLogoImage(null);
+      }
+    };
+
+    img.src = logo;
+
+    return () => {
+      cancelled = true;
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [logo]);
 
   const fetchPriceData = useCallback(async() => {
     try {
@@ -183,6 +219,37 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
     labels: priceData.map((p) => new Date(p.time))
   }), [priceData]);
 
+  const logoWatermarkPlugin = React.useMemo<Plugin<'line'>>(() => ({
+    beforeDatasetDraw(chart) {
+      const { chartArea, ctx } = chart;
+
+      if (!chartArea || !logoImage) {
+        return;
+      }
+
+      const { bottom, left, right, top } = chartArea;
+      const chartWidth = right - left;
+      const chartHeight = bottom - top;
+
+      if (chartWidth < 120 || chartHeight < 120) {
+        return;
+      }
+
+      const imageSize = Math.min(chartWidth, chartHeight) * 0.36;
+      const x = left + (chartWidth - imageSize) / 2;
+      const y = top + (chartHeight - imageSize) / 2;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(left, top, chartWidth, chartHeight);
+      ctx.clip();
+      ctx.globalAlpha = theme.palette.mode === 'dark' ? 0.1 : 0.075;
+      ctx.drawImage(logoImage, x, y, imageSize, imageSize);
+      ctx.restore();
+    },
+    id: 'logoWatermarkPlugin'
+  }), [logoImage, theme.palette.mode]);
+
   const options: ChartOptions<'line'> = {
     interaction: { intersect: false, mode: 'nearest' },
     plugins: {
@@ -244,6 +311,16 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
   useEffect(() => {
     const chart = chartRef.current;
 
+    if (!chart) {
+      return;
+    }
+
+    chart.update();
+  }, [logoImage]);
+
+  useEffect(() => {
+    const chart = chartRef.current;
+
     if (!chart || priceData.length === 0) {
       return;
     }
@@ -287,7 +364,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, onClo
             <SineWaveLoader height={300} width={637} />
           )
           : (
-            <Line data={chartData} options={options} plugins={[gradientFillPlugin]} ref={chartRef} />
+            <Line data={chartData} options={options} plugins={[logoWatermarkPlugin, gradientFillPlugin]} ref={chartRef} />
           )}
         <ToggleButtonGroup
           aria-label='Time range'

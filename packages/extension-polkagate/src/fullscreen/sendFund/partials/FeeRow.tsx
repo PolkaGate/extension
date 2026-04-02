@@ -13,7 +13,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { encodeLocation } from '@polkadot/extension-polkagate/src/util';
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import { getNativeTokenLogo } from '@polkadot/extension-polkagate/src/util/logo/native';
+import resolveLogoInfo, { resolveTokenLogoInfo } from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 import { BN } from '@polkadot/util';
 
 import { DisplayBalance, Logo } from '../../../components';
@@ -143,14 +144,20 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs, transa
   }, [feeInfo, setInputs]);
 
   const feeLogoInfo = useMemo(() =>
-    resolveLogoInfo(genesisHash, feeInfo.token)
+    feeInfo.token ? resolveTokenLogoInfo(genesisHash, feeInfo.token) : resolveLogoInfo(genesisHash)
     , [feeInfo.token, genesisHash]);
 
   const maybeDestinationChainFeeLogoInfo = useMemo(() =>
-    inputs.recipientChain?.text && feeInfo.destinationFee?.token
-      ? resolveLogoInfo(inputs.recipientChain?.text, feeInfo.destinationFee.token)
+    feeInfo.destinationFee?.token
+      ? resolveTokenLogoInfo(undefined, feeInfo.destinationFee.token) ?? resolveTokenLogoInfo(inputs.recipientChain?.text, feeInfo.destinationFee.token)
       : undefined
     , [feeInfo.destinationFee?.token, inputs.recipientChain?.text]);
+
+  const destinationFeeLogo = useMemo(() => {
+    const tokenLogo = getNativeTokenLogo(feeInfo.destinationFee?.token);
+
+    return tokenLogo ?? maybeDestinationChainFeeLogoInfo?.logo;
+  }, [feeInfo.destinationFee?.token, maybeDestinationChainFeeLogoInfo?.logo]);
 
   useEffect(() => {
     if (!feeInfo?.fee || !transferableBalance || inputs.transferType !== 'All') {
@@ -258,7 +265,8 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs, transa
               <Logo
                 assetSize='18px'
                 chainName={inputs.recipientChain?.text}
-                logo={maybeDestinationChainFeeLogoInfo?.logo}
+                logo={destinationFeeLogo}
+                subLogo={maybeDestinationChainFeeLogoInfo?.subLogo}
                 token={feeInfo.destinationFee?.token}
               />
             </Stack>

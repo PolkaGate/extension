@@ -27,10 +27,11 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
 
   const isFetching = useRef<Record<string, boolean>>({});
   const { displayName } = useChainInfo(genesisHash);
-  const { endpoint, isAuto } = useEndpoint(genesisHash);
+  const { endpoint, isAuto } = useEndpoint(genesisHash, undefined, isEnabled);
 
   const { dispatch,
     filteredEndpoints,
+    isEndpointSelectionDisabled,
     isOnAuto,
     mayBeEnabled,
     maybeNewEndpoint,
@@ -82,6 +83,7 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
             <MySwitch
               checked={isOnAuto}
               columnGap='8px'
+              disabled={isEndpointSelectionDisabled}
               label={t('Auto Node Selection')}
               onChange={onToggleAuto}
               style={{ alignItems: 'center', backgroundColor: '#05091C', borderRadius: '18px', height: '52px', justifyContent: 'flex-start', margin: '8px 0', padding: '0 15px', width: '100%' }}
@@ -91,6 +93,7 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
               <EndpointRow
                 checked={maybeNewEndpoint === value}
                 delay={delay}
+                disabled={isEndpointSelectionDisabled}
                 isFirst={index === 0}
                 isLast={index === filteredEndpoints.length - 1}
                 key={index}

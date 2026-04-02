@@ -8,7 +8,7 @@ import React, { useContext, useMemo } from 'react';
 
 import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountsAssetsContext, AssetNull } from '../../../components';

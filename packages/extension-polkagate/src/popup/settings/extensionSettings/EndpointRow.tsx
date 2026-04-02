@@ -12,13 +12,14 @@ interface EndpointRowProps {
   isFirst: boolean;
   isLast: boolean;
   checked: boolean;
+  disabled?: boolean;
   name: string;
   value: string;
   delay: number | null | undefined;
   onChangeEndpoint: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-function EndpointRow({ checked, delay, isFirst, isLast, name, onChangeEndpoint, value }: EndpointRowProps): React.ReactElement {
+function EndpointRow({ checked, delay, disabled = false, isFirst, isLast, name, onChangeEndpoint, value }: EndpointRowProps): React.ReactElement {
   const { t } = useTranslation();
 
   return (
@@ -35,6 +36,7 @@ function EndpointRow({ checked, delay, isFirst, isLast, name, onChangeEndpoint, 
           columnGap='5px'
           label={name}
           onChange={onChangeEndpoint}
+          props={{ disabled }}
           value={value}
         />
         <DotIndicator delay={delay} />

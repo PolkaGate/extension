@@ -7,7 +7,7 @@ import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
 import DailyChange from '@polkadot/extension-polkagate/src/popup/home/partial/DailyChange';
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import { Logo, CurrencyContext } from '../../../components';
 

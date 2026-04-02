@@ -14,7 +14,7 @@ import NftManager from '@polkadot/extension-polkagate/src/class/nftManager';
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/resolveLogoInfo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 import { BN_ZERO } from '@polkadot/util';
 
 import { Logo, CurrencyContext, FormatPrice, Identity, MySkeleton } from '../../components';

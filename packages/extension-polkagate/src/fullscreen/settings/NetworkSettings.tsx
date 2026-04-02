@@ -1,23 +1,19 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
-
 import { ChevronRight } from '@mui/icons-material';
 import { Grid, Stack, Typography } from '@mui/material';
 import { Add } from 'iconsax-react';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { type SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import VelvetBox from '@polkadot/extension-polkagate/src/style/VelvetBox';
-import { ExtensionPopups, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
-import { DEFAULT_SELECTED_CHAINS } from '@polkadot/extension-polkagate/src/util/defaultSelectedChains';
+import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { Logo, Motion, MySwitch, SearchField } from '../../components';
-import { useGenesisHashOptions, useTranslation } from '../../hooks';
-import { getStorage, setStorage } from '../../util';
+import { useTranslation } from '../../hooks';
+import useChainSelectionSettings from '../../hooks/useChainSelectionSettings';
 import Endpoints from './partials/Endpoints';
 import AddNewNetwork from './AddNewNetwork';
 
@@ -94,106 +90,14 @@ function AddButton(): React.ReactElement {
 
 function NetworkSettings(): React.ReactElement {
   const { t } = useTranslation();
-  const allChains = useGenesisHashOptions();
-
-  const [searchedChain, setSearchedChain] = useState<DropdownOption[]>();
-  const [selectedChains, setSelectedChains] = useState<Set<string>>(new Set());
-  const [initialChains, setInitialChains] = useState<Set<string>>(new Set());
+  const { chainsToList, onSearch, selectedChains, setChainSelection } = useChainSelectionSettings();
   const [chainToShowEndpoints, setShowEndpoints] = useState<string>();
-
-  const selectedChainsRef = useRef(selectedChains);
-
-  useEffect(() => {
-    // Update the ref whenever selectedChains changes
-    selectedChainsRef.current = selectedChains;
-  }, [selectedChains]);
-
-  const sortedChainsToShow = useMemo(() => [...allChains].sort((a, b) => {
-    const aInSet = initialChains.has(a.value as string);
-    const bInSet = initialChains.has(b.value as string);
-
-    if (aInSet && !bInSet) {
-      return -1; // Move 'a' before 'b'
-    } else if (!aInSet && bInSet) {
-      return 1; // Move 'b' before 'a'
-    } else {
-      return 0; // Keep the original order
-    }
-  }), [allChains, initialChains]);
-
-  useEffect(() => {
-    const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
-
-    getStorage(STORAGE_KEY.SELECTED_CHAINS).then((res) => {
-      (res as string[])?.length
-        ? setInitialChains(new Set(res as string[]))
-        : setInitialChains(new Set(defaultSelectedGenesisHashes));
-    }).catch(console.error);
-  }, [allChains]);
-
-  const updateSavedAssetsInStorage = useCallback(() => {
-    getStorage(STORAGE_KEY.ASSETS, true).then((info) => {
-      const assets = info as SavedAssets | undefined;
-
-      assets?.balances && Object.keys(assets.balances).forEach((addresses) => {
-        Object.keys(assets.balances[addresses]).forEach((genesisHash) => {
-          if (!selectedChains.has(genesisHash)) {
-            assets.balances[addresses][genesisHash] && delete assets.balances[addresses][genesisHash];
-          }
-        });
-      });
-      setStorage(STORAGE_KEY.ASSETS, assets, true).catch(console.error);
-    }).catch(console.error);
-  }, [selectedChains]);
-
-  const handleChainsChanges = useCallback((chains: Set<string>) => {
-    setStorage(STORAGE_KEY.SELECTED_CHAINS, [...chains]).catch(console.error);
-    updateSavedAssetsInStorage();
-  }, [updateSavedAssetsInStorage]);
-
-  useEffect(() => {
-    // Apply chain changes function that runs on unmount
-    return () => {
-      console.log('apply chain changes function that runs on unmount');
-      handleChainsChanges(selectedChainsRef.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    initialChains?.size && setSelectedChains(initialChains);
-  }, [initialChains]);
-
-  const applyChainSelect = useCallback((value: string, checked: boolean) => {
-    setSelectedChains((prevChains) => {
-      const updatedChains = new Set(prevChains);
-
-      if (checked) {
-        updatedChains.add(value);
-      } else {
-        updatedChains.delete(value);
-      }
-
-      return updatedChains;
-    });
-  }, []);
 
   const onChainSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     const value = event.target.value;
 
-    applyChainSelect(value, checked);
-  }, [applyChainSelect]);
-
-  const onSearch = useCallback((keyword: string) => {
-    if (!keyword) {
-      return setSearchedChain(undefined);
-    }
-
-    keyword = keyword.trim().toLowerCase();
-    const _filtered = allChains.filter(({ text }) => text.toLowerCase().includes(keyword));
-
-    setSearchedChain([..._filtered]);
-  }, [allChains]);
+    setChainSelection(value, checked);
+  }, [setChainSelection]);
 
   const chainEndpoints = useCallback((genesisHash: string) => {
     return () => setShowEndpoints(genesisHash);
@@ -202,8 +106,6 @@ function NetworkSettings(): React.ReactElement {
   const onCloseEndpoints = useCallback(() => {
     setShowEndpoints(undefined);
   }, []);
-
-  const chainsToList = useMemo(() => searchedChain ?? sortedChainsToShow, [searchedChain, sortedChainsToShow]);
 
   return (
     <Motion variant='slide'>
@@ -245,7 +147,7 @@ function NetworkSettings(): React.ReactElement {
             genesisHash={chainToShowEndpoints}
             isEnabled={selectedChains.has(chainToShowEndpoints)}
             onClose={onCloseEndpoints}
-            onEnableChain={applyChainSelect}
+            onEnableChain={setChainSelection}
             open={Boolean(chainToShowEndpoints)}
           />
         }

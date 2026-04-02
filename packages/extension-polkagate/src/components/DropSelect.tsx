@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIsDark } from '../hooks';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
-import resolveLogoInfo from '../util/resolveLogoInfo';
+import resolveLogoInfo from '../util/logo/resolveLogoInfo';
 import { DropContent, ScrollingTextBox } from '.';
 
 const DropSelectContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'focused' })(({ disabled, focused }: { disabled: boolean | undefined, focused: boolean }) => ({

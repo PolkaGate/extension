@@ -15,7 +15,7 @@ import { ScrollingTextBox } from '../../../components';
 import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import StakeAmountInput from '../../../popup/staking/partial/StakeAmountInput';
 import { EXTENSION_NAME } from '../../../util/constants';
-import resolveLogoInfo from '../../../util/resolveLogoInfo';
+import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
 
 interface StakingTypeOptionBoxProps {

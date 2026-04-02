@@ -15,7 +15,7 @@ import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, usePrices, useTokenPrice, useTranslation } from '../../../hooks';
 import { GlowBox } from '../../../style';
 import { GlowBall } from '../../../style/VelvetBox';
-import resolveLogoInfo from '../../../util/resolveLogoInfo';
+import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import PortfolioActionButton, { type PortfolioActionButtonProps } from './PortfolioActionButton';
 
 const StakedToken = ({ genesisHash, isFullScreen, token }: { genesisHash: string; isFullScreen: boolean; token: string | undefined; }) => {

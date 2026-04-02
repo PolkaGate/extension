@@ -13,7 +13,7 @@ import { DisplayBalance, FormatPrice, Logo } from '../../../components';
 import { usePrices } from '../../../hooks';
 import DailyChange from '../../../popup/home/partial/DailyChange';
 import { GlowBox } from '../../../style';
-import resolveLogoInfo from '../../../util/resolveLogoInfo';
+import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import Explorer from '../Explorer';
 
 interface Props {

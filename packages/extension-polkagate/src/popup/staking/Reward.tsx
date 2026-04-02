@@ -13,7 +13,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Logo, BackWithLabel, DisplayBalance, FadeOnScroll, Identity, Motion, NoInfoYet, Progress } from '../../components';
 import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewardsChart, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
-import resolveLogoInfo from '../../util/resolveLogoInfo';
+import resolveLogoInfo from '../../util/logo/resolveLogoInfo';
 import StakingMenu from './partial/StakingMenu';
 
 interface RewardChartHeaderProps {

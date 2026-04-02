@@ -12,7 +12,7 @@ import React, { useCallback, useMemo } from 'react';
 import { Logo } from '../../../components';
 import { useAccountAssets, usePrices } from '../../../hooks';
 import { amountToHuman } from '../../../util';
-import resolveLogoInfo from '../../../util/resolveLogoInfo';
+import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import { getValue } from '../../account/util';
 
 const MAX_ASSETS_TO_SHOW = 4; // we're gonna display up to 2 assets if they were available!
