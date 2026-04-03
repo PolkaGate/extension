@@ -59,9 +59,10 @@ export default function useGenesisHashOptions({ isEthereum = false, withRelay = 
   }, [isEthereum]);
 
   return useMemo(() => {
-    const testnetFilteredChains = isTestnetEnabled
-      ? chains
-      : chains.filter(({ isTestnet }) => !isTestnet);
+    const testnetFilteredChains =
+      isTestnetEnabled
+        ? chains
+        : chains.filter(({ isTestnet }) => !isTestnet);
 
     const protocolFilteredChains =
       isEthereum
