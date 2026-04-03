@@ -82,11 +82,10 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
 
     const _options = externalOptions ?? allChains.filter(({ value }) => initialChainsGenesisHashes.includes(String(value)));
 
-    return _options.map((o) => {
-      o.value = String(o.value);
-
-      return o;
-    });
+    return _options.map((o) => ({
+      ...o,
+      value: String(o.value)
+    }));
   }, [allChains, externalOptions, initialChainsGenesisHashes]);
   const onItemClick = useCallback((chain: DropdownOption) => {
     setMayBeSelected(chain);

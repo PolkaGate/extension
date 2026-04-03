@@ -88,7 +88,7 @@ export default function useGenesisHashOptions({ isEthereum = false, withRelay = 
       return assetHubFirstChains.map((chain) => ({
         ...chain,
         text: chain.text.includes(ASSET_HUB)
-          ? chain.text.replace(ASSET_HUB, '')
+          ? chain.text.replace(ASSET_HUB, '').trim()
           : chain.text
       }));
     }
