@@ -32,8 +32,14 @@ function getMetadataChains(chainType: ChainType): Promise<MetadataOption[]> {
           .map((metadata) => ({ text: metadata.chain, value: metadata.genesisHash }));
 
         metadataCacheByType[chainType] = options;
+        delete metadataRequestByType[chainType];
 
         return options;
+      })
+      .catch((error) => {
+        delete metadataRequestByType[chainType];
+
+        throw error;
       });
   }
 
