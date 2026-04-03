@@ -941,5 +941,6 @@
   "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "在 CoinGecko 上查找您的代币。价格 ID 可在此获取：{{web}}[price-id]",
   "Myself": "我自己",
   "Remove all access": "移除所有访问权限",
-  "This will remove access for all authenticated websites. Are you sure you want to continue?": "这将移除所有已认证网站的访问权限。您确定要继续吗？"
+  "This will remove access for all authenticated websites. Are you sure you want to continue?": "这将移除所有已认证网站的访问权限。您确定要继续吗？",
+  "Select Networks": "选择网络"
 }
