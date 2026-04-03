@@ -11,8 +11,9 @@ import chains from '../util/chains';
 import { useIsTestnetEnabled } from '.';
 
 const RELAY_CHAIN = 'Relay Chain';
+const ASSET_HUB = 'Asset Hub';
 
-export default function useGenesisHashOptions(isEthereum = false): DropdownOption[] {
+export default function useGenesisHashOptions({ isEthereum = false, withRelay = true }: { isEthereum?: boolean; withRelay?: boolean }): DropdownOption[] {
   const metadataCache = useRef<{ text: string; value: HexString }[] | null>(null);
   const isTestnetEnabled = useIsTestnetEnabled();
 
@@ -70,6 +71,23 @@ export default function useGenesisHashOptions(isEthereum = false): DropdownOptio
         .sort((a, b) => a.text.localeCompare(b.text))
     ];
 
+    if (!withRelay) {
+      const filteredRelay = allChains.filter(({ text }) => !text.includes(RELAY_CHAIN));
+
+      const temp = [
+        ...filteredRelay.filter(({ text }) => text.includes(ASSET_HUB)),
+        ...filteredRelay.filter(({ text }) => !text.includes(ASSET_HUB))
+      ];
+
+    return temp.map((hub) => {
+          if (hub.text.includes(ASSET_HUB)) {
+            hub.text = hub.text.replace(ASSET_HUB, '');
+          }
+
+          return hub;
+        });
+    }
+
     return allChains;
-  }, [isEthereum, isTestnetEnabled, metadataChains]);
+  }, [isEthereum, isTestnetEnabled, metadataChains, withRelay]);
 }

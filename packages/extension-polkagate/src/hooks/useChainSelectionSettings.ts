@@ -22,7 +22,7 @@ interface UseChainSelectionSettings {
 const endpointManager = new EndpointManager();
 
 export default function useChainSelectionSettings(): UseChainSelectionSettings {
-  const allChains = useGenesisHashOptions();
+  const allChains = useGenesisHashOptions({});
 
   const [searchedChain, setSearchedChain] = useState<DropdownOption[]>();
   const [selectedChains, setSelectedChains] = useState<Set<string>>(new Set());

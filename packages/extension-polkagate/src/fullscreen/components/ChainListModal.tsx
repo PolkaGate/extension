@@ -1,25 +1,23 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-/* eslint-disable react/jsx-first-prop-new-line */
-
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Container, Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { Container } from '@mui/material';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import useUpdateAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useUpdateAccountSelectedChain';
-import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { STAKING_CHAINS } from '@polkadot/extension-polkagate/src/util/constants';
 import { isMigratedHub, isMigratedRelay, mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
-import { Logo, GlowCheck, GradientButton, SearchField } from '../../components';
+import { GradientButton } from '../../components';
 import { useGenesisHashOptions, useSelectedAccount, useSelectedChains, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import { toTitleCase } from '../../util';
+import ChainPickerList from './ChainPickerList';
 import { DraggableModal } from './DraggableModal';
 
 interface ChooseAccountMenuProps {
@@ -36,17 +34,14 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
   const selectedChains = useSelectedChains();
   const selectedAccount = useSelectedAccount();
   const isSelectedAccountEthereum = isEthereumAddress(selectedAccount?.address);
-  const allChains = useGenesisHashOptions(isSelectedAccountEthereum);
+  const allChains = useGenesisHashOptions({ isEthereum: isSelectedAccountEthereum });
   const selectedAccountChain = useAccountSelectedChain(selectedAccount?.address);
-  const refContainer = useRef<HTMLDivElement>(null);
 
   const [maybeSelected, setMayBeSelected] = useState<DropdownOption>();
   const [appliedGenesis, setAppliedGenesis] = useState<DropdownOption>();
-  const [searchKeyword, setSearchKeyword] = useState<string>();
 
   const _handleClose = useCallback(() => {
     setMayBeSelected(undefined);
-    setSearchKeyword(undefined);
     setAppliedGenesis(undefined);
     handleClose();
   }, [handleClose]);
@@ -68,10 +63,6 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
     selectedAccount && setAppliedGenesis(maybeSelected);
   }, [setSelectedChain, maybeSelected, selectedAccount, _handleClose]);
 
-  const onSearch = useCallback((keyword: string) => {
-    setSearchKeyword(keyword);
-  }, []);
-
   const initialChainsGenesisHashes = useMemo(() => {
     if (pathname?.includes('stake')) {
       return STAKING_CHAINS;
@@ -89,25 +80,16 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
       return [];
     }
 
-    return externalOptions ?? allChains.filter(({ value }) => initialChainsGenesisHashes.includes(String(value)));
+    const _options = externalOptions ?? allChains.filter(({ value }) => initialChainsGenesisHashes.includes(String(value)));
+
+    return _options.map((o) => {
+      o.value = String(o.value);
+
+      return o;
+    });
   }, [allChains, externalOptions, initialChainsGenesisHashes]);
-
-  const filteredChainsToList = useMemo(() => {
-    if (!chainsOptions) {
-      return [];
-    }
-
-    if (!searchKeyword) {
-      return chainsOptions;
-    }
-
-    const keyword = searchKeyword.trim().toLowerCase();
-
-    return chainsOptions.filter(({ text }) => text.toLowerCase().includes(keyword));
-  }, [searchKeyword, chainsOptions]);
-
-  const onItemClick = useCallback((text: string, value: string) => () => {
-    setMayBeSelected({ text, value });
+  const onItemClick = useCallback((chain: DropdownOption) => {
+    setMayBeSelected(chain);
   }, []);
 
   return (
@@ -120,42 +102,29 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
       title={t('Select network')}
     >
       <Container disableGutters sx={{ display: 'block', height: '505px', mt: '10px', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
-        <SearchField
-          focused
-          onInputChange={onSearch}
-          placeholder={t('🔍 Search networks')}
-        />
         <VelvetBox style={{ margin: '5px 0 15px' }}>
-          <Stack ref={refContainer} style={{ gap: '4px', maxHeight: '388px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
-            {filteredChainsToList.map(({ text, value }, index) => {
+          <ChainPickerList
+            // eslint-disable-next-line react/jsx-no-bind
+            getLabel={({ text, value }) => {
               const normalizedChainName = isMigratedHub(String(value)) ? text.replace('Asset Hub', '') : text.replace('Relay Chain', '');
 
-              return (
-                <Grid alignItems='center' container item justifyContent='space-between' key={index}
-                  onClick={onItemClick(text, String(value))}
-                  onDoubleClick={onApply}
-                  sx={{ '&:hover': { bgcolor: '#6743944D' }, borderRadius: '12px', cursor: 'pointer', p: '10px 7px' }}
-                >
-                  <Stack alignItems='center' direction='row'>
-                    <Logo chainName={text} genesisHash={value as string} size={24} />
-                    <Typography color='#EAEBF1' ml='8px' sx={{ userSelect: 'none' }} variant='B-1'>
-                      {toTitleCase(normalizedChainName)}
-                    </Typography>
-                  </Stack>
-                  <GlowCheck
-                    show={maybeSelected?.value === value || maybeSelected?.text === text || (!maybeSelected && selectedAccountChain === value)}
-                    size='24px'
-                    timeout={100}
-                  />
-                </Grid>
-              );
-            })}
-            <NothingFound
-              show={filteredChainsToList.length === 0}
-              style={{ pt: '80px' }}
-              text={t('Network Not Found')}
-            />
-          </Stack>
+              return toTitleCase(normalizedChainName) ?? t('Unknown');
+            }}
+            itemTextColor='#EAEBF1'
+            itemTextVariant='B-1'
+            logoSize={24}
+            maxHeight='388px'
+            maybeSelectedText={maybeSelected?.text}
+            minHeight='88px'
+            nothingFoundStyle={{ paddingTop: '80px' }}
+            onDoubleClick={onApply}
+            onSelect={onItemClick}
+            options={chainsOptions}
+            searchPlaceholder={t('🔍 Search networks')}
+            selectedValue={(maybeSelected?.value?.toString() ?? selectedAccountChain) as string | undefined}
+            showSelectedCheck
+            showTopPadding
+          />
         </VelvetBox>
         <GradientButton
           contentPlacement='center'

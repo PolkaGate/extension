@@ -74,11 +74,11 @@ const Staked = ({ balance, decimal, price, token }: StakedProps) => {
 };
 
 export const ChainIdentifier = ({ genesisHash }: TokenInfoProps) => {
-  const { displayName } = useChainInfo(genesisHash, true);
+  const { chainName, displayName } = useChainInfo(genesisHash, true);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '6px', m: 0, minWidth: '200px', width: 'fit-content' }}>
-      <Logo genesisHash={genesisHash} size={24} />
+      <Logo chainName={chainName} size={24} />
       <Typography color='text.secondary' variant='B-2'>
         {displayName}
       </Typography>

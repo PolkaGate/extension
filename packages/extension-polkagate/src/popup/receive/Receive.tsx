@@ -84,7 +84,7 @@ interface SelectChainProp {
 
 function SelectNetwork({ isEthereum, setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
-  const allChains = useGenesisHashOptions(isEthereum);
+  const allChains = useGenesisHashOptions({ isEthereum, withRelay: false });
 
   const customSort = useCallback((itemA: DropdownOption, itemB: DropdownOption) => {
     const hasRelay = (str: string) => str.toLowerCase().includes('relay');

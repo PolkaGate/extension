@@ -52,8 +52,8 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
                 key={`${genesisHash}_${token}_pool`}
                 price={price}
                 token={token}
-                type='pool'
                 totalPositions={totalPositions}
+                type='pool'
               />}
             {soloTotal && !soloTotal?.isZero() && ['both', 'solo'].includes(state.stakingType) &&
               <PositionItem
@@ -64,8 +64,8 @@ const PositionOptions = ({ isSelected, positionItems, pricesInCurrency, state }:
                 key={`${genesisHash}_${token}_solo`}
                 price={price}
                 token={token}
-                type='solo'
                 totalPositions={totalPositions}
+                type='solo'
               />}
           </Fragment>
         );

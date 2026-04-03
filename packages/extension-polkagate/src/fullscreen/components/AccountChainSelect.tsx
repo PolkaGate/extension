@@ -4,12 +4,11 @@
 /* eslint-disable react/jsx-first-prop-new-line */
 
 import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useAccounts, useSelectedAccount, useUpdateSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
+import { useAccounts, useChainInfo, useSelectedAccount, useUpdateSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 
 import { Logo, ScrollingTextBox } from '../../components';
@@ -80,6 +79,7 @@ function ChainSwitcher({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () => 
   const { genesisHash: maybeGenesisFromPath } = useParams<{ genesisHash: string }>();
   const savedGenesis = useAccountSelectedChain(selectedAccount?.address);
   const genesisHash = maybeGenesisFromPath ?? savedGenesis;
+  const { chainName } = useChainInfo(genesisHash, true);
 
   return (
     <Box onClick={onClick(MODAL_TO_OPEN.CHAINS)}
@@ -95,7 +95,7 @@ function ChainSwitcher({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () => 
       }}
     >
       <Logo
-        genesisHash={genesisHash ?? POLKADOT_GENESIS}
+        chainName={chainName}
         size={20}
       />
     </Box>
