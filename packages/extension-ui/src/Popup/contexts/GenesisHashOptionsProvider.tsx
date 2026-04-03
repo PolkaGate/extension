@@ -7,7 +7,7 @@ import { GenesisHashOptionsContext } from '@polkadot/extension-polkagate/src/com
 import useGenesisHashOptions from '@polkadot/extension-polkagate/src/hooks/useGenesisHashOptions';
 
 export default function GenesisHashOptionsProvider({ children }: { children: React.ReactNode }) {
-  const genesisHashOptionsCtx = useGenesisHashOptions();
+  const genesisHashOptionsCtx = useGenesisHashOptions({});
 
   return (
     <GenesisHashOptionsContext.Provider value={genesisHashOptionsCtx}>

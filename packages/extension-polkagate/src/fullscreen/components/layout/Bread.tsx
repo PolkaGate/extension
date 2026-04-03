@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { ArrowCircleRight2, Home3, ImportCurve, Money3 } from 'iconsax-react';
+import { Home3, ImportCurve, Money3 } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -47,7 +47,7 @@ function Breadcrumbs(): React.ReactElement {
       { check: (path: string) => ['restore', 'attach', 'import'].some((keyword) => path.includes(keyword)), icon: ImportCurve, label: t('Import account'), redirect: '/account/have-wallet' },
       { check: (path: string) => path.includes('/historyfs'), icon: Money3, label: t('Account'), redirect },
       { check: (path: string) => path.includes('/proxyManagement'), icon: Money3, label: t('Account'), redirect },
-      { check: (path: string) => path.includes('/send'), icon: ArrowCircleRight2, label: t('Send') },
+      { check: (path: string) => path.includes('/send'), icon: Money3, label: t('Account'), redirect },
       { check: (path: string) => path.includes('/nft'), icon: Money3, label: t('Account'), redirect },
       { check: (path: string) => path.includes('/solo'), icon: Money3, label: t('Account'), redirect },
       { check: (path: string) => path.includes('/pool'), icon: Money3, label: t('Account'), redirect }

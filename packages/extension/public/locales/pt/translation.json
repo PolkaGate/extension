@@ -941,5 +941,6 @@
   "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "Encontre seu token no CoinGecko. O ID de preço está disponível em: {{web}}[price-id]",
   "Myself": "Eu mesmo",
   "Remove all access": "Remover todo o acesso",
-  "This will remove access for all authenticated websites. Are you sure you want to continue?": "Isso removerá o acesso de todos os sites autenticados. Tem certeza de que deseja continuar?"
+  "This will remove access for all authenticated websites. Are you sure you want to continue?": "Isso removerá o acesso de todos os sites autenticados. Tem certeza de que deseja continuar?",
+  "Select Networks": "Selecionar redes"
 }

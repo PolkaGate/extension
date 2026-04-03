@@ -159,13 +159,13 @@ function NotificationSettingsFS({ handleClose }: Props) {
       case Popups.GOVERNANCE:
         return {
           onClose: closePopup,
-          title: t('Select Chains')
+          title: t('Select Networks')
         };
 
       case Popups.STAKING_REWARDS:
         return {
           onClose: closePopup,
-          title: t('Select Chains')
+          title: t('Select Networks')
         };
 
       default:

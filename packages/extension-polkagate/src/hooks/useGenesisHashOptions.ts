@@ -4,72 +4,117 @@
 import type { HexString } from '@polkadot/util/types';
 import type { DropdownOption } from '../util/types';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { getAllMetadata } from '../messaging';
 import chains from '../util/chains';
 import { useIsTestnetEnabled } from '.';
 
 const RELAY_CHAIN = 'Relay Chain';
+const ASSET_HUB = 'Asset Hub';
 
-export default function useGenesisHashOptions(isEthereum = false): DropdownOption[] {
-  const metadataCache = useRef<{ text: string; value: HexString }[] | null>(null);
-  const isTestnetEnabled = useIsTestnetEnabled();
+interface MetadataOption { text: string; value: HexString }
+type ChainType = 'ethereum' | 'substrate';
 
-  const [metadataChains, setMetadataChains] = useState<{ text: string; value: HexString }[]>([]);
+const metadataCacheByType: Partial<Record<ChainType, MetadataOption[]>> = {};
+const metadataRequestByType: Partial<Record<ChainType, Promise<MetadataOption[]>>> = {};
 
-  useEffect(() => {
-    if (!metadataCache.current) {
-      getAllMetadata().then((metadataDefs) => {
-        const res = metadataDefs
-          .filter(({ chainType }) => isEthereum ? chainType === 'ethereum' : chainType === 'substrate')
+function getMetadataChains(chainType: ChainType): Promise<MetadataOption[]> {
+  if (metadataCacheByType[chainType]) {
+    return Promise.resolve(metadataCacheByType[chainType] ?? []);
+  }
+
+  if (!metadataRequestByType[chainType]) {
+    metadataRequestByType[chainType] = getAllMetadata()
+      .then((metadataDefs) => {
+        const options = metadataDefs
+          .filter((metadata) => metadata.chainType === chainType)
           .map((metadata) => ({ text: metadata.chain, value: metadata.genesisHash }));
 
-        metadataCache.current = res;
-        setMetadataChains(res);
-      }).catch(console.error);
-    } else {
-      setMetadataChains(metadataCache.current);
-    }
+        metadataCacheByType[chainType] = options;
+        delete metadataRequestByType[chainType];
+
+        return options;
+      })
+      .catch((error) => {
+        delete metadataRequestByType[chainType];
+
+        throw error;
+      });
+  }
+
+  return metadataRequestByType[chainType] ?? Promise.resolve([]);
+}
+
+export default function useGenesisHashOptions({ isEthereum = false, withRelay = true }: { isEthereum?: boolean; withRelay?: boolean }): DropdownOption[] {
+  const isTestnetEnabled = useIsTestnetEnabled();
+  const [metadataChains, setMetadataChains] = useState<MetadataOption[]>([]);
+
+  useEffect(() => {
+    const chainType: ChainType = isEthereum ? 'ethereum' : 'substrate';
+    let isCancelled = false;
+
+    setMetadataChains([]);
+
+    getMetadataChains(chainType)
+      .then((chains) => {
+        if (!isCancelled) {
+          setMetadataChains(chains);
+        }
+      })
+      .catch((error) => {
+        if (!isCancelled) {
+          console.error(error);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
   }, [isEthereum]);
 
   return useMemo(() => {
-    const testNetFiltered = isTestnetEnabled
-      ? chains
-      : chains.filter(({ isTestnet }) => !isTestnet);
+    const testnetFilteredChains =
+      isTestnetEnabled
+        ? chains
+        : chains.filter(({ isTestnet }) => !isTestnet);
 
-    const evmFiltered =
+    const protocolFilteredChains =
       isEthereum
-        ? testNetFiltered.filter((chain) => chain.isEthereum === isEthereum)
-        : testNetFiltered;
+        ? testnetFilteredChains.filter((chain) => chain.isEthereum)
+        : testnetFilteredChains;
+
+    const knownGenesisHashes = new Set(chains.map(({ genesisHash }) => genesisHash));
+    const metadataOnlyChains = metadataChains.filter(({ value }) => !knownGenesisHashes.has(value));
+    const relayChains = protocolFilteredChains
+      .filter(({ chain }) => chain.includes(RELAY_CHAIN))
+      .map(({ chain, genesisHash }) => ({ text: chain, value: genesisHash }));
+    const nonRelayChains = protocolFilteredChains
+      .filter(({ chain }) => !chain.includes(RELAY_CHAIN))
+      .map(({ chain, genesisHash }) => ({ text: chain, value: genesisHash }))
+      .concat(metadataOnlyChains)
+      .sort((a, b) => a.text.localeCompare(b.text));
 
     const allChains = [
-      // put the relay chains at the top
-      ...evmFiltered.filter(({ chain }) => chain.includes(RELAY_CHAIN))
-        .map(({ chain, genesisHash }) => ({
-          text: chain,
-          value: genesisHash
-        })),
-      ...evmFiltered.map(({ chain, genesisHash }) => ({
-        text: chain,
-        value: genesisHash
-      }))
-        // remove the relay chains, they are at the top already
-        .filter(({ text }) => !text.includes(RELAY_CHAIN))
-        // remove the migrated hub system chains, we address them by ecosystem chain
-        // .filter(({ value }) => !isMigratedHub(value))
-        .concat(
-          // get any chain present in the metadata and not already part of chains
-          ...metadataChains.filter(
-            ({ value }) => {
-              return !chains.find(({ genesisHash }) => genesisHash === value);
-            }
-          )
-        )
-        // filter testnets if it is not enabled by user
-        .sort((a, b) => a.text.localeCompare(b.text))
+      ...relayChains,
+      ...nonRelayChains
     ];
 
+    if (!withRelay) {
+      const nonRelayChainsOnly = allChains.filter(({ text }) => !text.includes(RELAY_CHAIN));
+      const assetHubFirstChains = [
+        ...nonRelayChainsOnly.filter(({ text }) => text.includes(ASSET_HUB)),
+        ...nonRelayChainsOnly.filter(({ text }) => !text.includes(ASSET_HUB))
+      ];
+
+      return assetHubFirstChains.map((chain) => ({
+        ...chain,
+        text: chain.text.includes(ASSET_HUB)
+          ? chain.text.replace(ASSET_HUB, '').trim()
+          : chain.text
+      }));
+    }
+
     return allChains;
-  }, [isEthereum, isTestnetEnabled, metadataChains]);
+  }, [isEthereum, isTestnetEnabled, metadataChains, withRelay]);
 }

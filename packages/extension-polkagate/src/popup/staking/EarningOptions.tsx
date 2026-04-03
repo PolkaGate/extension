@@ -83,7 +83,7 @@ export default function EarningOptions(): React.ReactElement {
           <VelvetBox style={{ margin: '0 4%', minHeight: '63px', width: '92%' }}>
             <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '15px', width: '100%' }}>
               {earningItems?.map((token, index) => {
-                const { availableBalance, chainName, decimal, freeBalance, genesisHash, tokenSymbol } = token;
+                const { availableBalance, chainName, decimal, freeBalance, tokenSymbol } = token;
                 const relayChainName = (extractRelayChainName(chainName) ?? chainName).toLowerCase();
                 const info = { ...token, rate: rates?.[relayChainName] || 0 } as PositionInfo;
 
@@ -106,7 +106,7 @@ export default function EarningOptions(): React.ReactElement {
                     }}
                   >
                     <Stack alignItems='center' direction='row' justifyContent='start'>
-                      <Logo genesisHash={genesisHash} size={36} />
+                      <Logo chainName={chainName} size={36} />
                       <Stack alignItems='start' direction='column' sx={{ ml: '10px' }}>
                         <Typography sx={{ mt: '-7px' }} variant='B-2'>
                           {tokenSymbol}

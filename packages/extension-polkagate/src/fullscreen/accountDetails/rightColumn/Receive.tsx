@@ -4,19 +4,19 @@
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 
-import { Grid, Grow, Stack, styled, Typography } from '@mui/material';
+import { Grid, Grow, Stack, Typography } from '@mui/material';
 import { DocumentCopy } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
 
-import { Address2, Logo, DecisionButtons, GradientDivider, MySnackbar, SearchField } from '@polkadot/extension-polkagate/src/components/index';
+import { Address2, DecisionButtons, Logo, MySnackbar } from '@polkadot/extension-polkagate/src/components/index';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
-import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import { sanitizeChainName, toShortAddress } from '@polkadot/extension-polkagate/src/util';
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { useFormatted, useGenesisHashOptions, useSelectedAccount, useTranslation } from '../../../hooks';
+import ChainPickerList from '../../components/ChainPickerList';
 import { DraggableModal } from '../../components/DraggableModal';
 
 interface Props {
@@ -30,83 +30,6 @@ interface AddressComponentProp {
   address: string | undefined;
   chainName: string | undefined;
   onCopy: () => void;
-}
-
-const ListItem = styled(Grid)(() => ({
-  '&:hover': {
-    backgroundColor: '#6743944D'
-  },
-  alignItems: 'center',
-  borderRadius: '12px',
-  cursor: 'pointer',
-  height: '40px',
-  justifyContent: 'space-between',
-  transition: 'all 250ms ease-out'
-}));
-
-interface SelectChainProp {
-  setSelectedChain: React.Dispatch<React.SetStateAction<DropdownOption | undefined>>;
-  isEthereum: boolean;
-}
-
-function SelectChain({ isEthereum, setSelectedChain }: SelectChainProp) {
-  const { t } = useTranslation();
-  const allChains = useGenesisHashOptions(isEthereum);
-
-  const [keyword, setSearchKeyword] = useState<string>();
-
-  const onSearch = useCallback((keyword: string) => {
-    setSearchKeyword(keyword);
-  }, []);
-
-  const chainsToShow = useMemo(() => {
-    if (!keyword) {
-      return allChains;
-    }
-
-    const _keyword = keyword.trim().toLowerCase();
-
-    return allChains.filter(({ text }) => text.toLowerCase().includes(_keyword));
-  }, [allChains, keyword]);
-
-  return (
-    <Grid container item justifyContent='center'>
-      <Grid container item>
-        <SearchField
-          focused
-          onInputChange={onSearch}
-          placeholder={t('🔍 Search networks')}
-        />
-      </Grid>
-      <Grid container item sx={{ display: 'block', maxHeight: '395px', minHeight: '395px', my: '10px', overflowY: 'auto' }}>
-        {chainsToShow.map((chain, index) => {
-          const chainName = chain.text;
-
-          return (
-            <React.Fragment key={index}>
-              <ListItem container item key={index} onClick={() => setSelectedChain(chain)}>
-                <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-                  <Logo chainName={chainName} size={18} />
-                  <Typography color='text.primary' variant='B-2'>
-                    {chainName}
-                  </Typography>
-                </Grid>
-              </ListItem>
-              {
-                index !== chainsToShow.length - 1 &&
-                <GradientDivider style={{ my: '3px' }} />
-              }
-            </React.Fragment>
-          );
-        })}
-        <NothingFound
-          show={chainsToShow.length === 0}
-          style={{ pb: '60px' }}
-          text={t('Network Not Found')}
-        />
-      </Grid>
-    </Grid>
-  );
 }
 
 function AddressComponent({ address, chainName, onCopy }: AddressComponentProp) {
@@ -130,6 +53,7 @@ function AddressComponent({ address, chainName, onCopy }: AddressComponentProp) 
 function Receive({ address, closePopup, onClose, setAddress }: Props): React.ReactElement {
   const { t } = useTranslation();
   const account = useSelectedAccount();
+  const allChains = useGenesisHashOptions({ isEthereum: isEthereumAddress(address || ''), withRelay: false });
 
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [selectedChain, setSelectedChain] = useState<DropdownOption | undefined>();
@@ -178,9 +102,11 @@ function Receive({ address, closePopup, onClose, setAddress }: Props): React.Rea
       <Grow in>
         <Grid container>
           {!selectedChain
-            ? (<SelectChain
-              isEthereum={isEthereumAddress(address || '')}
-              setSelectedChain={setSelectedChain}
+            ? (<ChainPickerList
+              nothingFoundStyle={{ paddingBottom: '60px' }}
+              onSelect={setSelectedChain}
+              options={allChains}
+              searchPlaceholder={t('🔍 Search networks')}
             />)
             : (<>
               <Stack direction='column' justifyItems='center' sx={{ display: 'block', width: '100%' }}>

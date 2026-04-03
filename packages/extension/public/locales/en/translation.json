@@ -840,7 +840,6 @@
   "Enable Received Funds": "",
   "Staking Rewards": "",
   "Select Accounts": "",
-  "Select Chains": "",
   "Notification Settings": "",
   "Notification": "",
   "Era Progress": "",
@@ -941,5 +940,6 @@
   "Find your token on CoinGecko. The price ID is available at: {{web}}[price-id]": "",
   "Myself": "",
   "Remove all access": "",
-  "This will remove access for all authenticated websites. Are you sure you want to continue?": ""
+  "This will remove access for all authenticated websites. Are you sure you want to continue?": "",
+  "Select Networks": ""
 }
