@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import { ArrowCircleRight2, Home3, ImportCurve, Money3 } from 'iconsax-react';
+import { Home3, ImportCurve, Money3 } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
