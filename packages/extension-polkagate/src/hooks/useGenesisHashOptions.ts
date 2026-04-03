@@ -52,10 +52,25 @@ export default function useGenesisHashOptions({ isEthereum = false, withRelay = 
 
   useEffect(() => {
     const chainType: ChainType = isEthereum ? 'ethereum' : 'substrate';
+    let isCancelled = false;
+
+    setMetadataChains([]);
 
     getMetadataChains(chainType)
-      .then(setMetadataChains)
-      .catch(console.error);
+      .then((chains) => {
+        if (!isCancelled) {
+          setMetadataChains(chains);
+        }
+      })
+      .catch((error) => {
+        if (!isCancelled) {
+          console.error(error);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
   }, [isEthereum]);
 
   return useMemo(() => {
