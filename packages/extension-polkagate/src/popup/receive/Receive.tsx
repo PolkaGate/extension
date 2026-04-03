@@ -12,6 +12,7 @@ import { QRCode } from 'react-qrcode-logo';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { Logo, NeonButton, SearchField, Transition } from '../../components';
 import MySnackbar from '../../components/MySnackbar';
@@ -20,7 +21,6 @@ import { useFormatted, useGenesisHashOptions, useSelectedAccount, useTranslation
 import { GradientDivider, RedGradient } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util';
 import BackButton from '../accountsLists/BackButton';
-import { isEthereumAddress } from '@polkadot/util-crypto';
 
 const ListItem = styled(Grid)(() => ({
   '&:hover': {
@@ -84,28 +84,21 @@ interface SelectChainProp {
 
 function SelectNetwork({ isEthereum, setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
-  const allChains = useGenesisHashOptions({ isEthereum, withRelay: false });
+  const networks = useGenesisHashOptions({ isEthereum, withRelay: false });
 
-  const customSort = useCallback((itemA: DropdownOption, itemB: DropdownOption) => {
-    const hasRelay = (str: string) => str.toLowerCase().includes('relay');
+  const [keyword, setKeyword] = useState<string>();
 
-    return (Number(hasRelay(itemB.text)) - Number(hasRelay(itemA.text))) || itemA.text.localeCompare(itemB.text);
-  }, []);
-
-  const networks = useMemo(() => allChains.sort(customSort), [allChains, customSort]);
-
-  const [chainsToShow, setChainsToShow] = useState<DropdownOption[]>(networks);
-
-  const onSearch = useCallback((keyword: string) => {
+  const chainsToShow = useMemo(() => {
     if (!keyword) {
-      return setChainsToShow(networks);
+      return networks;
     }
 
-    keyword = keyword.trim().toLowerCase();
-    const _filtered = networks.filter(({ text }) => text.toLowerCase().includes(keyword));
+    return networks.filter(({ text }) => text.toLowerCase().includes(keyword));
+  }, [keyword, networks]);
 
-    setChainsToShow([..._filtered]);
-  }, [networks]);
+  const onSearch = useCallback((keyword: string | undefined) => {
+    setKeyword(keyword?.trim()?.toLowerCase());
+  }, []);
 
   const handleChainSelect = useCallback((chain: DropdownOption) => () => {
     setSelectedChain(chain);
