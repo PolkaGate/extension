@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom';
 
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
-import { Logo, DisplayBalance, Motion } from '../../components';
+import { DisplayBalance, Logo, Motion } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
 import FeeRow from './partials/FeeRow';
 import FromToBox from './partials/FromToBox';
