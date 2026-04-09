@@ -18,7 +18,7 @@ import FooterControls from '../../partials/FooterControls';
 import TableToolbar from '../../partials/TableToolbar';
 import ReviewPopup from './ReviewPopup';
 import SystemSuggestion from './SystemSuggestionButton';
-import { DEFAULT_VALIDATORS_PER_PAGE, getFilterValidators, getSortAndFilterValidators, isIncluded, onSort, VALIDATORS_PAGINATION_OPTIONS, VALIDATORS_SORTED_BY } from './util';
+import { createSelectionPrioritySorter, DEFAULT_VALIDATORS_PER_PAGE, getFilterValidators, getSortAndFilterValidators, isIncluded, VALIDATORS_PAGINATION_OPTIONS, VALIDATORS_SORTED_BY } from './util';
 import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
 
 function ManageValidators() {
@@ -26,7 +26,7 @@ function ManageValidators() {
   const navigate = useNavigate();
   const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
-  const { nominatedValidatorsIds, nominatedValidatorsInformation, validatorsInfo, validatorsInformation } = useNominatedValidatorsInfo(stakingInfo);
+  const { nominatedValidatorsInformation, validatorsInfo, validatorsInformation } = useNominatedValidatorsInfo(stakingInfo);
 
   const selectedBestValidators = useValidatorSuggestion(validatorsInfo, genesisHash);
   const stakingConsts = useStakingConsts(genesisHash);
@@ -40,6 +40,8 @@ function ManageValidators() {
   const [itemsPerPage, setItemsPerPagePage] = useState<string | number>(DEFAULT_VALIDATORS_PER_PAGE);
 
   const maximum = useMemo(() => stakingConsts?.maxNominations || 0, [stakingConsts?.maxNominations]);
+  const newSelectedIds = useMemo(() => new Set(newSelectedValidators.map(({ accountId }) => String(accountId))), [newSelectedValidators]);
+  const nominatedIds = useMemo(() => new Set(nominatedValidatorsInformation?.map(({ accountId }) => String(accountId)) ?? []), [nominatedValidatorsInformation]);
 
   const sortedValidatorsInformation = useMemo(() => {
     if (!validatorsInformation || !nominatedValidatorsInformation) {
@@ -50,12 +52,13 @@ function ManageValidators() {
     const sortedAndFilteredValidators = getSortAndFilterValidators(filteredValidators, sortConfig);
 
     if (sortConfig === VALIDATORS_SORTED_BY.DEFAULT.toString() || systemSuggestion) {
-      // Priority: new selected > nominated > others
-      return sortedAndFilteredValidators?.sort((a, b) => onSort(String(a.accountId), String(b.accountId), newSelectedValidators, nominatedValidatorsInformation));
+      const compareBySelectionPriority = createSelectionPrioritySorter(newSelectedIds, nominatedIds);
+
+      return sortedAndFilteredValidators?.sort((a, b) => compareBySelectionPriority(String(a.accountId), String(b.accountId)));
     }
 
     return sortedAndFilteredValidators;
-  }, [validatorsInformation, nominatedValidatorsInformation, newSelectedValidators, search, sortConfig, systemSuggestion]);
+  }, [nominatedIds, nominatedValidatorsInformation, newSelectedIds, search, sortConfig, systemSuggestion, validatorsInformation]);
 
   const itemsToShow = useMemo(() => {
     if (!sortedValidatorsInformation) {
@@ -132,22 +135,16 @@ function ManageValidators() {
 
   const isNextDisabled = useMemo(() => {
     // If data is not yet loaded or no validators have been selected, disable the "Next" button
-    if (!isLoaded || newSelectedValidators.length === 0) {
+    if (!isLoaded || newSelectedIds.size === 0) {
       return true;
     }
 
-    // Convert both selected and nominated validator IDs to Sets for efficient comparison
-    const selectedIds = new Set(newSelectedValidators.map(({ accountId }) => String(accountId)));
-    const nominatedIds = new Set(nominatedValidatorsIds ?? []);
-
-    // Check if both sets have the same size and contain the same elements
     const isExactMatch =
-      selectedIds.size === nominatedIds.size &&
-      [...nominatedIds].every((id) => selectedIds.has(id));
+      newSelectedIds.size === nominatedIds.size &&
+      [...nominatedIds].every((id) => newSelectedIds.has(id));
 
-    // Enable the "Next" button only if there is a meaningful change in selection
     return isExactMatch;
-  }, [isLoaded, newSelectedValidators, nominatedValidatorsIds]);
+  }, [isLoaded, newSelectedIds, nominatedIds]);
 
   return (
     <>

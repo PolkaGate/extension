@@ -14,12 +14,12 @@ import PaginationRow from '../../../../fullscreen/history/PaginationRow';
 import { usePoolStakingInfo, useStakingConsts, useTranslation, useValidatorSuggestion } from '../../../../hooks';
 import VelvetBox from '../../../../style/VelvetBox';
 import HomeLayout from '../../../components/layout';
+import SystemSuggestion from '../../new-solo/nominations/SystemSuggestionButton';
+import { createSelectionPrioritySorter, DEFAULT_VALIDATORS_PER_PAGE, getFilterValidators, getNominatedValidatorsInformation, getSortAndFilterValidators, isIncluded, VALIDATORS_PAGINATION_OPTIONS, VALIDATORS_SORTED_BY } from '../../new-solo/nominations/util';
+import { UndefinedItem, ValidatorInfo } from '../../new-solo/nominations/ValidatorItem';
 import FooterControls from '../../partials/FooterControls';
 import TableToolbar from '../../partials/TableToolbar';
 import ReviewPopup from './ReviewPopup';
-import SystemSuggestion from '../../new-solo/nominations/SystemSuggestionButton';
-import { DEFAULT_VALIDATORS_PER_PAGE, getFilterValidators, getNominatedValidatorsInformation, getSortAndFilterValidators, isIncluded, onSort, VALIDATORS_PAGINATION_OPTIONS, VALIDATORS_SORTED_BY } from '../../new-solo/nominations/util';
-import { UndefinedItem, ValidatorInfo } from '../../new-solo/nominations/ValidatorItem';
 
 function ManageValidators() {
   const { t } = useTranslation();
@@ -34,7 +34,12 @@ function ManageValidators() {
       ? [...info.elected, ...info.waiting]
       : undefined;
   }, [validatorsInfo]);
-  const nominatedValidatorsIds = useMemo(() => stakingInfo.pool?.stashIdAccount?.nominators?.map((item) => item.toString()) ?? [], [stakingInfo.pool?.stashIdAccount?.nominators]);
+  const nominatedValidatorsIds = useMemo(
+    () => stakingInfo.pool === undefined
+      ? undefined
+      : stakingInfo.pool?.stashIdAccount?.nominators?.map((item) => item.toString()) ?? []
+    , [stakingInfo.pool]
+  );
   const nominatedValidatorsInformation = useMemo(() => getNominatedValidatorsInformation(validatorsInfo, nominatedValidatorsIds), [nominatedValidatorsIds, validatorsInfo]);
 
   const selectedBestValidators = useValidatorSuggestion(validatorsInfo, genesisHash);
@@ -49,6 +54,8 @@ function ManageValidators() {
   const [itemsPerPage, setItemsPerPagePage] = useState<string | number>(DEFAULT_VALIDATORS_PER_PAGE);
 
   const maximum = useMemo(() => stakingConsts?.maxNominations || 0, [stakingConsts?.maxNominations]);
+  const newSelectedIds = useMemo(() => new Set(newSelectedValidators.map(({ accountId }) => String(accountId))), [newSelectedValidators]);
+  const nominatedIds = useMemo(() => new Set(nominatedValidatorsInformation?.map(({ accountId }) => String(accountId)) ?? []), [nominatedValidatorsInformation]);
 
   const sortedValidatorsInformation = useMemo(() => {
     if (!validatorsInformation || !nominatedValidatorsInformation) {
@@ -59,11 +66,13 @@ function ManageValidators() {
     const sortedAndFilteredValidators = getSortAndFilterValidators(filteredValidators, sortConfig);
 
     if (sortConfig === VALIDATORS_SORTED_BY.DEFAULT.toString() || systemSuggestion) {
-      return sortedAndFilteredValidators?.sort((a, b) => onSort(String(a.accountId), String(b.accountId), newSelectedValidators, nominatedValidatorsInformation));
+      const compareBySelectionPriority = createSelectionPrioritySorter(newSelectedIds, nominatedIds);
+
+      return sortedAndFilteredValidators?.sort((a, b) => compareBySelectionPriority(String(a.accountId), String(b.accountId)));
     }
 
     return sortedAndFilteredValidators;
-  }, [validatorsInformation, nominatedValidatorsInformation, newSelectedValidators, search, sortConfig, systemSuggestion]);
+  }, [nominatedIds, nominatedValidatorsInformation, newSelectedIds, search, sortConfig, systemSuggestion, validatorsInformation]);
 
   const itemsToShow = useMemo(() => {
     if (!sortedValidatorsInformation) {
@@ -74,7 +83,7 @@ function ManageValidators() {
     const end = start + Number(itemsPerPage);
 
     return sortedValidatorsInformation.slice(start, end);
-  }, [itemsPerPage, page, sortedValidatorsInformation, systemSuggestion]);
+  }, [itemsPerPage, page, sortedValidatorsInformation]);
 
   const onSearch = useCallback((input: string) => {
     setSearch(input);
@@ -129,23 +138,20 @@ function ManageValidators() {
   const backToStakingHome = useCallback(() => navigate('/fullscreen-stake/pool/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
   const toggleReview = useCallback(() => setGoReview((isOnReview) => !isOnReview), []);
 
-  const isLoading = useMemo(() => stakingInfo.pool === undefined || nominatedValidatorsInformation === undefined, [nominatedValidatorsInformation, stakingInfo.pool]);
+  const isLoading = useMemo(() => stakingInfo.pool === undefined || nominatedValidatorsIds === undefined || nominatedValidatorsInformation === undefined, [nominatedValidatorsIds, nominatedValidatorsInformation, stakingInfo.pool]);
   const isLoaded = useMemo(() => itemsToShow && itemsToShow.length > 0, [itemsToShow]);
 
   const isNextDisabled = useMemo(() => {
-    if (!isLoaded || newSelectedValidators.length === 0) {
+    if (!isLoaded || newSelectedIds.size === 0) {
       return true;
     }
 
-    const selectedIds = new Set(newSelectedValidators.map(({ accountId }) => String(accountId)));
-    const nominatedIds = new Set(nominatedValidatorsIds ?? []);
-
     const isExactMatch =
-      selectedIds.size === nominatedIds.size &&
-      [...nominatedIds].every((id) => selectedIds.has(id));
+      newSelectedIds.size === nominatedIds.size &&
+      [...nominatedIds].every((id) => newSelectedIds.has(id));
 
     return isExactMatch;
-  }, [isLoaded, newSelectedValidators, nominatedValidatorsIds]);
+  }, [isLoaded, newSelectedIds, nominatedIds]);
 
   return (
     <>

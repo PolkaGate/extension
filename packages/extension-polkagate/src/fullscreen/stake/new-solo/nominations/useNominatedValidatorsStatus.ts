@@ -3,7 +3,7 @@
 
 import type { ValidatorInformation } from '@polkadot/extension-polkagate/hooks/useValidatorsInformation';
 import type { AccountId32 } from '@polkadot/types/interfaces';
-// @ts-ignore
+// @ts-expect-error lookup type import
 import type { SpStakingExposurePage } from '@polkadot/types/lookup';
 import type { SoloStakingInfo } from '../../../../hooks/useSoloStakingInfo';
 
@@ -29,10 +29,14 @@ export default function useNominatedValidatorsStatus(stakingInfo: SoloStakingInf
   const [sortConfig, setSortConfig] = React.useState<string>(VALIDATORS_SORTED_BY.DEFAULT);
   const [search, setSearch] = React.useState<string>('');
 
-  const { nominatedValidatorsInformation } = useNominatedValidatorsInfo(stakingInfo);
+  const { nominatedValidatorsInformation, validatorsInfo } = useNominatedValidatorsInfo(stakingInfo);
 
   const filteredValidators = useMemo(() => getFilterValidators(nominatedValidatorsInformation, search), [nominatedValidatorsInformation, search]);
   const sortedAndFilteredValidators = useMemo(() => getSortAndFilterValidators(filteredValidators, sortConfig), [filteredValidators, sortConfig]);
+  const electedIds = useMemo(
+    () => new Set(validatorsInfo?.validatorsInformation.elected.map(({ accountId }) => String(accountId)) ?? []),
+    [validatorsInfo?.validatorsInformation.elected]
+  );
 
   const isNominated = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length > 0, [stakingInfo?.stakingAccount?.nominators]);
   const isLoading = useMemo(() => (stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined), [nominatedValidatorsInformation, stakingInfo?.stakingAccount]);
@@ -44,9 +48,10 @@ export default function useNominatedValidatorsStatus(stakingInfo: SoloStakingInf
     const nonElected: typeof nominatedValidatorsInformation = [];
 
     sortedAndFilteredValidators?.forEach((info) => {
+      const isElected = electedIds.has(String(info.accountId));
       const others = (info.exposurePaged as unknown as SpStakingExposurePage | undefined)?.others;
 
-      if (others?.length) {
+      if (isElected) {
         const isActive = others?.find(({ who }: { who: AccountId32 }) => who.toString() === stakingInfo?.stakingAccount?.accountId?.toString());
 
         isActive ? active.push(info) : elected.push(info);
@@ -56,7 +61,7 @@ export default function useNominatedValidatorsStatus(stakingInfo: SoloStakingInf
     });
 
     return { active, elected, nonElected };
-  }, [sortedAndFilteredValidators, stakingInfo?.stakingAccount?.accountId]);
+  }, [electedIds, sortedAndFilteredValidators, stakingInfo?.stakingAccount?.accountId]);
 
   return {
     isLoaded,

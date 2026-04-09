@@ -4,7 +4,7 @@
 import type { ValidatorInformation } from '@polkadot/extension-polkagate/hooks/useValidatorsInformation';
 import type { MyPoolInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { AccountId32 } from '@polkadot/types/interfaces';
-// @ts-ignore
+// @ts-expect-error lookup type import
 import type { SpStakingExposurePage } from '@polkadot/types/lookup';
 
 import { Collapse, Stack } from '@mui/material';
@@ -12,16 +12,16 @@ import { Menu, Star1, Timer } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import useValidatorsInformation from '@polkadot/extension-polkagate/src/hooks/useValidatorsInformation';
 import { FadeOnScroll, GradientButton } from '@polkadot/extension-polkagate/src/components';
-import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { NoValidatorBox } from '@polkadot/extension-polkagate/src/fullscreen/components';
-import TableToolbar from '@polkadot/extension-polkagate/src/fullscreen/stake/partials/TableToolbar';
 import { LabelBar } from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/nominations/partials/LabelBar';
 import Line from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/nominations/partials/Line';
 import { Validators } from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/nominations/partials/Validators';
-import { VALIDATORS_SORTED_BY, getFilterValidators, getNominatedValidatorsInformation, getSortAndFilterValidators } from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/nominations/util';
+import { getFilterValidators, getNominatedValidatorsInformation, getSortAndFilterValidators, VALIDATORS_SORTED_BY } from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/nominations/util';
 import { UndefinedItem } from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/nominations/ValidatorItem';
+import TableToolbar from '@polkadot/extension-polkagate/src/fullscreen/stake/partials/TableToolbar';
+import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import useValidatorsInformation from '@polkadot/extension-polkagate/src/hooks/useValidatorsInformation';
 
 interface Props {
   genesisHash: string | undefined;
@@ -40,9 +40,12 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
   const [notElectedCollapse, setNotElectedCollapse] = React.useState<boolean>(false);
   const [electedCollapse, setElectedCollapse] = React.useState<boolean>(true);
 
-  const nominatedValidatorsIds = useMemo(() =>
-    poolInfo?.stashIdAccount?.nominators?.map((item) => item.toString()) ?? []
-  , [poolInfo?.stashIdAccount?.nominators]);
+  const nominatedValidatorsIds = useMemo(
+    () => poolInfo === undefined
+      ? undefined
+      : poolInfo?.stashIdAccount?.nominators?.map((item) => item.toString()) ?? []
+    , [poolInfo]
+  );
 
   const nominatedValidatorsInformation = useMemo(() =>
     getNominatedValidatorsInformation(validatorsInfo, nominatedValidatorsIds)
@@ -50,9 +53,13 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
 
   const filteredValidators = useMemo(() => getFilterValidators(nominatedValidatorsInformation, search), [nominatedValidatorsInformation, search]);
   const sortedAndFilteredValidators = useMemo(() => getSortAndFilterValidators(filteredValidators, sortConfig), [filteredValidators, sortConfig]);
+  const electedIds = useMemo(
+    () => new Set(validatorsInfo?.validatorsInformation.elected.map(({ accountId }) => String(accountId)) ?? []),
+    [validatorsInfo?.validatorsInformation.elected]
+  );
 
-  const isNominated = useMemo(() => nominatedValidatorsIds.length > 0, [nominatedValidatorsIds.length]);
-  const isLoading = useMemo(() => poolInfo !== null && nominatedValidatorsInformation === undefined, [nominatedValidatorsInformation, poolInfo]);
+  const isNominated = useMemo(() => (nominatedValidatorsIds?.length ?? 0) > 0, [nominatedValidatorsIds]);
+  const isLoading = useMemo(() => poolInfo === undefined || nominatedValidatorsIds === undefined || nominatedValidatorsInformation === undefined, [nominatedValidatorsIds, nominatedValidatorsInformation, poolInfo]);
   const stashAddress = poolInfo?.stashIdAccount?.accountId?.toString();
 
   const { active, elected, nonElected } = useMemo(() => {
@@ -61,9 +68,10 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
     const nonElected: ValidatorInformation[] = [];
 
     sortedAndFilteredValidators?.forEach((info) => {
+      const isElected = electedIds.has(String(info.accountId));
       const others = (info.exposurePaged as unknown as SpStakingExposurePage | undefined)?.others;
 
-      if (others?.length) {
+      if (isElected) {
         const isActive = others.find(({ who }: { who: AccountId32 }) => who.toString() === stashAddress);
 
         isActive ? active.push(info) : elected.push(info);
@@ -73,7 +81,7 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
     });
 
     return { active, elected, nonElected };
-  }, [sortedAndFilteredValidators, stashAddress]);
+  }, [electedIds, sortedAndFilteredValidators, stashAddress]);
 
   const onSearch = useCallback((input: string) => setSearch(input), []);
   const openValidatorManagement = useCallback(() => navigate('/fullscreen-stake/pool/manage-validator/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
