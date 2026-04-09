@@ -1108,7 +1108,7 @@ export const usePoolDetail = (
     return newState;
   }, []);
 
-  const [collapse, dispatchCollapse] = useReducer(collapseReducer, { Ids: false, Members: false, Rewards: true, Roles: false });
+  const [collapse, dispatchCollapse] = useReducer(collapseReducer, { Ids: false, Members: false, Nominations: false, Rewards: false, Roles: false });
 
   const unwrapRewardAccount = useCallback((rewardDestination: string | undefined) => {
     try {

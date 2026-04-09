@@ -6,7 +6,7 @@
 import type { MyPoolInfo, PoolInfo } from '../../../../util/types';
 
 import { Container, Grid, Link, Stack, Typography } from '@mui/material';
-import { BuyCrypto, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
+import { BuyCrypto, CommandSquare, DiscountCircle, Discover, FlashCircle, People } from 'iconsax-react';
 import React, { Fragment, memo, useCallback, useMemo } from 'react';
 
 import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
@@ -16,7 +16,7 @@ import { useChainInfo, useIsExtensionPopup, usePoolDetail, useTranslation } from
 import Subscan from '../../../../assets/icons/Subscan';
 import { DetailPanel, GradientButton, GradientDivider } from '../../../../components';
 import SnowFlake from '../../../../components/SVG/SnowFlake';
-import { CollapseSection, PoolMembers, PoolReward, PoolStashIdSocials, RoleItem, StakingInfoStackWithIcon } from '../../../../popup/staking/partial/PoolDetail';
+import { CollapseSection, PoolMembers, PoolNominations, PoolReward, PoolStashIdSocials, RoleItem, StakingInfoStackWithIcon } from '../../../../popup/staking/partial/PoolDetail';
 import { PoolIdenticon } from '../../../../popup/staking/partial/PoolIdenticon';
 import { toShortAddress } from '../../../../util';
 
@@ -168,6 +168,19 @@ const LeftColumnContent = memo(function LeftColumnContentMemo({ collapse, genesi
             genesisHash={genesisHash}
             totalPoolReward={poolDetail?.rewardClaimable?.toString() ?? '0'}
             totalPoolRewardAsFiat={totalPoolRewardAsFiat}
+          />
+        </CollapseSection>
+        <CollapseSection
+          TitleIcon={<Discover color={getIconColor('Nominations')} size='15' variant='Bulk' />}
+          onClick={handleCollapses('Nominations')}
+          open={collapse['Nominations']}
+          sideText={String(poolDetail?.stashIdAccount?.nominators?.length ?? 0)}
+          title={t('Nominations')}
+        >
+          <PoolNominations
+            genesisHash={genesisHash}
+            maxHeight='160px'
+            nominations={poolDetail?.stashIdAccount?.nominators?.map((item) => item.toString()) ?? []}
           />
         </CollapseSection>
       </Stack>

@@ -941,5 +941,7 @@
   "Myself": "",
   "Remove all access": "",
   "This will remove access for all authenticated websites. Are you sure you want to continue?": "",
-  "Select Networks": ""
+  "Select Networks": "",
+  "Pool nominated validators": "",
+  "No nominations found": ""
 }
