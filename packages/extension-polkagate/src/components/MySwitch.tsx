@@ -81,7 +81,9 @@ const StyledSwitch = styled(Switch, {
         : 'transparent'
       : '#3988FF'
     : isDark
-      ? '#6743944D'
+      ? isBlueish
+        ? '#809ACB66'
+        : '#6743944D'
       : '#CCD2EA'
     }`,
   borderRadius: '109.71px',
@@ -90,12 +92,12 @@ const StyledSwitch = styled(Switch, {
   padding: 0,
   width: '36px',
   '&:hover': {
-    border: checked ? undefined : '2px solid #674394'
+    border: checked ? undefined : `2px solid ${isBlueish ? '#3988FF66' : '#674394'}`
   },
   '&:hover .MuiSwitch-thumb': {
     background: checked
       ? isDark ? '#EAEBF1' : '#3988FF'
-      : isDark ? '#BEAAD8' : '#CCD2EA'
+      : isDark ? isBlueish ? '#AFC3E8' : '#BEAAD8' : '#CCD2EA'
   },
   '& .MuiSwitch-root': {
     height: '100%',
@@ -145,7 +147,7 @@ const StyledSwitch = styled(Switch, {
     }
   },
   '& .MuiSwitch-thumb': {
-    background: isDark ? '#674394' : '#CCD2EA',
+    background: isDark ? isBlueish ? '#809ACB' : '#674394' : '#CCD2EA',
     boxSizing: 'border-box',
     height: 10.29,
     transform: 'translateY(50%)', // proper vertical center
