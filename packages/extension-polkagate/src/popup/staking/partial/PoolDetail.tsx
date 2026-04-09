@@ -194,7 +194,7 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
 
             return (
               <React.Fragment key={index}>
-                <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
+                <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Identity
                     address={member.accountId}
                     genesisHash={genesisHash ?? ''}
@@ -205,15 +205,17 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
                   <DisplayBalance
                     balance={isHexToBn(member.member.points.toString())}
                     decimal={decimal}
-                    style={{ ...theme.typography['B-4'], textAlign: 'left', width: '35%' }}
+                    style={{ ...theme.typography['B-4'], textAlign: 'center' }}
                     token={token}
                     tokenColor={color}
                   />
-                  <Typography color='text.primary' textAlign='right' variant='B-4' width='22%'>
+                  <Typography color='text.primary' textAlign='right' variant='B-4' width='20%'>
                     {isNaN(percentage) ? '--' : percentage.toFixed(2)}%
                   </Typography>
                 </Container>
-                {members.length > index + 1 && <GradientDivider isBlueish />}
+                {members.length > index + 1 &&
+                  <GradientDivider isBlueish />
+                }
               </React.Fragment>
             );
           })}

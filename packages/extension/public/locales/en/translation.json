@@ -943,5 +943,6 @@
   "This will remove access for all authenticated websites. Are you sure you want to continue?": "",
   "Select Networks": "",
   "Pool nominated validators": "",
-  "No nominations found": ""
+  "No nominations found": "",
+  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": ""
 }

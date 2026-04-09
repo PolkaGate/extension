@@ -93,8 +93,10 @@ export default function PoolFullScreen(): React.ReactElement {
             unlockingAmount={unlockingAmount}
           />
           <StakingTabs
+            address={address}
             disabled={notStaked}
             genesisHash={genesisHash}
+            poolInfo={stakingInfo.pool}
             popupOpener={popupOpener}
             rewardInfo={rewardInfo}
             setSelectedPosition={setSelectedPosition}
