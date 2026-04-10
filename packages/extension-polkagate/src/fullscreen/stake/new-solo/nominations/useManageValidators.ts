@@ -11,7 +11,7 @@ import { createSelectionPrioritySorter, DEFAULT_VALIDATORS_PER_PAGE, getFilterVa
 interface UseManageValidatorsInput {
   maximum: number;
   nominatedValidatorsInformation: ValidatorInformation[] | undefined;
-  selectedBestValidators: ValidatorInformation[] | undefined;
+  selectedBestValidators: ValidatorInformation[] | null |undefined;
   validatorsInformation: ValidatorInformation[] | undefined;
 }
 
