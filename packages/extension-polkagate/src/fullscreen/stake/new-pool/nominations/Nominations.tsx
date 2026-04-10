@@ -72,7 +72,7 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
       const others = (info.exposurePaged as unknown as SpStakingExposurePage | undefined)?.others;
 
       if (isElected) {
-        const isActive = others.find(({ who }: { who: AccountId32 }) => who.toString() === stashAddress);
+        const isActive = others?.find(({ who }: { who: AccountId32 }) => who.toString() === stashAddress);
 
         isActive ? active.push(info) : elected.push(info);
       } else {
