@@ -141,6 +141,18 @@ export const getNominatedValidatorsInformation = (validatorsInfo: ValidatorsInfo
   return result;
 };
 
+export const mergeValidatorsByAccountId = (...validatorGroups: (ValidatorInformation[] | undefined)[]) => {
+  const merged = new Map<string, ValidatorInformation>();
+
+  validatorGroups.forEach((validators) => {
+    validators?.forEach((validator) => {
+      merged.set(String(validator.accountId), validator);
+    });
+  });
+
+  return [...merged.values()];
+};
+
 export const isIncluded = (validator: ValidatorInformation, validatorArray: ValidatorInformation[] | undefined) =>
   Boolean(validatorArray?.find(({ accountId }) => accountId.toString() === validator.accountId.toString()));
 

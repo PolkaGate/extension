@@ -1,25 +1,15 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
-
-import { Stack, Typography } from '@mui/material';
-import { Firstline } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import useNominatedValidatorsInfo from '@polkadot/extension-polkagate/src/hooks/useNominatedValidatorsInfo';
 
-import PaginationRow from '../../../../fullscreen/history/PaginationRow';
 import { useSoloStakingInfo, useStakingConsts, useTranslation, useValidatorSuggestion } from '../../../../hooks';
-import VelvetBox from '../../../../style/VelvetBox';
-import HomeLayout from '../../../components/layout';
-import FooterControls from '../../partials/FooterControls';
-import TableToolbar from '../../partials/TableToolbar';
+import ManageValidatorsView from './ManageValidatorsView';
 import ReviewPopup from './ReviewPopup';
-import SystemSuggestion from './SystemSuggestionButton';
-import { createSelectionPrioritySorter, DEFAULT_VALIDATORS_PER_PAGE, getFilterValidators, getSortAndFilterValidators, isIncluded, VALIDATORS_PAGINATION_OPTIONS, VALIDATORS_SORTED_BY } from './util';
-import { UndefinedItem, ValidatorInfo } from './ValidatorItem';
+import useManageValidators from './useManageValidators';
 
 function ManageValidators() {
   const { t } = useTranslation();
@@ -30,185 +20,67 @@ function ManageValidators() {
 
   const selectedBestValidators = useValidatorSuggestion(validatorsInfo, genesisHash);
   const stakingConsts = useStakingConsts(genesisHash);
-
-  const [review, setGoReview] = useState<boolean>(false);
-  const [systemSuggestion, setSystemSuggestion] = useState<boolean>(false);
-  const [sortConfig, setSortConfig] = useState<string>(VALIDATORS_SORTED_BY.DEFAULT);
-  const [search, setSearch] = useState<string>('');
-  const [newSelectedValidators, setNewSelectedValidators] = useState<ValidatorInformation[]>([]);
-  const [page, setPage] = useState<number>(1);
-  const [itemsPerPage, setItemsPerPagePage] = useState<string | number>(DEFAULT_VALIDATORS_PER_PAGE);
-
   const maximum = useMemo(() => stakingConsts?.maxNominations || 0, [stakingConsts?.maxNominations]);
-  const newSelectedIds = useMemo(() => new Set(newSelectedValidators.map(({ accountId }) => String(accountId))), [newSelectedValidators]);
-  const nominatedIds = useMemo(() => new Set(nominatedValidatorsInformation?.map(({ accountId }) => String(accountId)) ?? []), [nominatedValidatorsInformation]);
+  const [review, setGoReview] = useState<boolean>(false);
 
-  const sortedValidatorsInformation = useMemo(() => {
-    if (!validatorsInformation || !nominatedValidatorsInformation) {
-      return undefined;
-    }
+  const { isAlreadySelected,
+    isLoaded,
+    isNextDisabled,
+    isSelected,
+    itemsPerPage,
+    itemsToShow,
+    newSelectedValidators,
+    onReset,
+    onSearch,
+    onSelect,
+    onSortChange,
+    onSystemSuggestion,
+    page,
+    reachedMaximum,
+    setItemsPerPagePage,
+    setPage,
+    sortConfig,
+    sortedValidatorsInformation,
+    systemSuggestion } = useManageValidators({
+    maximum,
+    nominatedValidatorsInformation,
+    selectedBestValidators,
+    validatorsInformation
+  });
 
-    const filteredValidators = getFilterValidators(validatorsInformation, search);
-    const sortedAndFilteredValidators = getSortAndFilterValidators(filteredValidators, sortConfig);
-
-    if (sortConfig === VALIDATORS_SORTED_BY.DEFAULT.toString() || systemSuggestion) {
-      const compareBySelectionPriority = createSelectionPrioritySorter(newSelectedIds, nominatedIds);
-
-      return sortedAndFilteredValidators?.sort((a, b) => compareBySelectionPriority(String(a.accountId), String(b.accountId)));
-    }
-
-    return sortedAndFilteredValidators;
-  }, [nominatedIds, nominatedValidatorsInformation, newSelectedIds, search, sortConfig, systemSuggestion, validatorsInformation]);
-
-  const itemsToShow = useMemo(() => {
-    if (!sortedValidatorsInformation) {
-      return undefined;
-    }
-
-    const start = (page - 1) * Number(itemsPerPage);
-    const end = start + Number(itemsPerPage);
-
-    return sortedValidatorsInformation.slice(start, end);
-    // The systemSuggestion is here in order to sort happen
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itemsPerPage, page, sortedValidatorsInformation, systemSuggestion]);
-
-  const onSearch = useCallback((input: string) => {
-    setSearch(input);
-    setPage(1); // Reset to first page when searching
-  }, []);
-
-  const onSortChange = useCallback((sortBy: string) => {
-    setSortConfig(sortBy);
-    setPage(1); // Reset to first page when sorting changes
-  }, []);
-
-  const onSystemSuggestion = useCallback(() => {
-    const isCheck = !systemSuggestion;
-
-    onSearch('');
-    setSystemSuggestion(isCheck);
-    isCheck
-      ? selectedBestValidators?.length && setNewSelectedValidators([...selectedBestValidators])
-      : setNewSelectedValidators([]);
-  }, [onSearch, selectedBestValidators, systemSuggestion]);
-
-  const isSelected = useCallback((validator: ValidatorInformation) => isIncluded(validator, newSelectedValidators), [newSelectedValidators]);
-  const isAlreadySelected = useCallback((validator: ValidatorInformation) => isIncluded(validator, nominatedValidatorsInformation), [nominatedValidatorsInformation]);
-  // in order to prevent checkbox being checked!
-  const reachedMaximum = useMemo(() => newSelectedValidators.length >= maximum, [maximum, newSelectedValidators.length]);
-
-  const onSelect = useCallback((validator: ValidatorInformation) => () => {
-    setNewSelectedValidators((prev) => {
-      const current = prev || [];
-
-      const validatorId = String(validator.accountId);
-      const existingIndex = current.findIndex(({ accountId }) => String(accountId) === String(validatorId));
-
-      if (existingIndex >= 0) {
-        // Remove if exists
-        const newArray = [...current];
-
-        newArray.splice(existingIndex, 1);
-
-        return newArray;
-      } else {
-        // check if the selection hit the maximum
-        if (current.length >= maximum) {
-          return prev;
-        }
-
-        // Add if doesn't exist
-        return [...current, validator];
-      }
-    });
-  }, [maximum]);
-  const onReset = useCallback(() => {
-    setNewSelectedValidators([]);
-    setSystemSuggestion(false);
-  }, []);
-  const backToStakingHome = useCallback(() => navigate('/fullscreen-stake/solo/' + address + '/' + genesisHash) as void, [genesisHash, navigate, address]);
+  const backToStakingHome = useCallback(() => navigate('/fullscreen-stake/solo/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
   const toggleReview = useCallback(() => setGoReview((isOnReview) => !isOnReview), []);
-
-  const isLoading = useMemo(() => (stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined), [nominatedValidatorsInformation, stakingInfo?.stakingAccount]);
-  const isLoaded = useMemo(() => itemsToShow && itemsToShow.length > 0, [itemsToShow]);
-
-  const isNextDisabled = useMemo(() => {
-    // If data is not yet loaded or no validators have been selected, disable the "Next" button
-    if (!isLoaded || newSelectedIds.size === 0) {
-      return true;
-    }
-
-    const isExactMatch =
-      newSelectedIds.size === nominatedIds.size &&
-      [...nominatedIds].every((id) => newSelectedIds.has(id));
-
-    return isExactMatch;
-  }, [isLoaded, newSelectedIds, nominatedIds]);
+  const isLoading = useMemo(() => stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined || validatorsInformation === undefined, [nominatedValidatorsInformation, stakingInfo?.stakingAccount, validatorsInformation]);
 
   return (
     <>
-      <HomeLayout>
-        <Stack direction='column' sx={{ alignItems: 'flex-start', px: '18px', width: '100%' }}>
-          <Stack direction='column' sx={{ alignItems: 'flex-start', columnGap: '12px', pb: '26px', width: '100%' }}>
-            <Typography color='text.primary' sx={{ textAlign: 'left', textTransform: 'uppercase' }} variant='H-2'>
-              {t('Edit Nominations')}
-            </Typography>
-            <Typography color='text.secondary' variant='B-4'>
-              {t('Manage your nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.')}
-            </Typography>
-          </Stack>
-          <VelvetBox>
-            <Stack direction='column' sx={{ width: '100%' }}>
-              <TableToolbar
-                onSearch={onSearch}
-                setSortBy={onSortChange as React.Dispatch<React.SetStateAction<string>>}
-                sortBy={sortConfig}
-                sortByObject={VALIDATORS_SORTED_BY}
-              >
-                <SystemSuggestion
-                  disabled={!isLoaded}
-                  onSystemSuggestion={onSystemSuggestion}
-                  systemSuggestion={systemSuggestion}
-                />
-              </TableToolbar>
-              <Stack direction='column' sx={{ gap: '2px', height: 'calc(100vh - 390px)', overflow: 'auto', width: '100%' }}>
-                {isLoaded &&
-                  itemsToShow?.map((validator, index) => (
-                    <ValidatorInfo
-                      genesisHash={genesisHash}
-                      isAlreadySelected={isAlreadySelected(validator)}
-                      isSelected={isSelected(validator)}
-                      key={index}
-                      onSelect={onSelect(validator)}
-                      reachedMaximum={reachedMaximum}
-                      validatorInfo={validator}
-                    />
-                  ))
-                }
-                {isLoading && Array.from({ length: DEFAULT_VALIDATORS_PER_PAGE }).map((_, index) => (<UndefinedItem key={index} />))}
-              </Stack>
-              <PaginationRow
-                itemsPerPage={itemsPerPage}
-                options={VALIDATORS_PAGINATION_OPTIONS}
-                page={page}
-                setItemsPerPagePage={setItemsPerPagePage}
-                setPage={setPage}
-                totalItems={sortedValidatorsInformation?.length ?? 0}
-              />
-            </Stack>
-          </VelvetBox>
-          <FooterControls
-            Icon={Firstline}
-            isNextDisabled={isNextDisabled}
-            maxSelectable={maximum}
-            onBack={backToStakingHome}
-            onNext={toggleReview}
-            onReset={onReset}
-            selectedCount={newSelectedValidators?.length}
-          />
-        </Stack>
-      </HomeLayout>
+      <ManageValidatorsView
+        description={t('Manage your nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.')}
+        genesisHash={genesisHash}
+        isAlreadySelected={isAlreadySelected}
+        isLoaded={isLoaded}
+        isLoading={isLoading}
+        isNextDisabled={isNextDisabled}
+        isSelected={isSelected}
+        itemsPerPage={itemsPerPage}
+        itemsToShow={itemsToShow}
+        maximum={maximum}
+        onBack={backToStakingHome}
+        onNext={toggleReview}
+        onReset={onReset}
+        onSearch={onSearch}
+        onSelect={onSelect}
+        onSortChange={onSortChange}
+        onSystemSuggestion={onSystemSuggestion}
+        page={page}
+        reachedMaximum={reachedMaximum}
+        selectedCount={newSelectedValidators.length}
+        setItemsPerPagePage={setItemsPerPagePage}
+        setPage={setPage}
+        sortConfig={sortConfig}
+        systemSuggestion={systemSuggestion}
+        totalItems={sortedValidatorsInformation?.length ?? 0}
+      />
       {review &&
         <ReviewPopup
           address={address}
