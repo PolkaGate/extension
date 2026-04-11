@@ -37,6 +37,19 @@ interface UseManageValidatorsOutput {
   systemSuggestion: boolean;
 }
 
+/**
+ * Manages the editable validator selection for nomination update flows.
+ *
+ * @param maximum Maximum number of validators that may be selected.
+ * @param nominatedValidatorsInformation Current on-chain nominations used as the baseline state.
+ * @param selectedBestValidators Suggested validator set used by system suggestion.
+ * @param validatorsInformation Full validator list shown in the selection UI.
+ * @returns Selection state and handlers for rendering, editing, and validating the final nomination set.
+ *
+ * The hook keeps `newSelectedValidators` as the full in-progress nomination list
+ * that will be submitted on review. Incoming nomination updates only resync that
+ * local state while the user has not diverged from the previous on-chain baseline.
+ */
 export default function useManageValidators({ maximum,
   nominatedValidatorsInformation,
   selectedBestValidators,
