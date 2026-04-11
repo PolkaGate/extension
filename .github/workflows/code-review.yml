@@ -3,7 +3,6 @@ name: Code Review
 permissions:
   contents: read
   pull-requests: write
-  models: true
 
 on:
   pull_request:
