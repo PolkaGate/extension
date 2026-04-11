@@ -136,7 +136,7 @@ export default function useManageValidators({ maximum,
     setSystemSuggestion(false);
   }, []);
 
-  const isLoaded = useMemo(() => Boolean(itemsToShow?.length), [itemsToShow]);
+  const isLoaded = useMemo(() => sortedValidatorsInformation !== undefined, [sortedValidatorsInformation]);
 
   const isNextDisabled = useMemo(() => {
     if (!isLoaded || newSelectedIds.size === 0) {

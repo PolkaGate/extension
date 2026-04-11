@@ -119,7 +119,11 @@ export default function ManageValidatorsView({ description,
                   />
                 ))
               }
-              {isLoading && Array.from({ length: DEFAULT_VALIDATORS_PER_PAGE }).map((_, index) => (<UndefinedItem key={index} />))}
+              {isLoading &&
+                Array.from({ length: DEFAULT_VALIDATORS_PER_PAGE })
+                  .map((_, index) => (
+                    <UndefinedItem key={index} />))
+              }
             </Stack>
             <PaginationRow
               itemsPerPage={itemsPerPage}
