@@ -65,20 +65,16 @@ function ManageValidators() {
 
   const backToStakingHome = useCallback(() => {
     if (!address || !genesisHash) {
-      navigate(-1);
+      navigate(-1) as void;
 
       return;
     }
 
-    navigate('/fullscreen-stake/pool/' + address + '/' + genesisHash);
+    navigate('/fullscreen-stake/pool/' + address + '/' + genesisHash) as void;
   }, [address, genesisHash, navigate]);
   const canReview = useMemo(() => stakingInfo.pool?.poolId !== undefined, [stakingInfo.pool?.poolId]);
   const toggleReview = useCallback(() => {
-    if (!canReview) {
-      return;
-    }
-
-    setGoReview((isOnReview) => !isOnReview);
+    setGoReview((isOnReview) => (isOnReview ? false : canReview));
   }, [canReview]);
   const isLoading = useMemo(() => stakingConsts === undefined || stakingInfo.pool === undefined || nominatedValidatorsIds === undefined || nominatedValidatorsInformation === undefined || validatorsInformation === undefined, [nominatedValidatorsIds, nominatedValidatorsInformation, stakingConsts, stakingInfo.pool, validatorsInformation]);
 
