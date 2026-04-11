@@ -64,7 +64,14 @@ function ManageValidators() {
   });
 
   const backToStakingHome = useCallback(() => navigate('/fullscreen-stake/pool/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
-  const toggleReview = useCallback(() => setGoReview((isOnReview) => !isOnReview), []);
+  const canReview = useMemo(() => stakingInfo.pool?.poolId !== undefined, [stakingInfo.pool?.poolId]);
+  const toggleReview = useCallback(() => {
+    if (!canReview) {
+      return;
+    }
+
+    setGoReview((isOnReview) => !isOnReview);
+  }, [canReview]);
   const isLoading = useMemo(() => stakingInfo.pool === undefined || nominatedValidatorsIds === undefined || nominatedValidatorsInformation === undefined || validatorsInformation === undefined, [nominatedValidatorsIds, nominatedValidatorsInformation, stakingInfo.pool, validatorsInformation]);
 
   return (
@@ -75,7 +82,7 @@ function ManageValidators() {
         isAlreadySelected={isAlreadySelected}
         isLoaded={isLoaded}
         isLoading={isLoading}
-        isNextDisabled={isNextDisabled}
+        isNextDisabled={isNextDisabled || !canReview}
         isSelected={isSelected}
         itemsPerPage={itemsPerPage}
         itemsToShow={itemsToShow}
