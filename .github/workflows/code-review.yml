@@ -1,0 +1,21 @@
+name: Code Review
+
+permissions:
+  contents: read
+  pull-requests: write
+  models: true
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: anc95/ChatGPT-CodeReview@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USE_GITHUB_MODELS: true
+          MODEL: openai/gpt-4o
+          LANGUAGE: English
