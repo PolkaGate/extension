@@ -700,7 +700,6 @@
   "Start Staking": "Iniciar Staking",
   "Validators: {{selected}} of {{threshold}}": "Validadores: {{selected}} de {{threshold}}",
   "Inactive": "Inativo",
-  "My Share": "Minha Parte",
   "Elected": "Eleito",
   "Not Elected": "Não Eleito",
   "Staking type": "Tipo de Staking",
@@ -840,7 +839,6 @@
   "Enable Received Funds": "Ativar Fundos Recebidos",
   "Staking Rewards": "Recompensas de Staking",
   "Select Accounts": "Selecionar Contas",
-  "Select Chains": "Selecionar Redes",
   "Notification Settings": "Notificações",
   "Notification": "Notificação",
   "Era Progress": "Progresso da Era",
@@ -942,5 +940,8 @@
   "Myself": "Eu mesmo",
   "Remove all access": "Remover todo o acesso",
   "This will remove access for all authenticated websites. Are you sure you want to continue?": "Isso removerá o acesso de todos os sites autenticados. Tem certeza de que deseja continuar?",
-  "Select Networks": "Selecionar redes"
+  "Select Networks": "Selecionar redes",
+  "Pool nominated validators": "Validadores nomeados pelo pool",
+  "No nominations found": "Nenhuma nomeação encontrada",
+  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "Gerencie os validadores nomeados pelo seu pool considerando suas propriedades, incluindo suas taxas de comissão. Você também pode filtrá-los com base nas suas preferências."
 }

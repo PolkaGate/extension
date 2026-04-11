@@ -700,7 +700,6 @@
   "Start Staking": "Начать стейкинг",
   "Validators: {{selected}} of {{threshold}}": "Валидаторы: {{selected}} из {{threshold}}",
   "Inactive": "Неактивный",
-  "My Share": "Моя доля",
   "Elected": "Выбран",
   "Not Elected": "Не выбран",
   "Staking type": "Тип стейкинга",
@@ -840,7 +839,6 @@
   "Enable Received Funds": "Включить полученные средства",
   "Staking Rewards": "Вознаграждения за стейкинг",
   "Select Accounts": "Аккаунты",
-  "Select Chains": "Выбрать сети",
   "Notification Settings": "Уведомления",
   "Notification": "Уведомление",
   "Era Progress": "Прогресс эры",
@@ -942,5 +940,8 @@
   "Myself": "Я сам",
   "Remove all access": "Удалить весь доступ",
   "This will remove access for all authenticated websites. Are you sure you want to continue?": "Это удалит доступ для всех авторизованных сайтов. Вы уверены, что хотите продолжить?",
-  "Select Networks": "Выбрать сети"
+  "Select Networks": "Выбрать сети",
+  "Pool nominated validators": "Валидаторы, номинированные пулом",
+  "No nominations found": "Номинации не найдены",
+  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "Управляйте валидаторами, номинированными вашим пулом, учитывая их характеристики, включая комиссии. Вы также можете фильтровать их в соответствии со своими предпочтениями."
 }
