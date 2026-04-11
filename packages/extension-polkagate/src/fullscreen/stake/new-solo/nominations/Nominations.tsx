@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { FadeOnScroll, GradientButton } from '../../../../components';
 import { useTranslation } from '../../../../hooks';
+import { NothingFound } from '../../../../partials';
 import { NoValidatorBox } from '../../../components';
 import TableToolbar from '../../partials/TableToolbar';
 import { LabelBar } from './partials/LabelBar';
@@ -42,6 +43,7 @@ export default function Nominations({ address, genesisHash, stakingInfo }: Props
 
   const [notElectedCollapse, setNotElectedCollapse] = React.useState<boolean>(false);
   const [electedCollapse, setElectedCollapse] = React.useState<boolean>(true);
+  const hasVisibleNominations = active.length + elected.length + nonElected.length > 0;
 
   const onSearch = useCallback((input: string) => setSearch(input), [setSearch]);
   const openValidatorManagement = useCallback(() => address && genesisHash && navigate('/fullscreen-stake/solo/manage-validator/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
@@ -63,7 +65,7 @@ export default function Nominations({ address, genesisHash, stakingInfo }: Props
         />
       </TableToolbar>
       <Stack direction='column' ref={refContainer} sx={{ maxHeight: 'calc(100vh - 531px)', maxWidth: '1050px', minHeight: 'calc(100vh - 531px)', overflowY: 'auto', position: 'relative' }}>
-        {isNominated && isLoaded &&
+        {isNominated && isLoaded && hasVisibleNominations &&
           <>
             <LabelBar
               Icon={Star1}
@@ -126,6 +128,13 @@ export default function Nominations({ address, genesisHash, stakingInfo }: Props
         }
         {isNominated === false &&
           <NoValidatorBox style={{ height: '275px', paddingTop: '10px' }} />
+        }
+        {!isLoading && isNominated && isLoaded && !hasVisibleNominations &&
+          <NothingFound
+            show
+            style={{ pt: '80px' }}
+            text={t('No nominations found')}
+          />
         }
       </Stack>
       <FadeOnScroll containerRef={refContainer} height='45px' ratio={0.3} style={{ borderRadius: '0 0 14px 14px' }} />

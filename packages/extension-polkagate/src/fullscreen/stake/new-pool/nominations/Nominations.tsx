@@ -22,6 +22,7 @@ import { UndefinedItem } from '@polkadot/extension-polkagate/src/fullscreen/stak
 import TableToolbar from '@polkadot/extension-polkagate/src/fullscreen/stake/partials/TableToolbar';
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useValidatorsInformation from '@polkadot/extension-polkagate/src/hooks/useValidatorsInformation';
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 
 interface Props {
   genesisHash: string | undefined;
@@ -82,6 +83,7 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
 
     return { active, elected, nonElected };
   }, [electedIds, sortedAndFilteredValidators, stashAddress]);
+  const hasVisibleNominations = useMemo(() => (active.length + elected.length + nonElected.length) > 0, [active.length, elected.length, nonElected.length]);
 
   const onSearch = useCallback((input: string) => setSearch(input), []);
   const openValidatorManagement = useCallback(() => address && genesisHash && navigate('/fullscreen-stake/pool/manage-validator/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
@@ -103,7 +105,7 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
         />
       </TableToolbar>
       <Stack direction='column' ref={refContainer} sx={{ maxHeight: 'calc(100vh - 531px)', maxWidth: '1050px', minHeight: 'calc(100vh - 531px)', overflowY: 'auto', position: 'relative' }}>
-        {isNominated &&
+        {isNominated && hasVisibleNominations &&
           <>
             <LabelBar
               Icon={Star1}
@@ -166,6 +168,13 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
         }
         {!isLoading && !isNominated &&
           <NoValidatorBox style={{ height: '275px', paddingTop: '10px' }} />
+        }
+        {!isLoading && isNominated && !hasVisibleNominations &&
+          <NothingFound
+            show
+            style={{ pt: '80px' }}
+            text={t('No nominations found')}
+          />
         }
       </Stack>
       <FadeOnScroll containerRef={refContainer} height='45px' ratio={0.3} style={{ borderRadius: '0 0 14px 14px' }} />

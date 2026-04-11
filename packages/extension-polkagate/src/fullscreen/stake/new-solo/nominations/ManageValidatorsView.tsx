@@ -10,6 +10,7 @@ import React, { useCallback } from 'react';
 
 import PaginationRow from '../../../../fullscreen/history/PaginationRow';
 import { useTranslation } from '../../../../hooks';
+import { NothingFound } from '../../../../partials';
 import VelvetBox from '../../../../style/VelvetBox';
 import HomeLayout from '../../../components/layout';
 import FooterControls from '../../partials/FooterControls';
@@ -107,12 +108,12 @@ export default function ManageValidatorsView({ description,
             </TableToolbar>
             <Stack direction='column' sx={{ gap: '2px', height: 'calc(100vh - 390px)', overflow: 'auto', width: '100%' }}>
               {isLoaded &&
-                itemsToShow?.map((validator, index) => (
+                itemsToShow?.map((validator) => (
                   <ValidatorInfo
                     genesisHash={genesisHash}
                     isAlreadySelected={isAlreadySelected(validator)}
                     isSelected={isSelected(validator)}
-                    key={index}
+                    key={String(validator.accountId)}
                     onSelect={onSelect(validator)}
                     reachedMaximum={reachedMaximum}
                     validatorInfo={validator}
@@ -123,6 +124,13 @@ export default function ManageValidatorsView({ description,
                 Array.from({ length: DEFAULT_VALIDATORS_PER_PAGE })
                   .map((_, index) => (
                     <UndefinedItem key={index} />))
+              }
+              {!isLoading && isLoaded && itemsToShow?.length === 0 &&
+                <NothingFound
+                  show
+                  style={{ pt: '80px' }}
+                  text={t('Validator(s) Not Found')}
+                />
               }
             </Stack>
             <PaginationRow

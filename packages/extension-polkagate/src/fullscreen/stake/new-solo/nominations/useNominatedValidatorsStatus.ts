@@ -40,7 +40,7 @@ export default function useNominatedValidatorsStatus(stakingInfo: SoloStakingInf
 
   const isNominated = useMemo(() => stakingInfo?.stakingAccount?.nominators && stakingInfo?.stakingAccount.nominators.length > 0, [stakingInfo?.stakingAccount?.nominators]);
   const isLoading = useMemo(() => (stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined), [nominatedValidatorsInformation, stakingInfo?.stakingAccount]);
-  const isLoaded = useMemo(() => sortedAndFilteredValidators && sortedAndFilteredValidators.length > 0, [sortedAndFilteredValidators]);
+  const isLoaded = useMemo(() => sortedAndFilteredValidators !== undefined, [sortedAndFilteredValidators]);
 
   const nominatedStatuses = useMemo(() => {
     const elected: typeof nominatedValidatorsInformation = [];
