@@ -6,7 +6,7 @@ import type { ValidatorInformation } from '../../../../hooks/useValidatorsInform
 
 import { Stack, Typography } from '@mui/material';
 import { Firstline } from 'iconsax-react';
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import PaginationRow from '../../../../fullscreen/history/PaginationRow';
 import { useTranslation } from '../../../../hooks';
@@ -72,6 +72,13 @@ export default function ManageValidatorsView({ description,
   systemSuggestion,
   totalItems }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const handleSortByChange = useCallback((value: SetStateAction<string>) => {
+    if (typeof value === 'function') {
+      return;
+    }
+
+    onSortChange(value);
+  }, [onSortChange]);
 
   return (
     <HomeLayout>
@@ -88,7 +95,7 @@ export default function ManageValidatorsView({ description,
           <Stack direction='column' sx={{ width: '100%' }}>
             <TableToolbar
               onSearch={onSearch}
-              setSortBy={onSortChange as React.Dispatch<React.SetStateAction<string>>}
+              setSortBy={handleSortByChange}
               sortBy={sortConfig}
               sortByObject={VALIDATORS_SORTED_BY}
             >
