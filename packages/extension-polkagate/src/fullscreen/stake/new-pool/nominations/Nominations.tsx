@@ -84,7 +84,7 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
   }, [electedIds, sortedAndFilteredValidators, stashAddress]);
 
   const onSearch = useCallback((input: string) => setSearch(input), []);
-  const openValidatorManagement = useCallback(() => navigate('/fullscreen-stake/pool/manage-validator/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
+  const openValidatorManagement = useCallback(() => address && genesisHash && navigate('/fullscreen-stake/pool/manage-validator/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
 
   return (
     <Stack direction='column' sx={{ width: '100%' }}>

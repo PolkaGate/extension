@@ -44,7 +44,7 @@ export default function Nominations({ address, genesisHash, stakingInfo }: Props
   const [electedCollapse, setElectedCollapse] = React.useState<boolean>(true);
 
   const onSearch = useCallback((input: string) => setSearch(input), [setSearch]);
-  const openValidatorManagement = useCallback(() => navigate('/fullscreen-stake/solo/manage-validator/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
+  const openValidatorManagement = useCallback(() => address && genesisHash && navigate('/fullscreen-stake/solo/manage-validator/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
 
   return (
     <Stack direction='column' sx={{ width: '100%' }}>
