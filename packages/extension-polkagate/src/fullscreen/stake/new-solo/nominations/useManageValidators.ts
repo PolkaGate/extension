@@ -102,9 +102,7 @@ export default function useManageValidators({ maximum,
 
     onSearch('');
     setSystemSuggestion(isChecked);
-    isChecked
-      ? selectedBestValidators?.length && setNewSelectedValidators([...selectedBestValidators])
-      : setNewSelectedValidators([]);
+    setNewSelectedValidators(isChecked ? [...(selectedBestValidators ?? [])] : []);
   }, [onSearch, selectedBestValidators, systemSuggestion]);
 
   const isSelected = useCallback((validator: ValidatorInformation) => isIncluded(validator, newSelectedValidators), [newSelectedValidators]);
