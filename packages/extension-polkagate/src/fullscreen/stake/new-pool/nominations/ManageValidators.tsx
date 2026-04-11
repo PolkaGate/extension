@@ -35,7 +35,7 @@ function ManageValidators() {
 
   const selectedBestValidators = useValidatorSuggestion(validatorsInfo, genesisHash);
   const stakingConsts = useStakingConsts(genesisHash);
-  const maximum = useMemo(() => stakingConsts?.maxNominations || 0, [stakingConsts?.maxNominations]);
+  const maximum = useMemo(() => stakingConsts?.maxNominations ?? 0, [stakingConsts?.maxNominations]);
   const [review, setGoReview] = useState<boolean>(false);
 
   const { isAlreadySelected,
@@ -72,7 +72,7 @@ function ManageValidators() {
 
     setGoReview((isOnReview) => !isOnReview);
   }, [canReview]);
-  const isLoading = useMemo(() => stakingInfo.pool === undefined || nominatedValidatorsIds === undefined || nominatedValidatorsInformation === undefined || validatorsInformation === undefined, [nominatedValidatorsIds, nominatedValidatorsInformation, stakingInfo.pool, validatorsInformation]);
+  const isLoading = useMemo(() => stakingConsts === undefined || stakingInfo.pool === undefined || nominatedValidatorsIds === undefined || nominatedValidatorsInformation === undefined || validatorsInformation === undefined, [nominatedValidatorsIds, nominatedValidatorsInformation, stakingConsts, stakingInfo.pool, validatorsInformation]);
 
   return (
     <>
@@ -107,10 +107,10 @@ function ManageValidators() {
         <ReviewPopup
           address={address}
           genesisHash={genesisHash}
+          maximum={maximum}
           newSelectedValidators={newSelectedValidators}
           onClose={toggleReview}
           poolId={stakingInfo.pool?.poolId}
-          stakingConsts={stakingInfo.stakingConsts}
         />
       }
     </>

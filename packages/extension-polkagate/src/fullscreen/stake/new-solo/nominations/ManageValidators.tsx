@@ -20,7 +20,7 @@ function ManageValidators() {
 
   const selectedBestValidators = useValidatorSuggestion(validatorsInfo, genesisHash);
   const stakingConsts = useStakingConsts(genesisHash);
-  const maximum = useMemo(() => stakingConsts?.maxNominations || 0, [stakingConsts?.maxNominations]);
+  const maximum = useMemo(() => stakingConsts?.maxNominations ?? 0, [stakingConsts?.maxNominations]);
   const [review, setGoReview] = useState<boolean>(false);
 
   const { isAlreadySelected,
@@ -50,7 +50,7 @@ function ManageValidators() {
 
   const backToStakingHome = useCallback(() => navigate('/fullscreen-stake/solo/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
   const toggleReview = useCallback(() => setGoReview((isOnReview) => !isOnReview), []);
-  const isLoading = useMemo(() => stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined || validatorsInformation === undefined, [nominatedValidatorsInformation, stakingInfo?.stakingAccount, validatorsInformation]);
+  const isLoading = useMemo(() => stakingConsts === undefined || stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined || validatorsInformation === undefined, [nominatedValidatorsInformation, stakingConsts, stakingInfo?.stakingAccount, validatorsInformation]);
 
   return (
     <>
@@ -85,9 +85,9 @@ function ManageValidators() {
         <ReviewPopup
           address={address}
           genesisHash={genesisHash}
+          maximum={maximum}
           newSelectedValidators={newSelectedValidators}
           onClose={toggleReview}
-          stakingConsts={stakingInfo.stakingConsts}
         />
       }
     </>

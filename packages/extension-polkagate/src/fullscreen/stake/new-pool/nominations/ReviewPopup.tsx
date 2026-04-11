@@ -3,7 +3,6 @@
 
 import type { Content } from '@polkadot/extension-polkagate/partials/Review';
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
-import type { StakingConsts } from '../../../../util/types';
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -16,13 +15,13 @@ import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../.
 interface Props {
   address: string | undefined;
   genesisHash: string | undefined;
+  maximum: number;
   newSelectedValidators: ValidatorInformation[];
   onClose: () => void;
   poolId: number | undefined;
-  stakingConsts: StakingConsts | null | undefined;
 }
 
-export default function ReviewPopup({ address, genesisHash, newSelectedValidators, onClose, poolId, stakingConsts }: Props): React.ReactElement {
+export default function ReviewPopup({ address, genesisHash, maximum, newSelectedValidators, onClose, poolId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api } = useChainInfo(genesisHash);
   const navigate = useNavigate();
@@ -34,7 +33,7 @@ export default function ReviewPopup({ address, genesisHash, newSelectedValidator
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
-      content: `${newSelectedValidators.length} / ${stakingConsts?.maxNominations ?? 16}`,
+      content: `${newSelectedValidators.length} / ${maximum}`,
       title: t('Validators')
     },
     {
@@ -42,7 +41,7 @@ export default function ReviewPopup({ address, genesisHash, newSelectedValidator
       itemKey: 'fee',
       title: t('Fee')
     }];
-  }, [estimatedFee, newSelectedValidators.length, stakingConsts?.maxNominations, t]);
+  }, [estimatedFee, maximum, newSelectedValidators.length, t]);
 
   const tx = useMemo(() => poolId === undefined ? undefined : nominate?.(poolId, params), [nominate, params, poolId]);
   const extraDetailConfirmationPage = useMemo(() => {
