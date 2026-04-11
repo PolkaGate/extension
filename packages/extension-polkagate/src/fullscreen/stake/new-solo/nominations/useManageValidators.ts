@@ -4,7 +4,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { createSelectionPrioritySorter, DEFAULT_VALIDATORS_PER_PAGE, getFilterValidators, getSortAndFilterValidators, isIncluded, mergeValidatorsByAccountId, VALIDATORS_SORTED_BY } from './util';
 
@@ -50,6 +50,25 @@ export default function useManageValidators({ maximum,
 
   const newSelectedIds = useMemo(() => new Set(newSelectedValidators.map(({ accountId }) => String(accountId))), [newSelectedValidators]);
   const nominatedIds = useMemo(() => new Set(nominatedValidatorsInformation?.map(({ accountId }) => String(accountId)) ?? []), [nominatedValidatorsInformation]);
+  const previousNominatedIds = useRef<string>('');
+  const nominatedIdsString = useMemo(() => [...nominatedIds].sort().join(','), [nominatedIds]);
+  const newSelectedIdsString = useMemo(() => [...newSelectedIds].sort().join(','), [newSelectedIds]);
+
+  useEffect(() => {
+    if (nominatedValidatorsInformation === undefined) {
+      return;
+    }
+
+    const shouldSyncSelection =
+      previousNominatedIds.current === '' ||
+      newSelectedIdsString === previousNominatedIds.current;
+
+    if (shouldSyncSelection) {
+      setNewSelectedValidators(nominatedValidatorsInformation);
+    }
+
+    previousNominatedIds.current = nominatedIdsString;
+  }, [newSelectedIdsString, nominatedIdsString, nominatedValidatorsInformation]);
 
   const displayValidatorsInformation = useMemo(() => {
     if (!validatorsInformation || !nominatedValidatorsInformation) {
@@ -102,8 +121,8 @@ export default function useManageValidators({ maximum,
 
     onSearch('');
     setSystemSuggestion(isChecked);
-    setNewSelectedValidators(isChecked ? [...(selectedBestValidators ?? [])] : []);
-  }, [onSearch, selectedBestValidators, systemSuggestion]);
+    setNewSelectedValidators(isChecked ? [...(selectedBestValidators ?? [])] : [...(nominatedValidatorsInformation ?? [])]);
+  }, [nominatedValidatorsInformation, onSearch, selectedBestValidators, systemSuggestion]);
 
   const isSelected = useCallback((validator: ValidatorInformation) => isIncluded(validator, newSelectedValidators), [newSelectedValidators]);
   const isAlreadySelected = useCallback((validator: ValidatorInformation) => isIncluded(validator, nominatedValidatorsInformation), [nominatedValidatorsInformation]);
