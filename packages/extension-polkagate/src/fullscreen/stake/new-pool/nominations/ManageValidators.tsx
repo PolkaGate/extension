@@ -63,7 +63,15 @@ function ManageValidators() {
     validatorsInformation
   });
 
-  const backToStakingHome = useCallback(() => navigate('/fullscreen-stake/pool/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
+  const backToStakingHome = useCallback(() => {
+    if (!address || !genesisHash) {
+      navigate(-1);
+
+      return;
+    }
+
+    navigate('/fullscreen-stake/pool/' + address + '/' + genesisHash);
+  }, [address, genesisHash, navigate]);
   const canReview = useMemo(() => stakingInfo.pool?.poolId !== undefined, [stakingInfo.pool?.poolId]);
   const toggleReview = useCallback(() => {
     if (!canReview) {

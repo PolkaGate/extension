@@ -48,7 +48,15 @@ function ManageValidators() {
     validatorsInformation
   });
 
-  const backToStakingHome = useCallback(() => navigate('/fullscreen-stake/solo/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
+  const backToStakingHome = useCallback(() => {
+    if (!address || !genesisHash) {
+      navigate(-1) as void;
+
+      return;
+    }
+
+    navigate('/fullscreen-stake/solo/' + address + '/' + genesisHash) as void;
+  }, [address, genesisHash, navigate]);
   const toggleReview = useCallback(() => setGoReview((isOnReview) => !isOnReview), []);
   const isLoading = useMemo(() => stakingConsts === undefined || stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined || validatorsInformation === undefined, [nominatedValidatorsInformation, stakingConsts, stakingInfo?.stakingAccount, validatorsInformation]);
 
