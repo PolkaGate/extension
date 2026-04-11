@@ -152,7 +152,7 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receive
     log(`Processing ${extrinsicsTx.transactions.length} extrinsics`);
 
     const processed: TransactionDetail[] = extrinsicsTx.transactions.map((extrinsic: Extrinsics): TransactionDetail => {
-      const { account_display, amount, block_num, block_timestamp, call_module, call_module_function, calls, conviction, delegatee, extrinsic_hash, fee, forAccount, nominators, poolId, refId, success, to, to_account_display, voteType } = extrinsic;
+      const { account_display, amount, amountInHuman, block_num, block_timestamp, call_module, call_module_function, calls, conviction, delegatee, extrinsic_hash, fee, forAccount, nominators, poolId, refId, success, to, to_account_display, voteType } = extrinsic;
       // Determine action type
       const action = getActionType(call_module);
       const subAction = action === 'balances'
@@ -163,7 +163,7 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receive
 
       return {
         action,
-        amount: parseAmount(amount, decimal),
+        amount: parseAmount(amount, decimal, amountInHuman),
         block: block_num,
         calls,
         chain,
@@ -223,12 +223,20 @@ function getActionType(callModule: string): string {
 }
 
 // Helper: Parse amount considering decimal places
-function parseAmount(amount: string | undefined, decimal: number): string | undefined {
+function parseAmount(amount: string | undefined, decimal: number, amountInHuman?: boolean): string | undefined {
   if (amount === undefined) {
     return undefined;
   }
 
-  const isAlreadyInHuman = typeof amount === 'string' && (amount.includes('.') || amount.length < decimal);
+  if (amountInHuman) {
+    return amount;
+  }
+
+  // Subscan balance params are generally returned in machine units.
+  // Small raw balances can still have fewer digits than the chain decimals
+  // (e.g. 0.01 DOT => 100000000 Planck on a 10-decimal chain), so digit
+  // length is not a reliable signal that the value is already human-readable.
+  const isAlreadyInHuman = typeof amount === 'string' && /[.,]/.test(amount);
 
   if (isAlreadyInHuman) {
     return amount;
