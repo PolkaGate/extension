@@ -243,7 +243,7 @@ function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, 
             focused
             onInputChange={setSearchValue}
             placeholder={searchPlaceholder ?? t('Search')}
-            style={{ mb: '4px' }}
+            style={{ marginBottom: '4px' }}
           />
         }
         {filteredOptions.map(({ Icon: IconOption, text, value }, index) => {
