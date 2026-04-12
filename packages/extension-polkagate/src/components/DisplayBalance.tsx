@@ -91,8 +91,8 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
     token ?? nativeToken ?? api?.registry?.chainTokens?.[0],
     [api?.registry?.chainTokens, nativeToken, token]);
 
-  const isLoading = balance === undefined || balance === null || resolvedDecimal === undefined || resolvedDecimal === null || !resolvedToken;
   const maybeToken = withCurrency ? resolvedToken : '';
+  const isLoading = balance === undefined || balance === null || resolvedDecimal === undefined || resolvedDecimal === null || (withCurrency && !resolvedToken);
 
   if (isLoading) {
     return (
