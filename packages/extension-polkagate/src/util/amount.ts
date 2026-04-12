@@ -202,8 +202,8 @@ export function amountToHuman(_amount: string | number | BN | bigint | Compact<u
  * amountToMachine("500", 2) // BN instance representing 50000
  * amountToMachine("0.005", 6) // BN instance representing 5000
  */
-export function amountToMachine(amount: string | undefined, decimal: number | undefined): BN {
-  if (!amount || !decimal) {
+export function amountToMachine(amount: string | undefined, decimal: number | null | undefined): BN {
+  if (!amount || decimal === undefined || decimal === null) {
     return BN_ZERO;
   }
 
