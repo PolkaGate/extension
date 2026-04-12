@@ -228,19 +228,21 @@ function parseAmount(amount: string | undefined, decimal: number, amountInHuman?
     return undefined;
   }
 
+  const sanitizedAmount = amount.replace(/,/g, '');
+
   if (amountInHuman) {
-    return amount;
+    return sanitizedAmount;
   }
 
   // Subscan balance params are generally returned in machine units.
   // Small raw balances can still have fewer digits than the chain decimals
   // (e.g. 0.01 DOT => 100000000 Planck on a 10-decimal chain), so digit
   // length is not a reliable signal that the value is already human-readable.
-  const isAlreadyInHuman = typeof amount === 'string' && /[.,]/.test(amount);
+  const isAlreadyInHuman = sanitizedAmount.includes('.');
 
   if (isAlreadyInHuman) {
-    return amount;
+    return sanitizedAmount;
   }
 
-  return amountToHuman(amount, decimal);
+  return amountToHuman(sanitizedAmount, decimal);
 }
