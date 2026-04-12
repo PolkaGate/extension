@@ -943,5 +943,7 @@
   "Select Networks": "",
   "Pool nominated validators": "",
   "No nominations found": "",
-  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": ""
+  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "",
+  "Search network": "",
+  "Nothing found": ""
 }
