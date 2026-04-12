@@ -76,7 +76,7 @@ interface DisplayBalanceProps {
  * human-readable decimal string and can be further trimmed with
  * `decimalPoint`/`formatAdaptive`.
  */
-function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dotStyle, genesisHash, skeletonStyle, style, token, tokenColor, withCurrency = true, withSi }: DisplayBalanceProps) {
+function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dotStyle, genesisHash, skeletonStyle, style, token, tokenColor, useAdaptiveDecimalPoint, withCurrency = true, withSi }: DisplayBalanceProps) {
   const isDark = useIsDark();
   const theme = useTheme();
   const { isHideNumbers } = useIsHideNumbers();
@@ -118,7 +118,9 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
 
   const displayNum = isZero
     ? '0.00'
-    : typeof decimalPoint === 'number'
+    : useAdaptiveDecimalPoint
+      ? formatAdaptive(num, decimalPoint)
+      : typeof decimalPoint === 'number'
       ? formatAdaptive(num, decimalPoint)
       : num;
 

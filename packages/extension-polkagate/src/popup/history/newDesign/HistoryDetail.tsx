@@ -15,7 +15,7 @@ import { DisplayBalance, FadeOnScroll, FormatPrice, GradientButton, Identity, Tr
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsExtensionPopup, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
-import { amountToMachine, calcPrice, countDecimalPlaces, formatTimestamp, getVoteType, isReward, toShortAddress, toTitleCase } from '../../../util';
+import { amountToMachine, calcPrice, formatTimestamp, getVoteType, isReward, toShortAddress, toTitleCase } from '../../../util';
 import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
 import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import { getLink } from '../explorer';
@@ -92,14 +92,13 @@ function HistoryAmount({ amount, decimal, genesisHash, sign, token }: { amount: 
   const [integerPart, decimalPart] = sanitizedAmount.split('.');
 
   const decimalToShow = useMemo(() => {
-    if (decimalPart) {
-      const countDecimal = countDecimalPlaces(Number('0.' + decimalPart));
-      const toCut = countDecimal > 4 ? 4 : countDecimal;
-
-      return `.${decimalPart.slice(0, toCut)}`;
-    } else {
+    if (!decimalPart) {
       return '.00';
     }
+
+    const trimmedDecimal = decimalPart.slice(0, 4).replace(/0+$/, '');
+
+    return trimmedDecimal ? `.${trimmedDecimal}` : '.00';
   }, [decimalPart]);
 
   return (

@@ -67,6 +67,10 @@ export function getDecimal(n: string | number, count = 2) {
   return decimalPart ? decimalPart.slice(0, count) : 0;
 }
 
+function addThousandsSeparators(value: string): string {
+  return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 /**
  * Formats a number or string representation of a number to a specified number of decimal places.
  *
@@ -88,14 +92,13 @@ export function getDecimal(n: string | number, count = 2) {
  */
 export function formatDecimal(_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
   const MAX_DECIMAL_POINTS = 6;
-
-  // make number positive if it is negative
-  const sNumber = Number(_number) < 0 ? String(-Number(_number)) : String(_number);
+  const normalizedNumber = sciToDecimal(_number);
+  const sNumber = normalizedNumber.startsWith('-') ? normalizedNumber.slice(1) : normalizedNumber;
 
   const dotIndex = sNumber.indexOf('.');
 
   if (dotIndex < 0) {
-    return sNumber;
+   return commify ? addThousandsSeparators(sNumber) : sNumber;
   }
 
   let integerDigits = sNumber.slice(0, dotIndex);
@@ -112,9 +115,9 @@ export function formatDecimal(_number: number | string, decimalDigit = FLOATING_
 
   const fractionalDigits = decimalDigit === 0 ? '' : sNumber.slice(dotIndex, dotIndex + decimalDigit + 1);
 
-  integerDigits = commify ? Number(integerDigits).toLocaleString() : integerDigits;
+  integerDigits = commify ? addThousandsSeparators(integerDigits) : integerDigits;
 
-  return integerDigits + fractionalDigits;
+  return `${integerDigits}${fractionalDigits}`;
 }
 
 export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Balance', value).toHuman();
@@ -169,17 +172,23 @@ export function sciToDecimal(value: string | number) {
  * amountToHuman("5000000", 3, 0, true) // "5,000"
  */
 export function amountToHuman(_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
-  if (!_amount || !_decimals) {
+  if (_amount === undefined || _amount === null || _decimals === undefined || _decimals === null) {
     return '';
   }
 
-  _amount = String(_amount).replace(/,/g, '');
+  const sanitizedAmount = sciToDecimal(String(_amount).replace(/,/g, ''));
+  const unsignedAmount = sanitizedAmount.startsWith('-') ? sanitizedAmount.slice(1) : sanitizedAmount;
+  const digitsOnly = unsignedAmount.replace('.', '');
+  const integerLike = digitsOnly.replace(/^0+/, '') || '0';
 
-  const x = 10 ** _decimals;
-  const rawValue = Number(_amount) / x;
+  const normalized = _decimals === 0
+    ? integerLike
+    : (() => {
+      const padded = integerLike.padStart(_decimals + 1, '0');
+      const splitIndex = padded.length - _decimals;
 
-  // convert scientific notation to decimal string before formatting
-  const normalized = sciToDecimal(rawValue);
+      return `${padded.slice(0, splitIndex)}.${padded.slice(splitIndex)}`;
+    })();
 
   return formatDecimal(normalized, decimalDigits, commify);
 }
