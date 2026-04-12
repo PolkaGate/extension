@@ -93,7 +93,9 @@ function addThousandsSeparators(value: string): string {
 export function formatDecimal(_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
   const MAX_DECIMAL_POINTS = 6;
   const normalizedNumber = sciToDecimal(_number);
-  const sNumber = normalizedNumber.startsWith('-') ? normalizedNumber.slice(1) : normalizedNumber;
+  const sNumber = normalizedNumber.startsWith('-') || normalizedNumber.startsWith('+')
+    ? normalizedNumber.slice(1)
+    : normalizedNumber;
 
   const dotIndex = sNumber.indexOf('.');
 
@@ -130,26 +132,33 @@ export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Bala
 export function sciToDecimal(value: string | number) {
   const str = value.toString();
 
-  // Check if it’s scientific notation
   if (!/e/i.test(str)) {
     return str;
   }
 
-  const [base, exp] = str.toLowerCase().split('e');
-  let [intPart, fracPart = ''] = base.split('.');
-  const exponent = parseInt(exp, 10);
+  const [mantissa, exp] = str.split(/e/i);
+  const exponent = Number(exp);
 
-  if (exponent > 0) {
-    // Shift decimal to the right
-    const shift = exponent - fracPart.length;
-
-    fracPart = fracPart + '0'.repeat(Math.max(shift, 0));
-
-    return intPart + fracPart;
-  } else {
-    // Shift decimal to the left
-    return '0.' + '0'.repeat(Math.abs(exponent) - 1) + intPart + fracPart;
+  if (!Number.isFinite(exponent)) {
+    return str;
   }
+
+  const unsignedMantissa = mantissa.startsWith('-') || mantissa.startsWith('+')
+    ? mantissa.slice(1)
+    : mantissa;
+  const [intPart, fracPart = ''] = unsignedMantissa.split('.');
+  const digits = `${intPart}${fracPart}`;
+  const decimalIndex = intPart.length + exponent;
+
+  if (decimalIndex <= 0) {
+    return `0.${'0'.repeat(Math.abs(decimalIndex))}${digits}`;
+  }
+
+  if (decimalIndex >= digits.length) {
+    return `${digits}${'0'.repeat(decimalIndex - digits.length)}`;
+  }
+
+  return `${digits.slice(0, decimalIndex)}.${digits.slice(decimalIndex)}`;
 }
 
 /**
@@ -176,8 +185,13 @@ export function amountToHuman(_amount: string | number | BN | bigint | Compact<u
     return '';
   }
 
-  const sanitizedAmount = sciToDecimal(String(_amount).replace(/,/g, ''));
-  const unsignedAmount = sanitizedAmount.startsWith('-') ? sanitizedAmount.slice(1) : sanitizedAmount;
+  const rawAmount = String(_amount).replace(/,/g, '');
+  const sanitizedAmount = isHex(rawAmount)
+    ? hexToBn(rawAmount).toString()
+    : sciToDecimal(rawAmount);
+  const unsignedAmount = sanitizedAmount.startsWith('-') || sanitizedAmount.startsWith('+')
+    ? sanitizedAmount.slice(1)
+    : sanitizedAmount;
   const digitsOnly = unsignedAmount.replace('.', '');
   const integerLike = digitsOnly.replace(/^0+/, '') || '0';
 

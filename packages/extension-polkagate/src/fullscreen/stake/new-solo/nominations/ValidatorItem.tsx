@@ -47,6 +47,7 @@ const InfoWithIcons = memo(function InfoWithIcons({ StartIcon, amount, decimal, 
           decimalPoint={2}
           style={{ color: theme.palette.text.primary, fontFamily: 'Inter', fontSize: '12px', fontWeight: 500 }}
           token={token}
+          withSi
         />}
       {text &&
         <Typography color={textColor ?? 'text.primary'} textAlign='left' variant='B-4' width='fit-content'>

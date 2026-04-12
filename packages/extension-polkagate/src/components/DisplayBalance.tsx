@@ -107,14 +107,23 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
 
   const balanceBn = toBN(balance);
   const isZero = balanceBn.isZero();
-  const siThreshold = resolvedDecimal > 4
+  const enableSi = withSi ?? true;
+  const smallSiThreshold = resolvedDecimal > 4
     ? BN_TEN.pow(new BN(resolvedDecimal - 4))
     : null;
-  const shouldUseSi = Boolean(withSi && siThreshold && !isZero && balanceBn.lt(siThreshold));
+  const largeSiThreshold = BN_TEN.pow(new BN(resolvedDecimal + 5));
+  const shouldUseSi = Boolean(
+    enableSi &&
+    !isZero &&
+    (
+      (smallSiThreshold && balanceBn.lt(smallSiThreshold)) ||
+      balanceBn.gte(largeSiThreshold)
+    )
+  );
   const formattedBalance = shouldUseSi
     ? formatBalance(balance, { decimals: resolvedDecimal, withSi: true, withUnit: maybeToken, withZero: false })
     : `${amountToHuman(balance.toString(), resolvedDecimal, undefined, true)} ${maybeToken}`.trim();
-  const [num, unit = maybeToken] = formattedBalance.split(' ');
+  const [num, unit = maybeToken] = formattedBalance.trim().split(/\s+/);
 
   const displayNum = isZero
     ? '0.00'

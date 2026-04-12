@@ -204,10 +204,17 @@ export function positionsReducer(state: PositionsState, action: PositionsAction)
 
 export function getTokenUnit(value: number | string | BN | bigint, decimals: number, token: string): string {
   const valueBn = new BN(value.toString());
-  const siThreshold = decimals > 4
+  const smallSiThreshold = decimals > 4
     ? BN_TEN.pow(new BN(decimals - 4))
     : null;
-  const shouldUseSi = Boolean(siThreshold && !valueBn.isZero() && valueBn.lt(siThreshold));
+  const largeSiThreshold = BN_TEN.pow(new BN(decimals + 5));
+  const shouldUseSi = Boolean(
+    !valueBn.isZero() &&
+    (
+      (smallSiThreshold && valueBn.lt(smallSiThreshold)) ||
+      valueBn.gte(largeSiThreshold)
+    )
+  );
 
   if (!shouldUseSi) {
     return token;
