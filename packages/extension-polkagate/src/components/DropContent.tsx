@@ -5,14 +5,15 @@ import type { AdvancedDropdownOption } from '../util/types';
 
 import { Avatar, Grid, Popover, styled, Typography } from '@mui/material';
 import { Global } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { useIsDark } from '../hooks';
+import { useIsDark, useTranslation } from '../hooks';
 import { GradientDivider } from '../style';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import resolveLogoInfo from '../util/logo/resolveLogoInfo';
 import GlowCheck from './GlowCheck';
+import SearchField from './SearchField';
 
 const DropContentContainer = styled(Grid, {
   shouldForwardProp: (prop) => prop !== 'preferredWidth'
@@ -180,9 +181,11 @@ interface DropContentProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
   Icon: React.ElementType | React.JSX.Element | undefined;
   displayContentType?: 'logo' | 'text' | 'icon' | 'account' | 'iconOption';
+  enableSearch?: boolean;
   options: AdvancedDropdownOption[];
   open: boolean;
   onChange?: (value: number | string) => void;
+  searchPlaceholder?: string;
   setSelectedValue: React.Dispatch<React.SetStateAction<string | number | undefined>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedValue: string | number | undefined;
@@ -191,9 +194,30 @@ interface DropContentProps {
   withDivider: boolean;
 }
 
-function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, onChange, open, options, selectedValue, setOpen, setSelectedValue, showCheckAsIcon, style = {}, withDivider }: DropContentProps) {
+function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, enableSearch = false, onChange, open, options, searchPlaceholder, selectedValue, setOpen, setSelectedValue, showCheckAsIcon, style = {}, withDivider }: DropContentProps) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
+  const { t } = useTranslation();
+  const [searchValue, setSearchValue] = useState('');
+
+  useEffect(() => {
+    if (!open) {
+      setSearchValue('');
+    }
+  }, [open]);
+
+  const filteredOptions = useMemo(() => {
+    if (!enableSearch || !searchValue.trim()) {
+      return options;
+    }
+
+    const normalizedSearch = searchValue.trim().toLowerCase();
+
+    return options.filter(({ text, value }) =>
+      text.toString().toLowerCase().includes(normalizedSearch) ||
+      value.toString().toLowerCase().includes(normalizedSearch)
+    );
+  }, [enableSearch, options, searchValue]);
 
   return (
     <Popover
@@ -214,15 +238,24 @@ function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, 
       }}
     >
       <DropContentContainer container direction='column' item preferredWidth={contentDropWidth}>
-        {options.map(({ Icon: IconOption, text, value }, index) => {
-          const isLastOne = options.length === index + 1;
+        {enableSearch &&
+          <SearchField
+            focused
+            onInputChange={setSearchValue}
+            placeholder={searchPlaceholder ?? t('Search')}
+            style={{ marginBottom: '4px' }}
+          />
+        }
+        {filteredOptions.map(({ Icon: IconOption, text, value }, index) => {
+          const isLastOne = filteredOptions.length === index + 1;
+
+          const optionKey = `${String(value)}-${String(text)}`;
 
           return (
-            <React.Fragment key={index}>
+            <React.Fragment key={optionKey}>
               {displayContentType === 'text'
                 ? (
                   <TextContentDisplay
-                    key={index}
                     onChange={onChange}
                     selectedValue={selectedValue}
                     setOpen={setOpen}
@@ -235,7 +268,6 @@ function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, 
                 : (
                   <LogoContentDisplay
                     Icon={IconOption ?? Icon}
-                    key={index}
                     logoType={displayContentType}
                     onChange={onChange}
                     selectedValue={selectedValue}
@@ -252,6 +284,11 @@ function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, 
             </React.Fragment>
           );
         })}
+        {enableSearch && !filteredOptions.length &&
+          <Typography color='text.secondary' sx={{ px: '8px', py: '10px', textAlign: 'center' }} variant='B-2'>
+            {t('Nothing Found')}
+          </Typography>
+        }
       </DropContentContainer>
     </Popover>
   );

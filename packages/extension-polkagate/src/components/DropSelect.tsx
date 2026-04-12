@@ -55,6 +55,8 @@ interface Props {
   disabled?: boolean;
   displayContentType?: 'icon' | 'logo' | 'text' | 'account' | 'iconOption';
   dropContentStyle?: React.CSSProperties;
+  enableSearch?: boolean;
+  searchPlaceholder?: string;
   onChange?: (value: number | string) => void;
   options: AdvancedDropdownOption[];
   style?: React.CSSProperties;
@@ -66,7 +68,7 @@ interface Props {
   withDivider?: boolean;
 }
 
-function DropSelect({ Icon, contentDropWidth, defaultValue, disabled, displayContentType = 'text', dropContentStyle, onChange, options, scrollTextOnOverflow, showCheckAsIcon, simpleArrow, style, textVariant, value, withDivider = false }: Props) {
+function DropSelect({ Icon, contentDropWidth, defaultValue, disabled, displayContentType = 'text', dropContentStyle, enableSearch = false, onChange, options, scrollTextOnOverflow, searchPlaceholder, showCheckAsIcon, simpleArrow, style, textVariant, value, withDivider = false }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
 
@@ -141,9 +143,11 @@ function DropSelect({ Icon, contentDropWidth, defaultValue, disabled, displayCon
         containerRef={containerRef}
         contentDropWidth={contentDropWidth ?? _contentDropWidth}
         displayContentType={displayContentType}
+        enableSearch={enableSearch}
         onChange={onChange}
         open={open}
         options={options}
+        searchPlaceholder={searchPlaceholder}
         selectedValue={selectedValue}
         setOpen={setOpen}
         setSelectedValue={setSelectedValue}
