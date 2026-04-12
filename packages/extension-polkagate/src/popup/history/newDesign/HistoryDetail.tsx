@@ -85,10 +85,11 @@ function HistoryStatus({ action, success }: { action: string, success: boolean }
 
 function HistoryAmount({ amount, decimal, genesisHash, sign, token }: { amount: string, decimal: number, sign?: string, token?: string, genesisHash: string }) {
   const price = useTokenPriceBySymbol(token, genesisHash);
+  const sanitizedAmount = useMemo(() => amount.replace(/,/g, ''), [amount]);
 
-  const totalBalancePrice = useMemo(() => calcPrice(price.price, amountToMachine(amount, decimal) ?? BN_ZERO, decimal ?? 0), [amount, decimal, price.price]);
+  const totalBalancePrice = useMemo(() => calcPrice(price.price, amountToMachine(sanitizedAmount, decimal) ?? BN_ZERO, decimal ?? 0), [decimal, price.price, sanitizedAmount]);
 
-  const [integerPart, decimalPart] = amount.split('.');
+  const [integerPart, decimalPart] = sanitizedAmount.split('.');
 
   const decimalToShow = useMemo(() => {
     if (decimalPart) {

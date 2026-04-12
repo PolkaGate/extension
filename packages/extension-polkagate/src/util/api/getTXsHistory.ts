@@ -315,6 +315,7 @@ function getAdditionalInfo(functionName: keyof ParamTypesMapping, txDetail: { da
 
           return {
             amount,
+            amountInHuman: Boolean(transfer?.amount),
             from,
             to
           };

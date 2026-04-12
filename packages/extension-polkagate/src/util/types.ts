@@ -265,6 +265,7 @@ export interface Extrinsics {
   },
   refId?: number;
   amount?: string;
+  amountInHuman?: boolean;
   voteType?: number;
   class?: number;
   conviction?: string;
