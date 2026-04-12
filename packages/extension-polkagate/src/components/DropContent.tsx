@@ -249,12 +249,13 @@ function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, 
         {filteredOptions.map(({ Icon: IconOption, text, value }, index) => {
           const isLastOne = filteredOptions.length === index + 1;
 
+          const optionKey = `${String(value)}-${String(text)}`;
+
           return (
-            <React.Fragment key={index}>
+            <React.Fragment key={optionKey}>
               {displayContentType === 'text'
                 ? (
                   <TextContentDisplay
-                    key={index}
                     onChange={onChange}
                     selectedValue={selectedValue}
                     setOpen={setOpen}
@@ -267,7 +268,6 @@ function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, 
                 : (
                   <LogoContentDisplay
                     Icon={IconOption ?? Icon}
-                    key={index}
                     logoType={displayContentType}
                     onChange={onChange}
                     selectedValue={selectedValue}
