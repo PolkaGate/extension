@@ -228,7 +228,6 @@ function DetailCard({ historyItem }: Props) {
                                 width: 'max-content'
                               }}
                               token={token}
-                              withSi
                             />
                             : value
                   }

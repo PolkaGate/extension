@@ -71,7 +71,6 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
             decimalPoint={2}
             style={{ color: theme.palette.text.primary, fontFamily: 'Inter', fontSize: '12px', fontWeight: 500 }}
             token={token}
-            withSi
           />
         </Grid>
       </Stack>
@@ -161,7 +160,6 @@ const RightColumnContent = ({ genesisHash, onSelect, validator }: RightColumnCon
               style={{ ...theme.typography['H-2'], color: theme.palette.text.primary }}
               token={token}
               withCurrency={false}
-              withSi
             />
           }
           label={t('Staked') + valueUnit}

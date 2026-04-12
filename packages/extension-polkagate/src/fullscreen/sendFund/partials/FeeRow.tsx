@@ -221,7 +221,6 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs, transa
                 marginLeft: '5px'
               }}
               token={feeInfo.token}
-              withSi
             />
             <Logo assetSize='18px' genesisHash={genesisHash} logo={feeLogoInfo?.logo} />
             {showFeeSelector &&
@@ -262,7 +261,6 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs, transa
                   marginLeft: '5px'
                 }}
                 token={feeInfo.destinationFee?.token}
-                withSi
               />
               <Logo
                 assetSize='18px'

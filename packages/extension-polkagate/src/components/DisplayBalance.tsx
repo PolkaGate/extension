@@ -76,7 +76,7 @@ interface DisplayBalanceProps {
  * human-readable decimal string and can be further trimmed with
  * `decimalPoint`/`formatAdaptive`.
  */
-function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dotStyle, genesisHash, skeletonStyle, style, token, tokenColor, useAdaptiveDecimalPoint, withCurrency = true, withSi }: DisplayBalanceProps) {
+function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dotStyle, genesisHash, skeletonStyle, style, token, tokenColor, useAdaptiveDecimalPoint, withCurrency = true, withSi = true }: DisplayBalanceProps) {
   const isDark = useIsDark();
   const theme = useTheme();
   const { isHideNumbers } = useIsHideNumbers();
@@ -107,13 +107,12 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
 
   const balanceBn = toBN(balance);
   const isZero = balanceBn.isZero();
-  const enableSi = withSi ?? true;
   const smallSiThreshold = resolvedDecimal > 4
     ? BN_TEN.pow(new BN(resolvedDecimal - 4))
     : null;
   const largeSiThreshold = BN_TEN.pow(new BN(resolvedDecimal + 5));
   const shouldUseSi = Boolean(
-    enableSi &&
+    withSi &&
     !isZero &&
     (
       (smallSiThreshold && balanceBn.lt(smallSiThreshold)) ||
