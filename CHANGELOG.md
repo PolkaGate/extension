@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.6.1](https://github.com/polkagate/extension/compare/v2.6.0...v2.6.1) (2026-04-12)
+
+
+### Bug Fixes
+
+* fix history amount normalization for governance votes and transfers ([#2135](https://github.com/polkagate/extension/issues/2135)) ([2dcd204](https://github.com/polkagate/extension/commit/2dcd204d76f466c49c56975a05120c1dfc3619e9)), closes [#2133](https://github.com/polkagate/extension/issues/2133)
+
 # [2.6.0](https://github.com/polkagate/extension/compare/v2.5.0...v2.6.0) (2026-04-12)
 
 
