@@ -37,6 +37,7 @@ export default function FeeValue({ decimal, feeValue, token }: Props): React.Rea
             width: 'max-content'
           }}
           token={token}
+          withSi
         />
       </Container>
       <GradientDivider />

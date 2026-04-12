@@ -5,7 +5,7 @@ import type { PoolInfo } from '@polkadot/extension-polkagate/util/types';
 
 import { useCallback, useState } from 'react';
 
-import { type BN, BN_ZERO, formatBalance, noop } from '@polkadot/util';
+import { BN, BN_TEN, BN_ZERO, formatBalance, noop } from '@polkadot/util';
 
 import { SORTED_BY } from '../../../popup/staking/partial/PoolFilter';
 import { TRANSACTION_FLOW_STEPS } from '../../../util/constants';
@@ -203,9 +203,17 @@ export function positionsReducer(state: PositionsState, action: PositionsAction)
 }
 
 export function getTokenUnit(value: number | string | BN | bigint, decimals: number, token: string): string {
+  const valueBn = new BN(value.toString());
+  const siThreshold = decimals > 4
+    ? BN_TEN.pow(new BN(decimals - 4))
+    : null;
+  const shouldUseSi = Boolean(siThreshold && !valueBn.isZero() && valueBn.lt(siThreshold));
+
+  if (!shouldUseSi) {
+    return token;
+  }
+
   const formatted = formatBalance(value, { decimals, withSi: true, withUnit: token });
 
-  const match = formatted.match(/[\d,.]+\s*([a-zA-Z]+)$/);
-
-  return match?.[1] || '';
+  return formatted.trim().split(/\s+/).pop() || token;
 }
