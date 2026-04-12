@@ -92,7 +92,12 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
     [api?.registry?.chainTokens, nativeToken, token]);
 
   const maybeToken = withCurrency ? resolvedToken : '';
-  const isLoading = balance === undefined || balance === null || resolvedDecimal === undefined || resolvedDecimal === null || (withCurrency && !resolvedToken);
+  const isLoading =
+    balance === undefined ||
+    balance === null ||
+    resolvedDecimal === undefined ||
+    resolvedDecimal === null ||
+    (withCurrency && (resolvedToken === undefined || resolvedToken === null));
 
   if (isLoading) {
     return (
@@ -129,8 +134,8 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
     : useAdaptiveDecimalPoint
       ? formatAdaptive(num, decimalPoint)
       : typeof decimalPoint === 'number'
-      ? formatAdaptive(num, decimalPoint)
-      : num;
+        ? formatAdaptive(num, decimalPoint)
+        : num;
 
   const { maxWidth, width, ...restStyle } = style || {};
 
