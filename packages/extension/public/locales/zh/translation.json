@@ -700,7 +700,6 @@
   "Start Staking": "开始质押",
   "Validators: {{selected}} of {{threshold}}": "验证人：{{selected}} / {{threshold}}",
   "Inactive": "未激活",
-  "My Share": "我的份额",
   "Elected": "已当选",
   "Not Elected": "未当选",
   "Staking type": "质押类型",
@@ -840,7 +839,6 @@
   "Enable Received Funds": "启用已接收资金",
   "Staking Rewards": "质押奖励",
   "Select Accounts": "选择账户",
-  "Select Chains": "选择链",
   "Notification Settings": "通知设置",
   "Notification": "通知",
   "Era Progress": "纪元进度",
@@ -942,5 +940,8 @@
   "Myself": "我自己",
   "Remove all access": "移除所有访问权限",
   "This will remove access for all authenticated websites. Are you sure you want to continue?": "这将移除所有已认证网站的访问权限。您确定要继续吗？",
-  "Select Networks": "选择网络"
+  "Select Networks": "选择网络",
+  "Pool nominated validators": "池提名的验证人",
+  "No nominations found": "未找到提名",
+  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "管理你的资金池提名的验证人，并考虑他们的属性，包括佣金费率。你还可以根据自己的偏好对他们进行筛选。"
 }

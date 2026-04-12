@@ -7,7 +7,7 @@ import type { BN } from '@polkadot/util';
 import type { MyPoolInfo, PoolInfo } from '../../../util/types';
 
 import { Collapse, Container, Dialog, Grid, Link, Stack, Typography, useTheme } from '@mui/material';
-import { ArrowDown2, BuyCrypto, Chart21, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
+import { ArrowDown2, BuyCrypto, Chart21, CommandSquare, DiscountCircle, Discover, FlashCircle, People } from 'iconsax-react';
 import React, { Fragment, memo, useCallback, useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -194,7 +194,7 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
 
             return (
               <React.Fragment key={index}>
-                <Container disableGutters sx={{ display: 'flex', flexDirection: 'row' }}>
+                <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                   <Identity
                     address={member.accountId}
                     genesisHash={genesisHash ?? ''}
@@ -205,15 +205,17 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
                   <DisplayBalance
                     balance={isHexToBn(member.member.points.toString())}
                     decimal={decimal}
-                    style={{ ...theme.typography['B-4'], textAlign: 'left', width: '35%' }}
+                    style={{ ...theme.typography['B-4'], textAlign: 'center' }}
                     token={token}
                     tokenColor={color}
                   />
-                  <Typography color='text.primary' textAlign='right' variant='B-4' width='22%'>
+                  <Typography color='text.primary' textAlign='right' variant='B-4' width='20%'>
                     {isNaN(percentage) ? '--' : percentage.toFixed(2)}%
                   </Typography>
                 </Container>
-                {members.length > index + 1 && <GradientDivider isBlueish />}
+                {members.length > index + 1 &&
+                  <GradientDivider isBlueish />
+                }
               </React.Fragment>
             );
           })}
@@ -258,6 +260,70 @@ export const PoolReward = ({ genesisHash, totalPoolReward, totalPoolRewardAsFiat
         token={token ?? ''}
       />
     </Stack>
+  );
+};
+
+interface PoolNominationsProps {
+  genesisHash: string | undefined;
+  maxHeight?: string;
+  nominations: string[];
+}
+
+export const PoolNominations = ({ genesisHash, maxHeight = '220px', nominations }: PoolNominationsProps) => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const { chainName } = useChainInfo(genesisHash, true);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const isExtension = useIsExtensionPopup();
+
+  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
+
+  return (
+    <>
+      <Stack direction='column' ref={containerRef} sx={{ bgcolor: isExtension ? '#222540A6' : '#1B133C', borderRadius: '10px', gap: '12px', maxHeight, overflow: 'hidden', overflowY: 'auto', p: '12px', width: '100%' }}>
+        <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='100%'>
+          {t('Pool nominated validators')}
+        </Typography>
+        <Stack direction='column' sx={{ gap: '8px', width: '100%' }}>
+          {nominations.length === 0 &&
+            <Typography color='text.secondary' variant='B-4'>
+              {t('No nominations found')}
+            </Typography>
+          }
+          {nominations.map((address, index) => {
+            const { link } = getLink(chainName, 'account', address);
+
+            return (
+              <React.Fragment key={address}>
+                <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <Identity
+                    address={address}
+                    genesisHash={genesisHash ?? ''}
+                    identiconSize={18}
+                    showShortAddress
+                    showSocial
+                    style={{ flex: 1, maxWidth: '80%', variant: 'B-1' }}
+                  />
+                  <Grid container item width='fit-content'>
+                    <Link
+                      href={link}
+                      rel='noreferrer'
+                      sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '20px', justifyContent: 'center', width: '20px' }}
+                      target='_blank'
+                      underline='none'
+                    >
+                      <Subscan color={color} />
+                    </Link>
+                  </Grid>
+                </Container>
+                {nominations.length > index + 1 && <GradientDivider isBlueish />}
+              </React.Fragment>
+            );
+          })}
+        </Stack>
+      </Stack>
+      <FadeOnScroll containerRef={containerRef} height='40px' ratio={0.075} />
+    </>
   );
 };
 
@@ -502,6 +568,19 @@ export default function PoolDetail({ comprehensive, genesisHash, handleClose, op
                     genesisHash={genesisHash}
                     totalPoolReward={poolDetail?.rewardClaimable?.toString() ?? '0'}
                     totalPoolRewardAsFiat={totalPoolRewardAsFiat}
+                  />
+                </CollapseSection>
+                <CollapseSection
+                  TitleIcon={<Discover color={collapse['Nominations'] ? '#596AFF' : theme.palette.text.highlight} size='15' variant='Bulk' />}
+                  notShow={!comprehensive}
+                  onClick={handleCollapses('Nominations')}
+                  open={collapse['Nominations']}
+                  sideText={String(poolDetail.stashIdAccount?.nominators?.length ?? 0)}
+                  title={t('Nominations')}
+                >
+                  <PoolNominations
+                    genesisHash={genesisHash}
+                    nominations={poolDetail.stashIdAccount?.nominators?.map((item) => item.toString()) ?? []}
                   />
                 </CollapseSection>
               </Stack>

@@ -122,18 +122,15 @@ export const getNominatedValidatorsInformation = (validatorsInfo: ValidatorsInfo
   }
 
   const allValidators = [...validatorsInfo.validatorsInformation.elected, ...validatorsInfo.validatorsInformation.waiting];
+  const validatorsById = new Map(allValidators.map((validator) => [String(validator.accountId), validator]));
   const result = [];
 
-  // Go through each nominated validator ID
   for (const nominatedId of nominatedValidatorsIds) {
-    // Try to find the validator in the existing data
-    const existingValidator = allValidators.find(({ accountId }) => String(accountId) === nominatedId);
+    const existingValidator = validatorsById.get(nominatedId);
 
     if (existingValidator) {
-      // If found, use the existing validator info
       result.push(existingValidator);
     } else {
-      // If not found, create a placeholder validator object
       result.push({
         ...placeholderValidator,
         accountId: nominatedId as unknown as AccountId
@@ -144,19 +141,27 @@ export const getNominatedValidatorsInformation = (validatorsInfo: ValidatorsInfo
   return result;
 };
 
+export const mergeValidatorsByAccountId = (...validatorGroups: (ValidatorInformation[] | undefined)[]) => {
+  const merged = new Map<string, ValidatorInformation>();
+
+  validatorGroups.forEach((validators) => {
+    validators?.forEach((validator) => {
+      merged.set(String(validator.accountId), validator);
+    });
+  });
+
+  return [...merged.values()];
+};
+
 export const isIncluded = (validator: ValidatorInformation, validatorArray: ValidatorInformation[] | undefined) =>
   Boolean(validatorArray?.find(({ accountId }) => accountId.toString() === validator.accountId.toString()));
 
-export const onSort = (aId: string, bId: string, newSelectedValidators: ValidatorInformation[], nominatedValidatorsInformation: ValidatorInformation[]) => {
-  const newSelectedIds = new Set(newSelectedValidators.map(({ accountId }) => String(accountId)));
-  const nominatedIds = new Set(nominatedValidatorsInformation.map(({ accountId }) => String(accountId)));
-
+export const createSelectionPrioritySorter = (newSelectedIds: Set<string>, nominatedIds: Set<string>) => (aId: string, bId: string) => {
   const aNewSelected = newSelectedIds.has(aId);
   const bNewSelected = newSelectedIds.has(bId);
   const aNominated = nominatedIds.has(aId);
   const bNominated = nominatedIds.has(bId);
 
-  // Priority: new selected > nominated > others
   if (aNewSelected && !bNewSelected) {
     return -1;
   }

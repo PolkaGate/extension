@@ -10,7 +10,7 @@ import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 
-import { Logo, DisplayBalance, Identity, Motion } from '../../components';
+import { DisplayBalance, Identity, Logo, Motion } from '../../components';
 import NoInfoYet from '../../components/NoInfoYet';
 import { useChainInfo, useTranslation } from '../../hooks';
 import resolveLogoInfo from '../../util/logo/resolveLogoInfo';

@@ -700,7 +700,6 @@
   "Start Staking": "",
   "Validators: {{selected}} of {{threshold}}": "",
   "Inactive": "",
-  "My Share": "",
   "Elected": "",
   "Not Elected": "",
   "Staking type": "",
@@ -941,5 +940,8 @@
   "Myself": "",
   "Remove all access": "",
   "This will remove access for all authenticated websites. Are you sure you want to continue?": "",
-  "Select Networks": ""
+  "Select Networks": "",
+  "Pool nominated validators": "",
+  "No nominations found": "",
+  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": ""
 }

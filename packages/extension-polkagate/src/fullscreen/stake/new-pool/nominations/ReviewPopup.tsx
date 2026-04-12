@@ -16,21 +16,20 @@ interface Props {
   address: string | undefined;
   genesisHash: string | undefined;
   maximum: number;
-  onClose: () => void;
   newSelectedValidators: ValidatorInformation[];
+  onClose: () => void;
+  poolId: number | undefined;
 }
 
-export default function ReviewPopup({ address, genesisHash, maximum, newSelectedValidators, onClose }: Props): React.ReactElement {
+export default function ReviewPopup({ address, genesisHash, maximum, newSelectedValidators, onClose, poolId }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api } = useChainInfo(genesisHash);
   const navigate = useNavigate();
   const formatted = useFormatted(address, genesisHash);
 
-  const nominate = api?.tx['staking']['nominate'];
-
+  const nominate = api?.tx['nominationPools']?.['nominate'];
   const params = newSelectedValidators.map((v) => v.accountId.toString());
-
-  const estimatedFee = useEstimatedFee(genesisHash, formatted, nominate, [params]);
+  const estimatedFee = useEstimatedFee(genesisHash, formatted, nominate, poolId === undefined ? undefined : [poolId, params]);
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
@@ -43,7 +42,8 @@ export default function ReviewPopup({ address, genesisHash, maximum, newSelected
       title: t('Fee')
     }];
   }, [estimatedFee, maximum, newSelectedValidators.length, t]);
-  const tx = useMemo(() => nominate?.(params), [params, nominate]);
+
+  const tx = useMemo(() => poolId === undefined ? undefined : nominate?.(poolId, params), [nominate, params, poolId]);
   const extraDetailConfirmationPage = useMemo(() => {
     const nominators = newSelectedValidators.map(({ accountId }) => accountId.toString());
 
@@ -70,7 +70,7 @@ export default function ReviewPopup({ address, genesisHash, maximum, newSelected
       flowStep={flowStep}
       genesisHash={genesisHash}
       onClose={handleClose}
-      proxyTypeFilter={PROXY_TYPE.STAKING}
+      proxyTypeFilter={PROXY_TYPE.NOMINATION_POOLS}
       setFlowStep={setFlowStep}
       showBack
       title={t('Manage Nominations')}

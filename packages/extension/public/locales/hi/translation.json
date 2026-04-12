@@ -700,7 +700,6 @@
   "Start Staking": "स्टेकिंग शुरू करें",
   "Validators: {{selected}} of {{threshold}}": "वैलिडेटर: {{selected}} में से {{threshold}}",
   "Inactive": "निष्क्रिय",
-  "My Share": "मेरा हिस्सा",
   "Elected": "चुना गया",
   "Not Elected": "नहीं चुना गया",
   "Staking type": "स्टेकिंग प्रकार",
@@ -840,7 +839,6 @@
   "Enable Received Funds": "प्राप्त निधियों को सक्षम करें",
   "Staking Rewards": "स्टेकिंग पुरस्कार",
   "Select Accounts": "खाते चुनें",
-  "Select Chains": "चेन चुनें",
   "Notification Settings": "सूचना सेटिंग्स",
   "Notification": "सूचना",
   "Era Progress": "एरा प्रगति",
@@ -942,5 +940,8 @@
   "Myself": "मैं स्वयं",
   "Remove all access": "सारी पहुँच हटाएँ",
   "This will remove access for all authenticated websites. Are you sure you want to continue?": "यह सभी प्रमाणित वेबसाइटों की पहुँच हटा देगा। क्या आप वाकई जारी रखना चाहते हैं?",
-  "Select Networks": "नेटवर्क चुनें"
+  "Select Networks": "नेटवर्क चुनें",
+  "Pool nominated validators": "पूल द्वारा नामित वैलिडेटर",
+  "No nominations found": "कोई नॉमिनेशन नहीं मिला",
+  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "अपने पूल द्वारा नामित वैलिडेटरों को उनकी विशेषताओं, जिनमें उनकी कमीशन दरें भी शामिल हैं, के आधार पर प्रबंधित करें। आप उन्हें अपनी पसंद के अनुसार फ़िल्टर भी कर सकते हैं।"
 }

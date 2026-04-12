@@ -33,11 +33,11 @@
     }
   ],
   "icons": {
-    "16": "images/icon-16.png",
-    "32": "images/icon-32.png",
-    "48": "images/icon-48.png",
-    "64": "images/icon-64.png",
-    "128": "images/icon-128.png"
+    "16": "images/16b.png",
+    "32": "images/32b.png",
+    "48": "images/48b.png",
+    "64": "images/64b.png",
+    "128": "images/128b.png"
   },
   "web_accessible_resources": [{
     "resources":  ["page.js"],

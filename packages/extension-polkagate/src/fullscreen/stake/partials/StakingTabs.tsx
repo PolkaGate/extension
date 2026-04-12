@@ -4,17 +4,18 @@
 import type { Icon } from 'iconsax-react';
 import type { SoloStakingInfo } from '../../../hooks/useSoloStakingInfo';
 import type { UseStakingRewards } from '../../../hooks/useStakingRewardsChart';
-import type { PositionInfo } from '../../../util/types';
+import type { PositionInfo, MyPoolInfo } from '../../../util/types';
 
 import { Container, Stack, Typography } from '@mui/material';
 import { Discover, MagicStar, Wallet } from 'iconsax-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { useTranslation } from '../../../hooks';
+import { useFormatted, useTranslation } from '../../../hooks';
 import VelvetBox from '../../../style/VelvetBox';
 import ValidatorsTabBody from '../new-solo/nominations/ValidatorsTabBody';
+import PoolNominations from '../new-pool/nominations/Nominations';
 import Rewards from '../Rewards';
 import StakingPositions from '../stakingPositions';
 import { type PopupOpener } from '../util/utils';
@@ -53,6 +54,8 @@ const StakingTabsHeader = ({ disabled, items }: StakingTabsHeaderProps) => {
 };
 
 interface Props {
+  address?: string | undefined;
+  poolInfo?: MyPoolInfo | null | undefined;
   rewardInfo: UseStakingRewards;
   type: 'solo' | 'pool';
   genesisHash: string | undefined;
@@ -70,11 +73,20 @@ enum STAKING_TABS {
   VALIDATORS
 }
 
-function StakingTabs({ disabled, genesisHash, popupOpener, rewardInfo, setSelectedPosition, stakingInfo, token, type }: Props) {
+function StakingTabs({ address, disabled, genesisHash, poolInfo, popupOpener, rewardInfo, setSelectedPosition, stakingInfo, token, type }: Props) {
   const { t } = useTranslation();
   const [tab, setTab] = useState<STAKING_TABS>(STAKING_TABS.STAKING_POSITIONS);
+  const formatted = useFormatted(address, genesisHash);
+  const isPoolNominator = useMemo(() => formatted === poolInfo?.bondedPool?.roles?.nominator?.toString(), [formatted, poolInfo?.bondedPool?.roles?.nominator]);
+  const hasValidatorsTab = useMemo(() => type === 'solo' || (type === 'pool' && isPoolNominator), [isPoolNominator, type]);
 
   const tabSetter = useCallback((selectedTab: STAKING_TABS) => () => setTab(selectedTab), []);
+
+  useEffect(() => {
+    if (tab === STAKING_TABS.VALIDATORS && !hasValidatorsTab) {
+      setTab(STAKING_TABS.STAKING_POSITIONS);
+    }
+  }, [hasValidatorsTab, tab]);
 
   const tabItems: StakingTabsHeaderItems[] = useMemo(() => {
     const tabs: StakingTabsHeaderItems[] = [
@@ -101,8 +113,17 @@ function StakingTabs({ disabled, genesisHash, popupOpener, rewardInfo, setSelect
       });
     }
 
+    if (type === 'pool' && isPoolNominator) {
+      tabs.push({
+        Icon: Discover,
+        isSelected: tab === STAKING_TABS.VALIDATORS,
+        onClick: tabSetter(STAKING_TABS.VALIDATORS),
+        title: t('Nominations')
+      });
+    }
+
     return tabs;
-  }, [stakingInfo?.isValidator, t, tab, tabSetter, type]);
+  }, [isPoolNominator, stakingInfo?.isValidator, t, tab, tabSetter, type]);
 
   const content = useMemo(() => {
     switch (tab) {
@@ -124,10 +145,22 @@ function StakingTabs({ disabled, genesisHash, popupOpener, rewardInfo, setSelect
           />);
 
       case STAKING_TABS.VALIDATORS:
-        return (
-          <ValidatorsTabBody
-            stakingInfo={stakingInfo}
-          />);
+        if (type === 'solo') {
+          return (
+            <ValidatorsTabBody
+              stakingInfo={stakingInfo}
+            />);
+        }
+
+        if (type === 'pool' && isPoolNominator) {
+          return (
+            <PoolNominations
+              genesisHash={genesisHash}
+              poolInfo={poolInfo}
+            />);
+        }
+
+        return <></>;
 
       case STAKING_TABS.MY_POOL:
         return (<></>);
@@ -135,7 +168,7 @@ function StakingTabs({ disabled, genesisHash, popupOpener, rewardInfo, setSelect
       default:
         return <></>;
     }
-  }, [genesisHash, popupOpener, rewardInfo, setSelectedPosition, stakingInfo, tab, token, type]);
+  }, [genesisHash, isPoolNominator, poolInfo, popupOpener, rewardInfo, setSelectedPosition, stakingInfo, tab, token, type]);
 
   return (
     <Stack direction='column' sx={{ gap: '12px', px: '18px' }}>
