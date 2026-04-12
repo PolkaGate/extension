@@ -286,7 +286,7 @@ function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, 
         })}
         {enableSearch && !filteredOptions.length &&
           <Typography color='text.secondary' sx={{ px: '8px', py: '10px', textAlign: 'center' }} variant='B-2'>
-            {t('Nothing found')}
+            {t('Nothing Found')}
           </Typography>
         }
       </DropContentContainer>
