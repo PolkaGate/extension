@@ -41,24 +41,23 @@ export const InfoBox = ({ Amount, InfoIcon, decimal, genesisHash, label, style, 
           logoInfo &&
           <Logo assetSize='24px' genesisHash={genesisHash} logo={logoInfo.logo} subLogo={undefined} token={token} />
         }
-        {Amount}
-        {isBn(value)
-          ? (
-            <DisplayBalance
-              balance={value}
-              decimal={decimal}
-              style={{ ...theme.typography['H-2'], color: theme.palette.text.primary, width: 'fit-content' }}
-              useAdaptiveDecimalPoint
-              withCurrency={false}
-              withSi={false}
-            />
-          )
-          : (
-            !Amount &&
-            <Typography color='text.primary' fontFamily='OdibeeSans' variant='H-2'>
-              <ShowValue value={value} width='75px' />
-            </Typography>
-          )
+        {Amount ||
+          (isBn(value)
+            ? (
+              <DisplayBalance
+                balance={value}
+                decimal={decimal}
+                style={{ ...theme.typography['H-2'], color: theme.palette.text.primary, width: 'fit-content' }}
+                useAdaptiveDecimalPoint
+                withCurrency={false}
+                withSi={false}
+              />
+            )
+            : (
+              <Typography color='text.primary' fontFamily='OdibeeSans' variant='H-2'>
+                <ShowValue value={value} width='75px' />
+              </Typography>
+            ))
         }
       </Grid>
       <Typography color='#AA83DC' textAlign='left' variant='B-4' width='100%'>
