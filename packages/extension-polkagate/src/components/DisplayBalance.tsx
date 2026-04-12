@@ -118,7 +118,7 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
 
   const displayNum = isZero
     ? '0.00'
-    : decimalPoint
+    : typeof decimalPoint === 'number'
       ? formatAdaptive(num, decimalPoint)
       : num;
 
