@@ -108,7 +108,6 @@ function ManageProxies(): React.ReactElement {
         {step !== STEPS.UNSUPPORTED &&
           <Manage
             api={api}
-            chain={chain}
             decimal={decimal}
             depositedValue={depositedValue}
             isDisabledAddProxyButton={proxyItems === undefined}
@@ -122,7 +121,7 @@ function ManageProxies(): React.ReactElement {
         }
         {step === STEPS.ADD_PROXY &&
           <AddProxy
-            chain={chain}
+            genesisHash={chain?.genesisHash}
             proxiedAddress={address}
             proxyItems={proxyItems}
             setNewDepositedValue={setNewDepositedValue}

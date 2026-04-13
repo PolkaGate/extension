@@ -1,7 +1,6 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Chain } from '@polkadot/extension-chains/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
 import { Box, Divider, InputAdornment, Stack, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
@@ -20,18 +19,18 @@ interface Props {
   allAddresses?: [string, string | null, string | undefined][]// todo : remove
   address: string | null | undefined;
   addWithQr?: boolean;
-  chain?: Chain | null;
   disabled?: boolean;
+  genesisHash?: string | undefined;
   inlineActionLabel?: string;
-  onInlineActionClick?: () => void;
   label?: string;
+  onInlineActionClick?: () => void;
   placeHolder?: string;
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   style?: SxProps<Theme>;
-  withSelect?: boolean;
   setIsError?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   setType?: React.Dispatch<React.SetStateAction<KeypairType | undefined>>;
   showAddressBook?: boolean;
+  withSelect?: boolean;
 }
 
 interface AdornmentActionProps {
@@ -68,7 +67,7 @@ function AdornmentAction({ actionKey, children, hoverActionBackground, onClick, 
   );
 }
 
-export default function AddressInput({ addWithQr = false, address, chain, disabled = false, inlineActionLabel, onInlineActionClick, label, placeHolder, setAddress, setIsError, setType, showAddressBook, style, withSelect }: Props): React.ReactElement<Props> {
+export default function AddressInput({ addWithQr = false, address, genesisHash, disabled = false, inlineActionLabel, onInlineActionClick, label, placeHolder, setAddress, setIsError, setType, showAddressBook, style, withSelect }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const isBlueish = useIsBlueish();
@@ -306,7 +305,7 @@ export default function AddressInput({ addWithQr = false, address, chain, disabl
       }
       {openAccountList &&
         <AccountListModal
-          genesisHash={chain?.genesisHash}
+          genesisHash={genesisHash}
           // eslint-disable-next-line react/jsx-no-bind
           handleClose={() => setOpenAccountList(false)}
           open={openAccountList}

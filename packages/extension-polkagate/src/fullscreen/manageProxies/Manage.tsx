@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
-import type { Chain } from '@polkadot/extension-chains/types';
 import type { BN } from '@polkadot/util';
 import type { ProxyItem } from '../../util/types';
 
@@ -12,7 +11,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { BN_ZERO } from '@polkadot/util';
 
-import { Logo, DisplayBalance, GradientButton } from '../../components';
+import { DisplayBalance, GradientButton, Logo } from '../../components';
 import { useTranslation } from '../../hooks';
 import { SelectionStatus } from '../stake/partials/FooterControls';
 import ProxyList from './components/ProxyList';
@@ -21,19 +20,18 @@ import { type ProxyFlowStep } from './types';
 
 interface Props {
   api: ApiPromise | undefined | null;
-  setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
-  isDisabledAddProxyButton: boolean;
-  proxyItems: ProxyItem[] | null | undefined;
-  chain: Chain | null | undefined;
-  setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | null | undefined>>;
-  depositedValue: BN | null | undefined;
-  setNewDepositedValue: React.Dispatch<React.SetStateAction<BN | undefined>>;
-  newDepositValue: BN | undefined;
   decimal: number | undefined;
+  depositedValue: BN | null | undefined;
+  isDisabledAddProxyButton: boolean;
+  newDepositValue: BN | undefined;
+  proxyItems: ProxyItem[] | null | undefined;
+  setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | null | undefined>>;
+  setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
+  setNewDepositedValue: React.Dispatch<React.SetStateAction<BN | undefined>>;
   token: string | undefined;
 }
 
-export default function Manage({ api, chain, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
+export default function Manage({ api, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const proxyDepositBase = api ? api.consts['proxy']['proxyDepositBase'] as unknown as BN : BN_ZERO;
@@ -132,7 +130,7 @@ export default function Manage({ api, chain, decimal, depositedValue, isDisabled
           <Typography color='#AA83DC' variant='B-1'>
             {t('Deposit')}
           </Typography>
-          <Logo genesisHash={chain?.genesisHash} size={18} />
+          <Logo size={18} token={token} />
           <DisplayBalance
             balance={proxyItems === undefined ? undefined : depositedValue ?? newDepositValue ?? BN_ZERO}
             decimal={decimal}
