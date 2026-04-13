@@ -14,14 +14,33 @@ import React, { type CSSProperties, memo, useMemo } from 'react';
 import { formatBalance } from '@polkadot/util';
 
 import { useChainInfo, useIsDark, useIsHideNumbers } from '../hooks';
-import { toBN } from '../util';
+import { amountToHuman, shouldUseSi, toBN } from '../util';
 import { Dots, MySkeleton } from '.';
 
+/**
+ * Trims a decimal string for UI display without hiding significance.
+ *
+ * For values >= 1, it keeps up to `decimalPoint` fractional digits and drops
+ * trailing zeros. For values between 0 and 1, it preserves leading zeros after
+ * the decimal point and keeps the first non-zero digit so tiny balances like
+ * `0.0000123` do not collapse to `0`.
+ *
+ * Expects a plain decimal string such as the numeric part returned from
+ * `amountToHuman` or `formatBalance`.
+ */
 function formatAdaptive(num: string, decimalPoint = 4): string {
   const [int, frac] = num.split('.');
 
   if (!frac) {
     return int;
+  }
+
+  if (int === '0') {
+    const leadingZeros = frac.match(/^0*/)?.[0].length ?? 0;
+    const digitsToKeep = Math.max(decimalPoint, leadingZeros + 1);
+    const significantFraction = frac.slice(0, digitsToKeep).replace(/0+$/, '');
+
+    return significantFraction ? `${int}.${significantFraction}` : int;
   }
 
   const trimmed = frac
@@ -48,7 +67,17 @@ interface DisplayBalanceProps {
   withSi?: boolean;
 }
 
-function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dotStyle, genesisHash, skeletonStyle, style, token, tokenColor, withCurrency = true, withSi }: DisplayBalanceProps) {
+/**
+ * Renders a chain balance with token metadata and UI-friendly formatting.
+ *
+ * The component resolves decimal precision and token symbol from explicit props,
+ * chain metadata, or the provided API. While those inputs are unavailable, it
+ * shows a skeleton placeholder. When `withSi` is enabled, very small non-zero
+ * balances are formatted with SI units; otherwise the balance is rendered as a
+ * human-readable decimal string and can be further trimmed with
+ * `decimalPoint`/`formatAdaptive`.
+ */
+function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dotStyle, genesisHash, skeletonStyle, style, token, tokenColor, useAdaptiveDecimalPoint, withCurrency = true, withSi = true }: DisplayBalanceProps) {
   const isDark = useIsDark();
   const theme = useTheme();
   const { isHideNumbers } = useIsHideNumbers();
@@ -56,15 +85,20 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
   const { decimal: nativeDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
   const resolvedDecimal = useMemo(() =>
-    decimal || nativeDecimal || api?.registry?.chainDecimals?.[0],
+    decimal ?? nativeDecimal ?? api?.registry?.chainDecimals?.[0],
     [api?.registry?.chainDecimals, decimal, nativeDecimal]);
 
   const resolvedToken = useMemo(() =>
-    token || nativeToken || api?.registry?.chainTokens?.[0],
+    token ?? nativeToken ?? api?.registry?.chainTokens?.[0],
     [api?.registry?.chainTokens, nativeToken, token]);
 
-  const isLoading = balance === undefined || balance === null || !resolvedDecimal || !resolvedToken;
   const maybeToken = withCurrency ? resolvedToken : '';
+  const isLoading =
+    balance === undefined ||
+    balance === null ||
+    resolvedDecimal === undefined ||
+    resolvedDecimal === null ||
+    (withCurrency && (resolvedToken === undefined || resolvedToken === null));
 
   if (isLoading) {
     return (
@@ -77,15 +111,23 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
     );
   }
 
-  const formattedWithSi = formatBalance(balance, { decimals: resolvedDecimal, withSi, withUnit: maybeToken, withZero: false });
-  const [num, unit = maybeToken] = formattedWithSi.split(' ');
+  const balanceBn = toBN(balance);
+  const isZero = balanceBn.isZero();
+  const useSi = withSi && shouldUseSi(balanceBn, resolvedDecimal);
+  const formattedBalance = useSi
+    ? formatBalance(balance, { decimals: resolvedDecimal, withSi: true, withUnit: maybeToken, withZero: false })
+    : `${amountToHuman(balance.toString(), resolvedDecimal, undefined, true)} ${maybeToken}`.trim();
+  const [num, unit = maybeToken] = formattedBalance.trim().split(/\s+/);
 
-  const isZero = !balance || toBN(balance).isZero();
   const displayNum = isZero
     ? '0.00'
-    : decimalPoint ? formatAdaptive(num, decimalPoint) : num;
+    : useAdaptiveDecimalPoint
+      ? formatAdaptive(num, decimalPoint)
+      : typeof decimalPoint === 'number'
+        ? formatAdaptive(num, decimalPoint)
+        : num;
 
-    const { maxWidth, width, ...restStyle } = style || {};
+  const { maxWidth, width, ...restStyle } = style || {};
 
   return (
     <Fade in={true} timeout={1000}>

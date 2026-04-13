@@ -43,6 +43,7 @@ export default function TokenStakeStatus({ amount, decimal, genesisHash, style, 
           }}
           token={token}
           tokenColor={textColor}
+          useAdaptiveDecimalPoint
         />
         <Typography color={textColor} variant='B-4' width='fit-content'>
           {text}

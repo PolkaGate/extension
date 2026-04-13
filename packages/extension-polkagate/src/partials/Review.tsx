@@ -105,10 +105,11 @@ interface ContentItemProps extends Content {
   decimal?: number;
   token?: string;
   genesisHash: string;
+  itemKey?: 'fee' | 'amount';
   noDivider?: boolean;
 }
 
-export const ContentItem = memo(function ContentItemMemo({ Icon, content, decimal, description, genesisHash, noDivider = false, title, token, warningText, withLogo }: ContentItemProps) {
+export const ContentItem = memo(function ContentItemMemo({ Icon, content, decimal, description, genesisHash, itemKey, noDivider = false, title, token, warningText, withLogo }: ContentItemProps) {
   const isExtension = useIsExtensionPopup();
 
   const logoInfo = useMemo(() => withLogo ? resolveLogoInfo(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
@@ -144,6 +145,7 @@ export const ContentItem = memo(function ContentItemMemo({ Icon, content, decima
                     width: 'max-content'
                   }}
                   token={token}
+                  withSi={itemKey === 'fee'}
                 />)
               : isAddress(content)
                 ? (
@@ -235,12 +237,13 @@ export default function Review({ amount, closeReview, genesisHash, pool, proxyTy
         />
       }
       <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '170px', mt: '20px', overflow: 'hidden', overflowY: 'auto', width: '100%', ...fsStyle }}>
-        {transactionInformation.map(({ content, description, title, warningText, withLogo }, index) => (
+        {transactionInformation.map(({ content, description, itemKey, title, warningText, withLogo }, index) => (
           <ContentItem
             content={content}
             decimal={decimal}
             description={description}
             genesisHash={genesisHash}
+            itemKey={itemKey}
             key={index}
             noDivider={pool && !isRow}
             title={title}

@@ -196,6 +196,7 @@ export default function StakingPortfolio({ buttons = [], disabled, genesisHash, 
           padding: isFullScreen ? '3px 4px 1px' : 0
         }}
         token={token}
+        useAdaptiveDecimalPoint
       />
       <Buttons
         buttons={buttons}

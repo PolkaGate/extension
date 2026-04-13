@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
-import type { Chain } from '@polkadot/extension-chains/types';
 import type { BN } from '@polkadot/util';
 import type { AdvancedDropdownOption, ProxyItem, ProxyTypes } from '../../util/types';
 
@@ -21,18 +20,18 @@ import useProxyTypes from './useProxyTypes';
 interface Props {
   setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
   step: string;
-  chain: Chain | null | undefined;
+  genesisHash?: string | undefined;
   proxiedAddress: string | undefined;
   proxyItems: ProxyItem[] | null | undefined;
   setProxyItems: React.Dispatch<React.SetStateAction<ProxyItem[] | null | undefined>>;
   setNewDepositedValue: React.Dispatch<React.SetStateAction<BN | undefined>>;
 }
 
-export default function AddProxy({ chain, proxiedAddress, proxyItems, setNewDepositedValue, setProxyItems, setStep, step }: Props): React.ReactElement {
+export default function AddProxy({ genesisHash, proxiedAddress, proxyItems, setNewDepositedValue, setProxyItems, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const formatted = useFormatted(proxiedAddress, chain?.genesisHash);
-  const accountDisplayName = useAccountDisplay(proxiedAddress, chain?.genesisHash);
-  const proxyTypes = useProxyTypes(chain?.genesisHash);
+  const formatted = useFormatted(proxiedAddress, genesisHash);
+  const accountDisplayName = useAccountDisplay(proxiedAddress, genesisHash);
+  const proxyTypes = useProxyTypes(genesisHash);
 
   const [proxyAddress, setProxyAddress] = useState<string | null>();
   const [delay, setDelay] = useState<number>(0);
@@ -113,7 +112,7 @@ export default function AddProxy({ chain, proxiedAddress, proxyItems, setNewDepo
         </Typography>
         <AddressInput
           address={proxyAddress}
-          chain={chain}
+          genesisHash={genesisHash}
           label={t('Account ID')}
           setAddress={setProxyAddress}
           style={{ mt: '25px', width: '100%' }}

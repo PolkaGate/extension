@@ -7,7 +7,7 @@ import { Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { AddressInput } from '../../../components';
-import { useAddressBook, useChainInfo, useFormatted, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useAddressBook, useFormatted, useSelectedAccount, useTranslation } from '../../../hooks';
 import NumberedTitle from './NumberedTitle';
 
 interface Props {
@@ -18,7 +18,6 @@ interface Props {
 
 export default function RecipientAddress({ genesisHash, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const { chain } = useChainInfo(genesisHash, true);
   const contacts = useAddressBook();
   const selectedAccount = useSelectedAccount();
   const formattedSelectedAccount = useFormatted(selectedAccount?.address, genesisHash);
@@ -66,7 +65,7 @@ export default function RecipientAddress({ genesisHash, inputs, setInputs }: Pro
         <Stack alignItems='end' direction='row' justifyContent='space-between' width='100%'>
           <AddressInput
             address={address}
-            chain={chain}
+            genesisHash={genesisHash}
             inlineActionLabel={selectedAccount?.address ? t('Myself') : undefined}
             onInlineActionClick={useMyselfAsRecipient}
             setAddress={setAddress}

@@ -6,7 +6,7 @@ import type { Compact, u128 } from '@polkadot/types-codec';
 
 import { BN, BN_TEN, BN_ZERO, bnMax, hexToBn, isHex } from '@polkadot/util';
 
-import { FLOATING_POINT_DIGIT } from './constants';
+import { DEFAULT_DECIMAL_POINT_DIGIT } from './constants';
 
 /**
  * Counts the number of leading zeros in the fractional part of a decimal number.
@@ -67,35 +67,44 @@ export function getDecimal(n: string | number, count = 2) {
   return decimalPart ? decimalPart.slice(0, count) : 0;
 }
 
+function addThousandsSeparators(value: string): string {
+  return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 /**
- * Formats a number or string representation of a number to a specified number of decimal places.
+ * Formats a numeric string for display by truncating its fractional part.
  *
- * - If `dynamicDecimal` is true, it adjusts decimal places dynamically for very small numbers.
+ * - Removes any leading `+`/`-` sign before formatting.
  * - If `commify` is true, it adds commas to the integer part.
- * - Negative numbers are converted to positive before formatting.
+ * - If `dynamicDecimal` is true, values between 0 and 1 may keep one more
+ *   fractional digit after their leading zeros, up to the internal small-value
+ *   threshold.
+ * - Integer inputs are returned as integers and are not padded with trailing
+ *   decimal zeros.
  *
  * @param {number | string} _number - The number to format.
- * @param {number} [decimalDigit=FLOATING_POINT_DIGIT] - The number of decimal places to keep.
+ * @param {number} [decimalDigit=DEFAULT_DECIMAL_POINT_DIGIT] - Maximum number of fractional digits to keep.
  * @param {boolean} [commify] - Whether to add commas to the integer part.
- * @param {boolean} [dynamicDecimal] - Whether to dynamically adjust decimal places for small numbers.
+ * @param {boolean} [dynamicDecimal] - Whether to slightly expand precision for some small fractional values.
  * @returns {string} The formatted number as a string.
  *
  * @example
  * formatDecimal(1234.56789, 2); // "1234.56"
- * formatDecimal("0.0000001123", 6, false, true); // "0.0000001"
+ * formatDecimal("0.0001123", 6, false, true); // "0.00011"
  * formatDecimal(-4567.89123, 3, true); // "4,567.891"
  * formatDecimal(1000, 2, true); // "1,000"
  */
-export function formatDecimal(_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
+export function formatDecimal(_number: number | string, decimalDigit = DEFAULT_DECIMAL_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
   const MAX_DECIMAL_POINTS = 6;
-
-  // make number positive if it is negative
-  const sNumber = Number(_number) < 0 ? String(-Number(_number)) : String(_number);
+  const normalizedNumber = sciToDecimal(_number);
+  const sNumber = normalizedNumber.startsWith('-') || normalizedNumber.startsWith('+')
+    ? normalizedNumber.slice(1)
+    : normalizedNumber;
 
   const dotIndex = sNumber.indexOf('.');
 
   if (dotIndex < 0) {
-    return sNumber;
+    return commify ? addThousandsSeparators(sNumber) : sNumber;
   }
 
   let integerDigits = sNumber.slice(0, dotIndex);
@@ -112,9 +121,9 @@ export function formatDecimal(_number: number | string, decimalDigit = FLOATING_
 
   const fractionalDigits = decimalDigit === 0 ? '' : sNumber.slice(dotIndex, dotIndex + decimalDigit + 1);
 
-  integerDigits = commify ? Number(integerDigits).toLocaleString() : integerDigits;
+  integerDigits = commify ? addThousandsSeparators(integerDigits) : integerDigits;
 
-  return integerDigits + fractionalDigits;
+  return `${integerDigits}${fractionalDigits}`;
 }
 
 export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Balance', value).toHuman();
@@ -127,26 +136,33 @@ export const toHuman = (api: ApiPromise, value: unknown) => api.createType('Bala
 export function sciToDecimal(value: string | number) {
   const str = value.toString();
 
-  // Check if it’s scientific notation
   if (!/e/i.test(str)) {
     return str;
   }
 
-  const [base, exp] = str.toLowerCase().split('e');
-  let [intPart, fracPart = ''] = base.split('.');
-  const exponent = parseInt(exp, 10);
+  const [mantissa, exp] = str.split(/e/i);
+  const exponent = Number(exp);
 
-  if (exponent > 0) {
-    // Shift decimal to the right
-    const shift = exponent - fracPart.length;
-
-    fracPart = fracPart + '0'.repeat(Math.max(shift, 0));
-
-    return intPart + fracPart;
-  } else {
-    // Shift decimal to the left
-    return '0.' + '0'.repeat(Math.abs(exponent) - 1) + intPart + fracPart;
+  if (!Number.isFinite(exponent)) {
+    return str;
   }
+
+  const unsignedMantissa = mantissa.startsWith('-') || mantissa.startsWith('+')
+    ? mantissa.slice(1)
+    : mantissa;
+  const [intPart, fracPart = ''] = unsignedMantissa.split('.');
+  const digits = `${intPart}${fracPart}`;
+  const decimalIndex = intPart.length + exponent;
+
+  if (decimalIndex <= 0) {
+    return `0.${'0'.repeat(Math.abs(decimalIndex))}${digits}`;
+  }
+
+  if (decimalIndex >= digits.length) {
+    return `${digits}${'0'.repeat(decimalIndex - digits.length)}`;
+  }
+
+  return `${digits.slice(0, decimalIndex)}.${digits.slice(decimalIndex)}`;
 }
 
 /**
@@ -169,19 +185,48 @@ export function sciToDecimal(value: string | number) {
  * amountToHuman("5000000", 3, 0, true) // "5,000"
  */
 export function amountToHuman(_amount: string | number | BN | bigint | Compact<u128> | undefined, _decimals: number | undefined, decimalDigits?: number, commify?: boolean): string {
-  if (!_amount || !_decimals) {
+  if (_amount === undefined || _amount === null || _decimals === undefined || _decimals === null) {
     return '';
   }
 
-  _amount = String(_amount).replace(/,/g, '');
+  const rawAmount = String(_amount).replace(/,/g, '');
+  const sanitizedAmount = isHex(rawAmount)
+    ? hexToBn(rawAmount).toString()
+    : sciToDecimal(rawAmount);
+  const unsignedAmount = sanitizedAmount.startsWith('-') || sanitizedAmount.startsWith('+')
+    ? sanitizedAmount.slice(1)
+    : sanitizedAmount;
+  const digitsOnly = unsignedAmount.replace('.', '');
+  const integerLike = digitsOnly.replace(/^0+/, '') || '0';
 
-  const x = 10 ** _decimals;
-  const rawValue = Number(_amount) / x;
+  const normalized = _decimals === 0
+    ? integerLike
+    : (() => {
+      const padded = integerLike.padStart(_decimals + 1, '0');
+      const splitIndex = padded.length - _decimals;
 
-  // convert scientific notation to decimal string before formatting
-  const normalized = sciToDecimal(rawValue);
+      return `${padded.slice(0, splitIndex)}.${padded.slice(splitIndex)}`;
+    })();
 
   return formatDecimal(normalized, decimalDigits, commify);
+}
+
+export function shouldUseSi(value: string | number | BN | bigint | Compact<u128>, decimals: number): boolean {
+  const valueBn = new BN(value.toString());
+
+  if (valueBn.isZero()) {
+    return false;
+  }
+
+  const smallSiThreshold = decimals > DEFAULT_DECIMAL_POINT_DIGIT
+    ? BN_TEN.pow(new BN(decimals - DEFAULT_DECIMAL_POINT_DIGIT))
+    : null;
+  const largeSiThreshold = BN_TEN.pow(new BN(decimals + 5));
+
+  return Boolean(
+    (smallSiThreshold && valueBn.lt(smallSiThreshold)) ||
+    valueBn.gte(largeSiThreshold)
+  );
 }
 
 /**

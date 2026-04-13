@@ -3,15 +3,14 @@
 
 import type { Icon } from 'iconsax-react';
 
-import { Box, Grid, type SxProps, type Theme, Typography } from '@mui/material';
+import { Box, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { type ReactNode, useMemo } from 'react';
 
 import { type BN, isBn } from '@polkadot/util';
 
-import { ShowValue } from '../../../components';
+import { DisplayBalance, ShowValue } from '../../../components';
 import Logo from '../../../components/Logo';
 import { useChainInfo, useIsExtensionPopup } from '../../../hooks';
-import { amountToHuman } from '../../../util';
 import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 
 interface InfoBoxProps {
@@ -27,6 +26,7 @@ interface InfoBoxProps {
 export const InfoBox = ({ Amount, InfoIcon, decimal, genesisHash, label, style, value }: InfoBoxProps) => {
   const { token } = useChainInfo(genesisHash, true);
   const isExtension = useIsExtensionPopup();
+  const theme = useTheme();
 
   const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
@@ -41,13 +41,24 @@ export const InfoBox = ({ Amount, InfoIcon, decimal, genesisHash, label, style, 
           logoInfo &&
           <Logo assetSize='24px' genesisHash={genesisHash} logo={logoInfo.logo} subLogo={undefined} token={token} />
         }
-        {Amount}
-        <Typography color='text.primary' fontFamily='OdibeeSans' variant='H-2'>
-          {isBn(value)
-            ? decimal && <>{amountToHuman(value, decimal)}</>
-            : !Amount && <ShowValue value={value} width='75px' />
-          }
-        </Typography>
+        {Amount ||
+          (isBn(value)
+            ? (
+              <DisplayBalance
+                balance={value}
+                decimal={decimal}
+                style={{ ...theme.typography['H-2'], color: theme.palette.text.primary, width: 'fit-content' }}
+                useAdaptiveDecimalPoint
+                withCurrency={false}
+                withSi={false}
+              />
+            )
+            : (
+              <Typography color='text.primary' fontFamily='OdibeeSans' variant='H-2'>
+                <ShowValue value={value} width='75px' />
+              </Typography>
+            ))
+        }
       </Grid>
       <Typography color='#AA83DC' textAlign='left' variant='B-4' width='100%'>
         {label}

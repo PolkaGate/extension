@@ -5,17 +5,17 @@ import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
-import type { CanPayFee, Proxy, ProxyItem, TxInfo } from '../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import React, { useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { Logo, DisplayBalance, FadeOnScroll, SignArea3 } from '../../components';
+import { FadeOnScroll, SignArea3 } from '../../components';
 import { useCanPayFeeAndDeposit, useChainInfo, useTranslation } from '../../hooks';
-import { UnableToPayFee } from '../../partials';
 import { PROXY_TYPE, type TransactionFlowStep } from '../../util/constants';
+import DisplayValue from './components/DisplayValue';
 import ProxyAccountInfo from './components/ProxyAccountInfo';
 import { type ProxyFlowStep } from './types';
 
@@ -33,35 +33,6 @@ interface Props {
   setShowProxySelection: React.Dispatch<React.SetStateAction<boolean>>;
   showProxySelection: boolean;
   onClose: () => void
-}
-
-function DisplayValue({ balance, canPayFee, decimal, genesisHash, label, token }: {
-  canPayFee?: CanPayFee;
-  label: string;
-  genesisHash: string | undefined;
-  balance: BN | undefined | null;
-  decimal: number | undefined;
-  token: string | undefined;
-}): React.ReactElement {
-  return (
-    <Stack direction='row' justifyContent='space-between'>
-      <Typography color='#AA83DC' variant='B-1'>
-        {label}
-      </Typography>
-      <Stack alignItems='center' columnGap={1} direction='row'>
-        {canPayFee?.isAbleToPay === false && canPayFee?.warning &&
-          <UnableToPayFee warningText={canPayFee.warning} />
-        }
-        <Logo genesisHash={genesisHash} size={18} />
-        <DisplayBalance
-          balance={balance}
-          decimal={decimal}
-          style={{ color: '#EAEBF1' }}
-          token={token}
-        />
-      </Stack>
-    </Stack>
-  );
 }
 
 function Review({ address, call, depositToPay, fee, genesisHash, onClose, proxyItems, selectedProxy, setSelectedProxy, setShowProxySelection, setStep, setTxInfo, showProxySelection }: Props): React.ReactElement {
@@ -137,7 +108,6 @@ function Review({ address, call, depositToPay, fee, genesisHash, onClose, proxyI
           <DisplayValue
             balance={depositToPay}
             decimal={decimal}
-            genesisHash={genesisHash}
             label={t('Deposit')}
             token={token}
           />
@@ -146,7 +116,6 @@ function Review({ address, call, depositToPay, fee, genesisHash, onClose, proxyI
             balance={fee}
             canPayFee={feeAndDeposit}
             decimal={decimal}
-            genesisHash={genesisHash}
             label={t('Fee')}
             token={token}
           />

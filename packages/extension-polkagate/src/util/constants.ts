@@ -26,7 +26,7 @@ export const PRIVACY_POLICY_LINK = 'https://docs.polkagate.xyz/polkagate/polkaga
 
 export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance in grey
 export const MAX_NOMINATIONS = 16;
-export const FLOATING_POINT_DIGIT = 4;
+export const DEFAULT_DECIMAL_POINT_DIGIT = 4;
 export const BLOCK_RATE = 6; // sec
 export const DEFAULT_TOKEN_DECIMALS = 12;
 
