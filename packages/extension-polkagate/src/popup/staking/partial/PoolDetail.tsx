@@ -208,6 +208,7 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
                     style={{ ...theme.typography['B-4'], textAlign: 'center' }}
                     token={token}
                     tokenColor={color}
+                    useAdaptiveDecimalPoint
                   />
                   <Typography color='text.primary' textAlign='right' variant='B-4' width='20%'>
                     {isNaN(percentage) ? '--' : percentage.toFixed(2)}%
