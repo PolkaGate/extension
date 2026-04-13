@@ -11,6 +11,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { BN_MAX_INTEGER, BN_ZERO } from '@polkadot/util';
 
 import { blockToDate } from '../util';
+import { mapSystemToRelay } from '../util/migrateHubUtils';
 import useChainInfo from './useChainInfo';
 import useCurrentBlockNumber from './useCurrentBlockNumber';
 import useFormatted from './useFormatted';
@@ -20,7 +21,7 @@ export default function useTimeToUnlock(address: string | undefined, genesisHash
   const { t } = useTranslation();
   const { api, chain } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
-  const currentBlock = useCurrentBlockNumber(genesisHash);
+  const currentBlock = useCurrentBlockNumber(mapSystemToRelay(genesisHash));
 
   const [unlockableAmount, setUnlockableAmount] = useState<BN>();
   const [lockedInRef, setLockedInReferenda] = useState<BN>();
