@@ -14,6 +14,7 @@ import { getUserAddedPriceId } from '@polkadot/extension-polkagate/src/fullscree
 import { DEFAULT_PRICE, type Price } from '@polkadot/extension-polkagate/src/hooks/useTokenPriceBySymbol';
 import { getPriceIdByChainName, sanitizeChainName, toCamelCase } from '@polkadot/extension-polkagate/src/util';
 import chains from '@polkadot/extension-polkagate/src/util/chains';
+import { DEFAULT_DECIMAL_POINT_DIGIT } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { NOTIFICATION_TIMESTAMP_OFFSET } from './constant';
 
@@ -366,7 +367,7 @@ export function getNotificationDescription(item: NotificationMessageType, t: TFu
     }
 
     case 'stakingReward': {
-      const assetAmount = formatNumber(item.payout?.amount, 3, decimal);
+      const assetAmount = formatNumber(item.payout?.amount, DEFAULT_DECIMAL_POINT_DIGIT, decimal);
       const currencyAmount = formatNumber(assetAmount * (price.price ?? 0));
 
       const amountSection = `${assetAmount} ${token} (${currencySign}${currencyAmount})`;
