@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolInfo } from '@polkadot/extension-polkagate/util/types';
+import type { BN } from '@polkadot/util';
 
 import { useCallback, useState } from 'react';
 
-import { BN, BN_TEN, BN_ZERO, formatBalance, noop } from '@polkadot/util';
+import { BN_ZERO, formatBalance, noop } from '@polkadot/util';
 
 import { SORTED_BY } from '../../../popup/staking/partial/PoolFilter';
+import { shouldUseSi } from '../../../util';
 import { TRANSACTION_FLOW_STEPS } from '../../../util/constants';
 
 export const DEFAULT_POOL_ITEMS_PER_PAGE = 10;
@@ -203,20 +205,7 @@ export function positionsReducer(state: PositionsState, action: PositionsAction)
 }
 
 export function getTokenUnit(value: number | string | BN | bigint, decimals: number, token: string): string {
-  const valueBn = new BN(value.toString());
-  const smallSiThreshold = decimals > 4
-    ? BN_TEN.pow(new BN(decimals - 4))
-    : null;
-  const largeSiThreshold = BN_TEN.pow(new BN(decimals + 5));
-  const shouldUseSi = Boolean(
-    !valueBn.isZero() &&
-    (
-      (smallSiThreshold && valueBn.lt(smallSiThreshold)) ||
-      valueBn.gte(largeSiThreshold)
-    )
-  );
-
-  if (!shouldUseSi) {
+  if (!shouldUseSi(value, decimals)) {
     return token;
   }
 

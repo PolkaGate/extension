@@ -207,6 +207,24 @@ export function amountToHuman(_amount: string | number | BN | bigint | Compact<u
   return formatDecimal(normalized, decimalDigits, commify);
 }
 
+export function shouldUseSi(value: string | number | BN | bigint | Compact<u128>, decimals: number): boolean {
+  const valueBn = new BN(value.toString());
+
+  if (valueBn.isZero()) {
+    return false;
+  }
+
+  const smallSiThreshold = decimals > DEFAULT_DECIMAL_POINT_DIGIT
+    ? BN_TEN.pow(new BN(decimals - DEFAULT_DECIMAL_POINT_DIGIT))
+    : null;
+  const largeSiThreshold = BN_TEN.pow(new BN(decimals + 5));
+
+  return Boolean(
+    (smallSiThreshold && valueBn.lt(smallSiThreshold)) ||
+    valueBn.gte(largeSiThreshold)
+  );
+}
+
 /**
  * Converts a human-readable amount to its machine-readable format by accounting for decimals.
  *

@@ -5,17 +5,17 @@ import type { ApiPromise } from '@polkadot/api';
 import type { Compact, u64, u128 } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { INumber } from '@polkadot/types-codec/types';
+import type { BN } from '@polkadot/util';
 import type { DotsVariant } from './Dots';
 
 import { Fade, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { type CSSProperties, memo, useMemo } from 'react';
 
-import { BN, BN_TEN, formatBalance } from '@polkadot/util';
+import { formatBalance } from '@polkadot/util';
 
 import { useChainInfo, useIsDark, useIsHideNumbers } from '../hooks';
-import { amountToHuman, toBN } from '../util';
+import { amountToHuman, shouldUseSi, toBN } from '../util';
 import { Dots, MySkeleton } from '.';
-import { DEFAULT_DECIMAL_POINT_DIGIT } from '../util/constants';
 
 /**
  * Trims a decimal string for UI display without hiding significance.
@@ -113,20 +113,8 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
 
   const balanceBn = toBN(balance);
   const isZero = balanceBn.isZero();
-  const smallSiThreshold =
-    resolvedDecimal > DEFAULT_DECIMAL_POINT_DIGIT
-      ? BN_TEN.pow(new BN(resolvedDecimal - DEFAULT_DECIMAL_POINT_DIGIT))
-      : null;
-  const largeSiThreshold = BN_TEN.pow(new BN(resolvedDecimal + 5));
-  const shouldUseSi = Boolean(
-    withSi &&
-    !isZero &&
-    (
-      (smallSiThreshold && balanceBn.lt(smallSiThreshold)) ||
-      balanceBn.gte(largeSiThreshold)
-    )
-  );
-  const formattedBalance = shouldUseSi
+  const useSi = withSi && shouldUseSi(balanceBn, resolvedDecimal);
+  const formattedBalance = useSi
     ? formatBalance(balance, { decimals: resolvedDecimal, withSi: true, withUnit: maybeToken, withZero: false })
     : `${amountToHuman(balance.toString(), resolvedDecimal, undefined, true)} ${maybeToken}`.trim();
   const [num, unit = maybeToken] = formattedBalance.trim().split(/\s+/);
