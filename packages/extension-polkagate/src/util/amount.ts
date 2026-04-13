@@ -72,21 +72,25 @@ function addThousandsSeparators(value: string): string {
 }
 
 /**
- * Formats a number or string representation of a number to a specified number of decimal places.
+ * Formats a numeric string for display by truncating its fractional part.
  *
- * - If `dynamicDecimal` is true, it adjusts decimal places dynamically for very small numbers.
+ * - Removes any leading `+`/`-` sign before formatting.
  * - If `commify` is true, it adds commas to the integer part.
- * - Negative numbers are converted to positive before formatting.
+ * - If `dynamicDecimal` is true, values between 0 and 1 may keep one more
+ *   fractional digit after their leading zeros, up to the internal small-value
+ *   threshold.
+ * - Integer inputs are returned as integers and are not padded with trailing
+ *   decimal zeros.
  *
  * @param {number | string} _number - The number to format.
- * @param {number} [decimalDigit=DEFAULT_DECIMAL_POINT_DIGIT] - The number of decimal places to keep.
+ * @param {number} [decimalDigit=DEFAULT_DECIMAL_POINT_DIGIT] - Maximum number of fractional digits to keep.
  * @param {boolean} [commify] - Whether to add commas to the integer part.
- * @param {boolean} [dynamicDecimal] - Whether to dynamically adjust decimal places for small numbers.
+ * @param {boolean} [dynamicDecimal] - Whether to slightly expand precision for some small fractional values.
  * @returns {string} The formatted number as a string.
  *
  * @example
  * formatDecimal(1234.56789, 2); // "1234.56"
- * formatDecimal("0.0000001123", 6, false, true); // "0.0000001"
+ * formatDecimal("0.0001123", 6, false, true); // "0.00011"
  * formatDecimal(-4567.89123, 3, true); // "4,567.891"
  * formatDecimal(1000, 2, true); // "1,000"
  */
