@@ -943,5 +943,7 @@
   "Select Networks": "Selecionar redes",
   "Pool nominated validators": "Validadores nomeados pelo pool",
   "No nominations found": "Nenhuma nomeação encontrada",
-  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "Gerencie os validadores nomeados pelo seu pool considerando suas propriedades, incluindo suas taxas de comissão. Você também pode filtrá-los com base nas suas preferências."
+  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "Gerencie os validadores nomeados pelo seu pool considerando suas propriedades, incluindo suas taxas de comissão. Você também pode filtrá-los com base nas suas preferências.",
+  "Search network": "Pesquisar rede",
+  "No tokens on selected networks": "Nenhum token nas redes selecionadas"
 }

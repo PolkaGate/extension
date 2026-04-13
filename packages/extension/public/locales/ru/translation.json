@@ -943,5 +943,7 @@
   "Select Networks": "Выбрать сети",
   "Pool nominated validators": "Валидаторы, номинированные пулом",
   "No nominations found": "Номинации не найдены",
-  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "Управляйте валидаторами, номинированными вашим пулом, учитывая их характеристики, включая комиссии. Вы также можете фильтровать их в соответствии со своими предпочтениями."
+  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "Управляйте валидаторами, номинированными вашим пулом, учитывая их характеристики, включая комиссии. Вы также можете фильтровать их в соответствии со своими предпочтениями.",
+  "Search network": "Поиск сети",
+  "No tokens on selected networks": "Нет токенов в выбранных сетях"
 }

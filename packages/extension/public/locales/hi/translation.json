@@ -943,5 +943,7 @@
   "Select Networks": "नेटवर्क चुनें",
   "Pool nominated validators": "पूल द्वारा नामित वैलिडेटर",
   "No nominations found": "कोई नॉमिनेशन नहीं मिला",
-  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "अपने पूल द्वारा नामित वैलिडेटरों को उनकी विशेषताओं, जिनमें उनकी कमीशन दरें भी शामिल हैं, के आधार पर प्रबंधित करें। आप उन्हें अपनी पसंद के अनुसार फ़िल्टर भी कर सकते हैं।"
+  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "अपने पूल द्वारा नामित वैलिडेटरों को उनकी विशेषताओं, जिनमें उनकी कमीशन दरें भी शामिल हैं, के आधार पर प्रबंधित करें। आप उन्हें अपनी पसंद के अनुसार फ़िल्टर भी कर सकते हैं।",
+  "Search network": "नेटवर्क खोजें",
+  "No tokens on selected networks": "चयनित नेटवर्क पर कोई टोकन नहीं हैं"
 }

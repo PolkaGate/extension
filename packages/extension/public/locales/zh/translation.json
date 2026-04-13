@@ -943,5 +943,7 @@
   "Select Networks": "选择网络",
   "Pool nominated validators": "池提名的验证人",
   "No nominations found": "未找到提名",
-  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "管理你的资金池提名的验证人，并考虑他们的属性，包括佣金费率。你还可以根据自己的偏好对他们进行筛选。"
+  "Manage your pool nominated validators by considering their properties, including their commission rates. You can even filter them based on your preferences.": "管理你的资金池提名的验证人，并考虑他们的属性，包括佣金费率。你还可以根据自己的偏好对他们进行筛选。",
+  "Search network": "搜索网络",
+  "No tokens on selected networks": "所选网络中没有代币"
 }
