@@ -15,7 +15,7 @@ import { calcPrice, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
 import { AssetNull, Logo } from '../../../components';
-import { useIsDark, useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
+import { useIsDark, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../hooks';
 import allChains from '../../../util/chains';
 import resolveLogoInfo, { type LogoInfo } from '../../../util/logo/resolveLogoInfo';
 import Drawer from './Drawer';
@@ -181,6 +181,7 @@ const itemVariants = {
 };
 
 function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const address = useSelectedAccount()?.address;
 
@@ -275,16 +276,16 @@ function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
 
   return (
     !summary?.length
-      ? <AssetNull />
+      ? <AssetNull text={t('No tokens on selected networks')} />
       : <>
         {summary.map((tokenDetail) => (
-        <motion.div key={tokenDetail.token} variants={itemVariants}>
-          <MemoizedTokenBox
-            address={address}
-            theme={theme}
-            tokenDetail={tokenDetail}
-          />
-        </motion.div>
+          <motion.div key={tokenDetail.token} variants={itemVariants}>
+            <MemoizedTokenBox
+              address={address}
+              theme={theme}
+              tokenDetail={tokenDetail}
+            />
+          </motion.div>
         ))}
       </>
   );
