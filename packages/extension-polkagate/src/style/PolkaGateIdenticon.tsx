@@ -4,6 +4,7 @@
 import type { IconTheme as BaseIconTheme } from '@polkadot/react-identicon/types';
 
 import React, { useCallback, useContext } from 'react';
+import styled from 'styled-components';
 
 import Icon from '@polkadot/react-identicon';
 import { isEthereumAddress } from '@polkadot/util-crypto';
@@ -17,6 +18,7 @@ type IconTheme = BaseIconTheme | 'polkasoul';
 
 interface Props {
   address?: string | null;
+  className?: string;
   iconTheme?: IconTheme;
   // isSubId?: boolean;
   // judgement?: RegExpMatchArray | null | undefined;
@@ -27,7 +29,7 @@ interface Props {
   withNotify?: boolean;
 }
 
-function PolkaGateIdenticon({ address, iconTheme, onCopy, prefix, size, style = {}, withNotify = true }: Props) {
+function PolkaGateIdenticon({ address, className, iconTheme, onCopy, prefix, size, style = {}, withNotify = true }: Props) {
   const { accountIconTheme } = useContext(AccountIconThemeContext);
   const { t } = useTranslation();
   const { notify } = useAlerts();
@@ -52,7 +54,7 @@ function PolkaGateIdenticon({ address, iconTheme, onCopy, prefix, size, style = 
   }, [address, baseAddress]);
 
   return (
-    <span onClick={onClick} style={{ cursor: withNotify ? 'copy' : 'default', height: `${size}px`, width: `${size}px`, ...style }}>
+    <span className={className} onClick={onClick} style={{ cursor: withNotify ? 'copy' : 'default', height: `${size}px`, width: `${size}px`, ...style }}>
       {!_theme || _theme === 'polkasoul'
         ? (
           <PolkaSoul
@@ -61,7 +63,7 @@ function PolkaGateIdenticon({ address, iconTheme, onCopy, prefix, size, style = 
           />)
         : (
           <Icon
-            className='icon'
+            className={_theme === 'polkadot' ? 'polkadot-icon' : 'icon'}
             isAlternative
             onCopy={onCopy ?? _onCopy}
             prefix={prefix}
@@ -75,4 +77,14 @@ function PolkaGateIdenticon({ address, iconTheme, onCopy, prefix, size, style = 
   );
 }
 
-export default PolkaGateIdenticon;
+export default React.memo(styled(PolkaGateIdenticon)(() => `
+  .polkadot-icon .container:before {
+    box-shadow: none;
+  }
+
+  .polkadot-icon svg {
+    circle:first-of-type {
+      fill: #2c2643;
+    }
+  }
+`));
