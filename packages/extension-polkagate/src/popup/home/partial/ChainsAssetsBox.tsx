@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { Logo, FormatPrice } from '../../../components';
+import { AssetNull, FormatPrice, Logo } from '../../../components';
 import { useAllChains, useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
 import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import { type AssetDetailType, buildChainsAssetsSummary } from '../../helpers/buildChainsAssetsSummary';
@@ -136,8 +136,10 @@ function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
     , [allChains, assets, pricesInCurrency]);
 
   return (
-    <>
-      {summary?.map(({ assets, chainName, chainTotalBalance, genesisHash, token }) => (
+    !summary?.length
+      ? <AssetNull />
+      : <>
+        {summary.map(({ assets, chainName, chainTotalBalance, genesisHash, token }) => (
         <motion.div key={genesisHash} variants={itemVariants}>
           <Grid container item sx={{ background: theme.palette.background.paper, borderRadius: '14px', p: '10px', rowGap: '6px' }}>
             <MemoizedChainHeader
@@ -167,8 +169,8 @@ function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
             })}
           </Grid>
         </motion.div>
-      ))}
-    </>
+        ))}
+      </>
   );
 }
 

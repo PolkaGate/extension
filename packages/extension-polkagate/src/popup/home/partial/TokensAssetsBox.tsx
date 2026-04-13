@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { calcPrice, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
-import { Logo } from '../../../components';
+import { AssetNull, Logo } from '../../../components';
 import { useIsDark, useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
 import allChains from '../../../util/chains';
 import resolveLogoInfo, { type LogoInfo } from '../../../util/logo/resolveLogoInfo';
@@ -274,8 +274,10 @@ function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
   }, [tokens, priceMap]);
 
   return (
-    <>
-      {summary?.map((tokenDetail) => (
+    !summary?.length
+      ? <AssetNull />
+      : <>
+        {summary.map((tokenDetail) => (
         <motion.div key={tokenDetail.token} variants={itemVariants}>
           <MemoizedTokenBox
             address={address}
@@ -283,8 +285,8 @@ function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
             tokenDetail={tokenDetail}
           />
         </motion.div>
-      ))}
-    </>
+        ))}
+      </>
   );
 }
 
