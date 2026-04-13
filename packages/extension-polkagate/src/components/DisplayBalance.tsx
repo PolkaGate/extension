@@ -15,6 +15,7 @@ import { BN, BN_TEN, formatBalance } from '@polkadot/util';
 import { useChainInfo, useIsDark, useIsHideNumbers } from '../hooks';
 import { amountToHuman, toBN } from '../util';
 import { Dots, MySkeleton } from '.';
+import { DEFAULT_DECIMAL_POINT_DIGIT } from '../util/constants';
 
 /**
  * Trims a decimal string for UI display without hiding significance.
@@ -112,9 +113,10 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
 
   const balanceBn = toBN(balance);
   const isZero = balanceBn.isZero();
-  const smallSiThreshold = resolvedDecimal > 4
-    ? BN_TEN.pow(new BN(resolvedDecimal - 4))
-    : null;
+  const smallSiThreshold =
+    resolvedDecimal > DEFAULT_DECIMAL_POINT_DIGIT
+      ? BN_TEN.pow(new BN(resolvedDecimal - DEFAULT_DECIMAL_POINT_DIGIT))
+      : null;
   const largeSiThreshold = BN_TEN.pow(new BN(resolvedDecimal + 5));
   const shouldUseSi = Boolean(
     withSi &&

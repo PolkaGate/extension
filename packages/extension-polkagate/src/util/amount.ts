@@ -6,7 +6,7 @@ import type { Compact, u128 } from '@polkadot/types-codec';
 
 import { BN, BN_TEN, BN_ZERO, bnMax, hexToBn, isHex } from '@polkadot/util';
 
-import { FLOATING_POINT_DIGIT } from './constants';
+import { DEFAULT_DECIMAL_POINT_DIGIT } from './constants';
 
 /**
  * Counts the number of leading zeros in the fractional part of a decimal number.
@@ -79,7 +79,7 @@ function addThousandsSeparators(value: string): string {
  * - Negative numbers are converted to positive before formatting.
  *
  * @param {number | string} _number - The number to format.
- * @param {number} [decimalDigit=FLOATING_POINT_DIGIT] - The number of decimal places to keep.
+ * @param {number} [decimalDigit=DEFAULT_DECIMAL_POINT_DIGIT] - The number of decimal places to keep.
  * @param {boolean} [commify] - Whether to add commas to the integer part.
  * @param {boolean} [dynamicDecimal] - Whether to dynamically adjust decimal places for small numbers.
  * @returns {string} The formatted number as a string.
@@ -90,7 +90,7 @@ function addThousandsSeparators(value: string): string {
  * formatDecimal(-4567.89123, 3, true); // "4,567.891"
  * formatDecimal(1000, 2, true); // "1,000"
  */
-export function formatDecimal(_number: number | string, decimalDigit = FLOATING_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
+export function formatDecimal(_number: number | string, decimalDigit = DEFAULT_DECIMAL_POINT_DIGIT, commify?: boolean, dynamicDecimal?: boolean): string {
   const MAX_DECIMAL_POINTS = 6;
   const normalizedNumber = sciToDecimal(_number);
   const sNumber = normalizedNumber.startsWith('-') || normalizedNumber.startsWith('+')
@@ -100,7 +100,7 @@ export function formatDecimal(_number: number | string, decimalDigit = FLOATING_
   const dotIndex = sNumber.indexOf('.');
 
   if (dotIndex < 0) {
-   return commify ? addThousandsSeparators(sNumber) : sNumber;
+    return commify ? addThousandsSeparators(sNumber) : sNumber;
   }
 
   let integerDigits = sNumber.slice(0, dotIndex);
