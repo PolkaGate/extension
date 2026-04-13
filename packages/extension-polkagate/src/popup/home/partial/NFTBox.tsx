@@ -29,7 +29,7 @@ const NoNftAlert = () => {
         src={logoBlackBirdTransparent as string}
         sx={{ opacity: 0.4, width: '129px' }}
       />
-      <Typography pt='10px' variant='B-2'>
+      <Typography color='#BEAAD8' pt='10px' variant='B-2'>
         {t("You don't have any NFTs yet")}
       </Typography>
     </Container>
