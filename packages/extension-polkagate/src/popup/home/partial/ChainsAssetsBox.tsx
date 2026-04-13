@@ -9,8 +9,8 @@ import { motion } from 'framer-motion';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { Logo, FormatPrice } from '../../../components';
-import { useAllChains, useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
+import { AssetNull, FormatPrice, Logo } from '../../../components';
+import { useAllChains, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../hooks';
 import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import { type AssetDetailType, buildChainsAssetsSummary } from '../../helpers/buildChainsAssetsSummary';
 import { TokenBalanceDisplay } from './TokenBalanceDisplay';
@@ -106,6 +106,7 @@ const itemVariants = {
 const gridStyle = { display: 'grid', rowGap: '6px', width: 'inherit' };
 
 function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
   const allChains = useAllChains();
@@ -136,8 +137,10 @@ function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
     , [allChains, assets, pricesInCurrency]);
 
   return (
-    <>
-      {summary?.map(({ assets, chainName, chainTotalBalance, genesisHash, token }) => (
+    !summary?.length
+      ? <AssetNull text={t('No tokens on selected networks')} />
+      : <>
+        {summary.map(({ assets, chainName, chainTotalBalance, genesisHash, token }) => (
         <motion.div key={genesisHash} variants={itemVariants}>
           <Grid container item sx={{ background: theme.palette.background.paper, borderRadius: '14px', p: '10px', rowGap: '6px' }}>
             <MemoizedChainHeader
@@ -167,8 +170,8 @@ function ChainsAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { 
             })}
           </Grid>
         </motion.div>
-      ))}
-    </>
+        ))}
+      </>
   );
 }
 
