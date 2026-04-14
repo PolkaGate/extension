@@ -4,6 +4,7 @@
 import type { TransactionDetail } from '../../../util/types';
 
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { normalizeHistoryGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { log } from './utils';
 
@@ -23,9 +24,15 @@ export async function getHistoryFromStorage(address: string, genesisHash: string
         // Navigate the nested structure: address -> genesisHash -> transactions
         const addressHistories: Record<string, TransactionDetail[]> = allHistories[address] || {};
         const chainHistory: TransactionDetail[] = addressHistories[genesisHash];
+        const normalizedGenesisHash = normalizeHistoryGenesis(genesisHash);
+        const filteredHistory = chainHistory?.filter((tx) => normalizeHistoryGenesis(tx.chain?.genesisHash) === normalizedGenesisHash);
 
-        log(`Retrieved ${chainHistory?.length || 0} transactions for ${address} on chain ${genesisHash}`);
-        resolve(chainHistory);
+        if (chainHistory?.length !== filteredHistory?.length) {
+          log(`Filtered out ${(chainHistory?.length || 0) - (filteredHistory?.length || 0)} wrong-chain transactions for ${address} on chain ${genesisHash}`);
+        }
+
+        log(`Retrieved ${filteredHistory?.length || 0} transactions for ${address} on chain ${genesisHash}`);
+        resolve(filteredHistory);
       } catch (error) {
         console.error('Error retrieving history from storage:', error);
         resolve(undefined);

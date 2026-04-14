@@ -13,6 +13,7 @@ import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/use
 import { ActionContext, BackWithLabel, FadeOnScroll, Motion } from '../../../components';
 import { useChainInfo, useSelectedAccount, useTranslation } from '../../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../../partials';
+import { normalizeHistoryGenesis } from '../../../util/migrateHubUtils';
 import useTransactionHistory from '../useTransactionHistory';
 import HistoryBox from './HistoryBox';
 import HistoryTabs, { TAB } from './HistoryTabs';
@@ -55,7 +56,9 @@ function History(): React.ReactElement {
       Object.entries(grouped)
         .map(([date, items]) => {
           const filteredItems = items.filter(
-            ({ token: historyItemToken }) => historyItemToken === token
+            ({ chain, token: historyItemToken }) =>
+              historyItemToken === token &&
+              normalizeHistoryGenesis(chain?.genesisHash) === normalizeHistoryGenesis(savedSelectedChain)
           )
             .map((item) => ({ ...item, decimal }));
 
@@ -66,7 +69,7 @@ function History(): React.ReactElement {
 
     // Check if result is an empty object
     return Object.keys(result).length === 0 ? null : result;
-  }, [decimal, grouped, token]);
+  }, [decimal, grouped, savedSelectedChain, token]);
 
   const onBack = useCallback(() => onAction('/'), [onAction]);
 

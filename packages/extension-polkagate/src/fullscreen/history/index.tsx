@@ -10,7 +10,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import HistoryTabs from '@polkadot/extension-polkagate/src/popup/history/newDesign/HistoryTabs';
 import useTransactionHistory from '@polkadot/extension-polkagate/src/popup/history/useTransactionHistory';
-import { isSystemChain } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { normalizeHistoryGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { useChainInfo, useSelectedAccount, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
@@ -71,25 +71,15 @@ function HistoryFs(): React.ReactElement {
     }
 
     const flattenedHistories = Object.entries(grouped).map(([_, histories]) => histories).flat();
-    const historyGenesisHash = flattenedHistories[0]?.chain?.genesisHash;
-    const isHistoryRecordsRelatedToSelectedChain = historyGenesisHash === savedSelectedChain || isSystemChain(historyGenesisHash, savedSelectedChain as string | undefined); // TODO: We may need to fetch people system chain history as well
-
-    if (savedSelectedChain && !isHistoryRecordsRelatedToSelectedChain) {
-      return null;
-    }
-
-    const result = flattenedHistories.map((item) => {
-      if (item.token === token) {
-        return { ...item, decimal: item.decimal ?? decimal };
-      }
-
-      return undefined;
-    }).filter((item) => !!item)
+    const result = flattenedHistories
+      .filter((item) =>
+        item.token === token &&
+        normalizeHistoryGenesis(item.chain?.genesisHash) === normalizeHistoryGenesis(savedSelectedChain)
+      )
+      .map((item) => ({ ...item, decimal: item.decimal ?? decimal }))
       .filter((item) =>
         (extraFilters.type === ALL_TYPES || extraFilters.type === item.subAction) &&
         (extraFilters.status === ANY_STATUS || (extraFilters.status === 'Completed' && item.success) || (extraFilters.status === 'Failed' && !item.success)));
-
-    setCount(result.length);
 
     if (result.length === 0) {
       return null;
@@ -100,6 +90,26 @@ function HistoryFs(): React.ReactElement {
 
     return result.slice(start, end);
   }, [grouped, savedSelectedChain, page, itemsPerPage, token, decimal, extraFilters]);
+
+  useEffect(() => {
+    if (!grouped) {
+      setCount(0);
+
+      return;
+    }
+
+    const flattenedHistories = Object.entries(grouped).map(([_, histories]) => histories).flat();
+    const filtered = flattenedHistories
+      .filter((item) =>
+        item.token === token &&
+        normalizeHistoryGenesis(item.chain?.genesisHash) === normalizeHistoryGenesis(savedSelectedChain)
+      )
+      .filter((item) =>
+        (extraFilters.type === ALL_TYPES || extraFilters.type === item.subAction) &&
+        (extraFilters.status === ANY_STATUS || (extraFilters.status === 'Completed' && item.success) || (extraFilters.status === 'Failed' && !item.success)));
+
+    setCount(filtered.length);
+  }, [grouped, savedSelectedChain, token, extraFilters]);
 
   useEffect(() => { // reset
     setExtraFilters(DEFAULT_EXTRA_FILTERS);

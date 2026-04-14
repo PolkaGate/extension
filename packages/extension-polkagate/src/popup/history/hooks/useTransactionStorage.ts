@@ -42,15 +42,13 @@ export function useTransactionStorage({ address, allHistories, chain, localHisto
 
     getHistoryFromStorage(String(address), String(chain.genesisHash))
       .then((history) => {
-        const gHash = history?.[0].chain?.genesisHash;
-
-        if (!gHash) {
+        if (!history?.length) {
           setLocalHistories(null);
 
           return;
         }
 
-        const loadedContent = keyMaker(address, gHash);
+        const loadedContent = keyMaker(address, chain.genesisHash);
         const isValid = requested.current === loadedContent;
 
         if (isValid) {
@@ -113,14 +111,7 @@ export function useTransactionStorage({ address, allHistories, chain, localHisto
 
     log(`Saving latest ${itemsToSave} transactions to local storage:`, { latestTransactions });
 
-    const gHash = latestTransactions[0].chain?.genesisHash;
-    const addr = latestTransactions[0].forAccount;
-
-    if (!gHash || !addr) {
-      return;
-    }
-
-    const requestedContentToSave = keyMaker(addr, gHash);
+    const requestedContentToSave = keyMaker(address, chain.genesisHash);
     const isValid = requested.current === requestedContentToSave;
 
     if (!isValid) {

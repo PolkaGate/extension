@@ -5,7 +5,7 @@ import type { FilterOptions, TransactionHistoryOutput } from './hookUtils/types'
 
 import { useEffect, useRef } from 'react';
 
-import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { mapRelayToSystemGenesisIfMigrated, normalizeHistoryGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { useChainInfo } from '../../hooks';
 import { keyMaker } from './hookUtils/utils';
@@ -55,6 +55,7 @@ export default function useTransactionHistory(address: string | undefined, _gene
 
   // 3. Process raw transaction data
   const { processedExtrinsics, processedReceived } = useTransactionProcessing({
+    address,
     chain,
     decimal,
     extrinsicsTx,
@@ -77,9 +78,19 @@ export default function useTransactionHistory(address: string | undefined, _gene
   });
 
   const _all = localHistories ?? allHistories;
+  const normalizedGenesisHash = normalizeHistoryGenesis(genesisHash);
+  const chainScopedHistories = _all?.filter((item) => {
+    const itemGenesisHash = item.chain?.genesisHash;
+
+    if (!itemGenesisHash || !genesisHash) {
+      return false;
+    }
+
+    return normalizeHistoryGenesis(itemGenesisHash) === normalizedGenesisHash;
+  });
   // 5. Group transactions by date with filtering
   const grouped = useTransactionGrouping({
-    allHistories: _all,
+    allHistories: _all === null ? null : chainScopedHistories,
     extrinsicsTx,
     filterOptions,
     receivedTx
@@ -103,8 +114,8 @@ export default function useTransactionHistory(address: string | undefined, _gene
   }, [isReadyToFetch, resetAllState, setIsLoading]);
 
   return {
-    allHistories: _all,
-    count: _all?.length || 0,
+    allHistories: _all === null ? null : chainScopedHistories,
+    count: chainScopedHistories?.length || 0,
     grouped,
     isLoading
   };

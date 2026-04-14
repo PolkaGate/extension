@@ -4,6 +4,7 @@
 import type { Extrinsics, TransactionDetail, Transfers } from '../../../util/types';
 
 export interface RecordTabStatus {
+  genesisHash?: string;
   pageNum: number;
   isFetching?: boolean;
   hasMore?: boolean;
@@ -11,6 +12,7 @@ export interface RecordTabStatus {
 }
 
 export interface RecordTabStatusGov {
+  genesisHash?: string;
   pageNum: number;
   isFetching?: boolean;
   hasMore?: boolean;

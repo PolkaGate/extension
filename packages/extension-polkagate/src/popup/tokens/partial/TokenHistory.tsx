@@ -13,6 +13,7 @@ import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 import { DecisionButtons, GradientSwitch } from '../../../components';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useTranslation } from '../../../hooks';
+import { normalizeHistoryGenesis } from '../../../util/migrateHubUtils';
 import HistoryBox from '../../history/newDesign/HistoryBox';
 import useTransactionHistory from '../../history/useTransactionHistory';
 
@@ -164,7 +165,9 @@ function TokenHistory({ address, decimal, genesisHash, token }: Props): React.Re
       Object.entries(grouped)
         .map(([date, items]) => {
           const filteredItems = items.filter(
-            ({ token: historyItemToken }) => historyItemToken === token
+            ({ chain, token: historyItemToken }) =>
+              historyItemToken === token &&
+              normalizeHistoryGenesis(chain?.genesisHash) === normalizeHistoryGenesis(genesisHash)
           )
             .map((item) => ({ ...item, decimal }));
 
@@ -175,7 +178,7 @@ function TokenHistory({ address, decimal, genesisHash, token }: Props): React.Re
 
     // Check if result is an empty object
     return Object.keys(result).length === 0 ? null : result;
-  }, [decimal, grouped, token]);
+  }, [decimal, genesisHash, grouped, token]);
 
   const openPopup = useCallback(() => setOpenMenu(true), []);
 

@@ -202,6 +202,18 @@ export function isSystemChain(systemChainGenesis: string | undefined, relayGenes
 }
 
 /**
+ * Normalizes history chain scope so migrated relays and their asset hubs are treated
+ * as the same history surface, while people chains remain isolated.
+ */
+export function normalizeHistoryGenesis(genesisHash: string | undefined | null): string | undefined {
+  if (!genesisHash) {
+    return;
+  }
+
+  return mapRelayToSystemGenesisIfMigrated(genesisHash, 'assetHub') ?? genesisHash;
+}
+
+/**
  * Extracts the base relay chain name from a system chain name.
  * For example, "westendAssetHub" or "westendPeople" will return "westend".
  * Optionally, only performs extraction if the chain is considered migrated.

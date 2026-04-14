@@ -33,6 +33,7 @@ const getName = (accounts: AccountJson[], address: string) => {
 };
 
 interface UseTransactionProcessingProps {
+  address: string | undefined;
   receivedTx: RecordTabStatus;
   extrinsicsTx: RecordTabStatusGov;
   chain: Chain | null | undefined;
@@ -50,7 +51,7 @@ interface UseTransactionProcessingResult {
  * Processes raw transaction data from APIs into standardized format
  * Tracks initial fetch completion
  */
-export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receivedTx, setIsLoading, token }: UseTransactionProcessingProps): UseTransactionProcessingResult {
+export function useTransactionProcessing({ address, chain, decimal, extrinsicsTx, receivedTx, setIsLoading, token }: UseTransactionProcessingProps): UseTransactionProcessingResult {
   const accounts = useAccounts();
 
   const [processedReceived, setProcessedReceived] = useState<TransactionDetail[] | undefined>(undefined);
@@ -70,8 +71,24 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receive
     }
   }, [setIsLoading]);
 
+  useEffect(() => {
+    initialFetchDoneRef.current = {
+      extrinsics: false,
+      received: false
+    };
+    setProcessedReceived(undefined);
+    setProcessedExtrinsics(undefined);
+    log('Reset processed transaction state');
+  }, [address, chain?.genesisHash]);
+
   // Process transfer transactions
   useEffect(() => {
+    if (receivedTx.genesisHash && receivedTx.genesisHash !== chain?.genesisHash) {
+      log(`Skipping received processing for stale chain ${receivedTx.genesisHash}`);
+
+      return;
+    }
+
     // fetching done and there is no receive items
     if (!receivedTx.hasMore && !receivedTx.isFetching && !receivedTx.transactions?.length) {
       setProcessedReceived([]);
@@ -128,10 +145,16 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receive
       log('Initial received fetch complete');
       checkAndNotifyComplete();
     }
-  }, [accounts, chain, checkAndNotifyComplete, receivedTx.hasMore, receivedTx.isFetching, receivedTx.pageNum, receivedTx.transactions]);
+  }, [accounts, chain, checkAndNotifyComplete, receivedTx.genesisHash, receivedTx.hasMore, receivedTx.isFetching, receivedTx.pageNum, receivedTx.transactions]);
 
   // Process extrinsics
   useEffect(() => {
+    if (extrinsicsTx.genesisHash && extrinsicsTx.genesisHash !== chain?.genesisHash) {
+      log(`Skipping extrinsics processing for stale chain ${extrinsicsTx.genesisHash}`);
+
+      return;
+    }
+
     // fetching done and there is no extrinsic items
     if (!extrinsicsTx.hasMore && !extrinsicsTx.isFetching && !extrinsicsTx.transactions?.length) {
       setProcessedExtrinsics([]);
@@ -200,7 +223,7 @@ export function useTransactionProcessing({ chain, decimal, extrinsicsTx, receive
       log('Initial extrinsics fetch complete');
       checkAndNotifyComplete();
     }
-  }, [accounts, chain, checkAndNotifyComplete, decimal, extrinsicsTx.hasMore, extrinsicsTx.isFetching, extrinsicsTx.pageNum, extrinsicsTx.transactions, token]);
+  }, [accounts, chain, checkAndNotifyComplete, decimal, extrinsicsTx.genesisHash, extrinsicsTx.hasMore, extrinsicsTx.isFetching, extrinsicsTx.pageNum, extrinsicsTx.transactions, token]);
 
   return {
     processedExtrinsics,

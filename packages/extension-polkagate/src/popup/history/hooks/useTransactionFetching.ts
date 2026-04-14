@@ -54,11 +54,8 @@ export function useTransactionFetching({ address, chain, requested, setExtrinsic
 
             // Validate response is for current request
             if (!requested.current || requested.current !== res?.for) {
-                return setTransfersTx({
-                    hasMore: false,
-                    isFetching: false,
-                    transactions: []
-                });
+                log(`Ignoring stale received response for ${res?.for}`);
+                return;
             }
 
             const { count = 0, transfers = [] } = res.data || {};
@@ -68,6 +65,7 @@ export function useTransactionFetching({ address, chain, requested, setExtrinsic
             log(`Received transfers data: count=${count}, items=${transfers?.length ?? 0}, hasMore=${hasMorePages}`);
 
             setTransfersTx({
+                genesisHash: chain.genesisHash,
                 hasMore: hasMorePages,
                 isFetching: false,
                 pageNum: nextPageNum,
@@ -106,11 +104,8 @@ export function useTransactionFetching({ address, chain, requested, setExtrinsic
 
             // Validate response is for current request
             if (!requested.current || requested.current !== res?.for) {
-                return setExtrinsicsTx({
-                    hasMore: false,
-                    isFetching: false,
-                    transactions: []
-                });
+                log(`Ignoring stale extrinsics response for ${res?.for}`);
+                return;
             }
 
             const { count = 0, extrinsics = [] } = res.data || {};
@@ -120,6 +115,7 @@ export function useTransactionFetching({ address, chain, requested, setExtrinsic
             log(`Received extrinsics data: count=${count}, items=${extrinsics?.length ?? 0}, hasMore=${hasMorePages}`);
 
             setExtrinsicsTx({
+                genesisHash: chain.genesisHash,
                 hasMore: hasMorePages,
                 isFetching: false,
                 pageNum: nextPageNum,
