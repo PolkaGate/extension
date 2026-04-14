@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.6.2](https://github.com/polkagate/extension/compare/v2.6.1...v2.6.2) (2026-04-14)
+
+
+### Bug Fixes
+
+* resolve unlock referenda issue ([#2140](https://github.com/polkagate/extension/issues/2140)) ([5dc6c08](https://github.com/polkagate/extension/commit/5dc6c0859f290a0793a6a63c85218b7eabb44cb2))
+
 ## [2.6.1](https://github.com/polkagate/extension/compare/v2.6.0...v2.6.1) (2026-04-12)
 
 
