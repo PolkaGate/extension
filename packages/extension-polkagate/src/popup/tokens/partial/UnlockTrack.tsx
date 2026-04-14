@@ -174,20 +174,10 @@ function UnlockTrack({ address, genesisHash, setOpenUnlockReview, unlockTracks }
     return <></>;
   }
 
-  if (isExtension) {
-    return (
-      <UnlockEx
-        address={address}
-        amount={unlockTracks.unlockableAmount?.toString()}
-        closeModal={closeModal}
-        genesisHash={genesisHash}
-        transaction={tx}
-        transactionInformation={transactionInformation}
-      />);
-  }
+  const Component = isExtension ? UnlockEx : UnlockFs;
 
   return (
-    <UnlockFs
+    <Component
       address={address}
       amount={unlockTracks.unlockableAmount?.toString()}
       closeModal={closeModal}
