@@ -3,10 +3,12 @@
 
 import { useEffect, useState } from 'react';
 
+import { mapSystemToRelay } from '../util/migrateHubUtils';
 import useApi from './useApi';
 
-export default function useCurrentBlockNumber(genesisHash: string | null | undefined): number | undefined {
-  const api = useApi(genesisHash);
+export default function useCurrentBlockNumber(genesisHash: string | null | undefined, ofRelay = false): number | undefined {
+ const _genesisHash = ofRelay ? mapSystemToRelay(genesisHash) : genesisHash;
+  const api = useApi(_genesisHash);
 
   const [blockNumber, setCurrentBlockNumber] = useState<number | undefined>();
 

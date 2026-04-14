@@ -199,17 +199,15 @@ export function useTokenInfoDetails(address: string | undefined, genesisHash: st
 
   const unlockTracks: UnlockType = useMemo(() => ({ classToUnlock, isDisable, lockedTooltip, openLocked, unlockDate, unlockableAmount }), [classToUnlock, isDisable, lockedTooltip, openLocked, unlockDate, unlockableAmount]);
 
-  const UnlockTrackElement = useMemo(() => (
-    openUnlockReview
-      ? (
-        <UnlockTrack
-          address={address}
-          genesisHash={genesisHash}
-          setOpenUnlockReview={setOpenUnlockReview}
-          unlockTracks={unlockTracks}
-        />)
-      : undefined
-  ), [address, genesisHash, openUnlockReview, unlockTracks]);
+  const UnlockTrackElement = openUnlockReview
+    ? (
+      <UnlockTrack
+        address={address}
+        genesisHash={genesisHash}
+        setOpenUnlockReview={setOpenUnlockReview}
+        unlockTracks={unlockTracks}
+      />)
+    : null;
 
   return {
     UnlockTrackElement,
