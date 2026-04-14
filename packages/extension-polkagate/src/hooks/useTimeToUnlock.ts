@@ -20,7 +20,7 @@ export default function useTimeToUnlock(address: string | undefined, genesisHash
   const { t } = useTranslation();
   const { api, chain } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
-  const currentBlock = useCurrentBlockNumber(genesisHash, true);
+  const currentBlock = useCurrentBlockNumber(genesisHash, { relay: true });
 
   const [unlockableAmount, setUnlockableAmount] = useState<BN>();
   const [lockedInRef, setLockedInReferenda] = useState<BN>();

@@ -130,7 +130,7 @@ function UnlockTrack({ address, genesisHash, setOpenUnlockReview, unlockTracks }
   const tx = useMemo(() => {
     const classes = unlockTracks.classToUnlock;
 
-    if (!api || !address || !classes || !remove || !unlockClass || !batchAll) {
+    if (!api || !address || !classes?.length || !remove || !unlockClass || !batchAll) {
       return undefined;
     }
 
