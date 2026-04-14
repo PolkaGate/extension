@@ -118,7 +118,7 @@ interface Props {
   address: string | undefined;
 }
 
-export default function UnlockTrack({ address, genesisHash, setOpenUnlockReview, unlockTracks }: Props) {
+function UnlockTrack({ address, genesisHash, setOpenUnlockReview, unlockTracks }: Props) {
   const isExtension = useIsExtensionPopup();
   const { t } = useTranslation();
   const { api } = useChainInfo(genesisHash);
@@ -128,20 +128,26 @@ export default function UnlockTrack({ address, genesisHash, setOpenUnlockReview,
   const batchAll = api?.tx['utility']['batchAll'];
 
   const tx = useMemo(() => {
-    if (!api || !address || !unlockTracks.classToUnlock || !remove || !unlockClass || !batchAll) {
+    const classes = unlockTracks.classToUnlock;
+
+    if (!api || !address || !classes?.length || !remove || !unlockClass || !batchAll) {
       return undefined;
     }
 
-    const removes = unlockTracks.classToUnlock.map((r) => isBn(r.refId) ? remove(r.classId, r.refId) : undefined).filter((i) => !!i);
     const uniqueSet = new Set<string>();
 
-    unlockTracks.classToUnlock.forEach(({ classId }) => {
+    classes.forEach(({ classId }) => {
       const id = classId.toString();
 
       uniqueSet.add(id);
     });
 
     const unlocks = [...uniqueSet].map((id) => unlockClass(id, address));
+    const removes = classes.map((r) =>
+      isBn(r.refId)
+        ? remove(r.classId, r.refId)
+        : undefined
+    ).filter((i) => !!i);
 
     const params = [...removes, ...unlocks];
 
@@ -164,31 +170,21 @@ export default function UnlockTrack({ address, genesisHash, setOpenUnlockReview,
 
   const closeModal = useCallback(() => setOpenUnlockReview(false), [setOpenUnlockReview]);
 
-  return useMemo(() => {
-    if (!tx || !genesisHash) {
-      return <></>;
-    }
+  if (!tx || !genesisHash) {
+    return <></>;
+  }
 
-    if (isExtension) {
-      return (
-        <UnlockEx
-          address={address}
-          amount={unlockTracks.unlockableAmount?.toString()}
-          closeModal={closeModal}
-          genesisHash={genesisHash}
-          transaction={tx}
-          transactionInformation={transactionInformation}
-        />);
-    }
+  const Component = isExtension ? UnlockEx : UnlockFs;
 
-    return (
-      <UnlockFs
-        address={address}
-        amount={unlockTracks.unlockableAmount?.toString()}
-        closeModal={closeModal}
-        genesisHash={genesisHash}
-        transaction={tx}
-        transactionInformation={transactionInformation}
-      />);
-  }, [address, closeModal, genesisHash, isExtension, transactionInformation, tx, unlockTracks.unlockableAmount]);
+  return (
+    <Component
+      address={address}
+      amount={unlockTracks.unlockableAmount?.toString()}
+      closeModal={closeModal}
+      genesisHash={genesisHash}
+      transaction={tx}
+      transactionInformation={transactionInformation}
+    />);
 }
+
+export default React.memo(UnlockTrack);

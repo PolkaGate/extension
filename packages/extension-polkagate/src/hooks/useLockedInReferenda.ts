@@ -35,7 +35,7 @@ interface OutputType {
 export default function useLockedInReferenda(address: string | undefined, genesisHash: string | null | undefined, refreshNeeded: boolean | undefined): OutputType {
   const delegatedBalance = useHasDelegated(address, genesisHash, refreshNeeded);
   const referendaLocks = useAccountLocks(address, genesisHash, 'referenda', 'convictionVoting', false, refreshNeeded);
-  const currentBlock = useCurrentBlockNumber(genesisHash);
+  const currentBlock = useCurrentBlockNumber(genesisHash, { relay: true });
   const { lockedInRef, timeToUnlock, totalLocked, unlockDate, unlockableAmount } = useTimeToUnlock(address, genesisHash, delegatedBalance, referendaLocks, refreshNeeded);
 
   const classToUnlock = currentBlock ? referendaLocks?.filter((ref) => ref.endBlock.ltn(currentBlock) && ref.classId.lt(BN_MAX_INTEGER)) : undefined;
