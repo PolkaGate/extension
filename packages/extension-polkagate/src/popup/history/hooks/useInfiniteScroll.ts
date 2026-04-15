@@ -35,9 +35,38 @@ export function useInfiniteScroll({ extrinsicsTx, getExtrinsics, getTransfers, i
         extrinsicsStateRef.current = extrinsicsTx;
     }, [extrinsicsTx]);
 
-    // Setup IntersectionObserver for infinite scroll
     useEffect(() => {
         if (!isReadyToFetch) {
+            return;
+        }
+
+        const shouldFetchInitialReceived = receivedTx.pageNum === 0 && !receivedTx.isFetching && !receivedTx.transactions?.length;
+        const shouldFetchInitialExtrinsics = extrinsicsTx.pageNum === 0 && !extrinsicsTx.isFetching && !extrinsicsTx.transactions?.length;
+
+        if (shouldFetchInitialReceived) {
+            log('Fetching initial received page');
+            getTransfers(receivedTx).catch(console.error);
+        }
+
+        if (shouldFetchInitialExtrinsics) {
+            log('Fetching initial extrinsics page');
+            getExtrinsics(extrinsicsTx).catch(console.error);
+        }
+
+        if (shouldFetchInitialReceived || shouldFetchInitialExtrinsics) {
+            return;
+        }
+    }, [extrinsicsTx, getExtrinsics, getTransfers, isReadyToFetch, receivedTx]);
+
+    // Setup IntersectionObserver for pagination after the first batch is loaded
+    useEffect(() => {
+        if (!isReadyToFetch) {
+            return;
+        }
+
+        const hasLoadedFirstBatch = receivedTx.pageNum > 0 || extrinsicsTx.pageNum > 0;
+
+        if (!hasLoadedFirstBatch) {
             return;
         }
 
@@ -62,12 +91,12 @@ export function useInfiniteScroll({ extrinsicsTx, getExtrinsics, getTransfers, i
             const receivedState = receivedStateRef.current;
             const extrinsicsState = extrinsicsStateRef.current;
 
-            let canFetch = false;
+            let didStartFetch = false;
 
             // Check and fetch transfers
             if (shouldFetchMore(receivedState)) {
                 log('More received available, fetching next page');
-                canFetch = true;
+                didStartFetch = true;
                 getTransfers(receivedState).catch(console.error);
             } else {
                 log('No more received to fetch or already fetching', {
@@ -79,7 +108,7 @@ export function useInfiniteScroll({ extrinsicsTx, getExtrinsics, getTransfers, i
             // Check and fetch extrinsics
             if (shouldFetchMore(extrinsicsState)) {
                 log('More extrinsics available, fetching next page');
-                canFetch = true;
+                didStartFetch = true;
                 getExtrinsics(extrinsicsState).catch(console.error);
             } else {
                 log('No more extrinsics to fetch or already fetching', {
@@ -88,27 +117,34 @@ export function useInfiniteScroll({ extrinsicsTx, getExtrinsics, getTransfers, i
                 });
             }
 
-            // Disconnect if both sources exhausted
-            if (!canFetch) {
+            // Keep observing while requests are in flight. Only disconnect when both
+            // sources are actually exhausted, not merely busy with the current page.
+            if (didStartFetch) {
+                return;
+            }
+
+            const bothExhausted = receivedState.hasMore === false && extrinsicsState.hasMore === false;
+
+            if (bothExhausted) {
                 log('No more data to fetch for either type, disconnecting observer');
                 observerInstance.current?.disconnect();
             }
         };
 
-        // Create and configure observer
-        log('Creating new IntersectionObserver');
-        const options = {
-            root: document.getElementById('scrollArea'),
-            rootMargin: '0px',
-            threshold: 0.5
-        };
-
-        observerInstance.current = new IntersectionObserver(observerCallback, options);
-
         // Start observing
         const target = document.getElementById('observerObj');
 
         if (target) {
+            const root = findScrollRoot(target);
+
+            log('Creating new IntersectionObserver', { hasRoot: !!root });
+            observerInstance.current = new IntersectionObserver(observerCallback, {
+                // Observe relative to the actual scroll container that owns the sentinel.
+                root,
+                rootMargin: '120px 0px',
+                threshold: 0
+            });
+
             log('Started observing target element');
             observerInstance.current.observe(target);
         } else {
@@ -120,7 +156,7 @@ export function useInfiniteScroll({ extrinsicsTx, getExtrinsics, getTransfers, i
             log('Cleaning up observer on unmount/rerun');
             observerInstance.current?.disconnect();
         };
-    }, [getExtrinsics, getTransfers, isReadyToFetch]);
+    }, [extrinsicsTx.pageNum, getExtrinsics, getTransfers, isReadyToFetch, receivedTx.pageNum]);
 }
 
 /**
@@ -128,4 +164,22 @@ export function useInfiniteScroll({ extrinsicsTx, getExtrinsics, getTransfers, i
  */
 function shouldFetchMore(state: RecordTabStatus | RecordTabStatusGov): boolean {
     return Boolean(state.hasMore && !state.isFetching);
+}
+
+function findScrollRoot(target: HTMLElement): HTMLElement | null {
+    let current: HTMLElement | null = target.parentElement;
+
+    while (current) {
+        const style = window.getComputedStyle(current);
+        const overflowY = style.overflowY;
+        const isScrollable = ['auto', 'scroll', 'overlay'].includes(overflowY) && current.scrollHeight > current.clientHeight;
+
+        if (isScrollable) {
+            return current;
+        }
+
+        current = current.parentElement;
+    }
+
+    return null;
 }

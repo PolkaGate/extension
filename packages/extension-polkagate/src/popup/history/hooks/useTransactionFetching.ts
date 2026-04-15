@@ -8,7 +8,7 @@ import { type RefObject, useCallback } from 'react';
 
 import { getTxTransfers } from '../../../util/api/getTransfers';
 import { getTXsHistory } from '../../../util/api/getTXsHistory';
-import { MAX_PAGE, SINGLE_PAGE_SIZE } from '../hookUtils/consts';
+import { EXTRINSICS_PAGE_SIZE, TRANSFERS_PAGE_SIZE } from '../hookUtils/consts';
 import { log } from '../hookUtils/utils';
 
 interface UseTransactionFetchingProps {
@@ -50,7 +50,7 @@ export function useTransactionFetching({ address, chain, requested, setExtrinsic
         setTransfersTx({ isFetching: true });
 
         try {
-            const res = await getTxTransfers(address, chain.genesisHash, pageNum, SINGLE_PAGE_SIZE);
+            const res = await getTxTransfers(address, chain.genesisHash, pageNum, TRANSFERS_PAGE_SIZE);
 
             // Validate response is for current request
             if (!requested.current || requested.current !== res?.for) {
@@ -60,7 +60,7 @@ export function useTransactionFetching({ address, chain, requested, setExtrinsic
 
             const { count = 0, transfers = [] } = res.data || {};
             const nextPageNum = pageNum + 1;
-            const hasMorePages = !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE;
+            const hasMorePages = nextPageNum * TRANSFERS_PAGE_SIZE < count;
 
             log(`Received transfers data: count=${count}, items=${transfers?.length ?? 0}, hasMore=${hasMorePages}`);
 
@@ -105,12 +105,13 @@ export function useTransactionFetching({ address, chain, requested, setExtrinsic
             // Validate response is for current request
             if (!requested.current || requested.current !== res?.for) {
                 log(`Ignoring stale extrinsics response for ${res?.for}`);
+
                 return;
             }
 
             const { count = 0, extrinsics = [] } = res.data || {};
             const nextPageNum = pageNum + 1;
-            const hasMorePages = !(nextPageNum * SINGLE_PAGE_SIZE >= count) && nextPageNum < MAX_PAGE;
+            const hasMorePages = nextPageNum * EXTRINSICS_PAGE_SIZE < count;
 
             log(`Received extrinsics data: count=${count}, items=${extrinsics?.length ?? 0}, hasMore=${hasMorePages}`);
 

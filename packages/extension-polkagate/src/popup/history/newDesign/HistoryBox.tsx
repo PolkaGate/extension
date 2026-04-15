@@ -33,11 +33,12 @@ function EmptyHistoryBox() {
 
 interface Props {
   historyItems: Record<string, TransactionDetail[]> | null | undefined;
+  isFetchingMore?: boolean;
   style?: React.CSSProperties;
   notReady?: boolean;
 }
 
-function HistoryBox({ historyItems, notReady = false, style }: Props) {
+function HistoryBox({ historyItems, isFetchingMore = false, notReady = false, style }: Props) {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
 
@@ -80,12 +81,15 @@ function HistoryBox({ historyItems, notReady = false, style }: Props) {
     return inputDate;
   }, []);
 
-  const isLoading = !notReady && historyItems === undefined;
+  const hasHistoryItems = Boolean(historyItems && Object.keys(historyItems).length);
+  const isLoading = !notReady && (historyItems === undefined || (!hasHistoryItems && isFetchingMore));
+  const showEmptyState = !notReady && !hasHistoryItems && historyItems !== undefined && !isFetchingMore && !isLoading;
+  const showFetchingMore = hasHistoryItems && !isLoading && isFetchingMore;
 
   return (
     <VelvetBox style={style}>
       <Stack direction='column' id='scrollArea' ref={refContainer} sx={{ height: isExtension ? 'inherit' : 'calc(100vh - 633px)', overflowY: 'auto', rowGap: isLoading ? 0 : '4px' }}>
-        {!notReady && historyItems && Object.entries(historyItems).map(([date, items], index) => (
+        {hasHistoryItems && Object.entries(historyItems as Record<string, TransactionDetail[]>).map(([date, items], index) => (
           <HistoryItem
             historyDate={formatDate(date)}
             historyItems={items}
@@ -95,8 +99,11 @@ function HistoryBox({ historyItems, notReady = false, style }: Props) {
         ))
         }
         <div id='observerObj' style={{ height: '1px' }} />
-        {!notReady && historyItems === null &&
+        {showEmptyState &&
           <EmptyHistoryBox />
+        }
+        {showFetchingMore &&
+          <AssetLoading itemsCount={1} noDrawer />
         }
         {isLoading &&
           <AssetLoading itemsCount={short ? 2 : 5} noDrawer />

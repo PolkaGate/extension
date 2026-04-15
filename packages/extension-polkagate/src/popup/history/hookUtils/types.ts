@@ -23,6 +23,7 @@ export interface TransactionHistoryOutput {
   allHistories: TransactionDetail[] | null | undefined;
   count: number;
   grouped: Record<string, TransactionDetail[]> | null | undefined;
+  isFetchingMore: boolean;
   isLoading: boolean;
 }
 

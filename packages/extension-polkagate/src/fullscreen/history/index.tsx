@@ -38,7 +38,7 @@ function HistoryFs(): React.ReactElement {
 
   const selectedAccount = useSelectedAccount();
   const savedSelectedChain = useAccountSelectedChain(selectedAccount?.address);
-  const { decimal, token } = useChainInfo(savedSelectedChain as string, true);
+  const { decimal } = useChainInfo(savedSelectedChain as string, true);
 
   const [tab, setTab] = useState<TAB>(TAB.ALL);
   const [page, setPage] = useState(1);
@@ -63,7 +63,7 @@ function HistoryFs(): React.ReactElement {
     return filterMap[tab] ?? filterMap[TAB.ALL];
   }, [tab]);
 
-  const { allHistories, grouped } = useTransactionHistory(selectedAccount?.address, savedSelectedChain as string | undefined, historyFilter);
+  const { allHistories, grouped, isFetchingMore } = useTransactionHistory(selectedAccount?.address, savedSelectedChain as string | undefined, historyFilter);
 
   const historyItemsToShow = useMemo(() => {
     if (!grouped) {
@@ -73,7 +73,6 @@ function HistoryFs(): React.ReactElement {
     const flattenedHistories = Object.entries(grouped).map(([_, histories]) => histories).flat();
     const result = flattenedHistories
       .filter((item) =>
-        item.token === token &&
         normalizeHistoryGenesis(item.chain?.genesisHash) === normalizeHistoryGenesis(savedSelectedChain)
       )
       .map((item) => ({ ...item, decimal: item.decimal ?? decimal }))
@@ -89,7 +88,7 @@ function HistoryFs(): React.ReactElement {
     const end = start + Number(itemsPerPage);
 
     return result.slice(start, end);
-  }, [grouped, savedSelectedChain, page, itemsPerPage, token, decimal, extraFilters]);
+  }, [grouped, savedSelectedChain, page, itemsPerPage, decimal, extraFilters]);
 
   useEffect(() => {
     if (!grouped) {
@@ -101,7 +100,6 @@ function HistoryFs(): React.ReactElement {
     const flattenedHistories = Object.entries(grouped).map(([_, histories]) => histories).flat();
     const filtered = flattenedHistories
       .filter((item) =>
-        item.token === token &&
         normalizeHistoryGenesis(item.chain?.genesisHash) === normalizeHistoryGenesis(savedSelectedChain)
       )
       .filter((item) =>
@@ -109,7 +107,7 @@ function HistoryFs(): React.ReactElement {
         (extraFilters.status === ANY_STATUS || (extraFilters.status === 'Completed' && item.success) || (extraFilters.status === 'Failed' && !item.success)));
 
     setCount(filtered.length);
-  }, [grouped, savedSelectedChain, token, extraFilters]);
+  }, [grouped, savedSelectedChain, extraFilters]);
 
   useEffect(() => { // reset
     setExtraFilters(DEFAULT_EXTRA_FILTERS);
@@ -135,6 +133,7 @@ function HistoryFs(): React.ReactElement {
         />
         <HistoryBox
           historyItems={historyItemsToShow}
+          isFetchingMore={isFetchingMore}
           notReady={!savedSelectedChain}
         />
         <PaginationRow

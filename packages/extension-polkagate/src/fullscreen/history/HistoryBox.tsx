@@ -14,12 +14,17 @@ import HistoryLoading from './HistoryLoading';
 
 interface Props {
   historyItems: TransactionDetail[] | null | undefined;
+  isFetchingMore?: boolean;
   notReady?: boolean;
 }
 
-function HistoryBox({ historyItems, notReady = false }: Props) {
+function HistoryBox({ historyItems, isFetchingMore = false, notReady = false }: Props) {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
+  const hasHistoryItems = Boolean(historyItems?.length);
+  const isLoading = !notReady && (historyItems === undefined || (!hasHistoryItems && isFetchingMore));
+  const showEmptyState = !notReady && !hasHistoryItems && historyItems !== undefined && !isFetchingMore && !isLoading;
+  const showFetchingMore = hasHistoryItems && !isLoading && isFetchingMore;
 
   return (
     <Grid container item>
@@ -42,7 +47,7 @@ function HistoryBox({ historyItems, notReady = false }: Props) {
       </Stack>
       <Container disableGutters id='scrollArea' ref={refContainer} sx={{ alignContent: 'start', display: 'grid', height: 'calc(100vh - 360px)', minHeight: '422px', overflow: 'hidden', overflowY: 'auto', position: 'relative', rowGap: '3px' }}>
         {
-          !notReady && historyItems?.map((item, index) => (
+          hasHistoryItems && historyItems?.map((item, index) => (
             <HistoryItem
               historyItem={item}
               key={index}
@@ -51,12 +56,16 @@ function HistoryBox({ historyItems, notReady = false }: Props) {
         }
         <div id='observerObj' style={{ height: '1px' }} />
         {
-          !notReady && historyItems === null &&
+          showEmptyState &&
           <EmptyListBox style={{ marginTop: '20px' }} />
         }
         {
-          !notReady && historyItems === undefined &&
+          isLoading &&
           <HistoryLoading itemsCount={7} />
+        }
+        {
+          showFetchingMore &&
+          <HistoryLoading itemsCount={1} />
         }
         {
           notReady &&

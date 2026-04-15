@@ -9,6 +9,7 @@
 import type { Extrinsics, ExtrinsicsRequest } from '../types';
 
 import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
+import { EXTRINSICS_PAGE_SIZE } from '@polkadot/extension-polkagate/src/popup/history/hookUtils/consts';
 import { keyMaker } from '@polkadot/extension-polkagate/src/popup/history/hookUtils/utils';
 import { hexToU8a } from '@polkadot/util';
 import { encodeAddress } from '@polkadot/util-crypto';
@@ -149,8 +150,6 @@ interface ParamTypesMapping {
 }
 
 const SUPPORTED_MODULES = ['balances', 'nominationpools', 'utility', 'proxy', 'staking', 'convictionvoting'];
-const PAGE_SIZE = 60;
-
 function nullifier(requested: string) {
   return {
     code: 0,
@@ -190,7 +189,7 @@ export async function getTXsHistory(address: string, genesisHash: string, pageNu
   const extrinsics = await fetchFromSubscan<ExtrinsicsRequest>(link, {
     address,
     page: pageNum,
-    row: PAGE_SIZE
+    row: EXTRINSICS_PAGE_SIZE
   });
 
   if (!extrinsics.data.extrinsics) {

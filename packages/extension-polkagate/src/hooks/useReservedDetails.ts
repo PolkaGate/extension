@@ -53,7 +53,7 @@ export default function useReservedDetails(formatted: string | undefined, genesi
   }, [toBalance]);
 
   useEffect(() => {
-    if (!api || !genesisHash) {
+    if (!api || !genesisHash || !formatted) {
       return;
     }
 

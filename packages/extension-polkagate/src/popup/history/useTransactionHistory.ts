@@ -37,7 +37,6 @@ export default function useTransactionHistory(address: string | undefined, _gene
     isReadyToFetch,
     localHistories,
     receivedTx,
-    resetAllState,
     setAllHistories,
     setExtrinsicsTx,
     setIsLoading,
@@ -68,7 +67,7 @@ export default function useTransactionHistory(address: string | undefined, _gene
   useTransactionStorage({
     address,
     allHistories,
-    chain,
+    genesisHash,
     localHistories,
     processedExtrinsics,
     processedReceived,
@@ -77,7 +76,10 @@ export default function useTransactionHistory(address: string | undefined, _gene
     setLocalHistories
   });
 
-  const _all = localHistories ?? allHistories;
+  // Prefer the freshly combined in-memory history once it exists.
+  // The storage cache only contains the latest subset and should be a fallback,
+  // not the primary source after fetch/merge completes.
+  const _all = allHistories ?? localHistories;
   const normalizedGenesisHash = normalizeHistoryGenesis(genesisHash);
   const chainScopedHistories = _all?.filter((item) => {
     const itemGenesisHash = item.chain?.genesisHash;
@@ -105,18 +107,14 @@ export default function useTransactionHistory(address: string | undefined, _gene
     receivedTx
   });
 
-  // Reset state when address or chain changes
-  useEffect(() => {
-    if (isReadyToFetch) {
-      setIsLoading(true);
-      resetAllState();
-    }
-  }, [isReadyToFetch, resetAllState, setIsLoading]);
+  const hasVisibleHistory = _all !== undefined;
+  const isFetchingMore = hasVisibleHistory && Boolean(receivedTx.isFetching || extrinsicsTx.isFetching);
 
   return {
     allHistories: _all === null ? null : chainScopedHistories,
     count: chainScopedHistories?.length || 0,
     grouped,
+    isFetchingMore,
     isLoading
   };
 }
