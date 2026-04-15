@@ -54,10 +54,10 @@ function MigratePasswords(): React.ReactElement {
       return setStep(STEP.MIGRATING);
     }
 
-    if (accountsNeedMigration?.length === 0) { // shouldn't happen
-      navigate('/') as void;
+    if (accountsNeedMigration?.length === 0) {
+      setStep(STEP.COMPLETED);
     }
-  }, [isConfirmingMasterPassword, accountsNeedMigration, navigate]);
+  }, [isConfirmingMasterPassword, accountsNeedMigration]);
 
   useEffect((): void => {
     setIncorrectPassword(false);
