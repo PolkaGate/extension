@@ -24,7 +24,7 @@ export async function saveHistoryToStorage(address: string, genesisHash: string,
   try {
     const normalizedGenesisHash = normalizeHistoryGenesis(genesisHash);
 
-    if (isUnsafeObjectKey(address) || isUnsafeObjectKey(normalizedGenesisHash)) {
+    if (!normalizedGenesisHash || isUnsafeObjectKey(address) || isUnsafeObjectKey(normalizedGenesisHash)) {
       log('Unsafe storage key detected, skipping history save');
 
       return Promise.resolve();
