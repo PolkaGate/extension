@@ -10,7 +10,7 @@ import { useTranslation } from '../../hooks';
 import EmptyListBox from '../components/EmptyListBox';
 import { COLUMN_WIDTH } from './consts';
 import HistoryItem from './HistoryItem';
-import HistoryLoading from './HistoryLoading';
+import HistoryLoading from './loading';
 
 interface Props {
   historyItems: TransactionDetail[] | null | undefined;
@@ -60,12 +60,8 @@ function HistoryBox({ historyItems, isFetchingMore = false, notReady = false }: 
           <EmptyListBox style={{ marginTop: '20px' }} />
         }
         {
-          isLoading &&
-          <HistoryLoading itemsCount={7} />
-        }
-        {
-          showFetchingMore &&
-          <HistoryLoading itemsCount={1} />
+          (isLoading || showFetchingMore) &&
+          <HistoryLoading itemsCount={isLoading ? 7 : 1} />
         }
         {
           notReady &&

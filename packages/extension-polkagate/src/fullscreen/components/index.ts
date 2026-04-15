@@ -8,3 +8,4 @@ export { default as EmptyListBox } from './EmptyListBox';
 export { default as NotSupportedBox } from './NotSupportedBox';
 export { default as NoValidatorBox } from './NoValidatorBox';
 export { default as OnboardTitle } from './OnboardTitle';
+export { default as PolkaGateTransparentLogo } from './PolkaGateTransparentLogo';
