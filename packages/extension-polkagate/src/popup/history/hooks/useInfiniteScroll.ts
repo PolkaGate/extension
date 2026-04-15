@@ -37,7 +37,7 @@ export function useInfiniteScroll({ enabled = true, extrinsicsTx, getExtrinsics,
     }, [extrinsicsTx]);
 
     useEffect(() => {
-        if (!enabled || !isReadyToFetch) {
+        if (!isReadyToFetch) {
             return;
         }
 
@@ -57,7 +57,7 @@ export function useInfiniteScroll({ enabled = true, extrinsicsTx, getExtrinsics,
         if (shouldFetchInitialReceived || shouldFetchInitialExtrinsics) {
             return;
         }
-    }, [enabled, extrinsicsTx, getExtrinsics, getTransfers, isReadyToFetch, receivedTx]);
+    }, [extrinsicsTx, getExtrinsics, getTransfers, isReadyToFetch, receivedTx]);
 
     // Setup IntersectionObserver for pagination after the first batch is loaded
     useEffect(() => {

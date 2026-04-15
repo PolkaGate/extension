@@ -8,6 +8,25 @@ import { normalizeHistoryGenesis } from '@polkadot/extension-polkagate/src/util/
 
 import { log } from './utils';
 
+function deduplicateTransactions(transactions: TransactionDetail[]): TransactionDetail[] {
+  const seenTxHashes = new Set<string>();
+  const unique: TransactionDetail[] = [];
+
+  for (const tx of transactions) {
+    if (tx.txHash) {
+      if (seenTxHashes.has(tx.txHash)) {
+        continue;
+      }
+
+      seenTxHashes.add(tx.txHash);
+    }
+
+    unique.push(tx);
+  }
+
+  return unique;
+}
+
 // Retrieves transaction history from Chrome's local storage for a specific address and chain
 export async function getHistoryFromStorage(address: string, genesisHash: string): Promise<TransactionDetail[] | undefined> {
   if (!address || !genesisHash) {
@@ -23,15 +42,21 @@ export async function getHistoryFromStorage(address: string, genesisHash: string
 
         // Navigate the nested structure: address -> genesisHash -> transactions
         const addressHistories: Record<string, TransactionDetail[]> = allHistories[address] || {};
-        const chainHistory: TransactionDetail[] = addressHistories[genesisHash];
         const normalizedGenesisHash = normalizeHistoryGenesis(genesisHash);
-        const filteredHistory = chainHistory?.filter((tx) => normalizeHistoryGenesis(tx.chain?.genesisHash) === normalizedGenesisHash);
+        const matchingBuckets = Object.entries(addressHistories).filter(
+          ([storedGenesisHash]) => normalizeHistoryGenesis(storedGenesisHash) === normalizedGenesisHash
+        );
+        const chainHistory = matchingBuckets.flatMap(([, transactions]) => transactions ?? []);
+        const matchingChainHistory = chainHistory.filter(
+          (tx) => normalizeHistoryGenesis(tx.chain?.genesisHash) === normalizedGenesisHash
+        );
+        const filteredHistory = deduplicateTransactions(matchingChainHistory);
+        const mergedCount = matchingBuckets.length;
+        const filteredOutCount = chainHistory.length - filteredHistory.length;
 
-        if (chainHistory?.length !== filteredHistory?.length) {
-          log(`Filtered out ${(chainHistory?.length || 0) - (filteredHistory?.length || 0)} wrong-chain transactions for ${address} on chain ${genesisHash}`);
-        }
-
-        log(`Retrieved ${filteredHistory?.length || 0} transactions for ${address} on chain ${genesisHash}`);
+        log(
+          `Retrieved ${filteredHistory.length} transactions for ${address} on chain ${genesisHash} after merging ${mergedCount} bucket(s) and filtering out ${filteredOutCount} transaction(s)`
+        );
         resolve(filteredHistory);
       } catch (error) {
         console.error('Error retrieving history from storage:', error);
