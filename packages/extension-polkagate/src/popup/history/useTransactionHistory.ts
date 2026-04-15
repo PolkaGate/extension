@@ -1,11 +1,11 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { FilterOptions, TransactionHistoryOutput } from './hookUtils/types';
+import type { FilterOptions, TransactionHistoryConfig, TransactionHistoryOutput } from './hookUtils/types';
 
 import { useEffect, useRef } from 'react';
 
-import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { mapRelayToSystemGenesisIfMigrated, normalizeHistoryGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { useChainInfo } from '../../hooks';
 import { keyMaker } from './hookUtils/utils';
@@ -15,7 +15,7 @@ import { useInfiniteScroll, useTransactionFetching, useTransactionGrouping, useT
  * Main hook for managing transaction history
  * Orchestrates fetching, processing, storage, and display of transaction data
  */
-export default function useTransactionHistory(address: string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
+export default function useTransactionHistory(address: string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions, config?: TransactionHistoryConfig): TransactionHistoryOutput {
   const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
   const { chain, decimal, token } = useChainInfo(genesisHash, true);
 
@@ -37,7 +37,6 @@ export default function useTransactionHistory(address: string | undefined, _gene
     isReadyToFetch,
     localHistories,
     receivedTx,
-    resetAllState,
     setAllHistories,
     setExtrinsicsTx,
     setIsLoading,
@@ -55,6 +54,7 @@ export default function useTransactionHistory(address: string | undefined, _gene
 
   // 3. Process raw transaction data
   const { processedExtrinsics, processedReceived } = useTransactionProcessing({
+    address,
     chain,
     decimal,
     extrinsicsTx,
@@ -67,7 +67,7 @@ export default function useTransactionHistory(address: string | undefined, _gene
   useTransactionStorage({
     address,
     allHistories,
-    chain,
+    genesisHash,
     localHistories,
     processedExtrinsics,
     processedReceived,
@@ -76,17 +76,45 @@ export default function useTransactionHistory(address: string | undefined, _gene
     setLocalHistories
   });
 
-  const _all = localHistories ?? allHistories;
+  // Prefer the freshly combined in-memory history once it exists.
+  // The storage cache only contains the latest subset and should be a fallback,
+  // not the primary source after fetch/merge completes.
+  const _all = allHistories ?? localHistories;
+  const normalizedGenesisHash = normalizeHistoryGenesis(genesisHash);
+  const chainScopedHistories = _all?.filter((item) => {
+    const itemGenesisHash = item.chain?.genesisHash;
+
+    if (!itemGenesisHash || !genesisHash) {
+      return false;
+    }
+
+    return normalizeHistoryGenesis(itemGenesisHash) === normalizedGenesisHash;
+  });
   // 5. Group transactions by date with filtering
   const grouped = useTransactionGrouping({
-    allHistories: _all,
+    allHistories: _all === null ? null : chainScopedHistories,
     extrinsicsTx,
     filterOptions,
     receivedTx
   });
 
+  const fetchMoreIfAvailable = async (): Promise<void> => {
+    const tasks: Promise<void>[] = [];
+
+    if (receivedTx.hasMore && !receivedTx.isFetching) {
+      tasks.push(getTransfers(receivedTx));
+    }
+
+    if (extrinsicsTx.hasMore && !extrinsicsTx.isFetching) {
+      tasks.push(getExtrinsics(extrinsicsTx));
+    }
+
+    await Promise.all(tasks);
+  };
+
   // 6. Setup infinite scroll
   useInfiniteScroll({
+    enabled: config?.enableInfiniteScroll ?? true,
     extrinsicsTx,
     getExtrinsics,
     getTransfers,
@@ -94,18 +122,17 @@ export default function useTransactionHistory(address: string | undefined, _gene
     receivedTx
   });
 
-  // Reset state when address or chain changes
-  useEffect(() => {
-    if (isReadyToFetch) {
-      setIsLoading(true);
-      resetAllState();
-    }
-  }, [isReadyToFetch, resetAllState, setIsLoading]);
+  const hasVisibleHistory = _all !== undefined;
+  const isFetchingMore = hasVisibleHistory && Boolean(receivedTx.isFetching || extrinsicsTx.isFetching);
+  const hasMore = Boolean(receivedTx.hasMore || extrinsicsTx.hasMore);
 
   return {
-    allHistories: _all,
-    count: _all?.length || 0,
+    allHistories: _all === null ? null : chainScopedHistories,
+    count: chainScopedHistories?.length || 0,
+    fetchMoreIfAvailable,
     grouped,
+    hasMore,
+    isFetchingMore,
     isLoading
   };
 }

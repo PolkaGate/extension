@@ -1,12 +1,12 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import React from 'react';
 
 import { MySkeleton } from '@polkadot/extension-polkagate/src/components';
+import { PolkaGateTransparentLogo } from '@polkadot/extension-polkagate/src/fullscreen/components';
 
-import { logoWhiteTransparent } from '../../../assets/logos';
 import { useIsDark } from '../../../hooks/index';
 import Drawer from './Drawer';
 
@@ -19,18 +19,7 @@ function Loading({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex' }}>
           <Grid alignItems='center' container item justifyContent='space-between' sx={{ transition: 'all 250ms ease-out' }} xs>
             <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-              <Box
-                component='img'
-                src={logoWhiteTransparent as string}
-                sx={{
-                  bgcolor: isDark ? '#292247' : '#CFD5F0',
-                  borderRadius: '999px',
-                  filter: isDark ? 'brightness(0.4)' : 'brightness(0.9)',
-                  height: '36px',
-                  p: '4px',
-                  width: '36px'
-                }}
-              />
+              <PolkaGateTransparentLogo />
               <Grid container direction='column' item sx={{ rowGap: '8px', width: 'fit-content' }}>
                 <MySkeleton
                   bgcolor={isDark ? '#946CC826' : '#99A1C459'}

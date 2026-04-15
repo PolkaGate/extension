@@ -88,6 +88,14 @@ export function useTransactionState(address: string | undefined, chain: Chain | 
       return;
     }
 
+    if (prevAddressRef.current === undefined && prevGenesisHashRef.current === undefined) {
+      prevAddressRef.current = String(address);
+      prevGenesisHashRef.current = chain.genesisHash;
+      log('Initialized transaction state inputs');
+
+      return;
+    }
+
     const addressChanged = String(address) !== prevAddressRef.current;
     const genesisHashChanged = chain.genesisHash !== prevGenesisHashRef.current;
 

@@ -10,7 +10,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import HistoryTabs from '@polkadot/extension-polkagate/src/popup/history/newDesign/HistoryTabs';
 import useTransactionHistory from '@polkadot/extension-polkagate/src/popup/history/useTransactionHistory';
-import { isSystemChain } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+import { normalizeHistoryGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { useChainInfo, useSelectedAccount, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
@@ -38,7 +38,7 @@ function HistoryFs(): React.ReactElement {
 
   const selectedAccount = useSelectedAccount();
   const savedSelectedChain = useAccountSelectedChain(selectedAccount?.address);
-  const { decimal, token } = useChainInfo(savedSelectedChain as string, true);
+  const { decimal } = useChainInfo(savedSelectedChain as string, true);
 
   const [tab, setTab] = useState<TAB>(TAB.ALL);
   const [page, setPage] = useState(1);
@@ -63,7 +63,12 @@ function HistoryFs(): React.ReactElement {
     return filterMap[tab] ?? filterMap[TAB.ALL];
   }, [tab]);
 
-  const { allHistories, grouped } = useTransactionHistory(selectedAccount?.address, savedSelectedChain as string | undefined, historyFilter);
+  const { allHistories, fetchMoreIfAvailable, grouped, hasMore, isFetchingMore } = useTransactionHistory(
+    selectedAccount?.address,
+    savedSelectedChain as string | undefined,
+    historyFilter,
+    { enableInfiniteScroll: false }
+  );
 
   const historyItemsToShow = useMemo(() => {
     if (!grouped) {
@@ -71,25 +76,14 @@ function HistoryFs(): React.ReactElement {
     }
 
     const flattenedHistories = Object.entries(grouped).map(([_, histories]) => histories).flat();
-    const historyGenesisHash = flattenedHistories[0]?.chain?.genesisHash;
-    const isHistoryRecordsRelatedToSelectedChain = historyGenesisHash === savedSelectedChain || isSystemChain(historyGenesisHash, savedSelectedChain as string | undefined); // TODO: We may need to fetch people system chain history as well
-
-    if (savedSelectedChain && !isHistoryRecordsRelatedToSelectedChain) {
-      return null;
-    }
-
-    const result = flattenedHistories.map((item) => {
-      if (item.token === token) {
-        return { ...item, decimal: item.decimal ?? decimal };
-      }
-
-      return undefined;
-    }).filter((item) => !!item)
+    const result = flattenedHistories
+      .filter((item) =>
+        normalizeHistoryGenesis(item.chain?.genesisHash) === normalizeHistoryGenesis(savedSelectedChain)
+      )
+      .map((item) => ({ ...item, decimal: item.decimal ?? decimal }))
       .filter((item) =>
         (extraFilters.type === ALL_TYPES || extraFilters.type === item.subAction) &&
         (extraFilters.status === ANY_STATUS || (extraFilters.status === 'Completed' && item.success) || (extraFilters.status === 'Failed' && !item.success)));
-
-    setCount(result.length);
 
     if (result.length === 0) {
       return null;
@@ -99,7 +93,47 @@ function HistoryFs(): React.ReactElement {
     const end = start + Number(itemsPerPage);
 
     return result.slice(start, end);
-  }, [grouped, savedSelectedChain, page, itemsPerPage, token, decimal, extraFilters]);
+  }, [grouped, savedSelectedChain, page, itemsPerPage, decimal, extraFilters]);
+
+  useEffect(() => {
+    if (!grouped) {
+      setCount(0);
+
+      return;
+    }
+
+    const flattenedHistories = Object.entries(grouped).map(([_, histories]) => histories).flat();
+    const filtered = flattenedHistories
+      .filter((item) =>
+        normalizeHistoryGenesis(item.chain?.genesisHash) === normalizeHistoryGenesis(savedSelectedChain)
+      )
+      .filter((item) =>
+        (extraFilters.type === ALL_TYPES || extraFilters.type === item.subAction) &&
+        (extraFilters.status === ANY_STATUS || (extraFilters.status === 'Completed' && item.success) || (extraFilters.status === 'Failed' && !item.success)));
+
+    setCount(filtered.length);
+  }, [grouped, savedSelectedChain, extraFilters]);
+
+  useEffect(() => {
+    if (!grouped || isFetchingMore || !hasMore) {
+      return;
+    }
+
+    const flattenedHistories = Object.entries(grouped).map(([_, histories]) => histories).flat();
+    const filteredCount = flattenedHistories
+      .filter((item) =>
+        normalizeHistoryGenesis(item.chain?.genesisHash) === normalizeHistoryGenesis(savedSelectedChain)
+      )
+      .filter((item) =>
+        (extraFilters.type === ALL_TYPES || extraFilters.type === item.subAction) &&
+        (extraFilters.status === ANY_STATUS || (extraFilters.status === 'Completed' && item.success) || (extraFilters.status === 'Failed' && !item.success)))
+      .length;
+    const paginationCount = Math.max(1, Math.ceil(filteredCount / Number(itemsPerPage)));
+
+    if (page >= paginationCount) {
+      fetchMoreIfAvailable().catch(console.error);
+    }
+  }, [extraFilters, fetchMoreIfAvailable, grouped, hasMore, isFetchingMore, itemsPerPage, page, savedSelectedChain]);
 
   useEffect(() => { // reset
     setExtraFilters(DEFAULT_EXTRA_FILTERS);
@@ -125,6 +159,7 @@ function HistoryFs(): React.ReactElement {
         />
         <HistoryBox
           historyItems={historyItemsToShow}
+          isFetchingMore={isFetchingMore}
           notReady={!savedSelectedChain}
         />
         <PaginationRow

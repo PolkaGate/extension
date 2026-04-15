@@ -10,7 +10,7 @@ import { star } from '../icons';
 import RateUsButton from '../partials/RateUsButton';
 
 const EXTENSION_RATE = 4.7;
-const EXTENSION_REVIEWERS_COUNT = 31;
+const EXTENSION_REVIEWERS_COUNT = 32;
 
 interface Props {
   style?: React.CSSProperties;

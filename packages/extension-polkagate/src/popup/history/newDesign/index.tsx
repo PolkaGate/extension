@@ -13,6 +13,7 @@ import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/use
 import { ActionContext, BackWithLabel, FadeOnScroll, Motion } from '../../../components';
 import { useChainInfo, useSelectedAccount, useTranslation } from '../../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../../partials';
+import { normalizeHistoryGenesis } from '../../../util/migrateHubUtils';
 import useTransactionHistory from '../useTransactionHistory';
 import HistoryBox from './HistoryBox';
 import HistoryTabs, { TAB } from './HistoryTabs';
@@ -25,7 +26,7 @@ function History(): React.ReactElement {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const [tab, setTab] = useState<TAB>(TAB.ALL);
-  const { decimal, token } = useChainInfo(savedSelectedChain as string, true);
+  const { decimal } = useChainInfo(savedSelectedChain as string, true);
 
   const historyFilter: FilterOptions = useMemo(() => {
     const defaultFilters = {
@@ -44,7 +45,7 @@ function History(): React.ReactElement {
     return filterMap[tab] ?? filterMap[TAB.ALL];
   }, [tab]);
 
-  const { grouped } = useTransactionHistory(selectedAccount?.address, savedSelectedChain as string | undefined, historyFilter);
+  const { grouped, isFetchingMore } = useTransactionHistory(selectedAccount?.address, savedSelectedChain as string | undefined, historyFilter);
 
   const historyItemsToShow = useMemo(() => {
     if (!grouped) {
@@ -55,7 +56,8 @@ function History(): React.ReactElement {
       Object.entries(grouped)
         .map(([date, items]) => {
           const filteredItems = items.filter(
-            ({ token: historyItemToken }) => historyItemToken === token
+            ({ chain }) =>
+              normalizeHistoryGenesis(chain?.genesisHash) === normalizeHistoryGenesis(savedSelectedChain)
           )
             .map((item) => ({ ...item, decimal }));
 
@@ -66,7 +68,7 @@ function History(): React.ReactElement {
 
     // Check if result is an empty object
     return Object.keys(result).length === 0 ? null : result;
-  }, [decimal, grouped, token]);
+  }, [decimal, grouped, savedSelectedChain]);
 
   const onBack = useCallback(() => onAction('/'), [onAction]);
 
@@ -93,6 +95,7 @@ function History(): React.ReactElement {
         <Grid container item ref={scrollContainerRef} sx={{ height: 'fit-content', maxHeight: '400px', mt: '10px', overflowY: 'auto', pb: '60px' }}>
           <HistoryBox
             historyItems={historyItemsToShow}
+            isFetchingMore={isFetchingMore}
             notReady={!savedSelectedChain}
             style={{ margin: '10px 12px 15px', width: 'calc(100% - 24px)' }}
           />

@@ -1,7 +1,6 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Chain } from '@polkadot/extension-chains/types';
 import type { TransactionDetail } from '../../../util/types';
 
 import { type Dispatch, type RefObject, type SetStateAction, useEffect } from 'react';
@@ -13,7 +12,7 @@ import { keyMaker, log } from '../hookUtils/utils';
 
 interface UseTransactionStorageProps {
   address: string | undefined;
-  chain: Chain | null | undefined;
+  genesisHash: string | undefined;
   processedReceived: TransactionDetail[] | undefined;
   processedExtrinsics: TransactionDetail[] | undefined;
   setAllHistories: Dispatch<SetStateAction<TransactionDetail[] | null | undefined>>;
@@ -31,26 +30,24 @@ interface UseTransactionStorageResult {
  * Manages loading from and saving to local storage
  * Combines local and fetched transactions, removing duplicates
  */
-export function useTransactionStorage({ address, allHistories, chain, localHistories, processedExtrinsics, processedReceived, requested, setAllHistories, setLocalHistories }: UseTransactionStorageProps): UseTransactionStorageResult {
+export function useTransactionStorage({ address, allHistories, genesisHash, localHistories, processedExtrinsics, processedReceived, requested, setAllHistories, setLocalHistories }: UseTransactionStorageProps): UseTransactionStorageResult {
   // Load transactions from local storage
   useEffect(() => {
-    if (!address || !chain?.genesisHash) {
+    if (!address || !genesisHash) {
       return;
     }
 
-    log(`Loading history from storage for ${String(address)} on chain ${chain.genesisHash}`);
+    log(`Loading history from storage for ${String(address)} on chain ${genesisHash}`);
 
-    getHistoryFromStorage(String(address), String(chain.genesisHash))
+    getHistoryFromStorage(String(address), String(genesisHash))
       .then((history) => {
-        const gHash = history?.[0].chain?.genesisHash;
-
-        if (!gHash) {
+        if (!history?.length) {
           setLocalHistories(null);
 
           return;
         }
 
-        const loadedContent = keyMaker(address, gHash);
+        const loadedContent = keyMaker(address, genesisHash);
         const isValid = requested.current === loadedContent;
 
         if (isValid) {
@@ -65,7 +62,7 @@ export function useTransactionStorage({ address, allHistories, chain, localHisto
       .catch((error) => {
         console.error('Error loading history from storage:', error);
       });
-  }, [address, chain?.genesisHash, requested, setLocalHistories]);
+  }, [address, genesisHash, requested, setLocalHistories]);
 
   // Combine all transaction sources and deduplicate
   useEffect(() => {
@@ -104,7 +101,7 @@ export function useTransactionStorage({ address, allHistories, chain, localHisto
 
   // Save latest transactions to local storage
   useEffect(() => {
-    if (!address || !chain?.genesisHash || !allHistories?.length) {
+    if (!address || !genesisHash || !allHistories?.length) {
       return;
     }
 
@@ -113,14 +110,7 @@ export function useTransactionStorage({ address, allHistories, chain, localHisto
 
     log(`Saving latest ${itemsToSave} transactions to local storage:`, { latestTransactions });
 
-    const gHash = latestTransactions[0].chain?.genesisHash;
-    const addr = latestTransactions[0].forAccount;
-
-    if (!gHash || !addr) {
-      return;
-    }
-
-    const requestedContentToSave = keyMaker(addr, gHash);
+    const requestedContentToSave = keyMaker(address,genesisHash);
     const isValid = requested.current === requestedContentToSave;
 
     if (!isValid) {
@@ -129,14 +119,14 @@ export function useTransactionStorage({ address, allHistories, chain, localHisto
       return;
     }
 
-    saveHistoryToStorage(String(address), chain.genesisHash, latestTransactions)
+    saveHistoryToStorage(String(address), genesisHash, latestTransactions)
       .then(() => {
         log('Successfully saved latest transactions to local storage');
       })
       .catch((error) => {
         console.error('Error saving history to storage:', error);
       });
-  }, [address, allHistories, chain?.genesisHash, requested]);
+  }, [address, allHistories, genesisHash, requested]);
 
   return { localHistories };
 }

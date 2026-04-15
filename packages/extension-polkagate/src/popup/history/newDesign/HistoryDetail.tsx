@@ -259,7 +259,7 @@ function Content({ historyItem, style = {} }: { historyItem: TransactionDetail |
           <DetailHeader historyItem={historyItem} />
           <Grid container item ref={containerRef} sx={{ height: 'fit-content', maxHeight: '330px', overflowY: 'auto', pb: '65px' }}>
             <DetailCard historyItem={historyItem} />
-            <FadeOnScroll containerRef={containerRef} />
+            <FadeOnScroll containerRef={containerRef} ratio={0.3} style={{ borderRadius: '8px', bottom: '15px', justifySelf: 'center', width: '93%' }} />
           </Grid>
           <GradientButton
             disabled={!link}

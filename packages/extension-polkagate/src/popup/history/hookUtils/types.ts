@@ -4,6 +4,7 @@
 import type { Extrinsics, TransactionDetail, Transfers } from '../../../util/types';
 
 export interface RecordTabStatus {
+  genesisHash?: string;
   pageNum: number;
   isFetching?: boolean;
   hasMore?: boolean;
@@ -11,6 +12,7 @@ export interface RecordTabStatus {
 }
 
 export interface RecordTabStatusGov {
+  genesisHash?: string;
   pageNum: number;
   isFetching?: boolean;
   hasMore?: boolean;
@@ -20,7 +22,10 @@ export interface RecordTabStatusGov {
 export interface TransactionHistoryOutput {
   allHistories: TransactionDetail[] | null | undefined;
   count: number;
+  fetchMoreIfAvailable: () => Promise<void>;
   grouped: Record<string, TransactionDetail[]> | null | undefined;
+  hasMore: boolean;
+  isFetchingMore: boolean;
   isLoading: boolean;
 }
 
@@ -28,6 +33,10 @@ export interface FilterOptions {
   transfers?: boolean;
   governance?: boolean;
   staking?: boolean;
+}
+
+export interface TransactionHistoryConfig {
+  enableInfiniteScroll?: boolean;
 }
 
 // Action types for the reducers
