@@ -24,7 +24,7 @@ export async function saveHistoryToStorage(address: string, genesisHash: string,
   try {
     const normalizedGenesisHash = normalizeHistoryGenesis(genesisHash);
 
-    if (isUnsafeObjectKey(address) || isUnsafeObjectKey(genesisHash)) {
+    if (isUnsafeObjectKey(address) || isUnsafeObjectKey(normalizedGenesisHash)) {
       log('Unsafe storage key detected, skipping history save');
 
       return Promise.resolve();
@@ -54,7 +54,7 @@ export async function saveHistoryToStorage(address: string, genesisHash: string,
     allHistories[address] ??= {};
 
     // Update the history for this specific address and chain
-    allHistories[address][genesisHash] = filteredTransactions;
+    allHistories[address][normalizedGenesisHash] = filteredTransactions;
 
     // Save the updated history object back to storage
     const success = await setStorage(STORAGE_KEY.HISTORY, allHistories);
