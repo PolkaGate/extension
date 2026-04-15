@@ -596,7 +596,7 @@ export default function useReservedDetails(formatted: string | undefined, genesi
 
   useEffect(() => {
     setReserved({});
-  }, [genesisHash]);
+  }, [genesisHash, formatted]);
 
   return reserved;
 }
