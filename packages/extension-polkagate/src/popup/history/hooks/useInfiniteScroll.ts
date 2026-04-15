@@ -8,6 +8,7 @@ import { useEffect, useRef } from 'react';
 import { log } from '../hookUtils/utils';
 
 interface UseInfiniteScrollProps {
+    enabled?: boolean;
     extrinsicsTx: RecordTabStatusGov;
     getExtrinsics: (state: RecordTabStatusGov) => Promise<void>;
     getTransfers: (state: RecordTabStatus) => Promise<void>;
@@ -19,7 +20,7 @@ interface UseInfiniteScrollProps {
  * Manages infinite scroll behavior using IntersectionObserver
  * Initiates initial data fetches and handles scroll-triggered pagination
  */
-export function useInfiniteScroll({ extrinsicsTx, getExtrinsics, getTransfers, isReadyToFetch, receivedTx }: UseInfiniteScrollProps): void {
+export function useInfiniteScroll({ enabled = true, extrinsicsTx, getExtrinsics, getTransfers, isReadyToFetch, receivedTx }: UseInfiniteScrollProps): void {
     const observerInstance = useRef<IntersectionObserver | null>(null);
 
     // Refs for latest state (to avoid stale closures in observer)
@@ -36,7 +37,7 @@ export function useInfiniteScroll({ extrinsicsTx, getExtrinsics, getTransfers, i
     }, [extrinsicsTx]);
 
     useEffect(() => {
-        if (!isReadyToFetch) {
+        if (!enabled || !isReadyToFetch) {
             return;
         }
 
@@ -56,11 +57,11 @@ export function useInfiniteScroll({ extrinsicsTx, getExtrinsics, getTransfers, i
         if (shouldFetchInitialReceived || shouldFetchInitialExtrinsics) {
             return;
         }
-    }, [extrinsicsTx, getExtrinsics, getTransfers, isReadyToFetch, receivedTx]);
+    }, [enabled, extrinsicsTx, getExtrinsics, getTransfers, isReadyToFetch, receivedTx]);
 
     // Setup IntersectionObserver for pagination after the first batch is loaded
     useEffect(() => {
-        if (!isReadyToFetch) {
+        if (!enabled || !isReadyToFetch) {
             return;
         }
 
@@ -156,7 +157,7 @@ export function useInfiniteScroll({ extrinsicsTx, getExtrinsics, getTransfers, i
             log('Cleaning up observer on unmount/rerun');
             observerInstance.current?.disconnect();
         };
-    }, [extrinsicsTx.pageNum, getExtrinsics, getTransfers, isReadyToFetch, receivedTx.pageNum]);
+    }, [enabled, extrinsicsTx.pageNum, getExtrinsics, getTransfers, isReadyToFetch, receivedTx.pageNum]);
 }
 
 /**

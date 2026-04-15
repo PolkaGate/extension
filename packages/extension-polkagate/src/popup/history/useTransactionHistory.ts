@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { FilterOptions, TransactionHistoryOutput } from './hookUtils/types';
+import type { FilterOptions, TransactionHistoryConfig, TransactionHistoryOutput } from './hookUtils/types';
 
 import { useEffect, useRef } from 'react';
 
@@ -15,7 +15,7 @@ import { useInfiniteScroll, useTransactionFetching, useTransactionGrouping, useT
  * Main hook for managing transaction history
  * Orchestrates fetching, processing, storage, and display of transaction data
  */
-export default function useTransactionHistory(address: string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions): TransactionHistoryOutput {
+export default function useTransactionHistory(address: string | undefined, _genesisHash: string | undefined, filterOptions?: FilterOptions, config?: TransactionHistoryConfig): TransactionHistoryOutput {
   const genesisHash = mapRelayToSystemGenesisIfMigrated(_genesisHash);
   const { chain, decimal, token } = useChainInfo(genesisHash, true);
 
@@ -98,8 +98,23 @@ export default function useTransactionHistory(address: string | undefined, _gene
     receivedTx
   });
 
+  const fetchMoreIfAvailable = async (): Promise<void> => {
+    const tasks: Promise<void>[] = [];
+
+    if (receivedTx.hasMore && !receivedTx.isFetching) {
+      tasks.push(getTransfers(receivedTx));
+    }
+
+    if (extrinsicsTx.hasMore && !extrinsicsTx.isFetching) {
+      tasks.push(getExtrinsics(extrinsicsTx));
+    }
+
+    await Promise.all(tasks);
+  };
+
   // 6. Setup infinite scroll
   useInfiniteScroll({
+    enabled: config?.enableInfiniteScroll ?? true,
     extrinsicsTx,
     getExtrinsics,
     getTransfers,
@@ -109,11 +124,14 @@ export default function useTransactionHistory(address: string | undefined, _gene
 
   const hasVisibleHistory = _all !== undefined;
   const isFetchingMore = hasVisibleHistory && Boolean(receivedTx.isFetching || extrinsicsTx.isFetching);
+  const hasMore = Boolean(receivedTx.hasMore || extrinsicsTx.hasMore);
 
   return {
     allHistories: _all === null ? null : chainScopedHistories,
     count: chainScopedHistories?.length || 0,
+    fetchMoreIfAvailable,
     grouped,
+    hasMore,
     isFetchingMore,
     isLoading
   };

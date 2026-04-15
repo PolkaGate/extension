@@ -63,7 +63,12 @@ function HistoryFs(): React.ReactElement {
     return filterMap[tab] ?? filterMap[TAB.ALL];
   }, [tab]);
 
-  const { allHistories, grouped, isFetchingMore } = useTransactionHistory(selectedAccount?.address, savedSelectedChain as string | undefined, historyFilter);
+  const { allHistories, fetchMoreIfAvailable, grouped, hasMore, isFetchingMore } = useTransactionHistory(
+    selectedAccount?.address,
+    savedSelectedChain as string | undefined,
+    historyFilter,
+    { enableInfiniteScroll: false }
+  );
 
   const historyItemsToShow = useMemo(() => {
     if (!grouped) {
@@ -108,6 +113,27 @@ function HistoryFs(): React.ReactElement {
 
     setCount(filtered.length);
   }, [grouped, savedSelectedChain, extraFilters]);
+
+  useEffect(() => {
+    if (!grouped || isFetchingMore || !hasMore) {
+      return;
+    }
+
+    const flattenedHistories = Object.entries(grouped).map(([_, histories]) => histories).flat();
+    const filteredCount = flattenedHistories
+      .filter((item) =>
+        normalizeHistoryGenesis(item.chain?.genesisHash) === normalizeHistoryGenesis(savedSelectedChain)
+      )
+      .filter((item) =>
+        (extraFilters.type === ALL_TYPES || extraFilters.type === item.subAction) &&
+        (extraFilters.status === ANY_STATUS || (extraFilters.status === 'Completed' && item.success) || (extraFilters.status === 'Failed' && !item.success)))
+      .length;
+    const paginationCount = Math.max(1, Math.ceil(filteredCount / Number(itemsPerPage)));
+
+    if (page >= paginationCount) {
+      fetchMoreIfAvailable().catch(console.error);
+    }
+  }, [extraFilters, fetchMoreIfAvailable, grouped, hasMore, isFetchingMore, itemsPerPage, page, savedSelectedChain]);
 
   useEffect(() => { // reset
     setExtraFilters(DEFAULT_EXTRA_FILTERS);
