@@ -9,6 +9,10 @@ import { normalizeHistoryGenesis } from '@polkadot/extension-polkagate/src/util/
 
 import { log } from './utils';
 
+function isUnsafeObjectKey(key: string): boolean {
+  return key === '__proto__' || key === 'constructor' || key === 'prototype';
+}
+
 // Saves transaction history to Chrome's local storage for a specific address and chain
 export async function saveHistoryToStorage(address: string, genesisHash: string, transactions: TransactionDetail[]): Promise<void> {
   if (!address || !genesisHash || !transactions?.length) {
@@ -19,6 +23,13 @@ export async function saveHistoryToStorage(address: string, genesisHash: string,
 
   try {
     const normalizedGenesisHash = normalizeHistoryGenesis(genesisHash);
+
+    if (isUnsafeObjectKey(address) || isUnsafeObjectKey(genesisHash)) {
+      log('Unsafe storage key detected, skipping history save');
+
+      return Promise.resolve();
+    }
+
     const filteredTransactions = transactions.filter((tx) => normalizeHistoryGenesis(tx.chain?.genesisHash) === normalizedGenesisHash);
 
     if (!filteredTransactions.length) {
