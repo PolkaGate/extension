@@ -67,12 +67,8 @@ export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, ch
         if (!maybeAssetInfo) {
           const assetObj = getAssetsObject(toTitleCase(chainName));
 
-          if (assetObj) {
-            const maybeAssetId = entry[0].toHuman()[1].replace(/,/g, '');
-
-            const assets = assetObj.nativeAssets.concat(assetObj.otherAssets);
-
-            maybeAssetInfo = assets.find(({ assetId }) => assetId === maybeAssetId);
+          if (assetObj?.assets) {
+            maybeAssetInfo = assetObj.assets.find(({ assetId: candidateId }) => candidateId === assetId);
 
             if (maybeAssetInfo) {
               maybeAssetInfo.id = maybeAssetInfo.assetId;
