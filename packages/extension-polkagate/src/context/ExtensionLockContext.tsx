@@ -35,16 +35,26 @@ export const ExtensionLockProvider: React.FC<{ children: React.ReactElement }> =
   useAutoLockRefresher(isExtensionLocked);
 
   useEffect(() => {
-    const unsubscribe = getAndWatchStorage<boolean>(STORAGE_KEY.IS_EXTENSION_LOCKED, (locked) => {
-      setIsExtensionLocked(Boolean(locked));
-    }, false, true);
+    let unsubscribe: (() => void) | undefined;
 
-    isPasswordsMigrated && areAccountsLocksExpired()
-      .then((res) => {
-        setIsExtensionLocked(res);
-        return setStorage(STORAGE_KEY.IS_EXTENSION_LOCKED, res);
-      })
-      .catch(console.error);
+    const init = async (): Promise<void> => {
+      if (isPasswordsMigrated) {
+        try {
+          const res = await areAccountsLocksExpired();
+
+          setIsExtensionLocked(res);
+          await setStorage(STORAGE_KEY.IS_EXTENSION_LOCKED, res);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      unsubscribe = getAndWatchStorage<boolean>(STORAGE_KEY.IS_EXTENSION_LOCKED, (locked) => {
+        setIsExtensionLocked(locked ?? true);
+      }, false, true);
+    };
+
+    void init();
 
     const handleLockExpiredMessage = (msg: LockExpiredMessage) => {
       if (msg.type === 'LOCKED_ACCOUNTS_EXPIRED') {
@@ -55,7 +65,7 @@ export const ExtensionLockProvider: React.FC<{ children: React.ReactElement }> =
     chrome.runtime.onMessage.addListener(handleLockExpiredMessage);
 
     return () => {
-      unsubscribe();
+      unsubscribe?.();
       chrome.runtime.onMessage.removeListener(handleLockExpiredMessage);
     };
   }, [isPasswordsMigrated]);
