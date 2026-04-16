@@ -57,7 +57,7 @@ export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, ch
 
         // @ts-ignore
         let maybeAssetInfo = assetsToBeFetched.find((_asset) => {
-          const currencyId = _asset?.extras?.['currencyIdScale'].replace('0x', '');
+          const currencyId = _asset?.extras?.['currencyIdScale']?.replace('0x', '');
 
           return currencyId && storageKey.endsWith(currencyId);
         });
