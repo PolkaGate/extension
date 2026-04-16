@@ -5,14 +5,14 @@ import { Box } from '@mui/material';
 import React from 'react';
 import { createPortal } from 'react-dom';
 
-import { useAlerts, useTransactionState } from '../hooks';
+import { useAlerts, useTransactionStatus } from '../hooks';
 import Alert from './Alert';
 
 function AlertBox(): React.ReactElement {
   const { alerts } = useAlerts();
   const [portalEl, setPortalEl] = React.useState<HTMLElement | null>(null);
 
-  useTransactionState();
+  useTransactionStatus();
 
   React.useEffect(() => {
     setPortalEl(document.getElementById('alert-root'));
