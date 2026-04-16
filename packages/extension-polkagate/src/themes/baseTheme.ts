@@ -133,35 +133,35 @@ export const baseTheme: ThemeOptions = {
       textAlign: 'center'
     },
     'H-1': {
-      fontFamily: 'OdibeeSans',
+      fontFamily: "'OdibeeSans', 'Oswald', sans-serif",
       fontSize: '40px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
       textAlign: 'center'
     },
     'H-2': {
-      fontFamily: 'OdibeeSans',
+      fontFamily: "'OdibeeSans', 'Oswald', sans-serif",
       fontSize: '29px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
       textAlign: 'center'
     },
     'H-3': {
-      fontFamily: 'OdibeeSans',
+      fontFamily: "'OdibeeSans', 'Oswald', sans-serif",
       fontSize: '24px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
       textAlign: 'center'
     },
     'H-4': {
-      fontFamily: 'OdibeeSans',
+      fontFamily: "'OdibeeSans', 'Oswald', sans-serif",
       fontSize: '18px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
       textAlign: 'center'
     },
     'H-5': {
-      fontFamily: 'OdibeeSans',
+      fontFamily: "'OdibeeSans', 'Oswald', sans-serif",
       fontSize: '16px',
       fontWeight: 400,
       letterSpacing: '-0.19px',

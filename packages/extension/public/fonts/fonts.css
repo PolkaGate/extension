@@ -18,6 +18,15 @@
 }
 
 @font-face {
+  font-family: 'Oswald';
+  font-weight: 200 700;
+  font-style: normal;
+  src: url('./Oswald-VariableFont_wght.ttf'); /* IE9 Compat Modes */
+  src: local(''),
+       url('./Oswald-VariableFont_wght.ttf') format('truetype'), /* Safari, Android, iOS */
+}
+
+@font-face {
   font-family: 'Inter';
   src: url('./Inter-VariableFont_opsz,wght.ttf') format('truetype'); 
   font-weight: 100 900;
