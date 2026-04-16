@@ -3,6 +3,8 @@
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
+import { shouldSkipEndpointOption } from '../../endpoint';
+
 const API_READY_TIMEOUT = 7000;
 
 /**
@@ -43,11 +45,7 @@ export async function fastestEndpoint(endpoints, timeout = API_READY_TIMEOUT) {
    * @type {any[]}
    */
   const validEndpoints = endpoints.reduce((acc, { value }) => {
-    if (
-      !/^wss:\/\/\d+$/.test(value) &&
-      !value.includes('onfinality') &&
-      !value.startsWith('light')
-    ) {
+    if (!shouldSkipEndpointOption(value)) {
       // @ts-ignore
       acc.push(value);
     }
@@ -60,8 +58,13 @@ export async function fastestEndpoint(endpoints, timeout = API_READY_TIMEOUT) {
   }
 
   const providers = validEndpoints.map((endpoint) => new WsProvider(endpoint));
+  let winnerChosen = false;
   const attempts = providers.map((provider) =>
     createApiWithTimeout(provider, timeout).catch((error) => {
+      if (winnerChosen) {
+        return Promise.reject(error);
+      }
+
       console.warn(`${provider.endpoint} failed: ${error.message}`);
 
       return Promise.reject(error);
@@ -72,6 +75,7 @@ export async function fastestEndpoint(endpoints, timeout = API_READY_TIMEOUT) {
 
   try {
     fastest = await Promise.any(attempts);
+    winnerChosen = true;
   } catch (error) {
     await Promise.all(providers.map(disconnectProvider));
 

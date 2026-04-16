@@ -10,6 +10,7 @@ import { useUserAddedEndpoint } from '../fullscreen/addNewChain/utils';
 import { sanitizeChainName } from '../util';
 import chains from '../util/chains';
 import { AUTO_MODE } from '../util/constants';
+import { shouldSkipEndpointOption } from '../util/endpoint';
 
 const supportedLC = ['polkadot', 'kusama', 'westend']; // chains with supported light client
 const allEndpoints = createWsEndpoints();
@@ -34,9 +35,7 @@ export function useEndpoints(genesisHash: string | null | undefined): DropdownOp
     }
 
     let endpoints = allEndpoints?.filter(({ info, text, value }) => {
-      // Check if value matches the pattern 'wss://<any_number>'
-      // and ignore due to its rate limits
-      if (!value || /^wss:\/\/\d+$/.test(value) || value.includes('onfinality')) {
+      if (!value || shouldSkipEndpointOption(value)) {
         return false;
       }
 
