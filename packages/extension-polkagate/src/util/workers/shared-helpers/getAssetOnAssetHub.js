@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { FETCHING_ASSETS_FN } from '../../constants';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
+import { fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
 import { getAssets } from './getAssets.js';
 
 /**
@@ -15,37 +15,40 @@ import { getAssets } from './getAssets.js';
  */
 export async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName, userAddedEndpoints, port) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
-  const { api, connections } = await fastestEndpoint(endpoints);
+  const { api } = await fastestEndpoint(endpoints);
 
   let results = {};
 
-  if (api.isConnected) {
-    const { metadata } = await metadataFromApi(api);
+  try {
+    if (api.isConnected) {
+      const { metadata } = await metadataFromApi(api);
 
-    console.info(chainName, 'metadata : fetched and saved. (getAssetOnAssetHub)');
-    port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.ASSET_HUB, metadata }));
+      console.info(chainName, 'metadata : fetched and saved. (getAssetOnAssetHub)');
+      port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.ASSET_HUB, metadata }));
 
-    results = await toGetNativeToken(addresses, api, chainName);
+      results = await toGetNativeToken(addresses, api, chainName);
 
-    // @ts-ignore
-    const nonNativeAssets = (assetsToBeFetched || []).filter((asset) => !asset.extras?.isNative);
+      // @ts-ignore
+      const nonNativeAssets = (assetsToBeFetched || []).filter((asset) => !asset.extras?.isNative);
 
-    /** to calculate a new Foreign Token like MYTH asset id based on its XCM multi-location */
-    // const allForeignAssets = await api.query.foreignAssets.asset.entries();
-    // for (const [key, _others] of allForeignAssets) {
-    //   const id = key.args[0];
-    //   const assetMetaData = await api.query.foreignAssets.metadata(id);
+      /** to calculate a new Foreign Token like MYTH asset id based on its XCM multi-location */
+      // const allForeignAssets = await api.query.foreignAssets.asset.entries();
+      // for (const [key, _others] of allForeignAssets) {
+      //   const id = key.args[0];
+      //   const assetMetaData = await api.query.foreignAssets.metadata(id);
 
-    //   if (assetMetaData.toHuman().symbol === 'MYTH') {
-    //     console.log('new foreign asset id:', encodeLocation(id));
-    //   }
-    // }
+      //   if (assetMetaData.toHuman().symbol === 'MYTH') {
+      //     console.log('new foreign asset id:', encodeLocation(id));
+      //   }
+      // }
 
-    await getAssets(addresses, api, nonNativeAssets, chainName, results);
+      await getAssets(addresses, api, nonNativeAssets, chainName, results);
 
-    console.info(chainName, ': account assets fetched.');
+      console.info(chainName, ': account assets fetched.');
+    }
+  } finally {
+    await api.disconnect().catch(console.error);
   }
 
   port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.ASSET_HUB, results }));
-  closeWebsockets(connections);
 }

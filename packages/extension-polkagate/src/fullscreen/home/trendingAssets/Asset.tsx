@@ -9,7 +9,7 @@ import React, { useCallback, useContext, useState } from 'react';
 import DailyChange from '@polkadot/extension-polkagate/src/popup/home/partial/DailyChange';
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
-import { Logo, CurrencyContext } from '../../../components';
+import { CurrencyContext, Logo } from '../../../components';
 
 const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue, onClick: React.Dispatch<React.SetStateAction<string | undefined>> }>(({ asset, onClick }, ref) => {
   const { currency } = useContext(CurrencyContext);

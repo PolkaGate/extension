@@ -8,7 +8,7 @@ import { getSubstrateAddress } from '../../address';
 import { FETCHING_ASSETS_FN } from '../../constants';
 import { toTitleCase } from '../../string';
 // eslint-disable-next-line import/extensions
-import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
+import { balancifyAsset, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
 
 /**
  *
@@ -20,95 +20,98 @@ import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, me
  */
 export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, chainName, userAddedEndpoints, port) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
-  const { api, connections } = await fastestEndpoint(endpoints);
+  const { api } = await fastestEndpoint(endpoints);
 
   let results = {};
 
-  if (api.isConnected) {
-    const { metadata } = await metadataFromApi(api);
+  try {
+    if (api.isConnected) {
+      const { metadata } = await metadataFromApi(api);
 
-    console.info(chainName, 'metadata : fetched and saved.(getAssetOnMultiAssetChain)');
-    port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.MULTI_ASSET, metadata }));
+      console.info(chainName, 'metadata : fetched and saved.(getAssetOnMultiAssetChain)');
+      port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.MULTI_ASSET, metadata }));
 
-    results = await toGetNativeToken(addresses, api, chainName);
+      results = await toGetNativeToken(addresses, api, chainName);
 
-    const maybeTheAssetOfAddresses = addresses.map((address) => api.query['tokens']['accounts'].entries(address));
-    const balanceOfAssetsOfAddresses = await Promise.all(maybeTheAssetOfAddresses);
+      const maybeTheAssetOfAddresses = addresses.map((address) => api.query['tokens']['accounts'].entries(address));
+      const balanceOfAssetsOfAddresses = await Promise.all(maybeTheAssetOfAddresses);
 
-    balanceOfAssetsOfAddresses.flat().forEach((entry) => {
-      if (!entry.length) {
-        return;
-      }
+      balanceOfAssetsOfAddresses.flat().forEach((entry) => {
+        if (!entry.length) {
+          return;
+        }
 
-      // @ts-ignore
-      const [formatted, assetIdRaw] = entry[0].toHuman() ?? [];
+        // @ts-ignore
+        const [formatted, assetIdRaw] = entry[0].toHuman() ?? [];
 
-      let assetId;
+        let assetId;
 
-      if (typeof assetIdRaw === 'object') {
-        assetId = JSON.stringify(assetIdRaw);
-      } else {
-        // ensure assetId is a string and remove commas
-        assetId = assetIdRaw?.toString().replace(/,/g, '');
-      }
+        if (typeof assetIdRaw === 'object') {
+          assetId = JSON.stringify(assetIdRaw);
+        } else {
+          // ensure assetId is a string and remove commas
+          assetId = assetIdRaw?.toString().replace(/,/g, '');
+        }
 
-      const storageKey = entry[0].toString();
+        const storageKey = entry[0].toString();
 
-      // @ts-ignore
-      let maybeAssetInfo = assetsToBeFetched.find((_asset) => {
-        const currencyId = _asset?.extras?.['currencyIdScale'].replace('0x', '');
+        // @ts-ignore
+        let maybeAssetInfo = assetsToBeFetched.find((_asset) => {
+          const currencyId = _asset?.extras?.['currencyIdScale'].replace('0x', '');
 
-        return currencyId && storageKey.endsWith(currencyId);
-      });
+          return currencyId && storageKey.endsWith(currencyId);
+        });
 
-      const balance = entry[1];
+        const balance = entry[1];
 
-      if (!maybeAssetInfo) {
-        const assetObj = getAssetsObject(toTitleCase(chainName));
+        if (!maybeAssetInfo) {
+          const assetObj = getAssetsObject(toTitleCase(chainName));
 
-        if (assetObj) {
-          const maybeAssetId = entry[0].toHuman()[1].replace(/,/g, '');
+          if (assetObj) {
+            const maybeAssetId = entry[0].toHuman()[1].replace(/,/g, '');
 
-          const assets = assetObj.nativeAssets.concat(assetObj.otherAssets);
+            const assets = assetObj.nativeAssets.concat(assetObj.otherAssets);
 
-          maybeAssetInfo = assets.find(({ assetId }) => assetId === maybeAssetId);
+            maybeAssetInfo = assets.find(({ assetId }) => assetId === maybeAssetId);
 
-          if (maybeAssetInfo) {
-            maybeAssetInfo.id = maybeAssetInfo.assetId;
-            maybeAssetInfo.decimal = maybeAssetInfo.decimals;
-            console.log(' found:', maybeAssetInfo);
+            if (maybeAssetInfo) {
+              maybeAssetInfo.id = maybeAssetInfo.assetId;
+              maybeAssetInfo.decimal = maybeAssetInfo.decimals;
+              console.log(' found:', maybeAssetInfo);
+            }
           }
         }
-      }
 
-      if (maybeAssetInfo) {
-        // @ts-ignore
-        const totalBalance = balance.free.add(balance.reserved);
+        if (maybeAssetInfo) {
+          // @ts-ignore
+          const totalBalance = balance.free.add(balance.reserved);
 
-        const asset = {
-          ED: maybeAssetInfo?.extras?.existentialDeposit ?? maybeAssetInfo?.existentialDeposit,
-          assetId: assetId ?? maybeAssetInfo.id,
-          balanceDetails: balancifyAsset(balance),
-          chainName,
-          decimal: maybeAssetInfo.decimal,
-          formatted,
-          genesisHash: api.genesisHash.toString(),
-          priceId: maybeAssetInfo?.priceId,
-          token: maybeAssetInfo.symbol,
-          totalBalance: String(totalBalance)
-        };
+          const asset = {
+            ED: maybeAssetInfo?.extras?.existentialDeposit ?? maybeAssetInfo?.existentialDeposit,
+            assetId: assetId ?? maybeAssetInfo.id,
+            balanceDetails: balancifyAsset(balance),
+            chainName,
+            decimal: maybeAssetInfo.decimal,
+            formatted,
+            genesisHash: api.genesisHash.toString(),
+            priceId: maybeAssetInfo?.priceId,
+            token: maybeAssetInfo.symbol,
+            totalBalance: String(totalBalance)
+          };
 
-        const address = getSubstrateAddress(formatted);
+          const address = getSubstrateAddress(formatted);
 
-        // @ts-ignore
-        results[address]?.push(asset) ?? (results[address] = [asset]);
-      } else {
-        console.info(`NOTE: There is an asset on ${chainName} for ${formatted} which is not whitelisted. assetInfo`, storageKey, balance?.toHuman());
-      }
-    });
+          // @ts-ignore
+          results[address]?.push(asset) ?? (results[address] = [asset]);
+        } else {
+          console.info(`NOTE: There is an asset on ${chainName} for ${formatted} which is not whitelisted. assetInfo`, storageKey, balance?.toHuman());
+        }
+      });
+    }
+  } finally {
+    await api.disconnect().catch(console.error);
   }
 
   console.info(chainName, ': account assets fetched.');
   port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.MULTI_ASSET, results }));
-  closeWebsockets(connections);
 }

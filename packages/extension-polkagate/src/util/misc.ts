@@ -167,16 +167,7 @@ export function extractBaseUrl(url: string | undefined) {
 export async function fastestConnection(endpoints: DropdownOption[]): Promise<FastestConnectionType> {
   try {
     const urls = endpoints.map(({ value }) => ({ value: value as string }));
-    const { api, connections } = await fastestEndpoint(urls);
-
-    // @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const selectedEndpoint = api.registry.knownTypes.provider.endpoint as string;
-    const connectionsToDisconnect = connections.filter(({ wsProvider }) => wsProvider.endpoint !== selectedEndpoint);
-
-    connectionsToDisconnect.forEach(({ wsProvider }) => {
-      wsProvider.disconnect().catch(console.error);
-    });
+    const { api, selectedEndpoint } = await fastestEndpoint(urls);
 
     return {
       api,
