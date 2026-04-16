@@ -21,8 +21,10 @@ export default function useTransactionHistory(address: string | undefined, _gene
 
   // Create request identifier for validation
   const requested = useRef<string | undefined>(undefined);
-  requested.current = address && (chain?.genesisHash || genesisHash)
-    ? keyMaker(address, chain?.genesisHash || genesisHash)
+  const resolvedGenesisHash = chain?.genesisHash || genesisHash;
+
+  requested.current = address && resolvedGenesisHash
+    ? keyMaker(address, resolvedGenesisHash)
     : undefined;
 
   // 1. Manage transaction state (received & extrinsics)
