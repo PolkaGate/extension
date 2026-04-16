@@ -3,6 +3,8 @@
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
+const API_READY_TIMEOUT = 7000;
+
 /**
  * @param {WsProvider} provider
  */
@@ -12,8 +14,9 @@ function disconnectProvider(provider) {
 
 /**
  * @param {WsProvider} provider
+ * @param {number} [timeout=API_READY_TIMEOUT]
  */
-function createApiWithTimeout(provider, timeout = 7000) {
+function createApiWithTimeout(provider, timeout = API_READY_TIMEOUT) {
   // eslint-disable-next-line promise/param-names
   const timeoutPromise = new Promise((_, reject) => {
     setTimeout(() => reject(new Error('API isReady timeout')), timeout);
@@ -33,9 +36,9 @@ function createApiWithTimeout(provider, timeout = 7000) {
 
 /**
  * @param {{ value: string; }[]} endpoints
- * @param {number} [timeout=7000]
+ * @param {number} [timeout=API_READY_TIMEOUT]
  */
-export async function fastestEndpoint(endpoints, timeout = 7000) {
+export async function fastestEndpoint(endpoints, timeout = API_READY_TIMEOUT) {
   /**
    * @type {any[]}
    */
