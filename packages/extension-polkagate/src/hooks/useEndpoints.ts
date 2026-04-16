@@ -35,7 +35,7 @@ export function useEndpoints(genesisHash: string | null | undefined): DropdownOp
     }
 
     let endpoints = allEndpoints?.filter(({ info, text, value }) => {
-      if (!value || shouldSkipEndpointOption(value)) {
+      if (shouldSkipEndpointOption(value)) {
         return false;
       }
 

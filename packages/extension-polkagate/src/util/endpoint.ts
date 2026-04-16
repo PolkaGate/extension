@@ -7,7 +7,8 @@ export const isOnFinalityEndpoint = (value: string): boolean => value.includes('
 
 export const isLightClientEndpoint = (value: string): boolean => value.startsWith('light');
 
-export const shouldSkipEndpointOption = (value: string): boolean =>
+export const shouldSkipEndpointOption = (value: string | undefined): boolean =>
+  !value ||
   isRateLimitedNumericWsEndpoint(value) ||
   isOnFinalityEndpoint(value) ||
   isLightClientEndpoint(value);
