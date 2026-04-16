@@ -39,7 +39,7 @@ export default function AiTransactionInfo(): React.ReactElement {
 
   return (
     <Stack direction='column'>
-      <Typography color='text.primary' fontSize='22px' m='45px 0 15px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
+      <Typography color='text.primary' fontSize='22px' m='33px 0 15px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
         {t('AI Transaction Insights')}
       </Typography>
       <Stack alignItems='center' direction='row' gap='5px' justifyContent='center'>

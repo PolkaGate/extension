@@ -13,13 +13,15 @@ import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { blake2AsHex } from '@polkadot/util-crypto';
 
 import { Box as BoxIcon } from '../../assets/icons';
-import { DecisionButtons, GradientBox, MySwitch, PasswordInput } from '../../components';
+import { ActionButton, GradientBox, GradientButton, MySnackbar, MySwitch, PasswordInput } from '../../components';
 import { updateStorage } from '../../components/Loading';
 import { useExtensionLockContext } from '../../context/ExtensionLockContext';
 import { openOrFocusTab } from '../../fullscreen/accountDetails/components/CommonTasks';
 import { useAutoLockPeriod, useBackground, useIsExtensionPopup, useIsHideNumbers, useIsPasswordMigrated, useTranslation } from '../../hooks';
 import { Version } from '../../partials';
 import { RedGradient } from '../../style';
+import { getBiometricUnlockStatus, unlockAllAccountsWithBiometric } from '../../messaging';
+import { unlockWithBiometric } from '../../util/biometric';
 import { isPasswordCorrect } from '../settings/extensionSettings/ManagePassword';
 import { STEPS } from './constants';
 import Header from './Header';
@@ -38,11 +40,18 @@ function Content({ setStep }: Props): React.ReactElement {
   const { setExtensionLock } = useExtensionLockContext();
   const autoLockPeriod = useAutoLockPeriod();
   const isUnlockingRef = useRef(false);
+  const autoBiometricAttemptedRef = useRef(false);
 
   const [hashedPassword, setHashedPassword] = useState<string>();
   const [plainPassword, setPlainPassword] = useState<string>();
   const [isPasswordError, setIsPasswordError] = useState(false);
   const [isUnlocking, setUnlocking] = useState(false);
+  const [isBiometricAvailable, setBiometricAvailable] = useState(false);
+  const [isBiometricUnlocking, setBiometricUnlocking] = useState(false);
+  const [biometricCredentialId, setBiometricCredentialId] = useState<string>();
+  const [biometricPrfSalt, setBiometricPrfSalt] = useState<string>();
+  const [biometricError, setBiometricError] = useState<string>();
+  const [showPasswordFallback, setShowPasswordFallback] = useState(false);
 
   const { accountsNeedMigration, hasLocalAccounts } = useCheckMasterPassword((isUnlocking && isPasswordMigrated === false) ? plainPassword : undefined);
 
@@ -59,6 +68,23 @@ function Content({ setStep }: Props): React.ReactElement {
     const hashedPassword = blake2AsHex(pass, 256); // Hash the string with a 256-bit output
 
     setHashedPassword(hashedPassword);
+  }, []);
+
+  useEffect(() => {
+    getBiometricUnlockStatus()
+      .then((biometricStatus) => {
+        const isEnabled = biometricStatus.enabled && biometricStatus.credentialId && biometricStatus.prfSalt;
+
+        setBiometricAvailable(Boolean(isEnabled));
+        setBiometricCredentialId(biometricStatus.credentialId);
+        setBiometricPrfSalt(biometricStatus.prfSalt);
+        setShowPasswordFallback(true);
+      })
+      .catch((error) => {
+        console.error(error);
+        setBiometricAvailable(false);
+        setShowPasswordFallback(true);
+      });
   }, []);
 
   const canUnlockDirectly = useCallback((isOldPasswordCorrect: boolean, oldPasswordExists: boolean) => {
@@ -165,23 +191,81 @@ function Content({ setStep }: Props): React.ReactElement {
     openOrFocusTab('/forgot-password', true);
   }, [isExtension, setStep]);
 
+  const onBiometricUnlock = useCallback(async (silentFailure = false): Promise<boolean> => {
+    if (!autoLockPeriod || !biometricCredentialId || !biometricPrfSalt) {
+      return false;
+    }
+
+    setBiometricUnlocking(true);
+    setBiometricError(undefined);
+
+    try {
+      const biometricRequest = await unlockWithBiometric(autoLockPeriod, biometricCredentialId, biometricPrfSalt);
+      const success = await unlockAllAccountsWithBiometric(biometricRequest);
+
+      if (success) {
+        setIsPasswordError(false);
+        setPlainPassword(undefined);
+        setHashedPassword(undefined);
+        setShowPasswordFallback(false);
+        setExtensionLock(false);
+        hasLocalAccounts && setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
+        setStorage(STORAGE_KEY.IS_FORGOTTEN, undefined) as unknown as void;
+
+        return true;
+      }
+
+      setShowPasswordFallback(true);
+
+      if (!silentFailure) {
+        setBiometricError(t('Biometric unlock failed. Please use your password.'));
+      }
+    } catch (error) {
+      console.error(error);
+
+      setShowPasswordFallback(true);
+
+      if (!silentFailure) {
+        setBiometricError(t((error as Error).message || 'Biometric unlock failed. Please use your password.'));
+      }
+    } finally {
+      setBiometricUnlocking(false);
+    }
+
+    return false;
+  }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, hasLocalAccounts, setExtensionLock, t]);
+
+  useEffect(() => {
+    if (!isBiometricAvailable || !autoLockPeriod || !biometricCredentialId || !biometricPrfSalt || autoBiometricAttemptedRef.current) {
+      return;
+    }
+
+    autoBiometricAttemptedRef.current = true;
+    void onBiometricUnlock(true);
+  }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, isBiometricAvailable, onBiometricUnlock]);
+
   return (
-    <Grid container item justifyContent='start' sx={{ p: '18px 32px 32px' }}>
+    <Grid container item justifyContent='start' sx={{ p: isExtension ? '18px 24px 24px' : '18px 32px 32px' }}>
       <Box
         component='img'
         src={BoxIcon as string}
-        sx={{ height: '145px', m: '17px auto 7px', width: '140px' }}
+        sx={{ height: isExtension ? '118px' : '145px', m: isExtension ? '8px auto 6px' : '17px auto 7px', width: isExtension ? '114px' : '140px' }}
       />
-      <Typography sx={{ mb: '15px', textAlign: 'center', width: '100%' }} textTransform='uppercase' variant='H-2'>
-        {t('login')}
+      <Typography sx={{ mb: '8px', textAlign: 'center', width: '100%' }} textTransform='uppercase' variant='H-2'>
+        {t('Welcome back')}
       </Typography>
-      <PasswordInput
-        focused
-        hasError={isPasswordError}
-        onEnterPress={onUnlock}
-        onPassChange={onPassChange}
-        title={t('Enter your password')}
-      />
+      <Typography color='text.secondary' sx={{ mb: '18px', textAlign: 'center', width: '100%' }} variant='B-1'>
+        {t(isBiometricAvailable && !showPasswordFallback ? 'Use biometrics to continue' : 'Enter your password to continue')}
+      </Typography>
+      {(!isBiometricAvailable || showPasswordFallback) &&
+        <PasswordInput
+          focused={!isBiometricAvailable}
+          hasError={isPasswordError}
+          onEnterPress={onUnlock}
+          onPassChange={onPassChange}
+          title={t('Password')}
+        />
+      }
       <MySwitch
         checked={isHideNumbers}
         columnGap='8px'
@@ -190,20 +274,65 @@ function Content({ setStep }: Props): React.ReactElement {
         showHidden
         style={{ marginTop: '20px' }}
       />
-      <DecisionButtons
-        cancelButton
-        direction='vertical'
-        disabled={!hashedPassword || isUnlocking}
-        isBusy={isUnlocking}
-        onPrimaryClick={onUnlock}
-        onSecondaryClick={onForgotPassword}
-        primaryBtnText={t('Unlock')}
-        secondaryBtnText={t('Forgot password')}
-        style={{
-          height: '44px',
-          marginTop: '80px',
-          width: '100%'
+      {isBiometricAvailable &&
+        <GradientButton
+          disabled={isUnlocking || isBiometricUnlocking}
+          isBusy={isBiometricUnlocking}
+          onClick={() => void onBiometricUnlock()}
+          style={{ height: '44px', marginTop: '20px', width: '100%' }}
+          text={t('Unlock with biometrics')}
+        />
+      }
+      {(!isBiometricAvailable || showPasswordFallback) &&
+        (isBiometricAvailable
+          ? (
+            <ActionButton
+              contentPlacement='center'
+              disabled={!hashedPassword || isUnlocking || isBiometricUnlocking}
+              isBusy={isUnlocking}
+              onClick={onUnlock}
+              style={{
+                height: '44px',
+                marginTop: '18px',
+                width: '100%'
+              }}
+              text={t('Continue')}
+            />)
+          : (
+            <GradientButton
+              disabled={!hashedPassword || isUnlocking || isBiometricUnlocking}
+              isBusy={isUnlocking}
+              onClick={onUnlock}
+              style={{
+                height: '44px',
+                marginTop: '18px',
+                width: '100%'
+              }}
+              text={t('Continue')}
+            />)
+        )
+      }
+      <Typography
+        color={isUnlocking || isBiometricUnlocking ? 'text.disabled' : 'primary.main'}
+        onClick={isUnlocking || isBiometricUnlocking ? undefined : onForgotPassword}
+        sx={{
+          alignSelf: 'center',
+          cursor: isUnlocking || isBiometricUnlocking ? 'default' : 'pointer',
+          mt: isExtension ? '22px' : '16px',
+          textDecoration: 'underline',
+          textUnderlineOffset: '3px',
+          transition: 'all 250ms ease-out',
+          width: 'fit-content'
         }}
+        variant='B-1'
+      >
+        {t('Forgot password')}
+      </Typography>
+      <MySnackbar
+        isError
+        onClose={() => setBiometricError(undefined)}
+        open={Boolean(biometricError)}
+        text={biometricError || ''}
       />
     </Grid>
   );

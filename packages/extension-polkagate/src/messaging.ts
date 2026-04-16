@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, AllowedPath, AuthorizeRequest, MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, MetadataRequest, RequestTypes, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSigningIsLocked, ResponseTypes, SeedLengths, SigningRequest, SubscriptionMessageTypes } from '@polkadot/extension-base/background/types';
+import type { RequestBiometricEnable, RequestBiometricUnlock, ResponseBiometricStatus } from '@polkadot/extension-base/utils/biometric';
 import type { Message } from '@polkadot/extension-base/types';
 import type { AiTxAnyJson } from '@polkadot/extension-base/utils/AiUtils/aiTypes';
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -100,6 +101,22 @@ export async function accountsChangePassword(address: string, oldPass: string, n
 
 export async function accountsChangePasswordAll(oldPass: string, newPass: string): Promise<boolean> {
   return sendMessage('pri(accounts.changePasswordAll)', { newPass, oldPass });
+}
+
+export async function getBiometricUnlockStatus(): Promise<ResponseBiometricStatus> {
+  return sendMessage('pri(accounts.biometric.status)');
+}
+
+export async function enableBiometricUnlock(request: RequestBiometricEnable): Promise<boolean> {
+  return sendMessage('pri(accounts.biometric.enable)', request);
+}
+
+export async function unlockAllAccountsWithBiometric(request: RequestBiometricUnlock): Promise<boolean> {
+  return sendMessage('pri(accounts.biometric.unlock)', request);
+}
+
+export async function disableBiometricUnlock(): Promise<boolean> {
+  return sendMessage('pri(accounts.biometric.disable)');
 }
 
 export async function getSignature(payload: SignerPayloadJSON): Promise<HexString | null> {

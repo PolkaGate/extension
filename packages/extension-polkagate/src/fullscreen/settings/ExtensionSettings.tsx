@@ -5,6 +5,7 @@ import { Stack } from '@mui/material';
 import React from 'react';
 
 import { Motion } from '../../components';
+import BiometricUnlockSetting from '../../partials/BiometricUnlockSetting';
 import { VelvetBox } from '../../style';
 import AccountIcon from './partials/AccountIcon';
 import AiTransactionInfo from './partials/AiTransactionInfo';
@@ -29,6 +30,7 @@ function ExtensionSettings(): React.ReactElement {
               <EnableTestNet />
               <EnableCamera />
             </Stack>
+            <BiometricUnlockSetting titleMargin='45px 0 15px' />
             <DiagnosticsReports />
             <Password />
             <AiTransactionInfo />
