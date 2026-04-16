@@ -167,12 +167,8 @@ export function extractBaseUrl(url: string | undefined) {
 export async function fastestConnection(endpoints: DropdownOption[]): Promise<FastestConnectionType> {
   try {
     const urls = endpoints.map(({ value }) => ({ value: value as string }));
-    const { api, selectedEndpoint } = await fastestEndpoint(urls);
 
-    return {
-      api,
-      selectedEndpoint
-    };
+    return await fastestEndpoint(urls);
   } catch (error) {
     console.error('Unable to make an API connection!', error);
 
