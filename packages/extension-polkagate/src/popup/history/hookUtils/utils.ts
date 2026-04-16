@@ -3,6 +3,8 @@
 
 import type { ExtrinsicsAction, ReceivedAction, RecordTabStatus, RecordTabStatusGov } from './types';
 
+import { normalizeHistoryGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
+
 import { DEBUG, INITIAL_STATE } from './consts';
 
 // Helper for consistent logging format
@@ -42,5 +44,7 @@ export const extrinsicsReducer = (state: RecordTabStatusGov, action: ExtrinsicsA
 };
 
 export const keyMaker = (address: string, genesisHash: string) => {
-  return `${address}-${genesisHash}`;
+  const normalizedGenesisHash = normalizeHistoryGenesis(genesisHash) ?? genesisHash;
+
+  return `${address}-${normalizedGenesisHash}`;
 };

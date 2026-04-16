@@ -3,7 +3,7 @@
 
 import type { FilterOptions, TransactionHistoryConfig, TransactionHistoryOutput } from './hookUtils/types';
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import { mapRelayToSystemGenesisIfMigrated, normalizeHistoryGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
@@ -21,14 +21,9 @@ export default function useTransactionHistory(address: string | undefined, _gene
 
   // Create request identifier for validation
   const requested = useRef<string | undefined>(undefined);
-
-  useEffect(() => {
-    if (!address || !chain?.genesisHash) {
-      return undefined;
-    }
-
-    requested.current = keyMaker(address, chain.genesisHash);
-  }, [address, chain?.genesisHash]);
+  requested.current = address && (chain?.genesisHash || genesisHash)
+    ? keyMaker(address, chain?.genesisHash || genesisHash)
+    : undefined;
 
   // 1. Manage transaction state (received & extrinsics)
   const { allHistories,
