@@ -46,7 +46,7 @@ export async function getPool(genesisHash, stakerAddress, id, port) {
     let member;
 
     if (poolId === 0) {
-      const members = await api.query['nominationPools']['poolMembers'](stakerAddress);
+      const members = await api.query.nominationPools.poolMembers(stakerAddress);
 
       member = members.isEmpty ? undefined : /** @type {PoolMember | null} */ (members.toPrimitive());
 
@@ -72,15 +72,15 @@ export async function getPool(genesisHash, stakerAddress, id, port) {
     }
 
     const [metadata, bondedPools, myClaimable, pendingRewards, rewardIdBalance, stashIdAccount] = await Promise.all([
-      api.query['nominationPools']['metadata'](poolId),
-      api.query['nominationPools']['bondedPools'](poolId),
-      api.call['nominationPoolsApi']?.['pendingRewards'](stakerAddress), // not available on paseo hub
-      api.query['nominationPools']['rewardPools'](poolId),
-      api.query['system']['account'](accounts.rewardId),
+      api.query.nominationPools.metadata(poolId),
+      api.query.nominationPools.bondedPools(poolId),
+      api.call.nominationPoolsApi?.pendingRewards?.(stakerAddress), // not available on paseo hub
+      api.query.nominationPools.rewardPools(poolId),
+      api.query.system.account(accounts.rewardId),
       api.derive.staking.account(accounts.stashId)
     ]);
 
-    const ED = /** @type {unknown} */ (api.consts['balances']['existentialDeposit']);
+    const ED = /** @type {unknown} */ (api.consts.balances.existentialDeposit);
 
     const rewardIdBalancePrimitive = rewardIdBalance.isEmpty ? null : /** @type {RewardIdBalance} */ (rewardIdBalance.toPrimitive());
     const rewardPool = pendingRewards.isEmpty ? null : /** @type {RewardPools | null} */(pendingRewards.toPrimitive());
@@ -112,7 +112,7 @@ export async function getPool(genesisHash, stakerAddress, id, port) {
 
     port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.GET_POOL, results: JSON.stringify(poolInfo) }));
 
-    const allPoolMembers = await api.query['nominationPools']['poolMembers'].entries();
+    const allPoolMembers = await api.query.nominationPools.poolMembers.entries();
 
     poolMembers = allPoolMembers.map((/** @type {[any, any]} */ poolMember) => {
       const array = /** @type {string[]} */(poolMember[0].toHuman());
