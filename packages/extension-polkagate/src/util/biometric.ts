@@ -99,11 +99,7 @@ export async function isBiometricUnlockSupported(): Promise<boolean> {
 
   const capabilities = await (PublicKeyCredential as PublicKeyCredentialWithCapabilities).getClientCapabilities?.().catch(() => undefined);
 
-  if (!capabilities) {
-    return true;
-  }
-
-  return Boolean(capabilities['prf']);
+  return Boolean(capabilities?.['prf']);
 }
 
 export async function enrollBiometric(password: string): Promise<RequestBiometricEnable> {
