@@ -4,4 +4,4 @@
 export * from './getNominationPoolsClaimedRewards';
 export { default as getPrices } from './getPrices';
 export { default as postData } from './postData';
-export * from './signAndSend';
+export * from './submitTransaction';

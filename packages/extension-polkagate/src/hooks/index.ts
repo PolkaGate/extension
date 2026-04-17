@@ -107,7 +107,7 @@ export { default as useTokenPriceBySymbol } from './useTokenPriceBySymbol';
 export { default as useTracks } from './useTracks';
 export { default as useTransactionData } from './useTransactionData';
 export { default as useTransactionFlow } from './useTransactionFlow';
-export { default as useTransactionState } from './useTransactionState';
+export { default as useTransactionStatus } from './useTransactionStatus';
 export { default as useTranslation } from './useTranslation';
 export { default as useUpdateAccountSelectedChain } from './useUpdateAccountSelectedChain';
 export { default as useUpdateSelectedAccount } from './useUpdateSelectedAccount';

@@ -7,8 +7,8 @@ import React, { useMemo } from 'react';
 
 import { FormatPrice, MySkeleton } from '../../../components';
 import { useIsDark, useIsHideNumbers, usePortfolio } from '../../../hooks';
-import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { formatDecimal } from '../../../util';
+import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 
 const PORTFOLIO_CHANGE_DECIMAL = 2;
 
