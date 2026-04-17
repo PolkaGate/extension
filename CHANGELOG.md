@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.6.3](https://github.com/polkagate/extension/compare/v2.6.2...v2.6.3) (2026-04-17)
+
+
+### Bug Fixes
+
+* prevent loading hang when master password matches all imported accounts (skip login edge case) ([1447ad3](https://github.com/polkagate/extension/commit/1447ad312713aa8c8a471b3f3705d0952dc30736)), closes [#2142](https://github.com/polkagate/extension/issues/2142)
+
 ## [2.6.2](https://github.com/polkagate/extension/compare/v2.6.1...v2.6.2) (2026-04-14)
 
 
