@@ -337,6 +337,7 @@ export const STORAGE_KEY = {
   HISTORY: 'history',
   ICON_THEME: 'identiconType',
   IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN: 'accountsMigratedToAnyChain',
+  IS_EXTENSION_LOCKED: 'isExtensionLocked',
   IS_FORGOTTEN: 'isForgotten',
   IS_PASSWORD_MIGRATED: 'passwordMigrated',
   LAST_PASS_CHANGE: 'lastPasswordChange',

@@ -1,6 +1,6 @@
 /* Eras - latin */
 @font-face {
-  font-family: 'Eras';
+  font-family: Eras;
   font-style: normal;
   src: url('./ErasDemiITC.ttf'); /* IE9 Compat Modes */
   src: local(''),
@@ -9,7 +9,7 @@
 
 /* OdibeeSans-Regular */
 @font-face {
-  font-family: 'OdibeeSans';
+  font-family: OdibeeSans;
   font-weight: 400;
   font-style: normal;
   src: url('./OdibeeSans-Regular.ttf'); /* IE9 Compat Modes */
@@ -18,28 +18,37 @@
 }
 
 @font-face {
-  font-family: 'Inter';
+  font-family: Oswald;
+  font-weight: 200 700;
+  font-style: normal;
+  src: url('./Oswald-VariableFont_wght.ttf'); /* IE9 Compat Modes */
+  src: local(''),
+       url('./Oswald-VariableFont_wght.ttf') format('truetype'), /* Safari, Android, iOS */
+}
+
+@font-face {
+  font-family: Inter;
   src: url('./Inter-VariableFont_opsz,wght.ttf') format('truetype'); 
   font-weight: 100 900;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Inter';
+  font-family: Inter;
   src: url('./Inter-Italic-VariableFont_opsz,wght.ttf') format('truetype');
   font-weight: 100 900;  
   font-style: italic;  
 }
 
 @font-face {
-  font-family: 'JetBrainsMono';
+  font-family: JetBrainsMono;
   src: url('./JetBrainsMono-VariableFont_wght.ttf') format('truetype'); 
   font-weight: 100 900;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'JetBrainsMono';
+  font-family: JetBrainsMono;
   src: url('./JetBrainsMono-Italic-VariableFont_wght.ttf') format('truetype');
   font-weight: 100 900;  
   font-style: italic;  

@@ -12,6 +12,7 @@ import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { AiTxAnyJson } from '../utils/AiUtils/aiTypes';
+import type { RequestBiometricEnable, RequestBiometricUnlock, ResponseBiometricStatus } from '../utils/biometric';
 import type { AuthResponse } from './handlers/State';
 
 export type AuthUrls = Record<string, AuthUrlInfo>;
@@ -124,6 +125,10 @@ export interface RequestSignatures {
   'pri(accounts.validate)': [RequestAccountValidate, boolean];
   'pri(accounts.changePassword)': [RequestAccountChangePassword, boolean];
   'pri(accounts.changePasswordAll)': [RequestAccountChangePasswordAll, boolean];
+  'pri(accounts.biometric.disable)': [null, boolean];
+  'pri(accounts.biometric.enable)': [RequestBiometricEnable, boolean];
+  'pri(accounts.biometric.status)': [null, ResponseBiometricStatus];
+  'pri(accounts.biometric.unlock)': [RequestBiometricUnlock, boolean];
   'pri(signing.getSignature)': [RequestSigningSignature, HexString | null];
   'pri(signing.signEthereumRaw)': [RequestSigningEthereumRawSignature, HexString | null];
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];

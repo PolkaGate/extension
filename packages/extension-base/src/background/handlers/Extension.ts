@@ -8,6 +8,7 @@ import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type { KeyringAddress } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
+import type { BiometricEnrollmentData, RequestBiometricEnable, RequestBiometricUnlock, ResponseBiometricStatus } from '../../utils/biometric';
 // added for plus to import RequestUpdateMeta
 import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountsSetUnlockExpiry, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestCreateAgent, RequestDeriveCreate, RequestDeriveValidate, RequestExplainTx, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningEthereumRawSignature, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 import type State from './State';
@@ -17,9 +18,10 @@ import { metadataExpand } from '@polkadot/extension-chains';
 import { TypeRegistry } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
 import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
-import { assert, hexToU8a,isHex, u8aToHex } from '@polkadot/util';
+import { assert, hexToU8a, isHex, u8aToHex } from '@polkadot/util';
 import { keyExtractSuri, mnemonicGenerate, mnemonicValidate } from '@polkadot/util-crypto';
 
+import { BIOMETRIC_PRF_INFO, BIOMETRIC_STORAGE_KEY } from '../../utils/biometric';
 import { withErrorLog } from './helpers';
 import { createSubscription, unsubscribe } from './subscriptions';
 import { DEFAULT_MODEL_ID, explainTransaction, loadAgent } from './txAiAgent';
@@ -27,6 +29,74 @@ import { DEFAULT_MODEL_ID, explainTransaction, loadAgent } from './txAiAgent';
 const SEED_DEFAULT_LENGTH = 12;
 const SEED_LENGTHS = [12, 15, 18, 21, 24];
 const ETH_DERIVE_DEFAULT = "/m/44'/60'/0'/0/0";
+const BIOMETRIC_KEY_LENGTH = 32;
+const BIOMETRIC_VERSION = 1 as const;
+
+function toArrayBuffer(value: Uint8Array): ArrayBuffer {
+  return Uint8Array.from(value).buffer;
+}
+
+function base64ToArrayBuffer(value: string): ArrayBuffer {
+  const normalized = atob(value);
+
+  return toArrayBuffer(Uint8Array.from(normalized, (char) => char.charCodeAt(0)));
+}
+
+function bufferSourceToBytes(value: BufferSource): Uint8Array {
+  if (value instanceof ArrayBuffer) {
+    return new Uint8Array(value);
+  }
+
+  return new Uint8Array(value.buffer, value.byteOffset, value.byteLength);
+}
+
+function u8aToBase64(value: BufferSource): string {
+  const bytes = bufferSourceToBytes(value);
+
+  return btoa(String.fromCharCode(...bytes));
+}
+
+function getBiometricStorage<T>(key: string): Promise<T | undefined> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get([key], (result) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+
+        return;
+      }
+
+      resolve(result[key] as T | undefined);
+    });
+  });
+}
+
+function setBiometricStorage(key: string, value: unknown): Promise<void> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.set({ [key]: value }, () => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+
+        return;
+      }
+
+      resolve();
+    });
+  });
+}
+
+function removeBiometricStorage(key: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.remove(key, () => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+
+        return;
+      }
+
+      resolve();
+    });
+  });
+}
 
 function getSuri(seed: string, type?: KeypairType): string {
   return type === 'ethereum'
@@ -159,6 +229,10 @@ export default class Extension {
       return this.accountsChangePassword({ address, newPass, oldPass });
     });
 
+    if (res.every(Boolean)) {
+      void this.clearBiometricEnrollment().catch(console.error);
+    }
+
     return res.every(Boolean);
   }
 
@@ -167,6 +241,7 @@ export default class Extension {
 
     assert(pair, 'oldPass is invalid');
     keyring.encryptAccount(pair, newPass);
+    void this.clearBiometricEnrollment().catch(console.error);
 
     return true;
   }
@@ -249,6 +324,7 @@ export default class Extension {
 
   private accountsForget({ address }: RequestAccountForget): boolean {
     keyring.forgetAccount(address);
+    void this.clearBiometricEnrollment().catch(console.error);
 
     return true;
   }
@@ -260,7 +336,164 @@ export default class Extension {
       this.accountsForget({ address });
     });
 
+    void this.clearBiometricEnrollment().catch(console.error);
+
     return true;
+  }
+
+  private async getBiometricEnrollment(): Promise<BiometricEnrollmentData | undefined> {
+    return getBiometricStorage<BiometricEnrollmentData>(BIOMETRIC_STORAGE_KEY);
+  }
+
+  private async saveBiometricEnrollment(data: BiometricEnrollmentData): Promise<void> {
+    await setBiometricStorage(BIOMETRIC_STORAGE_KEY, data);
+  }
+
+  private async clearBiometricEnrollment(): Promise<void> {
+    await removeBiometricStorage(BIOMETRIC_STORAGE_KEY);
+  }
+
+  private async deriveBiometricKey(prfOutput: string, prfSalt: string): Promise<CryptoKey> {
+    const baseKey = await crypto.subtle.importKey(
+      'raw',
+      base64ToArrayBuffer(prfOutput),
+      'HKDF',
+      false,
+      ['deriveKey']
+    );
+
+    return crypto.subtle.deriveKey(
+      {
+        hash: 'SHA-256',
+        info: new TextEncoder().encode(BIOMETRIC_PRF_INFO),
+        name: 'HKDF',
+        salt: base64ToArrayBuffer(prfSalt)
+      },
+      baseKey,
+      {
+        length: BIOMETRIC_KEY_LENGTH * 8,
+        name: 'AES-GCM'
+      },
+      false,
+      ['encrypt', 'decrypt']
+    );
+  }
+
+  private async encryptPasswordWithBiometricKey(password: string, prfOutput: string, prfSalt: string): Promise<Pick<BiometricEnrollmentData, 'encryptedPassword' | 'iv'>> {
+    const aesKey = await this.deriveBiometricKey(prfOutput, prfSalt);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const payload = new TextEncoder().encode(password);
+    const encrypted = await crypto.subtle.encrypt(
+      { iv, name: 'AES-GCM' },
+      aesKey,
+      payload
+    );
+
+    payload.fill(0);
+
+    return {
+      encryptedPassword: u8aToBase64(encrypted),
+      iv: u8aToBase64(iv)
+    };
+  }
+
+  private async decryptPasswordWithBiometricKey(enrollment: BiometricEnrollmentData, prfOutput: string): Promise<string> {
+    const aesKey = await this.deriveBiometricKey(prfOutput, enrollment.prfSalt);
+    const decrypted = await crypto.subtle.decrypt(
+      {
+        iv: base64ToArrayBuffer(enrollment.iv),
+        name: 'AES-GCM'
+      },
+      aesKey,
+      base64ToArrayBuffer(enrollment.encryptedPassword)
+    );
+
+    return new TextDecoder().decode(decrypted);
+  }
+
+  private async biometricStatus(): Promise<ResponseBiometricStatus> {
+    const biometric = await this.getBiometricEnrollment();
+
+    if (!biometric) {
+      return { enabled: false };
+    }
+
+    return {
+      credentialId: biometric.credentialId,
+      enabled: true,
+      prfSalt: biometric.prfSalt
+    };
+  }
+
+  private async biometricEnable({ credentialId, password, prfOutput, prfSalt }: RequestBiometricEnable): Promise<boolean> {
+    let passwordToEncrypt = password;
+
+    try {
+      const firstLocalAccount = this.localAccounts()[0];
+
+      if (!firstLocalAccount) {
+        return false;
+      }
+
+      const isValid = this.accountsValidate({ address: firstLocalAccount.address, password: passwordToEncrypt });
+
+      if (!isValid) {
+        return false;
+      }
+
+      const { encryptedPassword, iv } = await this.encryptPasswordWithBiometricKey(passwordToEncrypt, prfOutput, prfSalt);
+
+      await this.saveBiometricEnrollment({
+        createdAt: Date.now(),
+        credentialId,
+        encryptedPassword,
+        iv,
+        prfSalt,
+        version: BIOMETRIC_VERSION
+      });
+
+      return true;
+    } catch (error) {
+      console.error('biometricEnable failed:', error);
+
+      return false;
+    } finally {
+      passwordToEncrypt = '';
+    }
+  }
+
+  private async biometricUnlock({ cacheTime, credentialId, lazy = true, prfOutput }: RequestBiometricUnlock): Promise<boolean> {
+    let decryptedPassword = '';
+
+    try {
+      const biometric = await this.getBiometricEnrollment();
+
+      if (!biometric || biometric.credentialId !== credentialId) {
+        return false;
+      }
+
+      decryptedPassword = await this.decryptPasswordWithBiometricKey(biometric, prfOutput);
+
+      return this.accountsUnlockAll({ cacheTime, lazy, password: decryptedPassword });
+    } catch (error) {
+      console.error('biometricUnlock failed:', error);
+
+      return false;
+    } finally {
+      decryptedPassword = '';
+    }
+  }
+
+  private async biometricDisable(): Promise<boolean> {
+    try {
+      await this.clearBiometricEnrollment();
+
+      return true;
+    } catch (error) {
+      console.error('biometricDisable failed:', error);
+
+      return false;
+    }
   }
 
   private refreshAccountPasswordCache(pair: KeyringPair): number {
@@ -842,6 +1075,18 @@ export default class Extension {
 
       case 'pri(accounts.changePasswordAll)':
         return this.accountsChangePasswordAll(request as RequestAccountChangePasswordAll);
+
+      case 'pri(accounts.biometric.disable)':
+        return this.biometricDisable();
+
+      case 'pri(accounts.biometric.enable)':
+        return this.biometricEnable(request as RequestBiometricEnable);
+
+      case 'pri(accounts.biometric.status)':
+        return this.biometricStatus();
+
+      case 'pri(accounts.biometric.unlock)':
+        return this.biometricUnlock(request as RequestBiometricUnlock);
 
       case 'pri(accounts.forgetAll)':
         return this.accountsForgetAll();
