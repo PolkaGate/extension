@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.7.1](https://github.com/polkagate/extension/compare/v2.7.0...v2.7.1) (2026-04-17)
+
+
+### Bug Fixes
+
+* fix stale staking amounts on chain switch ([#2145](https://github.com/polkagate/extension/issues/2145)) ([95bc300](https://github.com/polkagate/extension/commit/95bc3008d8c63fba6162ceb1196df21b9b1630ac))
+
 # [2.7.0](https://github.com/polkagate/extension/compare/v2.6.3...v2.7.0) (2026-04-17)
 
 
