@@ -56,7 +56,7 @@ export default function SubscanApi(): React.ReactElement {
 
   return (
     <Stack direction='column' sx={{ width: '100%' }}>
-      <Stack alignItems='center' columnGap='6px' direction='row' m='30px 0 12px'>
+      <Stack alignItems='center' columnGap='6px' direction='row' m='17px 0 12px'>
         <Typography color={!apiKey ? '#FF4FB9' : 'text.primary'} fontSize='22px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
           {t('Subscan API Key')}
         </Typography>

@@ -37,7 +37,7 @@ export default function Password(): React.ReactElement {
   return (
     <>
       <Stack direction='column'>
-        <Typography color='text.primary' fontSize='22px' m='45px 0 15px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
+        <Typography color='text.primary' fontSize='22px' m='32px 0 15px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
           {t('Change password')}
         </Typography>
         <Stack
@@ -52,7 +52,7 @@ export default function Password(): React.ReactElement {
             borderRadius: '12px',
             cursor: 'pointer',
             height: '53px',
-            mt: '5px',
+            mt: '2px',
             px: '8px',
             transition: 'all 250ms ease-out',
             width: '454px'
