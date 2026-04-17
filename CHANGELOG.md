@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.7.2](https://github.com/polkagate/extension/compare/v2.7.1...v2.7.2) (2026-04-17)
+
+
+### Bug Fixes
+
+* resolve validator social links' issues ([#2146](https://github.com/polkagate/extension/issues/2146)) ([ab9ce10](https://github.com/polkagate/extension/commit/ab9ce1031e198bc818b77b7b83e85682ad3f1ed6))
+
 ## [2.7.1](https://github.com/polkagate/extension/compare/v2.7.0...v2.7.1) (2026-04-17)
 
 
