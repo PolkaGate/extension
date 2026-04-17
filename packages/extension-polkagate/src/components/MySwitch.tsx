@@ -65,6 +65,10 @@ const MySwitch = ({ checked, columnGap, label, labelStyle = {}, onChange, showHi
 const StyledSwitch = styled(Switch, {
   shouldForwardProp: (prop) => prop !== 'isBlueish' && prop !== 'isDark' && prop !== 'showHidden'
 })<{ isDark: boolean, isBlueish: boolean, showHidden: boolean }>(({ checked, isBlueish, isDark, showHidden, theme }) => ({
+  '--pg-switch-thumb-size': showHidden ? '18px' : '10.29px',
+  '--pg-switch-track-height': '24px',
+  '--pg-switch-track-width': '36px',
+  '--pg-switch-track-padding': '3px',
   background: checked
     ? isDark
       ? 'linear-gradient(#2D1E4A, #2D1E4A) padding-box, linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%) border-box'
@@ -88,9 +92,9 @@ const StyledSwitch = styled(Switch, {
     }`,
   borderRadius: '109.71px',
   cursor: 'pointer',
-  height: '24px',
+  height: 'var(--pg-switch-track-height)',
   padding: 0,
-  width: '36px',
+  width: 'var(--pg-switch-track-width)',
   '&:hover': {
     border: checked ? undefined : `2px solid ${isBlueish ? '#3988FF66' : '#674394'}`
   },
@@ -104,18 +108,19 @@ const StyledSwitch = styled(Switch, {
     width: '100%'
   },
   '& .MuiSwitch-switchBase': {
-    alignSelf: 'anchor-center',
     left: 0,
-    margin: '0 3px',
     padding: 0,
+    position: 'absolute',
+    top: '50%',
     transition: theme.transitions.create(['transform', 'background-color', 'box-shadow'], {
       duration: 300,
       easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
     }),
+    transform: 'translate(3px, -50%)',
     '&.Mui-checked': {
       background: showHidden ? undefined : isDark ? '#EAEBF1' : '#3988FF',
       padding: showHidden ? 0 : 2,
-      transform: showHidden ? 'translate(10px, 5%)' : 'translate(13px, 20%)', // horizontal + vertical for checked
+      transform: showHidden ? 'translate(12px, -50%)' : 'translate(16px, -50%)',
       '& .MuiSwitch-thumb': {
         background: isDark ? '#EAEBF1' : '#3988FF'
       },
@@ -149,13 +154,12 @@ const StyledSwitch = styled(Switch, {
   '& .MuiSwitch-thumb': {
     background: isDark ? isBlueish ? '#809ACB' : '#674394' : '#CCD2EA',
     boxSizing: 'border-box',
-    height: 10.29,
-    transform: 'translateY(50%)', // proper vertical center
     transition: theme.transitions.create(['background-color', 'transform'], {
       duration: 300,
       easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
     }),
-    width: 10.29
+    height: 'var(--pg-switch-thumb-size)',
+    width: 'var(--pg-switch-thumb-size)'
   },
   '& .MuiSwitch-track': {
     backgroundColor: isDark ? '#39393D' : '#FFFFFF',
