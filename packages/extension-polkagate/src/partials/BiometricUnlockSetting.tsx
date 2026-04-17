@@ -131,8 +131,13 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
         return;
       }
 
-      await clearPendingBiometricCredentialId();
-      await refreshStatus();
+      try {
+        await clearPendingBiometricCredentialId();
+        await refreshStatus();
+      } catch (cleanupError) {
+        console.error('Post-enable cleanup failed:', cleanupError);
+      }
+
       resetEnrollmentForm();
       showFeedback(t('Biometric unlock has been enabled.'));
     } catch (error) {
