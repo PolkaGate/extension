@@ -58,6 +58,7 @@ export const ExtensionLockProvider: React.FC<{ children: React.ReactElement }> =
 
     const handleLockExpiredMessage = (msg: LockExpiredMessage) => {
       if (msg.type === 'LOCKED_ACCOUNTS_EXPIRED') {
+        window.sessionStorage.setItem(STORAGE_KEY.AUTO_LOCK_EXPIRED_SESSION, 'true');
         window.location.reload();
       }
     };

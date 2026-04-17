@@ -50,6 +50,7 @@ function Content({ setStep }: Props): React.ReactElement {
   const autoLockPeriod = useAutoLockPeriod();
   const isUnlockingRef = useRef(false);
   const autoBiometricAttemptedRef = useRef(false);
+  const skipAutoBiometricRef = useRef(window.sessionStorage.getItem(STORAGE_KEY.AUTO_LOCK_EXPIRED_SESSION) === 'true');
 
   const [hashedPassword, setHashedPassword] = useState<string>();
   const [plainPassword, setPlainPassword] = useState<string>();
@@ -61,6 +62,12 @@ function Content({ setStep }: Props): React.ReactElement {
   const [biometricPrfSalt, setBiometricPrfSalt] = useState<string>();
   const [biometricError, setBiometricError] = useState<string>();
   const [showPasswordFallback, setShowPasswordFallback] = useState(false);
+
+  useEffect(() => {
+    if (skipAutoBiometricRef.current) {
+      window.sessionStorage.removeItem(STORAGE_KEY.AUTO_LOCK_EXPIRED_SESSION);
+    }
+  }, []);
 
   const { accountsNeedMigration, hasLocalAccounts } = useCheckMasterPassword((isUnlocking && isPasswordMigrated === false) ? plainPassword : undefined);
 
@@ -247,7 +254,17 @@ function Content({ setStep }: Props): React.ReactElement {
   }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, hasLocalAccounts, setExtensionLock, t]);
 
   useEffect(() => {
-    if (!isBiometricAvailable || !autoLockPeriod || !biometricCredentialId || !biometricPrfSalt || autoBiometricAttemptedRef.current) {
+    if (skipAutoBiometricRef.current) {
+      return;
+    }
+
+    if (
+      !isBiometricAvailable ||
+      !autoLockPeriod ||
+      !biometricCredentialId ||
+      !biometricPrfSalt ||
+      autoBiometricAttemptedRef.current
+    ) {
       return;
     }
 
