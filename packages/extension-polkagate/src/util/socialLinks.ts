@@ -7,7 +7,7 @@ const trimValue = (value?: string | null): string | undefined => {
   return trimmed || undefined;
 };
 
-const hasProtocol = (value: string): boolean => /^[a-z]+:\/\//i.test(value);
+const hasAllowedWebProtocol = (value: string): boolean => /^(https?):\/\//i.test(value);
 
 export const normalizeUrl = (value?: string | null): string | undefined => {
   const trimmed = trimValue(value);
@@ -16,7 +16,7 @@ export const normalizeUrl = (value?: string | null): string | undefined => {
     return undefined;
   }
 
-  if (hasProtocol(trimmed) || trimmed.startsWith('mailto:')) {
+  if (hasAllowedWebProtocol(trimmed)) {
     return trimmed;
   }
 
@@ -30,7 +30,7 @@ export const normalizeTwitterUrl = (value?: string | null): string | undefined =
     return undefined;
   }
 
-  if (hasProtocol(trimmed)) {
+  if (hasAllowedWebProtocol(trimmed)) {
     return trimmed;
   }
 
@@ -44,7 +44,7 @@ export const normalizeGithubUrl = (value?: string | null): string | undefined =>
     return undefined;
   }
 
-  if (hasProtocol(trimmed)) {
+  if (hasAllowedWebProtocol(trimmed)) {
     return trimmed;
   }
 
@@ -58,7 +58,7 @@ export const normalizeMatrixUrl = (value?: string | null): string | undefined =>
     return undefined;
   }
 
-  if (hasProtocol(trimmed)) {
+  if (hasAllowedWebProtocol(trimmed)) {
     return trimmed;
   }
 
@@ -72,7 +72,7 @@ export const normalizeDiscordUrl = (value?: string | null): string | undefined =
     return undefined;
   }
 
-  if (hasProtocol(trimmed)) {
+  if (hasAllowedWebProtocol(trimmed)) {
     return trimmed;
   }
 
