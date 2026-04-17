@@ -291,7 +291,6 @@ function Content({ setStep }: Props): React.ReactElement {
           hasError={isPasswordError}
           onEnterPress={onUnlock}
           onPassChange={onPassChange}
-          title={t('Password')}
         />
       }
       <MySwitch
@@ -346,7 +345,7 @@ function Content({ setStep }: Props): React.ReactElement {
         sx={{
           alignSelf: 'center',
           cursor: isUnlocking || isBiometricUnlocking ? 'default' : 'pointer',
-          mt: isExtension ? '22px' : '16px',
+          mt: isExtension ? '40px' : '16px',
           textDecoration: 'underline',
           textUnderlineOffset: '3px',
           transition: 'all 250ms ease-out',
