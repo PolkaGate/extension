@@ -3,7 +3,7 @@
 
 import type { BiometricEnrollmentData, RequestBiometricEnable, RequestBiometricUnlock } from '@polkadot/extension-base/utils/biometric';
 
-import { BIOMETRIC_STORAGE_KEY, BIOMETRIC_USER_ID_STORAGE_KEY } from '@polkadot/extension-base/utils/biometric';
+import { BIOMETRIC_PENDING_CREDENTIAL_ID_STORAGE_KEY, BIOMETRIC_STORAGE_KEY, BIOMETRIC_USER_ID_STORAGE_KEY } from '@polkadot/extension-base/utils/biometric';
 
 const WEBAUTHN_CHALLENGE_LENGTH = 32;
 const BIOMETRIC_PRF_UNAVAILABLE_ERROR = 'The selected passkey provider does not support biometric unlock for PolkaGate. Please try a different provider.';
@@ -93,6 +93,24 @@ async function getBiometricUserId(): Promise<ArrayBuffer> {
   return created;
 }
 
+export async function clearPendingBiometricCredentialId(): Promise<void> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.remove(BIOMETRIC_PENDING_CREDENTIAL_ID_STORAGE_KEY, () => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+
+        return;
+      }
+
+      resolve();
+    });
+  });
+}
+
+function getExcludeCredentialIds(existingCredentialId?: string, pendingCredentialId?: string): string[] {
+  return [...new Set([existingCredentialId, pendingCredentialId].filter(Boolean) as string[])];
+}
+
 function getPrfOutput(credential: PublicKeyCredential | null): string | undefined {
   const results = (credential as PublicKeyCredentialWithPrf | null)?.getClientExtensionResults?.();
   const output = results?.prf?.results?.first;
@@ -148,8 +166,10 @@ export async function isBiometricUnlockSupported(): Promise<boolean> {
 
 export async function enrollBiometric(password: string): Promise<RequestBiometricEnable> {
   const existingEnrollment = await getLocalBiometricStorage<BiometricEnrollmentData>(BIOMETRIC_STORAGE_KEY).catch(() => undefined);
+  const pendingCredentialId = await getLocalBiometricStorage<string>(BIOMETRIC_PENDING_CREDENTIAL_ID_STORAGE_KEY).catch(() => undefined);
   const biometricUserId = await getBiometricUserId();
   const prfSaltBytes = randomBuffer(32);
+  const excludeCredentialIds = getExcludeCredentialIds(existingEnrollment?.credentialId, pendingCredentialId);
   const credential = await navigator.credentials.create({
     publicKey: {
       authenticatorSelection: {
@@ -159,12 +179,12 @@ export async function enrollBiometric(password: string): Promise<RequestBiometri
       },
       attestation: 'none',
       challenge: randomBuffer(WEBAUTHN_CHALLENGE_LENGTH),
-      excludeCredentials: existingEnrollment?.credentialId
-        ? [{
-          id: base64ToArrayBuffer(existingEnrollment.credentialId),
+      excludeCredentials: excludeCredentialIds.length
+        ? excludeCredentialIds.map((credentialId) => ({
+          id: base64ToArrayBuffer(credentialId),
           transports: ['internal'],
           type: 'public-key'
-        }]
+        }))
         : undefined,
       extensions: {
         prf: {
@@ -197,6 +217,9 @@ export async function enrollBiometric(password: string): Promise<RequestBiometri
   }
 
   const credentialId = bytesToBase64(credential.rawId);
+
+  await setLocalBiometricStorage(BIOMETRIC_PENDING_CREDENTIAL_ID_STORAGE_KEY, credentialId);
+
   const prfSalt = bytesToBase64(prfSaltBytes);
   let prfOutput = getPrfOutput(credential);
 

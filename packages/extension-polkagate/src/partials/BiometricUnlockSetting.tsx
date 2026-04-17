@@ -12,7 +12,7 @@ import { useTranslation } from '../components/translate';
 import { useIsExtensionPopup } from '../hooks';
 import useIsPasswordCorrect from '../hooks/useIsPasswordCorrect';
 import { disableBiometricUnlock, enableBiometricUnlock, getBiometricUnlockStatus } from '../messaging';
-import { enrollBiometric } from '../util/biometric';
+import { clearPendingBiometricCredentialId, enrollBiometric } from '../util/biometric';
 import SharePopup from './SharePopup';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { fingerprint } from '../assets/animations';
@@ -131,6 +131,7 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
         return;
       }
 
+      await clearPendingBiometricCredentialId();
       await refreshStatus();
       resetEnrollmentForm();
       showFeedback(t('Biometric unlock has been enabled.'));

@@ -951,11 +951,8 @@
   "Unlock with biometrics": "",
   "Available on supported Chromium browsers with a platform authenticator and WebAuthn PRF support.": "",
   "Enable biometrics": "",
-  "Biometric unlock failed. Please use your password.": "",
   "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "",
   "Enable Biometric Unlock": "",
   "Confirm your current password to securely enable biometric unlock on this device.": "",
-  "Welcome back": "",
-  "Use biometrics to continue": "",
-  "Enter your password to continue": ""
+  "Welcome back": ""
 }

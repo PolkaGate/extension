@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 export const BIOMETRIC_STORAGE_KEY = 'biometricUnlock';
+export const BIOMETRIC_PENDING_CREDENTIAL_ID_STORAGE_KEY = 'biometricUnlockPendingCredentialId';
 export const BIOMETRIC_USER_ID_STORAGE_KEY = 'biometricUnlockUserId';
 export const BIOMETRIC_PRF_INFO = 'polkagate-biometric-unlock';
 
