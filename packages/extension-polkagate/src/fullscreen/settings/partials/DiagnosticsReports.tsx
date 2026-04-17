@@ -27,7 +27,7 @@ export default function DiagnosticsReports(): React.ReactElement {
 
   return (
     <Stack direction='column'>
-      <Typography color='text.primary' fontSize='22px' m='45px 0 15px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
+      <Typography color='text.primary' fontSize='22px' m='33px 0 15px' sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'>
         {t('Diagnostic Reports')}
       </Typography>
       <MySwitch

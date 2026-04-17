@@ -28,7 +28,7 @@ export default function AutoLockTimerAdjustment(): React.ReactElement {
       <Typography
         color={isExtension ? 'label.secondary' : 'text.primary'}
         fontSize={isExtension ? undefined : '22px'}
-        m={isExtension ? '15px 0 5px' : '35px 0 5px'}
+        m={isExtension ? '15px 0 5px' : '35px 0 0'}
         sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'
       >
         {t('Auto-Lock Timer')}

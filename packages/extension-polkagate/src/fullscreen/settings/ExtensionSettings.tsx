@@ -31,9 +31,9 @@ function ExtensionSettings(): React.ReactElement {
               <EnableCamera />
             </Stack>
             <BiometricUnlockSetting titleMargin='45px 0 15px' />
-            <DiagnosticsReports />
-            <Password />
             <AiTransactionInfo />
+            <Password />
+            <DiagnosticsReports />
           </Stack>
           <Stack alignItems='flex-start' direction='column' justifyContent='flex-start'>
             <AccountIcon />
