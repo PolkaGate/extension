@@ -45,7 +45,7 @@ function Settings(): React.ReactElement {
         <ActionRow />
       </Stack>
       <TopMenus />
-      <VelvetBox style={{ margin: '5px 20px 0 0', padding: 0 }}>
+      <VelvetBox style={{ margin: '5px 20px 0 0', maxHeight: 'calc(100vh - 190px)', overflowY: 'auto', padding: 0 }}>
         <Grid container item>
           {content}
         </Grid>
