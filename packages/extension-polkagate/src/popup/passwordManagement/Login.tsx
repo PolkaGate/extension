@@ -31,6 +31,15 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
+function isBiometricPromptCancelled(error: unknown): boolean {
+  const errorName = (error as Error | undefined)?.name;
+  const errorMessage = (error as Error | undefined)?.message ?? '';
+
+  return errorName === 'NotAllowedError' ||
+    errorName === 'AbortError' ||
+    errorMessage.includes('timed out or was not allowed');
+}
+
 function Content({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -225,7 +234,7 @@ function Content({ setStep }: Props): React.ReactElement {
 
       setShowPasswordFallback(true);
 
-      if (!silentFailure) {
+      if (!silentFailure && !isBiometricPromptCancelled(error)) {
         const rawMessage = (error as Error).message;
 
         setBiometricError(rawMessage || t('Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.'));
