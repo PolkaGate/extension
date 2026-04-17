@@ -952,6 +952,7 @@
   "Available on supported Chromium browsers with a platform authenticator and WebAuthn PRF support.": "Verfügbar in unterstützten Chromium-Browsern mit Plattform-Authenticator und WebAuthn-PRF-Unterstützung.",
   "Enable biometrics": "Biometrie aktivieren",
   "Biometric unlock failed. Please use your password.": "Biometrisches Entsperren ist fehlgeschlagen. Bitte verwende dein Passwort.",
+  "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "Biometrisches Entsperren ist fehlgeschlagen. Versuche, die Biometrie in den Einstellungen erneut zu aktivieren, oder verwende dein Passwort.",
   "Enable Biometric Unlock": "Biometrisches Entsperren aktivieren",
   "Confirm your current password to securely enable biometric unlock on this device.": "Bestätige dein aktuelles Passwort, um das biometrische Entsperren auf diesem Gerät sicher zu aktivieren.",
   "Welcome back": "Willkommen zurück",

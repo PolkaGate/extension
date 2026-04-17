@@ -14,6 +14,8 @@ import useIsPasswordCorrect from '../hooks/useIsPasswordCorrect';
 import { disableBiometricUnlock, enableBiometricUnlock, getBiometricUnlockStatus } from '../messaging';
 import { enrollBiometric } from '../util/biometric';
 import SharePopup from './SharePopup';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { fingerprint } from '../assets/animations';
 
 interface Props {
   titleMargin?: string;
@@ -173,13 +175,19 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
         onClose={resetEnrollmentForm}
         open={showPasswordForm}
         popupProps={{
-          maxHeight: isExtension ? '280px' : '360px',
-          pt: 200,
+          maxHeight: isExtension ? '100%' : '360px',
+          pt: 90,
           withGradientBorder: true
         }}
         title={t('Enable Biometric Unlock')}
       >
         <Stack direction='column' sx={{ p: '0 5px 10px', rowGap: '16px', width: '100%' }}>
+          <DotLottieReact
+            autoplay
+            loop={false}
+            src={fingerprint as string}
+            style={{ margin: '-20px 0 -50px 0' }}
+          />
           <Typography color='text.secondary' sx={{ mt: '10px', textAlign: 'left' }} variant='B-4'>
             {t('Confirm your current password to securely enable biometric unlock on this device.')}
           </Typography>

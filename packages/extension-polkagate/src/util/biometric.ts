@@ -177,6 +177,9 @@ export async function enrollBiometric(password: string): Promise<RequestBiometri
         { alg: -7, type: 'public-key' },
         { alg: -257, type: 'public-key' }
       ],
+      // Omitting rp.id binds the credential to this extension's origin.
+      // If the extension ID changes across distributions/builds, the user may
+      // need to re-enable biometrics so a new credential is enrolled.
       rp: {
         name: 'PolkaGate'
       },

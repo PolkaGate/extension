@@ -218,7 +218,7 @@ function Content({ setStep }: Props): React.ReactElement {
       setShowPasswordFallback(true);
 
       if (!silentFailure) {
-        setBiometricError(t('Biometric unlock failed. Please use your password.'));
+        setBiometricError(t('Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.'));
       }
     } catch (error) {
       console.error(error);
@@ -228,7 +228,7 @@ function Content({ setStep }: Props): React.ReactElement {
       if (!silentFailure) {
         const rawMessage = (error as Error).message;
 
-        setBiometricError(rawMessage || t('Biometric unlock failed. Please use your password.'));
+        setBiometricError(rawMessage || t('Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.'));
       }
     } finally {
       setBiometricUnlocking(false);

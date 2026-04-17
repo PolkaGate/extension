@@ -952,6 +952,7 @@
   "Available on supported Chromium browsers with a platform authenticator and WebAuthn PRF support.": "Доступно в поддерживаемых браузерах Chromium с платформенным аутентификатором и поддержкой WebAuthn PRF.",
   "Enable biometrics": "Включить биометрию",
   "Biometric unlock failed. Please use your password.": "Не удалось выполнить биометрическую разблокировку. Используйте пароль.",
+  "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "Не удалось выполнить биометрическую разблокировку. Попробуйте снова включить биометрию в настройках или используйте пароль.",
   "Enable Biometric Unlock": "Включить биометрию",
   "Confirm your current password to securely enable biometric unlock on this device.": "Подтвердите текущий пароль, чтобы безопасно включить биометрическую разблокировку на этом устройстве.",
   "Welcome back": "С возвращением",
