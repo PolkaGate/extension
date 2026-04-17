@@ -31,6 +31,7 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
   const [password, setPassword] = useState('');
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [isBusy, setBusy] = useState(false);
+  const [isPasswordWrong, setIsPasswordWrong] = useState(false);
   const [snackbarText, setSnackbarText] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -61,11 +62,13 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
   const closeSnackbar = useCallback(() => setShowSnackbar(false), []);
 
   const onPasswordChange = useCallback((value: string | null) => {
+    setIsPasswordWrong(false);
     setPassword(value ?? '');
   }, []);
 
   const resetEnrollmentForm = useCallback(() => {
     setPassword('');
+    setIsPasswordWrong(false);
     setShowPasswordForm(false);
   }, []);
 
@@ -111,11 +114,12 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
       const isPasswordValid = await validatePasswordAsync(password);
 
       if (!isPasswordValid) {
-        showFeedback(t('Current password is wrong!'), true);
+        setIsPasswordWrong(true);
 
         return;
       }
 
+      setIsPasswordWrong(false);
       const enrollment = await enrollBiometric(password);
       const success = await enableBiometricUnlock(enrollment);
 
@@ -131,7 +135,7 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
     } catch (error) {
       console.error(error);
       resetEnrollmentForm();
-      showFeedback(t((error as Error).message || 'Unable to enable biometric unlock.'), true);
+      showFeedback((error as Error).message || t('Unable to enable biometric unlock.'), true);
     } finally {
       setBusy(false);
       setPassword('');
@@ -180,7 +184,9 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
             {t('Confirm your current password to securely enable biometric unlock on this device.')}
           </Typography>
           <PasswordInput
+            errorMessage={t('Current password is wrong!')}
             focused
+            hasError={isPasswordWrong}
             onEnterPress={onEnable}
             onPassChange={onPasswordChange}
             title={t('Current Password')}

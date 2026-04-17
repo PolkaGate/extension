@@ -1,10 +1,12 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { RequestBiometricEnable, RequestBiometricUnlock } from '@polkadot/extension-base/utils/biometric';
+import type { BiometricEnrollmentData, RequestBiometricEnable, RequestBiometricUnlock } from '@polkadot/extension-base/utils/biometric';
+
+import { BIOMETRIC_STORAGE_KEY, BIOMETRIC_USER_ID_STORAGE_KEY } from '@polkadot/extension-base/utils/biometric';
 
 const WEBAUTHN_CHALLENGE_LENGTH = 32;
-const BIOMETRIC_PRF_UNAVAILABLE_ERROR = 'Biometric PRF is unavailable on this browser or platform authenticator.';
+const BIOMETRIC_PRF_UNAVAILABLE_ERROR = 'The selected passkey provider does not support biometric unlock for PolkaGate. Please try a different provider.';
 
 type PublicKeyCredentialWithPrf = PublicKeyCredential & {
   getClientExtensionResults: () => {
@@ -47,6 +49,48 @@ function base64ToArrayBuffer(value: string): ArrayBuffer {
   const decoded = atob(value);
 
   return toArrayBuffer(Uint8Array.from(decoded, (char) => char.charCodeAt(0)));
+}
+
+async function getLocalBiometricStorage<T>(key: string): Promise<T | undefined> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get([key], (result) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+
+        return;
+      }
+
+      resolve(result[key] as T | undefined);
+    });
+  });
+}
+
+async function setLocalBiometricStorage(key: string, value: unknown): Promise<void> {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.set({ [key]: value }, () => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+
+        return;
+      }
+
+      resolve();
+    });
+  });
+}
+
+async function getBiometricUserId(): Promise<ArrayBuffer> {
+  const existing = await getLocalBiometricStorage<string>(BIOMETRIC_USER_ID_STORAGE_KEY).catch(() => undefined);
+
+  if (existing) {
+    return base64ToArrayBuffer(existing);
+  }
+
+  const created = randomBuffer(32);
+
+  await setLocalBiometricStorage(BIOMETRIC_USER_ID_STORAGE_KEY, bytesToBase64(created));
+
+  return created;
 }
 
 function getPrfOutput(credential: PublicKeyCredential | null): string | undefined {
@@ -103,6 +147,8 @@ export async function isBiometricUnlockSupported(): Promise<boolean> {
 }
 
 export async function enrollBiometric(password: string): Promise<RequestBiometricEnable> {
+  const existingEnrollment = await getLocalBiometricStorage<BiometricEnrollmentData>(BIOMETRIC_STORAGE_KEY).catch(() => undefined);
+  const biometricUserId = await getBiometricUserId();
   const prfSaltBytes = randomBuffer(32);
   const credential = await navigator.credentials.create({
     publicKey: {
@@ -113,6 +159,13 @@ export async function enrollBiometric(password: string): Promise<RequestBiometri
       },
       attestation: 'none',
       challenge: randomBuffer(WEBAUTHN_CHALLENGE_LENGTH),
+      excludeCredentials: existingEnrollment?.credentialId
+        ? [{
+          id: base64ToArrayBuffer(existingEnrollment.credentialId),
+          transports: ['internal'],
+          type: 'public-key'
+        }]
+        : undefined,
       extensions: {
         prf: {
           eval: {
@@ -130,7 +183,7 @@ export async function enrollBiometric(password: string): Promise<RequestBiometri
       timeout: 60000,
       user: {
         displayName: 'PolkaGate Biometric Unlock',
-        id: randomBuffer(32),
+        id: biometricUserId,
         name: 'PolkaGate Biometric Unlock'
       }
     }
