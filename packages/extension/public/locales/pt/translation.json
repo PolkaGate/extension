@@ -951,11 +951,8 @@
   "Unlock with biometrics": "Desbloquear com biometria",
   "Available on supported Chromium browsers with a platform authenticator and WebAuthn PRF support.": "Disponível em navegadores Chromium compatíveis com autenticador de plataforma e suporte a WebAuthn PRF.",
   "Enable biometrics": "Ativar biometria",
-  "Biometric unlock failed. Please use your password.": "O desbloqueio biométrico falhou. Use sua senha.",
   "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "O desbloqueio biométrico falhou. Tente reativar a biometria nas Configurações ou use sua senha.",
   "Enable Biometric Unlock": "Ativar desbloqueio biométrico",
   "Confirm your current password to securely enable biometric unlock on this device.": "Confirme sua senha atual para ativar com segurança o desbloqueio biométrico neste dispositivo.",
-  "Welcome back": "Bem-vindo de volta",
-  "Use biometrics to continue": "Use biometria para continuar",
-  "Enter your password to continue": "Digite sua senha para continuar"
+  "Welcome back": "Bem-vindo de volta"
 }

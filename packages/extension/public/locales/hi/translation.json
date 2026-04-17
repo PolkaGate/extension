@@ -951,11 +951,8 @@
   "Unlock with biometrics": "बायोमेट्रिक्स से अनलॉक करें",
   "Available on supported Chromium browsers with a platform authenticator and WebAuthn PRF support.": "समर्थित Chromium ब्राउज़र में, प्लेटफ़ॉर्म ऑथेंटिकेटर और WebAuthn PRF सपोर्ट के साथ उपलब्ध।",
   "Enable biometrics": "बायोमेट्रिक्स चालू करें",
-  "Biometric unlock failed. Please use your password.": "बायोमेट्रिक अनलॉक विफल रहा। कृपया अपना पासवर्ड इस्तेमाल करें।",
   "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "बायोमेट्रिक अनलॉक विफल रहा। सेटिंग्स में बायोमेट्रिक्स फिर से चालू करने का प्रयास करें, या अपना पासवर्ड इस्तेमाल करें।",
   "Enable Biometric Unlock": "बायोमेट्रिक अनलॉक चालू करें",
   "Confirm your current password to securely enable biometric unlock on this device.": "इस डिवाइस पर बायोमेट्रिक अनलॉक को सुरक्षित रूप से चालू करने के लिए अपना वर्तमान पासवर्ड पुष्टि करें।",
-  "Welcome back": "वापसी पर स्वागत है",
-  "Use biometrics to continue": "आगे बढ़ने के लिए बायोमेट्रिक्स का उपयोग करें",
-  "Enter your password to continue": "आगे बढ़ने के लिए अपना पासवर्ड दर्ज करें"
+  "Welcome back": "वापसी पर स्वागत है"
 }

@@ -951,11 +951,8 @@
   "Unlock with biometrics": "使用生物识别解锁",
   "Available on supported Chromium browsers with a platform authenticator and WebAuthn PRF support.": "可用于支持 Chromium 的浏览器，并且设备需具备平台验证器与 WebAuthn PRF 支持。",
   "Enable biometrics": "启用生物识别",
-  "Biometric unlock failed. Please use your password.": "生物识别解锁失败。请使用密码。",
   "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "生物识别解锁失败。请尝试在设置中重新启用生物识别，或使用密码。",
   "Enable Biometric Unlock": "启用生物识别解锁",
   "Confirm your current password to securely enable biometric unlock on this device.": "请确认当前密码，以便在此设备上安全启用生物识别解锁。",
-  "Welcome back": "欢迎回来",
-  "Use biometrics to continue": "使用生物识别以继续",
-  "Enter your password to continue": "请输入密码以继续"
+  "Welcome back": "欢迎回来"
 }
