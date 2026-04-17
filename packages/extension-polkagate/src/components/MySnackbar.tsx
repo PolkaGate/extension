@@ -67,11 +67,12 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
           color: '#fff',
           columnGap: '5px',
           display: 'flex',
-          height: '52px',
+          minHeight: '52px',
           justifyContent: 'center',
           overflow: 'hidden',
           position: 'relative',
           pointerEvents: 'auto',
+          px: 2,
           py: 1.5,
           textAlign: 'center',
           width: '330px'
@@ -86,7 +87,16 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
               sx={{ height: '28px', left: '20px', position: 'absolute', width: '28px' }}
             />
         }
-        <Typography color={theme.palette.text.primary} variant='B-2'>
+        <Typography
+          color={theme.palette.text.primary}
+          sx={{
+            overflowWrap: 'anywhere',
+            pr: isError ? 0 : '22px',
+            whiteSpace: 'normal',
+            wordBreak: 'break-word'
+          }}
+          variant='B-2'
+        >
           {text}
         </Typography>
         <Box
