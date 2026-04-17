@@ -86,5 +86,9 @@ export const normalizeDiscordUrl = (value?: string | null): string | undefined =
 export const normalizeMailtoUrl = (value?: string | null): string | undefined => {
   const trimmed = trimValue(value);
 
-  return trimmed ? `mailto:${trimmed}` : undefined;
+  if (!trimmed) {
+    return undefined;
+  }
+
+  return trimmed.toLowerCase().startsWith('mailto:') ? trimmed : `mailto:${trimmed}`;
 };
