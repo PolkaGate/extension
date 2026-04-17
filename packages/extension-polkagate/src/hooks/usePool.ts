@@ -5,7 +5,7 @@
 
 import type { MyPoolInfo } from '../util/types';
 
-import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect, useState } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { FetchingContext, WorkerContext } from '../components';
 import { getStorage, isHexToBn, setStorage } from '../util';
@@ -25,16 +25,28 @@ export default function usePool(address: string | undefined, genesisHash: string
 
   const [savedPool, setSavedPool] = useState<MyPoolInfo | undefined | null>(undefined);
   const [newPool, setNewPool] = useState<MyPoolInfo | undefined | null>(undefined);
+  const poolStorageKey = formatted && genesisHash
+    ? `${formatted}_${genesisHash}`
+    : undefined;
+  const activeRequestKeyRef = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    setSavedPool(undefined);
+    setNewPool(undefined);
+    activeRequestKeyRef.current = poolStorageKey;
+  }, [address, genesisHash, formatted]);
 
   const fetchPoolInformation = useCallback(() => {
     if (!worker || !genesisHash || !formatted) {
       return;
     }
 
+    activeRequestKeyRef.current = poolStorageKey;
+
     // the sort in this object is important because the getPool use the params as they pass
     // eslint-disable-next-line sort-keys
     worker.postMessage({ functionName: WORKER_TASKS.GET_POOL, parameters: { genesisHash, stakerAddress: formatted, id } });
-  }, [formatted, genesisHash, id, worker]);
+  }, [formatted, genesisHash, id, poolStorageKey, worker]);
 
   useEffect(() => {
     if (!worker || !formatted) {
@@ -42,6 +54,10 @@ export default function usePool(address: string | undefined, genesisHash: string
     }
 
     const handleMessage = (messageEvent: MessageEvent<string>) => {
+      if (activeRequestKeyRef.current !== poolStorageKey) {
+        return;
+      }
+
       const message = messageEvent.data;
 
       if (!message) {
@@ -80,11 +96,11 @@ export default function usePool(address: string | undefined, genesisHash: string
 
         // save my pool to local storage
         // if id is available there is no reason to save the pool information in the "MyPool" storage!
-        !id && getStorage(STORAGE_KEY.MY_POOL).then((res) => {
+        !id && poolStorageKey && getStorage(STORAGE_KEY.MY_POOL).then((res) => {
           const last = res || {};
 
           receivedMessage.date = Date.now();
-          (last as Record<string, MyPoolInfo>)[formatted] = receivedMessage;
+          (last as Record<string, MyPoolInfo>)[poolStorageKey] = receivedMessage;
 
           setStorage(STORAGE_KEY.MY_POOL, last).catch(console.error);
         }).catch(console.error);
@@ -98,7 +114,7 @@ export default function usePool(address: string | undefined, genesisHash: string
     return () => {
       worker.removeEventListener('message', handleMessage);
     };
-  }, [formatted, id, isFetching, worker]);
+  }, [formatted, id, isFetching, poolStorageKey, worker]);
 
   useEffect(() => {
     if (!formatted || !id) {
@@ -153,7 +169,7 @@ export default function usePool(address: string | undefined, genesisHash: string
   }, [fetchPoolInformation, refresh, setRefresh]);
 
   useEffect(() => {
-    if (!formatted) {
+    if (!poolStorageKey) {
       return;
     }
 
@@ -161,8 +177,8 @@ export default function usePool(address: string | undefined, genesisHash: string
     getStorage(STORAGE_KEY.MY_POOL).then((res) => {
       let myPool: MyPoolInfo | null | undefined;
 
-      if (res && typeof res === 'object' && formatted) {
-        myPool = (res as Record<string, MyPoolInfo | null | undefined>)[formatted];
+      if (res && typeof res === 'object') {
+        myPool = (res as Record<string, MyPoolInfo | null | undefined>)[poolStorageKey];
       }
 
       if (myPool !== undefined) {
@@ -173,7 +189,7 @@ export default function usePool(address: string | undefined, genesisHash: string
 
       setSavedPool(undefined);
     }).catch(console.error);
-  }, [formatted]);
+  }, [poolStorageKey]);
 
   return newPool ?? savedPool;
 }
