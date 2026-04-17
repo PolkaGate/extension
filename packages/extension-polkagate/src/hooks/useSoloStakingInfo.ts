@@ -186,8 +186,19 @@ export default function useSoloStakingInfo(address: string | undefined, genesisH
   const selectedPositionFlag = useRef<string | undefined>(undefined);
 
   useEffect(() => {
+    fetchingFlag.current = true;
+    rewardsFetchingFlag.current = true;
+    selectedPositionFlag.current = genesisHash;
+    needsStorageUpdate.current = false;
+    setSoloStakingInfoStorage(undefined);
+    setSoloStakingInfo(undefined);
+    setSessionInfo(undefined);
+  }, [address, genesisHash]);
+
+  useEffect(() => {
     if (refresh) {
       fetchingFlag.current = true;
+      rewardsFetchingFlag.current = true;
       setSoloStakingInfo(undefined);
       setSessionInfo(undefined);
     }
@@ -272,20 +283,6 @@ export default function useSoloStakingInfo(address: string | undefined, genesisH
       }).catch(console.error);
     }
   }, [address, currentEra, genesisHash, soloStakingInfo]);
-
-  // Refresh staking-related state when the chain changes,
-  // which also changes the token value.
-  useEffect(() => {
-    if (selectedPositionFlag.current && genesisHash && selectedPositionFlag.current !== genesisHash) {
-      console.log('[useSoloStakingInfo] Resetting staking state due to chain mismatch');
-      fetchingFlag.current = true;
-      setSoloStakingInfoStorage(undefined);
-      setSoloStakingInfo(undefined);
-      setSessionInfo(undefined);
-
-      selectedPositionFlag.current = genesisHash;
-    }
-  }, [genesisHash]);
 
   return useMemo(
     () => ({

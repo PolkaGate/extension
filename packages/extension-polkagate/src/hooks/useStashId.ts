@@ -5,7 +5,7 @@ import type { AccountId } from '@polkadot/types/interfaces/runtime';
 // @ts-ignore
 import type { PalletStakingStakingLedger } from '@polkadot/types/lookup';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import useChainInfo from './useChainInfo';
 import useFormatted from './useFormatted';
@@ -14,8 +14,15 @@ export default function useStashId(address: AccountId | string | undefined, gene
   const formatted = useFormatted(address, genesisHash);
   const { api } = useChainInfo(genesisHash);
   const [stashId, setStashId] = useState<AccountId | string>();
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
+    setStashId(undefined);
+  }, [address, genesisHash]);
+
+  useEffect(() => {
+    const requestId = ++requestIdRef.current;
+
     try {
       if (!api || !api.query?.['staking']?.['ledger'] || !formatted) {
         return;
@@ -23,6 +30,10 @@ export default function useStashId(address: AccountId | string | undefined, gene
 
       api.query['staking']['ledger'](formatted)
         .then((res) => {
+          if (requestId !== requestIdRef.current) {
+            return;
+          }
+
           const response = res.isEmpty ? undefined : res.toPrimitive() as unknown as PalletStakingStakingLedger;
 
           setStashId(response?.stash?.toString() ?? formatted);

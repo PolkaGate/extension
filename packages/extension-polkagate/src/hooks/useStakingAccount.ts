@@ -8,7 +8,7 @@ import type { PalletStakingRewardDestination } from '@polkadot/types/lookup';
 import type { Codec } from '@polkadot/types/types';
 import type { AccountStakingInfo } from '../util/types';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
@@ -34,8 +34,15 @@ export default function useStakingAccount(address: AccountId | string | undefine
   const stashId = useStashId(address, genesisHash);
 
   const [stakingInfo, setStakingInfo] = useState<AccountStakingInfo | null | undefined>(undefined);
+  const requestIdRef = useRef(0);
+
+  useEffect(() => {
+    setStakingInfo(undefined);
+  }, [address, genesisHash]);
 
   const fetch = useCallback(async () => {
+    const requestId = ++requestIdRef.current;
+
     if (!api || !stashId || !token || !decimal) {
       return;
     }
@@ -48,6 +55,10 @@ export default function useStakingAccount(address: AccountId | string | undefine
       api.derive.staking.account(stashId),
       api.query['staking']['currentEra']()
     ]);
+
+    if (requestId !== requestIdRef.current) {
+      return;
+    }
 
     if (!accountInfo) {
       console.log('Can not fetch accountInfo!');
