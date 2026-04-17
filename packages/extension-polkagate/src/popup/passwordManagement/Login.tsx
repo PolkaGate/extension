@@ -226,7 +226,9 @@ function Content({ setStep }: Props): React.ReactElement {
       setShowPasswordFallback(true);
 
       if (!silentFailure) {
-        setBiometricError(t((error as Error).message || 'Biometric unlock failed. Please use your password.'));
+         const rawMessage = (error as Error).message;
+
+        setBiometricError(rawMessage || t('Biometric unlock failed. Please use your password.'));
       }
     } finally {
       setBiometricUnlocking(false);
