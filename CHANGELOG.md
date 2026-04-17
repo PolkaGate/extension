@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.7.0](https://github.com/polkagate/extension/compare/v2.6.3...v2.7.0) (2026-04-17)
+
+
+### Features
+
+* add biometric unlock support ([#2144](https://github.com/polkagate/extension/issues/2144)) ([57ad9cd](https://github.com/polkagate/extension/commit/57ad9cd5fca8b76c7aae48a71696f9968af418e3))
+
 ## [2.6.3](https://github.com/polkagate/extension/compare/v2.6.2...v2.6.3) (2026-04-17)
 
 
