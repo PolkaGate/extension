@@ -3,9 +3,7 @@
 
 import type { Transaction, TransactionLike } from 'ethers';
 import type { ApiPromise } from '@polkadot/api';
-import type { SignerOptions } from '@polkadot/api/submittable/types';
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
-import type { KeyringPair } from '@polkadot/keyring/types';
 import type { Vec } from '@polkadot/types';
 import type { SignedBlock } from '@polkadot/types/interfaces';
 // @ts-ignore
@@ -124,24 +122,6 @@ export async function handleResult(
   }
 }
 
-export async function signAndSend(
-  api: ApiPromise,
-  extrinsic: SubmittableExtrinsic<'promise', ISubmittableResult>,
-  pair: KeyringPair,
-  options?: Partial<SignerOptions>
-): Promise<TxResult> {
-  return new Promise((resolve) => {
-    console.log('signing and sending a tx ...');
-
-    extrinsic.signAndSend(pair, options ?? {}, async(result) => {
-      await handleResult(api, resolve, result);
-    }).catch((e) => {
-      console.log('⚠️ Catch error', e);
-      resolve({ block: 0, failureText: String(e), fee: '', success: false, txHash: '' });
-    });
-  });
-}
-
 export async function send(
   from: string,
   api: ApiPromise,
@@ -162,7 +142,6 @@ export async function send(
       await handleResult(api, resolve, result);
 
       if (
-        status.isInBlock ||
         status.isFinalized ||
         status.isInvalid ||
         status.isDropped ||

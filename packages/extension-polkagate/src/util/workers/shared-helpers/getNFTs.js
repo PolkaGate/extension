@@ -8,7 +8,7 @@ import { isEthereumAddress } from '@polkadot/util-crypto';
 import { SUPPORTED_NFT_CHAINS } from '../../../fullscreen/nft/utils/constants';
 import { getFormattedAddress } from '../../address';
 import { WORKER_TASKS } from '../../constants';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
+import { fastestEndpoint, getChainEndpoints } from '../utils';
 
 /**
  * Fetches NFT or unique collections for a given chain and set of addresses
@@ -192,9 +192,9 @@ async function getNFTs(addresses) {
     const formattedAddresses = addresses.map((address) => getFormattedAddress(address, undefined, prefix));
     const endpoints = getChainEndpoints(name, undefined);
 
-    const { api, connections } = await fastestEndpoint(endpoints);
+    const { api } = await fastestEndpoint(endpoints);
 
-    return ({ api, chainName, connections, formattedAddresses, originalAddresses: addresses });
+    return ({ api, chainName, formattedAddresses, originalAddresses: addresses });
   });
 
   const apis = await Promise.all(apiPromises);
@@ -224,8 +224,9 @@ async function getNFTs(addresses) {
 
     return itemsByAddress;
   } finally {
-    // Ensure all websocket connections are closed
-    apis.forEach(({ connections }) => closeWebsockets(connections));
+    await Promise.allSettled(
+      apis.map(({ api }) => api.disconnect().catch(console.error))
+    );
   }
 }
 

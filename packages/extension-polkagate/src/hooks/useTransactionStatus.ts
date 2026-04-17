@@ -6,21 +6,21 @@ import { useCallback, useEffect } from 'react';
 import useAlerts from './useAlerts';
 import useTranslation from './useTranslation';
 
-export default function useTransactionState() {
+export default function useTransactionStatus() {
   const { t } = useTranslation();
   const { notify } = useAlerts();
 
   const handleTxEvent = useCallback((s: CustomEventInit<unknown>) => {
-    const event = s.detail;
+    const state = typeof s.detail === 'string'
+      ? s.detail.toLowerCase()
+      : undefined;
 
-    if (event) {
-      const state = Object.keys(event)[0];
-
-      state === 'finalized' && notify(t('The transaction has been finalized!'), 'success');
-    }
+    state === 'finalized' && notify(t('The transaction has been finalized!'), 'success');
   }, [notify, t]);
 
   useEffect(() => {
     window.addEventListener('transactionState', handleTxEvent);
+
+    return () => window.removeEventListener('transactionState', handleTxEvent);
   }, [handleTxEvent]);
 }
