@@ -17,21 +17,29 @@ import { Email, Web, XIcon } from '../../../popup/settings/icons';
 import SocialIcon from '../../../popup/settings/partials/SocialIcon';
 import { PolkaGateIdenticon, VelvetBox } from '../../../style';
 import { getSubstrateAddress, isHexToBn, toShortAddress } from '../../../util';
+import { normalizeMailtoUrl, normalizeMatrixUrl, normalizeTwitterUrl, normalizeUrl } from '../../../util/socialLinks';
 import { getTokenUnit } from '../util/utils';
 import { InfoBox } from './InfoBox';
 
 export const MiniSocials = ({ accountInfo }: { accountInfo: DeriveAccountRegistration | undefined }) => {
+  const emailLink = normalizeMailtoUrl(accountInfo?.email);
+  const webLink = normalizeUrl(accountInfo?.web);
+  const twitterLink = normalizeTwitterUrl(accountInfo?.twitter);
+  const matrixLink = normalizeMatrixUrl(accountInfo?.matrix || accountInfo?.riot);
+
   return (
     <Grid alignItems='center' columnGap='2px' container item sx={{ width: 'fit-content' }}>
-      {accountInfo?.email &&
-        <SocialIcon Icon={<Email color='#AA83DC' width='18px' />} link={`mailto:${accountInfo.email}`} size={24} />
+      {emailLink &&
+        <SocialIcon Icon={<Email color='#AA83DC' width='18px' />} link={emailLink} size={24} />
       }
-      {accountInfo?.web &&
-        <SocialIcon Icon={<Web color='#AA83DC' width='18px' />} link={accountInfo.web} size={24} />
-
+      {webLink &&
+        <SocialIcon Icon={<Web color='#AA83DC' width='18px' />} link={webLink} size={24} />
       }
-      {accountInfo?.twitter &&
-        <SocialIcon Icon={<XIcon color='#AA83DC' width='18px' />} bgColor='#AA83DC26' link={`https://twitter.com/${accountInfo.twitter}`} size={24} />
+      {twitterLink &&
+        <SocialIcon Icon={<XIcon color='#AA83DC' width='18px' />} bgColor='#AA83DC26' link={twitterLink} size={24} />
+      }
+      {matrixLink &&
+        <SocialIcon Icon={<Web color='#AA83DC' width='18px' />} bgColor='#AA83DC26' link={matrixLink} size={24} tooltip='Element / Matrix' />
       }
     </Grid>
   );
