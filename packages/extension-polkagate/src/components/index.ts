@@ -92,8 +92,6 @@ export { default as MakeRecoverableIcon } from './SVG/MakeRecoverableIcon';
 export { default as PoolStakingIcon } from './SVG/PoolStakingIcon';
 export { default as RescueRecoveryIcon } from './SVG/RescueRecoveryIcon';
 export { default as ShowIcon } from './SVG/ShowIcon';
-export { default as SocialRecoveryIcon } from './SVG/SocialRecoveryIcon';
-export { default as VouchRecoveryIcon } from './SVG/VouchRecoveryIcon';
 export { default as Switch } from './Switch';
 export { default as TextAreaWithLabel } from './TextAreaWithLabel';
 export { Input } from './TextInputs';
