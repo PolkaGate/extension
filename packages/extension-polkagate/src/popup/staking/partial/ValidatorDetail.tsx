@@ -17,6 +17,7 @@ import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsBlueish, useTranslation, useValidatorApy } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
 import { isHexToBn, toShortAddress } from '../../../util';
+import { normalizeDiscordUrl, normalizeGithubUrl, normalizeMailtoUrl, normalizeMatrixUrl, normalizeTwitterUrl, normalizeUrl } from '../../../util/socialLinks';
 import { getLink } from '../../history/explorer';
 import { Discord, Email, Github, Web, XIcon } from '../../settings/icons';
 import SocialIcon from '../../settings/partials/SocialIcon';
@@ -41,21 +42,29 @@ export const ValidatorIdSocials = ({ style, validatorDetail }: ValidatorIdSocial
 
   const bgColor = isBlueish ? '#FFFFFF1A' : '#AA83DC26';
   const color = isBlueish ? '#809ACB' : '#AA83DC';
+  const { discord, email, github, matrix, riot, twitter, web } = validatorDetail.identity ?? {};
+
+  const discordLink = normalizeDiscordUrl(discord);
+  const emailLink = normalizeMailtoUrl(email);
+  const githubLink = normalizeGithubUrl(github);
+  const matrixLink = normalizeMatrixUrl(matrix || riot);
+  const twitterLink = normalizeTwitterUrl(twitter);
+  const webLink = normalizeUrl(web);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', m: 0, width: '32%', ...style }}>
-      {validatorDetail.identity?.discord &&
-        <SocialIcon Icon={<Discord color={color} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+      {discordLink &&
+        <SocialIcon Icon={<Discord color={color} width='14px' />} bgColor={bgColor} link={discordLink} size={24} />
       }
-      {validatorDetail.identity?.email &&
-        <SocialIcon Icon={<Email color={color} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+      {emailLink &&
+        <SocialIcon Icon={<Email color={color} width='14px' />} bgColor={bgColor} link={emailLink} size={24} />
       }
-      {validatorDetail.identity?.github &&
-        <SocialIcon Icon={<Github color={color} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+      {githubLink &&
+        <SocialIcon Icon={<Github color={color} width='14px' />} bgColor={bgColor} link={githubLink} size={24} />
       }
-      {(validatorDetail.identity?.matrix || validatorDetail.identity?.riot) &&
+      {matrixLink &&
         <Link
-          href={''}
+          href={matrixLink}
           rel='noreferrer'
           sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
           target='_blank'
@@ -68,11 +77,11 @@ export const ValidatorIdSocials = ({ style, validatorDetail }: ValidatorIdSocial
           />
         </Link>
       }
-      {validatorDetail.identity?.twitter &&
-        <SocialIcon Icon={<XIcon color={color} width='13px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+      {twitterLink &&
+        <SocialIcon Icon={<XIcon color={color} width='13px' />} bgColor={bgColor} link={twitterLink} size={24} />
       }
-      {validatorDetail.identity?.web &&
-        <SocialIcon Icon={<Web color={color} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+      {webLink &&
+        <SocialIcon Icon={<Web color={color} width='14px' />} bgColor={bgColor} link={webLink} size={24} />
       }
     </Container>
   );
