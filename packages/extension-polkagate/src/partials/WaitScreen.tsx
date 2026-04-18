@@ -76,7 +76,7 @@ function Content({ isModal }: Props) {
           autoplay={false}
           dotLottieRefCallback={setDotLottie}
           loop
-          src={sendingLottie}
+          src={sendingLottie as string}
           style={{ height: 'auto', width: '300px' }}
         />
         <Fade in={true} timeout={1000}>
