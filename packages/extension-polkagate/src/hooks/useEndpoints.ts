@@ -43,8 +43,14 @@ export function getBuiltInEndpointOptions(genesisHash: string | null | undefined
     return [];
   }
 
-  const { genesisHashRelay, paraId } = endpoints[0];
-  const areAllSame = endpoints.every((e) => e.paraId === paraId && e.genesisHashRelay === genesisHashRelay);
+  const referenceEndpoint =
+    endpoints.find(({ info }) => String(info)?.toLowerCase() === lsChainName) ??
+    endpoints[0];
+  const { genesisHashRelay, paraId } = referenceEndpoint;
+  const areAllSame = endpoints.every((endpoint) =>
+    endpoint.paraId === paraId &&
+    endpoint.genesisHashRelay === genesisHashRelay
+  );
 
   if (!areAllSame) {
     endpoints = endpoints.filter(({ info }) => String(info)?.toLowerCase() === lsChainName);
