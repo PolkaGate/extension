@@ -385,8 +385,8 @@ function Logo({
           bgcolor: effectiveFallbackBackgroundColor,
           borderRadius,
           fontSize: typeof effectiveSize === 'number' ? effectiveSize * 0.6 : undefined,
-          height: parseInt(String(effectiveSize)) - 3.5,
-          width: parseInt(String(effectiveSize)) - 3.5,
+          height: `calc(${effectiveSize} - 3.5px)`,
+          width: `calc(${effectiveSize} - 3.5px)`,
           ...style
         }}
         variant='square'
