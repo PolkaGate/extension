@@ -7,6 +7,7 @@ import type { DropdownOption } from '../util/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import EndpointManager from '../class/endpointManager';
+import { getBuiltInEndpointOptions } from '../hooks/useEndpoints';
 import { getStorage, setStorage } from '../util';
 import { AUTO_MODE_DEFAULT_ENDPOINT, STORAGE_KEY } from '../util/constants';
 import { DEFAULT_SELECTED_CHAINS } from '../util/defaultSelectedChains';
@@ -23,6 +24,10 @@ const endpointManager = new EndpointManager();
 
 export default function useChainSelectionSettings(): UseChainSelectionSettings {
   const allChains = useGenesisHashOptions({});
+  const chainsWithEndpoints = useMemo(
+    () => allChains.filter(({ value }) => getBuiltInEndpointOptions(value as string).length > 0),
+    [allChains]
+  );
 
   const [searchedChain, setSearchedChain] = useState<DropdownOption[]>();
   const [selectedChains, setSelectedChains] = useState<Set<string>>(new Set());
@@ -34,7 +39,7 @@ export default function useChainSelectionSettings(): UseChainSelectionSettings {
     selectedChainsRef.current = selectedChains;
   }, [selectedChains]);
 
-  const sortedChainsToShow = useMemo(() => [...allChains].sort((a, b) => {
+  const sortedChainsToShow = useMemo(() => [...chainsWithEndpoints].sort((a, b) => {
     const aInSet = initialChains.has(a.value as string);
     const bInSet = initialChains.has(b.value as string);
 
@@ -47,7 +52,7 @@ export default function useChainSelectionSettings(): UseChainSelectionSettings {
     }
 
     return 0;
-  }), [allChains, initialChains]);
+  }), [chainsWithEndpoints, initialChains]);
 
   useEffect(() => {
     const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
@@ -138,10 +143,10 @@ export default function useChainSelectionSettings(): UseChainSelectionSettings {
     }
 
     const normalizedKeyword = keyword.trim().toLowerCase();
-    const filtered = allChains.filter(({ text }) => text.toLowerCase().includes(normalizedKeyword));
+    const filtered = chainsWithEndpoints.filter(({ text }) => text.toLowerCase().includes(normalizedKeyword));
 
     setSearchedChain([...filtered]);
-  }, [allChains]);
+  }, [chainsWithEndpoints]);
 
   const chainsToList = useMemo(() => searchedChain ?? sortedChainsToShow, [searchedChain, sortedChainsToShow]);
 
