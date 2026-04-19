@@ -643,7 +643,7 @@ export interface Step {
 
 export interface PriceValue {
   value: number;
-  change: number;
+  change?: number;
   genesisHash?: string;
   symbol?: string;
 }

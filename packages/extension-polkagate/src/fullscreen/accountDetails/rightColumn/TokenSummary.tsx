@@ -29,7 +29,7 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
 
   const tokenPrice = pricesInCurrency?.prices[token?.priceId ?? '']?.value ?? 0;
   const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change;
-  const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange);
+  const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange ?? 0);
 
   const totalBalancePrice = useMemo(() =>
     token?.decimal ? calcPrice(priceOf(token?.priceId ?? '') ?? 0, token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0) : undefined
