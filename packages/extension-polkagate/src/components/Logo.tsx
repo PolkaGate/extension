@@ -240,7 +240,8 @@ function Logo({
   const borderRadius = showSquare ? 0 : logoRoundness;
   const secondaryGraphicSize = typeof effectiveSecondaryLogoSize === 'number'
     ? effectiveSecondaryLogoSize - 2
-    : `calc(${effectiveSecondaryLogoSize} - 2px)`;
+    ? effectiveSecondaryLogoSize
+    : `calc(${effectiveSecondaryLogoSize} - 0px)`;
   const shouldInvertForDarkTheme = useMemo(
     () => TOKENS_WITH_BLACK_LOGO.includes(token ?? '') || CHAINS_WITH_BLACK_LOGO.includes(resolvedChainName ?? ''),
     [resolvedChainName, token]
@@ -344,7 +345,7 @@ function Logo({
           <Box
             sx={{
               alignItems: 'center',
-              bgcolor: secondaryBackgroundColor ?? '#fff',
+              bgcolor: secondaryBackgroundColor ?? '#2523235e',
               borderRadius: '50%',
               display: 'flex',
               height: effectiveSecondaryLogoSize,
@@ -384,9 +385,9 @@ function Logo({
         sx={{
           bgcolor: effectiveFallbackBackgroundColor,
           borderRadius,
-          fontSize: typeof effectiveSize === 'number' ? effectiveSize * 0.7 : undefined,
-          height: effectiveSize,
-          width: effectiveSize,
+          fontSize: typeof effectiveSize === 'number' ? effectiveSize * 0.6 : undefined,
+          height: parseInt(String(effectiveSize)) - 3.5,
+          width: parseInt(String(effectiveSize)) - 3.5,
           ...style
         }}
         variant='square'

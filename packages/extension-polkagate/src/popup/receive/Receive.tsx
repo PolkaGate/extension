@@ -128,7 +128,7 @@ function SelectNetwork({ isEthereum, setSelectedChain }: SelectChainProp) {
               <React.Fragment key={index}>
                 <ListItem container item onClick={handleChainSelect(chain)}>
                   <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-                    <Logo chainName={chainName} size={18} />
+                    <Logo chainName={chainName} size={24} />
                     <Typography color='text.primary' variant='B-2'>
                       {chainName}
                     </Typography>

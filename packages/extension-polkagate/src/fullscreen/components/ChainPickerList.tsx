@@ -33,7 +33,7 @@ interface ChainPickerListProps {
 export default function ChainPickerList({ getLabel,
   itemTextColor = 'text.primary',
   itemTextVariant = 'B-2',
-  logoSize = 18,
+  logoSize = 30,
   maxHeight = '395px',
   maybeSelectedText,
   minHeight = '395px',
@@ -92,7 +92,7 @@ export default function ChainPickerList({ getLabel,
                 justifyContent='space-between'
                 onClick={handleSelect(chain)}
                 onDoubleClick={onDoubleClick}
-                sx={{ '&:hover': { bgcolor: '#6743944D' }, borderRadius: '12px', cursor: 'pointer', minHeight: '40px', p: '10px 7px', transition: 'all 250ms ease-out' }}
+                sx={{ '&:hover': { bgcolor: '#6743944D' }, borderRadius: '12px', cursor: 'pointer', minHeight: '40px', p: '8px 7px', transition: 'all 250ms ease-out' }}
               >
                 <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
                   <Logo chainName={chain.text} size={logoSize} />

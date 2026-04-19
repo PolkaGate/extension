@@ -41,7 +41,7 @@ function Item({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: Item
       }}
     >
       <Stack alignItems='center' className='hoverable' direction='row' onClick={chainEndpoints(value)} sx={{ cursor: 'pointer' }}>
-        <Logo genesisHash={value} size={24} />
+        <Logo genesisHash={value} size={30} />
         <Typography color={isEnabled ? 'text.primary' : 'primary.main'} ml='8px' variant='B-1'>
           {text}
         </Typography>

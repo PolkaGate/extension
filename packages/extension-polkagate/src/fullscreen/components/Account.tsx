@@ -112,8 +112,10 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
     const uniqueAssets = [];
 
     for (const asset of sortedAssets) {
-      if (!seen.has(asset.token)) {
-        seen.add(asset.token);
+      const normalizedToken = asset.token.toUpperCase();
+
+      if (!seen.has(normalizedToken)) {
+        seen.add(normalizedToken);
         uniqueAssets.push(asset);
       }
     }
@@ -220,8 +222,8 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
             const logoInfo = resolveLogoInfo(genesisHash, token);
 
             return (
-              <Box key={`${genesisHash}+${token}+${index}`} sx={{ background: '#05091C', border: '2.57px solid #05091C', borderRadius: '50%', mb: '-4px', ml: index === 0 ? 0 : '-7px', position: 'relative', zIndex: index + 1 }}>
-                <Logo assetSize='18px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+              <Box key={`${genesisHash}+${token}+${index}`} sx={{ background: '#05091C', border: '2.57px solid #05091C', borderRadius: '50%', mb: '-4px', ml: index === 0 ? 0 : '-10px', position: 'relative', zIndex: index + 1 }}>
+                <Logo assetSize='22px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} />
               </Box>
             );
           })}
