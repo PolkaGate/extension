@@ -40,8 +40,8 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
   return (
     <GlowBox style={{ height: '187px', justifyContent: 'start', justifyItems: 'start', pl: '30px', rowGap: '5px' }}>
       <Grow
-        in={!!token}
-        key={token?.genesisHash ?? token?.token}
+        in
+        key={token?.genesisHash ?? token?.token ?? 'token-summary'}
         style={{ transformOrigin: 'center center' }} timeout={1000}
       >
         <Grid
@@ -57,7 +57,30 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
             width: 'fit-content'
           }}
         >
-          <Logo assetSize='40px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='5px -18px auto auto' />
+          {!token
+            ? (
+              <Skeleton
+                animation='wave'
+                sx={{
+                  borderRadius: '50%',
+                  height: '45px',
+                  width: '45px'
+                }}
+                variant='circular'
+              />
+            )
+            : (
+              <Logo
+                assetSize='45px'
+                baseTokenSize='24px'
+                fallbackBackgroundColor={theme.palette.action.hover}
+                fallbackText={token?.token}
+                genesisHash={token?.genesisHash}
+                logo={logoInfo?.logo}
+                subLogo={logoInfo?.subLogo}
+                subLogoPosition='5px -18px auto auto'
+              />
+            )}
         </Grid>
       </Grow>
       <Explorer
