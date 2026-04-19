@@ -37,8 +37,8 @@ export const MAX_HISTORY_RECORD_TO_SHOW = 40;
 export const MAX_AMOUNT_LENGTH = 15;
 export const TIME_TO_SHAKE_ICON = 5000;// msec
 
-export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'KusamaAssetHub', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
-export const TOKENS_WITH_BLACK_LOGO = ['BILL', 'BILLCOIN', 'BNC', 'CFG', 'INTR', 'KSM', 'PEN', 'ZTG'];
+export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Bittensor', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'KusamaAssetHub', 'NeuroWeb', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
+export const TOKENS_WITH_BLACK_LOGO = ['BILL', 'BILLCOIN', 'BNC', 'CFG', 'INTR', 'KSM', 'PEN', 'TAO', 'ZTG'];
 export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet', 'Stafi', 'Peaq Network', 'Genshiro Network'];
 
 export const ACALA_GENESIS_HASH = '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c';
