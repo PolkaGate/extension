@@ -239,7 +239,6 @@ function Logo({
     : logo ?? resolvedPrimaryLogo;
   const borderRadius = showSquare ? 0 : logoRoundness;
   const secondaryGraphicSize = typeof effectiveSecondaryLogoSize === 'number'
-    ? effectiveSecondaryLogoSize - 2
     ? effectiveSecondaryLogoSize
     : `calc(${effectiveSecondaryLogoSize} - 0px)`;
   const shouldInvertForDarkTheme = useMemo(
