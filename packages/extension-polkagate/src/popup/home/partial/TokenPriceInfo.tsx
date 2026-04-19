@@ -29,7 +29,7 @@ export function TokenPriceInfo({ priceId, token }: { priceId?: string, token?: s
           textColor={isDark ? '#AA83DC' : '#8299BD'}
           width='fit-content'
         />
-        {priceId && pricesInCurrency?.prices[priceId]?.change &&
+        {priceId && pricesInCurrency?.prices[priceId]?.change !== undefined &&
           <DailyChange
             change={pricesInCurrency.prices[priceId].change}
             iconSize={12}

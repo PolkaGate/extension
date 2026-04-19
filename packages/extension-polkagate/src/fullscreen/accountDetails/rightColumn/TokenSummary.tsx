@@ -28,8 +28,8 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
   const tokenPrice = pricesInCurrency?.prices[token?.priceId ?? '']?.value ?? 0;
-  const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change ?? 0;
-  const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange);
+  const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change;
+  const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange ?? 0);
 
   const totalBalancePrice = useMemo(() =>
     token?.decimal ? calcPrice(priceOf(token?.priceId ?? '') ?? 0, token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0) : undefined
@@ -123,7 +123,7 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
           }}
           token={token?.token}
         />
-        {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&
+        {token?.priceId && tokenPriceChange !== undefined &&
           <DailyChange
             change={change}
             textVariant='B-1'

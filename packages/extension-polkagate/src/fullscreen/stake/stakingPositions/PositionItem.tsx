@@ -12,7 +12,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { mapHubToRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { type BN, noop } from '@polkadot/util';
 
-import { Logo, CryptoFiatBalance, Motion, MyTooltip } from '../../../components';
+import { CryptoFiatBalance, Logo, Motion, MyTooltip } from '../../../components';
 import { useChainInfo } from '../../../hooks';
 import { StakingBadge, TestnetBadge } from '../../../popup/staking/StakingPositions';
 import { amountToHuman, updateStorage } from '../../../util';
@@ -28,7 +28,7 @@ export const TokenInfo = ({ genesisHash }: TokenInfoProps) => {
 
   return (
     <Grid container item sx={{ alignItems: 'center', flexWrap: 'nowrap', gap: '6px', minWidth: '100px', width: 'fit-content' }}>
-      <Logo genesisHash={_genesisHash} size={24} />
+      <Logo genesisHash={_genesisHash} size={30} />
       <Grid container item sx={{ alignItems: 'flex-start', display: 'flex', flexDirection: 'column', width: 'fit-content' }}>
         <Typography color='text.primary' textTransform='uppercase' variant='B-2'>
           {token}
@@ -78,7 +78,7 @@ export const ChainIdentifier = ({ genesisHash }: TokenInfoProps) => {
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '6px', m: 0, minWidth: '200px', width: 'fit-content' }}>
-      <Logo chainName={chainName} size={24} />
+      <Logo chainName={chainName} size={30} />
       <Typography color='text.secondary' variant='B-2'>
         {displayName}
       </Typography>
