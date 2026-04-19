@@ -17,6 +17,19 @@ export const EXTRA_PRICE_IDS: Record<string, string> = {
 
 export const COIN_GECKO_PRICE_CHANGE_DURATION = 24;
 
+function sanitizePriceChange(price: number | undefined, change: number | undefined): number | undefined {
+  if (change === undefined) {
+    return undefined;
+  }
+
+  // CoinGecko occasionally returns implausible percentage changes for micro-priced assets.
+  if ((price ?? 0) <= 0.01 && Math.abs(change) >= 100) {
+    return undefined;
+  }
+
+  return change;
+}
+
 export default async function getPrices(priceIds: (string | undefined)[], currencyCode = 'usd') {
   const revisedPriceIds = priceIds
     .filter((item): item is string => Boolean(item))
@@ -32,10 +45,11 @@ export default async function getPrices(priceIds: (string | undefined)[], curren
 
   for (const [key, value] of Object.entries(prices)) {
     const v = value as Record<string, number>;
+    const price = v[currencyCode];
 
     outputObjectPrices[key] = {
-      change: v[`${currencyCode}_24h_change`],
-      value: v[currencyCode]
+      change: sanitizePriceChange(price, v[`${currencyCode}_24h_change`]),
+      value: price
     };
   }
 
