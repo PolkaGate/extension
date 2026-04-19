@@ -15,6 +15,55 @@ import { shouldSkipEndpointOption } from '../util/endpoint';
 const supportedLC = ['polkadot', 'kusama', 'westend']; // chains with supported light client
 const allEndpoints = createWsEndpoints();
 
+export function getBuiltInEndpointOptions(genesisHash: string | null | undefined): DropdownOption[] {
+  if (!genesisHash) {
+    return [];
+  }
+
+  const chainName = chains?.find((o) => o.genesisHash === genesisHash)?.name;
+  const lsChainName = sanitizeChainName(chainName)?.toLowerCase();
+
+  if (!lsChainName) {
+    return [];
+  }
+
+  let endpoints = allEndpoints?.filter(({ info, text, value }) => {
+    if (shouldSkipEndpointOption(value)) {
+      return false;
+    }
+
+    const matchesName =
+      String(info)?.toLowerCase() === lsChainName ||
+      String(text)?.toLowerCase()?.includes(lsChainName);
+
+    return matchesName;
+  });
+
+  if (!endpoints.length) {
+    return [];
+  }
+
+  const { genesisHashRelay, paraId } = endpoints[0];
+  const areAllSame = endpoints.every((e) => e.paraId === paraId && e.genesisHashRelay === genesisHashRelay);
+
+  if (!areAllSame) {
+    endpoints = endpoints.filter(({ info }) => String(info)?.toLowerCase() === lsChainName);
+  }
+
+  let endpointOptions = endpoints.map((endpoint) => ({ text: endpoint.textBy, value: endpoint.value }));
+  const hasLightClientSupport = supportedLC.includes(lsChainName);
+
+  if (!hasLightClientSupport) {
+    endpointOptions = endpointOptions.filter((o) => String(o.value).startsWith('wss'));
+  }
+
+  if (endpointOptions.length > 1) {
+    endpointOptions.unshift(AUTO_MODE);
+  }
+
+  return endpointOptions;
+}
+
 /**
  * @description
  * find endpoints based on chainName and also omit light client which my be add later
@@ -23,58 +72,7 @@ export function useEndpoints(genesisHash: string | null | undefined): DropdownOp
   const userAddedEndpoint = useUserAddedEndpoint(genesisHash);
 
   const endpoints: DropdownOption[] | undefined = useMemo(() => {
-    if (!genesisHash) {
-      return [];
-    }
-
-    const chainName = chains?.find((o) => o.genesisHash === genesisHash)?.name;
-    const lsChainName = sanitizeChainName(chainName)?.toLowerCase();
-
-    if (!lsChainName) {
-      return undefined;
-    }
-
-    let endpoints = allEndpoints?.filter(({ info, text, value }) => {
-      if (shouldSkipEndpointOption(value)) {
-        return false;
-      }
-
-      const matchesName =
-        String(info)?.toLowerCase() === lsChainName ||
-        String(text)?.toLowerCase()?.includes(lsChainName);
-
-      return matchesName;
-    }
-    );
-
-    if (!endpoints.length) {
-      return [];
-    }
-
-    // check if all endpoints belong to same chain
-    const { genesisHashRelay, paraId } = endpoints[0];
-
-    const areAllSame = endpoints.every((e) => e.paraId === paraId && e.genesisHashRelay === genesisHashRelay);
-
-    if (!areAllSame) {
-      // Fallback: just filter the exact comparison
-      endpoints = endpoints?.filter(({ info }) => String(info)?.toLowerCase() === lsChainName);
-    }
-
-    // map to DropdownOption
-    let endpointOptions = endpoints.map((endpoint) => ({ text: endpoint.textBy, value: endpoint.value }));
-
-    const hasLightClientSupport = supportedLC.includes(lsChainName);
-
-    if (!hasLightClientSupport) {
-      endpointOptions = endpointOptions.filter((o) => String(o.value).startsWith('wss'));
-    }
-
-    if (endpointOptions.length > 1) {
-      endpointOptions?.unshift(AUTO_MODE);
-    }
-
-    return endpointOptions;
+    return getBuiltInEndpointOptions(genesisHash);
   }, [genesisHash]);
 
   return endpoints ?? userAddedEndpoint ?? [];
