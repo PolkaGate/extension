@@ -36,10 +36,10 @@ export function buildChainsAssetsSummary(
     const chainTotalBalance = enrichedBalances.reduce((sum, b) => sum + b.totalPrice, 0);
     const sortedAssets = enrichedBalances.sort((a, b) => b.totalPrice - a.totalPrice);
 
-    const network = chains.find(({ genesisHash: networkGenesisHash, tokenSymbol }) => genesisHash === networkGenesisHash && tokenSymbol);
-    const token = network?.tokenSymbol;
+    const network = chains.find(({ genesisHash: networkGenesisHash }) => genesisHash === networkGenesisHash);
+    const token = network?.tokenSymbol ?? sortedAssets[0]?.token;
     const logoInfo = resolveLogoInfo(genesisHash);
-    const chainName = toTitleCase(sanitizeChainName(network?.name, true));
+    const chainName = toTitleCase(sanitizeChainName(network?.name ?? sortedAssets[0]?.chainName, true));
 
     return {
       assets: sortedAssets,

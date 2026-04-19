@@ -238,6 +238,9 @@ function Logo({
     ? nativeTokenLogo
     : logo ?? resolvedPrimaryLogo;
   const borderRadius = showSquare ? 0 : logoRoundness;
+  const fallbackSize = typeof effectiveSize === 'number'
+    ? effectiveSize - (showSquare ? 6 : 3.5)
+    : `calc(${effectiveSize} - ${showSquare ? '6px' : '3.5px'})`;
   const secondaryGraphicSize = typeof effectiveSecondaryLogoSize === 'number'
     ? effectiveSecondaryLogoSize
     : `calc(${effectiveSecondaryLogoSize} - 0px)`;
@@ -384,9 +387,11 @@ function Logo({
         sx={{
           bgcolor: effectiveFallbackBackgroundColor,
           borderRadius,
-          fontSize: typeof effectiveSize === 'number' ? effectiveSize * 0.6 : undefined,
-          height: `calc(${effectiveSize} - 3.5px)`,
-          width: `calc(${effectiveSize} - 3.5px)`,
+          fontSize: typeof effectiveSize === 'number'
+            ? effectiveSize * (showSquare ? 0.48 : 0.6)
+            : undefined,
+          height: fallbackSize,
+          width: fallbackSize,
           ...style
         }}
         variant='square'
