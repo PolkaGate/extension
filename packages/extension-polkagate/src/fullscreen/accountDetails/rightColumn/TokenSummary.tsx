@@ -57,7 +57,7 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
             width: 'fit-content'
           }}
         >
-          <Logo assetSize='36px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='5px -18px auto auto' />
+          <Logo assetSize='40px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='5px -18px auto auto' />
         </Grid>
       </Grow>
       <Explorer

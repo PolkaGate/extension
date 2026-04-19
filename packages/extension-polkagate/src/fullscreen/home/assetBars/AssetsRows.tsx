@@ -74,7 +74,7 @@ function AssetsRows({ assets }: { assets: AssetsWithUiAndPrice[] }): React.React
           return (
             <Stack alignItems='center' direction='row' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '47px', my: '4px', px: '10px' }}>
               <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' width={`${WIDTHS[1]}%`}>
-                <Logo assetSize='18px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} token={token} />
+                <Logo assetSize='32px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} token={token} />
                 <Typography
                   sx={{
                     fontSize: 'clamp(10px, 1.2vw, 14px)',
