@@ -16,6 +16,8 @@ export const EXTRA_PRICE_IDS: Record<string, string> = {
 };
 
 export const COIN_GECKO_PRICE_CHANGE_DURATION = 24;
+const MICRO_PRICE_THRESHOLD = 0.01;
+const IMPLAUSIBLE_CHANGE_PERCENT = 100;
 
 function sanitizePriceChange(price: number | undefined, change: number | undefined): number | undefined {
   if (change === undefined) {
@@ -23,7 +25,8 @@ function sanitizePriceChange(price: number | undefined, change: number | undefin
   }
 
   // CoinGecko occasionally returns implausible percentage changes for micro-priced assets.
-  if ((price ?? 0) <= 0.01 && Math.abs(change) >= 100) {
+  // Treat missing price as micro-priced so we drop large changes without price context as well.
+  if ((price ?? 0) <= MICRO_PRICE_THRESHOLD && Math.abs(change) >= IMPLAUSIBLE_CHANGE_PERCENT) {
     return undefined;
   }
 
