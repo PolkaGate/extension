@@ -71,9 +71,10 @@ export function getBuiltInEndpointOptions(genesisHash: string | null | undefined
 export function useEndpoints(genesisHash: string | null | undefined): DropdownOption[] {
   const userAddedEndpoint = useUserAddedEndpoint(genesisHash);
 
-  const endpoints: DropdownOption[] | undefined = useMemo(() => {
-    return getBuiltInEndpointOptions(genesisHash);
-  }, [genesisHash]);
+  const endpoints = useMemo(
+    () => getBuiltInEndpointOptions(genesisHash),
+    [genesisHash]
+  );
 
-  return endpoints ?? userAddedEndpoint ?? [];
+  return endpoints.length ? endpoints : (userAddedEndpoint ?? []);
 }
