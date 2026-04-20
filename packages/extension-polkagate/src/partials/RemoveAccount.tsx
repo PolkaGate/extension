@@ -5,15 +5,16 @@ import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
 
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import { LogoutCurve } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { info } from '../assets/gif';
-import { Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } from '../components';
+import { AccountsAssetsContext, Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } from '../components';
 import { useAccount, useAccountsOrder, useAlerts, useIsExtensionPopup, useProfileAccounts, useSelectedAccount, useSelectedProfile, useTranslation } from '../hooks';
+import type { SavedAssets } from '../hooks/useAssetsBalances';
 import { forgetAccount, validateAccount } from '../messaging';
 import WarningBox from '../popup/settings/partials/WarningBox';
-import { cleanupAuthorizedAccount, cleanupNotificationAccount, setStorage } from '../util';
+import { cleanupAuthorizedAccount, cleanupNotificationAccount, getStorage, setStorage } from '../util';
 import { PROFILE_TAGS, STORAGE_KEY } from '../util/constants';
 import { SharePopup } from '.';
 
@@ -66,6 +67,7 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
   const { address: _address, isExternal, name } = useAccount(address) ?? selectedAccount ?? {};
   const navigate = useNavigate();
   const isExtension = useIsExtensionPopup();
+  const { accountsAssets, setAccountsAssets } = useContext(AccountsAssetsContext);
 
   const { notify } = useAlerts();
 
@@ -129,6 +131,19 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
       const success = await forgetAccount(_address);
 
       if (success) {
+        if (accountsAssets?.balances?.[_address]) {
+          const latestStoredAssets = await getStorage(STORAGE_KEY.ASSETS, true).catch(() => undefined) as SavedAssets | undefined;
+          const baseAssets = latestStoredAssets?.balances ? latestStoredAssets : accountsAssets;
+          const updatedAssets: SavedAssets = {
+            ...baseAssets,
+            balances: { ...baseAssets.balances }
+          };
+
+          delete updatedAssets.balances[_address];
+          setAccountsAssets(updatedAssets);
+          await setStorage(STORAGE_KEY.ASSETS, updatedAssets, true);
+        }
+
         await Promise.allSettled([
           cleanupNotificationAccount(_address),
           cleanupAuthorizedAccount(_address)
