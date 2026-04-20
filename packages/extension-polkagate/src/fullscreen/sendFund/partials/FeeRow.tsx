@@ -222,7 +222,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs, transa
               }}
               token={feeInfo.token}
             />
-            <Logo assetSize='18px' genesisHash={genesisHash} logo={feeLogoInfo?.logo} />
+            <Logo assetSize='22px' genesisHash={genesisHash} logo={feeLogoInfo?.logo} />
             {showFeeSelector &&
               <OpenerButton
                 flip
@@ -263,7 +263,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs, transa
                 token={feeInfo.destinationFee?.token}
               />
               <Logo
-                assetSize='18px'
+                assetSize='22px'
                 chainName={inputs.recipientChain?.text}
                 logo={destinationFeeLogo}
                 subLogo={maybeDestinationChainFeeLogoInfo?.subLogo}

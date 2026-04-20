@@ -38,7 +38,7 @@ export default function FromToBox({ address, chainName, genesisHash, label }: Pr
           {label}
         </Typography>
         <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='start' sx={{ bgcolor: '#1B133C', border: '1px solid #2D1E4A', borderRadius: '6px', height: 'fit-content', px: '7px', textAlign: 'left' }}>
-          <Logo chainName={chainName} size={14} />
+          <Logo chainName={chainName} size={18} />
           <Typography color='primary.main' variant='B-1'>
             {toTitleCase(chainName)}
           </Typography>

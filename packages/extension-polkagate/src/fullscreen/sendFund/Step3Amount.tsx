@@ -185,7 +185,7 @@ export default function Step3Amount({ inputs, isContract, setInputs }: Props): R
           <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
             {t('Available')}
           </Typography>
-          <Logo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} token={inputs?.token} />
+          <Logo assetSize='20px' genesisHash={genesisHash} logo={logoInfo?.logo} token={inputs?.token} />
           <DisplayBalance
             balance={transferableBalance}
             decimal={decimal}

@@ -78,7 +78,7 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
                 genesisHash={token?.genesisHash}
                 logo={logoInfo?.logo}
                 subLogo={logoInfo?.subLogo}
-                subLogoPosition='5px -18px auto auto'
+                subLogoPosition='5px -13px auto auto'
               />
             )}
         </Grid>

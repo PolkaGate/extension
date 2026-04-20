@@ -48,7 +48,7 @@ export default function Step4Summary({ canPayFee, inputs, setInputs, transaction
           {t('Amount')}
         </Typography>
         <Stack alignItems='center' columnGap='8px' direction='row' justifyContent='start' sx={{ height: '45px' }}>
-          <Logo assetSize='32px' genesisHash={genesisHash} logo={logoInfo?.logo} token={inputs?.token} />
+          <Logo assetSize='36px' genesisHash={genesisHash} logo={logoInfo?.logo} token={inputs?.token} />
           <DisplayBalance
             balance={inputs.amountAsBN}
             decimal={inputs?.decimal}
