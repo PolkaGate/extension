@@ -14,7 +14,7 @@ import { useAccount, useAccountsOrder, useAlerts, useIsExtensionPopup, useProfil
 import type { SavedAssets } from '../hooks/useAssetsBalances';
 import { forgetAccount, validateAccount } from '../messaging';
 import WarningBox from '../popup/settings/partials/WarningBox';
-import { cleanupAuthorizedAccount, cleanupNotificationAccount, setStorage } from '../util';
+import { cleanupAuthorizedAccount, cleanupNotificationAccount, getStorage, setStorage } from '../util';
 import { PROFILE_TAGS, STORAGE_KEY } from '../util/constants';
 import { SharePopup } from '.';
 
@@ -132,9 +132,11 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
 
       if (success) {
         if (accountsAssets?.balances?.[_address]) {
+          const latestStoredAssets = await getStorage(STORAGE_KEY.ASSETS, true).catch(() => undefined) as SavedAssets | undefined;
+          const baseAssets = latestStoredAssets?.balances ? latestStoredAssets : accountsAssets;
           const updatedAssets: SavedAssets = {
-            ...accountsAssets,
-            balances: { ...accountsAssets.balances }
+            ...baseAssets,
+            balances: { ...baseAssets.balances }
           };
 
           delete updatedAssets.balances[_address];
