@@ -105,9 +105,8 @@ export default function useNativeAssetBalances(address: string | undefined, gene
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(isFetching?.fetching ?? {})?.length, formatted, _getBalances, refresh]);
 
-  // TODO - account?.balances won't work!!!!!! because since now accounts are on substrate mode!!! @AMIRKHANEF @Nick-1979
   useEffect(() => {
-    if (!chainName || !account || account?.genesisHash !== genesisHash) {
+    if (!chainName || !account) {
       return;
     }
 

@@ -46,9 +46,8 @@ export default function useBalances(address: string | undefined, genesisHash: st
     }
   }, [pooledBalance, balances, apiGenesisHash, genesisHash]);
 
-  // TODO - account?.balances won't work!!!!!! because since now accounts are on substrate mode!!! @AMIRKHANEF @Nick-1979
   useEffect(() => {
-    if (!address || !apiGenesisHash || apiGenesisHash !== account?.genesisHash || !overall || !chainName || !token || !decimal || account?.genesisHash !== genesisHash || account?.genesisHash !== overall.genesisHash) {
+    if (!address || !apiGenesisHash || apiGenesisHash !== genesisHash || !overall || !chainName || !token || !decimal || genesisHash !== overall.genesisHash) {
       return;
     }
 
@@ -77,7 +76,7 @@ export default function useBalances(address: string | undefined, genesisHash: st
 
     updateMeta(address, metaData).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, account?.genesisHash, address, apiGenesisHash, pooledBalance, genesisHash, chainName, decimal, overall, token]);
+  }, [Object.keys(account ?? {})?.length, address, apiGenesisHash, pooledBalance, genesisHash, chainName, decimal, overall, token]);
 
   if (maybeNonNativeAssetId) {
     return assetBalance;

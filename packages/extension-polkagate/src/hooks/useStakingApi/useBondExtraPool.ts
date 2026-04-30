@@ -28,7 +28,6 @@ export const useBondExtraPool = (
   const [bondAmount, setBondAmount] = useState<BN | null | undefined>();
 
   const staked = useMemo(() => stakingInfo.pool === undefined ? undefined : new BN(stakingInfo.pool?.member?.points ?? 0), [stakingInfo.pool]);
-  // const poolState = useMemo(() => String(stakingInfo.pool?.bondedPool?.state), [stakingInfo.pool?.bondedPool?.state]);
 
   const tx = useMemo(() => {
     if (!formatted || !bondExtra || !bondAmount) {

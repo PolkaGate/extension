@@ -168,7 +168,7 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
       ).catch(console.error);
   }, [address, navigate]);
 
-  const _genesisHash = type === 'ethereum' ? undefined : account?.genesisHash ?? POLKADOT_GENESIS;
+  const _genesisHash = type === 'ethereum' ? undefined : POLKADOT_GENESIS;
 
   return (
     <Stack alignItems='start' direction='column' justifyContent='flex-start' sx={{ ml: '5px', width: '100%', ...style }}>
