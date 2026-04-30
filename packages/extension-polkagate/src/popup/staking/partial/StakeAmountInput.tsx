@@ -9,7 +9,7 @@ import type { LogoInfo } from '../../../util/logo/resolveLogoInfo';
 import { Collapse, Container, Grid, Stack, styled, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Logo, DisplayBalance, GradientDivider, TwoToneText } from '../../../components';
+import { DisplayBalance, GradientDivider, Logo, TwoToneText } from '../../../components';
 import { useIsExtensionPopup } from '../../../hooks';
 import { amountToHuman } from '../../../util';
 
