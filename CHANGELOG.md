@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.7.3](https://github.com/polkagate/extension/compare/v2.7.2...v2.7.3) (2026-04-30)
+
+
+### Bug Fixes
+
+* resolve max bond extra issue in pool staking extension mode ([#2156](https://github.com/polkagate/extension/issues/2156)) ([9df6079](https://github.com/polkagate/extension/commit/9df6079d10f945adec9ba64040713390df6d91ab))
+
 ## [2.7.2](https://github.com/polkagate/extension/compare/v2.7.1...v2.7.2) (2026-04-17)
 
 
