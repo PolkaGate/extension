@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
-import { Logo, BackWithLabel, DisplayBalance, FadeOnScroll, FormatPrice, Motion } from '../../components';
+import { BackWithLabel, DisplayBalance, FadeOnScroll, FormatPrice, Logo, Motion } from '../../components';
 import { useAccountAssets, useBackground, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
@@ -19,6 +19,7 @@ import { toTitleCase } from '../../util';
 import resolveLogoInfo, { type LogoInfo } from '../../util/logo/resolveLogoInfo';
 import DailyChange from '../home/partial/DailyChange';
 import ReservedLockedPopup from './partial/ReservedLockedPopup';
+import Symbol from './partial/Symbol';
 import TokenDetailBox from './partial/TokenDetailBox';
 import TokenHistory from './partial/TokenHistory';
 import TokenStakingInfo from './partial/TokenStakingInfo';
@@ -86,9 +87,7 @@ function Tokens(): React.ReactElement {
             <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
               <Logo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-6px -8px auto auto' />
             </Grid>
-            <Typography color='text.secondary' variant='B-2'>
-              {token?.token}
-            </Typography>
+            <Symbol token={token?.token} />
             <FormatPrice
               commify
               decimalColor={theme.palette.text.secondary}
