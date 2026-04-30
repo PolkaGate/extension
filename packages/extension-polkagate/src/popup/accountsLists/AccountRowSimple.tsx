@@ -32,7 +32,7 @@ const OFFSET = 30;
 
 function AccountRowSimple({ account, isFirstAccount, isFirstProfile, isInSettingMode, isLast, isSelected, showDrag }: Props): React.ReactElement {
   const navigate = useNavigate();
-  const { address, genesisHash, name, type } = account;
+  const { address, name, type } = account;
   const [appliedAddress, setAppliedAddress] = useState<string>();
 
   useUpdateSelectedAccount(appliedAddress, false, () => navigate('/') as void);
@@ -51,7 +51,7 @@ function AccountRowSimple({ account, isFirstAccount, isFirstProfile, isInSetting
     setAppliedAddress(address);
   }, [address, isInSettingMode]);
 
-  const _genesisHash = type === 'ethereum' ? undefined : genesisHash ?? POLKADOT_GENESIS;
+  const _genesisHash = type === 'ethereum' ? undefined : POLKADOT_GENESIS;
 
   return (
     <motion.div
