@@ -9,7 +9,7 @@ import { MySkeleton } from '@polkadot/extension-polkagate/src/components';
 export default function Symbol({ token }: { token: string | undefined }): React.ReactElement {
   return (
     <>
-      {token
+      {token !== undefined
         ? <Typography color='text.secondary' variant='B-2'>
           {token}
         </Typography>
