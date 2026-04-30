@@ -1,6 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+//@ts-ignore
 import type { PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 import type { Content } from '../../partials/Review';

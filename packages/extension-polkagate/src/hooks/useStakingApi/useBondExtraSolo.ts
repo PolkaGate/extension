@@ -1,36 +1,17 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { PalletNominationPoolsPoolState } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
 import type { Content } from '../../partials/Review';
-import type { MyPoolInfo, PoolInfo } from '../../util/types';
 
-import { People, UserOctagon } from 'iconsax-react';
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { BN, BN_FIVE, BN_MAX_INTEGER, BN_ONE, BN_ZERO } from '@polkadot/util';
-
-import { EasyStakeSide, type SelectedEasyStakingType } from '../../fullscreen/stake/util/utils';
-import { getValue } from '../../popup/account/util';
-import { INITIAL_POOL_FILTER_STATE, poolFilterReducer } from '../../popup/staking/partial/PoolFilter';
-import { type RolesState, updateRoleReducer } from '../../popup/staking/pool-new/createPool/UpdateRoles';
-import { getStakingAsset } from '../../popup/staking/utils';
-import { amountToHuman, amountToMachine, calcPrice, isHexToBn, safeSubtraction } from '../../util';
-import { DATE_OPTIONS, POLKAGATE_POOL_IDS } from '../../util/constants';
-import useAccountAssets from '../useAccountAssets';
+import { amountToMachine, safeSubtraction } from '../../util';
 import useChainInfo from '../useChainInfo';
 import useEstimatedFee from '../useEstimatedFee';
 import useFormatted from '../useFormatted';
-import useIsExposed from '../useIsExposed';
-import usePool from '../usePool';
-import usePoolConst from '../usePoolConst';
-import usePoolStakingInfo from '../usePoolStakingInfo';
 import useSoloStakingInfo from '../useSoloStakingInfo';
-import useStakingConsts from '../useStakingConsts';
-import useTokenPriceBySymbol from '../useTokenPriceBySymbol';
 import useTranslation from '../useTranslation';
-
-
 
 export const useBondExtraSolo = (
   address: string | undefined,
@@ -113,4 +94,3 @@ export const useBondExtraSolo = (
     tx
   };
 };
- 
