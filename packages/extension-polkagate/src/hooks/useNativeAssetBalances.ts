@@ -112,45 +112,45 @@ export default function useNativeAssetBalances(address: string | undefined, gene
     const savedBalances = JSON.parse(account.balances ?? '{}') as SavedBalances;
     const chainBalance = savedBalances[chainName];
 
-    if (chainBalance) {
-      const { balances: sb, date, decimal: sDecimal, token: sToken } = chainBalance;
-
-      const maybeAssetId = sb['assetId'];
-      const isForeignAsset = maybeAssetId && String(maybeAssetId).startsWith('0x');
-      const assetId = maybeAssetId === undefined
-        ? undefined
-        : isForeignAsset
-          ? decodeMultiLocation(maybeAssetId as HexString)
-          : parseInt(maybeAssetId);
-
-      const lastBalances = {
-        ED: new BN(sb['ED'] || '0'),
-        assetId,
-        availableBalance: new BN(sb['availableBalance']),
-        chainName,
-        date,
-        decimal: sDecimal,
-        freeBalance: new BN(sb['freeBalance']),
-        frozenBalance: new BN(sb['frozenBalance'] || '0'),
-        genesisHash: sb['genesisHash'],
-        lockedBalance: new BN(sb['lockedBalance']),
-        pooledBalance: new BN(sb['pooledBalance']),
-        reservedBalance: new BN(sb['reservedBalance']),
-        token: sToken,
-        vestedBalance: new BN(sb['vestedBalance']),
-        vestedClaimable: new BN(sb['vestedClaimable']),
-        votingBalance: new BN(sb['votingBalance'])
-      } as BalancesInfo;
-
-      setBalances({
-        ...lastBalances,
-        soloTotal: stakingAccount?.stakingLedger?.total as unknown as BN
-      });
+    if (!chainBalance) {
+      setBalances(undefined);
 
       return;
     }
 
-    setBalances(undefined);
+    const { balances: sb, date, decimal: sDecimal, token: sToken } = chainBalance;
+
+    const maybeAssetId = sb['assetId'];
+    const isForeignAsset = maybeAssetId && String(maybeAssetId).startsWith('0x');
+    const assetId = maybeAssetId === undefined
+      ? undefined
+      : isForeignAsset
+        ? decodeMultiLocation(maybeAssetId as HexString)
+        : parseInt(maybeAssetId);
+
+    const lastBalances = {
+      ED: new BN(sb['ED'] || '0'),
+      assetId,
+      availableBalance: new BN(sb['availableBalance']),
+      chainName,
+      date,
+      decimal: sDecimal,
+      freeBalance: new BN(sb['freeBalance']),
+      frozenBalance: new BN(sb['frozenBalance'] || '0'),
+      genesisHash: sb['genesisHash'],
+      lockedBalance: new BN(sb['lockedBalance']),
+      pooledBalance: new BN(sb['pooledBalance']),
+      reservedBalance: new BN(sb['reservedBalance']),
+      token: sToken,
+      vestedBalance: new BN(sb['vestedBalance']),
+      vestedClaimable: new BN(sb['vestedClaimable']),
+      votingBalance: new BN(sb['votingBalance'])
+    } as BalancesInfo;
+
+    setBalances({
+      ...lastBalances,
+      soloTotal: stakingAccount?.stakingLedger?.total as unknown as BN
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount]);
 
