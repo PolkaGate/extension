@@ -32,15 +32,14 @@ export default function useNativeAssetBalances(address: string | undefined, gene
 
   const isFetchingNativeTokenOfAssetHub = genesisHash && ASSET_HUBS.includes(genesisHash);
 
-  const token = api?.registry.chainTokens[0];
-  const decimal = api?.registry.chainDecimals[0];
-
   const _getBalances = useCallback(() => {
-    if (!chainName || !genesisHash || api?.genesisHash?.toString() !== genesisHash || !decimal || !token || !formatted) {
+    if (!chainName || !genesisHash || api?.genesisHash?.toString() !== genesisHash || !formatted) {
       return;
     }
 
     const ED = api.consts['balances'] ? api.consts['balances']['existentialDeposit'] as unknown as BN : BN_ZERO;
+    const token = api.registry.chainTokens[0];
+    const decimal = api.registry.chainDecimals[0];
 
     api.derive.balances?.all(formatted).then((allBalances) => {
       // @ts-ignore
@@ -70,10 +69,10 @@ export default function useNativeAssetBalances(address: string | undefined, gene
       }).catch(console.error);
     }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, genesisHash, chainName, decimal, stakingAccount, token, isFetchingNativeTokenOfAssetHub, balances, formatted, isFetching.fetching[String(formatted)]?.['length'], setRefresh]);
+  }, [api?.genesisHash, genesisHash, chainName, stakingAccount, isFetchingNativeTokenOfAssetHub, balances, formatted, isFetching.fetching[String(formatted)]?.['length'], setRefresh]);
 
   useEffect(() => {
-    if (!formatted || !token || !decimal || !chainName || api?.genesisHash?.toString() !== genesisHash) {
+    if (!formatted || api?.genesisHash?.toString() !== genesisHash || !chainName) {
       return;
     }
 
@@ -88,10 +87,10 @@ export default function useNativeAssetBalances(address: string | undefined, gene
       _getBalances();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, genesisHash, chainName, decimal, formatted, _getBalances, isFetching.fetching[String(formatted)]?.['length'], token]);
+  }, [api?.genesisHash, chainName, genesisHash, formatted, _getBalances, isFetching.fetching[String(formatted)]?.['length']]);
 
   useEffect(() => {
-    if (refresh) {
+    if (refresh && formatted) {
       setBalances(undefined);
       setNewBalances(undefined);
 
@@ -106,15 +105,15 @@ export default function useNativeAssetBalances(address: string | undefined, gene
   }, [Object.keys(isFetching?.fetching ?? {})?.length, formatted, _getBalances, refresh]);
 
   useEffect(() => {
-    if (!chainName || !account) {
+    if (!chainName || !account || address !== account.address) {
       return;
     }
 
-    // to LOAD saved balances
-    const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
+    const savedBalances = JSON.parse(account.balances ?? '{}') as SavedBalances;
+    const chainBalance = savedBalances[chainName];
 
-    if (savedBalances[chainName]) {
-      const sb = savedBalances[chainName].balances;
+    if (chainBalance) {
+      const { balances: sb, date, decimal: sDecimal, token: sToken } = chainBalance;
 
       const maybeAssetId = sb['assetId'];
       const isForeignAsset = maybeAssetId && String(maybeAssetId).startsWith('0x');
@@ -129,15 +128,15 @@ export default function useNativeAssetBalances(address: string | undefined, gene
         assetId,
         availableBalance: new BN(sb['availableBalance']),
         chainName,
-        date: savedBalances[chainName].date,
-        decimal: savedBalances[chainName].decimal,
+        date,
+        decimal: sDecimal,
         freeBalance: new BN(sb['freeBalance']),
         frozenBalance: new BN(sb['frozenBalance'] || '0'),
         genesisHash: sb['genesisHash'],
         lockedBalance: new BN(sb['lockedBalance']),
         pooledBalance: new BN(sb['pooledBalance']),
         reservedBalance: new BN(sb['reservedBalance']),
-        token: savedBalances[chainName].token,
+        token: sToken,
         vestedBalance: new BN(sb['vestedBalance']),
         vestedClaimable: new BN(sb['vestedClaimable']),
         votingBalance: new BN(sb['votingBalance'])
@@ -153,7 +152,7 @@ export default function useNativeAssetBalances(address: string | undefined, gene
 
     setBalances(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount, genesisHash]);
+  }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount]);
 
   if (onlyNew) {
     return newBalances; // returns balances that have been fetched recently and are not from the local storage, and it does not include the pooledBalance
