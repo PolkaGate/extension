@@ -47,7 +47,9 @@ export default function useBalances(address: string | undefined, genesisHash: st
   }, [pooledBalance, balances, apiGenesisHash, genesisHash]);
 
   useEffect(() => {
-    if (!address || !apiGenesisHash || apiGenesisHash !== genesisHash || !overall || !chainName || !token || !decimal || genesisHash !== overall.genesisHash) {
+    if (!address || !account || account.address !== address ||
+      !chainName || !token || !decimal || !genesisHash ||
+      apiGenesisHash !== genesisHash || overall?.genesisHash !== genesisHash) {
       return;
     }
 
@@ -70,13 +72,17 @@ export default function useBalances(address: string | undefined, genesisHash: st
       votingBalance: overall.votingBalance.toString()
     } as unknown as Record<string, string>;
 
-    // add this chain balances
-    savedBalances[chainName] = { balances, date: Date.now(), decimal, token };
+    savedBalances[chainName] = {
+      balances,
+      date: Date.now(),
+      decimal,
+      token
+    };
     const metaData = JSON.stringify({ balances: JSON.stringify(savedBalances) });
 
     updateMeta(address, metaData).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, address, apiGenesisHash, pooledBalance, genesisHash, chainName, decimal, overall, token]);
+  }, [Object.keys(account ?? {})?.length, address, apiGenesisHash, genesisHash, chainName, decimal, overall, token]);
 
   if (maybeNonNativeAssetId) {
     return assetBalance;
