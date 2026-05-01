@@ -248,7 +248,7 @@ export default function useSoloStakingInfo(address: string | undefined, genesisH
   }, [rewards, soloStakingInfo]);
 
   useEffect(() => {
-    if (soloStakingInfo?.rewards && soloStakingInfo?.availableBalanceToStake) { // time to save info in to storage
+    if (soloStakingInfo?.rewards && soloStakingInfo?.availableBalanceToStake) { // ready to persist staking info to storage
       needsStorageUpdate.current = true;
     }
   }, [soloStakingInfo?.availableBalanceToStake, soloStakingInfo?.rewards]);
