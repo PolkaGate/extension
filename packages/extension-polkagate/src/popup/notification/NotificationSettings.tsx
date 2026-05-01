@@ -10,7 +10,7 @@ import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionCard, BackWithLabel, Motion, MySwitch } from '../../components';
-import { useSelectedAccount, useTranslation } from '../../hooks';
+import { useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { SETTING_PAGES } from '../settings';
 import useNotificationSettings, { Popups } from './hook/useNotificationSettings';
@@ -29,6 +29,7 @@ export default function NotificationSettings() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const selectedAddress = useSelectedAccount()?.address;
+  const isDark = useIsDark();
 
   const { closePopup,
     notificationSetting,
@@ -61,7 +62,7 @@ export default function NotificationSettings() {
               onClick={toggleNotification}
               showChevron={false}
               showColorBall={false}
-              style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
+              style={{ ...CARD_STYLE, bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? undefined : '1px solid #DDE3F4' }}
               title={t('Enable Notifications')}
             >
               <MySwitch
@@ -77,7 +78,7 @@ export default function NotificationSettings() {
               onClick={toggleReceivedFunds}
               showChevron={false}
               showColorBall={false}
-              style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
+              style={{ ...CARD_STYLE, bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? undefined : '1px solid #DDE3F4' }}
               title={t('Enable Received Funds')}
             >
               <MySwitch
@@ -94,7 +95,7 @@ export default function NotificationSettings() {
               style={{ ...CARD_STYLE }}
               title={t('Accounts')}
             >
-              <Typography color='#AA83DC' sx={{ bgcolor: '#BFA1FF26', borderRadius: '10px', mr: '2px', p: '3px 10px' }} variant='B-3'>
+              <Typography color={isDark ? '#AA83DC' : '#7A69A8'} sx={{ bgcolor: isDark ? '#BFA1FF26' : '#EEF2FB', borderRadius: '10px', mr: '2px', p: '3px 10px' }} variant='B-3'>
                 {notificationSetting.accounts?.length}
               </Typography>
             </ActionCard>

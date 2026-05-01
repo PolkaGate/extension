@@ -53,10 +53,11 @@ interface PoolStashIdSocialsProps {
 
 export const PoolStashIdSocials = ({ poolDetail }: PoolStashIdSocialsProps) => {
   const theme = useTheme();
-  const bgColor = '#FFFFFF1A';
   const isExtension = useIsExtensionPopup();
+  const isLightExtension = isExtension && theme.palette.mode === 'light';
+  const bgColor = isLightExtension ? '#F3F6FD' : '#FFFFFF1A';
 
-  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
+  const color = useMemo(() => isLightExtension ? '#745E9F' : isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, isLightExtension, theme.palette.text.highlight]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', m: 0, width: '32%' }}>
@@ -80,9 +81,11 @@ interface PoolIdentityDetailProps {
 }
 
 const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentityDetailProps) => {
+  const theme = useTheme();
   const { chainName } = useChainInfo(genesisHash, true);
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const isLight = theme.palette.mode === 'light';
 
   const isOnEasyStake = useMemo(() => pathname.includes('easyStake'), [pathname]);
 
@@ -105,30 +108,30 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentit
     <Stack direction='column' sx={{ p: '12px', width: '100%' }}>
       <Container disableGutters sx={{ alignItems: 'flex-start', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <PoolStashIdSocials poolDetail={poolDetail} />
-        <Grid container item sx={{ border: '8px solid #00000033', borderRadius: '999px', height: 'fit-content', width: 'fit-content' }}>
+        <Grid container item sx={{ border: isLight ? '8px solid #EEF2FB' : '8px solid #00000033', borderRadius: '999px', height: 'fit-content', width: 'fit-content' }}>
           <PoolIdenticon
             poolInfo={poolDetail}
             size={48}
           />
         </Grid>
         <Grid container item sx={{ gap: '4px', justifyContent: 'flex-end', width: '32%' }}>
-          <Chart21 color='#809ACB' onClick={onRewardChart} size='24' style={{ backgroundColor: '#FFFFFF1A', borderRadius: '999px', cursor: 'pointer', padding: '4px' }} variant='Bulk' />
+          <Chart21 color={isLight ? '#745E9F' : '#809ACB'} onClick={onRewardChart} size='24' style={{ backgroundColor: isLight ? '#F3F6FD' : '#FFFFFF1A', borderRadius: '999px', cursor: 'pointer', padding: '4px' }} variant='Bulk' />
           <Link
             href={link}
             rel='noreferrer'
-            sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
+            sx={{ alignItems: 'center', bgcolor: isLight ? '#F3F6FD' : '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
             target='_blank'
             underline='none'
           >
             <Subscan
-              color='#809ACB'
+              color={isLight ? '#745E9F' : '#809ACB'}
             />
           </Link>
         </Grid>
       </Container>
       <Container disableGutters sx={{ alignItems: 'center', justifyContent: 'center', width: '100%' }}>
         <Grid container item justifyContent='center' sx={{ columnGap: '4px', my: '6px' }}>
-          <Typography color='text.primary' variant='B-2'>
+          <Typography color={isLight ? '#4D3A73' : 'text.primary'} variant='B-2'>
             {poolDetail.metadata}
             <Typography color={textColor} sx={{ bgcolor, borderRadius: '10px', ml: '6px', p: '4px 6px' }} textTransform='uppercase' variant='B-5'>
               {poolStatus}
@@ -162,12 +165,13 @@ export const PoolMembers = ({ genesisHash, maxHeight = '220px', members, totalSt
   const { decimal, token } = useChainInfo(genesisHash, true);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isExtension = useIsExtensionPopup();
+  const isLight = theme.palette.mode === 'light';
 
-  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
+  const color = useMemo(() => isLight ? '#745E9F' : isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, isLight, theme.palette.text.highlight]);
 
   return (
     <>
-      <Stack direction='column' ref={containerRef} sx={{ bgcolor: isExtension ? '#222540A6' : '#1B133C', borderRadius: '10px', gap: '12px', maxHeight, overflow: 'hidden', overflowY: 'auto', p: '12px', width: '100%' }}>
+      <Stack direction='column' ref={containerRef} sx={{ bgcolor: isLight ? '#FFFFFF' : isExtension ? '#222540A6' : '#1B133C', border: isLight ? '1px solid #E3E8F7' : 'none', borderRadius: '10px', gap: '12px', maxHeight, overflow: 'hidden', overflowY: 'auto', p: '12px', width: '100%' }}>
         <Stack direction='row' sx={{ justifyContent: 'space-between', width: '100%' }}>
           <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='40%'>
             {t('Identity')}
@@ -238,11 +242,12 @@ export const PoolReward = ({ genesisHash, totalPoolReward, totalPoolRewardAsFiat
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const isExtension = useIsExtensionPopup();
+  const isLight = theme.palette.mode === 'light';
 
-  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
+  const color = useMemo(() => isLight ? '#745E9F' : isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, isLight, theme.palette.text.highlight]);
 
   return (
-    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#222540A6' : '#1B133C', borderRadius: '10px', gap: '18px', p: '12px', width: '100%' }}>
+    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isLight ? '#FFFFFF' : isExtension ? '#222540A6' : '#1B133C', border: isLight ? '1px solid #E3E8F7' : 'none', borderRadius: '10px', gap: '18px', p: '12px', width: '100%' }}>
       <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='100%'>
         {t('Pool Claimable Reward')}
       </Typography>
@@ -276,12 +281,13 @@ export const PoolNominations = ({ genesisHash, maxHeight = '220px', nominations 
   const { chainName } = useChainInfo(genesisHash, true);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isExtension = useIsExtensionPopup();
+  const isLight = theme.palette.mode === 'light';
 
-  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
+  const color = useMemo(() => isLight ? '#745E9F' : isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, isLight, theme.palette.text.highlight]);
 
   return (
     <>
-      <Stack direction='column' ref={containerRef} sx={{ bgcolor: isExtension ? '#222540A6' : '#1B133C', borderRadius: '10px', gap: '12px', maxHeight, overflow: 'hidden', overflowY: 'auto', p: '12px', width: '100%' }}>
+      <Stack direction='column' ref={containerRef} sx={{ bgcolor: isLight ? '#FFFFFF' : isExtension ? '#222540A6' : '#1B133C', border: isLight ? '1px solid #E3E8F7' : 'none', borderRadius: '10px', gap: '12px', maxHeight, overflow: 'hidden', overflowY: 'auto', p: '12px', width: '100%' }}>
         <Typography color={color} letterSpacing='1px' textAlign='left' textTransform='uppercase' variant='S-1' width='100%'>
           {t('Pool nominated validators')}
         </Typography>
@@ -309,7 +315,7 @@ export const PoolNominations = ({ genesisHash, maxHeight = '220px', nominations 
                     <Link
                       href={link}
                       rel='noreferrer'
-                      sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '20px', justifyContent: 'center', width: '20px' }}
+                      sx={{ alignItems: 'center', bgcolor: isLight ? '#F3F6FD' : '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '20px', justifyContent: 'center', width: '20px' }}
                       target='_blank'
                       underline='none'
                     >
@@ -341,25 +347,26 @@ interface CollapseSectionProp {
 export const CollapseSection = memo(function CollapseSectionMemo({ TitleIcon, children, notShow, onClick, open, sideText, title }: CollapseSectionProp) {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
+  const isLight = theme.palette.mode === 'light';
 
-  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
+  const color = useMemo(() => isLight ? '#745E9F' : isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, isLight, theme.palette.text.highlight]);
 
   return (
-    <Collapse collapsedSize='44px' in={open} sx={{ bgcolor: '#060518', borderRadius: '14px', display: notShow ? 'none' : 'block', p: '4px' }}>
+    <Collapse collapsedSize='44px' in={open} sx={{ bgcolor: isLight ? '#FFFFFF' : '#060518', border: isLight ? '1px solid #DDE3F4' : 'none', borderRadius: '14px', boxShadow: isLight ? '0px 10px 24px rgba(148, 163, 184, 0.12)' : 'none', display: notShow ? 'none' : 'block', p: '4px' }}>
       <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '6px', p: '8px 14px 11px' }}>
         {TitleIcon}
-        <Typography color={open ? '#596AFF' : theme.palette.text.primary} sx={{ transition: 'all 150ms ease-out', width: 'fit-content' }} variant='B-2'>
+        <Typography color={open ? (isLight ? '#745E9F' : '#596AFF') : theme.palette.text.primary} sx={{ transition: 'all 150ms ease-out', width: 'fit-content' }} variant='B-2'>
           {title}
         </Typography>
-        <ArrowDown2 color={open ? '#596AFF' : color} size='17' style={{ rotate: open ? '180deg' : 'none', transition: 'all 150ms ease-out' }} />
+        <ArrowDown2 color={open ? (isLight ? '#745E9F' : '#596AFF') : color} size='17' style={{ rotate: open ? '180deg' : 'none', transition: 'all 150ms ease-out' }} />
         {sideText &&
           <Grid container item sx={{ alignItems: 'center', justifyContent: 'flex-end' }} xs>
-            <Typography color={color} sx={{ bgcolor: isExtension ? '#809ACB33' : '#2D1E4A', borderRadius: '8px', p: '2px 3px' }} variant='B-4'>
+            <Typography color={color} sx={{ bgcolor: isLight ? '#EEF2FB' : isExtension ? '#809ACB33' : '#2D1E4A', borderRadius: '8px', p: '2px 3px' }} variant='B-4'>
               {sideText}
             </Typography>
           </Grid>}
       </Container>
-      <Stack direction='column' sx={{ bgcolor: isExtension ? '#222540A6' : '#1B133C', borderRadius: '10px', position: 'relative' }}>
+      <Stack direction='column' sx={{ bgcolor: isLight ? '#FFFFFF' : isExtension ? '#222540A6' : '#1B133C', border: isLight ? '1px solid #E3E8F7' : 'none', borderRadius: '10px', position: 'relative' }}>
         {children}
       </Stack>
     </Collapse>
@@ -377,9 +384,10 @@ export const RoleItem = ({ address, genesisHash, role }: RoleItemProps) => {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
   const isExtension = useIsExtensionPopup();
+  const isLight = theme.palette.mode === 'light';
   const { link } = getLink(chainName, 'account', address);
 
-  const color = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
+  const color = useMemo(() => isLight ? '#745E9F' : isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, isLight, theme.palette.text.highlight]);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', px: '18px' }}>
@@ -395,7 +403,7 @@ export const RoleItem = ({ address, genesisHash, role }: RoleItemProps) => {
           aria-disabled={!address}
           href={link}
           rel='noreferrer'
-          sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '20px', justifyContent: 'center', width: '20px' }}
+          sx={{ alignItems: 'center', bgcolor: isLight ? '#F3F6FD' : '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '20px', justifyContent: 'center', width: '20px' }}
           target='_blank'
           underline='none'
         >
@@ -419,6 +427,7 @@ interface PoolDetailProps {
 export default function PoolDetail({ comprehensive, genesisHash, handleClose, openMenu, poolDetail }: PoolDetailProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const membersRef = useRef<{ accountId: string; member: { points: number; poolId: number } }[]>([]);
@@ -473,11 +482,11 @@ export default function PoolDetail({ comprehensive, genesisHash, handleClose, op
       {poolDetail &&
         <Container disableGutters sx={{ height: '100%', width: '100%' }}>
           <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-            <CustomCloseSquare color='#809ACB' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
+            <CustomCloseSquare color={isLight ? '#8C78B2' : '#809ACB'} onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
           </Grid>
-          <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#110F2A', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1 }}>
-            <BlueGradient style={{ top: '-120px' }} />
-            <DetailGradientBox />
+          <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: isLight ? '#F8FAFF' : '#110F2A', border: '2px solid', borderColor: isLight ? '#E3E8F7' : '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1 }}>
+            {!isLight && <BlueGradient style={{ top: '-120px' }} />}
+            {!isLight && <DetailGradientBox />}
             <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
               <PoolIdentityDetail
                 genesisHash={genesisHash}
@@ -487,19 +496,19 @@ export default function PoolDetail({ comprehensive, genesisHash, handleClose, op
               <GradientDivider style={{ mb: '12px' }} />
               <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '4px', justifyContent: 'space-between', p: '0 12px 0 10px' }}>
                 <StakingInfoStackWithIcon
-                  Icon={<SnowFlake color={theme.palette.text.highlight} size='18' />}
+                  Icon={<SnowFlake color={isLight ? '#745E9F' : theme.palette.text.highlight} size='18' />}
                   amount={poolDetail.bondedPool?.points}
                   decimal={decimal}
                   title={t('Staked')}
                   token={token}
                 />
                 <StakingInfoStackWithIcon
-                  Icon={<DiscountCircle color={theme.palette.text.highlight} size='24' variant='Bulk' />}
+                  Icon={<DiscountCircle color={isLight ? '#745E9F' : theme.palette.text.highlight} size='24' variant='Bulk' />}
                   text={String(commission) + '%'}
                   title={t('Commission')}
                 />
                 <StakingInfoStackWithIcon
-                  Icon={<People color={theme.palette.text.highlight} size='24' variant='Bulk' />}
+                  Icon={<People color={isLight ? '#745E9F' : theme.palette.text.highlight} size='24' variant='Bulk' />}
                   text={poolDetail.bondedPool?.memberCounter.toString()}
                   title={t('Members')}
                 />
@@ -507,7 +516,7 @@ export default function PoolDetail({ comprehensive, genesisHash, handleClose, op
               <GradientDivider style={{ m: '12px 0 7px' }} />
               <Stack direction='column' sx={{ gap: '8px', width: '100%' }}>
                 <CollapseSection
-                  TitleIcon={<FlashCircle color={collapse['Roles'] ? '#596AFF' : theme.palette.text.highlight} size='18' variant='Bulk' />}
+                  TitleIcon={<FlashCircle color={collapse['Roles'] ? (isLight ? '#745E9F' : '#596AFF') : isLight ? '#745E9F' : theme.palette.text.highlight} size='18' variant='Bulk' />}
                   onClick={handleCollapses('Roles')}
                   open={collapse['Roles']}
                   title={t('Roles')}
@@ -526,7 +535,7 @@ export default function PoolDetail({ comprehensive, genesisHash, handleClose, op
                   </Stack>
                 </CollapseSection>
                 <CollapseSection
-                  TitleIcon={<CommandSquare color={collapse['Ids'] ? '#596AFF' : theme.palette.text.highlight} size='18' variant='Bulk' />}
+                  TitleIcon={<CommandSquare color={collapse['Ids'] ? (isLight ? '#745E9F' : '#596AFF') : isLight ? '#745E9F' : theme.palette.text.highlight} size='18' variant='Bulk' />}
                   onClick={handleCollapses('Ids')}
                   open={collapse['Ids']}
                   title={t('Ids')}
@@ -545,7 +554,7 @@ export default function PoolDetail({ comprehensive, genesisHash, handleClose, op
                   </Stack>
                 </CollapseSection>
                 <CollapseSection
-                  TitleIcon={<People color={collapse['Members'] ? '#596AFF' : theme.palette.text.highlight} size='15' variant='Bulk' />}
+                  TitleIcon={<People color={collapse['Members'] ? (isLight ? '#745E9F' : '#596AFF') : isLight ? '#745E9F' : theme.palette.text.highlight} size='15' variant='Bulk' />}
                   notShow={!comprehensive}
                   onClick={handleCollapses('Members')}
                   open={collapse['Members']}
@@ -559,7 +568,7 @@ export default function PoolDetail({ comprehensive, genesisHash, handleClose, op
                   />
                 </CollapseSection>
                 <CollapseSection
-                  TitleIcon={<BuyCrypto color={collapse['Rewards'] ? '#596AFF' : theme.palette.text.highlight} size='15' variant='Bulk' />}
+                  TitleIcon={<BuyCrypto color={collapse['Rewards'] ? (isLight ? '#745E9F' : '#596AFF') : isLight ? '#745E9F' : theme.palette.text.highlight} size='15' variant='Bulk' />}
                   notShow={!comprehensive}
                   onClick={handleCollapses('Rewards')}
                   open={collapse['Rewards']}
@@ -572,7 +581,7 @@ export default function PoolDetail({ comprehensive, genesisHash, handleClose, op
                   />
                 </CollapseSection>
                 <CollapseSection
-                  TitleIcon={<Discover color={collapse['Nominations'] ? '#596AFF' : theme.palette.text.highlight} size='15' variant='Bulk' />}
+                  TitleIcon={<Discover color={collapse['Nominations'] ? (isLight ? '#745E9F' : '#596AFF') : isLight ? '#745E9F' : theme.palette.text.highlight} size='15' variant='Bulk' />}
                   notShow={!comprehensive}
                   onClick={handleCollapses('Nominations')}
                   open={collapse['Nominations']}

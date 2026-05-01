@@ -45,7 +45,7 @@ function TopPageElement({ isExtension }: { isExtension: boolean }) {
         src={info as string}
         sx={{ height: '100px', width: '100px', zIndex: 2 }}
       />
-      <Typography color='#BEAAD8' sx={{ m: '20px 0 15px' }} variant='B-4'>
+      <Typography color='text.secondary' sx={{ m: '20px 0 15px' }} variant='B-4'>
         {description}
       </Typography>
     </>

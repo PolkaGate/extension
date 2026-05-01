@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Avatar, Container, Grid, Typography } from '@mui/material';
+import { Avatar, Container, Grid, Typography, useTheme } from '@mui/material';
 import React, { } from 'react';
 
 import { MySkeleton } from '../components';
@@ -12,8 +12,11 @@ interface Props {
 }
 
 function DappInfo({ dappName, favicon }: Props): React.ReactElement {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '14px', display: 'flex', justifyContent: 'center', my: '15px', p: '4px', width: '90%' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? '#BEAAD833' : '#DDE3F4', borderRadius: '14px', display: 'flex', justifyContent: 'center', my: '15px', p: '4px', width: '90%' }}>
       {favicon
         ? (<Avatar
           src={favicon ?? undefined}

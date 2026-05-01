@@ -4,7 +4,7 @@
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
-import { Container, Dialog, Grid, styled, Typography } from '@mui/material';
+import { Container, Dialog, Grid, styled, Typography, useTheme } from '@mui/material';
 import { ArrowCircleLeft, DocumentCopy, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
@@ -17,14 +17,14 @@ import { isEthereumAddress } from '@polkadot/util-crypto';
 import { Logo, NeonButton, SearchField, Transition } from '../../components';
 import MySnackbar from '../../components/MySnackbar';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
-import { useFormatted, useGenesisHashOptions, useSelectedAccount, useTranslation } from '../../hooks';
+import { useFormatted, useGenesisHashOptions, useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util';
 import BackButton from '../accountsLists/BackButton';
 
-const ListItem = styled(Grid)(() => ({
+const ListItem = styled(Grid)<{ isdark: boolean }>(({ isdark }) => ({
   '&:hover': {
-    backgroundColor: '#6743944D'
+    backgroundColor: isdark ? '#6743944D' : '#EEF2FB'
   },
   alignItems: 'center',
   borderRadius: '12px',
@@ -43,6 +43,7 @@ interface AddressComponentProp {
 
 function AddressComponent({ address, chain }: AddressComponentProp) {
   const { t } = useTranslation();
+  const isDark = useIsDark();
   const { isHovered, ref } = useIsHovered();
   const [showSnackbar, setShowSnackbar] = useState(false);
 
@@ -57,7 +58,7 @@ function AddressComponent({ address, chain }: AddressComponentProp) {
 
   return (
     <>
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? '#BEAAD833' : '#DDE3F4', borderRadius: '12px', p: '3px' }}>
         <Grid alignItems='center' columnGap='8px' container item pl='10px' width='fit-content'>
           <Logo chainName={chainName} size={18} />
           <Typography color='text.secondary' variant='B-4'>
@@ -84,6 +85,7 @@ interface SelectChainProp {
 
 function SelectNetwork({ isEthereum, setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
+  const isDark = useIsDark();
   const networks = useGenesisHashOptions({ isEthereum, withRelay: false });
 
   const [keyword, setKeyword] = useState<string>();
@@ -126,7 +128,7 @@ function SelectNetwork({ isEthereum, setSelectedChain }: SelectChainProp) {
 
             return (
               <React.Fragment key={index}>
-                <ListItem container item onClick={handleChainSelect(chain)}>
+                <ListItem container isdark={isDark} item onClick={handleChainSelect(chain)}>
                   <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
                     <Logo chainName={chainName} size={24} />
                     <Typography color='text.primary' variant='B-2'>
@@ -229,6 +231,8 @@ interface Props {
  * Only has been used in extension mode!
  */
 export default function Receive({ openPopup, setOpenPopup }: Props) {
+  const theme = useTheme();
+  const isDark = useIsDark();
   const selectedAddress = useSelectedAccount();
 
   const [selectedChain, setSelectedChain] = useState<DropdownOption | undefined>();
@@ -252,7 +256,9 @@ export default function Receive({ openPopup, setOpenPopup }: Props) {
         backdrop: {
           sx: {
             backdropFilter: 'blur(10px)',
-            background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
+            background: isDark
+              ? 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)'
+              : 'radial-gradient(50% 44.61% at 50% 50%, rgba(244, 247, 255, 0) 0%, rgba(228, 234, 248, 0.72) 100%)',
             bgcolor: 'transparent'
           }
         }
@@ -264,7 +270,7 @@ export default function Receive({ openPopup, setOpenPopup }: Props) {
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
           <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', p: '10px', position: 'relative' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: isDark ? '#1B133C' : theme.palette.background.paper, border: '2px solid', borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', p: '10px', position: 'relative' }}>
           <div style={{ position: 'relative', zIndex: 1 }}>
             {!selectedChain &&
               <SelectNetwork

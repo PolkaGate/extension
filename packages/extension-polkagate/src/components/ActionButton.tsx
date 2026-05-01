@@ -79,12 +79,13 @@ export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 's
   const GeneralButtonStyle = {
     '&:hover': {
       background: isDark ? isBlueish ? '#2E2948' : '#674394' : '#EFF1F9',
+      borderColor: isDark ? undefined : '#DDE3F4',
       transition: 'all 250ms ease-out'
     },
     background: isDark ? isBlueish ? '#809ACB26' : '#2D1E4A' : '#FFFFFF',
-    border: isBlueish ? '1px solid #2E2948' : 'none',
+    border: isDark ? (isBlueish ? '1px solid #2E2948' : 'none') : '1px solid #DDE3F4',
     borderRadius: `${(style as Record<string, any>)?.['borderRadius'] ?? borderRadius}`,
-    boxShadow: 'unset',
+    boxShadow: isDark ? 'unset' : '0 8px 20px rgba(133, 140, 176, 0.10)',
     justifyContent: 'flex-start',
     padding: '10px 24px',
     transition: 'all 250ms ease-out',
@@ -159,7 +160,7 @@ export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 's
         />}
       sx={{
         '&.Mui-disabled': {
-          backgroundColor: '#2D1E4A4D'
+          backgroundColor: isDark ? '#2D1E4A4D' : '#E4E7F4'
         },
         ...GeneralButtonStyle,
         ...StartIconStyle,

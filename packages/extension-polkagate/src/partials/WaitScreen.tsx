@@ -23,6 +23,7 @@ function Content({ isModal }: Props) {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [text, setText] = useState({ highlightText: t('working'), title: t('We are working on your transaction.') });
   const [lottiePlay, setLottiePlay] = useState(false);
@@ -71,7 +72,20 @@ function Content({ isModal }: Props) {
       onAnimationComplete={onAnimationComplete}
       variant={isModal ? 'fade' : 'slide'}
     >
-      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : 'transparent', borderRadius: '14px', gap: '12px', justifyContent: 'center', m: '0 15px 15px', p: '0 32px 32px' }}>
+      <Stack
+        direction='column'
+        sx={{
+          alignItems: 'center',
+          bgcolor: isExtension ? (isDark ? '#110F2A' : '#FFFFFF') : 'transparent',
+          border: isExtension && !isDark ? '1px solid #DDE3F4' : 'none',
+          borderRadius: '14px',
+          boxShadow: isExtension && !isDark ? '0 10px 24px rgba(133, 140, 176, 0.12)' : 'none',
+          gap: '12px',
+          justifyContent: 'center',
+          m: '0 15px 15px',
+          p: '0 32px 32px'
+        }}
+      >
         <DotLottieReact
           autoplay={false}
           dotLottieRefCallback={setDotLottie}

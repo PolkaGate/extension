@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack } from '@mui/material';
+import { Grid, Stack, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useRef } from 'react';
 
 import { Logo, DecisionButtons, FadeOnScroll } from '@polkadot/extension-polkagate/src/components/index';
@@ -23,7 +23,13 @@ interface Props {
 
 function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const refContainer = useRef(null);
+  const isDark = theme.palette.mode === 'dark';
+  const modalBodyBg = isDark ? '#1B133C' : '#F5F6FF';
+  const fadeBackgroundColor = isDark ? modalBodyBg : 'transparent';
+  const toggleBg = isDark ? '#05091C' : '#FFFFFF';
+  const toggleBorderColor = isDark ? 'transparent' : '#DDE3F4';
 
   const isFetching = useRef<Record<string, boolean>>({});
   const { displayName } = useChainInfo(genesisHash);
@@ -71,13 +77,13 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
     >
       <Stack direction='column'>
         <Stack direction='column' sx={{ position: 'relative', width: '100%' }}>
-          <Grid container height='420px' item ref={refContainer} sx={{ bgcolor: '#1B133C', borderRadius: '14px', display: 'block', overflowY: 'auto', position: 'relative' }}>
+          <Grid container height='420px' item ref={refContainer} sx={{ bgcolor: modalBodyBg, border: '1px solid', borderColor: isDark ? 'transparent' : '#E3E8F7', borderRadius: '14px', display: 'block', overflowY: 'auto', position: 'relative' }}>
             <MySwitch
               checked={mayBeEnabled}
               columnGap='8px'
               label={t('Enable Network')}
               onChange={onEnableNetwork}
-              style={{ alignItems: 'center', backgroundColor: '#05091C', borderRadius: '18px', height: '52px', justifyContent: 'flex-start', padding: '0 15px', width: '100%' }}
+              style={{ alignItems: 'center', backgroundColor: toggleBg, border: `1px solid ${toggleBorderColor}`, borderRadius: '18px', height: '52px', justifyContent: 'flex-start', padding: '0 15px', width: '100%' }}
               value={mayBeEnabled}
             />
             <MySwitch
@@ -86,7 +92,7 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
               disabled={isEndpointSelectionDisabled}
               label={t('Auto Node Selection')}
               onChange={onToggleAuto}
-              style={{ alignItems: 'center', backgroundColor: '#05091C', borderRadius: '18px', height: '52px', justifyContent: 'flex-start', margin: '8px 0', padding: '0 15px', width: '100%' }}
+              style={{ alignItems: 'center', backgroundColor: toggleBg, border: `1px solid ${toggleBorderColor}`, borderRadius: '18px', height: '52px', justifyContent: 'flex-start', margin: '8px 0', padding: '0 15px', width: '100%' }}
               value={AUTO_MODE.value}
             />
             {filteredEndpoints?.map(({ delay, name, value }, index) => (
@@ -103,7 +109,7 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
               />
             ))}
           </Grid>
-          <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.3} style={{ borderRadius: '14px', justifySelf: 'center', width: '100%' }} />
+          <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.3} style={{ backgroundColor: fadeBackgroundColor, borderRadius: '14px', justifySelf: 'center', width: '100%' }} />
         </Stack>
         <DecisionButtons
           cancelButton

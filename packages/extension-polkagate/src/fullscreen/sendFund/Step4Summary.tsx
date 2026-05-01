@@ -30,6 +30,7 @@ interface Props {
 export default function Step4Summary({ canPayFee, inputs, setInputs, transaction }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const accountAssets = useAccountAssets(address);
@@ -59,15 +60,48 @@ export default function Step4Summary({ canPayFee, inputs, setInputs, transaction
           />
         </Stack>
       </Stack>
-      <Stack alignItems='start' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '146px', mt: '20px', p: '15px', width: '766px' }}>
+      <Stack
+        alignItems='start'
+        direction='row'
+        justifyContent='space-between'
+        sx={{
+          bgcolor: isDark ? '#05091C' : '#FFFFFF',
+          border: isDark ? 'none' : '1px solid #DDE3F4',
+          borderRadius: '14px',
+          boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)',
+          height: '146px',
+          mt: '20px',
+          p: '15px',
+          width: '766px'
+        }}
+      >
         <FromToBox
           address={address}
           chainName={chainName}
           genesisHash={genesisHash}
           label={t('From')}
         />
-        <Divider orientation='vertical' sx={{ color: '#67439433', height: '110px', mx: '15px' }} textAlign='center'>
-          <Box sx={{ alignItems: 'center', bgcolor: '#2D1E4A', border: '2px solid #674394', borderRadius: '50%', display: 'flex', height: '32px', justifyContent: 'center', width: '32px' }}>
+        <Divider
+          orientation='vertical'
+          sx={{
+            color: isDark ? '#67439433' : '#DDE3F4',
+            height: '110px',
+            mx: '15px'
+          }}
+          textAlign='center'
+        >
+          <Box
+            sx={{
+              alignItems: 'center',
+              bgcolor: isDark ? '#2D1E4A' : '#F3F6FD',
+              border: isDark ? '2px solid #674394' : '1px solid #DDE3F4',
+              borderRadius: '50%',
+              display: 'flex',
+              height: '32px',
+              justifyContent: 'center',
+              width: '32px'
+            }}
+          >
             <ArrowCircleRight2 color={theme.palette.primary.main} size='24px' variant='Bold' />
           </Box>
         </Divider>

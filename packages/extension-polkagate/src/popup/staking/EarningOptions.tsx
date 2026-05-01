@@ -81,7 +81,7 @@ export default function EarningOptions(): React.ReactElement {
             style={{ padding: '4%' }}
           />
           <VelvetBox style={{ margin: '0 4%', minHeight: '63px', width: '92%' }}>
-            <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '15px', width: '100%' }}>
+            <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #E3E8F7', borderRadius: '15px', boxShadow: isDark ? 'none' : '0 12px 24px rgba(133, 140, 176, 0.12)', width: '100%' }}>
               {earningItems?.map((token, index) => {
                 const { availableBalance, chainName, decimal, freeBalance, tokenSymbol } = token;
                 const relayChainName = (extractRelayChainName(chainName) ?? chainName).toLowerCase();
@@ -93,8 +93,8 @@ export default function EarningOptions(): React.ReactElement {
                     onClick={() => onPositionClick(info)}
                     sx={{
                       ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' },
-                      bgcolor: '#05091C',
-                      borderBottom: '1px solid #1B133C',
+                      bgcolor: isDark ? '#05091C' : '#FFFFFF',
+                      borderBottom: `1px solid ${isDark ? '#1B133C' : '#EEF1FF'}`,
                       borderBottomLeftRadius: index === earningItems.length - 1 ? '14px' : 0,
                       borderBottomRightRadius: index === earningItems.length - 1 ? '14px' : 0,
                       borderTopLeftRadius: index === 0 ? '14px' : 0,
@@ -111,7 +111,7 @@ export default function EarningOptions(): React.ReactElement {
                         <Typography sx={{ mt: '-7px' }} variant='B-2'>
                           {tokenSymbol}
                         </Typography>
-                        <Typography color='#BEAAD8' sx={{ alignItems: 'center', display: 'flex', gap: '5px', lineHeight: '10px' }} variant='B-4'>
+                        <Typography color={isDark ? '#BEAAD8' : '#7A68A4'} sx={{ alignItems: 'center', display: 'flex', gap: '5px', lineHeight: '10px' }} variant='B-4'>
                           {`${t('Available')}:`}
                           <DisplayBalance
                             balance={freeBalance || availableBalance || BN_ZERO}
@@ -122,7 +122,7 @@ export default function EarningOptions(): React.ReactElement {
                         </Typography>
                       </Stack>
                     </Stack>
-                    <Stack alignItems='center' direction='row' justifyContent='center' sx={{ bgcolor: '#82FFA533', borderRadius: '8px', minWidth: '64px', p: '7px', pt: '2px' }}>
+                    <Stack alignItems='center' direction='row' justifyContent='center' sx={{ bgcolor: isDark ? '#82FFA533' : '#E9FFF0', border: isDark ? 'none' : '1px solid #CFF3DA', borderRadius: '8px', minWidth: '64px', p: '7px', pt: '2px' }}>
                       <Stack alignItems='center' direction='column'>
                         <Typography color='#82FFA5' fontSize='10px' sx={{ lineHeight: '10px' }} variant='S-2'>
                           {t('up to')}
@@ -130,7 +130,7 @@ export default function EarningOptions(): React.ReactElement {
                         <Typography color='#82FFA5' sx={{ lineHeight: '17px' }} variant='B-2'>
                           {info.rate}%
                         </Typography>
-                        <Typography color='#EAEBF1' fontSize='10px' sx={{ lineHeight: '10px' }} variant='S-2'>
+                        <Typography color={isDark ? '#EAEBF1' : '#4D8F63'} fontSize='10px' sx={{ lineHeight: '10px' }} variant='S-2'>
                           {t('per year')}
                         </Typography>
                       </Stack>

@@ -4,6 +4,7 @@
 import { Grid, styled } from '@mui/material';
 import React from 'react';
 
+import useIsDark from '@polkadot/extension-polkagate/src/hooks/useIsDark';
 import { noop } from '@polkadot/util';
 
 interface Props {
@@ -12,8 +13,8 @@ interface Props {
   onChange: () => void
 }
 
-const Ball = styled(Grid)<{ checked: boolean; disabled: boolean }>(({ checked, disabled }) => ({
-  background: disabled ? '#674394' : checked ? '#EAEBF1' : '#BEAAD8',
+const Ball = styled(Grid)<{ checked: boolean; disabled: boolean; isdark: boolean }>(({ checked, disabled, isdark }) => ({
+  background: disabled ? (isdark ? '#674394' : '#B8BFD8') : checked ? (isdark ? '#EAEBF1' : '#3988FF') : (isdark ? '#BEAAD8' : '#CCD2EA'),
   borderRadius: '999px',
   height: checked ? '14px' : '10px',
   position: 'absolute',
@@ -24,9 +25,9 @@ const Ball = styled(Grid)<{ checked: boolean; disabled: boolean }>(({ checked, d
   zIndex: 2
 }));
 
-const SwitchContainer = styled(Grid)<{ checked: boolean; disabled: boolean }>(({ checked, disabled }) => ({
+const SwitchContainer = styled(Grid)<{ checked: boolean; disabled: boolean; isdark: boolean }>(({ checked, disabled, isdark }) => ({
   '&::after': {
-    background: disabled ? '#6743944D' : '#674394',
+    background: disabled ? (isdark ? '#6743944D' : '#C7CEE4') : (isdark ? '#674394' : '#CCD2EA'),
     borderRadius: '999px',
     content: '""',
     inset: '-2px',
@@ -36,7 +37,7 @@ const SwitchContainer = styled(Grid)<{ checked: boolean; disabled: boolean }>(({
     zIndex: -1
   },
   '&::before': {
-    background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+    background: isdark ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#3988FF',
     borderRadius: '999px',
     content: '""',
     inset: '-2px',
@@ -45,7 +46,7 @@ const SwitchContainer = styled(Grid)<{ checked: boolean; disabled: boolean }>(({
     transition: 'all 250ms ease-out',
     zIndex: -1
   },
-  background: '#2D1E4A',
+  background: isdark ? '#2D1E4A' : '#FFFFFF',
   borderRadius: '999px',
   cursor: disabled ? 'default' : 'pointer',
   height: '20px',
@@ -56,10 +57,12 @@ const SwitchContainer = styled(Grid)<{ checked: boolean; disabled: boolean }>(({
 }));
 
 export default function GradientSwitch({ checked, disabled = false, onChange }: Props): React.ReactElement {
+  const isDark = useIsDark();
+
   return (
     <div style={{ zIndex: 1 }}>
-      <SwitchContainer checked={checked} disabled={disabled} onClick={disabled ? noop : onChange}>
-        <Ball checked={checked} disabled={disabled} />
+      <SwitchContainer checked={checked} disabled={disabled} isdark={isDark} onClick={disabled ? noop : onChange}>
+        <Ball checked={checked} disabled={disabled} isdark={isDark} />
       </SwitchContainer>
     </div>
   );

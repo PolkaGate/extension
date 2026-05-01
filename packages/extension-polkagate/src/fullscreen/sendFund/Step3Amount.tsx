@@ -4,7 +4,7 @@
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
 import type { Inputs } from './types';
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { getExistentialDeposit, type TChain } from '@paraspell/sdk-pjs';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -15,7 +15,7 @@ import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/sr
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 import { BN, noop } from '@polkadot/util';
 
-import { ActionButton, Logo, DisplayBalance, Motion, MyTextField } from '../../components';
+import { ActionButton, DisplayBalance, Logo, Motion, MyTextField } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
 import NumberedTitle from './partials/NumberedTitle';
 import useWarningMessage from './useWarningMessage';
@@ -30,6 +30,8 @@ interface Props {
 
 export default function Step3Amount({ inputs, isContract, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const accountAssets = useAccountAssets(address);
@@ -44,6 +46,20 @@ export default function Step3Amount({ inputs, isContract, setInputs }: Props): R
   const amountAsBN = useMemo(() => decimal ? amountToMachine(amount, decimal) : undefined, [amount, decimal]);
 
   const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, inputs?.transferType ?? 'Normal', new BN(inputs?.fee?.originFee?.fee || 0));
+  const amountShortcutButtonStyle = useMemo(() => ({
+    '&:hover': {
+      backgroundColor: isDark ? undefined : '#E9DDFB',
+      borderColor: isDark ? undefined : '#D3C3EE'
+    },
+    backgroundColor: isDark ? undefined : '#F3F6FD',
+    border: isDark ? undefined : '1px solid #DDE3F4',
+    borderRadius: '999px',
+    color: isDark ? undefined : '#745E9F',
+    height: '26px',
+    minWidth: 'fit-content',
+    padding: '0 14px',
+    width: 'fit-content'
+  }), [isDark]);
 
   useEffect(() => {
     amountAsBN && setInputs((pre) => ({
@@ -135,7 +151,7 @@ export default function Step3Amount({ inputs, isContract, setInputs }: Props): R
       <Typography color='text.secondary' sx={{ mt: '15px', textAlign: 'left', width: '100%' }} variant='B-4'>
         {t('Input transfer amount')}
       </Typography>
-      <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: '#05091C', border: `2px solid ${error || warningMessage ? '#FF4FB9' : '#3988FF'}`, borderRadius: '14px', height: '196px', mt: '20px', p: '15px', width: '766px' }}>
+      <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: `2px solid ${error || warningMessage ? '#FF4FB9' : isDark ? '#3988FF' : '#DDE3F4'}`, borderRadius: '14px', boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)', height: '196px', mt: '20px', p: '15px', width: '766px' }}>
         <Stack direction='row' justifyContent='space-between'>
           <NumberedTitle
             number={1}
@@ -145,12 +161,7 @@ export default function Step3Amount({ inputs, isContract, setInputs }: Props): R
             <ActionButton
               contentPlacement='center'
               onClick={onMaxClick}
-              style={{
-                height: '26px',
-                minWidth: 'fit-content',
-                padding: '0 10px',
-                width: 'fit-content'
-              }}
+              style={amountShortcutButtonStyle}
               text={t('Max')}
               variant='text'
             />
@@ -158,18 +169,15 @@ export default function Step3Amount({ inputs, isContract, setInputs }: Props): R
               contentPlacement='center'
               onClick={onMinClick}
               style={{
-                color: '#AA83DC',
-                height: '26px',
-                minWidth: 'fit-content',
-                padding: '0 10px',
-                width: 'fit-content'
+                ...amountShortcutButtonStyle,
+                color: isDark ? '#AA83DC' : theme.palette.text.secondary
               }}
               text={t('Min')}
               variant='text'
             />
           </Stack>
         </Stack>
-        <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', my: '10px', width: '100%' }} />
+        <Box sx={{ background: isDark ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' : 'linear-gradient(90deg, rgba(221, 227, 244, 0.15) 0%, rgba(221, 227, 244, 1) 50.06%, rgba(221, 227, 244, 0.15) 100%)', height: '1px', my: '10px', width: '100%' }} />
         <MyTextField
           focused
           inputType='number'
@@ -180,7 +188,7 @@ export default function Step3Amount({ inputs, isContract, setInputs }: Props): R
           onTextChange={onAmountChange}
           placeholder='0.00'
         />
-        <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', my: '10px', width: '100%' }} />
+        <Box sx={{ background: isDark ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' : 'linear-gradient(90deg, rgba(221, 227, 244, 0.15) 0%, rgba(221, 227, 244, 1) 50.06%, rgba(221, 227, 244, 0.15) 100%)', height: '1px', my: '10px', width: '100%' }} />
         <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' onClick={onMaxClick} sx={{ cursor: 'pointer' }}>
           <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
             {t('Available')}

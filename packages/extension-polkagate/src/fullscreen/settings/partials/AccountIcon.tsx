@@ -3,7 +3,7 @@
 
 import type { MyIconTheme } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { PolkaGateIdenticon } from '@polkadot/extension-polkagate/src/style/index';
@@ -20,6 +20,9 @@ export interface ItemProps {
 }
 
 function Item({ address, iconTheme, label, selectedTheme }: ItemProps): React.ReactElement {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   const onClick = useCallback(() => {
     setStorage(STORAGE_KEY.ICON_THEME, iconTheme).catch(console.error);
   }, [iconTheme]);
@@ -32,7 +35,9 @@ function Item({ address, iconTheme, label, selectedTheme }: ItemProps): React.Re
       sx={{
         background: isSelected
           ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)'
-          : '#BEAAD833',
+          : isDark ? '#BEAAD833' : '#FFFFFF',
+        border: '1px solid',
+        borderColor: isSelected ? 'transparent' : isDark ? '#BEAAD833' : '#DDE3F4',
         borderRadius: '12px',
         cursor: 'pointer',
         height: '44px',
@@ -47,8 +52,8 @@ function Item({ address, iconTheme, label, selectedTheme }: ItemProps): React.Re
         direction='row'
         justifyContent='start'
         sx={{
-          ':hover': { background: '#2D1E4A' },
-          background: isSelected ? '#1A1B20' : '#1B133CB2',
+          ':hover': { background: isDark ? '#2D1E4A' : '#F3F6FD' },
+          background: isSelected ? (isDark ? '#1A1B20' : '#FFFFFF') : (isDark ? '#1B133CB2' : '#F5F6FF'),
           borderRadius: '10px',
           height: '40px',
           minWidth: '81px',

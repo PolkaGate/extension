@@ -21,9 +21,28 @@ const ResetSelection = ({ onReset }: { onReset: () => void }) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isBlueish = useIsBlueish();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
-    <Container disableGutters onClick={onReset} sx={{ alignItems: 'center', bgcolor: isBlueish ? '#809ACB26' : '#BFA1FF26', borderRadius: '10px', columnGap: '2px', cursor: 'pointer', display: 'flex', p: '4px 7px', width: 'fit-content' }}>
+    <Container
+      disableGutters
+      onClick={onReset}
+      sx={{
+        alignItems: 'center',
+        bgcolor: isBlueish
+          ? '#809ACB26'
+          : isDark
+            ? '#BFA1FF26'
+            : '#EEF2FB',
+        border: isDark ? 'none' : '1px solid #DDE3F4',
+        borderRadius: '10px',
+        columnGap: '2px',
+        cursor: 'pointer',
+        display: 'flex',
+        p: '4px 7px',
+        width: 'fit-content'
+      }}
+    >
       <Trash color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} size='16' style={{ height: 'fit-content' }} variant='Bulk' />
       <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} textAlign='left' variant='B-2'>
         {t('Reset')}
@@ -43,6 +62,8 @@ interface ProxiesItemProps {
 const ProxiesItem = ({ genesisHash, onSelect, proxy, proxyTypeFilter, selectedProxyItem }: ProxiesItemProps) => {
   const account = useAccount(getSubstrateAddress(proxy?.proxy?.delegate));
   const isBlueish = useIsBlueish();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const isAvailable = useMemo(() => {
     if (!proxy || !account) {
@@ -79,7 +100,32 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, proxyTypeFilter, selectedPr
   }, [isAvailable, onSelect, proxy]);
 
   return (
-    <Container disableGutters onClick={handleSelect} sx={{ alignItems: 'center', bgcolor: '#05091C', border: '2px solid', borderColor: isChecked ? isBlueish ? '#3988FF' : 'menuIcon.hover' : '#222442', borderRadius: '18px', cursor: isAvailable ? 'pointer' : 'default', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', position: 'relative' }}>
+    <Container
+      disableGutters
+      onClick={handleSelect}
+      sx={{
+        alignItems: 'center',
+        bgcolor: isDark ? '#05091C' : '#FFFFFF',
+        border: '2px solid',
+        borderColor: isChecked
+          ? isBlueish
+            ? '#3988FF'
+            : isDark
+              ? 'menuIcon.hover'
+              : theme.palette.primary.main
+          : isDark
+            ? '#222442'
+            : '#DDE3F4',
+        borderRadius: '18px',
+        boxShadow: isDark ? 'none' : '0 8px 20px rgba(133, 140, 176, 0.10)',
+        cursor: isAvailable ? 'pointer' : 'default',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        p: '12px',
+        position: 'relative'
+      }}
+    >
       <Grid container item sx={{ alignItems: 'center', columnGap: '6px', width: 'fit-content' }}>
         <PolkaGateIdenticon
           address={proxy.proxy.delegate}
@@ -94,10 +140,19 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, proxyTypeFilter, selectedPr
             style={{ width: '230px' }}
           />
           <Grid container flexDirection='row' item sx={{ alignItems: 'center', columnGap: '4px', width: 'fit-content' }}>
-            <Typography color='txt.highlight' variant='B-1'>
+            <Typography color={isDark ? 'txt.highlight' : 'text.secondary'} variant='B-1'>
               {proxy.proxy.proxyType}
             </Typography>
-            <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '7px', p: '1px 3px' }} variant='S-1'>
+            <Typography
+              color='#82FFA5'
+              sx={{
+                bgcolor: isDark ? '#82FFA526' : '#E9FFF0',
+                border: isDark ? 'none' : '1px solid #C5F1D3',
+                borderRadius: '7px',
+                p: '1px 3px'
+              }}
+              variant='S-1'
+            >
               {proxy.proxy.delay * 6}sec
             </Typography>
           </Grid>
@@ -109,7 +164,20 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, proxyTypeFilter, selectedPr
         onChange={noop}
         value={JSON.stringify(proxy)}
       />
-      {!isAvailable && <Grid sx={{ backdropFilter: 'blur(1px)', bgcolor: 'rgba(0,0,0, 0.3)', borderRadius: '18px', height: '100%', inset: 0, position: 'absolute', width: '100%', zIndex: 1 }} />}
+      {!isAvailable && (
+        <Grid
+          sx={{
+            backdropFilter: 'blur(1px)',
+            bgcolor: isDark ? 'rgba(0,0,0, 0.3)' : 'rgba(248, 250, 255, 0.65)',
+            borderRadius: '18px',
+            height: '100%',
+            inset: 0,
+            position: 'absolute',
+            width: '100%',
+            zIndex: 1
+          }}
+        />
+      )}
     </Container>
   );
 };
@@ -127,6 +195,7 @@ interface Props {
 export default function SignUsingProxy({ genesisHash, handleClose, openMenu, proxies, proxyTypeFilter, selectedProxy, setSelectedProxy }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const refContainer = useRef(null);
   const isBlueish = useIsBlueish();
 
@@ -194,7 +263,13 @@ export default function SignUsingProxy({ genesisHash, handleClose, openMenu, pro
             />
           ))}
         </Stack>
-        <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.05} style={{ bottom: '58px' }} />
+        <FadeOnScroll
+          backgroundColor={isDark ? '#1B133C' : 'transparent'}
+          containerRef={refContainer}
+          height='50px'
+          ratio={0.05}
+          style={{ bottom: '58px' }}
+        />
         {noProxyAvailable &&
           <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', justifyContent: 'center', mt: '90px' }}>
             <Warning2 color='#FF4FB9' size='22' style={{ height: 'fit-content' }} variant='Bold' />

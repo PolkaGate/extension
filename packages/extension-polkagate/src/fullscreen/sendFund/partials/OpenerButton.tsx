@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { ArrowRight3, Edit } from 'iconsax-react';
 import React from 'react';
 
@@ -13,6 +13,8 @@ interface Props {
 }
 
 export default function OpenerButton({ flip, onClick, style = {}, type = 'Edit' }: Props): React.ReactElement {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const Icon = type === 'Arrow' ? ArrowRight3 : Edit;
   const variant = type === 'Arrow' ? 'Bold' : 'Bulk';
 
@@ -29,9 +31,11 @@ export default function OpenerButton({ flip, onClick, style = {}, type = 'Edit' 
           cursor: 'pointer'
         },
         alignItems: 'center',
-        border: '2px solid #1B133C',
+        background: isDark ? 'transparent' : '#F3F6FD',
+        border: '2px solid',
+        borderColor: isDark ? '#1B133C' : '#DDE3F4',
         borderRadius: '12px',
-        color: '#AA83DC',
+        color: isDark ? '#AA83DC' : '#8D7AAF',
         display: 'flex',
         height: '40px',
         justifyContent: 'center',

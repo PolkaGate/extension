@@ -5,7 +5,7 @@ import type { AccountWithChildren } from '@polkadot/extension-base/background/ty
 import type { BalancesInfo } from '@polkadot/extension-polkagate/src/util/types';
 import type { ItemInformation } from '../nft/utils/types';
 
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -31,6 +31,8 @@ interface Props {
 
 function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, variant = 'B-2' }: Props): React.ReactElement {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const pricesInCurrencies = usePrices();
   const { currency } = useContext(CurrencyContext);
   const { address, type } = account ?? {};
@@ -179,14 +181,14 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
         noIdenticon
         onClick={onClick}
         socialStyles={{ mt: 0 }}
-        style={{ color: '#BEAAD8', variant, width: '100%' }}
+        style={{ color: isDark ? '#BEAAD8' : theme.palette.text.secondary, variant, width: '100%' }}
       />
       <Box sx={{ alignItems: 'end', display: 'flex', my: '3px', position: 'relative' }}>
         {/* Curve */}
         <Box
           sx={{
-            borderBottom: '1px solid #674394',
-            borderLeft: '1px solid #674394',
+            borderBottom: `1px solid ${isDark ? '#674394' : '#B7C0DE'}`,
+            borderLeft: `1px solid ${isDark ? '#674394' : '#B7C0DE'}`,
             borderRadius: '0 0 0 75%',
             height: '14px',
             left: '2px',
@@ -197,7 +199,7 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
         />
         <FormatPrice
           commify
-          decimalColor='#BEAAD8'
+          decimalColor={theme.palette.text.secondary}
           fontFamily='Inter'
           fontSize='16px'
           fontWeight={600}
@@ -222,7 +224,7 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
             const logoInfo = resolveLogoInfo(genesisHash, token);
 
             return (
-              <Box key={`${genesisHash}+${token}+${index}`} sx={{ background: '#05091C', border: '2.57px solid #05091C', borderRadius: '50%', mb: '-4px', ml: index === 0 ? 0 : '-10px', position: 'relative', zIndex: index + 1 }}>
+              <Box key={`${genesisHash}+${token}+${index}`} sx={{ background: isDark ? '#05091C' : '#FFFFFF', border: `2.57px solid ${isDark ? '#05091C' : '#FFFFFF'}`, borderRadius: '50%', boxShadow: isDark ? 'none' : '0px 2px 10px rgba(133, 140, 176, 0.14)', mb: '-4px', ml: index === 0 ? 0 : '-10px', position: 'relative', zIndex: index + 1 }}>
                 <Logo assetSize='22px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} />
               </Box>
             );
@@ -231,7 +233,7 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
         {
           extraTokensCount > 0 &&
           <Grid alignItems='center' container item justifyContent='center' sx={{ border: '2px dashed #9C28B7', borderRadius: '9px', height: '18px', mb: '-2px', minWidth: '24px', ml: '3px', width: 'fit-content' }}>
-            <Typography color='#EAEBF1' fontWeight={600} sx={{ letterSpacing: '-0.6px', lineHeight: 1, p: '0 4px 0 3px' }} variant='B-4'>
+            <Typography color='text.primary' fontWeight={600} sx={{ letterSpacing: '-0.6px', lineHeight: 1, p: '0 4px 0 3px' }} variant='B-4'>
               {`+${extraTokensCount}`}
             </Typography>
           </Grid>
@@ -240,7 +242,7 @@ function Account({ account, onClick, setDefaultGenesisAndAssetId, style = {}, va
           !!myNfts?.length &&
           <Stack alignItems='center' direction='row' mb='-2px' onClick={goToNft} sx={{ cursor: 'pointer' }}>
             <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)', height: '1px', transform: 'rotate(90deg)', width: '16px' }} />
-            <Typography color='#AA83DC' variant='B-1'>
+            <Typography color={isDark ? '#AA83DC' : theme.palette.text.secondary} variant='B-1'>
               {`${myNfts?.length} NFTs`}
             </Typography>
           </Stack>

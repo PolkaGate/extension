@@ -3,7 +3,7 @@
 
 import type { AssetsWithUiAndPrice } from './types';
 
-import { Container, LinearProgress, linearProgressClasses, Stack, styled, Typography } from '@mui/material';
+import { Container, LinearProgress, linearProgressClasses, Stack, styled, Typography, useTheme } from '@mui/material';
 import React, { useContext, useRef } from 'react';
 
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
@@ -23,7 +23,7 @@ const BorderLinearProgress = styled(LinearProgress, {
   borderRadius: 5,
   height: barHeight,
   [`&.${linearProgressClasses.colorPrimary}`]: {
-    backgroundColor: '#2D1E4A',
+    backgroundColor: '#EEF2FB',
     ...theme.applyStyles('dark', {
       backgroundColor: '#2D1E4A'
     })
@@ -50,20 +50,22 @@ function AssetsRows({ assets }: { assets: AssetsWithUiAndPrice[] }): React.React
   const { t } = useTranslation();
   const { currency } = useContext(CurrencyContext);
   const refContainer = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Container disableGutters>
       <Stack direction='row' justifyContent='space-between' sx={{ m: '8px 12px 5px' }}>
-        <Typography color='#BEAAD8' textAlign='left' variant='B-1' width={`${WIDTHS[1]}%`}>
+        <Typography color='text.secondary' textAlign='left' variant='B-1' width={`${WIDTHS[1]}%`}>
           {t('Token')}
         </Typography>
-        <Typography color='#BEAAD8' textAlign='left' variant='B-1' width={`${WIDTHS[2]}%`}>
+        <Typography color='text.secondary' textAlign='left' variant='B-1' width={`${WIDTHS[2]}%`}>
           {t('Cost')}
         </Typography>
-        <Typography color='#BEAAD8' textAlign='left' variant='B-1' width={`${WIDTHS[3]}%`}>
+        <Typography color='text.secondary' textAlign='left' variant='B-1' width={`${WIDTHS[3]}%`}>
           {t('Allocation')}
         </Typography>
-        <Typography color='#BEAAD8' textAlign='right' variant='B-1' width={`${WIDTHS[4]}%`}>
+        <Typography color='text.secondary' textAlign='right' variant='B-1' width={`${WIDTHS[4]}%`}>
           {t('Value')}
         </Typography>
       </Stack>
@@ -72,7 +74,7 @@ function AssetsRows({ assets }: { assets: AssetsWithUiAndPrice[] }): React.React
           const logoInfo = resolveLogoInfo(genesisHash, token);
 
           return (
-            <Stack alignItems='center' direction='row' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '47px', my: '4px', px: '10px' }}>
+            <Stack alignItems='center' direction='row' key={index} sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', height: '47px', my: '4px', px: '10px' }}>
               <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' width={`${WIDTHS[1]}%`}>
                 <Logo assetSize='32px' baseTokenSize='10px' genesisHash={genesisHash} logo={logoInfo?.logo} token={token} />
                 <Typography
@@ -87,18 +89,18 @@ function AssetsRows({ assets }: { assets: AssetsWithUiAndPrice[] }): React.React
                   {token}
                 </Typography>
               </Stack>
-              <Typography color='#BEAAD8' textAlign='left' variant='B-2' width={`${WIDTHS[2]}%`}>
+              <Typography color='text.secondary' textAlign='left' variant='B-2' width={`${WIDTHS[2]}%`}>
                 {currency?.sign} {price ? truncateToMaxYDecimals(price, 4) : 0}
               </Typography>
               <Stack alignItems='center' direction='row' justifyContent='start' width={`${WIDTHS[3]}%`}>
-                <Typography color='#BEAAD8' minWidth='60px' sx={{ textAlign: 'left', textWrap: 'nowrap' }} variant='B-2'>
+                <Typography color='text.secondary' minWidth='60px' sx={{ textAlign: 'left', textWrap: 'nowrap' }} variant='B-2'>
                   {percent >= 0.01 ? truncateToMaxYDecimals(percent, 2) : '~ 0'}%
                 </Typography>
                 <BorderLinearProgress barColor={ui.color} barHeight={8} sx={{ width: '72px' }} value={normalizePercent(percent)} variant='determinate' />
               </Stack>
               <FormatPrice
                 commify
-                decimalColor='#BEAAD8'
+                decimalColor={theme.palette.text.secondary}
                 fontFamily='Inter'
                 fontSize='14px'
                 fontWeight={600}

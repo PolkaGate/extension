@@ -6,7 +6,7 @@ import { ArrowCircleDown2, BuyCrypto, Notification as NotificationIcon, Record, 
 import React, { useMemo } from 'react';
 
 import { ActionCard, MySwitch } from '@polkadot/extension-polkagate/src/components';
-import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useIsDark, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { SUPPORTED_GOVERNANCE_NOTIFICATION_CHAIN, SUPPORTED_STAKING_NOTIFICATION_CHAIN } from '@polkadot/extension-polkagate/src/popup/notification/constant';
 import useNotificationSettings, { type NotificationSettingType, Popups } from '@polkadot/extension-polkagate/src/popup/notification/hook/useNotificationSettings';
 
@@ -25,6 +25,7 @@ interface SettingUIProps {
 
 const SettingUI = ({ notificationSetting, openPopup, toggleNotification, toggleReceivedFunds }: SettingUIProps) => {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
   return (
     <Stack direction='column' sx={{ gap: '8px', p: '15px 5px 0', width: '100%' }}>
@@ -36,7 +37,7 @@ const SettingUI = ({ notificationSetting, openPopup, toggleNotification, toggleR
         onClick={toggleNotification}
         showChevron={false}
         showColorBall={false}
-        style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
+        style={{ ...CARD_STYLE, bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4' }}
         title={t('Enable Notifications')}
       >
         <MySwitch
@@ -52,7 +53,7 @@ const SettingUI = ({ notificationSetting, openPopup, toggleNotification, toggleR
         onClick={toggleReceivedFunds}
         showChevron={false}
         showColorBall={false}
-        style={{ ...CARD_STYLE, bgcolor: '#05091C' }}
+        style={{ ...CARD_STYLE, bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4' }}
         title={t('Enable Received Funds')}
       >
         <MySwitch
@@ -69,7 +70,7 @@ const SettingUI = ({ notificationSetting, openPopup, toggleNotification, toggleR
         style={{ mt: '16px', ...CARD_STYLE }}
         title={t('Accounts')}
       >
-        <Typography color='#AA83DC' sx={{ bgcolor: '#BFA1FF26', borderRadius: '10px', mr: '2px', p: '3px 10px' }} variant='B-3'>
+        <Typography color={isDark ? '#AA83DC' : '#7A69A8'} sx={{ bgcolor: isDark ? '#BFA1FF26' : '#EEF2FB', borderRadius: '10px', mr: '2px', p: '3px 10px' }} variant='B-3'>
           {notificationSetting.accounts?.length}
         </Typography>
       </ActionCard>
@@ -181,7 +182,7 @@ function NotificationSettingsFS({ handleClose }: Props) {
       onClose={onClose}
       open={true}
       showBackIconAsClose
-      style={{ backgroundColor: '#1B133C', minHeight: '600px', overflow: 'clip', padding: ' 20px 10px 10px' }}
+      style={{ minHeight: '600px', overflow: 'clip', padding: ' 20px 10px 10px' }}
       title={title}
     >
       {ui}

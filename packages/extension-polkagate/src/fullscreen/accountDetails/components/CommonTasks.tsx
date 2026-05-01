@@ -36,7 +36,9 @@ export const openOrFocusTab = (relativeUrl: string, closeCurrentTab?: boolean): 
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     if (tabs[0]?.url) {
       const extensionUrl = tabs[0].url;
-      const extensionBaseUrl = extensionUrl.split('#')[0];
+      const extensionBaseUrl = extensionUrl.split('#')[0].includes('?view=fullscreen')
+        ? extensionUrl.split('#')[0]
+        : `${extensionUrl.split('#')[0]}?view=fullscreen`;
 
       const tabUrl = `${extensionBaseUrl}#${relativeUrl}`;
 

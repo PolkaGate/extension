@@ -3,20 +3,18 @@
 
 import { Grid } from '@mui/material';
 import { Moon, Sun1 } from 'iconsax-react';
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 
-import { noop } from '@polkadot/util';
-
+import { ColorContext } from '../../../../components';
 import useIsDark from '../../../../hooks/useIsDark';
 
 export default function ThemeChange(): React.ReactElement {
   const isDark = useIsDark();
+  const colorMode = useContext(ColorContext);
 
-  //const colorMode = useContext(ColorContext);
   const toggleTheme = useCallback(() => {
-    // colorMode.toggleColorMode()
-    noop();
-  }, []);
+    colorMode.toggleColorMode();
+  }, [colorMode]);
 
   return (
     <Grid alignItems='center' container item justifyContent='space-around' justifyItems='center' onClick={toggleTheme} sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '16px', cursor: 'pointer', height: '39px', mt: '2px', position: 'relative', width: '97px', zIndex: 10 }}>

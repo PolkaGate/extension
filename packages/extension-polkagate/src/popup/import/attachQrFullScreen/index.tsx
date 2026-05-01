@@ -129,7 +129,7 @@ export default function AttachQrFullScreen(): React.ReactElement {
             <ActionButton
               contentPlacement='center'
               onClick={onCancel}
-              style={{ height: '44px', marginTop: '20px', width: '40%' }}
+              style={{ height: '44px', marginTop: '20px', width: '272px' }}
               text={t('Cancel')}
             />
           </>

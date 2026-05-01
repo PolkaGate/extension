@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, Translate } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
@@ -16,6 +16,7 @@ import { ExtensionPopups } from '../../../util/constants';
 
 export default function Language(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const languageTicker = useSelectedLanguage();
   const isDark = useIsDark();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
@@ -37,10 +38,11 @@ export default function Language(): React.ReactElement {
           direction='row'
           onClick={extensionPopupOpener(ExtensionPopups.LANGUAGE)}
           sx={{
-            ':hover': { background: '#2D1E4A' },
+            ':hover': { background: isDark ? '#2D1E4A' : '#F3F6FD' },
             alignItems: 'center',
-            bgcolor: '#1B133CB2',
-            border: '1px solid #BEAAD833',
+            bgcolor: isDark ? '#1B133CB2' : '#FFFFFF',
+            border: '1px solid',
+            borderColor: isDark ? '#BEAAD833' : '#DDE3F4',
             borderRadius: '12px',
             cursor: 'pointer',
             height: '44px',
@@ -52,7 +54,7 @@ export default function Language(): React.ReactElement {
         >
           <Translate color={isDark ? '#AA83DC' : '#745D8B'} size='18' variant='Bulk' />
           <Stack columnGap='5px' direction='row' justifyContent='space-between' sx={{ alignItems: 'center', width: '100%' }}>
-            <Typography color='#BEAAD8' variant='B-4'>
+            <Typography color={theme.palette.text.secondary} variant='B-4'>
               {language}
             </Typography>
             <ArrowDown2 color={isDark ? '#AA83DC' : '#745D8B'} size='14px' style={{ marginTop: '5px' }} variant='Bold' />

@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { AddCircle } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -42,14 +42,19 @@ interface AddItemProps {
   onClick?: () => void;
 }
 
-export const AddItem = ({ disabled, label, onClick }: AddItemProps) => (
-  <Grid alignItems='center' container item justifyContent='center' onClick={disabled ? noop : onClick} sx={{ '&:hover': { background: '#6743944D' }, border: '1px solid #2D1E4A', borderRadius: '18px', cursor: disabled ? 'context-menu' : 'pointer', height: '44px', opacity: disabled ? 0.5 : 1, transition: 'all 250ms ease-out', width: '100%' }}>
-    <AddCircle color='#AA83DC' size='20' variant='Bold' />
-    <Typography color='#BEAAD8' pl='10px' variant='B-2'>
-      {label}
-    </Typography>
-  </Grid>
-);
+export const AddItem = ({ disabled, label, onClick }: AddItemProps) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
+  return (
+    <Grid alignItems='center' container item justifyContent='center' onClick={disabled ? noop : onClick} sx={{ '&:hover': { background: isDark ? '#6743944D' : '#F3F6FD' }, background: isDark ? 'transparent' : '#FFFFFF', border: `1px solid ${isDark ? '#2D1E4A' : '#DDE3F4'}`, borderRadius: '18px', boxShadow: isDark ? 'none' : '0 8px 20px rgba(133, 140, 176, 0.10)', cursor: disabled ? 'context-menu' : 'pointer', height: '44px', opacity: disabled ? 0.5 : 1, transition: 'all 250ms ease-out', width: '100%' }}>
+      <AddCircle color={isDark ? '#AA83DC' : '#7A69A8'} size='20' variant='Bold' />
+      <Typography color={isDark ? '#BEAAD8' : '#745E9F'} pl='10px' variant='B-2'>
+        {label}
+      </Typography>
+    </Grid>
+  );
+};
 
 export default function GenericApp({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();

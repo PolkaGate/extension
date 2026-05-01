@@ -8,7 +8,7 @@ import { LockSlash } from 'iconsax-react';
 import React from 'react';
 
 import { DisplayBalance, ExtensionPopup, GradientDivider } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useIsDark, useTranslation } from '../../../hooks';
 import { formatTimestamp } from '../../../util';
 import StakingActionButton from './StakingActionButton';
 
@@ -23,6 +23,14 @@ interface Props {
 
 export default function ToBeReleased({ decimal, handleClose, onRestake, openMenu, toBeReleased, token }: Props) {
   const { t } = useTranslation();
+  const isDark = useIsDark();
+
+  const labelColor = isDark ? '#AA83DC' : '#745E9F';
+  const valueColor = isDark ? '#FFFFFF' : '#3B2C68';
+  const rowTextColor = isDark ? '#FFFFFF' : '#6F5A96';
+  const rowBgColor = isDark ? 'transparent' : '#FFFFFF';
+  const rowBorder = isDark ? 'none' : '1px solid #E3E8F7';
+  const rowShadow = isDark ? 'none' : '0px 12px 24px rgba(148, 163, 184, 0.12)';
 
   return (
     <ExtensionPopup
@@ -45,7 +53,7 @@ export default function ToBeReleased({ decimal, handleClose, onRestake, openMenu
       withoutTopBorder
     >
       <Container disableGutters sx={{ maxHeight: '360px', mb: '15px', overflowY: 'auto', p: '8px' }}>
-        <Typography color='text.highlight' fontFamily='Inter' fontSize='11px' fontWeight={600} sx={{ letterSpacing: '1px', mb: '25px', textTransform: 'uppercase', width: 'fit-content' }}>
+        <Typography color={labelColor} fontFamily='Inter' fontSize='11px' fontWeight={600} sx={{ letterSpacing: '1px', mb: '25px', textTransform: 'uppercase', width: 'fit-content' }}>
           {t('To be released')}
         </Typography>
         {toBeReleased.map((info, index) => {
@@ -53,8 +61,21 @@ export default function ToBeReleased({ decimal, handleClose, onRestake, openMenu
 
           return (
             <React.Fragment key={index}>
-              <Grid alignItems='center' container item justifyContent='space-between' key={index}>
-                <Typography color='text.highlight' variant='B-1' width='fit-content'>
+              <Grid
+                alignItems='center'
+                container
+                item
+                justifyContent='space-between'
+                key={index}
+                sx={{
+                  bgcolor: rowBgColor,
+                  border: rowBorder,
+                  borderRadius: '12px',
+                  boxShadow: rowShadow,
+                  p: isDark ? 0 : '10px'
+                }}
+              >
+                <Typography color={rowTextColor} variant='B-1' width='fit-content'>
                   {formatTimestamp(info.date, ['month', 'day', 'hours', 'minutes', 'ampm'])}
                 </Typography>
                 <DisplayBalance
@@ -62,7 +83,7 @@ export default function ToBeReleased({ decimal, handleClose, onRestake, openMenu
                   decimal={decimal}
                   decimalPoint={2}
                   style={{
-                    color: '#ffffff',
+                    color: valueColor,
                     fontFamily: 'Inter',
                     fontSize: '13px',
                     fontWeight: 500,

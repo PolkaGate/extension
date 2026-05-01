@@ -73,10 +73,10 @@ function ExportAllAccounts({ onClose }: Props): React.ReactElement {
       <Grid container item justifyContent='center' sx={{ position: 'relative', px: '5px', zIndex: 1 }}>
         <Stack columnGap='15px' direction='column' sx={{ m: '10px 15px 0' }}>
           <Box component='img' src={exportAccountsGif as string} sx={{ alignSelf: 'center', width: '100px' }} />
-          <Typography color='#BEAAD8' sx={{ lineHeight: '16.8px', m: '5px 15px' }} textAlign='center' variant='B-4'>
+          <Typography color='text.secondary' sx={{ lineHeight: '16.8px', m: '5px 15px' }} textAlign='center' variant='B-4'>
             {t('All your accounts will be encrypted with a password and stored in a JSON file inside your browser’s download history.')}
           </Typography>
-          <Typography color='#BEAAD8' sx={{ lineHeight: '16.8px', m: '10px 15px' }} textAlign='center' variant='B-4'>
+          <Typography color='text.secondary' sx={{ lineHeight: '16.8px', m: '10px 15px' }} textAlign='center' variant='B-4'>
             {t('You can later use this JSON file to import your accounts into the extension using the provided password.')}
           </Typography>
           <MatchPasswordField

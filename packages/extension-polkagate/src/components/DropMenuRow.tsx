@@ -3,7 +3,7 @@
 
 import type { Icon } from 'iconsax-react';
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { useHandleNavigation } from '../hooks';
@@ -25,6 +25,8 @@ interface Props {
 function DropMenuRow({ option, setOpen }: Props) {
   const [hovered, setHovered] = useState(false);
   const handleNav = useHandleNavigation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const { Icon, isFullscreen, pathname, text, value } = option;
 
@@ -45,7 +47,7 @@ function DropMenuRow({ option, setOpen }: Props) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       sx={{
-        '&:hover': { background: '#6743944D' },
+        '&:hover': { background: isDark ? '#6743944D' : '#EEF1FF' },
         alignItems: 'center',
         background: 'transparent',
         borderRadius: '8px',
@@ -57,7 +59,7 @@ function DropMenuRow({ option, setOpen }: Props) {
     >
       <Grid alignItems='center' container item sx={{ columnGap: '7px', flexWrap: 'nowrap' }} xs>
         {Icon &&
-          <Icon size='18' style={{ color: hovered ? '#FF4FB9' : '#AA83DC' }} variant='Bulk' />
+          <Icon size='18' style={{ color: hovered ? '#FF4FB9' : (isDark ? '#AA83DC' : theme.palette.primary.main) }} variant='Bulk' />
         }
         <Typography color='text.primary' sx={{ textWrap: 'nowrap' }} variant='B-2'>
           {text}

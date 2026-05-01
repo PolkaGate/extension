@@ -65,7 +65,9 @@ export default function Home(): React.ReactElement {
           <Grid container item ref={refContainer} sx={{ maxHeight: '420px', overflowY: 'auto' }}>
             <AssetsBox />
             <WhatsNew style={{ columnGap: '5px', paddingBottom: '75px', paddingTop: '24px' }} />
-            <FadeOnScroll containerRef={refContainer} />
+            <FadeOnScroll
+              containerRef={refContainer}
+            />
           </Grid>
           <HomeMenu />
         </Grid>

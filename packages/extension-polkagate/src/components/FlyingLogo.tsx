@@ -16,7 +16,7 @@ export default function FlyingLogo(): React.ReactElement {
       container
       justifyContent='center'
       sx={{
-        backgroundColor: theme.palette.mode === 'dark' ? '#05091C' : '#fff', // covers any inherited background
+        backgroundColor: theme.palette.mode === 'dark' ? '#05091C' : 'transparent',
         backgroundImage: `url(${baseEffect})`,
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container } from '@mui/material';
+import { Container, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,6 +19,12 @@ interface Props {
 function Notification({ handleClose }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const modalBg = isDark ? '#1B133C' : theme.palette.background.paper;
+  const emptyStateBg = isDark ? '#05091C' : '#FFFFFF';
+  const emptyStateBorderColor = isDark ? 'transparent' : '#DDE3F4';
+  const fadeBackgroundColor = isDark ? modalBg : 'transparent';
 
   const refContainer = useRef(null);
   const { markAsRead, notificationItems, status } = useNotifications();
@@ -35,7 +41,7 @@ function Notification({ handleClose }: Props) {
       onClose={handleClose}
       open={true}
       showBackIconAsClose
-      style={{ backgroundColor: '#1B133C', height: 'fit-content', minHeight: 'unset', overflow: 'auto', padding: ' 20px 10px' }}
+      style={{ backgroundColor: modalBg, height: 'fit-content', minHeight: 'unset', overflow: 'auto', padding: ' 20px 10px' }}
       title={t('Notifications')}
     >
       <>
@@ -51,7 +57,9 @@ function Notification({ handleClose }: Props) {
             <OffNotificationMessage
               onClick={openSettings}
               style={{
-                bgcolor: '#05091C',
+                bgcolor: emptyStateBg,
+                border: '1px solid',
+                borderColor: emptyStateBorderColor,
                 borderRadius: '22px',
                 p: '32px 15px 22px'
               }}
@@ -60,7 +68,9 @@ function Notification({ handleClose }: Props) {
             <ColdStartNotification
               onClick={openSettings}
               style={{
-                bgcolor: '#05091C',
+                bgcolor: emptyStateBg,
+                border: '1px solid',
+                borderColor: emptyStateBorderColor,
                 borderRadius: '22px',
                 p: '32px 15px 22px'
               }}
@@ -69,7 +79,9 @@ function Notification({ handleClose }: Props) {
             <NoNotificationYet
               onClick={handleClose}
               style={{
-                bgcolor: '#05091C',
+                bgcolor: emptyStateBg,
+                border: '1px solid',
+                borderColor: emptyStateBorderColor,
                 borderRadius: '22px',
                 p: '32px 15px 22px'
               }}
@@ -80,6 +92,7 @@ function Notification({ handleClose }: Props) {
         <FadeOnScroll
           containerRef={refContainer}
           ratio={0.3}
+          style={{ backgroundColor: fadeBackgroundColor }}
         />
       </>
     </DraggableModal>

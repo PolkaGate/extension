@@ -53,12 +53,13 @@ interface NominatorItemProps {
 const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const [accountInfo, setAccountInfo] = useState<DeriveAccountRegistration | undefined>(undefined);
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '18px' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '18px' }}>
       <Stack direction='column' sx={{ width: 'max-content' }}>
         <Identity
           address={getSubstrateAddress(nominator.who.toString())}
@@ -70,7 +71,7 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
           style={{ width: '210px' }}
         />
         <Grid container item sx={{ alignItems: 'center', gap: '4px', ml: '30px', width: 'fit-content' }}>
-          <Typography color='#AA83DC' textAlign='left' variant='B-4'>
+          <Typography color={isDark ? '#AA83DC' : theme.palette.text.highlight} textAlign='left' variant='B-4'>
             {t('Staked')}:
           </Typography>
           <DisplayBalance
@@ -95,11 +96,13 @@ interface LeftColumnContentProps {
 
 const LeftColumnContent = ({ genesisHash, nominators, onClose }: LeftColumnContentProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Stack direction='column' sx={{ gap: '6px', p: '50px 18px 0', width: '100%', zIndex: 1 }}>
       <Box
-        sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', justifySelf: 'center', m: '5px 0 15px', width: '100%' }}
+        sx={{ background: isDark ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' : 'linear-gradient(90deg, rgba(221, 227, 244, 0) 0%, #DDE3F4 50.06%, rgba(221, 227, 244, 0) 100%)', height: '1px', justifySelf: 'center', m: '5px 0 15px', width: '100%' }}
       />
       <Stack direction='column' sx={{ gap: '4px', height: '350px', maxHeight: '350px', overflow: 'auto', pb: '18px', width: '100%' }}>
         {nominators.length > 0 &&
@@ -123,7 +126,7 @@ const LeftColumnContent = ({ genesisHash, nominators, onClose }: LeftColumnConte
             }}
           </List>}
         {nominators.length === 0 &&
-          <Typography color='#AA83DC' sx={{ pt: '25px', textAlign: 'center', width: '100%' }} variant='B-2'>
+          <Typography color={isDark ? '#AA83DC' : theme.palette.text.highlight} sx={{ pt: '25px', textAlign: 'center', width: '100%' }} variant='B-2'>
             {t('No nominators')}
           </Typography>
         }
@@ -202,6 +205,10 @@ const RightColumnContent = ({ genesisHash, onSelect, validator }: RightColumnCon
 };
 
 const ValidatorIdentityFs = memo(function ValidatorIdentity({ validatorInfo }: { validatorInfo: ValidatorInformation }) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const accentColor = isDark ? '#AA83DC' : theme.palette.text.highlight;
+
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', maxWidth: '310px', overflow: 'hidden', width: 'fit-content' }}>
       <PolkaGateIdenticon
@@ -217,7 +224,7 @@ const ValidatorIdentityFs = memo(function ValidatorIdentity({ validatorInfo }: {
           {validatorInfo.identity.displayParent ?? validatorInfo.identity.display}
         </Typography>}
       {validatorInfo.identity?.displayParent &&
-        <Typography color='#AA83DC' sx={{ bgcolor: '#AA83DC26', borderRadius: '6px', p: '4px' }} variant='B-5'>
+        <Typography color={accentColor} sx={{ bgcolor: isDark ? '#AA83DC26' : '#EEF1FF', borderRadius: '6px', p: '4px' }} variant='B-5'>
           {validatorInfo.identity.display}
         </Typography>}
     </Container>

@@ -87,19 +87,22 @@ function AccountSelection({ noSelection = false }: Props): React.ReactElement {
   }, [location.pathname, location?.state?.from, navigate, noSelection]);
 
   const isInAccountLists = location?.pathname === '/accounts';
+  const hoverBg = isDark ? '#674394' : '#EEF1FF';
+  const baseBg = isDark
+    ? isInAccountLists
+      ? '#FF4FB9'
+      : '#BFA1FF26'
+    : '#FFFFFF8C';
 
   return (
     <Container
       disableGutters
       onClick={onClick}
       sx={{
-        ':hover': noSelection ? {} : { background: '#674394' },
+        ':hover': noSelection ? {} : { background: hoverBg },
         alignItems: 'center',
-        background: isDark
-          ? isInAccountLists
-            ? '#FF4FB9'
-            : '#BFA1FF26'
-          : '#FFFFFF8C',
+        background: baseBg,
+        border: !isDark && !isInAccountLists ? '1px solid #E1E5F3' : 'none',
         borderRadius: '10px',
         columnGap: '5px',
         cursor: noSelection ? 'default' : 'pointer',

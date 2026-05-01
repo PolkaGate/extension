@@ -29,14 +29,17 @@ function SocialIcon({ Icon, bgColor, link, size = 32, tooltip }: Props): React.R
         onClick={goToLink}
         sx={{
           '&:hover': {
-            bgcolor: '#CC429D'
+            bgcolor: isDark ? '#CC429D' : '#E9DDFB',
+            borderColor: isDark ? 'transparent' : '#D3C3EE'
           },
           alignItems: 'center',
+          border: isDark ? 'none' : '1px solid #DDE3F4',
           borderRadius: '50%',
           cursor: 'pointer',
           display: 'flex',
           height: size,
           justifyContent: 'center',
+          transition: 'all 200ms ease-out',
           width: size
         }}
       >

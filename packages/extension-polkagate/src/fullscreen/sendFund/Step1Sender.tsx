@@ -3,7 +3,7 @@
 
 import type { Inputs } from './types';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -21,6 +21,8 @@ interface Props {
 
 export default function Step1Sender({ inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const accountAssets = useAccountAssets(address);
@@ -58,7 +60,7 @@ export default function Step1Sender({ inputs, setInputs }: Props): React.ReactEl
           address={address}
           genesisHash={genesisHash}
         />
-        <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '108px', p: '15px', width: '430px' }}>
+        <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#DDE3F4', borderRadius: '14px', boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)', height: '108px', p: '15px', width: '430px' }}>
           <NumberedTitle
             number={2}
             textPartInColor={t('your')}

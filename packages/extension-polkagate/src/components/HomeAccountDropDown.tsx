@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ClickAwayListener, Grid, styled, type SxProps, type Theme } from '@mui/material';
+import { ClickAwayListener, Grid, styled, type SxProps, type Theme, useTheme } from '@mui/material';
 import { AddCircle, ArrowDown2, Broom, ExportCurve, ImportCurve, Setting, User } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
@@ -16,13 +16,14 @@ import DropMenuContent from './DropMenuContent';
 
 const DropSelectContainer = styled(Grid, {
   shouldForwardProp: (prop) => prop !== 'focused'
-})<{ focused: boolean }>(({ focused }) => ({
-  ':hover': { background: '#674394' },
+})<{ focused: boolean }>(({ focused, theme }) => ({
+  ':hover': { background: theme.palette.mode === 'dark' ? '#674394' : '#F3F6FD' },
   alignItems: 'center',
   backdropFilter: 'blur(20px)',
-  background: focused ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#1B133C',
+  background: focused ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : theme.palette.mode === 'dark' ? '#1B133C' : '#FFFFFF',
+  border: focused ? 'none' : `1px solid ${theme.palette.mode === 'dark' ? 'transparent' : '#DDE3F4'}`,
   borderRadius: '12px',
-  boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
+  boxShadow: theme.palette.mode === 'dark' ? '0px 0px 24px 8px #4E2B7259 inset' : '0px 8px 22px rgba(133, 140, 176, 0.12)',
   columnGap: '2px',
   cursor: 'pointer',
   justifyContent: 'center',
@@ -35,6 +36,7 @@ interface Props {
 
 function HomeAccountDropDown({ style }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
   const selectedAccount = useSelectedAccount();
@@ -86,8 +88,8 @@ function HomeAccountDropDown({ style }: Props) {
     <>
       <ClickAwayListener onClickAway={handleClickAway}>
         <DropSelectContainer container focused={open} item onClick={toggleOpen} ref={containerRef} sx={style}>
-          <User color={open ? '#EAEBF1' : '#AA83DC'} size='18' variant='Bulk' />
-          <ArrowDown2 color={open ? '#EAEBF1' : '#AA83DC'} size='16' style={{ rotate: open ? '180deg' : 'none', transition: 'all 250ms ease-out' }} variant='Bold' />
+          <User color={open ? '#EAEBF1' : theme.palette.mode === 'dark' ? '#AA83DC' : theme.palette.text.secondary} size='18' variant='Bulk' />
+          <ArrowDown2 color={open ? '#EAEBF1' : theme.palette.mode === 'dark' ? '#AA83DC' : theme.palette.text.secondary} size='16' style={{ rotate: open ? '180deg' : 'none', transition: 'all 250ms ease-out' }} variant='Bold' />
         </DropSelectContainer>
       </ClickAwayListener>
       <DropMenuContent

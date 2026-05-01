@@ -69,13 +69,15 @@ const TableItem = ({ account, decimal, token, totalStaked, withDivider }: Accoun
 interface AccountsTableProps {
   accounts: SpStakingIndividualExposure[];
   genesisHash: string;
+  panelBgColor?: string;
   totalStaked: string;
   style?: SxProps<Theme>;
   tableMaxHeight?: string;
 }
 
-export default function AccountsTable({ accounts, genesisHash, style, tableMaxHeight, totalStaked }: AccountsTableProps) {
+export default function AccountsTable({ accounts, genesisHash, panelBgColor, style, tableMaxHeight, totalStaked }: AccountsTableProps) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const refContainer = useRef(null);
 
@@ -108,7 +110,7 @@ export default function AccountsTable({ accounts, genesisHash, style, tableMaxHe
           />
         ))}
       </Stack>
-      <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.3} />
+      <FadeOnScroll backgroundColor={panelBgColor ?? theme.palette.background.paper} containerRef={refContainer} height='50px' ratio={0.3} />
     </Stack>
   );
 }

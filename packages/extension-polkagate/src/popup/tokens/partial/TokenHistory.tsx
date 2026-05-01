@@ -4,7 +4,7 @@
 import type { Icon, IconProps } from 'iconsax-react';
 import type { TransactionDetail } from '../../../util/types';
 
-import { Container, Grid, IconButton, Typography } from '@mui/material';
+import { Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import { ArrowSwapHorizontal, Record, Setting4 } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useReducer, useState } from 'react';
 
@@ -12,7 +12,7 @@ import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 
 import { DecisionButtons, GradientSwitch } from '../../../components';
 import SnowFlake from '../../../components/SVG/SnowFlake';
-import { useTranslation } from '../../../hooks';
+import { useIsDark, useTranslation } from '../../../hooks';
 import { normalizeHistoryGenesis } from '../../../util/migrateHubUtils';
 import HistoryBox from '../../history/newDesign/HistoryBox';
 import useTransactionHistory from '../../history/useTransactionHistory';
@@ -64,10 +64,12 @@ interface FilterItemProps {
 }
 
 const FilterItem = ({ Icon, Logo, checked, iconVariant, name, onClick }: FilterItemProps) => {
+  const isDark = useIsDark();
+
   return (
     <Grid alignItems='center' container item justifyContent='space-between'>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ columnGap: '8px', width: 'fit-content' }}>
-        {Icon && <Icon color='#AA83DC' size='24' style={{ background: '#05091C', borderRadius: '999px', padding: '3px' }} variant={iconVariant ?? 'Outline'} />}
+        {Icon && <Icon color={isDark ? '#AA83DC' : '#4A86F7'} size='24' style={{ background: isDark ? '#05091C' : '#EEF1FF', borderRadius: '999px', padding: '3px' }} variant={iconVariant ?? 'Outline'} />}
         {Logo}
         <Typography color='text.primary' variant='B-1'>
           {name}
@@ -90,6 +92,7 @@ interface FilterHistoryProps {
 
 function FilterHistory({ dispatchFilter, filter, openMenu, setOpenMenu }: FilterHistoryProps) {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
   const closePopup = useCallback(() => {
     setOpenMenu(false);
@@ -123,7 +126,7 @@ function FilterHistory({ dispatchFilter, filter, openMenu, setOpenMenu }: Filter
             onClick={onFilters('governance')}
           />
           <FilterItem
-            Logo={<SnowFlake size='24' style={{ background: '#05091C', borderRadius: '999px', padding: '3px' }} />}
+            Logo={<SnowFlake size='24' style={{ background: isDark ? '#05091C' : '#EEF1FF', borderRadius: '999px', padding: '3px' }} />}
             checked={filter.staking}
             name={t('Staking')}
             onClick={onFilters('staking')}
@@ -150,6 +153,8 @@ interface Props {
 
 function TokenHistory({ address, decimal, genesisHash, token }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = useIsDark();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const [filter, dispatchFilter] = useReducer(filterReducer, INITIAL_STATE);
@@ -188,8 +193,8 @@ function TokenHistory({ address, decimal, genesisHash, token }: Props): React.Re
         <Typography color='text.primary' variant='B-3'>
           {t('History')}
         </Typography>
-        <IconButton onClick={openPopup} sx={{ ':hover': { background: '#674394' }, background: '#2D1E4A', borderRadius: '12px', p: '5px 8px' }}>
-          <Setting4 color='#AA83DC' size='18' variant='Bold' />
+        <IconButton onClick={openPopup} sx={{ ':hover': { background: isDark ? '#674394' : '#EEF1FF' }, background: isDark ? '#2D1E4A' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#E1E5F3', borderRadius: '12px', p: '5px 8px' }}>
+          <Setting4 color={isDark ? '#AA83DC' : theme.palette.text.primary} size='18' variant='Bold' />
         </IconButton>
       </Grid>
       <HistoryBox

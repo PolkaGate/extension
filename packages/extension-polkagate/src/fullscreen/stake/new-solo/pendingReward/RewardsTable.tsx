@@ -28,6 +28,8 @@ interface TableHeaderProp {
 export const TableHeader = ({ checked, disabled, onSelectAll }: TableHeaderProp) => {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const handleAllSelect = useCallback(() => onSelectAll(checked), [checked, onSelectAll]);
   const textColor = isExtension ? 'text.highlight' : 'text.secondary';
@@ -41,6 +43,7 @@ export const TableHeader = ({ checked, disabled, onSelectAll }: TableHeaderProp)
           changeState={handleAllSelect}
           checked={checked}
           disabled={disabled}
+          borderStyle={isExtension || isDark ? {} : { background: '#F3F6FD', borderColor: '#B58DDF', borderWidth: '2px' }}
           iconStyle={{ height: '24px', width: '24px' }}
           isBlueish={isExtension}
           style={{ m: 0, width: 'fit-content' }} // here
@@ -91,6 +94,7 @@ const StyledSkeleton = ({ isExtension }: { isExtension: boolean }) => {
 export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect, selectedToPayout }: RewardsTableProp) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const containerRef = useRef(null);
   const { decimal, token } = useChainInfo(genesisHash, true);
   const isExtension = useIsExtensionPopup();
@@ -121,11 +125,25 @@ export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect
 
           return (
             <Fragment key={index}>
-              <Grid container justifyContent='space-between' key={index} sx={{ alignItems: 'center', bgcolor: isExtension ? 'transparent' : '#05091C', borderRadius: isExtension ? 0 : '14px', display: 'flex', flexDirection: 'row', p: isExtension ? 0 : '5px 8px' }}>
+              <Grid
+                container
+                justifyContent='space-between'
+                key={index}
+                sx={{
+                  alignItems: 'center',
+                  bgcolor: isExtension ? 'transparent' : isDark ? '#05091C' : '#FFFFFF',
+                  border: isExtension || isDark ? 'none' : '1px solid #E3E8F7',
+                  borderRadius: isExtension ? 0 : '14px',
+                  boxShadow: isExtension || isDark ? 'none' : '0 8px 20px rgba(133, 140, 176, 0.10)',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  p: isExtension ? 0 : '5px 8px'
+                }}
+              >
                 <Grid container item sx={{ alignItems: 'center', gap: '6px' }} xs={COLUMNS_WIDTH.AMOUNT}>
                   <Grid item>
                     <GlowCheckbox
-                      borderStyle={{ border: 0 }}
+                      borderStyle={isExtension || isDark ? { border: 0 } : { background: '#F3F6FD', borderColor: '#B58DDF', borderWidth: '2px' }}
                       changeState={handleSelect(info, isChecked)}
                       checked={isChecked}
                       iconStyle={{ height: '24px', width: '24px' }}

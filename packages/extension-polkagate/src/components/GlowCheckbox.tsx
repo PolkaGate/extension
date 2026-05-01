@@ -4,7 +4,7 @@
 import { Container, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useIsHovered } from '../hooks';
+import { useIsDark, useIsHovered } from '../hooks';
 import TwoToneText from './TwoToneText';
 
 interface Props {
@@ -22,6 +22,7 @@ interface Props {
 
 function GlowCheckbox({ borderStyle ={}, changeState, checked = false, disabled, iconStyle = {}, isBlueish, label, labelPartInColor, labelStyle, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const isDark = useIsDark();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
 
@@ -45,17 +46,17 @@ function GlowCheckbox({ borderStyle ={}, changeState, checked = false, disabled,
   const CheckboxEffect = {
     background: hovered
       ? !disabled
-        ? isBlueish ? '#809ACB' : '#AA83DC'
+        ? isBlueish ? '#809ACB' : isDark ? '#AA83DC' : '#E9DDFB'
         : state
           ? '#FF4FB9'
-          : '#674394'
+          : isDark ? '#674394' : '#F8FAFF'
       : isBlueish
         ? '#809ACB4D'
         : state
           ? '#FF4FB9'
-          : '#674394',
+          : isDark ? '#674394' : '#F8FAFF',
     border: '2px solid',
-    borderColor: isBlueish ? '#809ACB' : '#AA83DC',
+    borderColor: isBlueish ? '#809ACB' : isDark ? '#AA83DC' : '#B58DDF',
     borderRadius: '6px',
     ...borderStyle,
     height: '18px',

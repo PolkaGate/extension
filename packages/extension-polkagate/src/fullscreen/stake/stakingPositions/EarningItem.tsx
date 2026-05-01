@@ -28,7 +28,7 @@ const Available = ({ balance, decimal, token }: StakedProps) => {
 
   return (
     <Grid container item sx={{ alignItems: 'center', gap: '6px', justifyContent: 'flex-start', minWidth: '160px', width: 'fit-content' }}>
-      <Typography color='#AA83DC' variant='B-2'>
+      <Typography color={theme.palette.mode === 'dark' ? '#AA83DC' : theme.palette.text.secondary} variant='B-2'>
         {t('Available')}:
       </Typography>
       {balance === undefined
@@ -73,11 +73,12 @@ const YieldBadge = ({ rate }: { rate: number | undefined }) => {
 
 const StakeButton = ({ onClick }: { onClick: () => void }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
-    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#2D1E4A', borderRadius: '11px', cursor: 'pointer', flexWrap: 'nowrap', gap: '6px', justifyContent: 'center', minWidth: '77px', p: '8px', width: 'fit-content' }}>
-      <Trade color='#AA83DC' size='18' variant='Bulk' />
-      <Typography color='primary.main' variant='B-4'>
+    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: theme.palette.mode === 'dark' ? '#2D1E4A' : '#EEF1FF', border: '1px solid', borderColor: theme.palette.mode === 'dark' ? 'transparent' : '#DDE3F4', borderRadius: '11px', cursor: 'pointer', flexWrap: 'nowrap', gap: '6px', justifyContent: 'center', minWidth: '77px', p: '8px', width: 'fit-content' }}>
+      <Trade color={theme.palette.mode === 'dark' ? '#AA83DC' : theme.palette.primary.main} size='18' variant='Bulk' />
+      <Typography color={theme.palette.mode === 'dark' ? 'primary.main' : 'text.highlight'} variant='B-4'>
         {t('Stake')}
       </Typography>
     </Grid>
@@ -91,6 +92,7 @@ interface Props {
 }
 
 function EarningItem({ info, popupOpener, setSelectedPosition }: Props) {
+  const theme = useTheme();
   const { availableBalance, decimal, freeBalance, genesisHash, rate, tokenSymbol } = info;
   const isTestNet = useMemo(() => TEST_NETS.includes(genesisHash), [genesisHash]);
 
@@ -101,7 +103,7 @@ function EarningItem({ info, popupOpener, setSelectedPosition }: Props) {
   }, [info, popupOpener, setSelectedPosition]);
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', gap: '40px', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: theme.palette.mode === 'dark' ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: theme.palette.mode === 'dark' ? 'transparent' : '#EEF1FF', borderRadius: '14px', display: 'flex', flexDirection: 'row', gap: '40px', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
       <TokenInfo genesisHash={genesisHash} />
       <Available balance={freeBalance || availableBalance || BN_ZERO} decimal={decimal} token={tokenSymbol} />
       <ChainIdentifier genesisHash={genesisHash} />

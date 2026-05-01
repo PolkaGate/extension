@@ -1,19 +1,16 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import { STORAGE_KEY } from '../util/constants';
+
 export function chooseTheme(): 'dark' | 'light' {
-  // TODO: will release Dark first then work on light mode
-  return 'dark';
+  const preferredTheme = localStorage.getItem(STORAGE_KEY.THEME);
 
-  // const preferredTheme = localStorage.getItem('theme');
+  if (preferredTheme === 'dark' || preferredTheme === 'light') {
+    return preferredTheme;
+  }
 
-  // if (preferredTheme) {
-  //   return preferredTheme === 'dark'
-  //     ? 'dark'
-  //     : 'light';
-  // }
-
-  // return window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
-  //   ? 'light'
-  //   : 'dark';
+  return window.matchMedia?.('(prefers-color-scheme: light)').matches
+    ? 'light'
+    : 'dark';
 }

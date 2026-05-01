@@ -34,10 +34,12 @@ const ThunderBackground = () => {
 
 const Badge = () => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
 
   return (
-    <Grid container item sx={{ background: 'linear-gradient(262.56deg, #0094FF 0%, #596AFF 45%, #0094FF 100%)', borderRadius: '0 0 12px 12px', clipPath: 'polygon(0% 0%, 100% 0%, 97% 100%, 3% 100%)', left: '50%', p: '3px 18px', position: 'absolute', transform: 'translateX(-50%)', width: 'fit-content' }}>
-      <Typography color='text.primary' fontSize='12px' fontWeight={700}>
+    <Grid container item sx={{ background: isLight ? 'linear-gradient(262.56deg, #3F86F8 0%, #5E8FF6 45%, #3F86F8 100%)' : 'linear-gradient(262.56deg, #0094FF 0%, #596AFF 45%, #0094FF 100%)', borderRadius: '0 0 12px 12px', clipPath: 'polygon(0% 0%, 100% 0%, 97% 100%, 3% 100%)', left: '50%', p: '3px 18px', position: 'absolute', transform: 'translateX(-50%)', width: 'fit-content' }}>
+      <Typography color={isLight ? '#FFFFFF' : 'text.primary'} fontSize='12px' fontWeight={700}>
         {t('Rewards')}
       </Typography>
     </Grid>
@@ -45,9 +47,12 @@ const Badge = () => {
 };
 
 const ChartButton = ({ onRewardChart }: { onRewardChart: () => void }) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   return (
-    <Grid container item onClick={onRewardChart} sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '999px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', p: '6px', position: 'absolute', right: '16px', top: '16px', width: 'fit-content', zIndex: 2 }}>
-      <Chart21 color='#0094FF' size='15' variant='Bulk' />
+    <Grid container item onClick={onRewardChart} sx={{ alignItems: 'center', bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '999px', boxShadow: isDark ? 'none' : '0 6px 16px rgba(133, 140, 176, 0.12)', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'center', p: '6px', position: 'absolute', right: '16px', top: '16px', width: 'fit-content', zIndex: 2 }}>
+      <Chart21 color={isDark ? '#0094FF' : '#745E9F'} size='15' variant='Bulk' />
     </Grid>
   );
 };
@@ -65,26 +70,27 @@ interface PoolClaimRewardProps {
 const PoolClaimReward = ({ decimal, disabled, onClaimReward, reward, rewardInCurrency, token }: PoolClaimRewardProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const isLight = theme.palette.mode === 'light';
 
   const isDisabled = useMemo(() => disabled || reward === undefined || reward.isZero() || rewardInCurrency === undefined || rewardInCurrency === 0, [disabled, reward, rewardInCurrency]);
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '10px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px 12px' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isLight ? '#FFFFFF' : '#05091C', border: isLight ? '1px solid #DDE3F4' : 'none', borderRadius: '10px', boxShadow: isLight ? '0px 10px 24px rgba(148, 163, 184, 0.12)' : 'none', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px 12px' }}>
       <ColumnAmounts
-        balanceColor={theme.palette.text.highlight}
-        color={theme.palette.text.primary}
+        balanceColor={isLight ? '#745E9F' : theme.palette.text.highlight}
+        color={isLight ? '#4D3A73' : theme.palette.text.primary}
         cryptoAmount={reward ?? BN_ZERO}
         decimal={decimal ?? 0}
         fiatAmount={rewardInCurrency ?? 0}
         placement='left'
-        priceSecondColor={theme.palette.text.highlight}
+        priceSecondColor={isLight ? '#745E9F' : theme.palette.text.highlight}
         token={token ?? ''}
       />
       <StakingActionButton
         buttonFontStyle={{ ...theme.typography['B-4'] }}
         disabled={isDisabled}
         onClick={onClaimReward}
-        startIcon={<MedalStar color={isDisabled ? '#EAEBF14D' : theme.palette.text.primary} size='18' variant='Bold' />}
+        startIcon={<MedalStar color={isLight ? (isDisabled ? '#B7BEDA' : '#FFFFFF') : isDisabled ? '#EAEBF14D' : theme.palette.text.primary} size='18' variant='Bold' />}
         style={{ '> span.MuiButton-startIcon': { marginRight: '4px' }, borderRadius: '12px', height: '28px', p: '6px 10px', width: 'fit-content' }}
         text={t('Claim Rewards')}
       />
@@ -136,6 +142,7 @@ interface FlatRewardTileProps {
 const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, reward, rewardInCurrency, token, totalClaimedReward, totalClaimedRewardInCurrency, type }: FlatRewardTileProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const isLight = theme.palette.mode === 'light';
 
   const height = type === 'pool' ? '170px' : '140px';
 
@@ -166,7 +173,7 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
         <Stack direction='column' sx={{ pl: '14px', pt: '16px', rowGap: '4px', zIndex: 1 }}>
           <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
             <Award color='#3988FF' size='20' variant='Bulk' />
-            <Typography color='text.highlight' variant='B-2'>
+            <Typography color={isLight ? '#745E9F' : 'text.highlight'} variant='B-2'>
               {t('Earned')}
             </Typography>
           </Container>
@@ -203,7 +210,7 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
                   balance={totalRewardFiat}
                   decimal={decimal}
                   style={{
-                    color: theme.palette.text.highlight,
+                    color: isLight ? '#745E9F' : theme.palette.text.highlight,
                     width: 'max-content'
                   }}
                   token={token}

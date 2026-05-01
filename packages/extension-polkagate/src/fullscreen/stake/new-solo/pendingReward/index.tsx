@@ -22,6 +22,7 @@ interface Props {
 export default function PendingRewards({ address, genesisHash, onClose }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { api, decimal, token } = useChainInfo(genesisHash);
 
   const [flowStep, setFlowStep] = useState<FullScreenTransactionFlow>(FULLSCREEN_STAKING_TX_FLOW.NONE);
@@ -58,7 +59,21 @@ export default function PendingRewards({ address, genesisHash, onClose }: Props)
     >
       <Grid container item sx={{ p: '4px' }}>
         <Stack direction='column' sx={{ gap: '8px', position: 'relative', px: '14px', width: '100%' }}>
-          <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', mb: '16px', p: '22px', pr: '32px' }}>
+          <Container
+            disableGutters
+            sx={{
+              alignItems: 'center',
+              bgcolor: isDark ? '#05091C' : '#FFFFFF',
+              border: isDark ? 'none' : '1px solid #E3E8F7',
+              borderRadius: '14px',
+              boxShadow: isDark ? 'none' : '0 12px 24px rgba(133, 140, 176, 0.12)',
+              display: 'flex',
+              flexDirection: 'row',
+              mb: '16px',
+              p: '22px',
+              pr: '32px'
+            }}
+          >
             <Box
               component='img'
               src={Badge as string}
@@ -67,7 +82,7 @@ export default function PendingRewards({ address, genesisHash, onClose }: Props)
                 width: '64px'
               }}
             />
-            <Typography color='#AA83DC' textAlign='left' variant='B-4'>
+            <Typography color={isDark ? '#AA83DC' : theme.palette.text.highlight} textAlign='left' variant='B-4'>
               {t('Validators usually pay rewards regularly. If not received within the set period, rewards expire. You can manually initiate the payout if desired.')}
             </Typography>
           </Container>
@@ -98,10 +113,22 @@ export default function PendingRewards({ address, genesisHash, onClose }: Props)
             variant='determinate'
           />
         </Stack>
-        <Grid container item sx={{ bgcolor: '#05091C', borderRadius: '28px', gap: '16px', mt: '10px', p: '16px' }}>
+        <Grid
+          container
+          item
+          sx={{
+            bgcolor: isDark ? '#05091C' : '#FFFFFF',
+            border: isDark ? 'none' : '1px solid #E3E8F7',
+            borderRadius: '28px',
+            boxShadow: isDark ? 'none' : '0 12px 24px rgba(133, 140, 176, 0.12)',
+            gap: '16px',
+            mt: '10px',
+            p: '16px'
+          }}
+        >
           <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
             <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width: '130px' }}>
-              <Typography color='#AA83DC' variant='B-4'>
+              <Typography color={isDark ? '#AA83DC' : theme.palette.text.highlight} variant='B-4'>
                 {t('Selected')}:
               </Typography>
               <Typography color='text.primary' variant='B-4'>
@@ -109,7 +136,7 @@ export default function PendingRewards({ address, genesisHash, onClose }: Props)
               </Typography>
             </Container>
             <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, width: '220px' }}>
-              <Typography color='#AA83DC' variant='B-4'>
+              <Typography color={isDark ? '#AA83DC' : theme.palette.text.highlight} variant='B-4'>
                 {t('Total')}:
               </Typography>
               <DisplayBalance

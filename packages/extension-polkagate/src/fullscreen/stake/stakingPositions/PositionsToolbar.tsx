@@ -21,11 +21,15 @@ interface TabItemProps {
   selector: () => void;
 }
 
-const TabItem = React.forwardRef<HTMLDivElement, TabItemProps>(
+  const TabItem = React.forwardRef<HTMLDivElement, TabItemProps>(
   ({ count, isSelected, selector, text }, ref: ForwardedRef<HTMLDivElement>) => {
     const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
 
-    const color = useMemo(() => isSelected ? theme.palette.text.primary : '#AA83DC', [isSelected, theme.palette.text.primary]);
+    const color = useMemo(
+      () => isSelected ? '#FFFFFF' : isDark ? theme.palette.text.secondary : theme.palette.text.highlight,
+      [isDark, isSelected, theme.palette.text.highlight, theme.palette.text.secondary]
+    );
 
     return (
       <Grid
@@ -48,7 +52,7 @@ const TabItem = React.forwardRef<HTMLDivElement, TabItemProps>(
         <Typography color={color} variant='B-6'>
           {text}
         </Typography>
-        <Typography color='text.primary' sx={{ bgcolor: isSelected ? '#EAEBF1' : '#FFFFFF26', borderRadius: '1024px', color: isSelected ? '#05091C' : '#AA83DC', minHeight: '18px', minWidth: '18px' }} variant='B-1'>
+        <Typography color='text.primary' sx={{ bgcolor: isSelected ? '#EAEBF1' : theme.palette.mode === 'dark' ? '#FFFFFF26' : '#EEF1FF', borderRadius: '1024px', color: isSelected ? '#05091C' : theme.palette.text.secondary, minHeight: '18px', minWidth: '18px' }} variant='B-1'>
           {count}
         </Typography>
       </Grid>
@@ -67,6 +71,7 @@ interface PositionsExploreProps {
 
 const PositionsExplore = ({ earningsCount, positionsCount, selectedTab, setter }: PositionsExploreProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const positionsRef = React.useRef<HTMLDivElement>(null);
   const exploreRef = React.useRef<HTMLDivElement>(null);
   const [indicatorStyle, setIndicatorStyle] = React.useState<{ left: number; width: number }>({ left: 4, width: 0 });
@@ -95,7 +100,7 @@ const PositionsExplore = ({ earningsCount, positionsCount, selectedTab, setter }
   }, [selectedTab, positionsCount, earningsCount, t]);
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '12px', display: 'flex', flexDirection: 'row', gap: '4px', height: '44px', m: 0, p: '4px', position: 'relative', width: 'fit-content' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: theme.palette.mode === 'dark' ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: theme.palette.mode === 'dark' ? 'transparent' : '#EEF1FF', borderRadius: '12px', display: 'flex', flexDirection: 'row', gap: '4px', height: '44px', m: 0, p: '4px', position: 'relative', width: 'fit-content' }}>
       <TabItem
         count={positionsCount ?? 0}
         isSelected={isSelected(POSITION_TABS.POSITIONS)}
@@ -142,10 +147,10 @@ function PositionsToolbar({ dispatch, earningsCount, positionsCount, state }: Pr
   const isTestnetEnabled = useIsTestnetEnabled();
 
   const positionOptions: AdvancedDropdownOption[] = useMemo(() => ([
-    { Icon: <Profile color='#AA83DC' size='20' variant='Bulk' />, text: t('Solo Staking'), value: 'solo' },
-    { Icon: <People color='#AA83DC' size='20' variant='Bulk' />, text: t('Pool Staking'), value: 'pool' },
-    { Icon: <Category2 color='#AA83DC' size='20' variant='Bulk' />, text: t('Solo and Pool Staking'), value: 'both' }
-  ]), [t]);
+    { Icon: <Profile color={theme.palette.primary.main} size='20' variant='Bulk' />, text: t('Solo Staking'), value: 'solo' },
+    { Icon: <People color={theme.palette.primary.main} size='20' variant='Bulk' />, text: t('Pool Staking'), value: 'pool' },
+    { Icon: <Category2 color={theme.palette.primary.main} size='20' variant='Bulk' />, text: t('Solo and Pool Staking'), value: 'both' }
+  ]), [t, theme.palette.primary.main]);
 
   useEffect(() => {
     isTestnetEnabled && dispatch({ type: 'TOGGLE_TESTNET' });

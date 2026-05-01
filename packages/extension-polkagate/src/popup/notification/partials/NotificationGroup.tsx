@@ -117,13 +117,14 @@ function NotificationItem({ currency, item, prices, t, theme, useAddedEndpoints 
 
 function NotificationGroup({ group: [dateKey, items] }: { group: [string, NotificationMessageInformation[]]; }) {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { t } = useTranslation();
   const { currency } = useContext(CurrencyContext);
   const useAddedEndpoints = useUserAddedEndpoints();
   const prices = usePrices();
 
   return (
-    <Stack direction='column' sx={{ bgcolor: '#05091C', borderRadius: '14px', gap: '8px', p: '10px', width: '100%' }}>
+    <Stack direction='column' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#EEF1FF', borderRadius: '14px', gap: '8px', p: '10px', width: '100%' }}>
       <ItemDate date={dateKey} />
       {items.map((item, index) => (
         <Fragment key={item.message.itemKey}>

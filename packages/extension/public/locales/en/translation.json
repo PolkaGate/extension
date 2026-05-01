@@ -660,7 +660,6 @@
   "Hide Balance": "",
   "This will permanently delete your accounts, and you won’t be able to recover your password. To restore access, import a backup (JSON file or recovery phrase).": "",
   "I understand the accounts will be deleted.": "",
-  "Coming Soon!": "",
   "customization": "",
   "Diagnostic Reports": "",
   "Opt Out of Sending Diagnostic Reports": "",
@@ -954,5 +953,6 @@
   "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "",
   "Enable Biometric Unlock": "",
   "Confirm your current password to securely enable biometric unlock on this device.": "",
-  "Welcome back": ""
+  "Welcome back": "",
+  "{{mode}} enabled": ""
 }

@@ -3,7 +3,7 @@
 
 import type { AlertType } from '../util/types';
 
-import { Alert as MuiAlert, Box, Typography } from '@mui/material';
+import { Alert as MuiAlert, Box, Typography, useTheme } from '@mui/material';
 import { keyframes } from '@mui/system';
 import { CloseCircle, Danger, InfoCircle, TickCircle } from 'iconsax-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -40,6 +40,8 @@ function Alert({ alert }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { removeAlert } = useAlerts();
   const isExtension = useIsExtensionPopup();
+  const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
   const nodeRef = React.useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const removeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -125,15 +127,18 @@ function Alert({ alert }: Props): React.ReactElement {
             severity={alert.severity}
             sx={{
               alignItems: 'center',
-              bgcolor: '#2D1E4A',
+              bgcolor: isLight ? '#FFFFFF' : '#2D1E4A',
+              border: isLight ? '1px solid #DDE3F4' : 'none',
               borderRadius: '12px',
+              boxShadow: isLight ? '0px 12px 30px rgba(148, 163, 184, 0.18)' : 'none',
+              color: isLight ? '#4D3A73' : theme.palette.text.primary,
               padding: '4px 16px',
               transform: 'none',
               width: 'fit-content',
               zIndex: 1
             }}
           >
-            <Typography sx={{ display: 'block', textAlign: 'left' }} variant={isExtension ? 'B-1' : 'B-2'}>
+            <Typography color={isLight ? '#6F5A96' : theme.palette.text.primary} sx={{ display: 'block', textAlign: 'left' }} variant={isExtension ? 'B-1' : 'B-2'}>
               {t(alert.text)}
             </Typography>
             {!alert.persist &&
@@ -153,7 +158,7 @@ function Alert({ alert }: Props): React.ReactElement {
                 <Box
                   sx={{
                     animation: `${progressAnimation} ${(TIME_TO_REMOVE_ALERT / 1000) - 1}s linear`,
-                    backgroundColor: '#EAEBF1',
+                    backgroundColor: isLight ? '#DDE3F4' : '#EAEBF1',
                     height: '100%',
                     width: '100%'
                   }}

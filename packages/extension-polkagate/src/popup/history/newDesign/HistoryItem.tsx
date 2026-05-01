@@ -12,7 +12,7 @@ import { historyIconBgColor, isReward, resolveActionType } from '@polkadot/exten
 import { BN_ZERO } from '@polkadot/util';
 
 import { DisplayBalance, FormatPrice, ScrollingTextBox } from '../../../components';
-import { useTokenPriceBySymbol, useTranslation } from '../../../hooks';
+import { useIsDark, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import GradientDivider from '../../../style/GradientDivider';
 import { amountToMachine, calcPrice } from '../../../util';
 import HistoryDetail from './HistoryDetail';
@@ -138,6 +138,7 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount({ historyItem, sho
 
 function HistoryItem({ historyDate, historyItems, short }: HistoryItemProps) {
   const theme = useTheme();
+  const isDark = useIsDark();
 
   const [historyItemDetail, setHistoryItemDetail] = useState<TransactionDetail>();
 
@@ -147,8 +148,8 @@ function HistoryItem({ historyDate, historyItems, short }: HistoryItemProps) {
 
   return (
     <>
-      <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', display: 'grid', p: '10px' }}>
-        <Typography color='text.secondary' sx={{ background: '#C6AECC26', borderRadius: '10px', mb: '4px', p: '2px 4px', width: 'fit-content' }} variant='B-2'>
+      <Container disableGutters sx={{ background: isDark ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#EEF1FF', borderRadius: '14px', display: 'grid', p: '10px' }}>
+        <Typography color='text.secondary' sx={{ background: isDark ? '#C6AECC26' : '#EEF1FF', borderRadius: '10px', mb: '4px', p: '2px 4px', width: 'fit-content' }} variant='B-2'>
           {historyDate}
         </Typography>
         {historyItems.map((historyItem, index) => {
@@ -158,8 +159,8 @@ function HistoryItem({ historyDate, historyItems, short }: HistoryItemProps) {
 
           return (
             <React.Fragment key={index}>
-              <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={openDetail(historyItem)} sx={{ ':hover': { background: '#1B133C', px: '8px' }, borderRadius: '12px', columnGap: '8px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
-                <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: '#2D1E4A', borderRadius: '999px', height: '36px', width: '36px' }}>
+              <Grid alignItems='center' container item justifyContent='space-between' key={index} onClick={openDetail(historyItem)} sx={{ ':hover': { background: isDark ? '#1B133C' : '#EEF1FF', px: '8px' }, borderRadius: '12px', columnGap: '8px', cursor: 'pointer', py: '4px', transition: 'all 250ms ease-out' }}>
+                <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: isDark ? '#2D1E4A' : '#EEF1FF', borderRadius: '999px', height: '36px', width: '36px' }}>
                   <HistoryIcon action={action} isFullscreen={false} />
                 </Grid>
                 <Grid container item justifyContent='space-between' xs>

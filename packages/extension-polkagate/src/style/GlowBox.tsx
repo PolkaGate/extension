@@ -102,10 +102,11 @@ interface Props {
   children: React.ReactNode;
   style?: SxProps<Theme>;
   isBlueish?: boolean;
+  noGlowBall?: boolean;
   shortSideDividers?: boolean; // Enables shorter side dividers used specifically in fullscreen mode.
 }
 
-function GlowBox({ children, isBlueish = false, shortSideDividers = false, showTopBorder = true, style }: Props): React.ReactElement {
+function GlowBox({ children, isBlueish = false, noGlowBall = false, shortSideDividers = false, showTopBorder = true, style }: Props): React.ReactElement {
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
 
@@ -121,7 +122,7 @@ function GlowBox({ children, isBlueish = false, shortSideDividers = false, showT
           <GradientBorder style={{ width: '311px', ...stakingStyle }} type='pinkish' />}
         <GlowDivider isDark={isDark} placement='left' shortSideDividers={shortSideDividers} staking={isBlueish} />
         <GlowDivider isDark={isDark} placement='right' shortSideDividers={shortSideDividers} staking={isBlueish} />
-        {isDark &&
+        {isDark && !noGlowBall &&
           <GlowBall staking={isBlueish} />
         }
         {isExtension

@@ -352,6 +352,7 @@ export const STORAGE_KEY = {
   SELECTED_PROFILE: 'profile',
   SUBSCAN_API_KEY: 'subscanApiKey',
   TEST_NET_ENABLED: 'testnet_enabled',
+  THEME: 'theme',
   USER_ADDED_ENDPOINT: 'userAddedEndpoint',
   VALIDATORS_INFO: 'validatorsInfo'
 };

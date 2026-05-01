@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Link } from '@mui/material';
+import { Box, Container, Grid, Link, useTheme } from '@mui/material';
 import React from 'react';
 
 import { Version } from '@polkadot/extension-polkagate/src/partials';
@@ -29,16 +29,29 @@ const INNER_WIDTH = 1416;
 
 function SocialRow({ showLeftColumn }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bottom: '20px', position: 'absolute', right: showLeftColumn ? '30px' : `calc(${INNER_WIDTH}-50%)px`, width: '50%' }}>
       <Socials buttonSize={24} iconSize={13.5} style={{ pr: '50px', width: 'fit-content' }} />
       <Grid columnGap='40px' container item width='fit-content'>
         <NeedHelp />
-        <Link href={PRIVACY_POLICY_LINK} rel='noreferrer' sx={{ '&:hover': { color: '#AA83DC' }, color: '#674394', cursor: 'pointer' }} target='_blank' underline='none' variant='B-5'>
+        <Link
+          href={PRIVACY_POLICY_LINK}
+          rel='noreferrer'
+          sx={{
+            '&:hover': { color: '#AA83DC' },
+            color: isDark ? '#674394' : '#745D8B',
+            cursor: 'pointer'
+          }}
+          target='_blank'
+          underline='none'
+          variant='B-5'
+        >
           {t('Privacy & Security')}
         </Link>
-        <Version style={{ padding: 0, width: 'fit-content' }} variant='B-5' />
+        <Version style={{ padding: 0, width: 'fit-content' }} textColor={isDark ? undefined : '#745D8B'} variant='B-5' />
       </Grid>
     </Grid>
   );
@@ -46,10 +59,36 @@ function SocialRow({ showLeftColumn }: Props): React.ReactElement {
 
 function OnboardingLayout({ children, childrenStyle = {}, showBread = true, showLeftColumn = true, style }: Props): React.ReactElement {
   useFullscreen();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
-    <Container maxWidth={false} sx={{ alignItems: 'center', display: 'flex', height: '100vh', justifyContent: 'center', ...style }}>
-      <Grid alignItems='flex-start' container sx={{ bgcolor: '#05091C', borderRadius: '24px', minHeight: '788px', height: '100vh', p: '12px', position: 'relative', width: '1440px' }}>
+    <Container
+      maxWidth={false}
+      sx={{
+        alignItems: 'center',
+        bgcolor: isDark ? '#05091C' : '#F8FAFF',
+        display: 'flex',
+        height: '100vh',
+        justifyContent: 'center',
+        ...style
+      }}
+    >
+      <Grid
+        alignItems='flex-start'
+        container
+        sx={{
+          bgcolor: isDark ? '#05091C' : '#F8FAFF',
+          border: isDark ? 'none' : '1px solid #E3E8F7',
+          borderRadius: '24px',
+          boxShadow: isDark ? 'none' : '0 20px 40px rgba(133, 140, 176, 0.14)',
+          minHeight: '788px',
+          height: '100vh',
+          p: '12px',
+          position: 'relative',
+          width: '1440px'
+        }}
+      >
         <LogoWithText style={{ borderRadius: '32px', left: '0', padding: '15px', position: 'absolute', top: '0', zIndex: 10 }} />
         <Grid
           alignItems='flex-start'
@@ -60,6 +99,7 @@ function OnboardingLayout({ children, childrenStyle = {}, showBread = true, show
             backgroundPosition: 'top',
             backgroundRepeat: 'no-repeat',
             borderRadius: '24px',
+            boxShadow: isDark ? 'none' : 'inset 0 1px 0 rgba(255, 255, 255, 0.6)',
             height: '100vh',
             minHeight: '764px',
             p: '7px',

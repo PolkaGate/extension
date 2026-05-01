@@ -38,6 +38,27 @@ const SNACK_BAR_VISIBILITY_DURATION = 2000;
  */
 const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isError, onClose, open, text }: Props) => {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
+  const background = isError
+    ? (isDark
+      ? 'linear-gradient(262.56deg, #B1004D 0%, #DC45A0 45%, #B1004D 100%)'
+      : 'linear-gradient(180deg, #FFF6FA 0%, #FFE8F1 100%)')
+    : (isDark
+      ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)'
+      : 'linear-gradient(180deg, #FFFFFF 0%, #F6F1FF 100%)');
+  const borderColor = isError
+    ? (isDark ? '#8F0040' : '#FFD0E0')
+    : (isDark ? '#4A217A' : '#E6DDF7');
+  const textColor = isError
+    ? (isDark ? '#EAEBF1' : '#7A244B')
+    : theme.palette.text.primary;
+  const progressTrackColor = isError
+    ? (isDark ? '#8F0040' : '#FFD0E0')
+    : (isDark ? '#674394' : '#DDD6F6');
+  const progressFillColor = isError
+    ? (isDark ? '#EAEBF1' : '#FF4FB9')
+    : (isDark ? '#EAEBF1' : '#8A56F8');
 
   useEffect(() => {
     if (open) {
@@ -61,10 +82,11 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
       <Box
         sx={{
           alignItems: 'center',
-          background: isError ? 'linear-gradient(262.56deg, #B1004D 0%, #DC45A0 45%, #B1004D 100%)' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+          background,
+          border: `1px solid ${borderColor}`,
           borderRadius: '12px',
           boxShadow: 3,
-          color: '#fff',
+          color: textColor,
           columnGap: '5px',
           display: 'flex',
           minHeight: '52px',
@@ -80,7 +102,7 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
       >
         {
           isError
-            ? <CloseCircle color='#EAEBF1' size='24' />
+            ? <CloseCircle color={textColor} size='24' />
             : <Box
               component='img'
               src={check as string}
@@ -88,7 +110,7 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
             />
         }
         <Typography
-          color={theme.palette.text.primary}
+          color={textColor}
           sx={{
             overflowWrap: 'anywhere',
             pr: isError ? 0 : '22px',
@@ -101,7 +123,7 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
         </Typography>
         <Box
           sx={{
-            backgroundColor: '#674394',
+            backgroundColor: progressTrackColor,
             bottom: '1px',
             height: '3px',
             position: 'absolute',
@@ -111,7 +133,7 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
           <Box
             sx={{
               animation: `${progressAnimation} 2s linear`,
-              backgroundColor: '#EAEBF1',
+              backgroundColor: progressFillColor,
               height: '100%',
               width: '100%'
             }}

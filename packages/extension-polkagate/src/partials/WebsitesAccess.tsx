@@ -4,7 +4,7 @@
 import type { AuthUrlInfo, AuthUrls } from '@polkadot/extension-base/background/types';
 import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
 
-import { Box, Container, Stack, Typography } from '@mui/material';
+import { Box, Container, Stack, Typography, useTheme } from '@mui/material';
 import { Key, Link2, Profile, Trash, Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -21,6 +21,7 @@ interface Props {
 
 function EmptyAccessList() {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Stack alignContent='center' direction='column'>
@@ -29,7 +30,7 @@ function EmptyAccessList() {
         src={emptyList as string}
         sx={{ m: '70px auto -10px' }}
       />
-      <Typography color='#BEAAD8' sx={{ p: '10px 40px 30px' }} variant='B-2'>
+      <Typography color={theme.palette.text.secondary} sx={{ p: '10px 40px 30px' }} variant='B-2'>
         {t('This is where sites with access to your accounts will appear')}
       </Typography>
     </Stack>
@@ -48,6 +49,8 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef(null);
   const isExtension = useIsExtensionPopup();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [isBusy, setIsBusy] = useState<boolean>();
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -105,7 +108,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
 
   return (
     <Stack alignItems='center' direction='column' sx={{ height: '460px', position: 'relative', pt: '10px' }}>
-      <Typography color='#BEAAD8' sx={{ p: isExtension ? '0 10px' : '10px 25px' }} variant='B-4'>
+      <Typography color='text.secondary' sx={{ p: isExtension ? '0 10px' : '10px 25px' }} variant='B-4'>
         {t('Control website access to your visible accounts. Edit the access list or delete a site to remove permissions. Only visible accounts are accessible.')}
       </Typography>
       <SearchField
@@ -115,10 +118,10 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
         style={{ margin: isExtension ? '17px 0 0' : '20px 25px 15px', padding: '0 10px' }}
       />
       <Stack direction='row' justifyContent='space-between' sx={{ m: '20px 0 10px', px: '15px', width: '100%' }}>
-        <Typography color='#7956A5' sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
+        <Typography color={isDark ? '#7956A5' : '#8A79B3'} sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
           {t('origin')}
         </Typography>
-        <Typography color='#7956A5' sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
+        <Typography color={isDark ? '#7956A5' : '#8A79B3'} sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
           {t('action')}
         </Typography>
       </Stack>
@@ -132,20 +135,20 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
                 !!index && isExtension &&
                 <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '345px' }} />
               }
-              <Stack alignItems='center' direction='row' justifyContent='space-between' key={index} sx={{ bgcolor: isExtension ? 'transparent' : '#05091C', borderRadius: '14px', mb: '2px', p: isExtension ? '10px 0' : '12px 10px', width: '100%' }}>
+              <Stack alignItems='center' direction='row' justifyContent='space-between' key={index} sx={{ bgcolor: isExtension ? 'transparent' : (isDark ? '#05091C' : '#FFFFFF'), border: isExtension || isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', mb: '2px', p: isExtension ? '10px 0' : '12px 10px', width: '100%' }}>
                 <Stack alignItems='center' columnGap='5px' direction='row'>
                   <Link2 color='#FF4FB9' size='16' variant='Bulk' />
-                  <Typography color='#EAEBF1' variant='B-4'>
+                  <Typography color='text.primary' variant='B-4'>
                     {url}
                   </Typography>
                 </Stack>
                 <Stack alignItems='center' columnGap='5px' direction='row'>
                   <MyTooltip content={t('Edit access')}>
-                    <Box onClick={onEditList(info)} sx={{ alignItems: 'center', bgcolor: isIncluded ? '#82FFA533' : '#2D1E4A', borderRadius: '128px', cursor: 'pointer', display: 'flex', height: '24px', justifyContent: 'center', minWidth: '34px' }}>
-                      <Typography color='#AA83DC' sx={{ mr: '3px' }} variant='B-4'>
+                    <Box onClick={onEditList(info)} sx={{ alignItems: 'center', bgcolor: isIncluded ? (isDark ? '#82FFA533' : '#E8F9EE') : (isDark ? '#2D1E4A' : '#EEF2FB'), border: isDark ? 'none' : '1px solid #E0E6F7', borderRadius: '128px', cursor: 'pointer', display: 'flex', height: '24px', justifyContent: 'center', minWidth: '34px' }}>
+                      <Typography color={isDark ? '#AA83DC' : '#7A69A8'} sx={{ mr: '3px' }} variant='B-4'>
                         {info.authorizedAccounts.length}
                       </Typography>
-                      <Profile color={isIncluded ? '#82FFA5' : '#AA83DC'} size='14' variant='Bulk' />
+                      <Profile color={isIncluded ? '#82FFA5' : (isDark ? '#AA83DC' : '#7A69A8')} size='14' variant='Bulk' />
                     </Box>
                   </MyTooltip>
                   <MyTooltip content={t('Remove access')}>
@@ -213,7 +216,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
         title={t('Remove all access')}
       >
         <Stack direction='column' sx={{ alignItems: 'center', px: '20px', pb: isExtension ? '12px' : '20px' }}>
-          <Typography color='#BEAAD8' sx={{ pb: isExtension ? '16px' : '25px', textAlign: 'center' }} variant='B-4'>
+          <Typography color='text.secondary' sx={{ pb: isExtension ? '16px' : '25px', textAlign: 'center' }} variant='B-4'>
             {t('This will remove access for all authenticated websites. Are you sure you want to continue?')}
           </Typography>
           <DecisionButtons

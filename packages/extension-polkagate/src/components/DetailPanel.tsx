@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChevronLeft, Close } from '@mui/icons-material';
-import { Box, Container, Grid, IconButton, Modal, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { Box, Container, Grid, IconButton, Modal, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useMemo } from 'react';
 
 import { modalEffect } from '../assets/img';
@@ -23,28 +23,32 @@ interface LeftColumnProps {
 
 function LeftColumn({ LeftItem, RightItem, TitleLogo, children, dividerStyle, noCloseButton, noDivider, onClose, showBackIconAsClose, style = {}, title }: LeftColumnProps) {
   const CLoseIcon = showBackIconAsClose ? ChevronLeft : Close;
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const BoxStyle: SxProps<Theme> = useMemo(() => ({
-    backgroundImage: `url(${modalEffect})`,
+    backgroundImage: isDark ? `url(${modalEffect})` : 'none',
     backgroundPosition: 'top center',
     backgroundRepeat: 'no-repeat',
     backgroundSize: '100% auto',
-    bgcolor: '#1B133C',
+    bgcolor: isDark ? '#1B133C' : theme.palette.background.paper,
+    border: isDark ? 'none' : '1px solid #DDE3F4',
     borderRadius: '32px',
+    boxShadow: isDark ? 'none' : '0 18px 48px rgba(133, 140, 176, 0.22)',
     position: 'relative',
     py: '20px',
     width: '451px',
     ...style
-  }), [style]);
+  }), [isDark, style, theme.palette.background.paper]);
 
   return (
     <Box sx={BoxStyle}>
       <Grid alignItems='center' container item>
         <IconButton
           onClick={onClose}
-          sx={{ background: '#BFA1FF26', borderRadius: '10px', height: '36px', left: '20px', position: 'absolute', top: noDivider ? '20px' : 'inherit', visibility: noCloseButton ? 'hidden' : 'visible', width: '36px', zIndex: 2 }}
+          sx={{ background: isDark ? '#BFA1FF26' : '#EEF1FF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '10px', height: '36px', left: '20px', position: 'absolute', top: noDivider ? '20px' : 'inherit', visibility: noCloseButton ? 'hidden' : 'visible', width: '36px', zIndex: 2 }}
         >
-          <CLoseIcon sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
+          <CLoseIcon sx={{ color: isDark ? '#AA83DC' : theme.palette.text.highlight, fontSize: 20, stroke: isDark ? '#AA83DC' : theme.palette.text.highlight }} />
         </IconButton>
         <Stack alignItems='center' direction='row' justifyContent='center' sx={{ width: '100%' }}>
           {TitleLogo &&
@@ -52,7 +56,7 @@ function LeftColumn({ LeftItem, RightItem, TitleLogo, children, dividerStyle, no
               {TitleLogo}
             </span>
           }
-          <Typography color='#EAEBF1' sx={{ ml: RightItem ? '53px' : 0, textAlign: RightItem || TitleLogo ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
+          <Typography color='text.primary' sx={{ ml: RightItem ? '53px' : 0, textAlign: RightItem || TitleLogo ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
             {title}
           </Typography>
         </Stack>
@@ -70,7 +74,9 @@ function LeftColumn({ LeftItem, RightItem, TitleLogo, children, dividerStyle, no
       {
         !noDivider &&
         <Box sx={{
-          background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
+          background: isDark
+            ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)'
+            : 'linear-gradient(90deg, rgba(221, 227, 244, 0) 0%, #DDE3F4 50.06%, rgba(221, 227, 244, 0) 100%)',
           height: '1px',
           justifySelf: 'center',
           m: '5px 0 15px',
@@ -118,6 +124,8 @@ function DetailPanel({ LeftItem,
   showBackIconAsClose,
   style,
   title }: Props) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const ModalWidth = 623;
 
   const initialX = useMemo(() => (window.innerWidth - ModalWidth) / 2, [ModalWidth]);
@@ -149,7 +157,7 @@ function DetailPanel({ LeftItem,
   }, [onClose]);
 
   return (
-    <Modal onClose={_onClose} open={true} slotProps={{ backdrop: { style: { backdropFilter: 'blur(5px)', backgroundColor: 'rgba(0, 0, 0, 0.73)' } } }}>
+    <Modal onClose={_onClose} open={true} slotProps={{ backdrop: { style: { backdropFilter: 'blur(5px)', backgroundColor: isDark ? 'rgba(0, 0, 0, 0.73)' : 'rgba(49, 40, 90, 0.18)' } } }}>
       <Container disableGutters sx={containerStyle}>
         <LeftColumn
           LeftItem={LeftItem}

@@ -3,7 +3,7 @@
 
 import type { Inputs } from '../types';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { AddressInput } from '../../../components';
@@ -18,6 +18,8 @@ interface Props {
 
 export default function RecipientAddress({ genesisHash, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const contacts = useAddressBook();
   const selectedAccount = useSelectedAccount();
   const formattedSelectedAccount = useFormatted(selectedAccount?.address, genesisHash);
@@ -56,7 +58,7 @@ export default function RecipientAddress({ genesisHash, inputs, setInputs }: Pro
 
   return (
     <Stack direction='column'>
-      <Stack sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '108px', overflow: 'hidden', p: '15px', rowGap: '6px', width: '379px' }}>
+      <Stack sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#DDE3F4', borderRadius: '14px', boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)', height: '108px', overflow: 'hidden', p: '15px', rowGap: '6px', width: '379px' }}>
         <NumberedTitle
           number={1}
           textPartInColor={t('Recipient')}

@@ -50,15 +50,28 @@ export default function Language(): React.ReactElement {
         onClick={extensionPopupOpener(ExtensionPopups.LANGUAGE)}
         onMouseEnter={toggleHover}
         onMouseLeave={toggleHover}
-        sx={{ alignItems: 'center', bgcolor: hovered ? '#2D1E4A' : 'transparent', border: '1px solid #1B133C', borderRadius: '12px', cursor: 'pointer', height: '36px', width: '100%', px: '10px' }}
+        sx={{
+          alignItems: 'center',
+          bgcolor: isDark
+            ? hovered ? '#2D1E4A' : 'transparent'
+            : hovered ? '#F3F6FD' : '#FFFFFF',
+          border: `1px solid ${isDark ? '#1B133C' : '#DDE3F4'}`,
+          borderRadius: '12px',
+          boxShadow: isDark ? 'none' : '0 6px 16px rgba(133, 140, 176, 0.10)',
+          cursor: 'pointer',
+          height: '36px',
+          width: '100%',
+          px: '10px',
+          transition: 'all 200ms ease-out'
+        }}
       >
         <Stack alignItems='center' columnGap='8px' direction='row' sx={{ alignItems: 'center' }}>
           <Translate color={isDark ? '#AA83DC' : '#745D8B'} size='14' variant='Bulk' />
-          <Typography color='#BEAAD8' variant='B-4'>
+          <Typography color={isDark ? '#BEAAD8' : '#745D8B'} variant='B-4'>
             {language}
           </Typography>
         </Stack>
-        <ChevronRight sx={{ color: '#AA83DC', fontSize: '20px' }} />
+        <ChevronRight sx={{ color: isDark ? '#AA83DC' : '#8B7AAA', fontSize: '20px' }} />
       </Stack>
       <SelectLanguage
         onClose={extensionPopupCloser}

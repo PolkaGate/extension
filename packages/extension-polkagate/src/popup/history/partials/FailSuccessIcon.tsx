@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { CloseCircle, TickCircle } from 'iconsax-react';
 import React from 'react';
 
@@ -20,13 +20,28 @@ interface Props {
 
 export default function FailSuccessIcon({ children, description, failureText, isBlueish, showLabel = true, style = {}, success }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const successColor = isDark ? '#82FFA5' : '#43A867';
+  const iconBg = isDark ? '#000' : '#F3F6FD';
 
   return (
     <Stack sx={{ alignItems: 'center', mt: '-5px', ...style }}>
-      <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', overflow: 'hidden', width: 'fit-content' }}>
+      <Grid
+        container
+        item
+        sx={{
+          backdropFilter: 'blur(4px)',
+          border: '8px solid',
+          borderColor: isDark ? '#00000033' : '#E9DDFB',
+          borderRadius: '999px',
+          overflow: 'hidden',
+          width: 'fit-content'
+        }}
+      >
         {success
-          ? <TickCircle color='#82FFA5' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
-          : <CloseCircle color='#FF4FB9' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
+          ? <TickCircle color={successColor} size='50' style={{ background: iconBg, borderRadius: '999px', margin: '-4px' }} variant='Bold' />
+          : <CloseCircle color='#FF4FB9' size='50' style={{ background: iconBg, borderRadius: '999px', margin: '-4px' }} variant='Bold' />
         }
       </Grid>
       {showLabel &&

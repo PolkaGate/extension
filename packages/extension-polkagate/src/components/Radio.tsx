@@ -3,7 +3,7 @@
 
 import type { RadioProps } from '@mui/material/Radio';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import Radio from '@mui/material/Radio';
 import { styled } from '@mui/material/styles';
 import * as React from 'react';
@@ -88,6 +88,9 @@ interface Props extends RadioProps {
 }
 
 export default function MyRadio({ checked, columnGap, label, onChange, props, value }: Props) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   return (
     <Stack columnGap={columnGap} direction='row' sx={{ alignItems: 'center' }}>
       <label htmlFor={`radio-${value}`} style={{ alignItems: 'center', cursor: 'pointer', display: 'flex' }}>
@@ -102,7 +105,7 @@ export default function MyRadio({ checked, columnGap, label, onChange, props, va
           value={value}
           {...props}
         />
-        <Typography color='#AA83DC' variant='B-1'>
+        <Typography color={isDark ? '#AA83DC' : theme.palette.text.primary} variant='B-1'>
           {label}
         </Typography>
       </label>

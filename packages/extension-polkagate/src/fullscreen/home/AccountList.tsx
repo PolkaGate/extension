@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack } from '@mui/material';
+import { Stack, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { useRef } from 'react';
 
@@ -14,6 +14,8 @@ import ProfileTabsFS from './ProfileTabsFS';
 
 function AccountList(): React.ReactElement {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { categorizedAccounts, initialAccountList } = useCategorizedAccountsInProfiles();
 
   let totalAccountsBefore = 0; // ← track accounts of previous profiles
@@ -44,7 +46,8 @@ function AccountList(): React.ReactElement {
                     direction='column'
                     justifyContent='center'
                     sx={{
-                      bgcolor: '#05091C',
+                      bgcolor: isDark ? '#05091C' : '#FFFFFF',
+                      border: isDark ? 'none' : '1px solid #DDE3F4',
                       borderRadius: justOneAccount
                         ? '14px'
                         : isFirstAccount

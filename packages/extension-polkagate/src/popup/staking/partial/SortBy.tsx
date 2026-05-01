@@ -11,11 +11,12 @@ import { useIsBlueish, useIsExtensionPopup, useIsHovered, useTranslation } from 
 
 // This code is used in both extension and fullscreen modes, so the UI design varies between the two.
 
-const DropContentContainer = styled(Grid)(() => ({
-  background: '#05091C',
+const DropContentContainer = styled(Grid)(({ theme }) => ({
+  background: theme.palette.mode === 'dark' ? '#05091C' : '#FFFFFF',
   border: '4px solid',
-  borderColor: '#1B133C',
+  borderColor: theme.palette.mode === 'dark' ? '#1B133C' : '#EEF1FF',
   borderRadius: '12px',
+  boxShadow: theme.palette.mode === 'dark' ? 'none' : '0 12px 32px rgba(133, 140, 176, 0.18)',
   columnGap: '5px',
   flexWrap: 'nowrap',
   margin: 'auto',
@@ -37,6 +38,8 @@ interface TabProps {
 function Tab({ label, setSortBy, sortBy }: TabProps): React.ReactElement {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const refContainer = useRef(null);
   const hovered = useIsHovered(refContainer);
 
@@ -46,16 +49,25 @@ function Tab({ label, setSortBy, sortBy }: TabProps): React.ReactElement {
     setSortBy(label);
   }, [label, setSortBy]);
 
-  const textColor = isBlueish ? 'text.highlight' : 'text.primary';
-  const hoveredTextColor = isBlueish ? 'text.primary' : 'text.secondary';
-  const color = isBlueish ? '#3988FF' : '#FF4FB9';
+  const selectedColor = isDark ? (isBlueish ? '#3988FF' : '#FF4FB9') : '#FF4FB9';
+  const textColor = isDark
+    ? (isBlueish ? 'text.highlight' : 'text.primary')
+    : 'text.primary';
+  const hoveredTextColor = isDark
+    ? (isBlueish ? 'text.primary' : 'text.secondary')
+    : 'text.primary';
+  const backgroundColor = hovered
+    ? (isDark ? '#222540A6' : '#F3F6FD')
+    : isSelected
+      ? (isDark ? 'transparent' : '#EEF2FB')
+      : 'transparent';
 
   return (
-    <Container disableGutters onClick={onClick} ref={refContainer} sx={{ alignItems: 'center', bgcolor: hovered ? '#222540A6' : 'transparent', borderRadius: '10px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px', width: '100%' }}>
-      <Typography color={isSelected ? color : hovered ? hoveredTextColor : textColor} variant='B-2'>
+    <Container disableGutters onClick={onClick} ref={refContainer} sx={{ alignItems: 'center', bgcolor: backgroundColor, borderRadius: '10px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px', width: '100%' }}>
+      <Typography color={isSelected ? selectedColor : hovered ? hoveredTextColor : textColor} variant='B-2'>
         {t(label)}
       </Typography>
-      <CheckIcon sx={{ background: isBlueish ? color : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '999px', color: '#fff', fontSize: '16px', fontWeight: 900, height: '18px', transition: 'all 100ms ease-out', visibility: isSelected ? 'visible' : 'hidden', width: '18px' }} />
+      <CheckIcon sx={{ background: isDark ? (isBlueish ? '#3988FF' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)') : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '999px', color: '#fff', fontSize: '16px', fontWeight: 900, height: '18px', transition: 'all 100ms ease-out', visibility: isSelected ? 'visible' : 'hidden', width: '18px' }} />
     </Container>
   );
 }

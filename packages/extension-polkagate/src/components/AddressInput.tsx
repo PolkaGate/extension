@@ -72,6 +72,7 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
   const containerRef = useRef<HTMLDivElement>(null);
   const isBlueish = useIsBlueish();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [focus, setFocus] = useState<boolean>(false);
   const [openCamera, setOpenCamera] = useState<boolean>(false);
@@ -79,7 +80,7 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
   const [invalidAddress, setInvalidAddress] = useState<boolean>(false);
   const [enteredAddress, setEnteredAddress] = useState<string | undefined | null>();
   const [hoveredAction, setHoveredAction] = useState<'clear' | 'inline' | 'qr' | 'select' | 'paste' | undefined>(undefined);
-  const defaultActionColor = '#AA83DC';
+  const defaultActionColor = isDark ? '#AA83DC' : '#8D7AAF';
   const hoverActionColor = '#EAEBF1';
   const hoverActionBackground = 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)';
   const getActionColor = useCallback((action: 'clear' | 'inline' | 'qr' | 'select' | 'paste') =>
@@ -156,14 +157,14 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
     <>
       <Stack direction='column' justifyContent='start' ref={containerRef} rowGap='5px' sx={{ position: 'relative', ...style }}>
         {label &&
-          <Typography color='#EAEBF1' sx={{ textAlign: 'left' }} variant='B-1'>
+          <Typography color={isDark ? '#EAEBF1' : theme.palette.text.primary} sx={{ textAlign: 'left' }} variant='B-1'>
             {label}
           </Typography>
         }
         <TextField
           InputProps={{
             endAdornment: (
-              <InputAdornment position='end' sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '80%', maxHeight: '80%', px: '5px' }}>
+              <InputAdornment position='end' sx={{ bgcolor: isDark ? '#2D1E4A' : '#F3F6FD', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '8px', height: '80%', maxHeight: '80%', px: '5px' }}>
                 {!disabled && <>
                   {!!enteredAddress
                     ? (
@@ -240,7 +241,7 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
                       size={18}
                     />)
                   : <Hashtag
-                    color={invalidAddress ? '#FF4FB9' : focus ? '#3988FF' : '#AA83DC'}
+                    color={invalidAddress ? '#FF4FB9' : focus ? '#3988FF' : defaultActionColor}
                     size='18'
                     style={{ cursor: 'pointer', margin: '0 2px 0' }}
                     variant='Bulk'
@@ -262,7 +263,7 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
           placeholder={placeHolder ?? t('Enter your account ID')}
           sx={{
             '&:hover': {
-              bgcolor: '#2D1E4A'
+              bgcolor: isDark ? '#2D1E4A' : '#F3F6FD'
             },
             '> div.MuiOutlinedInput-root': {
               '> fieldset':
@@ -283,9 +284,9 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
               height: '100%',
               p: '0 3px 0 5px'
             },
-            bgcolor: '#1B133CB2',
+            bgcolor: isDark ? '#1B133CB2' : '#FFFFFF',
             border: '1px solid',
-            borderColor: `${invalidAddress ? 'warning.main' : focus ? 'action.focus' : '#BEAAD833'}`,
+            borderColor: `${invalidAddress ? 'warning.main' : focus ? 'action.focus' : isDark ? '#BEAAD833' : '#DDE3F4'}`,
             borderRadius: '12px',
             height: '44px'
           }}

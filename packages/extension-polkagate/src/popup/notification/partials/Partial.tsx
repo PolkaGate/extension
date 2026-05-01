@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Like1, Setting2 } from 'iconsax-react';
 import React from 'react';
 
@@ -53,10 +53,13 @@ const ColdStartNotification = ({ onClick, style }: { onClick: () => void; style?
 };
 
 const NotificationLoading = ({ count = 3 }: { count?: number }) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   return (
     <Stack direction='column' sx={{ gap: '6px', width: '100%' }}>
       {Array(count).fill(1).map((item, index) => (
-        <Stack direction='column' key={item as number + index} sx={{ bgcolor: '#05091C', borderRadius: '14px', gap: '16px', p: '10px', width: '100%' }}>
+        <Stack direction='column' key={item as number + index} sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#EEF1FF', borderRadius: '14px', gap: '16px', p: '10px', width: '100%' }}>
           <MySkeleton
             height={16}
             width={90}

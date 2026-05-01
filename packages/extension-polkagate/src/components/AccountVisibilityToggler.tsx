@@ -20,6 +20,11 @@ function AccountVisibilityToggler({ size = '24', style = {} }: Props): React.Rea
   const account = useSelectedAccount();
   const ref = useRef<HTMLDivElement | null>(null);
   const hovered = useIsHovered(ref);
+  const hoverBg = isDark ? '#674394' : '#E9ECFB';
+  const activeBg = isDark ? '#AA83DC26' : '#FFFFFF';
+  const iconColor = !account?.isHidden && hovered
+    ? (isDark ? '#EAEBF1' : '#4F4779')
+    : isDark ? '#AA83DC' : '#745D8B';
 
   const toggleVisibility = useCallback((): void => {
     account?.address && showAccount(account.address, account.isHidden || false).catch(console.error);
@@ -27,12 +32,12 @@ function AccountVisibilityToggler({ size = '24', style = {} }: Props): React.Rea
 
   const containerStyle: SxProps<Theme> = {
     '&:hover': {
-      bgcolor: '#674394'
+      bgcolor: hoverBg
     },
     alignItems: 'center',
-    bgcolor: account?.isHidden ? 'transparent' : isDark ? '#AA83DC26' : '#FFFFFF',
+    bgcolor: account?.isHidden ? 'transparent' : activeBg,
     border: '1px solid',
-    borderColor: account?.isHidden ? '#AA83DC26' : 'transparent',
+    borderColor: account?.isHidden ? (isDark ? '#AA83DC26' : '#D7DDF0') : 'transparent',
     borderRadius: '16px',
     cursor: 'pointer',
     justifyContent: 'center',
@@ -51,7 +56,7 @@ function AccountVisibilityToggler({ size = '24', style = {} }: Props): React.Rea
         : t('This account is visible to websites')}
     >
       <Grid container item onClick={toggleVisibility} ref={ref} sx={containerStyle}>
-        <Radar2 color={!account?.isHidden && hovered ? '#EAEBF1' : isDark ? '#AA83DC' : '#745D8B'} size={size} />
+        <Radar2 color={iconColor} size={size} />
         <Divider sx={{ bgcolor: '#FF4FB9', height: '1.5px', opacity: account?.isHidden ? 1 : 0, position: 'absolute', rotate: '-45deg', transition: 'all 150ms ease-out', width: '28px' }} />
       </Grid>
     </MyTooltip>

@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack } from '@mui/material';
+import { Stack, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { Identity } from '../../../components';
@@ -17,6 +17,8 @@ interface Props {
 
 export default function SelectYourAccount({ address, genesisHash }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [openAccountList, setOpenAccountList] = useState<boolean>(false);
 
@@ -26,7 +28,7 @@ export default function SelectYourAccount({ address, genesisHash }: Props): Reac
 
   return (
     <>
-      <Stack sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '108px', p: '15px', width: '308px' }}>
+      <Stack sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#DDE3F4', borderRadius: '14px', boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)', height: '108px', p: '15px', width: '308px' }}>
         <NumberedTitle
           number={1}
           textPartInColor={t('your')}
@@ -39,7 +41,7 @@ export default function SelectYourAccount({ address, genesisHash }: Props): Reac
             genesisHash={genesisHash ?? ''}
             identiconSize={36}
             identiconStyle={{ marginRight: '7px' }}
-            nameStyle={{ color: '#AA83DC' }}
+            nameStyle={{ color: isDark ? '#AA83DC' : theme.palette.text.primary }}
             showShortAddress
             style={{ marginTop: '15px', maxWidth: '80%', variant: 'B-4' }}
             withShortAddress

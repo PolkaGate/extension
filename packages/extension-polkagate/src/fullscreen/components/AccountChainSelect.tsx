@@ -85,7 +85,8 @@ function ChainSwitcher({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () => 
     <Box onClick={onClick(MODAL_TO_OPEN.CHAINS)}
       sx={{
         alignItems: 'center',
-        bgcolor: isDark ? '#2D1E4A80' : '#CCD2EA',
+        bgcolor: isDark ? '#2D1E4A80' : '#F2F5FD',
+        border: isDark ? 'none' : '1px solid #DDE3F4',
         borderRadius: '8px',
         cursor: 'pointer',
         display: 'flex',
@@ -170,12 +171,14 @@ export default function AccountChainSelect({ noSelection = false }: Props): Reac
     <>
       <Container disableGutters
         sx={{
-          ':hover': noSelection ? {} : { background: '#674394' },
+          ':hover': noSelection ? {} : { background: isDark ? '#674394' : '#F3F6FD' },
           alignItems: 'center',
           background: isDark
             ? '#2D1E4A80'
-            : '#FFFFFF8C',
+            : '#FFFFFF',
+          border: isDark ? 'none' : '1px solid #DDE3F4',
           borderRadius: '10px',
+          boxShadow: isDark ? 'none' : '0px 8px 22px rgba(133, 140, 176, 0.12)',
           display: 'flex',
           justifyContent: 'space-between',
           pr: noSelection ? '8px' : '2px',

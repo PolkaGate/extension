@@ -19,16 +19,18 @@ import Notification from '../../notification';
 
 const NotificationButton = ({ hasNewNotification, isBlueish, onClick }: { hasNewNotification: boolean; onClick: () => void; isBlueish: boolean; }) => {
  const theme = useTheme();
+ const isDark = theme.palette.mode === 'dark';
  
  return (
     <Grid alignItems='center' container item justifyContent='center' onClick={onClick}
       sx={{
-        '&:hover': { background: '#674394' },
-        '&:hover .notification-dot': { borderColor: '#674394' },
+        '&:hover': { background: isDark ? '#674394' : '#F3F6FD' },
+        '&:hover .notification-dot': { borderColor: isDark ? '#674394' : '#F3F6FD' },
         backdropFilter: 'blur(20px)',
-        background: '#2D1E4A80',
+        background: isDark ? '#2D1E4A80' : '#FFFFFF',
+        border: isDark ? 'none' : '1px solid #DDE3F4',
         borderRadius: '12px',
-        boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
+        boxShadow: isDark ? '0px 0px 24px 8px #4E2B7259 inset' : '0px 8px 22px rgba(133, 140, 176, 0.12)',
         cursor: 'pointer',
         height: '32px',
         position: 'relative',
@@ -39,7 +41,7 @@ const NotificationButton = ({ hasNewNotification, isBlueish, onClick }: { hasNew
       <Box className='notification-dot'
         sx={{
           bgcolor: isBlueish ? '#809ACB' : '#FF4FB9',
-          border: '1.5px solid #2D1E4A',
+          border: `1.5px solid ${isDark ? '#2D1E4A' : '#FFFFFF'}`,
           borderRadius: '50%',
           display: hasNewNotification ? 'block' : 'none',
           height: '9px',
@@ -52,7 +54,7 @@ const NotificationButton = ({ hasNewNotification, isBlueish, onClick }: { hasNew
         }}
       />
       <NotificationIcon
-        color={isBlueish ? theme.palette.text.highlight : '#AA83DC'}
+        color={isBlueish ? theme.palette.text.highlight : isDark ? '#AA83DC' : theme.palette.text.secondary}
         size='20'
         style={{ cursor: 'pointer', transform: 'rotate(30deg)' }}
         variant='Bold'

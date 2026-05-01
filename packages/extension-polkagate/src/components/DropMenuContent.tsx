@@ -4,13 +4,14 @@
 import { Grid, Popover, styled } from '@mui/material';
 import React from 'react';
 
+import useIsDark from '@polkadot/extension-polkagate/src/hooks/useIsDark';
 import { GradientDivider } from '../style';
 import DropMenuRow, { type Options } from './DropMenuRow';
 
-const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'preferredWidth' })(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
-  background: '#05091C',
+const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'preferredWidth' && prop !== 'isdark' })(({ isdark, preferredWidth }: { preferredWidth: number | undefined, isdark: boolean }) => ({
+  background: isdark ? '#05091C' : '#FFFFFF',
   border: '4px solid',
-  borderColor: '#1B133C',
+  borderColor: isdark ? '#1B133C' : '#EEF1FF',
   borderRadius: '12px',
   columnGap: '5px',
   flexWrap: 'nowrap',
@@ -36,6 +37,7 @@ interface Props {
 }
 
 function DropMenuContent({ containerRef, contentDropWidth, open, options, setOpen, withDivider }: Props) {
+  const isDark = useIsDark();
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 
@@ -62,7 +64,7 @@ function DropMenuContent({ containerRef, contentDropWidth, open, options, setOpe
         vertical: 'top'
       }}
     >
-      <DropContentContainer container direction='column' item preferredWidth={contentDropWidth}>
+      <DropContentContainer container direction='column' isdark={isDark} item preferredWidth={contentDropWidth}>
         {options.map((option, index) => {
           const isLastOne = options.length === index + 1;
           const key = `option-${index}-${option.text ?? 'line'}`;

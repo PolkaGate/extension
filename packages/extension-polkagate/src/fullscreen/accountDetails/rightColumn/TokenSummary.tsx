@@ -36,6 +36,8 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
     , [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
 
   const logoInfo = useMemo(() => resolveLogoInfo(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
+  const mutedAmountColor = theme.palette.mode === 'dark' ? '#BEAAD8' : theme.palette.text.secondary;
+  const logoBorderColor = theme.palette.mode === 'dark' ? '#00000033' : '#FFFFFF99';
 
   return (
     <GlowBox style={{ height: '187px', justifyContent: 'start', justifyItems: 'start', pl: '30px', rowGap: '5px' }}>
@@ -49,7 +51,7 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
           sx={{
             backdropFilter: 'blur(4px)',
             border: '8px solid',
-            borderColor: '#00000033',
+            borderColor: logoBorderColor,
             borderRadius: '999px',
             height: 'fit-content',
             ml: '-10px',
@@ -118,7 +120,7 @@ function TokenSummary({ address, token }: Props): React.ReactElement {
           skeletonStyle={{ width: '130px' }}
           style={{
             ...theme.typography['B-4'],
-            color: '#BEAAD8',
+            color: mutedAmountColor,
             width: 'max-content'
           }}
           token={token?.token}

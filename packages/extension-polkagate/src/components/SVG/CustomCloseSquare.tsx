@@ -37,7 +37,7 @@ export const CustomCloseSquare: React.FC<CustomCloseSquareProps> = ({ className,
     {/* Cross symbol */}
     <path
       d='m9.17 14.83 5.66-5.66M14.83 14.83 9.17 9.17'
-      stroke='white'
+      stroke={color}
       strokeLinecap='round'
       strokeLinejoin='round'
       strokeWidth='1.5'

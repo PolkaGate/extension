@@ -3,7 +3,7 @@
 
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Container } from '@mui/material';
+import { Container, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -30,6 +30,7 @@ interface ChooseAccountMenuProps {
 export default function ChainListModal({ externalOptions, handleClose, open, setSelectedChain }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
+  const theme = useTheme();
 
   const selectedChains = useSelectedChains();
   const selectedAccount = useSelectedAccount();
@@ -39,6 +40,8 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
 
   const [maybeSelected, setMayBeSelected] = useState<DropdownOption>();
   const [appliedGenesis, setAppliedGenesis] = useState<DropdownOption>();
+  const isDark = theme.palette.mode === 'dark';
+  const modalBg = isDark ? '#1B133C' : theme.palette.background.paper;
 
   const _handleClose = useCallback(() => {
     setMayBeSelected(undefined);
@@ -97,7 +100,7 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
       onClose={_handleClose}
       open={open}
       showBackIconAsClose
-      style={{ backgroundColor: '#1B133C', minHeight: '600px', padding: ' 20px 10px 10px' }}
+      style={{ backgroundColor: modalBg, borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', minHeight: '600px', padding: ' 20px 10px 10px' }}
       title={t('Select network')}
     >
       <Container disableGutters sx={{ display: 'block', height: '505px', mt: '10px', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
@@ -109,7 +112,7 @@ export default function ChainListModal({ externalOptions, handleClose, open, set
 
               return toTitleCase(normalizedChainName) ?? t('Unknown');
             }}
-            itemTextColor='#EAEBF1'
+            itemTextColor={isDark ? '#EAEBF1' : theme.palette.text.primary}
             itemTextVariant='B-1'
             logoSize={24}
             maxHeight='388px'

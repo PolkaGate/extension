@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
+import { Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, ShieldTick } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
@@ -15,6 +15,8 @@ import { ExtensionPopups } from '../../util/constants';
 
 function TopRightIcons(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const privacyPolicyRef = useRef<HTMLDivElement>(null);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
@@ -31,12 +33,13 @@ function TopRightIcons(): React.ReactElement {
       position: 'absolute',
       transition: 'all 250ms ease-out'
     },
-    background: '#BFA1FF26',
+    background: isDark ? '#BFA1FF26' : '#EEF2FB',
+    border: isDark ? 'none' : '1px solid #DDE3F4',
     borderRadius: '10px',
     inset: 0,
     position: 'absolute',
     transition: 'all 250ms ease-out'
-  } as SxProps<Theme>), [hovered]);
+  } as SxProps<Theme>), [hovered, isDark]);
 
   const onHoveredPopup = useCallback((popup?: ExtensionPopups) => () => {
     setHovered(popup ?? ExtensionPopups.NONE);
@@ -51,14 +54,23 @@ function TopRightIcons(): React.ReactElement {
           onClick={extensionPopupOpener(ExtensionPopups.LANGUAGE)}
           onMouseEnter={onHoveredPopup(ExtensionPopups.LANGUAGE)}
           onMouseLeave={onHoveredPopup()}
-          sx={{ alignItems: 'center', bgcolor: hovered === ExtensionPopups.LANGUAGE ? '#674394' : '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '5px', transition: 'all 250ms ease-out', width: 'fit-content' }}
+          sx={{
+            alignItems: 'center',
+            bgcolor: hovered === ExtensionPopups.LANGUAGE ? '#674394' : isDark ? '#BFA1FF26' : '#FFFFFF',
+            border: hovered === ExtensionPopups.LANGUAGE || isDark ? 'none' : '1px solid #DDE3F4',
+            borderRadius: '10px',
+            cursor: 'pointer',
+            p: '5px',
+            transition: 'all 250ms ease-out',
+            width: 'fit-content'
+          }}
         >
-          <Typography color={hovered === ExtensionPopups.LANGUAGE ? '#EAEBF1' : '#AA83DC'} sx={{ textTransform: 'uppercase', transition: 'all 250ms ease-out' }} variant='B-1'>
+          <Typography color={hovered === ExtensionPopups.LANGUAGE ? '#EAEBF1' : isDark ? '#AA83DC' : '#745D8B'} sx={{ textTransform: 'uppercase', transition: 'all 250ms ease-out' }} variant='B-1'>
             {languageTicker}
           </Typography>
           <ArrowDown2
             size='15'
-            style={{ color: hovered === ExtensionPopups.LANGUAGE ? '#EAEBF1' : '#AA83DC80', transition: 'all 250ms ease-out' }}
+            style={{ color: hovered === ExtensionPopups.LANGUAGE ? '#EAEBF1' : isDark ? '#AA83DC80' : '#8B7AAA', transition: 'all 250ms ease-out' }}
             variant='Bold'
           />
         </Grid>
@@ -72,7 +84,7 @@ function TopRightIcons(): React.ReactElement {
           sx={{ alignItems: 'center', borderRadius: '10px', cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}
         >
           <ShieldTick
-            color={hovered === ExtensionPopups.PRIVACY ? '#EAEBF1' : '#82FFA5'}
+            color={hovered === ExtensionPopups.PRIVACY ? '#EAEBF1' : isDark ? '#82FFA5' : '#5EBE82'}
             size='24'
             style={{ transition: 'all 250ms ease-out', zIndex: 10 }}
             variant={hovered === ExtensionPopups.PRIVACY ? 'Bold' : 'Bulk'}

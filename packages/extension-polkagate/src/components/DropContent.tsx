@@ -3,7 +3,7 @@
 
 import type { AdvancedDropdownOption } from '../util/types';
 
-import { Avatar, Grid, Popover, styled, Typography } from '@mui/material';
+import { Avatar, Grid, Popover, styled, Typography, useTheme } from '@mui/material';
 import { Global } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -17,11 +17,12 @@ import SearchField from './SearchField';
 
 const DropContentContainer = styled(Grid, {
   shouldForwardProp: (prop) => prop !== 'preferredWidth'
-})(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
-  background: '#05091C',
+})(({ preferredWidth, theme }: { preferredWidth: number | undefined; theme?: any }) => ({
+  background: theme.palette.mode === 'dark' ? '#05091C' : '#FFFFFF',
   border: '4px solid',
-  borderColor: '#1B133C',
+  borderColor: theme.palette.mode === 'dark' ? '#1B133C' : '#EEF1FF',
   borderRadius: '12px',
+  boxShadow: theme.palette.mode === 'dark' ? 'none' : '0 12px 32px rgba(133, 140, 176, 0.18)',
   columnGap: '5px',
   flexWrap: 'nowrap',
   margin: 'auto',
@@ -35,10 +36,10 @@ const DropContentContainer = styled(Grid, {
   width: preferredWidth ? `${preferredWidth}px` : 'fit-content'
 }));
 
-const ContentDisplayContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'isSelectedItem' })(({ isSelectedItem, style }: { isSelectedItem: boolean, style: React.CSSProperties }) => ({
-  '&:hover': { background: '#6743944D' },
+const ContentDisplayContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'isSelectedItem' })(({ isSelectedItem, style, theme }: { isSelectedItem: boolean, style: React.CSSProperties, theme?: any }) => ({
+  '&:hover': { background: theme.palette.mode === 'dark' ? '#6743944D' : '#F3F6FD' },
   alignItems: 'center',
-  background: isSelectedItem ? '#6743944D' : 'transparent',
+  background: isSelectedItem ? (theme.palette.mode === 'dark' ? '#6743944D' : '#EEF2FB') : 'transparent',
   borderRadius: '8px',
   columnGap: '5px',
   cursor: 'pointer',
@@ -61,6 +62,7 @@ interface ContentDisplayProps {
 }
 
 function OptionLogo({ text }: { text: string }) {
+  const theme = useTheme();
   const isDark = useIsDark();
   const icon = resolveLogoInfo(text)?.logo;
 
@@ -71,13 +73,15 @@ function OptionLogo({ text }: { text: string }) {
       variant='square'
     >
       {!icon &&
-        <Global color='#AA83DC' size='18' variant='Bulk' />
+        <Global color={isDark ? '#AA83DC' : theme.palette.text.secondary} size='18' variant='Bulk' />
       }
     </Avatar>
   );
 }
 
 function LogoContentDisplay({ Icon, logoType, onChange, selectedValue, setOpen, setSelectedValue, showCheckAsIcon, text, value }: ContentDisplayProps) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const isSelectedItem = useMemo(() => [text, value].includes(selectedValue ?? ''), [selectedValue, text, value]);
 
   const handleClick = useCallback(() => {
@@ -114,7 +118,7 @@ function LogoContentDisplay({ Icon, logoType, onChange, selectedValue, setOpen, 
       if (typeof Icon === 'function' || typeof Icon === 'object') {
         const Component = Icon as React.ElementType;
 
-        return <Component color='#BEAAD8' size='18' variant='Bulk' />;
+        return <Component color={isDark ? '#BEAAD8' : theme.palette.text.secondary} size='18' variant='Bulk' />;
       }
     }
 
@@ -232,7 +236,8 @@ function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, 
         paper: {
           sx: {
             background: 'none',
-            backgroundImage: 'none'
+            backgroundImage: 'none',
+            boxShadow: 'none'
           }
         }
       }}

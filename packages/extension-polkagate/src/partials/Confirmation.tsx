@@ -29,6 +29,9 @@ interface ProxyAccountsProps {
 }
 
 const ProxyAccounts = ({ accounts, genesisHash }: ProxyAccountsProps) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   return (
     <Grid alignItems='center' container direction='row' item justifyContent='center' margin='10px 0 15px' width='90%'>
       {accounts?.map((acc, index) => (
@@ -39,7 +42,15 @@ const ProxyAccounts = ({ accounts, genesisHash }: ProxyAccountsProps) => {
           key={index}
           nameStyle={{ textAlign: 'center' }}
           showShortAddress
-          style={{ backgroundColor: '#C6AECC26', borderRadius: '9px', color: '#AA83DC', margin: '3px', padding: '4px 8px 4px 4px', variant: 'B-2' }}
+          style={{
+            backgroundColor: isDark ? '#C6AECC26' : '#EEF2FB',
+            border: isDark ? undefined : '1px solid #DDE3F4',
+            borderRadius: '9px',
+            color: isDark ? '#AA83DC' : theme.palette.text.secondary,
+            margin: '3px',
+            padding: '4px 8px 4px 4px',
+            variant: 'B-2'
+          }}
         />
       ))}
     </Grid>
@@ -72,13 +83,28 @@ interface HeaderProps {
 }
 
 const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { accounts, amount, assetDecimal, description, failureText, nominators, success, token } = transactionDetail;
 
   return (
-    <GlowBox isBlueish={isBlueish} style={{ m: 0, minHeight: '150px', width: '100%' }}>
+    <GlowBox
+      isBlueish={isBlueish}
+      noGlowBall={!isDark}
+      style={{
+        backgroundColor: isDark ? undefined : '#FFFFFF',
+        border: isDark ? undefined : '1px solid #E3E8F7',
+        borderRadius: '24px',
+        boxShadow: isDark ? undefined : '0 12px 28px rgba(133, 140, 176, 0.12)',
+        m: 0,
+        minHeight: '150px',
+        width: '100%'
+      }}
+    >
       <FailSuccessIcon
         description={description}
         failureText={failureText}
+        isBlueish={isBlueish}
         success={success}
       >
         {nominators &&
@@ -98,7 +124,7 @@ const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
                   />
                   : <Identity
                     address={accounts[0]}
-                    addressStyle={{ color: '#AA83DC', variant: 'B-1' }}
+                    addressStyle={{ color: isDark ? '#AA83DC' : theme.palette.text.secondary, variant: 'B-1' }}
                     charsCount={5}
                     genesisHash={genesisHash}
                     nameStyle={{ paddingBottom: '7px', textAlign: 'center' }}
@@ -131,6 +157,7 @@ interface DetailProps {
 const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
   const { accounts, amount, assetDecimal, decimal, extra, token = nativeToken } = transactionDetail;
@@ -176,7 +203,19 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
 
   return (
     <VelvetBox>
-      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', justifyContent: 'center', maxHeight: '260px', overflow: 'auto', p: '12px 18px' }}>
+      <Stack
+        direction='column'
+        sx={{
+          alignItems: 'center',
+          bgcolor: isDark ? '#05091C' : '#FFFFFF',
+          border: isDark ? 'none' : '1px solid #E3E8F7',
+          borderRadius: '14px',
+          justifyContent: 'center',
+          maxHeight: '260px',
+          overflow: 'auto',
+          p: '12px 18px'
+        }}
+      >
         {entriesToRender.map(([key, content], index) => {
           const withDivider = entriesToRender.length > index + 1;
           const { color, isAddress, isBalance, isBlock, isDate, isFee, isFromToAddress, isHash } = getContentTypeAndColor(key, content);
@@ -198,7 +237,19 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                       withShortAddress={false}
                     />
                   }
-                  <Typography color={color} sx={{ bgcolor: isHash || isAddress ? '#C6AECC26' : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
+                  <Typography
+                    color={color}
+                    sx={{
+                      bgcolor: isHash || isAddress ? (isDark ? '#C6AECC26' : '#EEF2FB') : 'none',
+                      border: isHash || isAddress
+                        ? `1px solid ${isDark ? 'transparent' : '#DDE3F4'}`
+                        : 'none',
+                      borderRadius: '9px',
+                      p: '2px 3px'
+                    }}
+                    variant='B-1'
+                    width='fit-content'
+                  >
                     {isBlock && '#'}
                     {isHash || isAddress
                       ? toShortAddress(String(content), 6)
@@ -439,6 +490,8 @@ interface Props {
 
 export default function Confirmation({ address, backToHome, backToHomeText, genesisHash, isModal, onClose, showDate, showHistoryButton = true, showStakingHome = true, transactionDetail }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [openModal, setOpenModal] = useState(true);
   const _onCloseModal = useCallback(() => {
@@ -467,7 +520,13 @@ export default function Confirmation({ address, backToHome, backToHomeText, gene
             onClose={onClose ?? _onCloseModal}
             open={openModal}
             showBackIconAsClose
-            style={{ backgroundColor: '#1B133C', minHeight: '600px', padding: '20px 9px 10px' }}
+            style={{
+              backgroundColor: isDark ? '#1B133C' : '#F8FAFF',
+              border: isDark ? undefined : '1px solid #E3E8F7',
+              boxShadow: isDark ? undefined : '0 20px 40px rgba(133, 140, 176, 0.18)',
+              minHeight: '600px',
+              padding: '20px 9px 10px'
+            }}
             title={transactionDetail.success ? t('Completed') : t('Failed')}
           >
             <Content {...contentProps} />

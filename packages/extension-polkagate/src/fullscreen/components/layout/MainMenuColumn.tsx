@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, Link, Stack } from '@mui/material';
+import { Box, Grid, Link, Stack, useTheme } from '@mui/material';
 import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Clock, Home3, Record, Setting } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -40,6 +40,8 @@ function Shining(): React.ReactElement {
 
 function MainMenuColumn(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const selectedAccount = useSelectedAccount();
   const navigate = useNavigate();
   const selectedGenesisHash = useAccountSelectedChain(selectedAccount?.address);
@@ -133,7 +135,7 @@ function MainMenuColumn(): React.ReactElement {
         <Grid container item justifyContent='start' width='fit-content'>
           <Version style={{ padding: 0, textAlign: 'left', width: '20%' }} variant='B-5' />
           <NeedHelp style={{ columnGap: '4px', marginLeft: '10px' }} />
-          <Link href={PRIVACY_POLICY_LINK} rel='noreferrer' sx={{ '&:hover': { color: '#AA83DC' }, color: '#674394', cursor: 'pointer', mt: '7px', textAlign: 'left', width: '100%' }} target='_blank' underline='none' variant='B-5'>
+          <Link href={PRIVACY_POLICY_LINK} rel='noreferrer' sx={{ '&:hover': { color: '#AA83DC' }, color: isDark ? '#674394' : theme.palette.text.secondary, cursor: 'pointer', mt: '7px', textAlign: 'left', width: '100%' }} target='_blank' underline='none' variant='B-5'>
             {t('Privacy & Security')}
           </Link>
         </Grid>

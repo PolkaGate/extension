@@ -3,7 +3,7 @@
 
 import type { BN } from '@polkadot/util';
 
-import { Grid, styled, Typography } from '@mui/material';
+import { Grid, styled, Typography, useTheme } from '@mui/material';
 import { type Icon, InfoCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
@@ -11,7 +11,7 @@ import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
 import { MyTooltip } from '../../../components';
-import { usePrices } from '../../../hooks';
+import { useIsDark, usePrices } from '../../../hooks';
 import { ColumnAmounts } from './ColumnAmounts';
 
 interface TokenDetailBoxProp {
@@ -30,11 +30,11 @@ interface TokenDetailBoxProp {
 const DISABLED_COLOR = '#674394'; // should be added to theme
 
 const TokenDetailBoxContainer = styled(Grid, {
-  shouldForwardProp: (prop) => prop !== 'background' && prop !== 'clickable'
-})(({ background, clickable }: { background: string, clickable: boolean }) => ({
+  shouldForwardProp: (prop) => prop !== 'background' && prop !== 'clickable' && prop !== 'hoverbackground'
+})(({ background, clickable, hoverbackground }: { background: string, clickable: boolean, hoverbackground: string }) => ({
   ':hover': clickable
     ? {
-      background: '#2D1E4A',
+      background: hoverbackground,
       transform: 'translateY(-4px)'
     }
     : {},
@@ -49,32 +49,38 @@ const TokenDetailBoxContainer = styled(Grid, {
 }));
 
 function TokenDetailBox({ Icon, amount, background = '#2D1E4A4D', decimal, description, iconSize = '21', iconVariant, onClick, priceId, title, token }: TokenDetailBoxProp) {
+  const theme = useTheme();
+  const isDark = useIsDark();
   const pricesInCurrency = usePrices();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
   const totalBalance = useMemo(() => calcPrice(priceOf(priceId ?? '0'), amount ?? BN_ZERO, decimal ?? 0), [amount, decimal, priceId, priceOf]);
   const clickable = !!onClick;
+  const resolvedBackground = background === '#2D1E4A4D' ? (isDark ? '#2D1E4A4D' : '#FFFFFF') : background;
+  const hoverBackground = isDark ? '#2D1E4A' : '#EEF1FF';
+  const accentColor = isDark ? '#AA83DC' : theme.palette.text.highlight;
+  const disabledColor = isDark ? DISABLED_COLOR : theme.palette.text.secondary;
 
   return (
     <>
-      <TokenDetailBoxContainer background={background} clickable={clickable} onClick={onClick}>
+      <TokenDetailBoxContainer background={resolvedBackground} clickable={clickable} hoverbackground={hoverBackground} onClick={onClick}>
         <Grid container direction='column' gap='8px' item>
-          <Icon color={clickable ? '#AA83DC' : DISABLED_COLOR} size={iconSize} variant={iconVariant ?? 'Bulk'} />
+          <Icon color={clickable ? accentColor : disabledColor} size={iconSize} variant={iconVariant ?? 'Bulk'} />
           <Grid alignItems='center' container item sx={{ columnGap: '6px', flexWrap: 'nowrap' }}>
-            <Typography color={clickable ? 'text.secondary' : DISABLED_COLOR} sx={{ textWrap: 'nowrap' }} variant='B-1'>
+            <Typography color={clickable ? 'text.secondary' : disabledColor} sx={{ textWrap: 'nowrap' }} variant='B-1'>
               {title}
             </Typography>
             {description &&
               <MyTooltip
                 content={description}
               >
-                <InfoCircle color={clickable ? '#AA83DC' : DISABLED_COLOR} size='19' variant='Bold' />
+                <InfoCircle color={clickable ? accentColor : disabledColor} size='19' variant='Bold' />
               </MyTooltip>
             }
           </Grid>
         </Grid>
         <ColumnAmounts
-          color={clickable ? undefined : DISABLED_COLOR}
+          color={clickable ? undefined : disabledColor}
           cryptoAmount={amount ?? BN_ZERO}
           decimal={decimal ?? 0}
           fiatAmount={totalBalance}

@@ -22,6 +22,7 @@ interface Props {
 export default function ModeSwitch({ accountType, isDefault, setAccountType }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const onModeSwitch = useCallback(() => {
     setAccountType((prev) => prev === DEFAULT_TYPE ? 'ethereum' : DEFAULT_TYPE);
@@ -29,7 +30,7 @@ export default function ModeSwitch({ accountType, isDefault, setAccountType }: P
 
   return (
     <Stack direction='column'>
-      <Grid alignItems='center' columnGap='15px' container sx={{ bgcolor: '#2D1E4A', borderRadius: '18px', height: '44px', mb: '10px', position: 'relative', px: '5px', userSelect: 'none', width: 'fit-content' }}>
+      <Grid alignItems='center' columnGap='15px' container sx={{ bgcolor: isDark ? '#2D1E4A' : '#EEF2FB', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '18px', boxShadow: isDark ? 'none' : '0 8px 20px rgba(133, 140, 176, 0.10)', height: '44px', mb: '10px', position: 'relative', px: '5px', userSelect: 'none', width: 'fit-content' }}>
         {/* Animated highlight */}
         <motion.div
           layout
@@ -48,7 +49,7 @@ export default function ModeSwitch({ accountType, isDefault, setAccountType }: P
         <motion.div layout onClick={onModeSwitch} style={{ cursor: 'pointer', zIndex: 1 }}>
           <Grid item sx={{ alignItems: 'center', display: 'inline-flex', opacity: accountType === 'ethereum' ? 0.6 : 1, position: 'relative', px: '10px', py: '5px' }}>
             <Logo chainName={'polkadot'} size={19.8} />
-            <Typography pl='5px' variant='B-2'>
+            <Typography color={!isDark && accountType !== 'ethereum' ? '#FFFFFF' : isDark ? 'text.primary' : 'text.secondary'} pl='5px' variant='B-2'>
               {'Substrate'}
             </Typography>
           </Grid>
@@ -56,7 +57,7 @@ export default function ModeSwitch({ accountType, isDefault, setAccountType }: P
         <motion.div layout onClick={onModeSwitch} style={{ cursor: 'pointer', zIndex: 1 }}>
           <Stack direction='row' sx={{ alignItems: 'center', opacity: accountType === 'ethereum' ? 1 : 0.6, position: 'relative', px: '10px', py: '5px', width: '96px' }}>
             <NetworkEthereum size={24} variant='branded' />
-            <Typography pl='5px' variant='B-2'>
+            <Typography color={!isDark && accountType === 'ethereum' ? '#FFFFFF' : isDark ? 'text.primary' : 'text.secondary'} pl='5px' variant='B-2'>
               {'EVM'}
             </Typography>
           </Stack>

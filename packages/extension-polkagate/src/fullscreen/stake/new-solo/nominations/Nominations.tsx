@@ -9,7 +9,7 @@ import React, { useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { FadeOnScroll, GradientButton } from '../../../../components';
-import { useTranslation } from '../../../../hooks';
+import { useIsDark, useTranslation } from '../../../../hooks';
 import { NothingFound } from '../../../../partials';
 import { NoValidatorBox } from '../../../components';
 import TableToolbar from '../../partials/TableToolbar';
@@ -28,6 +28,7 @@ interface Props {
 
 export default function Nominations({ address, genesisHash, stakingInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const isDark = useIsDark();
   const refContainer = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -82,14 +83,14 @@ export default function Nominations({ address, genesisHash, stakingInfo }: Props
                 />
                 <Validators
                   address={stakingInfo?.stakingAccount?.accountId?.toString()}
-                  bgcolor='#2D1E4A'
+                  bgcolor={isDark ? '#2D1E4A' : '#FFFFFF'}
                   genesisHash={genesisHash}
                   isActive={true}
                   validators={active} // to show possible active validators
                   withCurve
                 />
                 <Validators
-                  bgcolor='#2D1E4A66'
+                  bgcolor={isDark ? '#2D1E4A66' : '#FFFFFF'}
                   genesisHash={genesisHash}
                   isActive={false}
                   validators={elected}
@@ -112,7 +113,7 @@ export default function Nominations({ address, genesisHash, stakingInfo }: Props
                   height={44 * nonElected.length}
                 />
                 <Validators
-                  bgcolor='transparent'
+                  bgcolor={isDark ? 'transparent' : '#FFFFFF'}
                   genesisHash={genesisHash}
                   validators={nonElected}
                   withCurve

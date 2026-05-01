@@ -5,7 +5,7 @@ import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
 // @ts-ignore
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
 
-import { Collapse, Container, Grid, Stack } from '@mui/material';
+import { Collapse, Container, Grid, Stack, useTheme } from '@mui/material';
 import { BuyCrypto, Mask, PercentageSquare } from 'iconsax-react';
 import React, { useMemo, useRef, useState } from 'react';
 
@@ -33,6 +33,8 @@ interface NominatorItemProps {
 
 const NominatorItem = ({ genesisHash, nominator, total }: NominatorItemProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const [accountInfo, setAccountInfo] = useState<DeriveAccountRegistration | undefined>(undefined);
@@ -51,7 +53,7 @@ const NominatorItem = ({ genesisHash, nominator, total }: NominatorItemProps) =>
   return (
     <Stack direction='row' sx={{ position: 'relative', width: '100%' }}>
       <Curve />
-      <Stack direction='row' sx={{ alignItems: 'center', bgcolor: '#2D1E4A66', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', ml: '30px', p: '10px', width: '100%' }}>
+      <Stack direction='row' sx={{ alignItems: 'center', bgcolor: isDark ? '#2D1E4A66' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', ml: '30px', p: '10px', width: '100%' }}>
         <Stack direction='row' sx={{ pl: '10px', width: 'max-content' }}>
           <Identity
             address={getSubstrateAddress(nominator.who.toString())}
@@ -84,8 +86,11 @@ const NominatorItem = ({ genesisHash, nominator, total }: NominatorItemProps) =>
 };
 
 const PlaceHolder = () => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#2D1E4A66', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isDark ? '#2D1E4A66' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px' }}>
       <Stack alignItems='center' columnGap={14} direction='row' sx={{ width: 'max-content' }}>
         <Stack alignItems='center' columnGap={1} direction='row'>
           <MySkeleton height={24} width={24} />

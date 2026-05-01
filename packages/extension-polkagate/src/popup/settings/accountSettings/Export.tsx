@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Stack, Typography } from '@mui/material';
+import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import saveAs from 'file-saver';
 import { Import } from 'iconsax-react';
 import React, { useCallback, useContext, useState } from 'react';
@@ -33,6 +33,8 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
   const { t } = useTranslation();
   const accounts = useAccounts();
   const isExtension = useIsExtensionPopup();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [password, setPassword] = useState<string>();
@@ -78,7 +80,7 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
     <>
       <Stack columnGap='15px' direction='column' sx={{ p: isExtension ? '15px' : 0, position: 'relative', pt: 0, zIndex: 1 }}>
         <Box component='img' src={user as string} sx={{ alignSelf: 'center', width: '76px' }} />
-        <Typography color='#BEAAD8' sx={{ lineHeight: '16.8px' }} textAlign='start' variant='B-4'>
+        <Typography color='text.secondary' sx={{ lineHeight: '16.8px' }} textAlign='start' variant='B-4'>
           {t('Your account(s) will be encrypted with your password and saved as a JSON file in your browser’s downloads. You can later import them into the extension using the same password.')}
         </Typography>
         <Grid container item sx={{ my: '10px', position: 'relative' }}>
@@ -98,8 +100,8 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
               labelMarginTop='15px'
               name={name}
               style={{
-                bgcolor: '#1B133C',
-                border: '1px solid #BEAAD833',
+                bgcolor: isDark ? '#1B133C' : '#FFFFFF',
+                border: `1px solid ${isDark ? '#BEAAD833' : '#DDE3F4'}`,
                 borderRadius: '12px',
                 height: '44px'
               }}
@@ -141,9 +143,31 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
   );
 
   return (
-    <Motion style={{ borderRadius: '14px', margin: isExtension ? '15px 15px 0' : '15px 5px 0', overflow: 'hidden', width: 'auto' }} variant={isExtension ? 'slide' : 'fade'}>
+    <Motion
+      style={{
+        background: !isExtension ? (isDark ? '#05091C' : '#FFFFFF') : undefined,
+        border: !isExtension ? `4px solid ${isDark ? '#1B133C' : '#EEF2FB'}` : undefined,
+        borderRadius: '14px',
+        boxShadow: !isExtension && !isDark ? '0 12px 30px rgba(133, 140, 176, 0.14)' : undefined,
+        margin: isExtension ? '15px 15px 0' : '15px 5px 0',
+        overflow: 'hidden',
+        padding: !isExtension ? '16px' : undefined,
+        width: 'auto'
+      }}
+      variant={isExtension ? 'slide' : 'fade'}
+    >
       {isExtension
-        ? <GradientBox2 style={{ border: '4px solid #1B133C', borderRadius: '14px', boxShadow: 'none', overflow: 'none' }} withGradientTopBorder={false}>
+        ? <GradientBox2
+          noGradient={!isDark}
+          style={{
+            bgcolor: isDark ? '#120D27' : '#FFFFFF',
+            border: `4px solid ${isDark ? '#1B133C' : '#EEF2FB'}`,
+            borderRadius: '14px',
+            boxShadow: isDark ? 'none' : '0 12px 30px rgba(133, 140, 176, 0.14)',
+            overflow: 'none'
+          }}
+          withGradientTopBorder={false}
+        >
           {content}
         </GradientBox2>
         : content

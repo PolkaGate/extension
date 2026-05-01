@@ -54,7 +54,8 @@ function FullscreenModeButton({ url }: Props) {
       transition: 'all 250ms ease-out',
       zIndex: 1
     },
-    background: isDark ? '#BFA1FF26' : '#FFFFFF8C',
+    background: isDark ? '#BFA1FF26' : '#FFFFFF',
+    border: !isDark ? '1px solid #E1E5F3' : 'none',
     borderRadius: '10px',
     height: '30px',
     inset: 0,

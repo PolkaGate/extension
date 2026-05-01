@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 import { ArrowCircleRight2, Setting } from 'iconsax-react';
 import React, { useLayoutEffect, useRef, useState } from 'react';
@@ -15,6 +15,8 @@ interface Props {
 
 export default function ModeSwitch({ isAdvancedMode, onClick }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const standardRef = useRef<HTMLDivElement>(null);
   const advancedRef = useRef<HTMLDivElement>(null);
   const [highlightStyle, setHighlightStyle] = useState({ left: 0, width: 0 });
@@ -35,7 +37,8 @@ export default function ModeSwitch({ isAdvancedMode, onClick }: Props): React.Re
       columnGap='15px'
       container
       sx={{
-        bgcolor: '#2D1E4A',
+        bgcolor: isDark ? '#2D1E4A' : '#EEF2FB',
+        border: isDark ? 'none' : '1px solid #DDE3F4',
         borderRadius: '18px',
         height: '44px',
         mb: '10px',
@@ -74,8 +77,8 @@ export default function ModeSwitch({ isAdvancedMode, onClick }: Props): React.Re
           zIndex: 1
         }}
       >
-        <ArrowCircleRight2 color={isAdvancedMode ? '#AA83DC' : '#EAEBF1'} size='18' variant='Bulk' />
-        <Typography pl='5px' variant='B-2'>
+        <ArrowCircleRight2 color={isAdvancedMode ? '#AA83DC' : '#FFFFFF'} size='18' variant='Bulk' />
+        <Typography color={isAdvancedMode ? 'text.secondary' : '#FFFFFF'} pl='5px' variant='B-2'>
           {t('Standard mode')}
         </Typography>
       </Grid>
@@ -93,8 +96,8 @@ export default function ModeSwitch({ isAdvancedMode, onClick }: Props): React.Re
           zIndex: 1
         }}
       >
-        <Setting color={isAdvancedMode ? '#EAEBF1' : '#AA83DC'} size='18' variant='Bulk' />
-        <Typography pl='5px' variant='B-2'>
+        <Setting color={isAdvancedMode ? '#FFFFFF' : '#AA83DC'} size='18' variant='Bulk' />
+        <Typography color={isAdvancedMode ? '#FFFFFF' : 'text.secondary'} pl='5px' variant='B-2'>
           {t('Advanced mode')}
         </Typography>
       </Grid>

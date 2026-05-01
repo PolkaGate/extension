@@ -4,6 +4,7 @@
 import type { IconTheme as BaseIconTheme } from '@polkadot/react-identicon/types';
 
 import React, { useCallback, useContext } from 'react';
+import { useTheme } from '@mui/material';
 import styled from 'styled-components';
 
 import Icon from '@polkadot/react-identicon';
@@ -30,6 +31,7 @@ interface Props {
 }
 
 function PolkaGateIdenticon({ address, className, iconTheme, onCopy, prefix, size, style = {}, withNotify = true }: Props) {
+  const theme = useTheme();
   const { accountIconTheme } = useContext(AccountIconThemeContext);
   const { t } = useTranslation();
   const { notify } = useAlerts();
@@ -54,7 +56,7 @@ function PolkaGateIdenticon({ address, className, iconTheme, onCopy, prefix, siz
   }, [address, baseAddress]);
 
   return (
-    <span className={className} onClick={onClick} style={{ cursor: withNotify ? 'copy' : 'default', height: `${size}px`, width: `${size}px`, ...style }}>
+    <span className={className} onClick={onClick} style={{ '--pg-identicon-bg': theme.palette.mode === 'dark' ? '#2c2643' : '#E9ECF8', cursor: withNotify ? 'copy' : 'default', height: `${size}px`, width: `${size}px`, ...style } as React.CSSProperties}>
       {!_theme || _theme === 'polkasoul'
         ? (
           <PolkaSoul
@@ -84,7 +86,7 @@ export default React.memo(styled(PolkaGateIdenticon)(() => `
 
   .polkadot-icon svg {
     circle:first-of-type {
-      fill: #2c2643;
+      fill: var(--pg-identicon-bg, #2c2643);
     }
   }
 `));

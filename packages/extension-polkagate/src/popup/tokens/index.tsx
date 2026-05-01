@@ -70,6 +70,8 @@ function Tokens(): React.ReactElement {
   const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change;
   const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange ?? 0);
   const totalBalancePrice = useMemo(() => calcPrice(priceOf(token?.priceId ?? '') ?? 0, token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0), [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
+  const mutedAmountColor = theme.palette.mode === 'dark' ? '#BEAAD8' : theme.palette.text.secondary;
+  const logoBorderColor = theme.palette.mode === 'dark' ? '#00000033' : '#FFFFFF99';
 
   const backHome = useCallback(() => navigate('/') as void, [navigate]);
 
@@ -84,7 +86,7 @@ function Tokens(): React.ReactElement {
         />
         <Container disableGutters ref={refContainer} sx={{ display: 'block', height: 'fit-content', maxHeight: '504px', overflowY: 'auto', pb: '60px', pt: '15px' }}>
           <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
-            <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
+            <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: logoBorderColor, borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
               <Logo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-6px -8px auto auto' />
             </Grid>
             <Symbol token={token?.token} />
@@ -105,7 +107,7 @@ function Tokens(): React.ReactElement {
                 balance={token?.totalBalance}
                 decimal={token?.decimal}
                 style={{
-                  color: '#BEAAD8',
+                  color: mutedAmountColor,
                   width: 'max-content'
                 }}
                 token={token?.token}

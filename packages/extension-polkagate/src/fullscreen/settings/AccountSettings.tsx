@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Stack, Typography } from '@mui/material';
+import { Container, Stack, Typography, useTheme } from '@mui/material';
 import { Book, Broom, Data2, Edit2, ExportCurve, type Icon, ImportCurve, LogoutCurve, Notification as NotificationIcon, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -32,7 +32,9 @@ interface ActionBoxProps {
 
 function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
   const navigate = useNavigate();
- const { isHovered, ref } = useIsHovered();
+  const theme = useTheme();
+  const { isHovered, ref } = useIsHovered();
+  const isDark = theme.palette.mode === 'dark';
 
   const _onClick = useCallback(() => {
     onClick
@@ -41,9 +43,9 @@ function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactE
   }, [navigate, onClick, path]);
 
   return (
-    <Stack direction='column' justifyContent='start' onClick={_onClick} ref={ref} rowGap='8px' sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-4px)' }, bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', height: '86px', minWidth: '141px', px: '10px', transition: 'all 250ms ease-out', width: 'fit-content' }}>
-      <Icon color='#AA83DC' size='24' style={{ marginTop: '17px' }} variant={isHovered ? 'Bold' : 'Bulk'} />
-      <Typography sx={{ display: 'flex', fontWeight: 700, width: 'fit-content' }} variant='B-2'>
+    <Stack direction='column' justifyContent='start' onClick={_onClick} ref={ref} rowGap='8px' sx={{ '&:hover': { bgcolor: isDark ? '#2D1E4A' : '#F3F6FD', transform: 'translateY(-4px)' }, bgcolor: isDark ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#DDE3F4', borderRadius: '14px', cursor: 'pointer', height: '86px', minWidth: '141px', px: '10px', transition: 'all 250ms ease-out', width: 'fit-content' }}>
+      <Icon color={isDark ? '#AA83DC' : theme.palette.primary.main} size='24' style={{ marginTop: '17px' }} variant={isHovered ? 'Bold' : 'Bulk'} />
+      <Typography color='text.primary' sx={{ display: 'flex', fontWeight: 700, width: 'fit-content' }} variant='B-2'>
         {label}
       </Typography>
     </Stack>

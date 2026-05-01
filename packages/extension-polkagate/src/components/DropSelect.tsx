@@ -10,29 +10,44 @@ import { Avatar, ClickAwayListener, Grid, styled, Typography, useTheme } from '@
 import { ArrowDown2, Global } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useIsDark } from '../hooks';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 import { CHAINS_WITH_BLACK_LOGO } from '../util/constants';
 import resolveLogoInfo from '../util/logo/resolveLogoInfo';
 import { DropContent, ScrollingTextBox } from '.';
 
-const DropSelectContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'focused' })(({ disabled, focused }: { disabled: boolean | undefined, focused: boolean }) => ({
-  '&:hover': { background: disabled ? '#1B133C' : '#2D1E4A' },
-  alignItems: 'center',
-  background: focused && !disabled ? '#05091C' : '#1B133C',
-  border: '1px solid',
-  borderColor: '#BEAAD833',
-  borderRadius: '12px',
-  columnGap: '5px',
-  cursor: 'pointer',
-  flexWrap: 'nowrap',
-  justifyContent: 'space-between',
-  padding: '12px',
-  transition: 'all 250ms ease-out'
-}));
+interface DropSelectContainerProps {
+  disabled?: boolean;
+  focused: boolean;
+}
+
+const DropSelectContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'disabled' && prop !== 'focused' })<DropSelectContainerProps>(({ disabled, focused, theme }) => {
+  const isDark = theme.palette.mode === 'dark';
+
+  return ({
+    '&:hover': {
+      background: disabled
+        ? (isDark ? '#1B133C' : '#EFF1F9')
+        : (isDark ? '#2D1E4A' : '#F3F6FD')
+    },
+    alignItems: 'center',
+    background: focused && !disabled
+      ? (isDark ? '#05091C' : '#FFFFFF')
+      : (isDark ? '#1B133C' : disabled ? '#EFF1F9' : '#FFFFFF'),
+    border: '1px solid',
+    borderColor: isDark ? '#BEAAD833' : '#DDE3F4',
+    borderRadius: '12px',
+    columnGap: '5px',
+    cursor: 'pointer',
+    flexWrap: 'nowrap',
+    justifyContent: 'space-between',
+    padding: '12px',
+    transition: 'all 250ms ease-out'
+  });
+});
 
 function OptionLogo({ text }: { text: string }) {
-  const isDark = useIsDark();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const icon = resolveLogoInfo(text)?.logo;
 
   return (
@@ -71,6 +86,7 @@ interface Props {
 function DropSelect({ Icon, contentDropWidth, defaultValue, disabled, displayContentType = 'text', dropContentStyle, enableSearch = false, onChange, options, scrollTextOnOverflow, searchPlaceholder, showCheckAsIcon, simpleArrow, style, textVariant, value, withDivider = false }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [open, setOpen] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<number | string | undefined>(value ?? defaultValue);
@@ -90,7 +106,7 @@ function DropSelect({ Icon, contentDropWidth, defaultValue, disabled, displayCon
   }, [value]);
 
   const textColor = disabled ? 'text.disabled' : style?.color ?? 'text.secondary';
-  const arrowColor = open ? '#FF4FB9' : disabled ? '#4B4B4B' : '#AA83DC';
+  const arrowColor = open ? '#FF4FB9' : disabled ? theme.palette.text.disabled : isDark ? '#AA83DC' : theme.palette.text.secondary;
 
   return (
     <>
@@ -114,7 +130,7 @@ function DropSelect({ Icon, contentDropWidth, defaultValue, disabled, displayCon
               </>
             }
             {displayContentType === 'icon' && Icon &&
-              <Icon color='#BEAAD8' size='18' variant='Bulk' />
+              <Icon color={isDark ? '#BEAAD8' : theme.palette.text.secondary} size='18' variant='Bulk' />
             }
             {scrollTextOnOverflow && _contentDropWidth
               ? (

@@ -10,8 +10,11 @@ import { MyTooltip } from '.';
 const StyledTextFieldSmall = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'errorMessage'
 })<{ errorMessage?: string }>(({ errorMessage, theme }) => ({
+  '--pg-small-text-field-bg': theme.palette.mode === 'dark' ? '#1B133C' : '#FFFFFF',
+  '--pg-small-text-field-hover-bg': theme.palette.mode === 'dark' ? '#2D1E4A' : '#F3F6FD',
+  '--pg-small-text-field-border': theme.palette.mode === 'dark' ? '#BEAAD833' : '#DDE3F4',
   '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: errorMessage ? theme.palette.error.main : '#BEAAD833'
+    borderColor: errorMessage ? theme.palette.error.main : 'var(--pg-small-text-field-border)'
   },
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
@@ -31,26 +34,26 @@ const StyledTextFieldSmall = styled(TextField, {
       }
     },
     '&:hover': {
-      backgroundColor: '#2D1E4A',
+      backgroundColor: 'var(--pg-small-text-field-hover-bg)',
       transition: 'all 150ms ease-out'
     },
     '&:hover fieldset': {
-      borderColor: '#BEAAD833',
+      borderColor: 'var(--pg-small-text-field-border)',
       transition: 'all 150ms ease-out',
       zIndex: 0
     },
     '&.Mui-disabled': {
-      backgroundColor: '#1B133C', // or a lighter/darker shade
+      backgroundColor: theme.palette.mode === 'dark' ? '#1B133C' : '#EFF1F9',
       color: theme.palette.text.disabled,
       '& fieldset': {
-        borderColor: theme.palette.text.disabled // or any custom disabled border color
+        borderColor: theme.palette.text.disabled
       },
       '& svg path': {
         fill: theme.palette.text.disabled
       }
     },
-    backgroundColor: '#1B133C',
-    borderColor: '#BEAAD833',
+    backgroundColor: 'var(--pg-small-text-field-bg)',
+    borderColor: 'var(--pg-small-text-field-border)',
     borderRadius: '12px',
     color: errorMessage ? theme.palette.error.main : theme.palette.text.secondary,
     height: '44px',
@@ -208,7 +211,7 @@ export default function MyTextField({ Icon, disabled, errorMessage, focused = fa
             <InputAdornment position='start' sx={{ marginRight: Icon ? '5px' : 0 }}>
               {
                 Icon && <Icon
-                  color={focusing ? '#3988FF' : '#AA83DC'}
+                  color={focusing ? '#3988FF' : (theme.palette.mode === 'dark' ? '#AA83DC' : '#8F97B8')}
                   size={iconSize}
                   variant={focusing ? 'Bold' : 'Bulk'}
                 />

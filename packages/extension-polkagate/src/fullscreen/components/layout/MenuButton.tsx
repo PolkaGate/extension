@@ -3,7 +3,7 @@
 
 import type { Icon } from 'iconsax-react';
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -22,6 +22,8 @@ function MenuButton({ Icon, onClick, path, style = { marginBottom: '8px' }, text
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { isHovered, ref } = useIsHovered();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const getFirstSegment = (p: string | undefined) => p?.split('/')[1];
   const isSelected = getFirstSegment(path) === getFirstSegment(pathname);
@@ -44,13 +46,13 @@ function MenuButton({ Icon, onClick, path, style = { marginBottom: '8px' }, text
       sx={{
         ...(isSelected && {
           backdropFilter: 'blur(20px)',
-          background: '#2D1E4A80',
-          boxShadow: '0px 0px 24px 8px #4E2B7259 inset'
+          background: isDark ? '#2D1E4A80' : '#F3F5FD',
+          boxShadow: isDark ? '0px 0px 24px 8px #4E2B7259 inset' : '0px 0px 18px 0px rgba(205, 212, 238, 0.9) inset'
         }),
         '&:hover': {
           backdropFilter: 'blur(20px)',
-          background: '#2D1E4A80',
-          boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
+          background: isDark ? '#2D1E4A80' : '#F3F5FD',
+          boxShadow: isDark ? '0px 0px 24px 8px #4E2B7259 inset' : '0px 0px 18px 0px rgba(205, 212, 238, 0.9) inset',
           transition: 'all 250ms ease-out'
         },
         borderRadius: '16px',
@@ -63,8 +65,8 @@ function MenuButton({ Icon, onClick, path, style = { marginBottom: '8px' }, text
         ...style
       }}
     >
-      <Icon color={isHovered || isSelected ? '#FF4FB9' : '#AA83DC'} size='20' variant='Bulk' />
-      <Typography className='text' color={isHovered || isSelected ? '#FF4FB9' : '#EAEBF1'} ml='25px' sx={{ userSelect: 'none' }} variant='B-2'>
+      <Icon color={isHovered || isSelected ? '#FF4FB9' : (isDark ? '#AA83DC' : theme.palette.text.secondary)} size='20' variant='Bulk' />
+      <Typography className='text' color={isHovered || isSelected ? '#FF4FB9' : (isDark ? '#EAEBF1' : theme.palette.text.primary)} ml='25px' sx={{ userSelect: 'none' }} variant='B-2'>
         {text}
       </Typography>
       {

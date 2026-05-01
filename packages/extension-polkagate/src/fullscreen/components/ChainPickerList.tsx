@@ -4,7 +4,7 @@
 import type { TypographyProps } from '@mui/material';
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
@@ -46,7 +46,11 @@ export default function ChainPickerList({ getLabel,
   showSelectedCheck = false,
   showTopPadding = false }: ChainPickerListProps): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const [keyword, setKeyword] = useState<string>();
+  const isDark = theme.palette.mode === 'dark';
+  const hoverBg = isDark ? '#6743944D' : '#EEF2FB';
+  const dividerColor = isDark ? undefined : '#E7ECF7';
 
   const onSearch = useCallback((value: string) => {
     setKeyword(value);
@@ -92,7 +96,7 @@ export default function ChainPickerList({ getLabel,
                 justifyContent='space-between'
                 onClick={handleSelect(chain)}
                 onDoubleClick={onDoubleClick}
-                sx={{ '&:hover': { bgcolor: '#6743944D' }, borderRadius: '12px', cursor: 'pointer', minHeight: '40px', p: '8px 7px', transition: 'all 250ms ease-out' }}
+                sx={{ '&:hover': { bgcolor: hoverBg }, borderRadius: '12px', cursor: 'pointer', minHeight: '40px', p: '8px 7px', transition: 'all 250ms ease-out' }}
               >
                 <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
                   <Logo chainName={chain.text} size={logoSize} />
@@ -109,7 +113,7 @@ export default function ChainPickerList({ getLabel,
                 }
               </Grid>
               {index !== chainsToShow.length - 1 &&
-                <GradientDivider style={{ my: '3px' }} />
+                <GradientDivider style={{ background: dividerColor, my: '3px' }} />
               }
             </React.Fragment>
           );

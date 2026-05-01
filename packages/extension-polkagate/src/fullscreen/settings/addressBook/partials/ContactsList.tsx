@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import { UserAdd } from 'iconsax-react';
 import React, { type Dispatch, memo, type SetStateAction, useCallback } from 'react';
 
@@ -26,6 +26,8 @@ interface Props {
 
 function ContactsList({ changeStep, contacts, setContactAddress, setContacts, setName, setStep }: Props) {
     const { t } = useTranslation();
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
 
     const onRemove = useCallback((contactToDelete: string) => () => {
         if (!contacts) {
@@ -70,7 +72,21 @@ function ContactsList({ changeStep, contacts, setContactAddress, setContacts, se
             <Typography color='text.secondary' pt='20px' textAlign='left' variant='B-4'>
                 {t('Save trusted addresses with a custom name to make transfers faster and safer. Contacts are stored locally in your wallet.')}
             </Typography>
-            <Stack direction='column' sx={{ background: '#05091C', borderRadius: '14px', gap: '12px', height: '250px', m: '16px 6px', maxHeight: '250px', overflowY: 'auto', p: '16px' }}>
+            <Stack
+                direction='column'
+                sx={{
+                    background: isDark ? '#05091C' : '#FFFFFF',
+                    border: isDark ? 'none' : '1px solid #E3E8F7',
+                    borderRadius: '14px',
+                    boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)',
+                    gap: '12px',
+                    height: '250px',
+                    m: '16px 6px',
+                    maxHeight: '250px',
+                    overflowY: 'auto',
+                    p: '16px'
+                }}
+            >
                 {contacts?.map(({ address, name }) => (
                     <AddressBookItem
                         address={address}

@@ -71,6 +71,7 @@ export interface StakingInfoStackProps {
 export const StakingInfoStack = memo(function SIS({ adjustedColorForTitle, amount, decimal, secondaryColor, text, title, token, valueNode }: StakingInfoStackProps) {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
+  const isLightExtension = isExtension && theme.palette.mode === 'light';
 
   return (
     <Stack direction='column' sx={{ width: 'fit-content' }}>
@@ -92,7 +93,7 @@ export const StakingInfoStack = memo(function SIS({ adjustedColorForTitle, amoun
           {text}
         </Typography>
       }
-      <Typography color={adjustedColorForTitle ?? 'text.highlight'} textAlign='left' variant='B-4'>
+      <Typography color={adjustedColorForTitle ?? (isLightExtension ? '#6F5A96' : 'text.highlight')} textAlign='left' variant='B-4'>
         {title}
       </Typography>
     </Stack>
@@ -136,12 +137,16 @@ interface ValidatorInfoProp {
 
 const ValidatorInfo = memo(function VI({ genesisHash, isBlueish, isSelected, onDetailClick, onSelect, style, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const isLight = theme.palette.mode === 'light';
 
   const totalStaked = useMemo(() => toBN((validatorInfo.exposurePaged as unknown as SpStakingExposurePage)?.pageTotal ?? 0), [(validatorInfo.exposurePaged as unknown as SpStakingExposurePage)?.pageTotal]);
   const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);
   const isHighCommission = commission > HIGH_COMMISSION_THRESHOLD;
-  const baseBgcolor = isSelected ? '#BFA1FF26' : '#110F2A';
+  const baseBgcolor = isLight
+    ? isSelected ? '#F6F0FF' : '#FFFFFF'
+    : isSelected ? '#BFA1FF26' : '#110F2A';
   const warningColor = HIGH_COMMISSION_WARNING_COLOR;
 
   const handleSelect = useCallback((_value: boolean) => {
@@ -159,7 +164,9 @@ const ValidatorInfo = memo(function VI({ genesisHash, isBlueish, isSelected, onD
       direction='column'
       sx={{
         bgcolor: baseBgcolor,
+        border: isLight ? '1px solid #E3E8F7' : 'none',
         borderRadius: '14px',
+        boxShadow: isLight ? '0 10px 20px rgba(133, 140, 176, 0.10)' : 'none',
         mb: '4px',
         p: '8px',
         width: '100%',
@@ -179,7 +186,7 @@ const ValidatorInfo = memo(function VI({ genesisHash, isBlueish, isSelected, onD
           <ValidatorIdentity validatorInfo={validatorInfo} />
         </Stack>
         <IconButton onClick={onDetailClick} sx={{ m: 0, py: '6px' }}>
-          <ArrowRight2 color='#fff' size='20' />
+          <ArrowRight2 color={isLight ? '#6F5A96' : '#fff'} size='20' />
         </IconButton>
       </Container>
       <GradientDivider style={{ my: '4px' }} />

@@ -24,29 +24,38 @@ interface AmountButtonInputProps {
 }
 
 const StyledButton = styled(Grid, {
-  shouldForwardProp: (prop) => prop !== 'isExtension'
-})(({ isExtension }: { isExtension: boolean }) => ({
-  '&:hover': {
-    background: isExtension ? '#809ACB60' : '#3b295eff',
-    transition: 'all 150ms ease-in-out'
-  },
-  alignItems: 'center',
-  background: isExtension ? '#809ACB26' : '#2D1E4A',
-  borderRadius: '12px',
-  cursor: 'pointer',
-  justifyContent: 'center',
-  padding: '1px 10px',
-  width: 'fit-content'
-}));
+  shouldForwardProp: (prop) => prop !== 'isExtension' && prop !== 'theme'
+})(({ isExtension, theme }: { isExtension: boolean, theme: Theme }) => {
+  const isLight = theme.palette.mode === 'light';
+
+  return {
+    '&:hover': {
+      background: isLight ? '#F3F6FD' : isExtension ? '#809ACB60' : '#3b295eff',
+      transition: 'all 150ms ease-in-out'
+    },
+    alignItems: 'center',
+    background: isLight ? '#FFFFFF' : isExtension ? '#809ACB26' : '#2D1E4A',
+    border: isLight ? '1px solid #DDE3F4' : 'none',
+    borderRadius: '12px',
+    boxShadow: isLight ? '0px 4px 14px rgba(148, 163, 184, 0.12)' : 'none',
+    cursor: 'pointer',
+    justifyContent: 'center',
+    padding: '1px 10px',
+    width: 'fit-content'
+  };
+});
 
 const AmountButton = ({ buttonName, isExtension, onClick, value }: AmountButtonProps) => {
+  const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
+
   const handleClick = useCallback(() => {
     onClick({ target: { value } } as React.ChangeEvent<HTMLInputElement>, true);
   }, [onClick, value]);
 
   return (
-    <StyledButton isExtension={isExtension} onClick={handleClick}>
-      <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} variant='B-2'>
+    <StyledButton isExtension={isExtension} onClick={handleClick} theme={theme}>
+      <Typography color={isLight ? '#745E9F' : isExtension ? 'text.highlight' : '#AA83DC'} variant='B-2'>
         {buttonName}
       </Typography>
     </StyledButton>
@@ -56,6 +65,7 @@ const AmountButton = ({ buttonName, isExtension, onClick, value }: AmountButtonP
 const StyledTextField = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'isExtension' && prop !== 'theme'
 })(({ isExtension, theme }: { isExtension: boolean, theme: Theme }) => {
+  const isLight = theme.palette.mode === 'light';
   const fontStyle = {
     fontFamily: isExtension ? 'Inter' : 'OdibeeSans',
     fontSize: isExtension ? '32px' : '30px',
@@ -98,7 +108,7 @@ const StyledTextField = styled(TextField, {
     },
     '& input::placeholder': {
       alignItems: 'center',
-      color: isExtension ? theme.palette.text.highlight : '#AA83DC',
+      color: isLight ? '#B4B9D4' : isExtension ? theme.palette.text.highlight : '#AA83DC',
       ...fontStyle,
       textAlign: 'left'
     },
@@ -120,12 +130,13 @@ interface SubAmountProps {
 
 const SubAmount = ({ amount, decimal, dividerStyle, genesisHash, isExtension, logoInfo, title, token }: SubAmountProps) => {
   const theme = useTheme();
+  const isLightPopup = isExtension && theme.palette.mode === 'light';
 
   return (
     <>
       <GradientDivider style={{ my: '6px', ...dividerStyle }} />
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', gap: '6px', justifyContent: 'space-start', pl: '10px', pt: '8px' }}>
-        <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} variant='B-1'>
+        <Typography color={isLightPopup ? '#6F5A96' : isExtension ? 'text.highlight' : '#AA83DC'} variant='B-1'>
           {title}
         </Typography>
         <Logo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} />
@@ -168,6 +179,7 @@ interface Props {
 export default function StakeAmountInput({ bodyStyle = {}, buttonsArray = [], decimal, dividerStyle = {}, enteredValue, errorMessage, focused, maxLength = { decimal: 4, integer: 8 }, numberOnly = true, onInputChange, placeholder, style, subAmount, title, titleInColor }: Props): React.ReactElement {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
+  const isLight = theme.palette.mode === 'light';
 
   const [textFieldValue, setTextFieldValue] = useState<string | null | undefined>();
   const [memorizedErrorMessage, setMemorizedErrorMessage] = useState<string | undefined>();
@@ -232,12 +244,12 @@ export default function StakeAmountInput({ bodyStyle = {}, buttonsArray = [], de
 
   return (
     <Stack direction='column' sx={style}>
-      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', border: errorMessage ? '1px solid #FF4FB9' : 'none', borderRadius: '14px', display: 'flex', p: '12px', transition: 'all 150ms ease-out', width: '100%', ...bodyStyle }}>
+      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isLight ? '#FFFFFF' : isExtension ? '#110F2A' : '#05091C', border: errorMessage ? '1px solid #FF4FB9' : isLight ? '1px solid #DDE3F4' : 'none', borderRadius: '14px', boxShadow: isLight ? '0px 10px 24px rgba(148, 163, 184, 0.12)' : 'none', display: 'flex', p: '12px', transition: 'all 150ms ease-out', width: '100%', ...bodyStyle }}>
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', px: '10px' }}>
           <Typography variant='B-1'>
             <TwoToneText
-              backgroundColor={isExtension ? '#110F2A' : '#AA83DC26'}
-              color={isExtension ? theme.palette.text.highlight : '#AA83DC'}
+              backgroundColor={isLight ? '#FFFFFF' : isExtension ? '#110F2A' : '#AA83DC26'}
+              color={isLight ? '#6F5A96' : isExtension ? theme.palette.text.highlight : '#AA83DC'}
               text={title ?? ''}
               textPartInColor={titleInColor ?? ''}
             />

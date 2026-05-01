@@ -30,14 +30,16 @@ interface InfoProps extends StakingInfoStackProps {
 
 const InfoWithIcons = memo(function InfoWithIcons({ StartIcon, amount, decimal, startIconColor, style, text, textColor, title, titleColor, token, width = '80px' }: InfoProps) {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const accentColor = isDark ? '#AA83DC' : '#6F5A96';
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', m: 0, width, ...style }}>
       {
         StartIcon &&
-        <StartIcon color={startIconColor ?? '#AA83DC'} size='20' style={{ minWidth: '20px' }} variant='Bulk' />
+        <StartIcon color={startIconColor ?? accentColor} size='20' style={{ minWidth: '20px' }} variant='Bulk' />
       }
-      <Typography color={titleColor ?? '#AA83DC'} textAlign='left' variant='B-4'>
+      <Typography color={titleColor ?? accentColor} textAlign='left' variant='B-4'>
         {title}:
       </Typography>
       {amount &&
@@ -73,6 +75,8 @@ interface ValidatorInfoProp {
 
 const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActive, isAlreadySelected, isSelected, myShare, onSelect, reachedMaximum, style = {}, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { api, decimal, token } = useChainInfo(genesisHash);
 
   const totalStaked = toBN((validatorInfo.exposurePaged as unknown as SpStakingExposurePage)?.pageTotal ?? 0);
@@ -89,7 +93,11 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
   const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);
   const isHighCommission = commission > HIGH_COMMISSION_THRESHOLD;
   const notElected = isActive === undefined && !onSelect;
-  const baseBgcolor = bgcolor ?? (isSelected ? '#FF4FB926' : isAlreadySelected ? '#AA83DC1A' : '#05091C');
+  const baseBgcolor = bgcolor ?? (isSelected ? '#FF4FB926' : isAlreadySelected ? (isDark ? '#AA83DC1A' : '#EEF1FF') : isDark ? '#05091C' : '#FFFFFF');
+  const activeBadgeBg = isDark ? '#82FFA526' : '#E8F8EE';
+  const activeBadgeColor = isDark ? '#82FFA5' : '#43A867';
+  const inactiveBadgeBg = isDark ? '#8E8E8E26' : '#F1F3F9';
+  const inactiveBadgeColor = isDark ? '#8E8E8E' : '#98A0B8';
   const warningColor = HIGH_COMMISSION_WARNING_COLOR;
 
   return (
@@ -100,7 +108,9 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
         sx={{
           alignItems: 'center',
           bgcolor: baseBgcolor,
+          border: isDark ? 'none' : '1px solid #DDE3F4',
           borderRadius: '14px',
+          boxShadow: isDark ? 'none' : '0 8px 18px rgba(133, 140, 176, 0.10)',
           columnGap: '5px',
           cursor: onSelect ? 'pointer' : 'default',
           display: 'flex',
@@ -121,7 +131,18 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
           />
         }
         {isActive !== undefined &&
-          <Typography sx={{ bgcolor: isActive ? '#82FFA526' : '#8E8E8E26', borderRadius: '6px', color: isActive ? '#82FFA5' : '#8E8E8E', lineHeight: '16px', minWidth: '54px', mr: '8px', px: '8px' }} variant='B-5'>
+          <Typography
+            sx={{
+              bgcolor: isActive ? activeBadgeBg : inactiveBadgeBg,
+              borderRadius: '6px',
+              color: isActive ? activeBadgeColor : inactiveBadgeColor,
+              lineHeight: '16px',
+              minWidth: '54px',
+              mr: '8px',
+              px: '8px'
+            }}
+            variant='B-5'
+          >
             {isActive ? t('Active') : t('Inactive')}
           </Typography>
         }
@@ -181,8 +202,8 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
           style={{ justifyContent: 'center', width: '125px' }}
           validatorDetail={validatorInfo}
         />
-        <IconButton onClick={openValidatorDetail} sx={{ bgcolor: bgcolor ? '#1B133C' : '#2D1E4A', borderRadius: '8px', height: '40px', width: '36px' }}>
-          <ArrowRight2 color='#AA83DC' size='14' variant='Bold' />
+        <IconButton onClick={openValidatorDetail} sx={{ bgcolor: isDark ? (bgcolor ? '#1B133C' : '#2D1E4A') : '#EEF1FF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '8px', height: '40px', width: '36px' }}>
+          <ArrowRight2 color={isDark ? '#AA83DC' : '#6F5A96'} size='14' variant='Bold' />
         </IconButton>
       </Container>
       {open &&
@@ -196,19 +217,24 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
   );
 });
 
-const UndefinedItem = ({ mb = '0px', noSocials = false }: { noSocials?: boolean; mb?: string; }) => (
-  <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mb, minHeight: '48px', p: '10px' }}>
-    <MySkeleton height={20} style={{ borderRadius: '20px', width: '300px' }} />
-    <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
-    <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
-    <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
-    <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
-    {!noSocials && <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
-      {Array.from({ length: 4 }).map((_, index) =>
-        <MySkeleton height={24} key={index} style={{ width: '24px' }} variant='rounded' />
-      )}
-    </Container>}
-  </Container>
-);
+const UndefinedItem = ({ mb = '0px', noSocials = false }: { noSocials?: boolean; mb?: string; }) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
+  return (
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mb, minHeight: '48px', p: '10px' }}>
+      <MySkeleton height={20} style={{ borderRadius: '20px', width: '300px' }} />
+      <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
+      <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
+      <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
+      <MySkeleton height={20} style={{ borderRadius: '20px', width: '130px' }} />
+      {!noSocials && <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '4px', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
+        {Array.from({ length: 4 }).map((_, index) =>
+          <MySkeleton height={24} key={index} style={{ width: '24px' }} variant='rounded' />
+        )}
+      </Container>}
+    </Container>
+  );
+};
 
 export { InfoWithIcons, UndefinedItem, ValidatorInfo };

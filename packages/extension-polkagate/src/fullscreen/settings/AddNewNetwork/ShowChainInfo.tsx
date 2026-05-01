@@ -39,13 +39,19 @@ function ChainItem({ label, value }: ChainItemProps): React.ReactElement {
 function ShowChainInfo({ currencySign, metadata, price }: ShowChainInfoProps): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const labelColor = isDark ? '#7956A5' : theme.palette.primary.main;
+  const infoStripBg = isDark ? '#2D1E4A' : '#F5F6FF';
+  const infoStripBorder = isDark ? 'transparent' : '#E3E8F7';
+  const hashFieldBg = isDark ? '#1B133CB2' : '#EFF1F9';
+  const hashFieldBorder = isDark ? '#BEAAD833' : '#DDE3F4';
 
   return (
     <Collapse in={true} orientation='vertical' sx={{ m: '20px 0 20px', width: '100%' }}>
       {metadata &&
         <Stack alignItems='start' direction='column' sx={{ bgcolor: 'background.paper', borderRadius: '14px', width: '100%' }}>
           <Stack alignItems='start' direction='column' sx={{ p: '20px 20px 10px', width: '100%' }}>
-            <Typography color='#7956A5' fontSize='11px' fontWeight={400} sx={{ alignItems: 'center', display: 'flex', letterSpacing: 1, mb: '15px', textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='S-1'>
+            <Typography color={labelColor} fontSize='11px' fontWeight={400} sx={{ alignItems: 'center', display: 'flex', letterSpacing: 1, mb: '15px', textAlign: 'left', textTransform: 'uppercase', width: '100%' }} variant='S-1'>
               {t('Network information')}
             </Typography>
             <Stack alignItems='start' columnGap='20px' direction='row'>
@@ -58,7 +64,7 @@ function ShowChainInfo({ currencySign, metadata, price }: ShowChainInfoProps): R
                     {metadata.tokenSymbol}
                   </Typography>
                 </Stack>
-                <Typography color='#7956A5' variant='S-2'>
+                <Typography color={labelColor} variant='S-2'>
                   {t('Network')}
                 </Typography>
               </Stack>
@@ -66,13 +72,13 @@ function ShowChainInfo({ currencySign, metadata, price }: ShowChainInfoProps): R
                 <Typography color='text.primary' sx={{ textAlign: 'left', textTransform: 'uppercase' }} variant='H-3'>
                   {currencySign ?? '$'}{price ?? '0.00'}
                 </Typography>
-                <Typography color='#7956A5' variant='S-2'>
+                <Typography color={labelColor} variant='S-2'>
                   {t('Token price')}
                 </Typography>
               </Stack>
             </Stack>
           </Stack>
-          <Stack alignItems='center' columnGap='10%' direction='row' sx={{ bgcolor: '#2D1E4A', borderRadius: '14px', height: '62px', mx: '5px', pl: '15px', width: '98%' }}>
+          <Stack alignItems='center' columnGap='10%' direction='row' sx={{ bgcolor: infoStripBg, border: '1px solid', borderColor: infoStripBorder, borderRadius: '14px', height: '62px', mx: '5px', pl: '15px', width: '98%' }}>
             <ChainItem
               label={t('Decimal')}
               value={metadata.tokenDecimals}
@@ -94,7 +100,7 @@ function ShowChainInfo({ currencySign, metadata, price }: ShowChainInfoProps): R
             <Typography color='text.primary' sx={{ alignItems: 'center', mb: '10px', textAlign: 'left', width: '100%' }} variant='B-1'>
               {t('Genesis Hash')}
             </Typography>
-            <Stack alignItems='center' columnGap='10px' direction='row' sx={{ bgcolor: '#1B133CB2', border: '1px solid #BEAAD833', borderRadius: '12px', height: '44px', opacity: '50%', pl: '20px', width: '95%' }}>
+            <Stack alignItems='center' columnGap='10px' direction='row' sx={{ bgcolor: hashFieldBg, border: '1px solid', borderColor: hashFieldBorder, borderRadius: '12px', height: '44px', pl: '20px', width: '95%' }}>
               <Hashtag color={theme.palette.text.secondary} size='18px' variant='Bulk' />
               <Typography color='text.secondary' variant='B-1'>
                 {toShortAddress(metadata.genesisHash, 15)}

@@ -166,19 +166,21 @@ function SocialLinks({ accountInfo, socialStyles }: SocialProps): React.ReactEle
   const { email, twitter, web } = accountInfo?.identity ?? {};
 
   const socials = useMemo(() => {
-    const iconColor = isBlueish ? '#809ACB' : theme.palette.icon.secondary;
-    const bgColor = !isDark ? '#CCD2EA' : undefined;
+    const iconColor = isBlueish ? '#809ACB' : isDark ? theme.palette.icon.secondary : '#6F6396';
+    const bgColor = !isDark ? '#EEF2FB' : undefined;
     const iconSize = 18;
     const width = '10.12px';
 
     return [
       email && {
+        bgColor,
         icon: <Email color={iconColor} width={width} />,
         key: 'email',
         link: `mailto:${email}`,
         size: iconSize
       },
       web && {
+        bgColor,
         icon: <Web color={iconColor} width={width} />,
         key: 'web',
         link: web,
