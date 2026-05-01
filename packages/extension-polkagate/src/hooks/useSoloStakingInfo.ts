@@ -153,6 +153,8 @@ const DEFAULT_VALUE = {
   stakingConsts: undefined
 };
 
+const getKey = (genesisHash: string, address: string) => genesisHash + 'SoloStakingInfo' + address;
+
 /**
  * Custom hook that provides solo staking information for a given address
  *
@@ -229,7 +231,6 @@ export default function useSoloStakingInfo(address: string | undefined, genesisH
     };
 
     fetchingFlag.current = false;
-
     selectedPositionFlag.current = genesisHash;
 
     const nonUndefinedInfo = Object.fromEntries(
@@ -247,14 +248,19 @@ export default function useSoloStakingInfo(address: string | undefined, genesisH
   }, [rewards, soloStakingInfo]);
 
   useEffect(() => {
-    // Only save to storage when specifically needed
+    if (soloStakingInfo?.rewards && soloStakingInfo?.availableBalanceToStake) { // ready to persist staking info to storage
+      needsStorageUpdate.current = true;
+    }
+  }, [soloStakingInfo?.availableBalanceToStake, soloStakingInfo?.rewards]);
+
+  useEffect(() => {
     if (needsStorageUpdate.current === true && fetchingFlag.current === false && soloStakingInfo && currentEra !== undefined && genesisHash && address) {
       const toSave = {
         ...soloStakingInfo,
         currentEra
       };
 
-      const key = genesisHash + 'SoloStakingInfo' + address;
+      const key = getKey(genesisHash, address);
 
       setStorage(key, toSave, true)
         .then(() => {
@@ -267,7 +273,7 @@ export default function useSoloStakingInfo(address: string | undefined, genesisH
   // Load from storage if needed
   useEffect(() => {
     if (!soloStakingInfo && genesisHash && address && currentEra !== undefined) {
-      const key = genesisHash + 'SoloStakingInfo' + address;
+      const key = getKey(genesisHash, address);
 
       selectedPositionFlag.current = genesisHash;
 

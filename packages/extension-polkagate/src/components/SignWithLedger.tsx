@@ -74,7 +74,7 @@ export default function SignWithLedger({ address, api, disabled, from, handleTxR
             account={account}
             disabled={disabled}
             error={error}
-            genesisHash={account?.genesisHash || api?.genesisHash?.toHex()}
+            genesisHash={ api?.genesisHash?.toHex()}
             onCancel={onSecondaryClick} // TODO: should be fixed later
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onSignature={onSignature}

@@ -32,15 +32,14 @@ export default function useNativeAssetBalances(address: string | undefined, gene
 
   const isFetchingNativeTokenOfAssetHub = genesisHash && ASSET_HUBS.includes(genesisHash);
 
-  const token = api?.registry.chainTokens[0];
-  const decimal = api?.registry.chainDecimals[0];
-
   const _getBalances = useCallback(() => {
-    if (!chainName || !genesisHash || api?.genesisHash?.toString() !== genesisHash || !decimal || !token || !formatted) {
+    if (!chainName || !genesisHash || api?.genesisHash?.toString() !== genesisHash || !formatted) {
       return;
     }
 
     const ED = api.consts['balances'] ? api.consts['balances']['existentialDeposit'] as unknown as BN : BN_ZERO;
+    const token = api.registry.chainTokens[0];
+    const decimal = api.registry.chainDecimals[0];
 
     api.derive.balances?.all(formatted).then((allBalances) => {
       // @ts-ignore
@@ -70,10 +69,10 @@ export default function useNativeAssetBalances(address: string | undefined, gene
       }).catch(console.error);
     }).catch(console.error);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, genesisHash, chainName, decimal, stakingAccount, token, isFetchingNativeTokenOfAssetHub, balances, formatted, isFetching.fetching[String(formatted)]?.['length'], setRefresh]);
+  }, [api?.genesisHash, genesisHash, chainName, stakingAccount, isFetchingNativeTokenOfAssetHub, balances, formatted, isFetching.fetching[String(formatted)]?.['length'], setRefresh]);
 
   useEffect(() => {
-    if (!formatted || !token || !decimal || !chainName || api?.genesisHash?.toString() !== genesisHash) {
+    if (!formatted || api?.genesisHash?.toString() !== genesisHash || !chainName) {
       return;
     }
 
@@ -88,10 +87,10 @@ export default function useNativeAssetBalances(address: string | undefined, gene
       _getBalances();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api, genesisHash, chainName, decimal, formatted, _getBalances, isFetching.fetching[String(formatted)]?.['length'], token]);
+  }, [api?.genesisHash, chainName, genesisHash, formatted, _getBalances, isFetching.fetching[String(formatted)]?.['length']]);
 
   useEffect(() => {
-    if (refresh) {
+    if (refresh && formatted) {
       setBalances(undefined);
       setNewBalances(undefined);
 
@@ -105,56 +104,55 @@ export default function useNativeAssetBalances(address: string | undefined, gene
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Object.keys(isFetching?.fetching ?? {})?.length, formatted, _getBalances, refresh]);
 
-  // TODO - account?.balances won't work!!!!!! because since now accounts are on substrate mode!!! @AMIRKHANEF @Nick-1979
   useEffect(() => {
-    if (!chainName || !account || account?.genesisHash !== genesisHash) {
+    if (!chainName || !account || address !== account.address) {
       return;
     }
 
-    // to LOAD saved balances
-    const savedBalances = JSON.parse(account?.balances ?? '{}') as SavedBalances;
+    const savedBalances = JSON.parse(account.balances ?? '{}') as SavedBalances;
+    const chainBalance = savedBalances[chainName];
 
-    if (savedBalances[chainName]) {
-      const sb = savedBalances[chainName].balances;
-
-      const maybeAssetId = sb['assetId'];
-      const isForeignAsset = maybeAssetId && String(maybeAssetId).startsWith('0x');
-      const assetId = maybeAssetId === undefined
-        ? undefined
-        : isForeignAsset
-          ? decodeMultiLocation(maybeAssetId as HexString)
-          : parseInt(maybeAssetId);
-
-      const lastBalances = {
-        ED: new BN(sb['ED'] || '0'),
-        assetId,
-        availableBalance: new BN(sb['availableBalance']),
-        chainName,
-        date: savedBalances[chainName].date,
-        decimal: savedBalances[chainName].decimal,
-        freeBalance: new BN(sb['freeBalance']),
-        frozenBalance: new BN(sb['frozenBalance'] || '0'),
-        genesisHash: sb['genesisHash'],
-        lockedBalance: new BN(sb['lockedBalance']),
-        pooledBalance: new BN(sb['pooledBalance']),
-        reservedBalance: new BN(sb['reservedBalance']),
-        token: savedBalances[chainName].token,
-        vestedBalance: new BN(sb['vestedBalance']),
-        vestedClaimable: new BN(sb['vestedClaimable']),
-        votingBalance: new BN(sb['votingBalance'])
-      } as BalancesInfo;
-
-      setBalances({
-        ...lastBalances,
-        soloTotal: stakingAccount?.stakingLedger?.total as unknown as BN
-      });
+    if (!chainBalance) {
+      setBalances(undefined);
 
       return;
     }
 
-    setBalances(undefined);
+    const { balances: sb, date, decimal: sDecimal, token: sToken } = chainBalance;
+
+    const maybeAssetId = sb['assetId'];
+    const isForeignAsset = maybeAssetId && String(maybeAssetId).startsWith('0x');
+    const assetId = maybeAssetId === undefined
+      ? undefined
+      : isForeignAsset
+        ? decodeMultiLocation(maybeAssetId as HexString)
+        : parseInt(maybeAssetId);
+
+    const lastBalances = {
+      ED: new BN(sb['ED'] || '0'),
+      assetId,
+      availableBalance: new BN(sb['availableBalance']),
+      chainName,
+      date,
+      decimal: sDecimal,
+      freeBalance: new BN(sb['freeBalance']),
+      frozenBalance: new BN(sb['frozenBalance'] || '0'),
+      genesisHash: sb['genesisHash'],
+      lockedBalance: new BN(sb['lockedBalance']),
+      pooledBalance: new BN(sb['pooledBalance']),
+      reservedBalance: new BN(sb['reservedBalance']),
+      token: sToken,
+      vestedBalance: new BN(sb['vestedBalance']),
+      vestedClaimable: new BN(sb['vestedClaimable']),
+      votingBalance: new BN(sb['votingBalance'])
+    } as BalancesInfo;
+
+    setBalances({
+      ...lastBalances,
+      soloTotal: stakingAccount?.stakingLedger?.total as unknown as BN
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount, genesisHash]);
+  }, [Object.keys(account ?? {})?.length, address, chainName, stakingAccount]);
 
   if (onlyNew) {
     return newBalances; // returns balances that have been fetched recently and are not from the local storage, and it does not include the pooledBalance

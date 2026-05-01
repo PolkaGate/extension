@@ -22,13 +22,13 @@ interface Props {
 }
 
 function AccountRowSimple({ account, handleSelect, isFirstAccount, isFirstProfile, isLast, isSelected, maybeSelected, onDoubleClick }: Props): React.ReactElement {
-  const { address, genesisHash, type } = account ?? {};
+  const { address, type } = account ?? {};
 
   const _onClick = useCallback(() => {
     handleSelect(address);
   }, [address, handleSelect]);
 
-  const _genesisHash = type === 'ethereum' ? undefined : genesisHash ?? POLKADOT_GENESIS;
+  const _genesisHash = type === 'ethereum' ? undefined : POLKADOT_GENESIS;
 
   return (
     <motion.div
