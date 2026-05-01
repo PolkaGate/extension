@@ -48,7 +48,7 @@ export default function useBalances(address: string | undefined, genesisHash: st
 
   useEffect(() => {
     if (!address || !account || account.address !== address ||
-      !chainName || !token || !decimal || !genesisHash ||
+      !chainName || !token || decimal === undefined || !genesisHash ||
       apiGenesisHash !== genesisHash || overall?.genesisHash !== genesisHash) {
       return;
     }
