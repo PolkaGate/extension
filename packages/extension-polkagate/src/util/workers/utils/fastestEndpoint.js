@@ -5,7 +5,7 @@ import { ApiPromise, WsProvider } from '@polkadot/api';
 
 import { shouldSkipEndpointOption } from '../../endpoint';
 
-const API_READY_TIMEOUT = 7000;
+const API_READY_TIMEOUT = 30_000;
 
 /**
  * @param {WsProvider} provider
