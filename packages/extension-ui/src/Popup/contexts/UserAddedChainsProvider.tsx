@@ -6,7 +6,7 @@ import type { UserAddedChains } from '@polkadot/extension-polkagate/util/types';
 import React, { useEffect, useState } from 'react';
 
 import { UserAddedChainContext } from '@polkadot/extension-polkagate/src/components/contexts';
-import { getStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { getStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 export default function UserAddedChainsProvider({ children }: { children: React.ReactNode }) {

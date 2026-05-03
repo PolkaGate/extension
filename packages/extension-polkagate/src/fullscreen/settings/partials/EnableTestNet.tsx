@@ -5,8 +5,8 @@ import { Stack, Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 
 import { MySwitch } from '@polkadot/extension-polkagate/src/components/index';
-import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { useAccounts, useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { ExtensionPopups, STORAGE_KEY, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 

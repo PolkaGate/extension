@@ -3,7 +3,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { getStorage, setStorage, watchStorage } from '../components/Loading';
+import { getStorage, setStorage, watchStorage } from '../util';
 
 interface HideNumbersProps {
   isHideNumbers: boolean | undefined;

@@ -11,10 +11,10 @@ import { BuyCrypto, Coin1, Hashtag } from 'iconsax-react';
 import React, { Fragment, memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { CurrencyContext, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
-import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
 import SharePopup from '../../../partials/SharePopup';
 import { CRYPTO_AS_CURRENCY, CURRENCY_LIST } from '../../../util/currencyList';

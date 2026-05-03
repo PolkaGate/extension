@@ -7,9 +7,9 @@ import { Divider, Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { setStorage } from '@polkadot/extension-polkagate/util';
 
 import { CurrencyContext, InputFilter } from '../../../components';
-import { setStorage } from '../../../components/Loading';
 import { useTranslation } from '../../../hooks';
 import { CURRENCY_LIST } from '../../../util/currencyList';
 import CurrencyItem from './CurrencyItem';
