@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { useExtensionLockContext } from '../context/ExtensionLockContext';
 import { useIsFlying, useLocalAccounts } from '../hooks';
@@ -88,7 +87,6 @@ export const setStorage = (label: string, data: unknown, stringify = false) => {
 export default function Loading({ children }: Props): React.ReactElement<Props> {
   const isExtension = useIsExtensionPopup();
   const isFlying = useIsFlying();
-  const location = useLocation();
   const { isExtensionLocked } = useExtensionLockContext();
   const localAccounts = useLocalAccounts();
   const isForgotten = useIsForgotten();
@@ -101,14 +99,12 @@ export default function Loading({ children }: Props): React.ReactElement<Props> 
     }
   }, [isExtensionLocked]);
 
-  const isForgotPasswordRoute = location.pathname === '/forgot-password';
-  const isResetFlowRoute = Boolean(isForgotten?.status && ALLOWED_URL_ON_RESET_PASSWORD.includes(location.pathname));
-  const canRenderWithoutAuthentication = isForgotPasswordRoute || isResetFlowRoute;
+  const isResettingWallet = isForgotten?.status || ALLOWED_URL_ON_RESET_PASSWORD.includes(window.location.hash.replace('#', ''));
 
   const requiresAuthentication = useMemo(() =>
-    !canRenderWithoutAuthentication &&
+    !isResettingWallet &&
     ((isExtensionLocked && !!localAccounts?.length) || !children || (isFlying && isExtension))
-    , [canRenderWithoutAuthentication, isExtensionLocked, localAccounts?.length, children, isFlying, isExtension]);
+    , [isExtensionLocked, localAccounts?.length, children, isFlying, isExtension, isResettingWallet]);
 
   if (!requiresAuthentication) {
     return <>{children}</>;

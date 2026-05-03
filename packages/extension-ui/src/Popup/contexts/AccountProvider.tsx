@@ -3,7 +3,7 @@
 
 import type { AccountJson, AccountsContext } from '@polkadot/extension-base/background/types';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { canDerive } from '@polkadot/extension-base/utils';
 import { AccountContext } from '@polkadot/extension-polkagate/src/components/contexts';
@@ -27,16 +27,9 @@ function initAccountContext(accounts: AccountJson[]): AccountsContext {
 
 export default function AccountProvider({ children }: { children: React.ReactNode }) {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
+  const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const isForgotten = useIsForgotten();
   const { setExtensionLock } = useExtensionLockContext();
-
-  const accountCtx = useMemo((): AccountsContext => {
-    if (!accounts || isForgotten === undefined) {
-      return initAccountContext([]);
-    }
-
-    return initAccountContext(isForgotten?.status ? [] : accounts);
-  }, [accounts, isForgotten]);
 
   useEffect(() => {
     subscribeAccounts(setAccounts).catch(console.log);
@@ -74,14 +67,21 @@ export default function AccountProvider({ children }: { children: React.ReactNod
   }, [accounts?.length]);
 
   useEffect(() => {
-    if (isForgotten?.status) {
+    if (isForgotten === undefined) {
+      return;
+    }
+
+    if (!isForgotten?.status) {
+      setAccountCtx(initAccountContext(accounts || []));
+    } else {
+      setAccountCtx(initAccountContext([]));
       const addresses = accounts?.map((account) => account.address);
 
       updateStorage(STORAGE_KEY.IS_FORGOTTEN, { addressesToForget: addresses }).catch(console.error);
     }
   }, [accounts, isForgotten]);
 
-  if (!accounts || isForgotten === undefined) {
+  if (!accounts) {
     return null;
   }
 
