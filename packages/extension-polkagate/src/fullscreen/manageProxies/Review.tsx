@@ -117,6 +117,7 @@ function Review({ address, call, depositToPay, fee, genesisHash, onClose, proxyI
           <DisplayValue
             balance={depositToPay}
             decimal={decimal}
+            genesisHash={genesisHash}
             label={t('Deposit')}
             token={token}
           />
@@ -125,6 +126,7 @@ function Review({ address, call, depositToPay, fee, genesisHash, onClose, proxyI
             balance={fee}
             canPayFee={feeAndDeposit}
             decimal={decimal}
+            genesisHash={genesisHash}
             label={t('Fee')}
             token={token}
           />

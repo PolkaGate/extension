@@ -15,10 +15,11 @@ interface Props {
   label: string;
   balance: BN | undefined | null;
   decimal: number | undefined;
+  genesisHash?: string | undefined;
   token: string | undefined;
 }
 
-function DisplayValue({ balance, canPayFee, decimal, label, token }: Props): React.ReactElement {
+function DisplayValue({ balance, canPayFee, decimal, genesisHash, label, token }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
 
@@ -31,7 +32,7 @@ function DisplayValue({ balance, canPayFee, decimal, label, token }: Props): Rea
         {canPayFee?.isAbleToPay === false && canPayFee?.warning &&
           <UnableToPayFee warningText={canPayFee.warning} />
         }
-        <Logo size={18} token={token} />
+        <Logo genesisHash={genesisHash} size={18} token={token} />
         <DisplayBalance
           balance={balance}
           decimal={decimal}

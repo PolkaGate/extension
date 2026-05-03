@@ -22,6 +22,7 @@ interface Props {
   api: ApiPromise | undefined | null;
   decimal: number | undefined;
   depositedValue: BN | null | undefined;
+  genesisHash: string | undefined;
   isDisabledAddProxyButton: boolean;
   newDepositValue: BN | undefined;
   proxyItems: ProxyItem[] | null | undefined;
@@ -31,7 +32,7 @@ interface Props {
   token: string | undefined;
 }
 
-export default function Manage({ api, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
+export default function Manage({ api, decimal, depositedValue, genesisHash, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
@@ -135,7 +136,7 @@ export default function Manage({ api, decimal, depositedValue, isDisabledAddProx
           <Typography color={depositLabelColor} variant='B-1'>
             {t('Deposit')}
           </Typography>
-          <Logo size={18} token={token} />
+          <Logo genesisHash={genesisHash} size={18} token={token} />
           <DisplayBalance
             balance={proxyItems === undefined ? undefined : depositedValue ?? newDepositValue ?? BN_ZERO}
             decimal={decimal}
