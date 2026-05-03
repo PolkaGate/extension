@@ -58,14 +58,20 @@ const Available = ({ balance, decimal, token }: StakedProps) => {
 };
 
 const YieldBadge = ({ rate }: { rate: number | undefined }) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const successColor = isDark ? '#82FFA5' : theme.palette.success.main;
+  const successMutedColor = isDark ? '#82FFA580' : '#5EBE82';
+  const successBgColor = isDark ? '#82FFA526' : '#DDF8EA';
+
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#82FFA526', borderRadius: '9px', display: 'flex', flexDirection: 'row', gap: '4px', m: 'auto', p: '2px 6px', whiteSpace: 'nowrap', width: 'fit-content' }}>
-      <PercentageCircle color='#82FFA5' size='16' variant='Bold' />
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: successBgColor, borderRadius: '9px', display: 'flex', flexDirection: 'row', gap: '4px', m: 'auto', p: '2px 6px', whiteSpace: 'nowrap', width: 'fit-content' }}>
+      <PercentageCircle color={successColor} size='16' variant='Bold' />
       <Grid container item sx={{ flexWrap: 'nowrap', fontSize: '14px', fontWeight: 600, gap: '3px', width: 'fit-content' }}>
-        <span style={{ color: '#82FFA5' }}>up</span>
-        <span style={{ color: '#82FFA580' }}>to</span>
-        <span style={{ color: '#82FFA5' }}>{rate}%</span>
-        <span style={{ color: '#82FFA580' }}>per year</span>
+        <span style={{ color: successColor }}>up</span>
+        <span style={{ color: successMutedColor }}>to</span>
+        <span style={{ color: successColor }}>{rate}%</span>
+        <span style={{ color: successMutedColor }}>per year</span>
       </Grid>
     </Container>
   );

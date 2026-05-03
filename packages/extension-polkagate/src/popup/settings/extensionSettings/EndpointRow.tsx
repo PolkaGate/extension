@@ -23,13 +23,13 @@ function EndpointRow({ checked, delay, disabled = false, isFirst, isLast, name, 
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
-  const rowBg = isDark ? '#05091C' : '#FFFFFF';
-  const rowBorderColor = isDark ? '#1B133C' : '#DDE3F4';
-  const endpointColor = isDark ? '#674394' : theme.palette.text.secondary;
-  const nodesLabelColor = isDark ? '#7956A5' : theme.palette.primary.main;
+  const rowBg = isDark ? '#05091C' : 'rgba(255, 255, 255, 0.86)';
+  const rowBorderColor = isDark ? '#1B133C' : '#E4E9F7';
+  const endpointColor = isDark ? '#674394' : '#7B84AC';
+  const nodesLabelColor = isDark ? '#7956A5' : '#4F4779';
 
   return (
-    <Grid alignItems='start' container direction='column' item key={value} py='5px' sx={{ bgcolor: rowBg, border: '1px solid', borderColor: rowBorderColor, borderRadius: isFirst ? '14px 14px 0 0' : isLast ? '0 0 14px 14px' : 0, flexWrap: 'nowrap', height: isFirst ? '100px' : '73px', mt: '2px', px: '10px' }}>
+    <Grid alignItems='start' container direction='column' item key={value} py='5px' sx={{ bgcolor: rowBg, border: '1px solid', borderColor: rowBorderColor, borderRadius: isFirst ? '14px 14px 0 0' : isLast ? '0 0 14px 14px' : 0, boxShadow: isDark ? 'none' : 'inset 0 1px 0 rgba(255, 255, 255, 0.72)', flexWrap: 'nowrap', height: isFirst ? '100px' : '73px', mt: '2px', px: '10px' }}>
       {
         isFirst &&
         <Typography color={nodesLabelColor} fontFamily='Inter' fontSize='11px' fontWeight={600} sx={{ p: '8px' }}>

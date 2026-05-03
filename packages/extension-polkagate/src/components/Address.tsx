@@ -128,8 +128,12 @@ function Address({ address, backgroundColor, check, genesisHash, handleCheck, ma
     handleCheck && handleCheck(checked, address || '');
   }, [address, handleCheck]);
 
+  const rowBg = backgroundColor || (isDark ? '#1B133CB2' : '#FFFFFF');
+  const rowBorder = isDark ? '#BEAAD833' : '#DDE3F4';
+  const addressColor = isDark ? '#BEAAD8' : '#7B84AC';
+
   return (
-    <Grid alignItems='center' container direction='row' justifyContent='space-between' sx={{ backgroundColor: backgroundColor || '#1B133CB2', border: '0.5px solid', borderColor: '#BEAAD833', borderRadius: '12px', height: '56px', m: { margin }, px: '8px', width: { width }, ...style }}>
+    <Grid alignItems='center' container direction='row' justifyContent='space-between' sx={{ backgroundColor: rowBg, border: '0.5px solid', borderColor: rowBorder, borderRadius: '12px', boxShadow: isDark ? 'none' : '0 8px 20px rgba(133, 140, 176, 0.10)', height: '56px', m: { margin }, px: '8px', width: { width }, ...style }}>
       {showCheckbox && handleCheck &&
         <Grid item width='5%'>
           <GlowCheckbox
@@ -156,7 +160,7 @@ function Address({ address, backgroundColor, check, genesisHash, handleCheck, ma
               address={_address}
               clipped
               style={{
-                color: '#BEAAD8',
+                color: addressColor,
                 justifyContent: 'space-between',
                 width: '100%'
               }}

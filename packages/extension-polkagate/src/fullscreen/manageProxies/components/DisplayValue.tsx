@@ -4,8 +4,8 @@
 import type { BN } from '@polkadot/util';
 import type { CanPayFee } from '../../../util/types';
 
-import { Stack, Typography } from '@mui/material';
-import React, { } from 'react';
+import { Stack, Typography, useTheme } from '@mui/material';
+import React from 'react';
 
 import { DisplayBalance, Logo } from '../../../components';
 import { UnableToPayFee } from '../../../partials';
@@ -19,9 +19,12 @@ interface Props {
 }
 
 function DisplayValue({ balance, canPayFee, decimal, label, token }: Props): React.ReactElement {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   return (
     <Stack direction='row' justifyContent='space-between'>
-      <Typography color='#AA83DC' variant='B-1'>
+      <Typography color={isDark ? '#AA83DC' : '#745D8B'} variant='B-1'>
         {label}
       </Typography>
       <Stack alignItems='center' columnGap={1} direction='row'>
@@ -32,7 +35,7 @@ function DisplayValue({ balance, canPayFee, decimal, label, token }: Props): Rea
         <DisplayBalance
           balance={balance}
           decimal={decimal}
-          style={{ color: '#EAEBF1' }}
+          style={{ color: isDark ? '#EAEBF1' : theme.palette.text.primary }}
           token={token}
         />
       </Stack>

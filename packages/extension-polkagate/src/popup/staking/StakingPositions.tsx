@@ -40,12 +40,12 @@ export const StakingBadge = ({ hasPoolStaking, isFullscreen, style }: StakingBad
   const { t } = useTranslation();
   const isDark = useIsDark();
 
-  const poolColor = isDark ? '#82FFA5' : '#43A867';
+  const poolColor = isDark ? '#82FFA5' : '#14B874';
   const soloColor = isFullscreen ? '#8C78B2' : '#8C78B2';
   const textColor = hasPoolStaking ? poolColor : soloColor;
 
   const soloBgcolor = '#C6AECC26';
-  const poolBgcolor = isDark ? '#82FFA526' : '#E8F8EE';
+  const poolBgcolor = isDark ? '#82FFA526' : '#DDF8EA';
   const bgcolor = hasPoolStaking ? poolBgcolor : soloBgcolor;
 
   return (

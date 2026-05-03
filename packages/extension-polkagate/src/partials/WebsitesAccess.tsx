@@ -8,7 +8,7 @@ import { Box, Container, Stack, Typography, useTheme } from '@mui/material';
 import { Key, Link2, Profile, Trash, Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { emptyList } from '../assets/icons/index';
+import { emptyList, emptyListLight } from '../assets/icons/index';
 import { ActionButton, DecisionButtons, FadeOnScroll, MySnackbar, MyTooltip, SearchField } from '../components';
 import { useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { getAuthList, removeAuthorization } from '../messaging';
@@ -22,12 +22,13 @@ interface Props {
 function EmptyAccessList() {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Stack alignContent='center' direction='column'>
       <Box
         component='img'
-        src={emptyList as string}
+        src={(isDark ? emptyList : emptyListLight) as string}
         sx={{ m: '70px auto -10px' }}
       />
       <Typography color={theme.palette.text.secondary} sx={{ p: '10px 40px 30px' }} variant='B-2'>

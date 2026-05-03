@@ -5,7 +5,7 @@ import { Box, Container, Grid, type SxProps, type Theme, Typography, useTheme } 
 import { ArrowRight2, type Icon as IconType } from 'iconsax-react';
 import React, { useRef } from 'react';
 
-import { logoTransparent } from '../assets/logos';
+import { logoBlackBirdTransparent, logoTransparent } from '../assets/logos';
 import { useIsDark, useIsHovered } from '../hooks';
 
 interface Props {
@@ -87,7 +87,7 @@ function ActionCard({ Icon, children, description, iconColor = '#AA83DC', iconSi
       {logoIcon &&
         <Box
           component='img'
-          src={logoTransparent as string}
+          src={(isDark ? logoTransparent : logoBlackBirdTransparent) as string}
           sx={{ ...IconStyle, height: '34px', p: '2px', width: '34px' }}
         />
       }

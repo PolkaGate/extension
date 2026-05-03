@@ -137,6 +137,7 @@ function AccountSelect({ modalToOpen, noSelection = false, onClick }: { modalToO
           noSelection={noSelection}
         />
         <ScrollingTextBox
+          fadeColor={isDark ? undefined : '#FFFFFF'}
           text={selectedAccount?.name ?? ''}
           textStyle={{
             color: 'text.primary',

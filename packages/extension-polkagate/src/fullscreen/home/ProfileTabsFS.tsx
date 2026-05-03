@@ -65,6 +65,23 @@ function ProfileTabsFS({ initialAccountList, showAddressBook = false, width = '5
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [hovered, setIsHovered] = useState('');
+  const leftFadeBackground = isDark
+    ? 'linear-gradient(90deg, rgba(42, 10, 64, 0.9) 13.79%, rgba(42, 10, 64, 0) 100%)'
+    : 'linear-gradient(90deg, rgba(239, 225, 255, 0.24) 0%, rgba(239, 225, 255, 0.08) 54%, rgba(239, 225, 255, 0) 100%)';
+  const rightFadeBackground = isDark
+    ? 'linear-gradient(270deg, rgba(42, 10, 64, 0.9) 13.79%, rgba(42, 10, 64, 0) 100%)'
+    : 'linear-gradient(270deg, rgba(239, 225, 255, 0.24) 0%, rgba(239, 225, 255, 0.08) 54%, rgba(239, 225, 255, 0) 100%)';
+  const arrowFadeSx = {
+    alignItems: 'center',
+    backdropFilter: 'blur(8px)',
+    display: 'flex',
+    height: '100%',
+    pointerEvents: 'none',
+    position: 'absolute',
+    WebkitBackdropFilter: 'blur(8px)',
+    width: '34px',
+    zIndex: 1
+  } as const;
 
   useEffect(() => {
     selectedProfileRef.current = selectedProfile;
@@ -140,13 +157,13 @@ function ProfileTabsFS({ initialAccountList, showAddressBook = false, width = '5
     <Stack alignItems='center' direction='row' sx={{ position: 'relative', width }}>
       {
         showLeftArrow &&
-        <Box justifyContent='start' sx={{ background: isDark ? 'linear-gradient(90deg, #2A0A40 13.79%, rgba(42, 10, 64, 0) 100%)' : 'linear-gradient(90deg, #FFFFFF 13.79%, rgba(255, 255, 255, 0) 100%)', display: 'flex', left: '0px', position: 'absolute', width: '40px' }}>
+        <Box justifyContent='start' sx={{ ...arrowFadeSx, background: leftFadeBackground, left: '0px' }}>
           <ArrowCircleLeft
             color={hovered === 'left' ? '#FF4FB9' : (isDark ? '#AA83DC' : theme.palette.text.secondary)}
             onClick={onClickLeftArrow}
             onMouseEnter={handleHover('left')}
             onMouseLeave={handleHover('')}
-            size='24' style={{ cursor: 'pointer' }} variant='Bold'
+            size='24' style={{ cursor: 'pointer', pointerEvents: 'auto' }} variant='Bold'
           />
         </Box>
       }
@@ -160,14 +177,14 @@ function ProfileTabsFS({ initialAccountList, showAddressBook = false, width = '5
         ))}
       </Stack>
       {showRightArrow &&
-        <Box justifyContent='end' sx={{ background: isDark ? 'linear-gradient(270deg, #2A0A40 13.79%, rgba(42, 10, 64, 0) 100%)' : 'linear-gradient(270deg, #FFFFFF 13.79%, rgba(255, 255, 255, 0) 100%)', display: 'flex', position: 'absolute', right: '-7px', width: '40px' }}>
+        <Box justifyContent='end' sx={{ ...arrowFadeSx, background: rightFadeBackground, right: '-7px' }}>
           <ArrowCircleRight
             color={hovered === 'right' ? '#FF4FB9' : (isDark ? '#AA83DC' : theme.palette.text.secondary)}
             onClick={onClickRightArrow}
             onMouseEnter={handleHover('right')}
             onMouseLeave={handleHover('')}
             size='24'
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: 'pointer', pointerEvents: 'auto' }}
             variant='Bold'
           />
         </Box>

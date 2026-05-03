@@ -117,11 +117,10 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
           title={isExportAll ? t('Password') : t('Your Password')}
         />
         <GradientButton
-          StartIcon={Import}
           disabled={!password}
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onClick={onExport}
-          startIconSize={18}
+          startIconNode={<Import color={isDark ? theme.palette.text.primary : '#FFFFFF'} size='18' style={{ marginRight: '2px', zIndex: 10 }} variant='Bulk' />}
           style={{ flex: 'none', height: '48px', width: '100%' }}
           text={t('Export')}
         />

@@ -3,7 +3,7 @@
 
 import type { ProxyItem } from '../../../util/types';
 
-import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -22,13 +22,13 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-function Info({ label, value }: { label: string; value: string; }): React.ReactElement {
+function Info({ isDark, label, value }: { isDark: boolean; label: string; value: string; }): React.ReactElement {
   return (
-    <Stack columnGap='5px' direction='row' sx={{ bgcolor: '#C6AECC26', borderRadius: '9px', lineHeight: '24px', px: '5px' }}>
-      <Typography color='#AA83DC' variant='B-1'>
+    <Stack columnGap='5px' direction='row' sx={{ bgcolor: isDark ? '#C6AECC26' : '#EAE4F5', borderRadius: '9px', lineHeight: '24px', px: '5px' }}>
+      <Typography color={isDark ? '#AA83DC' : '#745D8B'} variant='B-1'>
         {label}:
       </Typography>
-      <Typography color='#BEAAD8' variant='B-1'>
+      <Typography color={isDark ? '#BEAAD8' : '#745D8B'} variant='B-1'>
         {value}
       </Typography>
     </Stack>
@@ -37,9 +37,21 @@ function Info({ label, value }: { label: string; value: string; }): React.ReactE
 
 export default function ProxyAccountInfo({ handleDelete, proxyItem, showCheck = true, style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const genesisHash = useAccountSelectedChain(proxyItem.proxy.delegate);
 
   const [selected, setSelected] = useState(proxyItem.status === 'remove');
+
+  const cardBackground = selected
+    ? isDark
+      ? 'linear-gradient(#05091C, #05091C) padding-box, linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%) border-box'
+      : 'linear-gradient(#FFFFFF, #FFFFFF) padding-box, linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%) border-box'
+    : isDark ? '#05091C' : '#FFFFFF';
+  const cardBorder = selected ? '2px solid transparent' : `1px solid ${isDark ? '#2D1E4A' : '#E3E8F7'}`;
+  const primaryTextColor = isDark ? '#EAEBF1' : theme.palette.text.primary;
+  const delayColor = isDark ? '#82FFA5' : '#14B874';
+  const delayBg = isDark ? '#82FFA526' : '#DDF8EA';
 
   useEffect(() => {
     setSelected(proxyItem.status === 'remove');
@@ -53,11 +65,9 @@ export default function ProxyAccountInfo({ handleDelete, proxyItem, showCheck = 
   return (
     <Grid
       alignItems='center' columnGap='15px' container item sx={{
-        background: selected
-          ? 'linear-gradient(#05091C, #05091C) padding-box, linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%) border-box'
-          : '#05091C',
-        bgcolor: '#05091C',
-        border: selected ? '2px solid transparent' : '1px solid #2D1E4A',
+        background: cardBackground,
+        bgcolor: isDark ? '#05091C' : '#FFFFFF',
+        border: cardBorder,
         borderRadius: '14px',
         flexWrap: 'nowrap',
         height: '90px',
@@ -65,6 +75,7 @@ export default function ProxyAccountInfo({ handleDelete, proxyItem, showCheck = 
         minWidth: '379px',
         p: '0 5px 0 20px',
         position: 'relative',
+        boxShadow: isDark ? 'none' : '0 10px 22px rgba(106, 116, 156, 0.12)',
         width: 'fit-content',
         ...style
       }}
@@ -79,18 +90,20 @@ export default function ProxyAccountInfo({ handleDelete, proxyItem, showCheck = 
             address={proxyItem.proxy.delegate}
             genesisHash={genesisHash ?? POLKADOT_GENESIS}
             noIdenticon
-            style={{ color: '#EAEBF1', maxWidth: '170px', overflow: 'hidden', textOverflow: 'ellipsis', variant: 'B-1' }}
+            style={{ color: primaryTextColor, maxWidth: '170px', overflow: 'hidden', textOverflow: 'ellipsis', variant: 'B-1' }}
           />
-          <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '7px', px: '4px' }} variant='B-5'>
+          <Typography color={delayColor} sx={{ bgcolor: delayBg, borderRadius: '7px', px: '4px' }} variant='B-5'>
             {proxyItem.proxy.delay * 6} sec
           </Typography>
         </Stack>
         <Stack columnGap='5px' direction='row'>
           <Info
+            isDark={isDark}
             label={t('Type')}
             value={toTitleCase(proxyItem.proxy.proxyType) ?? ''}
           />
           <Info
+            isDark={isDark}
             label={t('Address')}
             value={toShortAddress(proxyItem.proxy.delegate, 4)}
           />

@@ -56,6 +56,10 @@ function AccountSettings(): React.ReactElement {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const removeActionColor = isDark ? '#BEAAD8' : '#745D8B';
+  const removeActionIconColor = isDark ? '#AA83DC' : '#745D8B';
 
   const popups = useMemo(() => {
     switch (extensionPopup) {
@@ -181,8 +185,8 @@ function AccountSettings(): React.ReactElement {
             </Container>
           </VelvetBox>
           <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)} sx={{ bottom: '20px', cursor: 'pointer', position: 'absolute' }}>
-            <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />
-            <Typography sx={{ '&:hover': { color: '#AA83DC' }, color: '#BEAAD8', transition: 'all 250ms ease-out' }} variant='B-1'>
+            <LogoutCurve color={removeActionIconColor} size={18} variant='Bulk' />
+            <Typography sx={{ '&:hover': { color: '#AA83DC' }, color: removeActionColor, transition: 'all 250ms ease-out' }} variant='B-1'>
               {t('Remove account')}
             </Typography>
           </Stack>

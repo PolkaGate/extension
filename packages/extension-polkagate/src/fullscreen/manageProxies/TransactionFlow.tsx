@@ -7,6 +7,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { BN } from '@polkadot/util';
 import type { Proxy, ProxyItem, TransactionDetail, TxInfo } from '../../util/types';
 
+import { useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { PROCESSING_TITLE } from '@polkadot/extension-polkagate/src/util/constants';
@@ -34,6 +35,8 @@ interface Props {
 
 function TransactionFlow({ address, api, chain, depositedValue, proxyItems, setRefresh, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const genesisHash = chain?.genesisHash;
 
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>();
@@ -201,7 +204,9 @@ function TransactionFlow({ address, api, chain, depositedValue, proxyItems, setR
       open={true}
       showBackIconAsClose
       style={{
-        backgroundColor: '#1B133C',
+        backgroundColor: isDark ? '#1B133C' : '#F8F9FF',
+        borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4',
+        boxShadow: isDark ? undefined : '0 18px 40px rgba(106, 116, 156, 0.18)',
         minHeight: step === STEPS.WAIT_SCREEN ? '320px' : `${555 + extraHeight}px`,
         padding: confirmationStep ? '20px 5px' : '20px 15px 10px'
       }}

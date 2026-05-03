@@ -94,8 +94,8 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
   const isHighCommission = commission > HIGH_COMMISSION_THRESHOLD;
   const notElected = isActive === undefined && !onSelect;
   const baseBgcolor = bgcolor ?? (isSelected ? '#FF4FB926' : isAlreadySelected ? (isDark ? '#AA83DC1A' : '#EEF1FF') : isDark ? '#05091C' : '#FFFFFF');
-  const activeBadgeBg = isDark ? '#82FFA526' : '#E8F8EE';
-  const activeBadgeColor = isDark ? '#82FFA5' : '#43A867';
+  const activeBadgeBg = isDark ? '#82FFA526' : '#DDF8EA';
+  const activeBadgeColor = isDark ? '#82FFA5' : '#14B874';
   const inactiveBadgeBg = isDark ? '#8E8E8E26' : '#F1F3F9';
   const inactiveBadgeColor = isDark ? '#8E8E8E' : '#98A0B8';
   const warningColor = HIGH_COMMISSION_WARNING_COLOR;

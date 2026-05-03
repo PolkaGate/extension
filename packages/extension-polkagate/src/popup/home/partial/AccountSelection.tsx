@@ -121,6 +121,7 @@ function AccountSelection({ noSelection = false }: Props): React.ReactElement {
         noSelection={noSelection}
       />
       <ScrollingTextBox
+        fadeColor={isDark ? undefined : '#FFFFFF'}
         text={selectedAccount?.name ?? ''}
         textStyle={{
           color: isInAccountLists ? '#05091C' : 'text.primary',

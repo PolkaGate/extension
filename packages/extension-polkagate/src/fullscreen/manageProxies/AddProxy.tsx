@@ -5,7 +5,7 @@ import type { Icon } from 'iconsax-react';
 import type { BN } from '@polkadot/util';
 import type { AdvancedDropdownOption, ProxyItem, ProxyTypes } from '../../util/types';
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Clock, Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -29,9 +29,15 @@ interface Props {
 
 export default function AddProxy({ genesisHash, proxiedAddress, proxyItems, setNewDepositedValue, setProxyItems, setStep, step }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const formatted = useFormatted(proxiedAddress, genesisHash);
   const accountDisplayName = useAccountDisplay(proxiedAddress, genesisHash);
   const proxyTypes = useProxyTypes(genesisHash);
+  const modalBg = isDark ? '#1B133C' : '#F8F9FF';
+  const descriptionColor = isDark ? '#BEAAD8' : '#745D8B';
+  const labelColor = isDark ? '#EAEBF1' : theme.palette.text.primary;
+  const secondaryTextColor = isDark ? '#BEAAD8' : '#745D8B';
 
   const [proxyAddress, setProxyAddress] = useState<string | null>();
   const [delay, setDelay] = useState<number>(0);
@@ -103,11 +109,11 @@ export default function AddProxy({ genesisHash, proxiedAddress, proxyItems, setN
       noDivider
       onClose={onCancel}
       open={step === STEPS.ADD_PROXY}
-      style={{ backgroundColor: '#1B133C', minHeight: '460px', padding: '20px 15px' }}
+      style={{ backgroundColor: modalBg, borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', boxShadow: isDark ? undefined : '0 18px 40px rgba(106, 116, 156, 0.18)', minHeight: '460px', padding: '20px 15px' }}
       title={t('Add proxy')}
     >
       <Grid container item sx={{ px: '5px' }}>
-        <Typography color='#BEAAD8' sx={{ padding: '20px 10px 0px', textAlign: 'left' }} variant='B-4'>
+        <Typography color={descriptionColor} sx={{ padding: '20px 10px 0px', textAlign: 'left' }} variant='B-4'>
           {t("You can add an account included in this extension as a proxy of {{accountDisplayName}} to sign certain types of transactions on {{accountDisplayName}}'s behalf.", { replace: { accountDisplayName } })}
         </Typography>
         <AddressInput
@@ -129,7 +135,7 @@ export default function AddProxy({ genesisHash, proxiedAddress, proxyItems, setN
         }
         <Stack columnGap='20px' direction='row' sx={{ mt: '25px', width: '100%' }}>
           <Stack direction='column' justifyContent='start' rowGap='3px' sx={{ width: '52%' }}>
-            <Typography color='#EAEBF1' sx={{ mb: '3px', width: 'fit-content' }} variant='B-1'>
+            <Typography color={labelColor} sx={{ mb: '3px', width: 'fit-content' }} variant='B-1'>
               {t('Proxy type')}
             </Typography>
             <DropSelect
@@ -156,7 +162,7 @@ export default function AddProxy({ genesisHash, proxiedAddress, proxyItems, setN
               placeholder={'0'}
               title={t('Delay')}
             />
-            <Typography color='#BEAAD8' sx={{ marginBottom: '13px' }} variant='B-4'>
+            <Typography color={secondaryTextColor} sx={{ marginBottom: '13px' }} variant='B-4'>
               {t('block(s)')}
             </Typography>
           </Stack>

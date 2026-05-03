@@ -26,6 +26,9 @@ export default function EarningOptions(): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const isDark = useIsDark();
+  const successColor = isDark ? '#82FFA5' : theme.palette.success.main;
+  const successBgColor = isDark ? '#82FFA533' : '#DDF8EA';
+  const successBorderColor = isDark ? 'none' : '1px solid #BCECCF';
   const account = useSelectedAccount();
   const accountAssets = useAccountAssets(account?.address);
   const navigate = useNavigate();
@@ -122,12 +125,12 @@ export default function EarningOptions(): React.ReactElement {
                         </Typography>
                       </Stack>
                     </Stack>
-                    <Stack alignItems='center' direction='row' justifyContent='center' sx={{ bgcolor: isDark ? '#82FFA533' : '#E9FFF0', border: isDark ? 'none' : '1px solid #CFF3DA', borderRadius: '8px', minWidth: '64px', p: '7px', pt: '2px' }}>
+                    <Stack alignItems='center' direction='row' justifyContent='center' sx={{ bgcolor: successBgColor, border: successBorderColor, borderRadius: '8px', minWidth: '64px', p: '7px', pt: '2px' }}>
                       <Stack alignItems='center' direction='column'>
-                        <Typography color='#82FFA5' fontSize='10px' sx={{ lineHeight: '10px' }} variant='S-2'>
+                        <Typography color={successColor} fontSize='10px' sx={{ lineHeight: '10px' }} variant='S-2'>
                           {t('up to')}
                         </Typography>
-                        <Typography color='#82FFA5' sx={{ lineHeight: '17px' }} variant='B-2'>
+                        <Typography color={successColor} sx={{ lineHeight: '17px' }} variant='B-2'>
                           {info.rate}%
                         </Typography>
                         <Typography color={isDark ? '#EAEBF1' : '#4D8F63'} fontSize='10px' sx={{ lineHeight: '10px' }} variant='S-2'>

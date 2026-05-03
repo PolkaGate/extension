@@ -172,10 +172,12 @@ export default function StakingPortfolio({ buttons = [], disabled, genesisHash, 
       isBlueish={!isFullScreen && isDark}
       shortSideDividers={isFullScreen}
       style={{
-        bgcolor: isLightPopup ? '#FFFFFF' : undefined,
-        border: isLightPopup ? '1px solid #E3E8F7' : undefined,
-        boxShadow: isLightPopup ? '0px 12px 24px rgba(148, 163, 184, 0.12)' : undefined,
+        bgcolor: undefined,
+        background: undefined,
+        border: isLightPopup ? 'none' : undefined,
+        boxShadow: isLightPopup ? 'inset 0 1px 0 rgba(244, 246, 255, 0.9), 0px 18px 32px rgba(148, 163, 184, 0.06)' : undefined,
         display: 'grid',
+        overflow: 'hidden',
         p: isFullScreen ? '20px 18px 14px' : '20px 18px 0px',
         rowGap: '5px',
         width: 'calc(100% - 16px)',

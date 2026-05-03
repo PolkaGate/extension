@@ -20,14 +20,30 @@ import StakingActionButton from './StakingActionButton';
 import StakingInfoTile, { TileActionButton } from './StakingInfoTile';
 
 const ThunderBackground = () => {
+  const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
+
   return (
     <>
-      <Background imageStyle={{ backdropFilter: 'blur(5px)', height: '420px', left: '55px', top: '-90px', width: '350px' }} type='staking' />
-      <Box
-        component='img'
-        src={Thunder as string}
-        sx={{ height: '650px', left: '-300px', mixBlendMode: 'color-dodge', position: 'absolute', rotate: '24deg', top: '-300px', width: '1160px' }}
-      />
+      {isLight
+        ? (
+          <Box
+            sx={{
+              background: 'radial-gradient(circle at 22% 4%, rgba(63, 134, 248, 0.24) 0%, rgba(63, 134, 248, 0) 34%), radial-gradient(circle at 78% -8%, rgba(255, 79, 185, 0.16) 0%, rgba(255, 79, 185, 0) 30%), linear-gradient(180deg, #FFFFFF 0%, #F6F8FF 100%)',
+              inset: 0,
+              position: 'absolute'
+            }}
+          />)
+        : (
+          <>
+            <Background imageStyle={{ backdropFilter: 'blur(5px)', height: '420px', left: '55px', top: '-90px', width: '350px' }} type='staking' />
+            <Box
+              component='img'
+              src={Thunder as string}
+              sx={{ height: '650px', left: '-300px', mixBlendMode: 'color-dodge', position: 'absolute', rotate: '24deg', top: '-300px', width: '1160px' }}
+            />
+          </>)
+      }
     </>
   );
 };
@@ -165,7 +181,7 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
   }, [reward, rewardInCurrency, totalClaimedReward, totalClaimedRewardInCurrency, type]);
 
   return (
-    <Stack direction='column' sx={{ borderRadius: '14px', height, overflow: 'hidden', position: 'relative' }}>
+    <Stack direction='column' sx={{ bgcolor: isLight ? '#FFFFFF' : '#05091C', border: isLight ? '1px solid #E3E8F7' : 'none', borderRadius: '14px', boxShadow: isLight ? '0px 12px 24px rgba(148, 163, 184, 0.12)' : 'none', height, overflow: 'hidden', position: 'relative' }}>
       <ThunderBackground />
       <Badge />
       {type === 'pool' && <ChartButton onRewardChart={onRewardChart} />}
