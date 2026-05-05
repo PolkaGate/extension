@@ -21,10 +21,24 @@ export default function ThemeToggle(): React.ReactElement {
 
   return (
     <Box onClick={onClick} sx={{ alignItems: 'center', borderRadius: '16px', cursor: 'pointer', display: 'flex', height: '32px', position: 'relative', width: '48px' }}>
-      <Box sx={{ backdropFilter: 'blur(8px)', bgcolor: isDark ? '#2D1E4A80' : 'background.default', borderRadius: '16px', boxShadow: '0px 0px 24px 8px #4E2B7259 inset', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }} />
+      <Box
+        sx={{
+          backdropFilter: 'blur(8px)',
+          bgcolor: isDark ? '#2D1E4A80' : '#D8CDEA',
+          border: isDark ? 'none' : '1px solid #E9E2F5',
+          borderRadius: '16px',
+          bottom: 0,
+          boxShadow: isDark ? '0px 0px 24px 8px #4E2B7259 inset' : '0 8px 22px rgba(116, 93, 139, 0.16)',
+          left: 0,
+          position: 'absolute',
+          right: 0,
+          top: 0
+        }}
+      />
       <Box sx={{
-        background: '#9542FF4D',
+        background: isDark ? '#9542FF4D' : '#FFFFFF',
         borderRadius: '50%',
+        boxShadow: isDark ? 'none' : '0 4px 12px rgba(116, 93, 139, 0.18)',
         height: 28,
         position: 'relative',
         transform: isDark ? 'translateX(0px)' : 'translateX(20px)',
@@ -35,7 +49,7 @@ export default function ThemeToggle(): React.ReactElement {
         <Box
           sx={{
             alignItems: 'center',
-            background: isDark ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#EAEBF1',
+            background: isDark ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#FFFFFF',
             borderRadius: '50%',
             display: 'flex',
             height: 'stretch',
