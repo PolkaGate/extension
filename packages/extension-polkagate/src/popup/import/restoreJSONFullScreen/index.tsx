@@ -9,9 +9,9 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { AUTO_LOCK_PERIOD_DEFAULT, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { stringToU8a, u8aToString } from '@polkadot/util';
 import { ethereumEncode, jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';

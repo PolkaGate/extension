@@ -6,12 +6,11 @@ import type { DropdownOption } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 
-import { getStorage, setStorage } from '../components/Loading';
 import { AUTO_MARK_AS_READ_DELAY, initialNotificationState } from '../popup/notification/constant';
 import { getPayoutsInformation, getReceivedFundsInformation, getReferendasInformation } from '../popup/notification/helpers';
 import useNotificationSettings from '../popup/notification/hook/useNotificationSettings';
 import { filterMessages, generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, groupNotificationsByDay, markMessagesAsRead } from '../popup/notification/util';
-import { getSubscanChainName, sanitizeChainName } from '../util';
+import { getStorage, getSubscanChainName, sanitizeChainName, setStorage } from '../util';
 import { STORAGE_KEY } from '../util/constants';
 import { SUBSCAN_CHAINS } from '../util/subscanChains';
 import { useGenesisHashOptions, useSelectedChains } from '.';

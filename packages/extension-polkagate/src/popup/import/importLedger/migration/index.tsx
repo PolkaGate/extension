@@ -10,10 +10,10 @@ import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import LedgerErrorMessage from '@polkadot/extension-polkagate/src/popup/signing/ledger/LedgerErrorMessage';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { DISABLED_NETWORKS, PROFILE_TAGS, STATEMINT_GENESIS_HASH, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { DecisionButtons, DropSelect } from '../../../../components';
-import { setStorage } from '../../../../components/Loading';
 import { openOrFocusTab } from '../../../../fullscreen/accountDetails/components/CommonTasks';
 import { OnboardTitle } from '../../../../fullscreen/components/index';
 import { useGenericLedger, useTranslation } from '../../../../hooks';

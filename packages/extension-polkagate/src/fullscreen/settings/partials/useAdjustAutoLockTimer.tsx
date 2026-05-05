@@ -6,9 +6,9 @@ import type { AutoLock, AutoLockDelayType } from '../../../hooks/useAutoLock';
 
 import { useCallback, useEffect, useState } from 'react';
 
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { AUTO_LOCK_PERIOD_DEFAULT, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { setStorage } from '../../../components/Loading';
 import useAutoLock from '../../../hooks/useAutoLock';
 
 // enforce a minimum auto-lock time; 0 would lock forever

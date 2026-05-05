@@ -7,9 +7,9 @@ import { AddCircle } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import LedgerErrorMessage from '@polkadot/extension-polkagate/src/popup/signing/ledger/LedgerErrorMessage';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { POLKADOT_SLIP44, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import settings from '@polkadot/ui-settings';
