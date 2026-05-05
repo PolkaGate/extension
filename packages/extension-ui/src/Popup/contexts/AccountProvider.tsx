@@ -74,8 +74,8 @@ export default function AccountProvider({ children }: { children: React.ReactNod
   }, [accounts?.length]);
 
   useEffect(() => {
-    if (isForgotten?.status) {
-      const addresses = accounts?.map((account) => account.address);
+    if (isForgotten?.status && accounts) {
+      const addresses = accounts.map((account) => account.address);
 
       updateStorage(STORAGE_KEY.IS_FORGOTTEN, { addressesToForget: addresses }).catch(console.error);
     }
