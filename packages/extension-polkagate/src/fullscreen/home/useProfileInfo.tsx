@@ -4,6 +4,7 @@
 import { Book, ColorSwatch, Data2, Eye, Folder, type Icon, KeySquare, ScanBarcode, UserOctagon } from 'iconsax-react';
 import { useMemo } from 'react';
 
+import { useIsDark } from '@polkadot/extension-polkagate/src/hooks';
 import { ADDRESS_BOOK_LABEL, PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { PROXIED_PROFILE_LABEL } from '../settings/importProxied/ProxiedAccount';
@@ -15,6 +16,8 @@ interface IconInfo {
 }
 
 export default function useProfileInfo(label?: string | null): IconInfo {
+  const isDark = useIsDark();
+  
   return useMemo(() => {
     switch (label) {
       case PROFILE_TAGS.ALL:
@@ -31,7 +34,7 @@ export default function useProfileInfo(label?: string | null): IconInfo {
         return {
           Icon: ColorSwatch,
           bgcolor: '#A7DFB726',
-          color: '#A7DFB7'
+          color: isDark ? '#A7DFB7' : '#00CA8D'
         };
       case PROFILE_TAGS.WATCH_ONLY:
         return {

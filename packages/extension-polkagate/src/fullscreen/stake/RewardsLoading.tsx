@@ -10,7 +10,7 @@ import { MySkeleton } from '../../components';
 
 const ChartHeader = () => {
   return (
-    <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '20px', justifyContent: 'space-between', mb: '20px' }}>
+    <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '20px', justifyContent: 'space-between', m: 'auto', width: '98%' }}>
       <MySkeleton
         bgcolor='#BEAAD840'
         height={43.5}
@@ -62,7 +62,7 @@ const RewardTable = () => {
 
 function Chart() {
   return (
-    <Stack alignItems='end' columnGap='10px' direction='row'>
+    <Stack alignItems='end' columnGap='10px' direction='row' margin='auto'>
       {
         Array.from({ length: 15 }).map((_, index) => {
           const height = Math.random() * 240;
@@ -80,10 +80,10 @@ function Chart() {
   );
 }
 
-function RewardsLoading() {
+function RewardsLoading({ isDark }: { isDark: boolean }) {
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
-      <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: '#1B133C', borderRadius: '18px', width: '533px' }}>
+      <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: isDark ? '#1B133C' : '#F8FAFF', borderRadius: '18px', width: '533px' }}>
         <ChartHeader />
         <Chart />
       </Stack>

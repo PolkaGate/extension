@@ -148,7 +148,7 @@ interface ChartHeaderProps extends RewardSettingProps {
 
 const ChartHeader = ({ genesisHash, popupOpener, rewardInfo, token, type }: ChartHeaderProps) => {
   return (
-    <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '20px', justifyContent: 'space-between', mb: '20px' }}>
+    <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '20px', justifyContent: 'space-between', mb: '20px', width: '98%' }}>
       <WindowChanger
         dateInterval={rewardInfo.dateInterval}
         onNextPeriod={rewardInfo.onNextPeriod}
@@ -366,16 +366,16 @@ export default function Rewards({ genesisHash, popupOpener, rewardInfo, token, t
             text={t('No rewards yet')}
           />)
         : !descSortedRewards
-          ? <RewardsLoading />
+          ? <RewardsLoading
+            isDark={isDark}
+          />
           : (
             <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
               <Stack
                 direction='column'
                 sx={{
-                  bgcolor: isDark ? '#1B133C' : '#F8FAFF',
-                  border: isDark ? 'none' : '1px solid #E3E8F7',
+                  bgcolor: isDark ? '#1B133C' : 'transparent',
                   borderRadius: '18px',
-                  boxShadow: isDark ? 'none' : '0 12px 24px rgba(133, 140, 176, 0.12)',
                   width: '533px'
                 }}
               >
@@ -388,7 +388,7 @@ export default function Rewards({ genesisHash, popupOpener, rewardInfo, token, t
                 />
                 <RewardChart rewardInfo={rewardInfo} />
               </Stack>
-              <Grid container item sx={{ maxHeight: '324px', overflow: 'hidden', overflowY: 'auto', width: '482px' }}>
+              <Grid container item sx={{ maxHeight: '324px', overflow: 'hidden', overflowY: 'auto' }}>
                 <RewardTable
                   descSortedRewards={descSortedRewards ?? []}
                   expanded={detail}

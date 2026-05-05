@@ -21,6 +21,7 @@ import Language from './Language';
 import LogoWithText from './LogoWithText';
 import MenuButton from './MenuButton';
 import ReceiveGeneral from './ReceiveGeneral';
+import ThemeToggle from './ThemeToggle';
 
 function Shining(): React.ReactElement {
   return (
@@ -94,7 +95,11 @@ function MainMenuColumn(): React.ReactElement {
       }}
     >
       <Shining />
-      <LogoWithText style={{ marginBottom: '20px', zIndex: 10 }} />
+      {/* <LogoWithText style={{ marginBottom: '20px', zIndex: 10 }} /> */}
+       <Grid alignItems='center' container direction='row' sx={{ columnGap: '12px', marginBottom: '20px' }}>
+        <LogoWithText style={{ zIndex: 10 }} />
+        <ThemeToggle />
+      </Grid>
       <MenuButton
         Icon={Home3}
         path='/'

@@ -66,7 +66,7 @@ function AccountProfileLabel({ isInSettingMode, label, style = {} }: Props): Rea
         <Typography color={shouldChangeColorOnHover ? theme.palette.primary.contrastText : (color ?? theme.palette.primary.main)} sx={{ maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', textWrap: 'noWrap' }} variant='B-2'>
           {
             label
-              ? t(expandedLabel)
+              ? expandedLabel
               : ''
           }
         </Typography>

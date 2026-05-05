@@ -6,7 +6,7 @@ import { Data } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useProxies, useTranslation } from '../hooks';
+import { useIsDark, useProxies, useTranslation } from '../hooks';
 import { PASEO_ASSET_HUB_GENESIS_HASH, STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH } from '../util/constants';
 import MyTooltip from './MyTooltip';
 
@@ -17,6 +17,7 @@ interface Props {
 
 function HasProxyOnHubIndicator({ address, style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const isDark = useIsDark();
   const navigate = useNavigate();
 
   const paseoProxies = useProxies(PASEO_ASSET_HUB_GENESIS_HASH, address);
@@ -77,9 +78,9 @@ function HasProxyOnHubIndicator({ address, style = {} }: Props): React.ReactElem
       bgcolor: '#674394'
     },
     alignItems: 'center',
-    bgcolor: '#05091C',
+    bgcolor: isDark ? '#05091C' : 'transparent',
     border: '1px solid',
-    borderColor: '#1B133C',
+    borderColor: isDark ? '#1B133C' : '#E3E8F7',
     borderRadius: '12px',
     cursor: 'pointer',
     height: '40px',

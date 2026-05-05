@@ -7,10 +7,10 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import { Moon, Sun1 } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
-import { ColorContext } from '../../../components';
 import { useAlerts, useIsDark } from '@polkadot/extension-polkagate/src/hooks/index';
 import { toTitleCase } from '@polkadot/extension-polkagate/src/util/string';
 
+import { ColorContext } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 
 export interface ItemProps {
