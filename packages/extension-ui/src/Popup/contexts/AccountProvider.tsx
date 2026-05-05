@@ -39,7 +39,10 @@ export default function AccountProvider({ children }: { children: React.ReactNod
   }, [accounts, isForgotten]);
 
   useEffect(() => {
-    subscribeAccounts(setAccounts).catch(console.log);
+    subscribeAccounts(setAccounts).catch((error) => {
+      console.error(error);
+      setAccounts([]);
+    });
   }, []);
 
   useEffect(() => {
