@@ -6,8 +6,8 @@ import type { Prices, PricesInCurrencies } from '@polkadot/extension-polkagate/s
 import React, { useContext, useEffect, useState } from 'react';
 
 import { CurrencyContext, PricesContext } from '@polkadot/extension-polkagate/src/components/contexts';
-import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import usePriceIds from '@polkadot/extension-polkagate/src/hooks/usePriceIds';
+import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
 import { getPrices } from '@polkadot/extension-polkagate/src/util/api';
 import { EXTRA_PRICE_IDS } from '@polkadot/extension-polkagate/src/util/api/getPrices';
 import { PRICE_VALIDITY_PERIOD, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
