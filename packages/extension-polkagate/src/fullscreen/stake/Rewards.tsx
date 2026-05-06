@@ -195,13 +195,15 @@ interface RewardChartItemProps {
   genesisHash: string | undefined;
   onExpand: React.Dispatch<React.SetStateAction<string | undefined>>;
   isExpanded: boolean;
+  type: 'solo' | 'pool';
 }
 
-const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardChartItemProps) => {
+const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward, type }: RewardChartItemProps) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const rewardTime = useMemo(() => new Date(reward.timeStamp * 1000).toLocaleTimeString('en-US', { hour: '2-digit', hour12: false, minute: '2-digit' }), [reward.timeStamp]);
 
   const handleExpand = useCallback(() => {
     onExpand((alreadyExpanded) => alreadyExpanded === JSON.stringify(reward) ? undefined : JSON.stringify(reward));
@@ -240,7 +242,10 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
           {new Date(reward.timeStamp * 1000).toLocaleDateString('en-US', { day: 'numeric', month: 'short', weekday: 'short', year: 'numeric' })}
         </Typography>
         <Typography color='text.secondary' textAlign='left' variant='B-2' width='15%'>
-          {reward.era}
+          {type === 'pool'
+            ? rewardTime
+            : reward.era
+          }
         </Typography>
         <DisplayBalance
           balance={reward.amount}
@@ -315,10 +320,12 @@ interface RewardTableProps {
   genesisHash: string | undefined;
   expanded: string | undefined;
   onExpand: React.Dispatch<React.SetStateAction<string | undefined>>;
+  type: 'solo' | 'pool';
 }
 
-const RewardTable = ({ descSortedRewards, expanded, genesisHash, onExpand }: RewardTableProps) => {
+const RewardTable = ({ descSortedRewards, expanded, genesisHash, onExpand, type }: RewardTableProps) => {
   const { t } = useTranslation();
+  const isEmptyPeriod = descSortedRewards.length === 0;
 
   return (
     <Stack direction='column' sx={{ gap: '10px', width: '100%' }}>
@@ -327,12 +334,19 @@ const RewardTable = ({ descSortedRewards, expanded, genesisHash, onExpand }: Rew
           {t('Date')}
         </Typography>
         <Typography color='text.secondary' textAlign='left' variant='B-1' width='22%'>
-          {t('Era')}
+          {type === 'pool' ? t('Time') : t('Era')}
         </Typography>
         <Typography color='text.secondary' textAlign='left' variant='B-1' width='30%'>
           {t('Reward')}
         </Typography>
       </Container>
+      {isEmptyPeriod &&
+        <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#060518', borderRadius: '14px', display: 'flex', justifyContent: 'center', minHeight: '118px', px: '24px', textAlign: 'center', width: '100%' }}>
+          <Typography color='text.secondary' variant='B-2'>
+            {t('No rewards claimed in this period')}
+          </Typography>
+        </Container>
+      }
       {descSortedRewards.map((reward, index) => {
         const isExpanded = expanded ? JSON.stringify(reward) === expanded : false;
 
@@ -343,6 +357,7 @@ const RewardTable = ({ descSortedRewards, expanded, genesisHash, onExpand }: Rew
             key={index}
             onExpand={onExpand}
             reward={reward}
+            type={type}
           />
         );
       })}
@@ -368,6 +383,7 @@ export default function Rewards({ genesisHash, popupOpener, rewardInfo, token, t
         : !descSortedRewards
           ? <RewardsLoading
             isDark={isDark}
+            type={type}
           />
           : (
             <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
@@ -394,6 +410,7 @@ export default function Rewards({ genesisHash, popupOpener, rewardInfo, token, t
                   expanded={detail}
                   genesisHash={genesisHash}
                   onExpand={expand}
+                  type={type}
                 />
               </Grid>
             </Container>)

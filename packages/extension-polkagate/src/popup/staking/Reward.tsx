@@ -10,7 +10,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { Logo, BackWithLabel, DisplayBalance, FadeOnScroll, Identity, Motion, NoInfoYet, Progress } from '../../components';
+import { BackWithLabel, DisplayBalance, FadeOnScroll, Identity, Logo, Motion, NoInfoYet, Progress } from '../../components';
 import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewardsChart, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import resolveLogoInfo from '../../util/logo/resolveLogoInfo';
@@ -53,13 +53,15 @@ interface RewardChartItemProps {
   genesisHash: string | undefined;
   onExpand: React.Dispatch<React.SetStateAction<string | undefined>>;
   isExpanded: boolean;
+  type: 'solo' | 'pool';
 }
 
-const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardChartItemProps) => {
+const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward, type }: RewardChartItemProps) => {
   const theme = useTheme();
   const isLight = theme.palette.mode === 'light';
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const rewardTime = useMemo(() => new Date(reward.timeStamp * 1000).toLocaleTimeString('en-US', { hour: '2-digit', hour12: false, minute: '2-digit' }), [reward.timeStamp]);
 
   const handleExpand = useCallback(() => {
     onExpand((alreadyExpanded) => alreadyExpanded === JSON.stringify(reward) ? undefined : JSON.stringify(reward));
@@ -72,7 +74,10 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward }: RewardCh
           {new Date(reward.timeStamp * 1000).toDateString()}
         </Typography>
         <Typography color={isLight ? '#4D3A73' : 'text.primary'} textAlign='left' variant='B-2' width='15%'>
-          {reward.era}
+          {type === 'pool'
+            ? rewardTime
+            : reward.era
+          }
         </Typography>
         <DisplayBalance
           balance={reward.amount}
@@ -122,12 +127,14 @@ interface RewardChartTableProps {
   genesisHash: string | undefined;
   expanded: string | undefined;
   onExpand: React.Dispatch<React.SetStateAction<string | undefined>>;
+  type: 'solo' | 'pool';
 }
 
-const RewardChartTable = ({ descSortedRewards, expanded, genesisHash, onExpand }: RewardChartTableProps) => {
+const RewardChartTable = ({ descSortedRewards, expanded, genesisHash, onExpand, type }: RewardChartTableProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isLight = theme.palette.mode === 'light';
+  const isEmptyPeriod = descSortedRewards.length === 0;
 
   return (
     <Stack direction='column' sx={{ gap: '4px', pb: '60px', pt: '10px', width: '100%' }}>
@@ -136,12 +143,19 @@ const RewardChartTable = ({ descSortedRewards, expanded, genesisHash, onExpand }
           {t('Date')}
         </Typography>
         <Typography color={isLight ? '#745E9F' : 'text.highlight'} textAlign='left' textTransform='uppercase' variant='S-1' width='20%'>
-          {t('Era')}
+          {type === 'pool' ? t('Time') : t('Era')}
         </Typography>
         <Typography color={isLight ? '#745E9F' : 'text.highlight'} textAlign='left' textTransform='uppercase' variant='S-1' width='35%'>
           {t('Reward')}
         </Typography>
       </Container>
+      {isEmptyPeriod &&
+        <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#060518', borderRadius: '14px', display: 'flex', justifyContent: 'center', minHeight: '96px', px: '18px', textAlign: 'center', width: '100%' }}>
+          <Typography color='text.highlight' variant='B-2'>
+            {t('No rewards claimed in this period')}
+          </Typography>
+        </Container>
+      }
       {descSortedRewards.map((reward, index) => {
         const isExpanded = expanded ? JSON.stringify(reward) === expanded : false;
 
@@ -152,6 +166,7 @@ const RewardChartTable = ({ descSortedRewards, expanded, genesisHash, onExpand }
             key={index}
             onExpand={onExpand}
             reward={reward}
+            type={type}
           />
         );
       })}
@@ -221,6 +236,7 @@ export default function StakingReward() {
                   expanded={detail}
                   genesisHash={genesisHash}
                   onExpand={expand}
+                  type={_type}
                 />
               </>
             }

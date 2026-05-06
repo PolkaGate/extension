@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.7.5](https://github.com/polkagate/extension/compare/v2.7.4...v2.7.5) (2026-05-05)
+
+
+### Bug Fixes
+
+* prevent onboarding opening when accounts already exist ([#2158](https://github.com/polkagate/extension/issues/2158)) ([0fe3e7e](https://github.com/polkagate/extension/commit/0fe3e7e618f5689281ed6617f40fc221aae472c1))
+
 ## [2.7.4](https://github.com/polkagate/extension/compare/v2.7.3...v2.7.4) (2026-05-03)
 
 

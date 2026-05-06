@@ -28,6 +28,7 @@ ChartJS.register(
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 const DAYS_TO_SHOW = 10;
+const EMPTY_CHART_VALUES: string[] = [];
 
 interface GradientObject {
   x: number;
@@ -109,6 +110,10 @@ export default function useStakingRewardsChart(address: string | undefined, gene
   const [totalClaimedReward, setTotalClaimedReward] = useState<BN | undefined>(undefined);
   // Currently selected/hovered reward detail
   const [detail, expand] = useState<string | undefined>(undefined);
+  const safeIndex = useMemo(() => Math.min(pageIndex, Math.max((dataToShow?.length ?? 1) - 1, 0)), [dataToShow?.length, pageIndex]);
+  const period = useMemo(() => dataToShow?.[safeIndex], [dataToShow, safeIndex]);
+  const amounts = period?.[0] ?? EMPTY_CHART_VALUES;
+  const labels = period?.[1] ?? EMPTY_CHART_VALUES;
 
   // Date formatting options for consistent display
   const dateOptions = useMemo((): Intl.DateTimeFormatOptions => ({ day: 'numeric', month: 'short' }), []);
@@ -253,18 +258,18 @@ export default function useStakingRewardsChart(address: string | undefined, gene
       return;
     }
 
-    // Get dates available in the current period
-    const availableDates = weeksRewards[pageIndex].map((item) => formateDate(item.timestamp));
-    const rewardsDetailInAWeek = ascSortedRewards.filter(({ date }) => availableDates.includes(date ?? ''));
-
-    // Get the expected date range for this period from weeksRewards
-    // This gives us the actual intended time range, not just the dates that happen to have rewards
-    const currentPeriodData = weeksRewards[pageIndex];
+    const currentPeriodData = weeksRewards[safeIndex];
 
     if (!currentPeriodData?.length) {
       return [];
     }
 
+    // Get dates available in the current period
+    const availableDates = currentPeriodData.map((item) => formateDate(item.timestamp));
+    const rewardsDetailInAWeek = ascSortedRewards.filter(({ date }) => availableDates.includes(date ?? ''));
+
+    // Get the expected date range for this period from weeksRewards
+    // This gives us the actual intended time range, not just the dates that happen to have rewards
     // Calculate threshold based on the period's actual time range, not just the available rewards
     const periodStartTimestamp = Math.min(...currentPeriodData.map(({ timestamp }) => timestamp));
     const periodEndTimestamp = Math.max(...currentPeriodData.map(({ timestamp }) => timestamp));
@@ -281,7 +286,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
 
     // Return in descending order (newest first) for display
     return filteredRewardsDetail.reverse();
-  }, [ascSortedRewards, formateDate, pageIndex, weeksRewards]);
+  }, [ascSortedRewards, formateDate, safeIndex, weeksRewards]);
 
   /**
    * Effect: Process aggregated rewards into paginated periods for chart display
@@ -343,6 +348,12 @@ export default function useStakingRewardsChart(address: string | undefined, gene
     setWeekRewards(rewardPeriods);
   }, [INTERVAL_PERIOD, aggregatedRewards, formateDate]);
 
+  useEffect(() => {
+    if (dataToShow?.length && pageIndex > dataToShow.length - 1) {
+      setPageIndex(dataToShow.length - 1);
+    }
+  }, [dataToShow?.length, pageIndex]);
+
   /**
    * Memoized computation: Generate human-readable date range for current period
    * Creates strings like "Dec 1 - 10" or "Dec 25 - Jan 5"
@@ -352,7 +363,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
       return undefined;
     }
 
-    const currentPeriodData = weeksRewards[pageIndex];
+    const currentPeriodData = weeksRewards[safeIndex];
 
     if (!currentPeriodData?.length) {
       return undefined;
@@ -376,7 +387,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
 
     // If different months, show like "Dec 25 - Jan 5"
     return `${firstMonth} ${firstDay} - ${lastMonth} ${lastDay}`;
-  }, [dataToShow, weeksRewards, pageIndex]);
+  }, [dataToShow?.length, safeIndex, weeksRewards]);
 
   /**
    * Memoized chart configuration with interactive features
@@ -398,6 +409,10 @@ export default function useStakingRewardsChart(address: string | undefined, gene
         // A bar is being hovered
         const hoveredIndex = activeElements[0].index;
         const dataset = chart.data.datasets[0];
+
+        if (!Array.isArray(dataset?.data)) {
+          return;
+        }
 
         // Get the date label for the hovered bar (this is the date without month)
         const hoveredDateLabel = chart.data.labels?.[hoveredIndex] as string;
@@ -429,6 +444,10 @@ export default function useStakingRewardsChart(address: string | undefined, gene
       } else {
         // No bar is being hovered - reset all bars to normal color
         const dataset = chart.data.datasets[0];
+
+        if (!Array.isArray(dataset?.data)) {
+          return;
+        }
 
         expand(undefined); // Reset detail when no bar is hovered
         dataset.backgroundColor = dataset.data.map((_, index: number) => {
@@ -467,7 +486,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
           drawTicks: true,
           tickColor: 'transparent'
         },
-        labels: dataToShow?.[pageIndex][0], // Reward amounts
+        labels: amounts, // Reward amounts
         position: 'top',
         ticks: {
           color: isFullScreen ? '#AA83DC' : isLightExtension ? '#745E9F' : theme.palette.text.highlight,
@@ -503,7 +522,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
         }
       }
     }
-  }), [dataToShow, descSortedRewards, isFullScreen, isLightExtension, pageIndex, theme.palette.text.highlight]) as unknown as PluginChartOptions<'bar'>;
+  }), [amounts, descSortedRewards, isFullScreen, isLightExtension, theme.palette.text.highlight]) as unknown as PluginChartOptions<'bar'>;
 
   /**
    * Memoized chart data configuration
@@ -528,7 +547,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
         barThickness: 28,
         borderRadius: 12,
         borderSkipped: false,
-        data: dataToShow?.[pageIndex][0], // Reward amounts for current period
+        data: amounts, // Reward amounts for current period
         // Hover color function (similar to backgroundColor but for hover state)
         hoverBackgroundColor: (context: { chart: ChartType, dataIndex: number }) => {
           const chart = context.chart;
@@ -545,18 +564,18 @@ export default function useStakingRewardsChart(address: string | undefined, gene
         label: token // Dataset label (token name)
       }
     ],
-    labels: dataToShow?.[pageIndex][1] // Date labels for current period
-  }), [dataToShow, isFullScreen, isLightExtension, pageIndex, token]);
+    labels // Date labels for current period
+  }), [amounts, isFullScreen, labels, token]);
 
   // Navigation function: Move to next (more recent) period
   const onNextPeriod = useCallback(() => {
-    pageIndex && setPageIndex(pageIndex - 1);
-  }, [pageIndex]);
+    safeIndex && setPageIndex(safeIndex - 1);
+  }, [safeIndex]);
 
   // Navigation function: Move to previous (older) period
   const onPreviousPeriod = useCallback(() => {
-    dataToShow && pageIndex !== (dataToShow.length - 1) && setPageIndex(pageIndex + 1);
-  }, [dataToShow, pageIndex]);
+    dataToShow && safeIndex !== (dataToShow.length - 1) && setPageIndex(safeIndex + 1);
+  }, [dataToShow, safeIndex]);
 
   // Compute loading/error/ready status based on data state
   const status = useMemo((): RewardStatus => {

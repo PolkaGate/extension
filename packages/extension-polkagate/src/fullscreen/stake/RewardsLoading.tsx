@@ -27,7 +27,12 @@ const ChartHeader = () => {
   );
 };
 
-const RewardTable = () => {
+interface RewardsLoadingProps {
+  type: 'solo' | 'pool';
+  isDark?: boolean;
+}
+
+const RewardTable = ({ type }: RewardsLoadingProps) => {
   const { t } = useTranslation();
 
   return (
@@ -37,7 +42,7 @@ const RewardTable = () => {
           {t('Date')}
         </Typography>
         <Typography color='text.secondary' textAlign='left' variant='B-1' width='22%'>
-          {t('Era')}
+          {type === 'pool' ? t('Time') : t('Era')}
         </Typography>
         <Typography color='text.secondary' textAlign='left' variant='B-1' width='30%'>
           {t('Reward')}
@@ -80,7 +85,7 @@ function Chart() {
   );
 }
 
-function RewardsLoading({ isDark }: { isDark: boolean }) {
+function RewardsLoading({ isDark, type }: RewardsLoadingProps) {
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
       <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: isDark ? '#1B133C' : '#F8FAFF', borderRadius: '18px', width: '533px' }}>
@@ -88,7 +93,7 @@ function RewardsLoading({ isDark }: { isDark: boolean }) {
         <Chart />
       </Stack>
       <Grid container item sx={{ maxHeight: '324px', overflow: 'hidden', overflowY: 'auto', width: '482px' }}>
-        <RewardTable />
+        <RewardTable type={type} />
       </Grid>
     </Container>
   );
