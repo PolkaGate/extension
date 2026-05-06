@@ -294,7 +294,7 @@ export default function Rewards({ genesisHash, popupOpener, rewardInfo, token, t
             text={t('No rewards yet')}
           />)
         : !descSortedRewards
-          ? <RewardsLoading />
+          ? <RewardsLoading type={type} />
           : (
             <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
               <Stack direction='column' sx={{ bgcolor: '#1B133C', borderRadius: '18px', width: '533px' }}>
