@@ -464,7 +464,9 @@ export default function PoolDetail({ comprehensive, genesisHash, handleClose, op
         backdrop: {
           sx: {
             backdropFilter: 'blur(10px)',
-            background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
+            background: isLight
+              ? 'radial-gradient(50% 44.61% at 50% 50%, rgba(255, 255, 255, 0) 0%, rgba(212, 219, 243, 0.72) 100%)'
+              : 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
             bgcolor: 'transparent'
           }
         }

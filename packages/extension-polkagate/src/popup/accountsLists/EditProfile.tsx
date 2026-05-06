@@ -9,7 +9,7 @@ import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 
 import { DecisionButtons, GradientButton, MyTextField, TwoToneText } from '../../components';
-import { useAccountsOrder, useCategorizedAccountsInProfiles, useProfileAccounts, useTranslation } from '../../hooks';
+import { useAccountsOrder, useCategorizedAccountsInProfiles, useIsDark, useProfileAccounts, useTranslation } from '../../hooks';
 import ProfileAccountSelection from './ProfileAccountSelection';
 import { addProfileTag, removeProfileTag } from './utils';
 
@@ -26,6 +26,7 @@ enum STEP {
 function EditProfile({ profileLabel, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = useIsDark();
   const allAccounts = useAccountsOrder();
   const profileAccounts = useProfileAccounts(allAccounts, profileLabel);
   const { categorizedAccounts } = useCategorizedAccountsInProfiles();
@@ -101,7 +102,7 @@ function EditProfile({ profileLabel, setPopup }: Props): React.ReactElement {
       <>
         {step === STEP.EDIT_NAME &&
           <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
-            <Typography color='#BEAAD8' variant='B-4'>
+            <Typography color={isDark ? '#BEAAD8' : '#674394'} variant='B-4'>
               {t('You can give the profile a new name')}
             </Typography>
             <MyTextField
@@ -137,7 +138,7 @@ function EditProfile({ profileLabel, setPopup }: Props): React.ReactElement {
                 textPartInColor={maybeNewName ?? profileLabel ?? ''}
               />
             </Typography>
-            <Stack direction='column' sx={{ height: '350px', mt: '25px', overflowY: 'auto', width: '100%' }}>
+            <Stack direction='column' sx={{ boxSizing: 'border-box', height: '350px', mt: '25px', overflowY: 'auto', pb: '90px', width: '100%' }}>
               {Object.entries(categorizedAccounts)?.map(([label, accounts]) => {
                 return (
                   <>
