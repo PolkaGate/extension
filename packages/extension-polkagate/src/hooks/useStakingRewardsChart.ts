@@ -252,18 +252,18 @@ export default function useStakingRewardsChart(address: string | undefined, gene
       return;
     }
 
-    // Get dates available in the current period
-    const availableDates = weeksRewards[pageIndex].map((item) => formateDate(item.timestamp));
-    const rewardsDetailInAWeek = ascSortedRewards.filter(({ date }) => availableDates.includes(date ?? ''));
-
-    // Get the expected date range for this period from weeksRewards
-    // This gives us the actual intended time range, not just the dates that happen to have rewards
     const currentPeriodData = weeksRewards[pageIndex];
 
     if (!currentPeriodData?.length) {
       return [];
     }
 
+    // Get dates available in the current period
+    const availableDates = currentPeriodData.map((item) => formateDate(item.timestamp));
+    const rewardsDetailInAWeek = ascSortedRewards.filter(({ date }) => availableDates.includes(date ?? ''));
+
+    // Get the expected date range for this period from weeksRewards
+    // This gives us the actual intended time range, not just the dates that happen to have rewards
     // Calculate threshold based on the period's actual time range, not just the available rewards
     const periodStartTimestamp = Math.min(...currentPeriodData.map(({ timestamp }) => timestamp));
     const periodEndTimestamp = Math.max(...currentPeriodData.map(({ timestamp }) => timestamp));
@@ -341,6 +341,12 @@ export default function useStakingRewardsChart(address: string | undefined, gene
     setDataToShow(sliced);
     setWeekRewards(rewardPeriods);
   }, [INTERVAL_PERIOD, aggregatedRewards, formateDate]);
+
+  useEffect(() => {
+    if (dataToShow?.length && pageIndex > dataToShow.length - 1) {
+      setPageIndex(dataToShow.length - 1);
+    }
+  }, [dataToShow?.length, pageIndex]);
 
   /**
    * Memoized computation: Generate human-readable date range for current period
@@ -464,7 +470,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
           drawTicks: true,
           tickColor: 'transparent'
         },
-        labels: dataToShow?.[pageIndex][0], // Reward amounts
+        labels: dataToShow?.[pageIndex]?.[0], // Reward amounts
         position: 'top',
         ticks: {
           color: isFullScreen ? '#AA83DC' : theme.palette.text.highlight,
@@ -525,7 +531,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
         barThickness: 28,
         borderRadius: 12,
         borderSkipped: false,
-        data: dataToShow?.[pageIndex][0], // Reward amounts for current period
+        data: dataToShow?.[pageIndex]?.[0], // Reward amounts for current period
         // Hover color function (similar to backgroundColor but for hover state)
         hoverBackgroundColor: (context: { chart: ChartType, dataIndex: number }) => {
           const chart = context.chart;
@@ -542,7 +548,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
         label: token // Dataset label (token name)
       }
     ],
-    labels: dataToShow?.[pageIndex][1] // Date labels for current period
+    labels: dataToShow?.[pageIndex]?.[1] // Date labels for current period
   }), [dataToShow, isFullScreen, pageIndex, token]);
 
   // Navigation function: Move to next (more recent) period
