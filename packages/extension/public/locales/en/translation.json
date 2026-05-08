@@ -954,5 +954,7 @@
   "Enable Biometric Unlock": "",
   "Confirm your current password to securely enable biometric unlock on this device.": "",
   "Welcome back": "",
-  "{{mode}} enabled": ""
+  "{{mode}} enabled": "",
+  "Time": "",
+  "No rewards claimed in this period": ""
 }

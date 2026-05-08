@@ -4,7 +4,7 @@
 import { Box, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { useAnimateOnce, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useAnimateOnce, useIsDark, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 
 interface WordProps {
@@ -66,6 +66,7 @@ const TIME_OUT = 300;
 
 const SecretPhraseGuard = ({ revealed, setRevealed }: { revealed: boolean; setRevealed: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
   const [removeGlass, setRemoveGlass] = useState<boolean>(false);
 
@@ -90,9 +91,11 @@ const SecretPhraseGuard = ({ revealed, setRevealed }: { revealed: boolean; setRe
         alignItems: 'center',
         animation: 'fadeIn 0.5s',
         backdropFilter: 'blur(6px)',
-        bgcolor: 'rgba(20, 15, 30, 0.4)',
+        bgcolor: isDark ? 'rgba(20, 15, 30, 0.4)' : 'rgba(238, 242, 251, 0.82)',
         borderRadius: '14px',
-        boxShadow: 'inset 0 0 0 1000px rgba(255, 255, 255, 0.03), 0 0 14px rgba(255, 255, 255, 0.08)',
+        boxShadow: isDark
+          ? 'inset 0 0 0 1000px rgba(255, 255, 255, 0.03), 0 0 14px rgba(255, 255, 255, 0.08)'
+          : 'inset 0 0 0 1000px rgba(255, 255, 255, 0.22), 0 10px 24px rgba(133, 140, 176, 0.14)',
         cursor: 'pointer',
         display: removeGlass ? 'none' : 'flex',
         flexDirection: 'column',
@@ -108,7 +111,7 @@ const SecretPhraseGuard = ({ revealed, setRevealed }: { revealed: boolean; setRe
       }}
       tabIndex={0}
     >
-      <Typography color='primary.main' sx={{ mb: 2 }} variant='B-2'>
+      <Typography color={isDark ? 'primary.main' : '#674394'} sx={{ mb: 2 }} variant='B-2'>
         {t('Click to reveal — make sure no one is watching!')}
       </Typography>
     </Box>

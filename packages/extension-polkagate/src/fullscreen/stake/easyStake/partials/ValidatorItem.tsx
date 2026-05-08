@@ -10,7 +10,7 @@ import React, { memo, useCallback, useRef } from 'react';
 import { noop } from '@polkadot/util';
 
 import { GlowCheckbox } from '../../../../components';
-import { useChainInfo, useTranslation } from '../../../../hooks';
+import { useChainInfo, useIsDark, useTranslation } from '../../../../hooks';
 import { ValidatorIdentity } from '../../../../popup/staking/partial/NominatorsTable';
 import { GradientDivider } from '../../../../style';
 import { InfoWithIcons } from '../../new-solo/nominations/ValidatorItem';
@@ -28,9 +28,15 @@ interface PoolInfoProp {
 function ValidatorItem({ genesisHash, isSelected, onDetailClick, onSelect, selectable, style, validatorInfo }: PoolInfoProp) {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const isDark = useIsDark();
   const containerRef = useRef(null);
 
   const commission = String(Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7)) + '%';
+  const backgroundColor = isSelected
+    ? '#FF4FB926'
+    : isDark
+      ? '#05091C'
+      : '#FFFFFF';
 
   const handleOnDetail = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
@@ -48,7 +54,7 @@ function ValidatorItem({ genesisHash, isSelected, onDetailClick, onSelect, selec
   }, [onSelect, validatorInfo]);
 
   return (
-    <Stack direction='column' sx={{ bgcolor: isSelected ? '#FF4FB926' : '#05091C', borderRadius: '14px', p: '8px 4px 8px 8px', transition: 'all 150ms ease-out', width: '100%', ...style }}>
+    <Stack direction='column' sx={{ bgcolor: backgroundColor, border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', boxShadow: isDark ? 'none' : '0 8px 18px rgba(133, 140, 176, 0.10)', p: '8px 4px 8px 8px', transition: 'all 150ms ease-out', width: '100%', ...style }}>
       <Container
         disableGutters
         onClick={selectable ? handleContainerClick : noop}
@@ -62,8 +68,8 @@ function ValidatorItem({ genesisHash, isSelected, onDetailClick, onSelect, selec
             style={{ height: '18px', mr: '6px', width: '18px' }}
           />}
         <ValidatorIdentity validatorInfo={validatorInfo} />
-        <IconButton onClick={handleOnDetail} sx={{ bgcolor: '#2D1E4A', borderRadius: '6px', height: '34px', width: '34px' }}>
-          <ArrowRight2 color='#AA83DC' size='16' variant='Bold' />
+        <IconButton onClick={handleOnDetail} sx={{ bgcolor: isDark ? '#2D1E4A' : '#EEF1FF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '6px', height: '34px', width: '34px' }}>
+          <ArrowRight2 color={isDark ? '#AA83DC' : '#6F5A96'} size='16' variant='Bold' />
         </IconButton>
       </Container>
       <GradientDivider />

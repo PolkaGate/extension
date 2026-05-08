@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
 import { ArrowRight2, type Icon } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
@@ -46,7 +46,6 @@ export interface GradientButtonProps {
  * @returns {React.ReactElement} The rendered gradient button.
  */
 export default function GradientButton({ EndIcon, StartIcon, contentPlacement = 'center', disabled, endIconNode, isBusy, onClick, showChevron, startIconNode, startIconSize = 20, startIconVariant = 'Bulk', style, text }: GradientButtonProps): React.ReactElement<GradientButtonProps> {
-  const theme = useTheme();
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
   const borderRadius = isExtension ? '12px' : '18px';
@@ -120,7 +119,7 @@ export default function GradientButton({ EndIcon, StartIcon, contentPlacement = 
 
   return (
     <Grid component='button' container item onClick={disabled ? noop : onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={GradientButtonStyle}>
-      {StartIcon && <StartIcon color={theme.palette.text.primary} size={startIconSize} style={{ marginRight: '2px', zIndex: 10 }} variant={startIconVariant} />}
+      {StartIcon && <StartIcon color='#FFFFFF' size={startIconSize} style={{ marginRight: '2px', zIndex: 10 }} variant={startIconVariant} />}
       {startIconNode && startIconNode}
       {isBusy
         ? <LoaderGif />
@@ -131,7 +130,7 @@ export default function GradientButton({ EndIcon, StartIcon, contentPlacement = 
           {showChevron && <ArrowRight2 color={hovered ? '#EAEBF1' : 'undefined'} size='12' style={chevronStyle} variant='Linear' />}
         </>
       }
-      {EndIcon && <EndIcon color={theme.palette.text.primary} size='20' style={{ zIndex: 10 }} variant='Bulk' />}
+      {EndIcon && <EndIcon color='#FFFFFF' size='20' style={{ zIndex: 10 }} variant='Bulk' />}
       {endIconNode && endIconNode}
       <Grid sx={GradientBackground}></Grid>
     </Grid>

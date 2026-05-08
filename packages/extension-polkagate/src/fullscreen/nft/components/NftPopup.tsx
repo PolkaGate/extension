@@ -34,10 +34,12 @@ export interface Props {
 }
 
 function AccountRow({ address, genesisHash, label }: { label: string, address: string, genesisHash: string }): React.ReactElement {
+  const isDark = useIsDark();
+
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between' lineHeight='35px'>
       <Stack alignItems='baseline' columnGap='3px' direction='row'>
-        <Typography color='#BEAAD8' textAlign='left' variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : '#745D8B'} textAlign='left' variant='B-1'>
           {label}
         </Typography>
         <CopyAddressButton address={address} padding={0} />
@@ -60,6 +62,7 @@ function LeftCol({ gifSource, info, setShowFullscreen }: {
   } | undefined>>
 }): React.ReactElement<{ info: ItemInformation; }> {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
   const { iFrame, source } = useMemo(() => {
     if (gifSource) {
@@ -92,25 +95,25 @@ function LeftCol({ gifSource, info, setShowFullscreen }: {
         gifSource={gifSource}
         info={info}
       />
-      <Stack direction='column' sx={{ bgcolor: '#05091C', border: '2px solid #1B133C', borderRadius: '23px', my: '8px', padding: '23px 13px' }}>
-        <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
+      <Stack direction='column' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? '2px solid #1B133C' : '1px solid #DDE3F4', borderRadius: '23px', boxShadow: isDark ? 'none' : '0 10px 22px rgba(133, 140, 176, 0.14)', my: '8px', padding: '23px 13px' }}>
+        <Typography color={isDark ? 'text.secondary' : '#745D8B'} sx={{ textAlign: 'left' }} variant='B-1'>
           {t('Collection name')}
         </Typography>
-        <Typography color='#EAEBF1' sx={{ mt: '1px', textAlign: 'left' }} variant='B-1'>
+        <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} sx={{ mt: '1px', textAlign: 'left' }} variant='B-1'>
           {info.collectionName || (info.isCollection && info.name) || info.collectionId || t('Not in a collection')}
         </Typography>
         <GradientDivider style={{ margin: '15px 0' }} />
         {info.isCollection
           ? <>
-            <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
+            <Typography color={isDark ? 'text.secondary' : '#745D8B'} sx={{ textAlign: 'left' }} variant='B-1'>
               {t('Items')}
             </Typography>
-            <Typography color='#EAEBF1' sx={{ mt: '1px', textAlign: 'left' }} variant='B-1'>
+            <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} sx={{ mt: '1px', textAlign: 'left' }} variant='B-1'>
               {info.items}
             </Typography>
           </>
           : <>
-            <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
+            <Typography color={isDark ? 'text.secondary' : '#745D8B'} sx={{ textAlign: 'left' }} variant='B-1'>
               {t('Price')}
             </Typography>
             <NftPrice
@@ -136,25 +139,29 @@ function LeftCol({ gifSource, info, setShowFullscreen }: {
 }
 
 function Line(): ReactElement {
+  const isDark = useIsDark();
+
   return (
     <Divider
       orientation='horizontal' sx={{
-        background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '301px'
+        background: isDark ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' : 'linear-gradient(90deg, rgba(221, 227, 244, 0) 0%, #DDE3F4 50.06%, rgba(221, 227, 244, 0) 100%)', height: '1px', width: '301px'
       }}
     />
   );
 }
 
 function ItemInfo({ label, link, markDown, showDivider = true, value }: { label: string, value?: string | ReactElement, showDivider?: boolean, link?: string, markDown?: string }): ReactElement {
+  const isDark = useIsDark();
+
   return (
     <Stack direction='column' justifyItems='center'>
       <Grid container direction='row' item justifyContent='space-between' justifyItems='space-between' sx={{ lineHeight: '35px' }}>
-        <Typography color='#BEAAD8' textAlign='left' variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : '#745D8B'} textAlign='left' variant='B-1'>
           {label}
         </Typography>
         {React.isValidElement(value)
           ? value
-          : <Typography color='#EAEBF1' overflow='auto' textAlign='right' variant='B-1' width='50%'>
+          : <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} overflow='auto' textAlign='right' variant='B-1' width='50%'>
             {value}
           </Typography>
         }
@@ -163,7 +170,7 @@ function ItemInfo({ label, link, markDown, showDivider = true, value }: { label:
             <ReactMarkdown
               components={{
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                a: ({ node, ...props }) => <a style={{ color: '#AA83DC' }} {...props} />
+                a: ({ node, ...props }) => <a style={{ color: isDark ? '#AA83DC' : '#674394' }} {...props} />
               }}
               linkTarget='_blank'
             >
@@ -172,7 +179,7 @@ function ItemInfo({ label, link, markDown, showDivider = true, value }: { label:
           </Typography>
         }
         {link &&
-          <Typography color='#AA83DC' variant='B-1'>
+          <Typography color={isDark ? '#AA83DC' : '#674394'} variant='B-1'>
             <Link href={link} target='_blank' underline='hover'>
               Kodadot
             </Link>
@@ -188,6 +195,7 @@ function ItemInfo({ label, link, markDown, showDivider = true, value }: { label:
 
 function NftDetails({ gifHash, gifSource, info }: { gifHash: string | undefined, gifSource: string | null | undefined, info: ItemInformation; }): React.ReactElement<{ info: ItemInformation; }> {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
   const chainNameSymbol = useMemo(() => {
     switch (info?.chainName) {
@@ -209,14 +217,14 @@ function NftDetails({ gifHash, gifSource, info }: { gifHash: string | undefined,
   }, [chainNameSymbol, info]);
 
   return (
-    <Grid container item sx={{ bgcolor: '#05091C', border: '4px solid #1B133C', borderRadius: '18px', m: '20px 10px 45px', maxHeight: '370px', overflowY: 'auto', p: '10px 15px', width: '94%' }}>
+    <Grid container item sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? '4px solid #1B133C' : '1px solid #DDE3F4', borderRadius: '18px', boxShadow: isDark ? 'none' : '0 10px 22px rgba(133, 140, 176, 0.14)', m: '20px 10px 45px', maxHeight: '370px', overflowY: 'auto', p: '10px 15px', width: '94%' }}>
       {info &&
         <Stack direction='column' width='100%'>
           <ItemInfo
             label={t('Network')}
             value={<Stack alignItems='center' columnGap='3px' direction='row'>
               <Logo genesisHash={info?.genesisHash} size={14} />
-              <Typography color='#EAEBF1' variant='B-2'>
+              <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} variant='B-2'>
                 {info?.chainName}
               </Typography>
             </Stack>
@@ -241,7 +249,7 @@ function NftDetails({ gifHash, gifSource, info }: { gifHash: string | undefined,
                 genesisHash={info.genesisHash}
                 label={t('Creator')}
               />
-              <Divider orientation='horizontal' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '301px' }} />
+              <Line />
             </>
           }
           {info.owner && info.genesisHash &&
@@ -251,7 +259,7 @@ function NftDetails({ gifHash, gifSource, info }: { gifHash: string | undefined,
                 genesisHash={info.genesisHash}
                 label={t('Owner')}
               />
-              <Divider orientation='horizontal' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '301px' }} />
+              <Line />
             </>
           }
           {
@@ -319,10 +327,10 @@ function RightCol({ gifHash, gifSource, info, onClose }: { gifSource: string | n
   return (
     <Box
       sx={{
-        backgroundImage: `url(${modalEffect})`,
+        backgroundImage: isDark ? `url(${modalEffect})` : 'linear-gradient(180deg, #F1E4FF 0%, #F8FAFF 48%, #FFFFFF 100%)',
         backgroundPosition: 'top center',
         backgroundRepeat: 'no-repeat',
-        bgcolor: '#1B133C',
+        bgcolor: isDark ? '#1B133C' : '#F8FAFF',
         border: isDark ? '0.5px solid' : 'none',
         borderColor: '#FFFFFF0D',
         borderRadius: '32px',
@@ -337,8 +345,10 @@ function RightCol({ gifHash, gifSource, info, onClose }: { gifSource: string | n
           <IconButton
             onClick={onClose}
             sx={{
-              background: '#BFA1FF26',
+              background: isDark ? '#BFA1FF26' : '#FFFFFF',
+              border: isDark ? 'none' : '1px solid #DDE3F4',
               borderRadius: '10px',
+              boxShadow: isDark ? 'none' : '0 8px 18px rgba(133, 140, 176, 0.12)',
               height: '36px',
               left: '20px',
               position: 'absolute',
@@ -346,17 +356,17 @@ function RightCol({ gifHash, gifSource, info, onClose }: { gifSource: string | n
               zIndex: 1
             }}
           >
-            <ChevronLeft sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
+            <ChevronLeft sx={{ color: isDark ? '#AA83DC' : '#745D8B', fontSize: 20, stroke: isDark ? '#AA83DC' : '#745D8B' }} />
           </IconButton>
-          <Typography color='#EAEBF1' sx={{ ml: '53px', textAlign: 'center', textTransform: 'uppercase', width: '80%' }} variant='H-2'>
+          <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} sx={{ ml: '53px', textAlign: 'center', textTransform: 'uppercase', width: '80%' }} variant='H-2'>
             {info.name ?? t('unknown')}
           </Typography>
         </Stack>
-        <Typography color='#EAEBF1' sx={{ '> p': { m: 0 }, maxHeight: '120px', mt: '30px', overflow: 'auto', px: '20px', width: '100%' }} textAlign='justify' variant='B-5'>
+        <Typography color={isDark ? '#EAEBF1' : '#745D8B'} sx={{ '> p': { m: 0 }, maxHeight: '120px', mt: '30px', overflow: 'auto', px: '20px', width: '100%' }} textAlign='justify' variant='B-5'>
           <ReactMarkdown
             components={{
               // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              a: ({ node, ...props }) => <a style={{ color: '#AA83DC' }} {...props} />
+              a: ({ node, ...props }) => <a style={{ color: isDark ? '#AA83DC' : '#674394' }} {...props} />
             }}
             linkTarget='_blank'
           >

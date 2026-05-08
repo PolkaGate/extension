@@ -150,8 +150,8 @@ const RewardChartTable = ({ descSortedRewards, expanded, genesisHash, onExpand, 
         </Typography>
       </Container>
       {isEmptyPeriod &&
-        <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#060518', borderRadius: '14px', display: 'flex', justifyContent: 'center', minHeight: '96px', px: '18px', textAlign: 'center', width: '100%' }}>
-          <Typography color='text.highlight' variant='B-2'>
+        <Container disableGutters sx={{ alignItems: 'center', bgcolor: isLight ? '#FFFFFF' : '#060518', border: isLight ? '1px solid #DDE3F4' : 'none', borderRadius: '14px', boxShadow: isLight ? '0px 10px 24px rgba(148, 163, 184, 0.12)' : 'none', display: 'flex', justifyContent: 'center', minHeight: '96px', px: '18px', textAlign: 'center', width: '100%' }}>
+          <Typography color={isLight ? '#745E9F' : 'text.highlight'} variant='B-2'>
             {t('No rewards claimed in this period')}
           </Typography>
         </Container>
