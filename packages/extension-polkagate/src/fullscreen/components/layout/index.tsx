@@ -6,7 +6,7 @@ import React from 'react';
 
 import { useFullscreen } from '@polkadot/extension-polkagate/src/hooks';
 
-import { fullscreenBackground } from '../../../assets/img';
+import { fullscreenBackground, fullscreenBackgroundLight } from '../../../assets/img';
 import Bread from './Bread';
 import MainMenuColumn from './MainMenuColumn';
 import TopRightActions from './TopRightActions';
@@ -32,7 +32,7 @@ function HomeLayout({ children, childrenStyle = {}, genesisHash, selectedProxyAd
         <Grid
           container item position='relative'
           sx={{
-            backgroundImage: `url(${fullscreenBackground})`,
+            backgroundImage: `url(${isDark ? fullscreenBackground : fullscreenBackgroundLight})`,
             backgroundRepeat: 'no-repeat',
             borderRadius: '32px',
             display: 'block',
