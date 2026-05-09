@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.7.6](https://github.com/polkagate/extension/compare/v2.7.5...v2.7.6) (2026-05-06)
+
+
+### Bug Fixes
+
+* prevent staking rewards chart crash ([#2160](https://github.com/polkagate/extension/issues/2160)) ([3c1ef91](https://github.com/polkagate/extension/commit/3c1ef9177ed3febc6a941381dacc981252e65077))
+
 ## [2.7.5](https://github.com/polkagate/extension/compare/v2.7.4...v2.7.5) (2026-05-05)
 
 
