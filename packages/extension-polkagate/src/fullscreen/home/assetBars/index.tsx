@@ -69,7 +69,7 @@ function AssetsBars(): React.ReactElement {
           logo: ui?.logo
         }
       });
-    });
+    }).filter(({ totalBalance }) => totalBalance > 0);
 
     aggregatedAssets.sort((a, b) => b.percent - a.percent);
 
