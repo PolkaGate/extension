@@ -48,6 +48,7 @@ function AccountList(): React.ReactElement {
                     sx={{
                       bgcolor: isDark ? '#05091C' : '#FFFFFF',
                       border: isDark ? 'none' : '1px solid #DDE3F4',
+                      borderTop: !isDark && !isFirstAccount ? 0 : undefined,
                       borderRadius: justOneAccount
                         ? '14px'
                         : isFirstAccount
@@ -55,7 +56,7 @@ function AccountList(): React.ReactElement {
                           : isLast
                             ? '0 0 14px 14px'
                             : 0,
-                      mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? '4px' : '2px',
+                      mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? '4px' : isDark ? '2px' : 0,
                       pt: '5px',
                       px: '1px',
                       width: '100%'

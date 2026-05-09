@@ -119,7 +119,7 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
             sx={{
               pb: '10px',
               pl: '15px',
-              pr: isDark ? '15px' : '22px',
+              pr: isDark ? '15px' : '12px',
               pt: '10px'
             }}
           >
@@ -139,13 +139,13 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
               />
             </Grid>
           </Grid>
-          <Container disableGutters sx={{ background: isDark ? '#1B133C' : '#F8FAFF', border: isDark ? 'none' : '1px solid #E6EAF7', borderRadius: '10px', height: 'fit-content', maxHeight: hasBanner ? '185px' : '223px', overflowY: 'auto', p: '8px 12px', width: '100%' }}>
+          <Container disableGutters sx={{ background: isDark ? '#1B133C' : '#F8FAFF', border: isDark ? 'none' : '1px solid #E6EAF7', borderRadius: '10px', height: 'fit-content', maxHeight: hasBanner ? '185px' : '223px', overflowY: 'auto', p: isDark ? '8px 12px' : 'none', width: '100%' }}>
             {accountsToShow.map(({ address, name }, index) => {
               const noDivider = accountsToShow.length === index + 1;
 
               return (
                 <React.Fragment key={index}>
-                  <Grid alignItems='center' container item justifyContent='space-between' key={index} py='8px'>
+                  <Grid alignItems='center' container item justifyContent='space-between' key={index} py={isDark ? '8px' : '2px'}>
                     <Grid
                       alignItems='center'
                       container
@@ -157,7 +157,7 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
                         borderRadius: '12px',
                         boxShadow: isDark ? 'none' : '0 8px 18px rgba(133, 140, 176, 0.08)',
                         px: isDark ? 0 : '10px',
-                        py: isDark ? 0 : '8px'
+                        py: isDark ? 0 : '6px'
                       }}
                     >
                       <Grid alignItems='center' container item sx={{ columnGap: '8px', width: 'fit-content' }}>
