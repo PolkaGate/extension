@@ -23,7 +23,7 @@ function AccountList(): React.ReactElement {
   return (
     <Stack alignItems='flex-start' direction='column' justifyContent='flex-start'>
       <ProfileTabsFS initialAccountList={initialAccountList} />
-      <VelvetBox style={{ marginTop: '5px' }}>
+      <VelvetBox style={{ marginTop: '5px', position: 'relative' }}>
         <Stack ref={scrollContainerRef} style={{ maxHeight: 'calc(100vh - 190px)', minHeight: '100px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
           {Object.entries(categorizedAccounts)?.map(([label, accounts], profileIndex) => {
             const renderedAccounts = accounts?.map((account, accIndex) => {
@@ -81,8 +81,8 @@ function AccountList(): React.ReactElement {
             );
           })}
         </Stack>
+        <FadeOnScroll containerRef={scrollContainerRef} height='50px' minScrollDistance={25} ratio={0.3} style={{ borderRadius: '0 0 14px 14px' }} />
       </VelvetBox>
-      <FadeOnScroll containerRef={scrollContainerRef} height='50px' ratio={0.3} />
     </Stack>
   );
 }

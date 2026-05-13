@@ -3,6 +3,7 @@
 
 import { styled } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
+
 import { useIsDark } from '../hooks';
 
 interface FaderProps {
@@ -15,6 +16,7 @@ interface FaderProps {
 interface Props extends FaderProps {
   backgroundColor?: React.CSSProperties['backgroundColor'];
   containerRef: React.RefObject<HTMLElement | null> | null;
+  minScrollDistance?: number;
   showAnyway?: boolean;
 }
 
@@ -102,7 +104,7 @@ const Fader = styled('div', {
   };
 });
 
-function FadeOnScroll({ backgroundColor, containerRef, height, ratio, showAnyway = false, style }: Props) {
+function FadeOnScroll({ backgroundColor, containerRef, height, minScrollDistance = 1, ratio, showAnyway = false, style }: Props) {
   const isDark = useIsDark();
 
   const [isScrollable, setIsScrollable] = useState<boolean>(false);
@@ -120,8 +122,10 @@ function FadeOnScroll({ backgroundColor, containerRef, height, ratio, showAnyway
       const container = containerRef?.current;
 
       if (container) {
-        const hasScroll = container.scrollHeight > container.clientHeight;
-        const isAtBottom = container.scrollTop + container.clientHeight < container.scrollHeight - 1;
+        const scrollDistance = container.scrollHeight - container.clientHeight;
+        const remainingScroll = scrollDistance - container.scrollTop;
+        const hasScroll = scrollDistance > minScrollDistance;
+        const isAtBottom = remainingScroll > minScrollDistance;
 
         setIsScrollable(hasScroll);
         setShowFade(hasScroll && isAtBottom);
@@ -145,6 +149,10 @@ function FadeOnScroll({ backgroundColor, containerRef, height, ratio, showAnyway
       // Observe both the container and its children
       resizeObserverRef.current.observe(container);
 
+      Array.from(container.children).forEach((child) => {
+        resizeObserverRef.current?.observe(child);
+      });
+
       // Optional: observe children changes with MutationObserver
       const mutationObserver = new MutationObserver(checkScroll);
 
@@ -162,7 +170,7 @@ function FadeOnScroll({ backgroundColor, containerRef, height, ratio, showAnyway
     }
 
     return undefined;
-  }, [containerRef, showAnyway]);
+  }, [containerRef, minScrollDistance, showAnyway]);
 
   if (!isScrollable && !showAnyway) {
     return null;
