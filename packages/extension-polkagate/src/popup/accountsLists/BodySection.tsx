@@ -164,7 +164,7 @@ function BodySection({ mode, onApply, searchKeyword, setMode, setShowDeleteConfi
               text={t('Account Not Found')}
             />
           </Stack>
-          <FadeOnScroll containerRef={refContainer} height='30px' ratio={0.3} />
+          <FadeOnScroll containerRef={refContainer} height='30px' minScrollDistance={15} ratio={0.3} />
         </VelvetBox>
         {
           isInSettingMode
