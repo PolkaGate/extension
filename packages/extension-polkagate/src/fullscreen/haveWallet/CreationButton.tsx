@@ -62,10 +62,9 @@ function CreationButton({ Icon, label, labelPartInColor = '', style, url }: Prop
       }}
     >
       <Icon color={hovered ? '#AA83DC' : (isDark ? '#BEAAD8' : '#8D7AAF')} size='36' variant='Bulk' />
-      <Typography bottom={0} color={colorChangeActive ? '#BEAAD8' : isDark ? '#EAEBF1' : theme.palette.text.primary} display='block' p='0 15px 15px 0' position='absolute' textAlign='left' variant='B-2'>
+      <Typography bottom={0} color={colorChangeActive ? '#BEAAD8' : isDark ? '#EAEBF1' : theme.palette.text.primary} display='block' left='15px' p='0 0 15px' position='absolute' right='15px' textAlign='left' variant='B-2'>
         <TwoToneText
           color={isDark ? '#EAEBF1' : theme.palette.text.primary}
-          backgroundColor={hovered && !isDark ? '#F3F6FD' : undefined}
           text={label}
           textPartInColor={labelPartInColor}
         />
