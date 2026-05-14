@@ -46,6 +46,9 @@ function Alert({ alert }: Props): React.ReactElement {
   const [isVisible, setIsVisible] = useState(true);
   const removeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const autoCloseTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const progressColor = isLight
+    ? theme.palette.primary.main
+    : theme.palette.text.primary;
 
   const closeAlert = useCallback(() => {
     setIsVisible(false);
@@ -158,7 +161,7 @@ function Alert({ alert }: Props): React.ReactElement {
                 <Box
                   sx={{
                     animation: `${progressAnimation} ${(TIME_TO_REMOVE_ALERT / 1000) - 1}s linear`,
-                    backgroundColor: isLight ? '#DDE3F4' : '#EAEBF1',
+                    backgroundColor: progressColor,
                     height: '100%',
                     width: '100%'
                   }}
