@@ -9,9 +9,9 @@ import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 
 import { celebration } from '../../assets/gif';
 import { CometStar, Gear } from '../../assets/icons';
-import { logoTransparent } from '../../assets/logos';
+import { logoPink, logoTransparent } from '../../assets/logos';
 import { GradientButton, GradientDivider, Progress } from '../../components';
-import { useManifest } from '../../hooks';
+import { useIsDark, useManifest } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { RedGradient } from '../../style';
 import { EXTENSION_NAME } from '../../util/constants';
@@ -236,6 +236,7 @@ interface Props {
 
 export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
   const manifest = useManifest();
 
@@ -371,10 +372,10 @@ export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props)
         <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px' sx={{ flexWrap: 'nowrap' }}>
           <Box
             component='img'
-            src={logoTransparent as string}
+            src={(isDark ? logoTransparent : logoPink) as string}
             sx={{ height: '30px', width: '30px' }}
           />
-          <Typography color='#fff' sx={{ whiteSpace: 'nowrap' }} textTransform='uppercase' variant='H-2'>
+          <Typography color={isDark ? '#fff' : 'text.primary'} sx={{ whiteSpace: 'nowrap' }} textTransform='uppercase' variant='H-2'>
             {t('change log')}
           </Typography>
         </Grid>

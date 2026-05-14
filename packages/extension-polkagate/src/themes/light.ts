@@ -26,7 +26,7 @@ export const lightTheme: ExtendedThemeOptions = {
     border: { default: '#C7D0EA', paper: '#EEF0FB' },
     text: { primary: '#31285A', secondary: '#7B84AC', disabled: '#A6ADC7', highlight: '#4A86F7' },
     action: { disabled: '#FFFFFF', disabledBackground: '#B7C4E8', focus: '#D7B3E0' },
-    success: { main: '#14B874', light: '#A9F1CF', contrastText: '#14B874' },
+    success: { main: '#14B874', light: '#DDF8EA', contrastText: '#14B874' },
     warning: { main: '#FF8A3D' },
     divider: '#D8DDF1',
     gradient: {

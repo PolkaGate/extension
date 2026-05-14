@@ -64,12 +64,13 @@ function HistoryStatus({ action, success }: { action: string, success: boolean }
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
+  const successColor = theme.palette.success.main;
 
   return (
     <Stack sx={{ alignItems: 'center', mt: '-5px' }}>
       <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: isDark ? '#00000033' : '#FFFFFF66', borderRadius: '999px', overflow: 'hidden', width: 'fit-content' }}>
         {success
-          ? <TickCircle color='#82FFA5' size='50' style={{ background: isDark ? '#000' : '#FFFFFF', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
+          ? <TickCircle color={successColor} size='50' style={{ background: isDark ? '#000' : '#FFFFFF', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
           : <CloseCircle color='#FF4FB9' size='50' style={{ background: isDark ? '#000' : '#FFFFFF', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
         }
       </Grid>

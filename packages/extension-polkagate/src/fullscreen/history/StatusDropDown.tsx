@@ -3,6 +3,7 @@
 
 import type { ExtraFilters } from './types';
 
+import { useTheme } from '@mui/material';
 import { Chart, CloseCircle, TickCircle } from 'iconsax-react';
 import React, { useCallback, useMemo } from 'react';
 
@@ -17,6 +18,8 @@ interface Props {
 
 function StatusDropDown({ extraFilters, setExtraFilters }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const successColor = theme.palette.success.main;
 
   const options = useMemo(() => {
     return [
@@ -26,7 +29,7 @@ function StatusDropDown({ extraFilters, setExtraFilters }: Props): React.ReactEl
         value: ANY_STATUS
       },
       {
-        Icon: <TickCircle color='#82FFA5' size='14' variant='Bold' />,
+        Icon: <TickCircle color={successColor} size='14' variant='Bold' />,
         text: t('Completed'),
         value: 'Completed'
       },
@@ -36,7 +39,7 @@ function StatusDropDown({ extraFilters, setExtraFilters }: Props): React.ReactEl
         value: 'Failed'
       }
     ];
-  }, [t]);
+  }, [successColor, t]);
 
   const handleChange = useCallback((value: string | number) => {
     setExtraFilters((prev) => ({ ...prev, status: String(value) }));

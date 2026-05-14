@@ -83,6 +83,8 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount({ historyItem, sho
   const { t } = useTranslation();
   const theme = useTheme();
   const price = useTokenPriceBySymbol(historyItem.token ?? '', historyItem.chain?.genesisHash ?? '');
+  const successColor = theme.palette.success.main;
+  const successDecimalColor = `${theme.palette.success.main}99`;
 
   const totalBalancePrice = useMemo(() => calcPrice(price.price, amountToMachine(historyItem.amount, historyItem.decimal ?? 0) ?? BN_ZERO, historyItem.decimal ?? 0), [historyItem.amount, historyItem.decimal, price.price]);
 
@@ -104,18 +106,18 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount({ historyItem, sho
               </Typography>
             </>
             : <Grid alignItems='center' container item sx={{ columnGap: '4px', display: 'flex', flexDirection: 'row', width: 'fit-content' }}>
-              <Typography color={isReceivedOrReward ? '#82FFA5' : theme.palette.text.primary} variant='B-2'>
+              <Typography color={isReceivedOrReward ? successColor : theme.palette.text.primary} variant='B-2'>
                 {isReceivedOrReward ? '+' : isSend ? '-' : ''}
               </Typography>
               <FormatPrice
                 commify
-                decimalColor={isReceivedOrReward ? '#82FFA580' : theme.palette.text.secondary}
+                decimalColor={isReceivedOrReward ? successDecimalColor : theme.palette.text.secondary}
                 dotStyle='small'
                 fontFamily='Inter'
                 fontSize='14px'
                 fontWeight={600}
                 num={totalBalancePrice}
-                textColor={isReceivedOrReward ? '#82FFA5' : theme.palette.text.secondary}
+                textColor={isReceivedOrReward ? successColor : theme.palette.text.secondary}
                 width='fit-content'
                 withSmallDecimal
               />
@@ -124,10 +126,10 @@ const HistoryStatusAmount = memo(function HistoryStatusAmount({ historyItem, sho
         </Grid>
         : <Grid alignItems='center' columnGap='4px' container item justifyContent='center' width='fit-content'>
           {success
-            ? <TickCircle color='#82FFA5' size='15' variant='Bold' />
+            ? <TickCircle color={successColor} size='15' variant='Bold' />
             : <CloseCircle color='#FF8A65' size='15' variant='Bold' />
           }
-          <Typography color={success ? '#82FFA5' : '#FF4FB9'} variant='B-4'>
+          <Typography color={success ? successColor : '#FF4FB9'} variant='B-4'>
             {success ? t('Completed') : t('Failed')}
           </Typography>
         </Grid>

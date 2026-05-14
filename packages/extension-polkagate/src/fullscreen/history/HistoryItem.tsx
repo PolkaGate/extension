@@ -3,7 +3,7 @@
 
 import type { TransactionDetail } from '../../util/types';
 
-import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { alpha, Box, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { ArrowRight2, CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
@@ -52,15 +52,18 @@ const TimeOfTX = ({ date, style = {} }: { date: number, style: React.CSSProperti
 
 const HistoryStatus = memo(function HistoryStatus({ historyItem }: { historyItem: TransactionDetail }) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const success = historyItem.success;
+  const successColor = theme.palette.success.main;
+  const successBg = theme.palette.mode === 'dark' ? alpha(theme.palette.success.main, 0.15) : theme.palette.success.light;
 
   return (
-    <Grid alignItems='center' columnGap='4px' container item justifyContent='center' sx={{ bgcolor: !success ? '#FF4FB926' : '#82FFA526', borderRadius: '9px', p: '2px 5px' }} width='fit-content'>
+    <Grid alignItems='center' columnGap='4px' container item justifyContent='center' sx={{ bgcolor: !success ? '#FF4FB926' : successBg, borderRadius: '9px', p: '2px 5px' }} width='fit-content'>
       {success
-        ? <TickCircle color='#82FFA5' size='14' variant='Bold' />
+        ? <TickCircle color={successColor} size='14' variant='Bold' />
         : <CloseCircle color='#FF4FB9' size='14' variant='Bold' />
       }
-      <Typography color={success ? '#82FFA5' : '#FF4FB9'} variant='B-2'>
+      <Typography color={success ? successColor : '#FF4FB9'} variant='B-2'>
         {success ? t('Completed') : t('Failed')}
       </Typography>
     </Grid>

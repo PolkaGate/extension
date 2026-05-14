@@ -6,7 +6,7 @@
 import { Box, styled, type SxProps, type Theme, Typography } from '@mui/material';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useIsHovered } from '../hooks';
+import { useIsDark, useIsHovered } from '../hooks';
 
 interface ScrollingTextBoxProps {
   text: string;
@@ -46,9 +46,11 @@ const BoxContainer = styled(Box, {
 }));
 
 function ScrollingTextBox({ fadeColor, scrollOnHover = false, style, text, textStyle, width }: ScrollingTextBoxProps): React.ReactElement {
+  const isDark = useIsDark();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
   const textRef = useRef<HTMLDivElement>(null);
+  const defaultFadeColor = isDark ? undefined : '#FFFFFF';
 
   const [shouldScroll, setShouldScroll] = useState(false);
   const [textWidth, setTextWidth] = useState(0);
@@ -91,7 +93,7 @@ function ScrollingTextBox({ fadeColor, scrollOnHover = false, style, text, textS
   }), [animationDuration, hovered, scrollOnHover, shouldScroll, textWidth, uniqueKeyframeName, width]);
 
   return (
-    <BoxContainer fadeColor={fadeColor} maxWidth={width} ref={containerRef} shouldScroll={shouldScroll} sx={style}>
+    <BoxContainer fadeColor={fadeColor ?? defaultFadeColor} maxWidth={width} ref={containerRef} shouldScroll={shouldScroll} sx={style}>
       <Typography ref={textRef} sx={{ ...textboxStyle, ...textStyle }}>
         {text}
       </Typography>

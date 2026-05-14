@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
-import { useChainInfo, useSelectedAccount, useTranslation } from '../hooks';
+import { useChainInfo, useIsDark, useSelectedAccount, useTranslation } from '../hooks';
 import { KUSAMA_GENESIS_HASH, WESTEND_GENESIS_HASH } from '../util/constants';
 import MyTooltip from './MyTooltip';
 
@@ -22,6 +22,7 @@ interface Props {
 
 function Recoverability({ style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const isDark = useIsDark();
   const address = useSelectedAccount()?.address;
   const { api: westendApi } = useChainInfo(WESTEND_GENESIS_HASH);
   const { api: kusamaApi } = useChainInfo(KUSAMA_GENESIS_HASH);
@@ -74,12 +75,12 @@ function Recoverability({ style = {} }: Props): React.ReactElement {
 
   const containerStyle: SxProps<Theme> = {
     '&:hover': {
-      bgcolor: '#674394'
+      bgcolor: isDark ? '#674394' : '#EEF1FF'
     },
     alignItems: 'center',
-    bgcolor: '#05091C',
+    bgcolor: isDark ? '#05091C' : '#FFFFFF',
     border: '1px solid',
-    borderColor: '#1B133C',
+    borderColor: isDark ? '#1B133C' : '#DDE3F4',
     borderRadius: '12px',
     cursor: 'pointer',
     height: '40px',
@@ -101,7 +102,7 @@ function Recoverability({ style = {} }: Props): React.ReactElement {
           })}
         >
           <Grid container item onClick={onClick} sx={containerStyle}>
-            <Shield color='#AA83DC' size='20' variant='Bulk' />
+            <Shield color={isDark ? '#AA83DC' : '#745E9F'} size='20' variant='Bulk' />
           </Grid>
         </MyTooltip>
       }

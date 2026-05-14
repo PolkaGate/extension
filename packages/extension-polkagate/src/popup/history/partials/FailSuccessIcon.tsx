@@ -22,7 +22,7 @@ export default function FailSuccessIcon({ children, description, failureText, is
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
-  const successColor = isDark ? '#82FFA5' : '#43A867';
+  const successColor = theme.palette.success.main;
   const iconBg = isDark ? '#000' : '#F3F6FD';
 
   return (
