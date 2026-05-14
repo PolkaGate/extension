@@ -75,10 +75,10 @@ function HasProxyOnHubIndicator({ address, style = {} }: Props): React.ReactElem
 
   const containerStyle: SxProps<Theme> = {
     '&:hover': {
-      bgcolor: '#674394'
+      bgcolor: isDark ? '#674394' : '#EEF1FF'
     },
     alignItems: 'center',
-    bgcolor: isDark ? '#05091C' : 'transparent',
+    bgcolor: isDark ? '#05091C' : '#FFFFFF',
     border: '1px solid',
     borderColor: isDark ? '#1B133C' : '#E3E8F7',
     borderRadius: '12px',
@@ -102,7 +102,7 @@ function HasProxyOnHubIndicator({ address, style = {} }: Props): React.ReactElem
           })}
         >
           <Grid container item onClick={onClick} sx={containerStyle}>
-            <Data color='#AA83DC' size='20' variant='Bulk' />
+            <Data color={isDark ? '#AA83DC' : '#745E9F'} size='20' variant='Bulk' />
           </Grid>
         </MyTooltip>
       }
