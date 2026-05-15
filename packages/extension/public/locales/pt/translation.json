@@ -954,5 +954,7 @@
   "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "O desbloqueio biométrico falhou. Tente reativar a biometria nas Configurações ou use sua senha.",
   "Enable Biometric Unlock": "Ativar desbloqueio biométrico",
   "Confirm your current password to securely enable biometric unlock on this device.": "Confirme sua senha atual para ativar com segurança o desbloqueio biométrico neste dispositivo.",
-  "Welcome back": "Bem-vindo de volta"
+  "Welcome back": "Bem-vindo de volta",
+  "Time": "Tempo",
+  "No rewards claimed in this period": "Nenhuma recompensa foi reivindicada neste período"
 }

@@ -954,5 +954,7 @@
   "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "",
   "Enable Biometric Unlock": "",
   "Confirm your current password to securely enable biometric unlock on this device.": "",
-  "Welcome back": ""
+  "Welcome back": "",
+  "Time": "",
+  "No rewards claimed in this period": ""
 }

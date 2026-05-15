@@ -954,5 +954,7 @@
   "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "Biometrisches Entsperren ist fehlgeschlagen. Versuche, die Biometrie in den Einstellungen erneut zu aktivieren, oder verwende dein Passwort.",
   "Enable Biometric Unlock": "Biometrisches Entsperren aktivieren",
   "Confirm your current password to securely enable biometric unlock on this device.": "Bestätige dein aktuelles Passwort, um das biometrische Entsperren auf diesem Gerät sicher zu aktivieren.",
-  "Welcome back": "Willkommen zurück"
+  "Welcome back": "Willkommen zurück",
+  "Time": "Zeit",
+  "No rewards claimed in this period": "In diesem Zeitraum wurden keine Belohnungen beansprucht"
 }

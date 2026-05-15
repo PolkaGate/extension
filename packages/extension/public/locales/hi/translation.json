@@ -954,5 +954,7 @@
   "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "बायोमेट्रिक अनलॉक विफल रहा। सेटिंग्स में बायोमेट्रिक्स फिर से चालू करने का प्रयास करें, या अपना पासवर्ड इस्तेमाल करें।",
   "Enable Biometric Unlock": "बायोमेट्रिक अनलॉक चालू करें",
   "Confirm your current password to securely enable biometric unlock on this device.": "इस डिवाइस पर बायोमेट्रिक अनलॉक को सुरक्षित रूप से चालू करने के लिए अपना वर्तमान पासवर्ड पुष्टि करें।",
-  "Welcome back": "वापसी पर स्वागत है"
+  "Welcome back": "वापसी पर स्वागत है",
+  "Time": "समय",
+  "No rewards claimed in this period": "इस अवधि में कोई रिवॉर्ड क्लेम नहीं किया गया"
 }
