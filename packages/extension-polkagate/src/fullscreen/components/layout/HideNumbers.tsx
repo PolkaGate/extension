@@ -9,7 +9,7 @@ import { useIsDark, useIsHideNumbers } from '../../../hooks';
 
 function HideNumbers(): React.ReactElement {
   const isDark = useIsDark();
-  const hoverBg = isDark ? '#674394' : '#E9ECFB';
+  const hoverBg = isDark ? '#674394' : '#F3F6FD';
   const eyeColor = isDark ? '#AA83DC' : '#745D8B';
 
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
@@ -21,10 +21,10 @@ function HideNumbers(): React.ReactElement {
         ':hover': { background: hoverBg },
         alignItems: 'center',
         backdropFilter: 'blur(20px)',
-        background: isDark ? '#2D1E4A80' : '#FFFFFF8C',
-        border: `2px solid ${isDark ? '#2D1E4A80' : '#DADFF1'}`,
+        background: isDark ? '#2D1E4A80' : '#FFFFFF',
+        border: isDark ? 'none' : '1px solid #DDE3F4',
         borderRadius: '12px',
-        boxShadow: isDark ? '0px 0px 24px 8px #4E2B7259 inset' : '0px 0px 18px 6px rgba(210, 218, 244, 0.8) inset',
+        boxShadow: isDark ? '0px 0px 24px 8px #4E2B7259 inset' : '0px 8px 22px rgba(133, 140, 176, 0.12)',
         cursor: 'pointer',
         height: '32px',
         transition: 'all 250ms ease-out',
