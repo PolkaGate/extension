@@ -86,7 +86,13 @@ function HistoryItem({ historyItem }: HistoryItemProps) {
   const price = useTokenPriceBySymbol(token ?? '', chain?.genesisHash ?? '');
   const fiatBalance = useMemo(() => calcPrice(price.price, amountToMachine(amount, decimal) ?? BN_ZERO, decimal), [amount, decimal, price.price]);
 
-  const iconBgColor = historyIconBgColor(action);
+  const iconBgColor = isDark
+    ? historyIconBgColor(action)
+    : ['receive', 'reward'].includes(action.toLowerCase())
+      ? '#E9FFF1'
+      : ['send', 'proxy', 'utility'].includes(action.toLowerCase())
+        ? '#FFFFFF'
+        : '#F5F4FF';
   const isTransfer = hAction.toLowerCase() === 'balances';
   const isSend = subAction?.toLowerCase() === 'send';
   const rowBg = isDark ? '#05091C' : '#FFFFFF';

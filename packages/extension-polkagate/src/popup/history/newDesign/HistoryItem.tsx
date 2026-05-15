@@ -156,7 +156,13 @@ function HistoryItem({ historyDate, historyItems, short }: HistoryItemProps) {
         </Typography>
         {historyItems.map((historyItem, index) => {
           const action = resolveActionType(historyItem);
-          const iconBgColor = historyIconBgColor(action);
+          const iconBgColor = isDark
+            ? historyIconBgColor(action)
+            : ['receive', 'reward'].includes(action.toLowerCase())
+              ? '#E9FFF1'
+              : ['send', 'proxy', 'utility'].includes(action.toLowerCase())
+                ? '#FFFFFF'
+                : '#F5F4FF';
           const noDivider = historyItems.length === index + 1;
 
           return (
