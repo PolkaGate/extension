@@ -107,15 +107,20 @@ function probeEndpoint(endpoint, timeout = ENDPOINT_PROBE_TIMEOUT) {
       }));
     };
 
-    websocket.onmessage = () => {
+    websocket.onmessage = (event) => {
       if (settled) {
         return;
       }
 
+      const response = JSON.parse(event.data);
+      const genesisHash = response.result;
+
+      console.info(`${endpoint} genesisHash:`, genesisHash);
+
       const delay = Date.now() - startedAt;
 
       close();
-      resolve({ delay, endpoint });
+      resolve({ delay, endpoint, genesisHash });
     };
 
     websocket.onerror = () => {
