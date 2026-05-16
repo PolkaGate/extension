@@ -103,7 +103,11 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ 
       if (!isFirstAccount) {
         navigate(onSuccessPath) as void;
         window.location.reload();
+
+        return;
       }
+
+      setIsBusy(false);
     } catch (error) {
       setIsBusy(false);
       console.error(error);
