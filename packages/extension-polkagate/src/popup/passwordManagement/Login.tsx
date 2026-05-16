@@ -3,7 +3,7 @@
 
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
 import useCheckMasterPassword from '@polkadot/extension-polkagate/src/hooks/useCheckMasterPassword';
@@ -30,6 +30,15 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
+const SETUP_ROUTES = [
+  '/account/create',
+  '/account/have-wallet',
+  '/account/import-seed',
+  '/account/import-raw-seed',
+  '/account/restore-json',
+  '/migratePasswords'
+];
+
 function isBiometricPromptCancelled(error: unknown): boolean {
   const errorName = (error as Error | undefined)?.name;
   const errorMessage = (error as Error | undefined)?.message ?? '';
@@ -41,6 +50,7 @@ function isBiometricPromptCancelled(error: unknown): boolean {
 
 function Content({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const location = useLocation();
   const navigate = useNavigate();
   const isExtension = useIsExtensionPopup();
   const isPasswordMigrated = useIsPasswordMigrated();
@@ -68,7 +78,7 @@ function Content({ setStep }: Props): React.ReactElement {
     }
   }, []);
 
-  const { accountsNeedMigration, hasLocalAccounts } = useCheckMasterPassword((isUnlocking && isPasswordMigrated === false) ? plainPassword : undefined);
+  const { accountsNeedMigration, hasLocalAccounts, matchedAccountsCount } = useCheckMasterPassword((isUnlocking && isPasswordMigrated === false) ? plainPassword : undefined);
 
   const onPassChange = useCallback((pass: string | null): void => {
     if (!pass) {
@@ -118,13 +128,17 @@ function Content({ setStep }: Props): React.ReactElement {
       setExtensionLock(false);
       hasLocalAccounts && setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
       setStorage(STORAGE_KEY.IS_FORGOTTEN, undefined) as unknown as void;
+
+      if (SETUP_ROUTES.includes(location.pathname)) {
+        navigate('/') as void;
+      }
     } else {
       setExtensionLock(true);
       setIsPasswordError(true);
     }
 
     setPlainPassword(undefined);
-  }, [hasLocalAccounts, setExtensionLock]);
+  }, [hasLocalAccounts, location.pathname, navigate, setExtensionLock]);
 
   const handlePasswordMigration = useCallback(async () => {
     await updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET }); // DEPRECATED, will be removed in future releases
@@ -163,7 +177,7 @@ function Content({ setStep }: Props): React.ReactElement {
         return;
       }
 
-      const needsPasswordMigration = accountsNeedMigration?.length && (isOldPasswordCorrect || !oldPasswordExists);
+      const needsPasswordMigration = accountsNeedMigration?.length && !!matchedAccountsCount && (isOldPasswordCorrect || !oldPasswordExists);
 
       if (needsPasswordMigration) {
         await handlePasswordMigration();
@@ -181,7 +195,7 @@ function Content({ setStep }: Props): React.ReactElement {
 
       isUnlockingRef.current = false; // ✅ unlock finished
     }
-  }, [accountsNeedMigration, autoLockPeriod, canUnlockDirectly, handleDirectUnlock, handlePasswordMigration, hashedPassword, isPasswordMigrated, isUnlocking, plainPassword]);
+  }, [accountsNeedMigration, autoLockPeriod, canUnlockDirectly, handleDirectUnlock, handlePasswordMigration, hashedPassword, isPasswordMigrated, isUnlocking, matchedAccountsCount, plainPassword]);
 
   useEffect(() => {
     tryUnlock() as unknown as void;

@@ -753,6 +753,18 @@ export default class Extension {
       assert(pair, `Unable to unlock account ${account.address}`);
     };
 
+    const lockAccount = (account: KeyringAddress) => {
+      try {
+        const pair = keyring.getPair(account.address);
+
+        if (!pair.isLocked) {
+          pair.lock();
+        }
+      } catch (e) {
+        console.info('Unable to lock account after failed unlock attempt', e);
+      }
+    };
+
     try {
       const accountsLocal = this.localAccounts();
 
@@ -781,6 +793,8 @@ export default class Extension {
       return true;
     } catch (error) {
       console.error('accountsUnlockAll failed:', error);
+      this.localAccounts().forEach(lockAccount);
+      this.clearUnlockExpiry();
 
       return false;
     }

@@ -100,8 +100,10 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ 
         console.warn('Failed to persist profile or migration flag');
       }
 
-      navigate(onSuccessPath) as void;
-      window.location.reload();
+      if (!isFirstAccount) {
+        navigate(onSuccessPath) as void;
+        window.location.reload();
+      }
     } catch (error) {
       setIsBusy(false);
       console.error(error);
