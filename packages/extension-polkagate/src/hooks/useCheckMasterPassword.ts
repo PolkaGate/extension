@@ -37,6 +37,7 @@ export default function useCheckMasterPassword(pass: string | undefined): {
     }
 
     setAccountsNeedMigration(undefined);
+    setMatchedAccountsCount(undefined);
 
     checkAccountsPassword(localAccounts, pass)
       .then(({ accountsNeedMigration, matchedAccountsCount }) => {
