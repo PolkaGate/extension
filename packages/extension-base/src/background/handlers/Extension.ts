@@ -266,8 +266,20 @@ export default class Extension {
   }
 
   private lockExtension(): boolean {
-    for (const { address } of this.localAccounts()) {
-      this.lockAccount(address);
+    const failures: unknown[] = [];
+
+    this.localAccounts().forEach(({ address }) => {
+      try {
+        this.lockAccount(address);
+      } catch (error) {
+        failures.push(error);
+      }
+    });
+
+    if (failures.length) {
+      console.error('Unable to lock all accounts:', failures);
+
+      return false;
     }
 
     this.clearUnlockExpiry();
@@ -713,20 +725,14 @@ export default class Extension {
     return pair;
   }
 
-  private lockAccount(address: string): KeyringPair | null {
-    try {
-      const pair = this.getPair(address);
+  private lockAccount(address: string): KeyringPair {
+    const pair = this.getPair(address);
 
-      if (!pair.isLocked) {
-        pair.lock();
-      }
-
-      return pair;
-    } catch (error) {
-      console.info('Unable to lock account', error);
-
-      return null;
+    if (!pair.isLocked) {
+      pair.lock();
     }
+
+    return pair;
   }
 
   private unlockPair({ address, password }: { address: string, password: string | undefined }): KeyringPair | null {
@@ -734,10 +740,6 @@ export default class Extension {
 
     try {
       const pair = this.lockAccount(address);
-
-      if (!pair) {
-        return null;
-      }
 
       pair.decodePkcs8(password);
 
@@ -788,8 +790,13 @@ export default class Extension {
       return true;
     } catch (error) {
       console.error('accountsUnlockAll failed:', error);
-      this.localAccounts().forEach(({ address }) => this.lockAccount(address));
-      this.clearUnlockExpiry();
+
+      try {
+        this.localAccounts().forEach(({ address }) => this.lockAccount(address));
+        this.clearUnlockExpiry();
+      } catch (lockError) {
+        console.error('Unable to re-lock accounts after failed unlock attempt:', lockError);
+      }
 
       return false;
     }
