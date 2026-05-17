@@ -24,7 +24,7 @@ function Portfolio(): React.ReactElement {
   const EyeIcon = isHideNumbers ? EyeSlash : Eye;
 
   return (
-    <GlowBox>
+    <GlowBox openBottom>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '15px 20px 5px' }}>
         <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content' }}>
           <Typography color={isDark ? 'text.secondary' : '#291443'} variant='B-2'>

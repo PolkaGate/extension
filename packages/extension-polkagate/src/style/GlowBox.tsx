@@ -7,8 +7,10 @@ import React from 'react';
 import { useIsDark, useIsExtensionPopup } from '../hooks';
 import { GradientBorder, GradientDivider } from '.';
 
-const GlowBoxContainer = styled(Container)(() => ({
-  borderRadius: '24px',
+const GlowBoxContainer = styled(Container, {
+  shouldForwardProp: (prop) => prop !== 'openBottom'
+})<{ openBottom: boolean }>(({ openBottom }) => ({
+  borderRadius: openBottom ? '24px 24px 0 0' : '24px',
   bottom: 0,
   height: '100%',
   left: 0,
@@ -17,6 +19,12 @@ const GlowBoxContainer = styled(Container)(() => ({
   right: 0,
   top: 0,
   width: '100%',
+  ...(openBottom
+    ? {
+      maskImage: 'linear-gradient(180deg, #000 0%, #000 72%, rgba(0, 0, 0, 0.45) 86%, transparent 100%)',
+      WebkitMaskImage: 'linear-gradient(180deg, #000 0%, #000 72%, rgba(0, 0, 0, 0.45) 86%, transparent 100%)'
+    }
+    : {}),
   zIndex: -1
 }));
 
@@ -35,7 +43,7 @@ const GlowBall = styled('div')<{ staking: boolean }>(({ staking }) => ({
 const FadeOut = styled('div')<{ isDark: boolean }>(({ isDark }) => ({
   background: isDark
     ? 'linear-gradient(180deg, transparent 13.79%, #05091C 100%)'
-    : '',
+    : 'radial-gradient(ellipse at 50% 72%, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0.45) 24%, rgba(255, 255, 255, 0) 58%), linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0%, rgba(255, 255, 255, 0.06) 18%, rgba(255, 255, 255, 0) 48%), linear-gradient(90deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0) 3%, rgba(255, 255, 255, 0) 97%, rgba(255, 255, 255, 0.32) 100%)',
   height: '160px',
   inset: 0,
   position: 'absolute',
@@ -65,10 +73,11 @@ interface GlowDividerProps {
   staking: boolean;
   shortSideDividers: boolean;
   isDark: boolean;
+  openBottom: boolean;
   placement: 'right' | 'left';
 }
 
-function GlowDivider({ isDark, placement, shortSideDividers, staking }: GlowDividerProps): React.ReactElement {
+function GlowDivider({ isDark, openBottom, placement, shortSideDividers, staking }: GlowDividerProps): React.ReactElement {
   const stakingStyle = staking
     ? { background: 'linear-gradient(180deg, rgba(16, 16, 25, 0.1) 0%, rgba(60, 196, 255, 0.5) 50.06%, transparent 100%)' }
     : {};
@@ -88,7 +97,8 @@ function GlowDivider({ isDark, placement, shortSideDividers, staking }: GlowDivi
         position: 'absolute',
         right: placement === 'right' ? 0 : undefined,
         top: 0,
-        width: '2px',
+        opacity: openBottom && !isDark ? 0.35 : 1,
+        width: openBottom && !isDark ? '1px' : '2px',
         zIndex: 1,
         ...stakingStyle,
         ...shortSideDividersStyle
@@ -103,10 +113,11 @@ interface Props {
   style?: SxProps<Theme>;
   isBlueish?: boolean;
   noGlowBall?: boolean;
+  openBottom?: boolean;
   shortSideDividers?: boolean; // Enables shorter side dividers used specifically in fullscreen mode.
 }
 
-function GlowBox({ children, isBlueish = false, noGlowBall = false, shortSideDividers = false, showTopBorder = true, style }: Props): React.ReactElement {
+function GlowBox({ children, isBlueish = false, noGlowBall = false, openBottom = false, shortSideDividers = false, showTopBorder = true, style }: Props): React.ReactElement {
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
 
@@ -115,13 +126,13 @@ function GlowBox({ children, isBlueish = false, noGlowBall = false, shortSideDiv
     : {};
 
   return (
-    <Container disableGutters sx={{ border: '2px solid transparent', borderRadius: '24px', display: 'grid', height: 'fit-content', mx: '8px', position: 'relative', width: 'calc(100% - 16px)', zIndex: 1, ...style }}>
+    <Container disableGutters sx={{ border: '2px solid transparent', borderRadius: openBottom ? '24px 24px 0 0' : '24px', display: 'grid', height: 'fit-content', mx: '8px', position: 'relative', width: 'calc(100% - 16px)', zIndex: 1, ...style }}>
       {children}
-      <GlowBoxContainer disableGutters>
+      <GlowBoxContainer disableGutters openBottom={openBottom}>
         {showTopBorder &&
           <GradientBorder style={{ width: '311px', ...stakingStyle }} type='pinkish' />}
-        <GlowDivider isDark={isDark} placement='left' shortSideDividers={shortSideDividers} staking={isBlueish} />
-        <GlowDivider isDark={isDark} placement='right' shortSideDividers={shortSideDividers} staking={isBlueish} />
+        <GlowDivider isDark={isDark} openBottom={openBottom} placement='left' shortSideDividers={shortSideDividers} staking={isBlueish} />
+        <GlowDivider isDark={isDark} openBottom={openBottom} placement='right' shortSideDividers={shortSideDividers} staking={isBlueish} />
         {isDark && !noGlowBall &&
           <GlowBall staking={isBlueish} />
         }
