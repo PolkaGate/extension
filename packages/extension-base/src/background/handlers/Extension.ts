@@ -313,7 +313,7 @@ export default class Extension {
 
   private accountsForget({ address }: RequestAccountForget): boolean {
     keyring.forgetAccount(address);
-    void this.clearBiometricEnrollment().catch(console.error);
+    this.clearBiometricEnrollment().catch(console.error);
 
     return true;
   }
@@ -325,7 +325,7 @@ export default class Extension {
       this.accountsForget({ address });
     });
 
-    void this.clearBiometricEnrollment().catch(console.error);
+    this.clearBiometricEnrollment().catch(console.error);
 
     return true;
   }
