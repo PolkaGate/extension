@@ -191,8 +191,10 @@ export default function RestoreJson(): React.ReactElement {
       );
 
       if (localAccountsToUnlock.length > 0) {
-        setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true) as unknown as void;
-        setStorage(STORAGE_KEY.IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN, false) as unknown as void; // may import accounts with old format, so reset to trigger migration in account provider
+        await Promise.all([
+          setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true) as unknown as void,
+          setStorage(STORAGE_KEY.IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN, false) as unknown as void // may import accounts with old format, so reset to trigger migration in account provider
+        ]);
         const success = await unlockAllAccounts(password, AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000);
 
         await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, success);
