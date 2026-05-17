@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.7.9](https://github.com/polkagate/extension/compare/v2.7.8...v2.7.9) (2026-05-17)
+
+
+### Bug Fixes
+
+* fix onboarding and JSON import lock handoff ([#2163](https://github.com/polkagate/extension/issues/2163)) ([3de6f04](https://github.com/polkagate/extension/commit/3de6f045b7a5cc40f2d591fa3d898225d60a5c91))
+
 ## [2.7.8](https://github.com/polkagate/extension/compare/v2.7.7...v2.7.8) (2026-05-16)
 
 
