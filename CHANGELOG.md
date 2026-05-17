@@ -1,5 +1,19 @@
 # Change Log
 
+## [2.7.8](https://github.com/polkagate/extension/compare/v2.7.7...v2.7.8) (2026-05-16)
+
+
+### Performance Improvements
+
+* reduce endpoint selection network usage with lightweight WebSocket probes ([#2162](https://github.com/polkagate/extension/issues/2162)) ([eee145f](https://github.com/polkagate/extension/commit/eee145f7cd543b0400edfe63708d29d37eda95c6))
+
+## [2.7.7](https://github.com/polkagate/extension/compare/v2.7.6...v2.7.7) (2026-05-09)
+
+
+### Bug Fixes
+
+* hide zero-value assets from allocation list ([4c9a996](https://github.com/polkagate/extension/commit/4c9a996cbc41847eb2d791998efd1a044e632ac1))
+
 ## [2.7.6](https://github.com/polkagate/extension/compare/v2.7.5...v2.7.6) (2026-05-06)
 
 

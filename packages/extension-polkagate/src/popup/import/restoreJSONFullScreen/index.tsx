@@ -7,8 +7,10 @@ import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 
 import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 
+import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import { setStorage } from '@polkadot/extension-polkagate/src/util';
@@ -34,6 +36,7 @@ export default function RestoreJson(): React.ReactElement {
   const theme = useTheme();
   const isLight = theme.palette.mode === 'light';
   const navigate = useNavigate();
+  const { setExtensionLock } = useExtensionLockContext();
   const maybeExistingAccounts = useAccounts();
   const { notify } = useAlerts();
 
@@ -159,6 +162,7 @@ export default function RestoreJson(): React.ReactElement {
     }
 
     setIsBusy(true);
+    window.sessionStorage.setItem(STORAGE_KEY.AUTH_HANDOFF_SESSION, 'true');
 
     try {
       const resetOk = await resetOnForgotPassword();
@@ -188,23 +192,27 @@ export default function RestoreJson(): React.ReactElement {
       );
 
       if (localAccountsToUnlock.length > 0) {
+        setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true) as unknown as void;
         const success = await unlockAllAccounts(password, AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000);
 
-        setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true) as unknown as void;
+        await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, success);
 
         if (success) {
-          setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
-          navigate('/') as void;
+          flushSync(() => setExtensionLock(false));
         } else {
-          navigate('/migratePasswords') as void;
+          setExtensionLock(true);
         }
       }
+
+      window.sessionStorage.removeItem(STORAGE_KEY.AUTH_HANDOFF_SESSION);
+      navigate('/') as void;
     } catch (error) {
+      window.sessionStorage.removeItem(STORAGE_KEY.AUTH_HANDOFF_SESSION);
       console.error(error);
       setIsPasswordError(true);
       setIsBusy(false);
     }
-  }, [file, requirePassword, password, selectedAccountsInfo, maybeExistingAccounts, notify, t, handleKeyringPairsJson, handleRegularJson, navigate]);
+  }, [file, requirePassword, password, selectedAccountsInfo, maybeExistingAccounts, notify, t, handleKeyringPairsJson, handleRegularJson, navigate, setExtensionLock]);
 
   const onSelectDeselectAll = useCallback(() => {
     setSelectedAccountsInfo((prev) =>

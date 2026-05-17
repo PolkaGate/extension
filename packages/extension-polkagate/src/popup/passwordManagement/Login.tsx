@@ -3,7 +3,7 @@
 
 import { Box, Container, Grid, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import OnboardingLayout from '@polkadot/extension-polkagate/src/fullscreen/onboarding/OnboardingLayout';
 import useCheckMasterPassword from '@polkadot/extension-polkagate/src/hooks/useCheckMasterPassword';
@@ -30,6 +30,15 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>
 }
 
+const SETUP_ROUTES = [
+  '/account/create',
+  '/account/have-wallet',
+  '/account/import-seed',
+  '/account/import-raw-seed',
+  '/account/restore-json',
+  '/migratePasswords'
+];
+
 function isBiometricPromptCancelled(error: unknown): boolean {
   const errorName = (error as Error | undefined)?.name;
   const errorMessage = (error as Error | undefined)?.message ?? '';
@@ -41,6 +50,7 @@ function isBiometricPromptCancelled(error: unknown): boolean {
 
 function Content({ setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const location = useLocation();
   const navigate = useNavigate();
   const isExtension = useIsExtensionPopup();
   const isPasswordMigrated = useIsPasswordMigrated();
@@ -61,6 +71,7 @@ function Content({ setStep }: Props): React.ReactElement {
   const [biometricPrfSalt, setBiometricPrfSalt] = useState<string>();
   const [biometricError, setBiometricError] = useState<string>();
   const [showPasswordFallback, setShowPasswordFallback] = useState(false);
+  const canUseBiometric = isBiometricAvailable && isPasswordMigrated === true;
 
   useEffect(() => {
     if (skipAutoBiometricRef.current) {
@@ -68,7 +79,7 @@ function Content({ setStep }: Props): React.ReactElement {
     }
   }, []);
 
-  const { accountsNeedMigration, hasLocalAccounts } = useCheckMasterPassword((isUnlocking && isPasswordMigrated === false) ? plainPassword : undefined);
+  const { accountsNeedMigration, hasLocalAccounts, matchedAccountsCount } = useCheckMasterPassword((isUnlocking && isPasswordMigrated === false) ? plainPassword : undefined);
 
   const onPassChange = useCallback((pass: string | null): void => {
     if (!pass) {
@@ -118,13 +129,17 @@ function Content({ setStep }: Props): React.ReactElement {
       setExtensionLock(false);
       hasLocalAccounts && setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
       setStorage(STORAGE_KEY.IS_FORGOTTEN, undefined) as unknown as void;
+
+      if (SETUP_ROUTES.includes(location.pathname)) {
+        navigate('/') as void;
+      }
     } else {
       setExtensionLock(true);
       setIsPasswordError(true);
     }
 
     setPlainPassword(undefined);
-  }, [hasLocalAccounts, setExtensionLock]);
+  }, [hasLocalAccounts, location.pathname, navigate, setExtensionLock]);
 
   const handlePasswordMigration = useCallback(async () => {
     await updateStorage(STORAGE_KEY.LOGIN_INFO, { lastLoginTime: Date.now(), status: LOGIN_STATUS.SET }); // DEPRECATED, will be removed in future releases
@@ -163,7 +178,7 @@ function Content({ setStep }: Props): React.ReactElement {
         return;
       }
 
-      const needsPasswordMigration = accountsNeedMigration?.length && (isOldPasswordCorrect || !oldPasswordExists);
+      const needsPasswordMigration = accountsNeedMigration?.length && !!matchedAccountsCount && (isOldPasswordCorrect || !oldPasswordExists);
 
       if (needsPasswordMigration) {
         await handlePasswordMigration();
@@ -181,7 +196,7 @@ function Content({ setStep }: Props): React.ReactElement {
 
       isUnlockingRef.current = false; // ✅ unlock finished
     }
-  }, [accountsNeedMigration, autoLockPeriod, canUnlockDirectly, handleDirectUnlock, handlePasswordMigration, hashedPassword, isPasswordMigrated, isUnlocking, plainPassword]);
+  }, [accountsNeedMigration, autoLockPeriod, canUnlockDirectly, handleDirectUnlock, handlePasswordMigration, hashedPassword, isPasswordMigrated, isUnlocking, matchedAccountsCount, plainPassword]);
 
   useEffect(() => {
     tryUnlock() as unknown as void;
@@ -207,7 +222,9 @@ function Content({ setStep }: Props): React.ReactElement {
   }, [isExtension, setStep]);
 
   const onBiometricUnlock = useCallback(async (silentFailure = false): Promise<boolean> => {
-    if (!autoLockPeriod || !biometricCredentialId || !biometricPrfSalt) {
+    if (!canUseBiometric || !autoLockPeriod || !biometricCredentialId || !biometricPrfSalt) {
+      setShowPasswordFallback(true);
+
       return false;
     }
 
@@ -226,6 +243,10 @@ function Content({ setStep }: Props): React.ReactElement {
         setExtensionLock(false);
         hasLocalAccounts && setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
         setStorage(STORAGE_KEY.IS_FORGOTTEN, undefined) as unknown as void;
+
+        if (SETUP_ROUTES.includes(location.pathname)) {
+          navigate('/') as void;
+        }
 
         return true;
       }
@@ -250,7 +271,7 @@ function Content({ setStep }: Props): React.ReactElement {
     }
 
     return false;
-  }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, hasLocalAccounts, setExtensionLock, t]);
+  }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, canUseBiometric, hasLocalAccounts, location.pathname, navigate, setExtensionLock, t]);
 
   useEffect(() => {
     if (skipAutoBiometricRef.current) {
@@ -259,6 +280,7 @@ function Content({ setStep }: Props): React.ReactElement {
 
     if (
       !isBiometricAvailable ||
+      !canUseBiometric ||
       !autoLockPeriod ||
       !biometricCredentialId ||
       !biometricPrfSalt ||
@@ -268,8 +290,8 @@ function Content({ setStep }: Props): React.ReactElement {
     }
 
     autoBiometricAttemptedRef.current = true;
-    void onBiometricUnlock(true);
-  }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, isBiometricAvailable, onBiometricUnlock]);
+    onBiometricUnlock(true).catch(console.error);
+  }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, canUseBiometric, isBiometricAvailable, onBiometricUnlock]);
 
   return (
     <Grid container item justifyContent='start' sx={{ p: isExtension ? '18px 24px 24px' : '18px 32px 32px' }}>
@@ -282,11 +304,11 @@ function Content({ setStep }: Props): React.ReactElement {
         {t('Welcome back')}
       </Typography>
       <Typography color='text.secondary' sx={{ mb: '18px', textAlign: 'center', width: '100%' }} variant='B-1'>
-        {t(isBiometricAvailable && !showPasswordFallback ? 'Use biometrics to continue' : 'Enter your password to continue')}
+        {t(canUseBiometric && !showPasswordFallback ? 'Use biometrics to continue' : 'Enter your password to continue')}
       </Typography>
-      {(!isBiometricAvailable || showPasswordFallback) &&
+      {(!canUseBiometric || showPasswordFallback) &&
         <PasswordInput
-          focused={!isBiometricAvailable}
+          focused={!canUseBiometric}
           hasError={isPasswordError}
           onEnterPress={onUnlock}
           onPassChange={onPassChange}
@@ -300,17 +322,18 @@ function Content({ setStep }: Props): React.ReactElement {
         showHidden
         style={{ marginTop: '20px' }}
       />
-      {isBiometricAvailable &&
+      {canUseBiometric &&
         <GradientButton
           disabled={isUnlocking || isBiometricUnlocking}
           isBusy={isBiometricUnlocking}
-          onClick={() => void onBiometricUnlock()}
+          // eslint-disable-next-line react/jsx-no-bind, @typescript-eslint/no-misused-promises
+          onClick={() => onBiometricUnlock()}
           style={{ height: '44px', marginTop: '20px', width: '100%' }}
           text={t('Unlock with biometrics')}
         />
       }
-      {(!isBiometricAvailable || showPasswordFallback) &&
-        (isBiometricAvailable
+      {(!canUseBiometric || showPasswordFallback) &&
+        (canUseBiometric
           ? (
             <ActionButton
               contentPlacement='center'

@@ -954,5 +954,7 @@
   "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "Не удалось выполнить биометрическую разблокировку. Попробуйте снова включить биометрию в настройках или используйте пароль.",
   "Enable Biometric Unlock": "Включить биометрию",
   "Confirm your current password to securely enable biometric unlock on this device.": "Подтвердите текущий пароль, чтобы безопасно включить биометрическую разблокировку на этом устройстве.",
-  "Welcome back": "С возвращением"
+  "Welcome back": "С возвращением",
+  "Time": "Время",
+  "No rewards claimed in this period": "За этот период награды не были получены"
 }

@@ -133,9 +133,7 @@ export default class Extension {
   }
 
   private scheduleExpiryCheck(): void {
-    const accountsLocal = this.localAccounts();
-
-    if (accountsLocal.length === 0) {
+    if (this.localAccounts().length === 0) {
       return;
     }
 
@@ -223,14 +221,12 @@ export default class Extension {
   }
 
   private accountsChangePasswordAll({ newPass, oldPass }: RequestAccountChangePasswordAll): boolean {
-    const accountsLocal = this.localAccounts();
-
-    const res = accountsLocal.map(({ address }) => {
+    const res = this.localAccounts().map(({ address }) => {
       return this.accountsChangePassword({ address, newPass, oldPass });
     });
 
     if (res.every(Boolean)) {
-      void this.clearBiometricEnrollment().catch(console.error);
+      this.clearBiometricEnrollment().catch(console.error);
     }
 
     return res.every(Boolean);
@@ -241,7 +237,7 @@ export default class Extension {
 
     assert(pair, 'oldPass is invalid');
     keyring.encryptAccount(pair, newPass);
-    void this.clearBiometricEnrollment().catch(console.error);
+    this.clearBiometricEnrollment().catch(console.error);
 
     return true;
   }
@@ -270,19 +266,20 @@ export default class Extension {
   }
 
   private lockExtension(): boolean {
-    for (const { address } of this.localAccounts()) {
-      let pair;
+    const failures: unknown[] = [];
 
+    this.localAccounts().forEach(({ address }) => {
       try {
-        pair = keyring.getPair(address);
-      } catch (e) {
-        console.info('SomeThing went wrong to get the pair!', e);
-        continue;
+        this.lockAccount(address);
+      } catch (error) {
+        failures.push(error);
       }
+    });
 
-      if (pair && !pair.isLocked) {
-        pair.lock();
-      }
+    if (failures.length) {
+      console.error('Unable to lock all accounts:', failures);
+
+      return false;
     }
 
     this.clearUnlockExpiry();
@@ -324,7 +321,7 @@ export default class Extension {
 
   private accountsForget({ address }: RequestAccountForget): boolean {
     keyring.forgetAccount(address);
-    void this.clearBiometricEnrollment().catch(console.error);
+    this.clearBiometricEnrollment().catch(console.error);
 
     return true;
   }
@@ -336,7 +333,7 @@ export default class Extension {
       this.accountsForget({ address });
     });
 
-    void this.clearBiometricEnrollment().catch(console.error);
+    this.clearBiometricEnrollment().catch(console.error);
 
     return true;
   }
@@ -525,9 +522,9 @@ export default class Extension {
 
     assert(pair, 'Unable to find pair');
 
-    console.warn('NO TIE ANYMORE IN NEW DESIGN, genesisHash:', genesisHash);
+    console.info('no ie anymore in the new design, g.h.:', genesisHash);
 
-    keyring.saveAccountMeta(pair, { ...pair.meta, genesisHash: null }); // NO TIE ANYMORE IN NEW DESIGN
+    keyring.saveAccountMeta(pair, { ...pair.meta, genesisHash: null });
 
     return true;
   }
@@ -720,17 +717,29 @@ export default class Extension {
     return accounts.filter(({ meta }) => !meta.isExternal);
   }
 
+  private getPair(address: string): KeyringPair {
+    const pair = keyring.getPair(address);
+
+    assert(pair, 'Unable to find pair');
+
+    return pair;
+  }
+
+  private lockAccount(address: string): KeyringPair {
+    const pair = this.getPair(address);
+
+    if (!pair.isLocked) {
+      pair.lock();
+    }
+
+    return pair;
+  }
+
   private unlockPair({ address, password }: { address: string, password: string | undefined }): KeyringPair | null {
     assert(password, 'Password needed to unlock the account');
 
     try {
-      const pair = keyring.getPair(address);
-
-      assert(pair, 'Unable to find pair');
-
-      if (!pair.isLocked) {
-        pair.lock();
-      }
+      const pair = this.lockAccount(address);
 
       pair.decodePkcs8(password);
 
@@ -782,14 +791,19 @@ export default class Extension {
     } catch (error) {
       console.error('accountsUnlockAll failed:', error);
 
+      try {
+        this.localAccounts().forEach(({ address }) => this.lockAccount(address));
+        this.clearUnlockExpiry();
+      } catch (lockError) {
+        console.error('Unable to re-lock accounts after failed unlock attempt:', lockError);
+      }
+
       return false;
     }
   }
 
   private areLocksExpired(): boolean {
-    const accountsLocal = this.localAccounts();
-
-    if (accountsLocal.length === 0) {
+    if (this.localAccounts().length === 0) {
       return false; // no lock when has only external accounts
     }
 

@@ -329,6 +329,7 @@ export const STORAGE_KEY = {
   ADDRESS_BOOK: 'addressBook',
   AI_TX_INFO: 'aiTransactionInfo',
   ASSETS: 'migratedAssets',
+  AUTH_HANDOFF_SESSION: 'authHandoff',
   AUTO_LOCK: 'autoLock',
   AUTO_LOCK_EXPIRED_SESSION: 'autoLockExpired',
   CHECK_BALANCE_ON_ALL_CHAINS: 'checkBalancesOnAllChains',

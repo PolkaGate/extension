@@ -954,5 +954,7 @@
   "Biometric unlock failed. Try re-enabling biometrics in Settings, or use your password.": "生物识别解锁失败。请尝试在设置中重新启用生物识别，或使用密码。",
   "Enable Biometric Unlock": "启用生物识别解锁",
   "Confirm your current password to securely enable biometric unlock on this device.": "请确认当前密码，以便在此设备上安全启用生物识别解锁。",
-  "Welcome back": "欢迎回来"
+  "Welcome back": "欢迎回来",
+  "Time": "时间",
+  "No rewards claimed in this period": "此期间未领取任何奖励"
 }
