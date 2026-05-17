@@ -244,6 +244,10 @@ function Content({ setStep }: Props): React.ReactElement {
         hasLocalAccounts && setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
         setStorage(STORAGE_KEY.IS_FORGOTTEN, undefined) as unknown as void;
 
+        if (SETUP_ROUTES.includes(location.pathname)) {
+          navigate('/') as void;
+        }
+
         return true;
       }
 
@@ -267,7 +271,7 @@ function Content({ setStep }: Props): React.ReactElement {
     }
 
     return false;
-  }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, canUseBiometric, hasLocalAccounts, setExtensionLock, t]);
+  }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, canUseBiometric, hasLocalAccounts, location.pathname, navigate, setExtensionLock, t]);
 
   useEffect(() => {
     if (skipAutoBiometricRef.current) {
