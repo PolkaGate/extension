@@ -71,6 +71,7 @@ function Content({ setStep }: Props): React.ReactElement {
   const [biometricPrfSalt, setBiometricPrfSalt] = useState<string>();
   const [biometricError, setBiometricError] = useState<string>();
   const [showPasswordFallback, setShowPasswordFallback] = useState(false);
+  const canUseBiometric = isBiometricAvailable && isPasswordMigrated === true;
 
   useEffect(() => {
     if (skipAutoBiometricRef.current) {
@@ -221,7 +222,9 @@ function Content({ setStep }: Props): React.ReactElement {
   }, [isExtension, setStep]);
 
   const onBiometricUnlock = useCallback(async (silentFailure = false): Promise<boolean> => {
-    if (!autoLockPeriod || !biometricCredentialId || !biometricPrfSalt) {
+    if (!canUseBiometric || !autoLockPeriod || !biometricCredentialId || !biometricPrfSalt) {
+      setShowPasswordFallback(true);
+
       return false;
     }
 
@@ -264,7 +267,7 @@ function Content({ setStep }: Props): React.ReactElement {
     }
 
     return false;
-  }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, hasLocalAccounts, setExtensionLock, t]);
+  }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, canUseBiometric, hasLocalAccounts, setExtensionLock, t]);
 
   useEffect(() => {
     if (skipAutoBiometricRef.current) {
@@ -273,6 +276,7 @@ function Content({ setStep }: Props): React.ReactElement {
 
     if (
       !isBiometricAvailable ||
+      !canUseBiometric ||
       !autoLockPeriod ||
       !biometricCredentialId ||
       !biometricPrfSalt ||
@@ -282,8 +286,8 @@ function Content({ setStep }: Props): React.ReactElement {
     }
 
     autoBiometricAttemptedRef.current = true;
-    void onBiometricUnlock(true);
-  }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, isBiometricAvailable, onBiometricUnlock]);
+    onBiometricUnlock(true).catch(console.error);
+  }, [autoLockPeriod, biometricCredentialId, biometricPrfSalt, canUseBiometric, isBiometricAvailable, onBiometricUnlock]);
 
   return (
     <Grid container item justifyContent='start' sx={{ p: isExtension ? '18px 24px 24px' : '18px 32px 32px' }}>
@@ -296,11 +300,11 @@ function Content({ setStep }: Props): React.ReactElement {
         {t('Welcome back')}
       </Typography>
       <Typography color='text.secondary' sx={{ mb: '18px', textAlign: 'center', width: '100%' }} variant='B-1'>
-        {t(isBiometricAvailable && !showPasswordFallback ? 'Use biometrics to continue' : 'Enter your password to continue')}
+        {t(canUseBiometric && !showPasswordFallback ? 'Use biometrics to continue' : 'Enter your password to continue')}
       </Typography>
-      {(!isBiometricAvailable || showPasswordFallback) &&
+      {(!canUseBiometric || showPasswordFallback) &&
         <PasswordInput
-          focused={!isBiometricAvailable}
+          focused={!canUseBiometric}
           hasError={isPasswordError}
           onEnterPress={onUnlock}
           onPassChange={onPassChange}
@@ -314,17 +318,18 @@ function Content({ setStep }: Props): React.ReactElement {
         showHidden
         style={{ marginTop: '20px' }}
       />
-      {isBiometricAvailable &&
+      {canUseBiometric &&
         <GradientButton
           disabled={isUnlocking || isBiometricUnlocking}
           isBusy={isBiometricUnlocking}
-          onClick={() => void onBiometricUnlock()}
+          // eslint-disable-next-line react/jsx-no-bind, @typescript-eslint/no-misused-promises
+          onClick={() => onBiometricUnlock()}
           style={{ height: '44px', marginTop: '20px', width: '100%' }}
           text={t('Unlock with biometrics')}
         />
       }
-      {(!isBiometricAvailable || showPasswordFallback) &&
-        (isBiometricAvailable
+      {(!canUseBiometric || showPasswordFallback) &&
+        (canUseBiometric
           ? (
             <ActionButton
               contentPlacement='center'
