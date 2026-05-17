@@ -133,9 +133,7 @@ export default class Extension {
   }
 
   private scheduleExpiryCheck(): void {
-    const accountsLocal = this.localAccounts();
-
-    if (accountsLocal.length === 0) {
+    if (this.localAccounts().length === 0) {
       return;
     }
 
@@ -223,9 +221,7 @@ export default class Extension {
   }
 
   private accountsChangePasswordAll({ newPass, oldPass }: RequestAccountChangePasswordAll): boolean {
-    const accountsLocal = this.localAccounts();
-
-    const res = accountsLocal.map(({ address }) => {
+    const res = this.localAccounts().map(({ address }) => {
       return this.accountsChangePassword({ address, newPass, oldPass });
     });
 
@@ -800,9 +796,7 @@ export default class Extension {
   }
 
   private areLocksExpired(): boolean {
-    const accountsLocal = this.localAccounts();
-
-    if (accountsLocal.length === 0) {
+    if (this.localAccounts().length === 0) {
       return false; // no lock when has only external accounts
     }
 
