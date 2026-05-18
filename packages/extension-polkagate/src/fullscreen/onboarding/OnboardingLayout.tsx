@@ -1,14 +1,14 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Link, useTheme } from '@mui/material';
+import { Box, Container, Grid, Link } from '@mui/material';
 import React from 'react';
 
 import { Version } from '@polkadot/extension-polkagate/src/partials';
 
-import { onboardingBackground } from '../../assets/img';
+import { onboardingBackground, onboardingBackgroundLight } from '../../assets/img';
 import { CarouselFs } from '../../components';
-import { useFullscreen, useTranslation } from '../../hooks';
+import { useFullscreen, useIsDark, useTranslation } from '../../hooks';
 import Socials from '../../popup/settings/partials/Socials';
 import { PRIVACY_POLICY_LINK } from '../../util/constants';
 import LogoWithText from '../components/layout/LogoWithText';
@@ -29,8 +29,7 @@ const INNER_WIDTH = 1416;
 
 function SocialRow({ showLeftColumn }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
+  const isDark = useIsDark();
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' sx={{ bottom: '20px', position: 'absolute', right: showLeftColumn ? '30px' : `calc(${INNER_WIDTH}-50%)px`, width: '50%' }}>
@@ -59,8 +58,7 @@ function SocialRow({ showLeftColumn }: Props): React.ReactElement {
 
 function OnboardingLayout({ children, childrenStyle = {}, showBread = true, showLeftColumn = true, style }: Props): React.ReactElement {
   useFullscreen();
-  const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
+  const isDark = useIsDark();
 
   return (
     <Container
@@ -82,8 +80,8 @@ function OnboardingLayout({ children, childrenStyle = {}, showBread = true, show
           border: isDark ? 'none' : '1px solid #E3E8F7',
           borderRadius: '24px',
           boxShadow: isDark ? 'none' : '0 20px 40px rgba(133, 140, 176, 0.14)',
-          minHeight: '788px',
           height: '100vh',
+          minHeight: '788px',
           p: '12px',
           position: 'relative',
           width: '1440px'
@@ -95,7 +93,7 @@ function OnboardingLayout({ children, childrenStyle = {}, showBread = true, show
           container
           justifyContent={showLeftColumn ? 'start' : 'center'}
           sx={{
-            backgroundImage: `url(${onboardingBackground})`,
+            backgroundImage: `url(${isDark ? onboardingBackground : onboardingBackgroundLight})`,
             backgroundPosition: 'top',
             backgroundRepeat: 'no-repeat',
             borderRadius: '24px',
@@ -109,7 +107,9 @@ function OnboardingLayout({ children, childrenStyle = {}, showBread = true, show
         >
           <Box
             sx={{
-              background: 'linear-gradient(262.56deg, rgba(236, 180, 255, 0) 22.53%, #ECB4FF 47.68%, #ECB4FF 62.78%, rgba(236, 180, 255, 0) 72.53%)',
+              background: isDark
+                ? 'linear-gradient(262.56deg, rgba(236, 180, 255, 0) 22.53%, #ECB4FF 47.68%, #ECB4FF 62.78%, rgba(236, 180, 255, 0) 72.53%)'
+                : 'linear-gradient(262.56deg, rgba(198, 211, 244, 0) 22.53%, #C9D4F2 47.68%, #E2D2F5 62.78%, rgba(226, 210, 245, 0) 72.53%)',
               height: '2px',
               left: `${(INNER_WIDTH - 375) / 2}px`,
               position: 'absolute',
