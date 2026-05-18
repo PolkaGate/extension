@@ -9,7 +9,7 @@ import React, { useMemo } from 'react';
 
 import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 
-import { Logo, DisplayBalance, FormatPrice, MySkeleton } from '../../../components';
+import { DisplayBalance, FormatPrice, Logo, MySkeleton } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
 import { useChainInfo, useIsDark, usePrices, useTokenPrice, useTranslation } from '../../../hooks';
@@ -170,10 +170,11 @@ export default function StakingPortfolio({ buttons = [], disabled, genesisHash, 
   return (
     <GlowBox
       isBlueish={!isFullScreen && isDark}
+      openBottom
       shortSideDividers={isFullScreen}
       style={{
-        bgcolor: undefined,
         background: undefined,
+        bgcolor: undefined,
         border: isLightPopup ? 'none' : undefined,
         boxShadow: isLightPopup ? 'inset 0 1px 0 rgba(244, 246, 255, 0.9), 0px 18px 32px rgba(148, 163, 184, 0.06)' : undefined,
         display: 'grid',
