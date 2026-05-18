@@ -40,6 +40,12 @@ function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, to
   const theme = useTheme();
   const refContainer = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(refContainer);
+  const isDark = theme.palette.mode === 'dark';
+  const iconColor = hovered || isSelected
+    ? '#3F76FF'
+    : isDark
+      ? theme.palette.text.highlight
+      : '#8FA1BE';
 
   useEffect(() => {
     if (isSelected && refContainer.current) {
@@ -55,7 +61,7 @@ function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, to
         placement='top'
       >
         <Grid container item onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
-          <ButtonIcon color={hovered || isSelected ? '#3F76FF' : theme.palette.text.highlight} size='24' variant={isSelected ? 'Bold' : 'Bulk'} />
+          <ButtonIcon color={iconColor} size='24' variant={isSelected ? 'Bold' : 'Bulk'} />
         </Grid>
       </MyTooltip>
       {withBorder &&
