@@ -20,9 +20,10 @@ interface IconElementProp {
   iconSize?: number;
   iconAlwaysBold?: boolean;
   hovered: boolean;
+  disabledIconColor?: string;
 }
 
-const IconElement = ({ IconName, disabled, hovered, iconAlwaysBold, iconSize, iconVariant, iconVariantOnHover, isBlueish }: IconElementProp) => {
+const IconElement = ({ IconName, disabled, disabledIconColor, hovered, iconAlwaysBold, iconSize, iconVariant, iconVariantOnHover, isBlueish }: IconElementProp) => {
   const theme = useTheme();
 
   return (IconName
@@ -30,7 +31,7 @@ const IconElement = ({ IconName, disabled, hovered, iconAlwaysBold, iconSize, ic
       <IconName
         color={
           disabled
-            ? '#BEAAD84D'
+            ? disabledIconColor ?? '#BEAAD84D'
             : isBlueish
               ? theme.palette.text.highlight
               : theme.palette.primary.main
@@ -56,19 +57,23 @@ export interface ActionButtonProps {
   iconSize?: number;
   iconAlwaysBold?: boolean;
   isBusy?: boolean;
+  disabledIconColor?: string;
+  disabledTextColor?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   style?: SxProps<Theme> | undefined;
   text?: string | { text?: string; textPartInColor?: string; };
   variant?: 'text' | 'contained' | 'outlined';
 }
 
-export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBlueish, isBusy, onClick, style, text, variant }: ActionButtonProps): React.ReactElement<ActionButtonProps> {
+export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 'start', disabled, disabledIconColor, disabledTextColor, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBlueish, isBusy, onClick, style, text, variant }: ActionButtonProps): React.ReactElement<ActionButtonProps> {
   const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
   const isExtension = useIsExtensionPopup();
   const borderRadius = isExtension ? '12px' : '18px';
+  const finalDisabledIconColor = disabledIconColor ?? '#BEAAD84D';
+  const finalDisabledTextColor = disabledTextColor ?? '#BEAAD84D';
 
   const ButtonFontStyle = useMemo(() => ({
     ...theme.typography['B-2'],
@@ -98,7 +103,7 @@ export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 's
       marginRight: '16px'
     },
     '& .MuiButton-startIcon svg': {
-      color: disabled ? '#BEAAD84D' : '#BEAAD8'
+      color: disabled ? finalDisabledIconColor : '#BEAAD8'
     }
   };
 
@@ -108,13 +113,13 @@ export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 's
       marginRight: 0
     },
     '& .MuiButton-endIcon svg': {
-      color: disabled ? '#BEAAD84D' : '#BEAAD8'
+      color: disabled ? finalDisabledIconColor : '#BEAAD8'
     }
   };
 
   const renderText = useMemo(() => {
     if (typeof text === 'string') {
-      return <span style={{ color: disabled ? '#BEAAD84D' : isDark ? isBlueish ? '#809ACB' : '#BEAAD8' : '#745D8B', whiteSpace: 'nowrap', ...ButtonFontStyle }}>
+      return <span style={{ color: disabled ? finalDisabledTextColor : isDark ? isBlueish ? '#809ACB' : '#BEAAD8' : '#745D8B', whiteSpace: 'nowrap', ...ButtonFontStyle }}>
         {text}
       </span>;
     } else {
@@ -129,7 +134,7 @@ export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 's
         </Typography>
       );
     }
-  }, [ButtonFontStyle, disabled, isBlueish, isDark, text, theme]);
+  }, [ButtonFontStyle, disabled, finalDisabledTextColor, isBlueish, isDark, text, theme]);
 
   return (
     <Button
@@ -138,6 +143,7 @@ export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 's
         <IconElement
           IconName={EndIcon}
           disabled={disabled}
+          disabledIconColor={finalDisabledIconColor}
           hovered={hovered}
           iconAlwaysBold={iconAlwaysBold}
           iconSize={iconSize}
@@ -151,6 +157,7 @@ export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 's
         <IconElement
           IconName={StartIcon}
           disabled={disabled}
+          disabledIconColor={finalDisabledIconColor}
           hovered={hovered}
           iconAlwaysBold={iconAlwaysBold}
           iconSize={iconSize}

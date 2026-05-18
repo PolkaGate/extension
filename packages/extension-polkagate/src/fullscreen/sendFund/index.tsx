@@ -138,13 +138,22 @@ export default function SendFund(): React.ReactElement {
   }, [formatted, inputs?.amountAsBN, inputs?.decimal, inputs?.feeInfo, inputs?.recipientAddress, inputs?.recipientChain?.text, inputs?.token, t, txInfo]);
 
   const backButtonStyle = useMemo(() => ({
-    '&:hover': {
-      background: isDark ? undefined : '#F3F6FD',
-      borderColor: isDark ? undefined : '#DDE3F4'
-    },
-    background: isDark ? undefined : '#FFFFFF',
-    border: isDark ? undefined : '1px solid #DDE3F4',
-    color: isDark ? undefined : '#745E9F'
+    ...(!isDark
+      ? {
+        '&.Mui-disabled': {
+          background: '#EEF2FB',
+          borderColor: '#DDE3F4',
+          boxShadow: 'none'
+        },
+        '&:hover': {
+          background: '#F3F6FD',
+          borderColor: '#DDE3F4'
+        },
+        background: '#FFFFFF',
+        border: '1px solid #DDE3F4',
+        color: '#745E9F'
+      }
+      : {})
   }), [isDark]);
 
   return (
@@ -217,6 +226,8 @@ export default function SendFund(): React.ReactElement {
             secondaryButtonProps={{
               StartIcon: ArrowLeft,
               disabled: inputStep === INPUT_STEPS.SENDER,
+              disabledIconColor: isDark ? undefined : '#AEB7D3',
+              disabledTextColor: isDark ? undefined : '#9CA8C8',
               iconVariant: 'Linear',
               style: { ...backButtonStyle, width: '15%' }
             }}
