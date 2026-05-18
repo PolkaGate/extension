@@ -72,13 +72,13 @@ function ProfileTabsFS({ initialAccountList, showAddressBook = false, width = '5
     ? 'linear-gradient(270deg, rgba(42, 10, 64, 0.9) 13.79%, rgba(42, 10, 64, 0) 100%)'
     : 'linear-gradient(270deg, rgba(239, 225, 255, 0.24) 0%, rgba(239, 225, 255, 0.08) 54%, rgba(239, 225, 255, 0) 100%)';
   const arrowFadeSx = {
+    WebkitBackdropFilter: 'blur(1px)',
     alignItems: 'center',
-    backdropFilter: 'blur(8px)',
+    backdropFilter: 'blur(1px)',
     display: 'flex',
     height: '100%',
     pointerEvents: 'none',
     position: 'absolute',
-    WebkitBackdropFilter: 'blur(8px)',
     width: '34px',
     zIndex: 1
   } as const;
