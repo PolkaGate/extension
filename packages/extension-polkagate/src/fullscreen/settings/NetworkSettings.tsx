@@ -12,7 +12,7 @@ import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constant
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { Logo, Motion, MySwitch, SearchField } from '../../components';
-import { useTranslation } from '../../hooks';
+import { useIsDark, useTranslation } from '../../hooks';
 import useChainSelectionSettings from '../../hooks/useChainSelectionSettings';
 import Endpoints from './partials/Endpoints';
 import AddNewNetwork from './AddNewNetwork';
@@ -67,14 +67,15 @@ function Item({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: Item
 
 function AddButton(): React.ReactElement {
   const { t } = useTranslation();
+  const isDark = useIsDark();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
   return (
     <>
       <VelvetBox style={{ minWidth: 'fit-content', width: 'auto' }}>
-        <Stack direction='row' onClick={extensionPopupOpener(ExtensionPopups.NEW_NETWORK)} sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-1px)' }, alignItems: 'center', bgcolor: 'background.default', borderRadius: '14px', columnGap: '3px', cursor: 'pointer', height: '40px', p: '0 15px 0 5px', transition: 'all 250ms ease-out', width: '100%' }}>
+        <Stack direction='row' onClick={extensionPopupOpener(ExtensionPopups.NEW_NETWORK)} sx={{ '&:hover': { bgcolor: isDark ? '#2D1E4A' : '#FFFFFF', transform: 'translateY(-1px)' }, alignItems: 'center', bgcolor: isDark ? '#2D1E4A' : '#FFFFFF', borderRadius: '14px', columnGap: '3px', cursor: 'pointer', height: '40px', p: '0 15px 0 5px', transition: 'all 250ms ease-out', width: '100%' }}>
           <Add color='#FF4FB9' size='24' variant='Linear' />
-          <Typography color='text.primary' sx={{ textWrap: 'nowrap', width: 'fit-content' }} variant='B-6'>
+          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ textWrap: 'nowrap', width: 'fit-content' }} variant='B-6'>
             {t('Add New Network')}
           </Typography>
         </Stack>
