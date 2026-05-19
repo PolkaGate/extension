@@ -132,10 +132,13 @@ function Wrapper({ onBack, onCancel, ...content }: WrapperProps): React.ReactEle
       onClose={isSigning ? onBack : onCancel}
       open
       showBackIconAsClose={isSigning}
-      style={{ minHeight: '550px', padding: '10px', position: 'relative', width: 360 }}
+      style={{ padding: '10px', position: 'relative' }}
       title={content.mode.title}
+      width={360}
     >
-      <Content {...content} />
+      <Motion style={{ display: 'block', minHeight: '515px', position: 'relative' }} variant='fade'>
+        <Content {...content} />
+      </Motion>
     </DraggableModal>
   );
 }

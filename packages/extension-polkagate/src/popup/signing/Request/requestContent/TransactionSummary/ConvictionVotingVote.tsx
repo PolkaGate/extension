@@ -22,6 +22,7 @@ interface Props {
 function ConvictionVotingVote({ args, genesisHash }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const { decimal, token } = useChainInfo(genesisHash, true);
   const rfIndex = args.length > 0 ? String(args[0]) : '';
@@ -103,14 +104,14 @@ function ConvictionVotingVote({ args, genesisHash }: Props): React.ReactElement<
             balance={balance}
             decimal={decimal}
             decimalPoint={2}
-            style={{ color: '#EAEBF1', ...theme.typography['B-2'] }}
+            style={{ color: isDark ? '#EAEBF1' : '#2D1E4A', ...theme.typography['B-2'] }}
             token={token}
           />
         }
         <Stack alignItems='center' columnGap='5px' direction='row'>
-          <Typography color='#BEAAD8' sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
+          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             <TwoToneText
-              color={theme.palette.text.primary}
+              color={isDark ? theme.palette.text.primary : '#2D1E4A'}
               text={text}
               textPartInColor={textInColor ?? ''}
             />

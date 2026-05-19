@@ -28,7 +28,7 @@ function LedgerButtons({ disabled, error, isBusy, isMetadataProofReady, ledgerLo
   const isBlueish = useIsBlueish();
 
   return (
-    <Grid container sx={{ bottom: 0, position: 'absolute', ...style }}>
+    <Grid container sx={{ mt: '12px', px: '10px', width: '100%', ...style }}>
       {error &&
         <LedgerErrorMessage error={error} />
       }
@@ -44,7 +44,6 @@ function LedgerButtons({ disabled, error, isBusy, isMetadataProofReady, ledgerLo
         cancelButton
         disabled={ disabled || isMetadataProofReady === false }
         divider
-        flexibleWidth
         isBusy={isBusy}
         onPrimaryClick={ledgerLocked || error ? onRefresh : onSignLedger}
         onSecondaryClick={onCancel}

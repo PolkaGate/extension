@@ -94,7 +94,7 @@ export default function Confirm({ extrinsicPayload, fee, onCancel, onSignature, 
   }, [payload?.address, signId, navigate]);
 
   return (
-    <Grid container item sx={{ bottom: 0, display: 'block', height: '160px', position: 'absolute' }}>
+    <Grid container item sx={{ bottom: 0, display: 'block', height: isHardware ? '185px' : '160px', left: 0, position: 'absolute', right: 0 }}>
       {fee !== null &&
         <FeeRow
           fee={fee}

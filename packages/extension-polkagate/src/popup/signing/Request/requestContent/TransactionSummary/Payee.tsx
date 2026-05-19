@@ -28,6 +28,7 @@ interface StakeAdjustmentInfo {
 function Payee({ genesisHash, payee }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const { Icon, account, color, style, text } = useMemo<StakeAdjustmentInfo>(() => {
     if (payee.isStaked) {
@@ -70,7 +71,7 @@ function Payee({ genesisHash, payee }: Props): React.ReactElement<Props> {
       <Logo genesisHash={genesisHash} size={36} />
       <Stack alignItems='flex-start' direction='column'>
         <Stack alignItems='center' columnGap='5px' direction='row'>
-          <Typography color='#BEAAD8' sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
+          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {text}
           </Typography>
           {account

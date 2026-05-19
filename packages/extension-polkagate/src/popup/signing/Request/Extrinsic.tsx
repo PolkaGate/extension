@@ -178,7 +178,7 @@ function Extrinsic({ onCancel, onSignature, payload, request, setMode, signerPay
       <DappRow
         url={url}
       />
-      <Stack direction='column' sx={{ bgcolor: isExtension ? (isDark ? '#1B133C' : '#F6F1FF') : 'unset', border: isExtension && !isDark ? '1px solid #E3D8F4' : 'none', borderRadius: '16px', mt: '20px', p: '4px' }}>
+      <Stack direction='column' sx={{ bgcolor: isDark ? '#1B133C' : '#F6F1FF', border: !isDark ? '1px solid #E3D8F4' : 'none', borderRadius: '16px', mt: '20px', p: '4px' }}>
         <SignerContext
           address={address}
           genesisHash={genesisHash}
