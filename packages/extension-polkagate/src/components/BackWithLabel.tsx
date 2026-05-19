@@ -5,7 +5,7 @@ import { Box, Container, Grid, type SxProps, type Theme, Typography, useTheme } 
 import { ArrowCircleLeft } from 'iconsax-react';
 import React, { useMemo, useRef } from 'react';
 
-import { useIsBlueish, useIsHovered, useTranslation } from '../hooks';
+import { useIsBlueish, useIsExtensionPopup, useIsHovered, useTranslation } from '../hooks';
 
 export interface StepCounterType { currentStep: number; totalSteps: number }
 
@@ -39,10 +39,13 @@ function BackWithLabel({ content, onClick, stepCounter, style, text }: DynamicBa
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
   const isBlueish = useIsBlueish();
+  const isExtension = useIsExtensionPopup();
   const theme = useTheme();
   const isLight = theme.palette.mode === 'light';
 
-  const iconColor = isBlueish
+  const iconColor = isExtension && isLight
+    ? '#2D1E4A'
+    : isBlueish
     ? isLight ? '#8C78B2' : '#809ACB'
     : '#FF4FB9';
 
