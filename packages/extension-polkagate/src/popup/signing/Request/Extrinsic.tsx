@@ -58,17 +58,19 @@ function decodeMethod(data: string, chain: Chain, specVersion: BN): Decoded {
 }
 
 function DappRow({ url }: { url: string }) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const dapp = new URL(url).origin;
   const faviconUrl = useFavIcon(dapp);
 
   return (
-    <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: '#05091C80', borderRadius: '14px', height: '34px', m: 'auto', pr: '5px', width: 'fit-content' }}>
+    <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: isDark ? '#05091C80' : '#8E839D', borderRadius: '14px', height: '34px', m: 'auto', pr: '5px', width: 'fit-content' }}>
       <Avatar
         src={faviconUrl ?? undefined}
         sx={{ borderRadius: '8px !important', height: '26px', width: '26px' }}
         variant='circular'
       />
-      <Typography color='#BEAAD8' variant='B-1'>
+      <Typography color={isDark ? '#BEAAD8' : '#E9DDFB'} variant='B-1'>
         {dapp}
       </Typography>
     </Grid>
@@ -83,6 +85,7 @@ interface SignerContextProps {
 
 function SignerContext({ address, genesisHash, showBalance = true }: SignerContextProps): React.ReactElement {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { t } = useTranslation();
   const { chainName, decimal, token } = useChainInfo(genesisHash);
 
@@ -102,9 +105,9 @@ function SignerContext({ address, genesisHash, showBalance = true }: SignerConte
         inTitleCase
         showSocial={false}
         style={{
-          backgroundColor: '#05091C',
+          backgroundColor: isDark ? '#05091C' : '#FFFFFF',
           borderRadius: '14px',
-          color: theme.palette.text.primary,
+          color: isDark ? theme.palette.text.primary : '#2D1E4A',
           height: '56px',
           paddingLeft: '10px',
           variant: 'B-2',
@@ -112,20 +115,20 @@ function SignerContext({ address, genesisHash, showBalance = true }: SignerConte
         }}
         withShortAddress
       />
-      <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
+      <Typography color={isDark ? '#AA83DC' : '#745E9F'} fontSize='13px' textTransform='uppercase' variant='B-2'>
         {t('on')}
       </Typography>
-      <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>
+      <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>
         <Logo genesisHash={genesisHash} size={36} />
         <Stack alignItems='flex-start' width='90px'>
-          <Typography color='#EAEBF1' sx={{ overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', width: '95%' }} variant='B-2'>
+          <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} sx={{ overflow: 'hidden', textAlign: 'left', textOverflow: 'ellipsis', width: '95%' }} variant='B-2'>
             {chainName || t('Unknown')}
           </Typography>
           {showBalance &&
             <DisplayBalance
               balance={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
               decimal={decimal}
-              style={{ color: '#BEAAD8', ...theme.typography['B-4'] }}
+              style={{ color: isDark ? '#BEAAD8' : '#745E9F', ...theme.typography['B-4'] }}
               token={token}
             />
           }
@@ -138,6 +141,7 @@ function SignerContext({ address, genesisHash, showBalance = true }: SignerConte
 function Extrinsic({ onCancel, onSignature, payload, request, setMode, signerPayload: { address, genesisHash, method, specVersion: hexSpec }, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const allChains = useAllChains();
   const selectedChains = useSelectedChains();
   const isExtension = useIsExtensionPopup();
@@ -174,7 +178,7 @@ function Extrinsic({ onCancel, onSignature, payload, request, setMode, signerPay
       <DappRow
         url={url}
       />
-      <Stack direction='column' sx={{ bgcolor: isExtension ? '#1B133C' : 'unset', borderRadius: '16px', mt: '20px', p: '4px' }}>
+      <Stack direction='column' sx={{ bgcolor: isExtension ? (isDark ? '#1B133C' : '#F6F1FF') : 'unset', border: isExtension && !isDark ? '1px solid #E3D8F4' : 'none', borderRadius: '16px', mt: '20px', p: '4px' }}>
         <SignerContext
           address={address}
           genesisHash={genesisHash}
@@ -183,7 +187,7 @@ function Extrinsic({ onCancel, onSignature, payload, request, setMode, signerPay
         {decoded.method &&
           <>
             <Stack direction='row' justifyContent='space-between' sx={{ my: '6px', width: '100%' }}>
-              <Typography color='#674394' variant='B-2'>
+              <Typography color={isDark ? '#674394' : '#745E9F'} variant='B-2'>
                 {t('Request content')}
               </Typography>
               <AiInsightErrorBoundary>

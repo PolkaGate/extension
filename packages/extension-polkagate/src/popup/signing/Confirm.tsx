@@ -7,7 +7,7 @@ import type { Balance, ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,6 +22,8 @@ import SignWithPassword from './Request/SignWithPassword';
 
 function FeeRow({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: string }) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { decimal } = useChainInfo(genesisHash);
   const { price } = useTokenPrice(genesisHash);
 
@@ -33,13 +35,13 @@ function FeeRow({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: s
       <Stack alignItems='center' columnGap='5px' direction='row' lineHeight='normal'>
         <FormatPrice
           commify
-          decimalColor='#EAEBF1'
+          decimalColor={isDark ? '#EAEBF1' : '#745E9F'}
           decimalPoint={4}
           fontFamily='Inter'
           fontSize='13px'
           fontWeight={500}
           num={fee ? amountToHuman(fee?.muln(price ?? 0), decimal) : undefined}
-          textColor='#EAEBF1'
+          textColor={isDark ? '#EAEBF1' : '#745E9F'}
         />
         <Typography color='#AA83DC' variant='B-1'>
           {fee?.toHuman()}

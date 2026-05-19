@@ -4,7 +4,7 @@
 import { Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
-import { Logo, DisplayBalance, Identity } from '../../../../../components';
+import { DisplayBalance, Identity, Logo } from '../../../../../components';
 import { useChainInfo, useTranslation } from '../../../../../hooks';
 
 interface Props {
@@ -16,6 +16,7 @@ interface Props {
 function Transfer({ amount, genesisHash, to }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const { decimal, token } = useChainInfo(genesisHash, true);
 
@@ -27,11 +28,11 @@ function Transfer({ amount, genesisHash, to }: Props): React.ReactElement<Props>
           balance={amount}
           decimal={decimal}
           decimalPoint={2}
-          style={{ color: '#EAEBF1', ...theme.typography['B-2'] }}
+          style={{ color: isDark ? '#EAEBF1' : '#2D1E4A', ...theme.typography['B-2'] }}
           token={token}
         />
         <Stack alignItems='center' columnGap='5px' direction='row'>
-          <Typography color='#BEAAD8' sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
+          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {t('Transfer to')}
           </Typography>
           <Identity

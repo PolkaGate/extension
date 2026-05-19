@@ -4,7 +4,7 @@
 import type { Call } from '@polkadot/types/interfaces';
 import type { AnyJson } from '@polkadot/types/types';
 
-import { Grid } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import { ArrowCircleRight } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -25,7 +25,10 @@ interface Props {
 
 function RequestContent({ decoded, genesisHash, setMode }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const isBatchCall = decoded.method?.method.includes('batch');
+  const defaultIconColor = isDark ? '#BEAAD8' : '#745E9F';
 
   const [iconColor, setIconColor] = useState<string[]>([]);
 
@@ -50,16 +53,16 @@ function RequestContent({ decoded, genesisHash, setMode }: Props): React.ReactEl
   return (
     <Grid container item sx={{ gap: '4px', maxHeight: '175px', overflowY: 'auto' }}>
       {decoded?.method && txInfo?.map((info, index) => (
-        <Grid alignItems='center' container item justifyContent='space-between' key={index} sx={{ bgcolor: '#05091C', borderRadius: '14px', flexWrap: 'noWrap', height: isBatchCall ? '40px' : '58px', px: '10px' }}>
+        <Grid alignItems='center' container item justifyContent='space-between' key={index} sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #E3E8F7', borderRadius: '14px', flexWrap: 'noWrap', height: isBatchCall ? '40px' : '58px', px: '10px' }}>
           <TransactionSummary
             genesisHash={genesisHash}
             info={info}
           />
           <ArrowCircleRight
-            color={iconColor?.[index] ?? '#BEAAD8'}
+            color={iconColor?.[index] ?? defaultIconColor}
             onClick={onShowDetails(index)}
             onMouseEnter={handleColor('#f84bb4', index)}
-            onMouseLeave={handleColor('#BEAAD8', index)}
+            onMouseLeave={handleColor(defaultIconColor, index)}
             size={isBatchCall ? '20' : '32'}
             style={{ cursor: 'pointer' }}
             variant='Bulk'

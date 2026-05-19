@@ -3,7 +3,7 @@
 
 import type { Variant } from '@mui/material/styles/createTypography';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { Logo, ShortAddress } from '../../../../../components';
@@ -18,17 +18,19 @@ interface Props {
 
 function TransferAll({ genesisHash, to }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const accountName = useAccountName(to || '');
 
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' justifyContent='start'>
       <Logo genesisHash={genesisHash} size={36} />
       <Stack alignItems='flex-start' direction='column'>
-        <Typography color='#EAEBF1' sx={{ textWrapMode: 'noWrap' }} variant='B-2'>
+        <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} sx={{ textWrapMode: 'noWrap' }} variant='B-2'>
           {t('Entire balance')}
         </Typography>
         <Stack alignItems='center' columnGap='5px' direction='row'>
-          <Typography color='#BEAAD8' sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
+          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {t('Transfer to')}
           </Typography>
           <PolkaGateIdenticon

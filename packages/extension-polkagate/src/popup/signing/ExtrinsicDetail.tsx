@@ -5,7 +5,7 @@ import type { RequestSign } from '@polkadot/extension-base/background/types';
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { TypeRegistry } from '@polkadot/types';
@@ -32,6 +32,8 @@ const STYLE = { '&::after': { background: 'linear-gradient(90deg, rgba(210, 185,
 
 function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const signerPayload = request.payload as SignerPayloadJSON;
   const [{ payload }, setData] = useState<Data>({ hexBytes: null, payload: null });
@@ -60,7 +62,7 @@ function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.Rea
     return String(rawText).split(regex).map((part, index) => {
       if (index % 2 === 1) {
         return (
-          <span key={index} style={{ color: '#82FFA5', fontFamily: 'JetBrainsMono', fontSize: '11px', fontWeight: '500' }}>
+          <span key={index} style={{ color: isDark ? '#82FFA5' : '#31D862', fontFamily: 'JetBrainsMono', fontSize: '11px', fontWeight: '500' }}>
             {part}
           </span>
         );
@@ -68,7 +70,7 @@ function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.Rea
 
       return part;
     });
-  }, [data]);
+  }, [data, isDark]);
 
   const onBack = useCallback((): void => {
     setMode({
@@ -82,44 +84,44 @@ function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.Rea
     <>
       <Grid container item sx={{ display: 'block', fontSize: '16px', justifyContent: 'center', justifyItems: 'center', maxHeight: '465px', minHeight: '465px', overflowY: 'auto' }}>
         <Grid alignItems='center' container item justifyContent='space-between' sx={STYLE}>
-          <Typography color='#BEAAD8' fontSize='13px' variant='B-1'>
+          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} fontSize='13px' variant='B-1'>
             {t('Tip')}
           </Typography>
           <DisplayBalance
             balance={toBN(payload?.tip ?? 0)}
             decimal={decimal}
             decimalPoint={3}
-            style={{ color: '#EAEBF1' }}
+            style={{ color: isDark ? '#EAEBF1' : '#2D1E4A' }}
             token={token}
           />
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-between' sx={STYLE}>
-          <Typography color='#BEAAD8' fontSize='13px' variant='B-1'>
+          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} fontSize='13px' variant='B-1'>
             {t('Nonce')}
           </Typography>
-          <Typography color='#EAEBF1' fontSize='13px' variant='B-1'>
+          <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} fontSize='13px' variant='B-1'>
             {formatNumber(payload?.nonce ?? 0)}
           </Typography>
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-between' sx={STYLE}>
-          <Typography color='#BEAAD8' fontSize='13px' variant='B-1'>
+          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} fontSize='13px' variant='B-1'>
             {t('Pallet')}
           </Typography>
-          <Typography color='#EAEBF1' fontSize='13px' variant='B-1'>
+          <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} fontSize='13px' variant='B-1'>
             {toTitleCase(data?.section)}
           </Typography>
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '10px' }}>
-          <Typography color='#BEAAD8' fontSize='13px' variant='B-1'>
+          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} fontSize='13px' variant='B-1'>
             {t('Method')}
           </Typography>
-          <Typography color='#EAEBF1' fontSize='13px' variant='B-1'>
+          <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} fontSize='13px' variant='B-1'>
             {toTitleCase(data?.method)}
           </Typography>
         </Grid>
         {!!data?.argsEntries?.length &&
-          <Grid alignItems='start' container item sx={{ bgcolor: '#1B133C', borderRadius: '14px', p: '10px', pl: '20px' }}>
-            <Typography color='#AA83DC' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, mb: '10px', pb: '5px', position: 'relative', textAlign: 'left', width: '100%' }} textTransform='uppercase' variant='S-1'>
+          <Grid alignItems='start' container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #E3E8F7', borderRadius: '14px', p: '10px', pl: '20px' }}>
+            <Typography color={isDark ? '#AA83DC' : '#745E9F'} sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, mb: '10px', pb: '5px', position: 'relative', textAlign: 'left', width: '100%' }} textTransform='uppercase' variant='S-1'>
               {t('Arguments')}
             </Typography>
             <Grid container fontSize='11px' sx={{ overflowY: 'auto' }} textAlign='left'>
@@ -130,10 +132,10 @@ function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.Rea
                 return (
                   <div key={index}>
                     <Stack direction='row'>
-                      <Typography color='#AA83DC' fontFamily='JetBrainsMono' fontSize='13px' fontWeight={500} sx={{ mr: '5px', width: 'max-content' }}>
+                      <Typography color={isDark ? '#AA83DC' : '#7A68A4'} fontFamily='JetBrainsMono' fontSize='13px' fontWeight={500} sx={{ mr: '5px', width: 'max-content' }}>
                         {key}:
                       </Typography>
-                      <Typography color='#EAEBF1' component='div' fontFamily='JetBrainsMono' fontSize='13px' fontWeight={500}>
+                      <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} component='div' fontFamily='JetBrainsMono' fontSize='13px' fontWeight={500}>
                         {value !== null && typeof value === 'object'
                           ? <pre style={{ margin: 0 }}>
                             {JSON.stringify(value, null, 2)}
@@ -149,10 +151,10 @@ function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.Rea
           </Grid>
         }
         <Stack direction='column' sx={{ mx: '10px' }}>
-          <Typography color='#BEAAD8' sx={{ m: '15px 0 5px', textAlign: 'left', width: '100%' }} variant='B-1'>
+          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ m: '15px 0 5px', textAlign: 'left', width: '100%' }} variant='B-1'>
             {t('Documentation')}
           </Typography>
-          <Typography color='#EAEBF1' sx={{ mb: '10px', pb: '5px', textAlign: 'left', width: '100%' }} variant='B-5'>
+          <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} sx={{ mb: '10px', pb: '5px', textAlign: 'left', width: '100%' }} variant='B-5'>
             {docs}
           </Typography>
         </Stack>
