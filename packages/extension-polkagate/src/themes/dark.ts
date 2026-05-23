@@ -45,6 +45,7 @@ export const darkTheme: ExtendedThemeOptions = {
     divider: 'rgba(255, 255, 255, 0.1)',
     dividerGradient: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
     gradient: {
+      brand: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
       primary: `radial-gradient(
         circle at 95% 19%, 
         rgba(91, 0, 182, 0.35) 2%, 

@@ -117,7 +117,7 @@ const PositionsExplore = ({ earningsCount, positionsCount, selectedTab, setter }
       />
       <Grid
         sx={{
-          background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+          background: theme.palette.gradient.brand,
           borderRadius: '10px',
           height: '36px',
           left: `${indicatorStyle.left}px`,

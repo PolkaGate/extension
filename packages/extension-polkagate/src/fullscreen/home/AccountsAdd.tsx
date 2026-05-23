@@ -39,7 +39,7 @@ function AccountsAdd(): React.ReactElement {
             onClick={onClick}
             ref={ref}
             sx={{
-              background: isHovered ? '#6E00B1' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+              background: isHovered ? '#6E00B1' : theme.palette.gradient.brand,
               borderRadius: '50%',
               cursor: 'pointer',
               display: 'inline-flex',
@@ -51,7 +51,7 @@ function AccountsAdd(): React.ReactElement {
             <Box
               sx={{
                 alignItems: 'center',
-                background: isHovered ? '#6E00B1' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+                background: isHovered ? '#6E00B1' : theme.palette.gradient.brand,
                 borderRadius: '50%',
                 color: '#FFFFFF',
                 display: 'flex',

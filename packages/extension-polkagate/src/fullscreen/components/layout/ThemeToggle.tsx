@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { Moon, Sun1 } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
@@ -10,6 +10,7 @@ import { ColorContext } from '@polkadot/extension-polkagate/src/components';
 import { useIsDark } from '../../../hooks';
 
 export default function ThemeToggle(): React.ReactElement {
+  const theme = useTheme();
   const isDark = useIsDark();
   const colorMode = useContext(ColorContext);
 
@@ -44,12 +45,13 @@ export default function ThemeToggle(): React.ReactElement {
         transform: isDark ? 'translateX(0px)' : 'translateX(20px)',
         transition: 'transform 0.2s ease-in-out',
         width: 28
-      }}>
+      }}
+      >
 
         <Box
           sx={{
             alignItems: 'center',
-            background: isDark ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#FFFFFF',
+            background: isDark ? theme.palette.gradient.brand : '#FFFFFF',
             borderRadius: '50%',
             display: 'flex',
             height: 'stretch',

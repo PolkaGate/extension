@@ -45,7 +45,7 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
       ? 'linear-gradient(262.56deg, #B1004D 0%, #DC45A0 45%, #B1004D 100%)'
       : 'linear-gradient(180deg, #FFF6FA 0%, #FFE8F1 100%)')
     : (isDark
-      ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)'
+      ? theme.palette.gradient.brand
       : 'linear-gradient(180deg, #FFFFFF 0%, #F6F1FF 100%)');
   const borderColor = isError
     ? (isDark ? '#8F0040' : '#FFD0E0')
@@ -89,11 +89,11 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
           color: textColor,
           columnGap: '5px',
           display: 'flex',
-          minHeight: '52px',
           justifyContent: 'center',
+          minHeight: '52px',
           overflow: 'hidden',
-          position: 'relative',
           pointerEvents: 'auto',
+          position: 'relative',
           px: 2,
           py: 1.5,
           textAlign: 'center',
@@ -107,7 +107,7 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
               component='img'
               src={check as string}
               sx={{ height: '28px', left: '20px', position: 'absolute', width: '28px' }}
-            />
+              />
         }
         <Typography
           color={textColor}

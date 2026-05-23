@@ -85,7 +85,7 @@ export default function AddressInput({ addWithQr = false, address, disabled = fa
   const [hoveredAction, setHoveredAction] = useState<'clear' | 'inline' | 'qr' | 'select' | 'paste' | undefined>(undefined);
   const defaultActionColor = isDark ? theme.palette.primary.main : theme.palette.text.secondary;
   const hoverActionColor = theme.palette.text.primary;
-  const hoverActionBackground = 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)';
+  const hoverActionBackground = theme.palette.gradient.brand;
   const getActionColor = useCallback((action: 'clear' | 'inline' | 'qr' | 'select' | 'paste') =>
     hoveredAction === action ? hoverActionColor : defaultActionColor
   , [defaultActionColor, hoverActionColor, hoveredAction]);

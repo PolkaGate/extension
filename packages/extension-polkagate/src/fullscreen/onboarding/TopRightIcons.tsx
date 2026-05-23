@@ -25,7 +25,7 @@ function TopRightIcons(): React.ReactElement {
 
   const shieldHoveredStyle = useMemo(() => ({
     '&::after': {
-      background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+      background: theme.palette.gradient.brand,
       borderRadius: '10px',
       content: '""',
       inset: 0,
@@ -39,7 +39,7 @@ function TopRightIcons(): React.ReactElement {
     inset: 0,
     position: 'absolute',
     transition: 'all 250ms ease-out'
-  } as SxProps<Theme>), [hovered, isDark]);
+  } as SxProps<Theme>), [hovered, isDark, theme.palette.gradient.brand]);
 
   const onHoveredPopup = useCallback((popup?: ExtensionPopups) => () => {
     setHovered(popup ?? ExtensionPopups.NONE);

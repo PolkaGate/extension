@@ -21,6 +21,7 @@ interface AccountsIconProps {
 }
 
 const AccountsIcon = ({ accountsLength, address, isInAccountLists, noSelection }: AccountsIconProps) => {
+  const theme = useTheme();
   const isDark = useIsDark();
 
   return (
@@ -40,7 +41,7 @@ const AccountsIcon = ({ accountsLength, address, isInAccountLists, noSelection }
             </Stack>
             <Grid
               alignContent='center' container item justifyContent='center' sx={{
-                background: isInAccountLists ? 'transparent' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+                background: isInAccountLists ? 'transparent' : theme.palette.gradient.brand,
                 borderRadius: '1024px',
                 color: isDark ? '#EAEBF1' : '#FFFFFF',
                 fontFamily: 'Inter',
@@ -69,6 +70,7 @@ function AccountSelection({ noSelection = false }: Props): React.ReactElement {
   const isBlueish = useIsBlueish();
   const accounts = useAccounts();
   const location = useLocation();
+  const locationState = location.state as { from?: string } | null;
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();
 
@@ -77,14 +79,14 @@ function AccountSelection({ noSelection = false }: Props): React.ReactElement {
       return;
     }
 
-    const from = location?.state?.from as string || '/';
+    const from = locationState?.from || '/';
 
     if (location.pathname === '/accounts') {
       navigate(from) as void;
     } else {
       navigate('/accounts', { state: { from: location.pathname } }) as void;
     }
-  }, [location.pathname, location?.state?.from, navigate, noSelection]);
+  }, [location.pathname, locationState?.from, navigate, noSelection]);
 
   const isInAccountLists = location?.pathname === '/accounts';
   const hoverBg = isDark ? '#674394' : '#EEF1FF';

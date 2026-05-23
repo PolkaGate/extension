@@ -122,7 +122,7 @@ function AccountDropDown({ address, disabled, iconSize = '25px', isExternal, nam
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           ref={containerRef}
-          sx={{ background: hovered || open ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : theme.palette.mode === 'dark' ? '#05091C' : '#FFFFFF', border: `2px solid ${hovered || open ? 'transparent' : theme.palette.mode === 'dark' ? '#1B133C' : theme.palette.border.paper}`, borderRadius: '12px', boxShadow: theme.palette.mode === 'dark' ? 'none' : '0px 6px 18px rgba(133, 140, 176, 0.16)', cursor: 'pointer', height: '40px', transition: 'all 0.2s ease-in-out', width: '40px', ...style }}
+          sx={{ background: hovered || open ? theme.palette.gradient.brand : theme.palette.mode === 'dark' ? '#05091C' : '#FFFFFF', border: `2px solid ${hovered || open ? 'transparent' : theme.palette.mode === 'dark' ? '#1B133C' : theme.palette.border.paper}`, borderRadius: '12px', boxShadow: theme.palette.mode === 'dark' ? 'none' : '0px 6px 18px rgba(133, 140, 176, 0.16)', cursor: 'pointer', height: '40px', transition: 'all 0.2s ease-in-out', width: '40px', ...style }}
         >
           <MoreVert sx={{ color: hovered || open ? '#EAEBF1' : theme.palette.mode === 'dark' ? '#AA83DC' : theme.palette.primary.main, fontSize: iconSize }} />
         </Grid>

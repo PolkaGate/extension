@@ -27,10 +27,10 @@ export default function PortfolioActionButton({ Icon, disabled = false, isFullSc
   const background = useMemo(() =>
     isFullScreen
       ? isDark
-        ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)'
+        ? theme.palette.gradient.brand
         : '#745E9F'
-      : isDark ? '#809ACB40' : '#EEF1FF'
-    , [isDark, isFullScreen]);
+    : isDark ? '#809ACB40' : '#EEF1FF'
+    , [isDark, isFullScreen, theme.palette.gradient.brand]);
 
   const defaultTextColor = useMemo(() =>
     isLightFullscreen
@@ -56,12 +56,12 @@ export default function PortfolioActionButton({ Icon, disabled = false, isFullSc
       onClick={disabled ? noop : onClick}
       sx={{
         ':hover': {
-          background,
-          borderColor: isLightFullscreen ? '#DDE3F4' : 'transparent',
-          color: isLightPopup ? '#745E9F' : '#FFFFFF',
           '& .portfolio-action-text': {
             color: isLightPopup ? '#745E9F' : '#FFFFFF'
-          }
+          },
+          background,
+          borderColor: isLightFullscreen ? '#DDE3F4' : 'transparent',
+          color: isLightPopup ? '#745E9F' : '#FFFFFF'
         },
         bgcolor: isFullScreen
           ? isDark

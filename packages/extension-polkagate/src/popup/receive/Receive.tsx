@@ -43,6 +43,7 @@ interface AddressComponentProp {
 
 function AddressComponent({ address, chain }: AddressComponentProp) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
   const { isHovered, ref } = useIsHovered();
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -65,7 +66,7 @@ function AddressComponent({ address, chain }: AddressComponentProp) {
             {toShortAddress(address, 12)}
           </Typography>
         </Grid>
-        <Grid container item onClick={onCopy} ref={ref} sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
+        <Grid container item onClick={onCopy} ref={ref} sx={{ background: theme.palette.gradient.brand, borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
           <DocumentCopy color='#fff' size='17' variant={isHovered ? 'Bulk' : 'Bold'} />
         </Grid>
       </Grid>
@@ -162,6 +163,7 @@ interface QrCodeProps {
 
 function QrCode({ address, onBackToAccount, selectedChain, setSelectedChain }: QrCodeProps) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const formattedAddress = useFormatted(address, selectedChain?.value as string);
 
   const chainLogo = useMemo(() => {
@@ -189,7 +191,7 @@ function QrCode({ address, onBackToAccount, selectedChain, setSelectedChain }: Q
       <Grid container item pt='6px' px='16px'>
         <AddressComponent address={formattedAddress ?? address} chain={selectedChain} />
       </Grid>
-      <Grid container item sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '17px', mb: '29px', mt: '25px', p: '4px', width: 'fit-content' }}>
+      <Grid container item sx={{ background: theme.palette.gradient.brand, borderRadius: '17px', mb: '29px', mt: '25px', p: '4px', width: 'fit-content' }}>
         <QRCode
           bgColor='#fff'
           ecLevel='H'

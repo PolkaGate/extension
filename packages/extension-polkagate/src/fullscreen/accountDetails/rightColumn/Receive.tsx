@@ -47,7 +47,7 @@ function AddressComponent({ address, chainName, onCopy }: AddressComponentProp) 
           {toShortAddress(address, 12)}
         </Typography>
       </Grid>
-      <Grid container item onClick={onCopy} ref={ref} sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
+      <Grid container item onClick={onCopy} ref={ref} sx={{ background: theme.palette.gradient.brand, borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
         <DocumentCopy color='#fff' size='17' variant={isHovered ? 'Bulk' : 'Bold'} />
       </Grid>
     </Grid>
@@ -56,6 +56,7 @@ function AddressComponent({ address, chainName, onCopy }: AddressComponentProp) 
 
 function Receive({ address, closePopup, onClose, setAddress }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const account = useSelectedAccount();
   const allChains = useGenesisHashOptions({ isEthereum: isEthereumAddress(address || ''), withRelay: false });
 
@@ -111,7 +112,7 @@ function Receive({ address, closePopup, onClose, setAddress }: Props): React.Rea
               onSelect={setSelectedChain}
               options={allChains}
               searchPlaceholder={t('🔍 Search networks')}
-            />)
+               />)
             : (<>
               <Stack direction='column' justifyItems='center' sx={{ display: 'block', width: '100%' }}>
                 <Address2
@@ -119,7 +120,7 @@ function Receive({ address, closePopup, onClose, setAddress }: Props): React.Rea
                   name={account?.name}
                   style={{ marginTop: '10px' }}
                 />
-                <Grid container item sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '17px', mb: '29px', mt: '25px', p: '4px', width: 'fit-content' }}>
+                <Grid container item sx={{ background: theme.palette.gradient.brand, borderRadius: '17px', mb: '29px', mt: '25px', p: '4px', width: 'fit-content' }}>
                   <QRCode
                     bgColor='#fff'
                     ecLevel='H'

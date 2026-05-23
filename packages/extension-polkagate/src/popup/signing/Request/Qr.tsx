@@ -74,7 +74,7 @@ function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props
       }
       <Box
         sx={{
-          background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+          background: theme.palette.gradient.brand,
           borderRadius: '14px',
           justifySelf: 'center',
           my: '25px',

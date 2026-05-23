@@ -4,7 +4,7 @@
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { ExpandMore } from '@mui/icons-material';
-import { Box, ClickAwayListener, Grid, Popover, Stack, styled, type SxProps, type Theme, Typography, alpha, useTheme } from '@mui/material';
+import { alpha, Box, ClickAwayListener, Grid, Popover, Stack, styled, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useRef } from 'react';
 
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
@@ -49,7 +49,8 @@ function Tab({ initialAccountList, label }: { initialAccountList: AccountJson[] 
   }, [label]);
 
   return (
-    <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='space-between' onClick={onClick} ref={refContainer}
+    <Stack
+alignItems='center' columnGap='5px' direction='row' justifyContent='space-between' onClick={onClick} ref={refContainer}
       sx={{ backgroundColor: hovered ? (isDark ? '#6743944D' : '#F4F6FF') : 'transparent', borderRadius: '8px', cursor: 'pointer', height: '40px', px: '5px', width: '100%' }}
     >
       <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start'>
@@ -58,7 +59,7 @@ function Tab({ initialAccountList, label }: { initialAccountList: AccountJson[] 
           {t(label)}
         </Typography>
       </Stack>
-      <Box alignItems='center' justifyContent='center' sx={{ background: isSelected ? (isDark ? '#05091C' : alpha(theme.palette.primary.main, 0.12)) : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '1024px', display: 'flex', height: '20px', minWidth: '20px' }}>
+      <Box alignItems='center' justifyContent='center' sx={{ background: isSelected ? (isDark ? '#05091C' : alpha(theme.palette.primary.main, 0.12)) : theme.palette.gradient.brand, borderRadius: '1024px', display: 'flex', height: '20px', minWidth: '20px' }}>
         <Typography color={isSelected ? theme.palette.text.primary : '#EAEBF1'} variant='B-1'>
           {profileAccounts?.length ?? 0}
         </Typography>
@@ -171,7 +172,7 @@ function ProfilesDropDown({ mode, setMode, style }: Props) {
               <Typography sx={{ lineHeight: '100%', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', textTransform: 'uppercase', whiteSpace: 'nowrap' }} variant='H-3'>
                 {`${selectedProfile} accounts`}
               </Typography>
-              <Box sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '50%', display: 'flex', height: '20px', justifyContent: 'center', minWidth: '20px' }}>
+              <Box sx={{ background: theme.palette.gradient.brand, borderRadius: '50%', display: 'flex', height: '20px', justifyContent: 'center', minWidth: '20px' }}>
                 <Typography fontWeight={700} variant='B-1'>
                   {profileAccounts?.length}
                 </Typography>

@@ -25,7 +25,7 @@ const StepItem = ({ inputStep, label, num }: { inputStep: number, num: number, l
           alignItems: 'center',
           background: isActive
             ? isDark
-              ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)'
+              ? theme.palette.gradient.brand
               : 'linear-gradient(262.56deg, #A86BE4 0%, #FF4FB9 55%, #A86BE4 100%)'
             : isDark
               ? '#674394'

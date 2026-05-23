@@ -67,7 +67,7 @@ function Tab({ label, setSortBy, sortBy }: TabProps): React.ReactElement {
       <Typography color={isSelected ? selectedColor : hovered ? hoveredTextColor : textColor} variant='B-2'>
         {t(label)}
       </Typography>
-      <CheckIcon sx={{ background: isDark ? (isBlueish ? '#3988FF' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)') : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '999px', color: '#fff', fontSize: '16px', fontWeight: 900, height: '18px', transition: 'all 100ms ease-out', visibility: isSelected ? 'visible' : 'hidden', width: '18px' }} />
+      <CheckIcon sx={{ background: isDark ? (isBlueish ? '#3988FF' : theme.palette.gradient.brand) : theme.palette.gradient.brand, borderRadius: '999px', color: '#fff', fontSize: '16px', fontWeight: 900, height: '18px', transition: 'all 100ms ease-out', visibility: isSelected ? 'visible' : 'hidden', width: '18px' }} />
     </Container>
   );
 }

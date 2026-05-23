@@ -72,7 +72,7 @@ function MenuButton({ Icon, onClick, path, style = { marginBottom: '8px' }, text
       {
         isSelected &&
         <Box sx={{
-          background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+          background: theme.palette.gradient.brand,
           filter: 'blur(25px)',
           height: '48px',
           position: 'absolute',

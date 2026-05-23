@@ -23,7 +23,7 @@ export default function RewardConfigureButton({ onClick }: { onClick: () => void
         ref={refContainer}
         sx={{
           ':hover': {
-            background: isDark ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#745E9F',
+            background: isDark ? theme.palette.gradient.brand : '#745E9F',
             borderColor: isDark ? '#1B133C' : '#745E9F',
             color: '#FFFFFF'
           },

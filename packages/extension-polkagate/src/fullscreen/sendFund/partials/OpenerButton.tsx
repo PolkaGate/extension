@@ -26,7 +26,7 @@ export default function OpenerButton({ flip, onClick, style = {}, type = 'Edit' 
           '& .edit-icon': {
             color: 'inherit'
           },
-          background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+          background: theme.palette.gradient.brand,
           color: '#EAEBF1',
           cursor: 'pointer'
         },

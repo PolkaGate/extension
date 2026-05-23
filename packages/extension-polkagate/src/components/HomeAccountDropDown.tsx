@@ -20,7 +20,7 @@ const DropSelectContainer = styled(Grid, {
   ':hover': { background: theme.palette.mode === 'dark' ? '#674394' : '#F3F6FD' },
   alignItems: 'center',
   backdropFilter: 'blur(20px)',
-  background: focused ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : theme.palette.mode === 'dark' ? '#1B133C' : '#FFFFFF',
+  background: focused ? theme.palette.gradient.brand : theme.palette.mode === 'dark' ? '#1B133C' : '#FFFFFF',
   border: focused ? 'none' : `1px solid ${theme.palette.mode === 'dark' ? 'transparent' : '#DDE3F4'}`,
   borderRadius: '12px',
   boxShadow: theme.palette.mode === 'dark' ? '0px 0px 24px 8px #4E2B7259 inset' : '0px 8px 22px rgba(133, 140, 176, 0.12)',
@@ -66,7 +66,6 @@ function HomeAccountDropDown({ style }: Props) {
       }
     ];
 
- 
     if (!isEthereum && !selectedAccount?.isExternal) {
       OPTIONS.push({
         Icon: Broom,

@@ -48,7 +48,7 @@ function Tab({ initialAccountList, label }: { initialAccountList: AccountJson[] 
         </Box>
       </Stack>
       {isSelected &&
-        <Box sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', height: '2px', mt: '10px', width: '100%' }} />
+        <Box sx={{ background: theme.palette.gradient.brand, height: '2px', mt: '10px', width: '100%' }} />
       }
     </Stack>
   );

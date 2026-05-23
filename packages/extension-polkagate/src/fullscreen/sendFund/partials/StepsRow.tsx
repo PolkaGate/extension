@@ -32,7 +32,7 @@ const StepItem = ({ inputStep, label, num, withDivider = true }: { inputStep: nu
           alignItems: 'center',
           background: isActive
             ? isDark
-              ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)'
+              ? theme.palette.gradient.brand
               : 'linear-gradient(262.56deg, #A86BE4 0%, #FF4FB9 55%, #A86BE4 100%)'
             : isDark
               ? '#674394'
@@ -74,7 +74,7 @@ export default function StepsRow({ inputStep }: { inputStep: INPUT_STEPS }): Rea
   const { t } = useTranslation();
 
   return (
-    <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' sx={{ width: FULLSCREEN_WIDTH, my: '19px' }}>
+    <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' sx={{ my: '19px', width: FULLSCREEN_WIDTH }}>
       <StepItem
         inputStep={inputStep}
         label={t('Sender')}

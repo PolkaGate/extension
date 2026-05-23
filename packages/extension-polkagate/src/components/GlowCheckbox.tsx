@@ -20,7 +20,7 @@ interface Props {
   borderStyle?: SxProps<Theme> | undefined;
 }
 
-function GlowCheckbox({ borderStyle ={}, changeState, checked = false, disabled, iconStyle = {}, isBlueish, label, labelPartInColor, labelStyle, style }: Props): React.ReactElement<Props> {
+function GlowCheckbox({ borderStyle = {}, changeState, checked = false, disabled, iconStyle = {}, isBlueish, label, labelPartInColor, labelStyle, style }: Props): React.ReactElement<Props> {
   const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);
@@ -67,7 +67,7 @@ function GlowCheckbox({ borderStyle ={}, changeState, checked = false, disabled,
 
     ...(state && {
       '&::before': {
-        background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+        background: theme.palette.gradient.brand,
         border: 'unset',
         inset: 0,
         position: 'absolute',

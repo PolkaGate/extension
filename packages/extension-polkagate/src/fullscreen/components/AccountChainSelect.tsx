@@ -25,6 +25,7 @@ interface AccountsIconProps {
 }
 
 const AccountsIcon = ({ accountsLength, address, noSelection }: AccountsIconProps) => {
+  const theme = useTheme();
   const isDark = useIsDark();
 
   return (
@@ -45,7 +46,7 @@ const AccountsIcon = ({ accountsLength, address, noSelection }: AccountsIconProp
             <Grid
               alignContent='center' container item justifyContent='center'
               sx={{
-                background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+                background: theme.palette.gradient.brand,
                 borderRadius: '999px',
                 color: isDark ? '#EAEBF1' : '#FFFFFF',
                 fontFamily: 'Inter',

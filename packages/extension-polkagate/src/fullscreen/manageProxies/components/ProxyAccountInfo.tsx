@@ -47,8 +47,8 @@ export default function ProxyAccountInfo({ handleDelete, proxyItem, showCheck = 
 
   const cardBackground = selected
     ? isDark
-      ? 'linear-gradient(#05091C, #05091C) padding-box, linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%) border-box'
-      : 'linear-gradient(#FFFFFF, #FFFFFF) padding-box, linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%) border-box'
+      ? `linear-gradient(#05091C, #05091C) padding-box, ${theme.palette.gradient.brand} border-box`
+      : `linear-gradient(#FFFFFF, #FFFFFF) padding-box, ${theme.palette.gradient.brand} border-box`
     : isDark ? '#05091C' : '#FFFFFF';
   const cardBorder = selected ? '2px solid transparent' : `1px solid ${isDark ? '#2D1E4A' : '#E3E8F7'}`;
   const primaryTextColor = isDark ? '#EAEBF1' : theme.palette.text.primary;

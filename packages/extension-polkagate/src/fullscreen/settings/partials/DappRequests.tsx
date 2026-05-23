@@ -38,7 +38,7 @@ function Item({ Icon, caption, label, notification }: ItemProps): React.ReactEle
       onClick={onClick}
       sx={{
         background: isSelected
-          ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)'
+          ? theme.palette.gradient.brand
           : isDark ? '#BEAAD833' : '#FFFFFF',
         border: '1px solid',
         borderColor: isSelected ? 'transparent' : isDark ? '#BEAAD833' : '#DDE3F4',

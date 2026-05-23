@@ -44,6 +44,7 @@ declare module '@mui/material/styles' {
   }
 
   interface TypeText {
+    brand: string;
     highlight: string;
     muted: string;
   }

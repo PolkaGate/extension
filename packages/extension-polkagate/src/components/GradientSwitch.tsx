@@ -25,7 +25,7 @@ const Ball = styled(Grid)<{ checked: boolean; disabled: boolean; isdark: boolean
   zIndex: 2
 }));
 
-const SwitchContainer = styled(Grid)<{ checked: boolean; disabled: boolean; isdark: boolean }>(({ checked, disabled, isdark }) => ({
+const SwitchContainer = styled(Grid)<{ checked: boolean; disabled: boolean; isdark: boolean }>(({ checked, disabled, isdark, theme }) => ({
   '&::after': {
     background: disabled ? (isdark ? '#6743944D' : '#C7CEE4') : (isdark ? '#674394' : '#CCD2EA'),
     borderRadius: '999px',
@@ -37,7 +37,7 @@ const SwitchContainer = styled(Grid)<{ checked: boolean; disabled: boolean; isda
     zIndex: -1
   },
   '&::before': {
-    background: isdark ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#3988FF',
+    background: isdark ? theme.palette.gradient.brand : '#3988FF',
     borderRadius: '999px',
     content: '""',
     inset: '-2px',
