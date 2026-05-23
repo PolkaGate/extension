@@ -20,11 +20,11 @@ function InfoRow({ Icon, text, textPartInColor }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
   const variant = isExtension ? 'B-3' : 'B-2';
-  const iconColor = isDark ? '#AA83DC' : '#745D8B';
+  const iconColor = theme.palette.accent.icon;
   const iconBackground = isDark
     ? 'linear-gradient(180deg, #674394 0%, #4B2A75 50%, #171739 100%)'
     : 'linear-gradient(180deg, #E8DEF8 0%, #D6C7EA 52%, #C4B3DD 100%)';
-  const textColor = isDark ? '#BEAAD8' : '#745D8B';
+  const textColor = theme.palette.accent.text;
   const highlightColor = isDark ? '#AA83DC' : '#9B6BE8';
 
   return (

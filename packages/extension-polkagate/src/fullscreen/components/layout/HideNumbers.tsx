@@ -1,16 +1,17 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import { Eye, EyeSlash } from 'iconsax-react';
 import React from 'react';
 
 import { useIsDark, useIsHideNumbers } from '../../../hooks';
 
 function HideNumbers(): React.ReactElement {
+  const theme = useTheme();
   const isDark = useIsDark();
   const hoverBg = isDark ? '#674394' : '#F3F6FD';
-  const eyeColor = isDark ? '#AA83DC' : '#745D8B';
+  const eyeColor = theme.palette.accent.icon;
 
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 

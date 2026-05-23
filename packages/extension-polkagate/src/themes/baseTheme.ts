@@ -3,35 +3,81 @@
 
 /* eslint-disable header/header */
 
-import type { ThemeOptions, TypeAction, TypeBackground } from '@mui/material';
+import type { ThemeOptions, TypeAction } from '@mui/material';
 import type { CSSProperties } from 'react';
 
+interface PolkaGateAccent {
+  icon: string;
+  text: string;
+  textStrong: string;
+}
+
+interface PolkaGateShadow {
+  card: string;
+  popover: string;
+}
+
+interface PolkaGateSkeleton {
+  accent: string;
+  default: string;
+  muted: string;
+  subtle: string;
+}
+
+interface PolkaGateSurface {
+  badge: string;
+  disabled: string;
+  hover: string;
+  input: string;
+  panel: string;
+  panelAlt: string;
+  popover: string;
+  selected: string;
+}
+
 declare module '@mui/material/styles' {
+  interface TypeBackground {
+    input: string;
+    strong: string;
+    subtle: string;
+  }
+
   interface TypeText {
     highlight: string;
+    muted: string;
   }
   interface Palette {
+    accent: PolkaGateAccent;
     approval: Palette['primary'];
     aye: Palette['primary'];
     backgroundFL: TypeText;
     border: Partial<TypeBackground>;
+    dividerGradient: string;
     gradient: TypeText;
     icon: Partial<TypeText>;
     label: Partial<TypeText>;
     menuIcon: TypeAction;
     nay: Palette['primary'];
+    shadow: PolkaGateShadow;
+    skeleton: PolkaGateSkeleton;
+    surface: PolkaGateSurface;
     support: Palette['primary'];
   }
   interface PaletteOptions {
+    accent?: Partial<PolkaGateAccent>;
     approval?: PaletteOptions['primary'];
     aye?: PaletteOptions['primary'];
     backgroundFL?: Partial<TypeText>;
     border?: Partial<TypeBackground>;
+    dividerGradient?: string;
     icon?: Partial<TypeText>;
     gradient?: Partial<TypeText>;
     label?: Partial<TypeText>;
     menuIcon?: Partial<TypeAction>;
     nay?: PaletteOptions['primary'];
+    shadow?: Partial<PolkaGateShadow>;
+    skeleton?: Partial<PolkaGateSkeleton>;
+    surface?: Partial<PolkaGateSurface>;
     support?: PaletteOptions['primary'];
   }
 }

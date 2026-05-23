@@ -28,10 +28,9 @@ function AccountSettings(): React.ReactElement {
   const selectedChain = useAccountSelectedChain(address);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
-  const footerActionColor = isDark ? '#BEAAD8' : '#745D8B';
+  const footerActionColor = theme.palette.accent.text;
   const footerActionHoverColor = '#AA83DC';
-  const footerActionIconColor = isDark ? '#AA83DC' : '#745D8B';
+  const footerActionIconColor = theme.palette.accent.icon;
 
   useEffect(() => {
     if (!address) {

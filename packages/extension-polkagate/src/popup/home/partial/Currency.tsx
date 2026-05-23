@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Share } from 'iconsax-react';
 import React, { useCallback, useContext, useState } from 'react';
 
@@ -11,10 +11,11 @@ import { useIsDark } from '../../../hooks';
 import SelectCurrency from './SelectCurrency';
 
 function Currency() {
+  const theme = useTheme();
   const { currency } = useContext(CurrencyContext);
   const isDark = useIsDark();
   const hoverBg = isDark ? '#674394' : '#EEF1FF';
-  const textColor = isDark ? '#BEAAD8' : '#745D8B';
+  const textColor = theme.palette.accent.text;
 
   const containerStyle: SxProps<Theme> = {
     '&:hover': {

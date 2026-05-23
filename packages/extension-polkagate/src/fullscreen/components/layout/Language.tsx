@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChevronRight } from '@mui/icons-material';
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import { Translate } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
@@ -17,6 +17,7 @@ import { ExtensionPopups } from '../../../util/constants';
 
 export default function Language(): React.ReactElement {
   const settings = useContext(SettingsContext);
+  const theme = useTheme();
   const isDark = useIsDark();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
@@ -60,14 +61,14 @@ export default function Language(): React.ReactElement {
           boxShadow: isDark ? 'none' : '0 6px 16px rgba(133, 140, 176, 0.10)',
           cursor: 'pointer',
           height: '36px',
-          width: '100%',
           px: '10px',
-          transition: 'all 200ms ease-out'
+          transition: 'all 200ms ease-out',
+          width: '100%'
         }}
       >
         <Stack alignItems='center' columnGap='8px' direction='row' sx={{ alignItems: 'center' }}>
-          <Translate color={isDark ? '#AA83DC' : '#745D8B'} size='14' variant='Bulk' />
-          <Typography color={isDark ? '#BEAAD8' : '#745D8B'} variant='B-4'>
+          <Translate color={theme.palette.accent.icon} size='14' variant='Bulk' />
+          <Typography color={theme.palette.accent.text} variant='B-4'>
             {language}
           </Typography>
         </Stack>

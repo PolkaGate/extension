@@ -3,7 +3,7 @@
 
 import type { ItemInformation } from '../../../fullscreen/nft/utils/types';
 
-import { Box, Container, Grid, Typography } from '@mui/material';
+import { Box, Container, Grid, Typography, useTheme } from '@mui/material';
 import { ArrowRight2 } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -38,6 +38,7 @@ const NoNftAlert = () => {
 
 function NFTBox() {
   const { t } = useTranslation();
+  const theme = useTheme();
   const account = useSelectedAccount();
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
@@ -70,7 +71,7 @@ function NFTBox() {
 
   const itemsToShow = useMemo(() => nfts?.filter(({ isCollection }) => !isCollection)?.slice(0, MAX_NFT_TO_SHOW), [MAX_NFT_TO_SHOW, nfts]);
 
-  const fetchMetadata = useCallback(async () => {
+  const fetchMetadata = useCallback(async() => {
     if (!itemsToShow || itemsToShow?.length === 0 || !account) {
       return;
     }
@@ -114,7 +115,7 @@ function NFTBox() {
           </Container>
           {isExtension
             ? <Grid alignItems='center' columnGap='5px' container item justifyContent='center' onClick={openNft} sx={{ cursor: 'pointer', p: '8px 0 4px' }}>
-              <Typography color={isDark ? '#BEAAD8' : '#745D8B'} variant='B-2'>
+              <Typography color={theme.palette.accent.text} variant='B-2'>
                 {t('See all')}
               </Typography>
               <ArrowRight2 color='#BEAAD880' size='14' />

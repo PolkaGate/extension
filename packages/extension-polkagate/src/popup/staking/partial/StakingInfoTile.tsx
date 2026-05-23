@@ -12,7 +12,7 @@ import { PENDING_REWARDS_TEXT } from '@polkadot/extension-polkagate/src/fullscre
 import { type BN, noop } from '@polkadot/util';
 
 import { CryptoFiatBalance, DisplayBalance, FormatPrice, MySkeleton, MyTooltip } from '../../../components';
-import { useIsDark, useIsHideNumbers, useTranslation } from '../../../hooks';
+import { useIsHideNumbers, useTranslation } from '../../../hooks';
 
 interface TileActionButtonProps {
   text: string;
@@ -62,14 +62,16 @@ export function TileActionButton({ Icon, iconVariant = 'Bulk', isDisabled = fals
           justifyContent='center'
           onClick={isDisabled ? noop : onClick}
           sx={{
-            ':hover': isDisabled ? {} : {
-              bgcolor: isFullScreen ? '#674394' : isLightPopup ? '#F0F3FF' : theme.palette.text.highlight,
-              borderColor: isLightPopup ? '#C8D2EC' : 'transparent',
-              color: isLightPopup ? '#6F5A96' : '#FFFFFF',
-              '& .staking-tile-action-text': {
+            ':hover': isDisabled
+              ? {}
+              : {
+                '& .staking-tile-action-text': {
+                  color: isLightPopup ? '#6F5A96' : '#FFFFFF'
+                },
+                bgcolor: isFullScreen ? '#674394' : isLightPopup ? '#F0F3FF' : theme.palette.text.highlight,
+                borderColor: isLightPopup ? '#C8D2EC' : 'transparent',
                 color: isLightPopup ? '#6F5A96' : '#FFFFFF'
-              }
-            },
+              },
             bgcolor: isFullScreen
               ? isDisabled
                 ? isDark ? '#1B133C' : '#EEF2FB'
@@ -110,7 +112,6 @@ interface StakingFiatCryptoFSProps {
 
 const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: StakingFiatCryptoFSProps) => {
   const theme = useTheme();
-  const isDark = useIsDark();
 
   const { isHideNumbers } = useIsHideNumbers();
 
@@ -129,7 +130,7 @@ const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: Staki
             width={77}
           />
           <MySkeleton
-            bgcolor={isDark ? '#1A1836' : '#99A1C440'}
+            bgcolor={theme.palette.skeleton.subtle}
             style={{ marginTop: '6px' }}
             width={48}
           />

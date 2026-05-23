@@ -13,7 +13,7 @@ const StyledTextField = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'hasError' && prop !== 'isBlueish'
 })<{ hasError?: boolean; isBlueish?: boolean }>(({ hasError, isBlueish, theme }) => ({
   '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
+    borderColor: hasError ? theme.palette.error.main : theme.palette.border.input
   },
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
@@ -27,22 +27,22 @@ const StyledTextField = styled(TextField, {
       },
       '& fieldset.MuiOutlinedInput-notchedOutline': {
         backgroundColor: 'unset',
-        borderColor: hasError ? theme.palette.error.main : '#3988FF',
+        borderColor: hasError ? theme.palette.error.main : theme.palette.text.highlight,
         borderWidth: '2px',
         transition: 'all 150ms ease-out'
       }
     },
     '&:hover': {
-      backgroundColor: theme.palette.mode === 'dark' ? isBlueish ? '#222442' : '#2D1E4A' : '#e5e7ed',
+      backgroundColor: theme.palette.mode === 'dark' && isBlueish ? '#222442' : theme.palette.surface.hover,
       transition: 'all 150ms ease-out'
     },
     '&:hover fieldset': {
-      borderColor: isBlueish ? '#2E2B52' : '#BEAAD833',
+      borderColor: isBlueish ? '#2E2B52' : theme.palette.border.input,
       transition: 'all 150ms ease-out',
       zIndex: 0
     },
-    backgroundColor: theme.palette.mode === 'dark' ? isBlueish ? '#2224424D' : '#1B133C' : '#EFF1F9',
-    borderColor: isBlueish ? '#2E2B52' : '#BEAAD833',
+    backgroundColor: theme.palette.mode === 'dark' && isBlueish ? '#2224424D' : theme.palette.surface.popover,
+    borderColor: isBlueish ? '#2E2B52' : theme.palette.border.input,
     borderRadius: '12px',
     color: hasError ? theme.palette.error.main : isBlueish ? theme.palette.text.highlight : theme.palette.text.secondary,
     height: '44px',
@@ -94,8 +94,8 @@ function PasswordInput({ Icon, errorMessage, focused = false, hasError = false, 
   }, [onEnterPress]);
 
   const commonColor = useMemo(() => isDark
-    ? isBlueish ? theme.palette.text.highlight : '#AA83DC'
-    : '#8F97B8', [isBlueish, isDark, theme.palette.text.highlight]);
+    ? isBlueish ? theme.palette.text.highlight : theme.palette.primary.main
+    : theme.palette.text.secondary, [isBlueish, isDark, theme.palette.primary.main, theme.palette.text.highlight, theme.palette.text.secondary]);
 
   const InputIcon = Icon ?? Check;
 
@@ -114,7 +114,7 @@ function PasswordInput({ Icon, errorMessage, focused = false, hasError = false, 
                 aria-label='toggle password visibility'
                 edge='end'
                 onClick={handleClickShowPassword}
-                sx={{ bgcolor: isDark ? isBlueish ? '#222442' : '#2D1E4A' : '#FFFFFF', borderRadius: '8px' }}
+                sx={{ bgcolor: isDark && isBlueish ? '#222442' : theme.palette.surface.input, borderRadius: '8px' }}
                 tabIndex={-1}
               >
                 {showPassword
@@ -127,7 +127,7 @@ function PasswordInput({ Icon, errorMessage, focused = false, hasError = false, 
           startAdornment: (
             <InputAdornment position='start'>
               <InputIcon
-                color={hasError ? '#FF4FB9' : focusing ? '#3988FF' : commonColor}
+                color={hasError ? theme.palette.error.main : focusing ? theme.palette.text.highlight : commonColor}
                 size='22'
                 variant={focusing ? 'Bold' : 'Bulk'}
               />
@@ -149,7 +149,7 @@ function PasswordInput({ Icon, errorMessage, focused = false, hasError = false, 
         value={value}
       />
       {hasError &&
-        <Typography color='#FF4FB9' sx={{ display: 'flex', height: '6px' }} variant='B-1'>
+        <Typography color='error.main' sx={{ display: 'flex', height: '6px' }} variant='B-1'>
           { errorMessage ?? t('Wrong password.')}
         </Typography>
       }

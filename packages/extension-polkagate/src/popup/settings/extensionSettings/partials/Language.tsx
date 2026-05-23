@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowDown2, Translate } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
@@ -16,6 +16,7 @@ import { ExtensionPopups } from '../../../../util/constants';
 
 export default function Language(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const languageTicker = useSelectedLanguage();
   const isDark = useIsDark();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
@@ -33,7 +34,7 @@ export default function Language(): React.ReactElement {
           {t('LANGUAGE')}
         </Typography>
         <Stack columnGap='10px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.LANGUAGE)} sx={{ alignItems: 'center', cursor: 'pointer', mt: '5px' }}>
-          <Translate color={isDark ? '#AA83DC' : '#745D8B'} size='18' variant='Bulk' />
+          <Translate color={theme.palette.accent.icon} size='18' variant='Bulk' />
           <Stack columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.LANGUAGE)} sx={{ alignItems: 'center' }}>
             <Typography variant='B-1'>
               {language}

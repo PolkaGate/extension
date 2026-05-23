@@ -28,7 +28,7 @@ function RequestContent({ decoded, genesisHash, setMode }: Props): React.ReactEl
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
   const isBatchCall = decoded.method?.method.includes('batch');
-  const defaultIconColor = isDark ? '#BEAAD8' : '#745E9F';
+  const defaultIconColor = theme.palette.accent.textStrong;
 
   const [iconColor, setIconColor] = useState<string[]>([]);
 

@@ -30,14 +30,14 @@ const StyledButton = styled(Grid, {
 
   return {
     '&:hover': {
-      background: isLight ? '#F3F6FD' : isExtension ? '#809ACB60' : '#3b295eff',
+      background: isLight ? theme.palette.surface.hover : isExtension ? '#809ACB60' : '#3b295eff',
       transition: 'all 150ms ease-in-out'
     },
     alignItems: 'center',
-    background: isLight ? '#FFFFFF' : isExtension ? '#809ACB26' : '#2D1E4A',
-    border: isLight ? '1px solid #DDE3F4' : 'none',
+    background: isLight ? theme.palette.surface.input : isExtension ? '#809ACB26' : theme.palette.surface.hover,
+    border: isLight ? `1px solid ${theme.palette.border.strong}` : 'none',
     borderRadius: '12px',
-    boxShadow: isLight ? '0px 4px 14px rgba(148, 163, 184, 0.12)' : 'none',
+    boxShadow: isLight ? theme.palette.shadow.card : 'none',
     cursor: 'pointer',
     justifyContent: 'center',
     padding: '1px 10px',
@@ -55,7 +55,7 @@ const AmountButton = ({ buttonName, isExtension, onClick, value }: AmountButtonP
 
   return (
     <StyledButton isExtension={isExtension} onClick={handleClick} theme={theme}>
-      <Typography color={isLight ? '#745E9F' : isExtension ? 'text.highlight' : '#AA83DC'} variant='B-2'>
+      <Typography color={isLight ? theme.palette.text.secondary : isExtension ? 'text.highlight' : 'primary.main'} variant='B-2'>
         {buttonName}
       </Typography>
     </StyledButton>
@@ -183,6 +183,7 @@ export default function StakeAmountInput({ bodyStyle = {}, buttonsArray = [], de
 
   const [textFieldValue, setTextFieldValue] = useState<string | null | undefined>();
   const [memorizedErrorMessage, setMemorizedErrorMessage] = useState<string | undefined>();
+  const bodyBackground = isLight ? theme.palette.surface.input : isExtension ? theme.palette.surface.panelAlt : theme.palette.background.default;
 
   useEffect(() => {
     if (!errorMessage) {
@@ -244,11 +245,11 @@ export default function StakeAmountInput({ bodyStyle = {}, buttonsArray = [], de
 
   return (
     <Stack direction='column' sx={style}>
-      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isLight ? '#FFFFFF' : isExtension ? '#110F2A' : '#05091C', border: errorMessage ? '1px solid #FF4FB9' : isLight ? '1px solid #DDE3F4' : 'none', borderRadius: '14px', boxShadow: isLight ? '0px 10px 24px rgba(148, 163, 184, 0.12)' : 'none', display: 'flex', p: '12px', transition: 'all 150ms ease-out', width: '100%', ...bodyStyle }}>
+      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: bodyBackground, border: errorMessage ? `1px solid ${theme.palette.error.main}` : isLight ? `1px solid ${theme.palette.border.strong}` : 'none', borderRadius: '14px', boxShadow: isLight ? theme.palette.shadow.card : 'none', display: 'flex', p: '12px', transition: 'all 150ms ease-out', width: '100%', ...bodyStyle }}>
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', px: '10px' }}>
           <Typography variant='B-1'>
             <TwoToneText
-              backgroundColor={isLight ? '#FFFFFF' : isExtension ? '#110F2A' : '#AA83DC26'}
+              backgroundColor={bodyBackground}
               color={isLight ? '#6F5A96' : isExtension ? theme.palette.text.highlight : '#AA83DC'}
               text={title ?? ''}
               textPartInColor={titleInColor ?? ''}
@@ -286,7 +287,7 @@ export default function StakeAmountInput({ bodyStyle = {}, buttonsArray = [], de
         }
       </Stack>
       <Collapse in={!!errorMessage} sx={{ textAlign: 'left', width: '100%' }}>
-        <Typography color='#FF4FB9' variant='B-1'>
+        <Typography color='error.main' variant='B-1'>
           {memorizedErrorMessage}
         </Typography>
       </Collapse>

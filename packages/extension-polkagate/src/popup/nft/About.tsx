@@ -1,8 +1,6 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-//@ts-nocheck
-
 import type { ItemInformation } from '@polkadot/extension-polkagate/fullscreen/nft/utils/types';
 
 import { Box, Divider, Grid, Stack, Typography } from '@mui/material';
@@ -30,12 +28,10 @@ function Line({ my }: { my?: string }): React.ReactElement {
 }
 
 function AccountRow({ address, genesisHash, label }: { label: string, address: string, genesisHash: string }): React.ReactElement {
-  const isDark = useIsDark();
-
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between' lineHeight='35px'>
       <Stack alignItems='baseline' columnGap='3px' direction='row'>
-        <Typography color={isDark ? '#BEAAD8' : '#745D8B'} textAlign='left' variant='B-1'>
+        <Typography color='accent.text' textAlign='left' variant='B-1'>
           {label}
         </Typography>
         <CopyAddressButton address={address} padding={0} />
@@ -64,7 +60,7 @@ export default function About({ nft }: { nft: ItemInformation | undefined }): Re
             <Typography color={isDark ? '#EAEBF1' : '#745D8B'} sx={{ '> p': { m: 0 }, maxHeight: '258px', overflow: 'auto', width: '100%' }} textAlign='justify' variant='B-5'>
               <ReactMarkdown
                 components={{
-                  a: ({ _node, ...props }) => <a style={{ color: isDark ? '#AA83DC' : '#674394' }} {...props} />
+                  a: ({ node: _node, ...props }) => <a style={{ color: isDark ? '#AA83DC' : '#674394' }} {...props} />
                 }}
                 linkTarget='_blank'
               >

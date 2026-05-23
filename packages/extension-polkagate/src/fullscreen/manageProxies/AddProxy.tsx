@@ -35,9 +35,9 @@ export default function AddProxy({ genesisHash, proxiedAddress, proxyItems, setN
   const accountDisplayName = useAccountDisplay(proxiedAddress, genesisHash);
   const proxyTypes = useProxyTypes(genesisHash);
   const modalBg = isDark ? '#1B133C' : '#F8F9FF';
-  const descriptionColor = isDark ? '#BEAAD8' : '#745D8B';
+  const descriptionColor = theme.palette.accent.text;
   const labelColor = isDark ? '#EAEBF1' : theme.palette.text.primary;
-  const secondaryTextColor = isDark ? '#BEAAD8' : '#745D8B';
+  const secondaryTextColor = theme.palette.accent.text;
 
   const [proxyAddress, setProxyAddress] = useState<string | null>();
   const [delay, setDelay] = useState<number>(0);

@@ -43,10 +43,10 @@ const ProxyAccounts = ({ accounts, genesisHash }: ProxyAccountsProps) => {
           nameStyle={{ textAlign: 'center' }}
           showShortAddress
           style={{
-            backgroundColor: isDark ? '#C6AECC26' : '#EEF2FB',
-            border: isDark ? undefined : '1px solid #DDE3F4',
+            backgroundColor: theme.palette.surface.selected,
+            border: isDark ? undefined : `1px solid ${theme.palette.border.strong}`,
             borderRadius: '9px',
-            color: isDark ? '#AA83DC' : theme.palette.text.secondary,
+            color: isDark ? theme.palette.primary.main : theme.palette.text.secondary,
             margin: '3px',
             padding: '4px 8px 4px 4px',
             variant: 'B-2'
@@ -66,7 +66,7 @@ const ValidatorsConfirm = ({ genesisHash, nominators }: { genesisHash: string | 
       <Typography color='text.primary' lineHeight='normal' variant='H-1'>
         {nominators.length}
       </Typography>
-      <Typography color='#AA83DC' variant='H-3'>
+      <Typography color='primary.main' variant='H-3'>
         {`/ ${stakingConst?.maxNominations ?? 16}`}
       </Typography>
       <Typography color='text.secondary' pl='3px' variant='H-3'>
@@ -92,10 +92,10 @@ const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
       isBlueish={isBlueish}
       noGlowBall={!isDark}
       style={{
-        backgroundColor: isDark ? undefined : '#FFFFFF',
-        border: isDark ? undefined : '1px solid #E3E8F7',
+        backgroundColor: isDark ? undefined : theme.palette.surface.input,
+        border: isDark ? undefined : `1px solid ${theme.palette.border.subtle}`,
         borderRadius: '24px',
-        boxShadow: isDark ? undefined : '0 12px 28px rgba(133, 140, 176, 0.12)',
+        boxShadow: isDark ? undefined : theme.palette.shadow.card,
         m: 0,
         minHeight: '150px',
         width: '100%'
@@ -121,7 +121,7 @@ const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
                   ? <ProxyAccounts
                     accounts={accounts}
                     genesisHash={genesisHash}
-                  />
+                    />
                   : <Identity
                     address={accounts[0]}
                     addressStyle={{ color: isDark ? '#AA83DC' : theme.palette.text.secondary, variant: 'B-1' }}
@@ -131,7 +131,7 @@ const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
                     noIdenticon
                     style={{ maxWidth: '170px', overflow: 'hidden', padding: '10px 0 18px', textOverflow: 'ellipsis', variant: 'B-3' }}
                     withShortAddress
-                  />
+                    />
               }
             </>
             : amount &&
@@ -153,6 +153,9 @@ interface DetailProps {
   showDate: boolean | undefined;
   transactionDetail: TransactionDetail;
 }
+
+const isFeeInfo = (content: TransactionDetail[keyof TransactionDetail]): content is FeeInfo =>
+  typeof content === 'object' && content !== null && 'fee' in content;
 
 const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailProps) => {
   const { t } = useTranslation();
@@ -207,8 +210,8 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
         direction='column'
         sx={{
           alignItems: 'center',
-          bgcolor: isDark ? '#05091C' : '#FFFFFF',
-          border: isDark ? 'none' : '1px solid #E3E8F7',
+          bgcolor: theme.palette.surface.input,
+          border: isDark ? 'none' : `1px solid ${theme.palette.border.subtle}`,
           borderRadius: '14px',
           justifyContent: 'center',
           maxHeight: '260px',
@@ -240,9 +243,9 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                   <Typography
                     color={color}
                     sx={{
-                      bgcolor: isHash || isAddress ? (isDark ? '#C6AECC26' : '#EEF2FB') : 'none',
+                      bgcolor: isHash || isAddress ? theme.palette.surface.selected : 'none',
                       border: isHash || isAddress
-                        ? `1px solid ${isDark ? 'transparent' : '#DDE3F4'}`
+                        ? `1px solid ${isDark ? 'transparent' : theme.palette.border.strong}`
                         : 'none',
                       borderRadius: '9px',
                       p: '2px 3px'
@@ -257,19 +260,19 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                         ? (
                           <DisplayBalance
                             balance={
-                              isFee && typeof content === 'object' && 'fee' in (content as any)
-                                ? (content as FeeInfo).fee
+                              isFeeInfo(content)
+                                ? content.fee
                                 : (content as string)
                             }
-                            decimal={(isFee && typeof content === 'object' && 'decimal' in (content as any)
-                              ? (content as FeeInfo).decimal
+                            decimal={(isFeeInfo(content)
+                              ? content.decimal
                               : isFee ? nativeAssetDecimal : _decimal) ?? 0}
                             style={{
                               color: isBlueish ? theme.palette.text.highlight : theme.palette.primary.main,
                               width: 'max-content'
                             }}
-                            token={(isFee && typeof content === 'object' && 'token' in (content as any)
-                              ? (content as FeeInfo).token
+                            token={(isFeeInfo(content)
+                              ? content.token
                               : isFee ? nativeToken : token) ?? ''}
                           />)
                         : isDate
@@ -313,6 +316,7 @@ function Buttons({ address, backToHome, backToHomeText, extrinsicIndex, genesisH
       : { link: undefined };
     const url = link ?? `https://subscan.io/account/${address}`;
 
+    // eslint-disable-next-line no-undef
     chrome.tabs.create({ url }).catch(console.error);
   }, [address, chainName, extrinsicIndex, txHash]);
 
@@ -354,7 +358,7 @@ function Buttons({ address, backToHome, backToHomeText, extrinsicIndex, genesisH
             />}
           style={{ width: '100%' }}
           text={t('View on Explorer')}
-        />
+          />
         : <GradientButton
           onClick={goToExplorer}
           startIconNode={
@@ -366,7 +370,7 @@ function Buttons({ address, backToHome, backToHomeText, extrinsicIndex, genesisH
           }
           style={{ ...btnStyle, zIndex: 2 }}
           text={t('View on Explorer')}
-        />
+          />
       }
     </Stack>
   );
@@ -521,9 +525,9 @@ export default function Confirmation({ address, backToHome, backToHomeText, gene
             open={openModal}
             showBackIconAsClose
             style={{
-              backgroundColor: isDark ? '#1B133C' : '#F8FAFF',
-              border: isDark ? undefined : '1px solid #E3E8F7',
-              boxShadow: isDark ? undefined : '0 20px 40px rgba(133, 140, 176, 0.18)',
+              backgroundColor: theme.palette.surface.panel,
+              border: isDark ? undefined : `1px solid ${theme.palette.border.subtle}`,
+              boxShadow: isDark ? undefined : theme.palette.shadow.card,
               minHeight: '600px',
               padding: '20px 9px 10px'
             }}

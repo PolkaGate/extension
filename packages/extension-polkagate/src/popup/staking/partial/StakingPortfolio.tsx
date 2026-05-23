@@ -192,11 +192,11 @@ export default function StakingPortfolio({ buttons = [], disabled, genesisHash, 
         ? (
             <Stack direction='column'>
               <MySkeleton
-                bgcolor={theme.palette.mode === 'dark' ? '#BEAAD840' : '#E4EAF9'}
+                bgcolor={theme.palette.skeleton.accent}
                 style={{ margin: isFullScreen ? '5px 0 0px' : '5px 0 0', width: '258px' }}
               />
               <MySkeleton
-                bgcolor={theme.palette.mode === 'dark' ? '#BEAAD840' : '#E4EAF9'}
+                bgcolor={theme.palette.skeleton.accent}
                 style={{ margin: isFullScreen ? '8px 0 8px' : '5px 0 0', width: '155px' }}
               />
             </Stack>
@@ -219,7 +219,7 @@ export default function StakingPortfolio({ buttons = [], disabled, genesisHash, 
       <DisplayBalance
         balance={staked}
         decimal={decimal}
-        skeletonStyle={{ bgcolor: '#BEAAD840', borderRadius: '10px', margin: '10px 0 1px', width: '88px' }}
+        skeletonStyle={{ bgcolor: theme.palette.skeleton.accent, borderRadius: '10px', margin: '10px 0 1px', width: '88px' }}
         style={{
           backgroundColor: isFullScreen ? (theme.palette.mode === 'dark' ? '#AA83DC26' : 'transparent') : 'transparent',
           borderRadius: '9px',

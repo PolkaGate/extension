@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Divider, Grid, type SxProps, type Theme } from '@mui/material';
+import { Divider, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import { Radar2 } from 'iconsax-react';
 import React, { useCallback, useRef } from 'react';
 
@@ -16,6 +16,7 @@ interface Props {
 
 function AccountVisibilityToggler({ size = '24', style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
   const account = useSelectedAccount();
   const ref = useRef<HTMLDivElement | null>(null);
@@ -24,7 +25,7 @@ function AccountVisibilityToggler({ size = '24', style = {} }: Props): React.Rea
   const activeBg = isDark ? '#AA83DC26' : '#FFFFFF';
   const iconColor = !account?.isHidden && hovered
     ? (isDark ? '#EAEBF1' : '#4F4779')
-    : isDark ? '#AA83DC' : '#745D8B';
+    : theme.palette.accent.icon;
 
   const toggleVisibility = useCallback((): void => {
     account?.address && showAccount(account.address, account.isHidden || false).catch(console.error);

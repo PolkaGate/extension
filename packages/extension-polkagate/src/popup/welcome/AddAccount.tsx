@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Dialog, Grid, Typography } from '@mui/material';
+import { Box, Container, Dialog, Grid, Typography, useTheme } from '@mui/material';
 import { Check, ColorSwatch, Convertshape2, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +21,7 @@ interface Props {
 
 function AddAccount({ openMenu, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
   const navigate = useNavigate();
 
@@ -84,9 +85,9 @@ function AddAccount({ openMenu, setPopup }: Props): React.ReactElement {
     >
       <Container disableGutters sx={{ height: '100%', width: '100%' }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-          <CustomCloseSquare color={isDark ? '#AA83DC' : '#745D8B'} onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
+          <CustomCloseSquare color={theme.palette.accent.icon} onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: isDark ? '#120D27' : '#F8FAFF', background: isDark ? undefined : 'linear-gradient(180deg, #F1E4FF 0%, #F8FAFF 45%, #FFFFFF 100%)', border: '2px solid', borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ background: isDark ? undefined : 'linear-gradient(180deg, #F1E4FF 0%, #F8FAFF 45%, #FFFFFF 100%)', bgcolor: isDark ? '#120D27' : '#F8FAFF', border: '2px solid', borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative' }}>
           <GradientBorder />
           <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
             <Typography color={isDark ? '#FFFFFF' : '#2D1E4A'} textTransform='uppercase' variant='H-2'>

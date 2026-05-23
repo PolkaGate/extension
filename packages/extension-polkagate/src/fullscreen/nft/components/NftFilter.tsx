@@ -103,6 +103,7 @@ const Filters = React.memo(function Filters({ dispatchFilter, dispatchSort, filt
 
 function NftFilters({ dispatchFilter, dispatchSort, filters, sort }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
@@ -121,11 +122,11 @@ function NftFilters({ dispatchFilter, dispatchSort, filters, sort }: Props): Rea
   return (
     <>
       <Grid alignItems='center' aria-describedby={id} columnGap='5px' component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: 'none', cursor: 'pointer', height: 'fit-content', p: 0, width: 'fit-content' }}>
-        <DocumentFilter color={isDark ? '#AA83DC' : '#745D8B'} size='18px' variant='Bulk' />
-        <Typography color={isDark ? '#AA83DC' : '#745D8B'} variant='B-4'>
+        <DocumentFilter color={theme.palette.accent.icon} size='18px' variant='Bulk' />
+        <Typography color={theme.palette.accent.icon} variant='B-4'>
           {t('Filter/Sort')}
         </Typography>
-        <ArrowDown2 color={open ? (isDark ? '#FFF' : '#2D1E4A') : (isDark ? '#AA83DC' : '#745D8B')} size='17' style={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }} variant='Linear' />
+        <ArrowDown2 color={open ? (isDark ? '#FFF' : '#2D1E4A') : (theme.palette.accent.icon)} size='17' style={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }} variant='Linear' />
       </Grid>
       <Popover
         anchorEl={anchorEl}

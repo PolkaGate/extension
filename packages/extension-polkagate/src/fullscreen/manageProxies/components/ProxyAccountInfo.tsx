@@ -23,12 +23,14 @@ interface Props {
 }
 
 function Info({ isDark, label, value }: { isDark: boolean; label: string; value: string; }): React.ReactElement {
+  const theme = useTheme();
+
   return (
     <Stack columnGap='5px' direction='row' sx={{ bgcolor: isDark ? '#C6AECC26' : '#EAE4F5', borderRadius: '9px', lineHeight: '24px', px: '5px' }}>
-      <Typography color={isDark ? '#AA83DC' : '#745D8B'} variant='B-1'>
+      <Typography color={theme.palette.accent.icon} variant='B-1'>
         {label}:
       </Typography>
-      <Typography color={isDark ? '#BEAAD8' : '#745D8B'} variant='B-1'>
+      <Typography color={theme.palette.accent.text} variant='B-1'>
         {value}
       </Typography>
     </Stack>
@@ -69,13 +71,13 @@ export default function ProxyAccountInfo({ handleDelete, proxyItem, showCheck = 
         bgcolor: isDark ? '#05091C' : '#FFFFFF',
         border: cardBorder,
         borderRadius: '14px',
+        boxShadow: isDark ? 'none' : '0 10px 22px rgba(106, 116, 156, 0.12)',
         flexWrap: 'nowrap',
         height: '90px',
         maxWidth: '423px',
         minWidth: '379px',
         p: '0 5px 0 20px',
         position: 'relative',
-        boxShadow: isDark ? 'none' : '0 10px 22px rgba(106, 116, 156, 0.12)',
         width: 'fit-content',
         ...style
       }}

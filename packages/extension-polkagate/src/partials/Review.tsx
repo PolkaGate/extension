@@ -14,7 +14,7 @@ import React, { memo, useMemo } from 'react';
 import { type BN, isBn, noop } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 
-import { Logo, DisplayBalance, GradientDivider, Identity, MySkeleton, MyTooltip, SignArea3 } from '../components';
+import { DisplayBalance, GradientDivider, Identity, Logo, MySkeleton, MyTooltip, SignArea3 } from '../components';
 import RestakeRewardToggler from '../fullscreen/stake/new-pool/claimReward/partials/RestakeRewardToggler';
 import { RewardHeaderAmount } from '../fullscreen/stake/new-pool/claimReward/partials/Review';
 import { useChainInfo, useFormatted, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
@@ -39,9 +39,9 @@ const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
   const color = useMemo(() => isExtension ? (isDark ? theme.palette.text.highlight : '#745E9F') : '#AA83DC', [isDark, isExtension, theme.palette.text.highlight]);
   const accountBoxStyle = isExtension
     ? {
-      bgcolor: isDark ? '#05091C' : '#FFFFFF',
-      border: isDark ? 'none' : '1px solid #DDE3F4',
-      boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.10)',
+      bgcolor: theme.palette.surface.input,
+      border: isDark ? 'none' : `1px solid ${theme.palette.border.strong}`,
+      boxShadow: theme.palette.shadow.card,
       p: '12px 8px'
     }
     : {
@@ -73,7 +73,7 @@ const RowAccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
   const identitySecondaryColor = isExtension ? (isDark ? 'text.highlight' : '#745E9F') : '#AA83DC';
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isExtension ? isDark ? '#110F2A' : '#FFFFFF' : '#05091C', border: isExtension && !isDark ? '1px solid #DDE3F4' : 'none', borderRadius: '14px', boxShadow: isExtension && !isDark ? '0 10px 24px rgba(133, 140, 176, 0.10)' : 'none', display: 'flex', gap: '12px', mb: '8px', p: '12px 8px' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isExtension ? isDark ? theme.palette.surface.panelAlt : theme.palette.surface.input : theme.palette.background.default, border: isExtension && !isDark ? `1px solid ${theme.palette.border.strong}` : 'none', borderRadius: '14px', boxShadow: isExtension ? theme.palette.shadow.card : 'none', display: 'flex', gap: '12px', mb: '8px', p: '12px 8px' }}>
       <Identity
         address={selectedAccount?.address}
         addressStyle={{ color: identitySecondaryColor, variant: 'B-4' }}
@@ -227,10 +227,10 @@ export default function Review({ amount, closeReview, genesisHash, pool, proxyTy
   const fsStyle = isExtension
     ? {}
     : {
-      bgcolor: isDark ? '#05091C' : '#FFFFFF',
-      border: isDark ? 'none' : '1px solid #DDE3F4',
+      bgcolor: theme.palette.surface.input,
+      border: isDark ? 'none' : `1px solid ${theme.palette.border.strong}`,
       borderRadius: '14px',
-      boxShadow: isDark ? 'none' : '0 14px 28px rgba(133, 140, 176, 0.12)',
+      boxShadow: theme.palette.shadow.card,
       gap: '7px',
       padding: '15px 15px 8px'
     };
@@ -243,10 +243,10 @@ export default function Review({ amount, closeReview, genesisHash, pool, proxyTy
           amount={amount}
           genesisHash={genesisHash}
           style={{
-            bgcolor: isDark ? '#110F2A' : '#FFFFFF',
-            border: isDark ? 'none' : '1px solid #DDE3F4',
+            bgcolor: isDark ? theme.palette.surface.panelAlt : theme.palette.surface.input,
+            border: isDark ? 'none' : `1px solid ${theme.palette.border.strong}`,
             borderRadius: '14px',
-            boxShadow: isDark ? 'none' : '0 14px 28px rgba(133, 140, 176, 0.12)',
+            boxShadow: theme.palette.shadow.card,
             p: '24px'
           }}
           token={token}

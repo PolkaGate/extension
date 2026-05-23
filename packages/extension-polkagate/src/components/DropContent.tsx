@@ -17,12 +17,12 @@ import SearchField from './SearchField';
 
 const DropContentContainer = styled(Grid, {
   shouldForwardProp: (prop) => prop !== 'preferredWidth'
-})(({ preferredWidth, theme }: { preferredWidth: number | undefined; theme?: any }) => ({
-  background: theme.palette.mode === 'dark' ? '#05091C' : '#FFFFFF',
+})<{ preferredWidth: number | undefined }>(({ preferredWidth, theme }) => ({
+  background: theme.palette.surface.input,
   border: '4px solid',
-  borderColor: theme.palette.mode === 'dark' ? '#1B133C' : '#EEF1FF',
+  borderColor: theme.palette.border.paper,
   borderRadius: '12px',
-  boxShadow: theme.palette.mode === 'dark' ? 'none' : '0 12px 32px rgba(133, 140, 176, 0.18)',
+  boxShadow: theme.palette.shadow.popover,
   columnGap: '5px',
   flexWrap: 'nowrap',
   margin: 'auto',
@@ -36,10 +36,10 @@ const DropContentContainer = styled(Grid, {
   width: preferredWidth ? `${preferredWidth}px` : 'fit-content'
 }));
 
-const ContentDisplayContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'isSelectedItem' })(({ isSelectedItem, style, theme }: { isSelectedItem: boolean, style: React.CSSProperties, theme?: any }) => ({
-  '&:hover': { background: theme.palette.mode === 'dark' ? '#6743944D' : '#F3F6FD' },
+const ContentDisplayContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'isSelectedItem' })<{ isSelectedItem: boolean, style?: React.CSSProperties }>(({ isSelectedItem, style, theme }) => ({
+  '&:hover': { background: theme.palette.surface.hover },
   alignItems: 'center',
-  background: isSelectedItem ? (theme.palette.mode === 'dark' ? '#6743944D' : '#EEF2FB') : 'transparent',
+  background: isSelectedItem ? theme.palette.surface.selected : 'transparent',
   borderRadius: '8px',
   columnGap: '5px',
   cursor: 'pointer',
@@ -73,7 +73,7 @@ function OptionLogo({ text }: { text: string }) {
       variant='square'
     >
       {!icon &&
-        <Global color={isDark ? '#AA83DC' : theme.palette.text.secondary} size='18' variant='Bulk' />
+        <Global color={isDark ? theme.palette.primary.main : theme.palette.text.secondary} size='18' variant='Bulk' />
       }
     </Avatar>
   );
@@ -81,7 +81,6 @@ function OptionLogo({ text }: { text: string }) {
 
 function LogoContentDisplay({ Icon, logoType, onChange, selectedValue, setOpen, setSelectedValue, showCheckAsIcon, text, value }: ContentDisplayProps) {
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
   const isSelectedItem = useMemo(() => [text, value].includes(selectedValue ?? ''), [selectedValue, text, value]);
 
   const handleClick = useCallback(() => {
@@ -118,7 +117,7 @@ function LogoContentDisplay({ Icon, logoType, onChange, selectedValue, setOpen, 
       if (typeof Icon === 'function' || typeof Icon === 'object') {
         const Component = Icon as React.ElementType;
 
-        return <Component color={isDark ? '#BEAAD8' : theme.palette.text.secondary} size='18' variant='Bulk' />;
+        return <Component color={theme.palette.text.secondary} size='18' variant='Bulk' />;
       }
     }
 
@@ -138,7 +137,7 @@ function LogoContentDisplay({ Icon, logoType, onChange, selectedValue, setOpen, 
               />)
             : renderLogo()
         }
-        <Typography color={isSelectedItem ? '#FF4FB9' : 'text.primary'} textTransform='capitalize' variant='B-2'>
+        <Typography color={isSelectedItem ? 'error.main' : 'text.primary'} textTransform='capitalize' variant='B-2'>
           {text}
         </Typography>
       </Grid>
@@ -173,7 +172,7 @@ function TextContentDisplay({ onChange, selectedValue, setOpen, setSelectedValue
           timeout={250}
         />
       }
-      <Typography color={isSelectedItem ? '#FF4FB9' : 'text.primary'} textTransform='capitalize' variant='B-2'>
+      <Typography color={isSelectedItem ? 'error.main' : 'text.primary'} textTransform='capitalize' variant='B-2'>
         {text}
       </Typography>
     </ContentDisplayContainer>

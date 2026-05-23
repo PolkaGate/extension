@@ -4,7 +4,7 @@
 import type { Attribute, ItemInformation } from '../utils/types';
 
 import { ChevronLeft } from '@mui/icons-material';
-import { Box, Divider, Grid, IconButton, Link, Modal, Stack, Typography } from '@mui/material';
+import { Box, Divider, Grid, IconButton, Link, Modal, Stack, Typography, useTheme } from '@mui/material';
 import { Maximize4 } from 'iconsax-react';
 import React, { type ReactElement, useCallback, useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -34,12 +34,12 @@ export interface Props {
 }
 
 function AccountRow({ address, genesisHash, label }: { label: string, address: string, genesisHash: string }): React.ReactElement {
-  const isDark = useIsDark();
+  const theme = useTheme();
 
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between' lineHeight='35px'>
       <Stack alignItems='baseline' columnGap='3px' direction='row'>
-        <Typography color={isDark ? '#BEAAD8' : '#745D8B'} textAlign='left' variant='B-1'>
+        <Typography color={theme.palette.accent.text} textAlign='left' variant='B-1'>
           {label}
         </Typography>
         <CopyAddressButton address={address} padding={0} />
@@ -151,12 +151,13 @@ function Line(): ReactElement {
 }
 
 function ItemInfo({ label, link, markDown, showDivider = true, value }: { label: string, value?: string | ReactElement, showDivider?: boolean, link?: string, markDown?: string }): ReactElement {
+  const theme = useTheme();
   const isDark = useIsDark();
 
   return (
     <Stack direction='column' justifyItems='center'>
       <Grid container direction='row' item justifyContent='space-between' justifyItems='space-between' sx={{ lineHeight: '35px' }}>
-        <Typography color={isDark ? '#BEAAD8' : '#745D8B'} textAlign='left' variant='B-1'>
+        <Typography color={theme.palette.accent.text} textAlign='left' variant='B-1'>
           {label}
         </Typography>
         {React.isValidElement(value)
@@ -321,6 +322,7 @@ function NftDetails({ gifHash, gifSource, info }: { gifHash: string | undefined,
 }
 
 function RightCol({ gifHash, gifSource, info, onClose }: { gifSource: string | null | undefined, gifHash: string | undefined, info: ItemInformation; onClose: () => void; }): React.ReactElement<Props> {
+  const theme = useTheme();
   const isDark = useIsDark();
   const { t } = useTranslation();
 
@@ -356,7 +358,7 @@ function RightCol({ gifHash, gifSource, info, onClose }: { gifSource: string | n
               zIndex: 1
             }}
           >
-            <ChevronLeft sx={{ color: isDark ? '#AA83DC' : '#745D8B', fontSize: 20, stroke: isDark ? '#AA83DC' : '#745D8B' }} />
+            <ChevronLeft sx={{ color: theme.palette.accent.icon, fontSize: 20, stroke: theme.palette.accent.icon }} />
           </IconButton>
           <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} sx={{ ml: '53px', textAlign: 'center', textTransform: 'uppercase', width: '80%' }} variant='H-2'>
             {info.name ?? t('unknown')}
@@ -406,7 +408,7 @@ export function NftPopup({ info, onClose, setShowFullscreen }: Props): React.Rea
   const [gifHash, setGifHash] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    const getUniqueGif = async () => {
+    const getUniqueGif = async() => {
       if (info.isNft || !info.mediaUri) {
         setGifSource(null);
 

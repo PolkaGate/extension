@@ -79,12 +79,11 @@ function AddContactPopper({ addingContact, contactAddress, containerRef, open, s
                             direction='row'
                             sx={{
                                 alignItems: 'flex-end',
-                                bgcolor: isDark ? '#1B133C' : '#FFFFFF',
+                                bgcolor: theme.palette.surface.popover,
                                 border: '1px solid',
-                                borderColor: isDark ? '#2D1E4A' : '#DDE3F4',
+                                borderColor: theme.palette.border.strong,
                                 borderRadius: '6px',
-                                boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.14)',
-                                // boxShadow: '0 0 5px 4px #2D1E4A',
+                                boxShadow: theme.palette.shadow.popover,
                                 gap: '10px',
                                 justifyContent: 'space-between',
                                 p: '6px'

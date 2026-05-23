@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
-//@ts-ignore
+// @ts-expect-error generated lookup type is unavailable in some metadata builds.
 import type { PalletStakingRewardDestination } from '@polkadot/types/lookup';
 
 import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight, MoneyRecive, Repeat } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { Logo, Identity } from '../../../../../components';
+import { Identity, Logo } from '../../../../../components';
 import { useTranslation } from '../../../../../hooks';
 
 interface Props {
@@ -28,7 +28,6 @@ interface StakeAdjustmentInfo {
 function Payee({ genesisHash, payee }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
 
   const { Icon, account, color, style, text } = useMemo<StakeAdjustmentInfo>(() => {
     if (payee.isStaked) {
@@ -71,7 +70,7 @@ function Payee({ genesisHash, payee }: Props): React.ReactElement<Props> {
       <Logo genesisHash={genesisHash} size={36} />
       <Stack alignItems='flex-start' direction='column'>
         <Stack alignItems='center' columnGap='5px' direction='row'>
-          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
+          <Typography color={theme.palette.accent.textStrong} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {text}
           </Typography>
           {account
@@ -84,13 +83,13 @@ function Payee({ genesisHash, payee }: Props): React.ReactElement<Props> {
               identiconStyle={{ marginRight: '5px' }}
               showSocial={false}
               style={{ color: 'text.primary', variant: 'B-2' }}
-            />
+              />
             : Icon && <Icon
               color={color}
               size={14}
               style={{ ...style }}
               variant='Linear'
-            />}
+                      />}
         </Stack>
       </Stack>
     </Stack>

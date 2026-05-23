@@ -18,7 +18,7 @@ function ItemInfo({ label, style = {}, value }: { label: string, value: string |
 
   return (
     <Stack direction='column' sx={{ ...style }}>
-      <Typography color={isDark ? '#AA83DC' : '#745D8B'} textAlign='left' variant='B-4'>
+      <Typography color='accent.icon' textAlign='left' variant='B-4'>
         {label}
       </Typography>
       {React.isValidElement(value)
@@ -69,7 +69,7 @@ export default function Details({ nft }: { nft: ItemInformation | undefined }): 
               />
               <Divider
                 orientation='horizontal' sx={{
-                  background: isDark ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' : 'linear-gradient(90deg, rgba(221, 227, 244, 0) 0%, #DDE3F4 50.06%, rgba(221, 227, 244, 0) 100%)', my: '15px', width: '182px', height: '1px'
+                  background: isDark ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' : 'linear-gradient(90deg, rgba(221, 227, 244, 0) 0%, #DDE3F4 50.06%, rgba(221, 227, 244, 0) 100%)', height: '1px', my: '15px', width: '182px'
                 }}
               />
               <ItemInfo

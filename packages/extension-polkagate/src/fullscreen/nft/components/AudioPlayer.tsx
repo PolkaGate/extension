@@ -3,13 +3,14 @@
 
 import type { AudioPlayerProps } from '../utils/types';
 
-import { Grid, IconButton, Slider, Stack, Typography } from '@mui/material';
+import { Grid, IconButton, Slider, Stack, Typography, useTheme } from '@mui/material';
 import { PauseCircle, PlayCircle } from 'iconsax-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useIsDark } from '../../../hooks';
 
 export default function AudioPlayer({ audioUrl }: AudioPlayerProps): React.ReactElement {
+  const theme = useTheme();
   const isDark = useIsDark();
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -77,8 +78,8 @@ export default function AudioPlayer({ audioUrl }: AudioPlayerProps): React.React
           sx={{ p: '5px', width: 'fit-content' }}
         >
           {isPlaying
-            ? <PauseCircle color={isDark ? '#AA83DC' : '#745D8B'} size='18' variant='Bold' />
-            : <PlayCircle color={isDark ? '#AA83DC' : '#745D8B'} size='18' variant='Bold' />
+            ? <PauseCircle color={theme.palette.accent.icon} size='18' variant='Bold' />
+            : <PlayCircle color={theme.palette.accent.icon} size='18' variant='Bold' />
           }
         </IconButton>
         <Grid alignItems='center' container item justifyContent='space-between' px='10px' xs>
@@ -92,7 +93,7 @@ export default function AudioPlayer({ audioUrl }: AudioPlayerProps): React.React
                 height: 8,
                 width: 8
               },
-              color: isDark ? '#AA83DC' : '#745D8B',
+              color: theme.palette.accent.icon,
               height: '2px',
               py: '5px',
               width: '100%'
@@ -103,7 +104,7 @@ export default function AudioPlayer({ audioUrl }: AudioPlayerProps): React.React
             <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} fontSize='10px' variant='S-2'>
               {formatTime(currentTime)}
             </Typography>
-            <Typography color={isDark ? '#AA83DC' : '#745D8B'} fontSize='10px' variant='S-2'>
+            <Typography color={theme.palette.accent.icon} fontSize='10px' variant='S-2'>
               {formatTime(duration)}
             </Typography>
           </Stack>

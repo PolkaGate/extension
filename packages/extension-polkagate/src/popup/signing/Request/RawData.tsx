@@ -30,7 +30,6 @@ interface Props {
 export default function RawData({ account, error, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
   const navigate = useNavigate();
   const dapp = new URL(url).origin;
   const faviconUrl = useFavIcon(dapp);
@@ -65,13 +64,13 @@ export default function RawData({ account, error, request, setError, setMode, si
 
   return (
     <Grid container display='block' fontSize='16px' height='490px' justifyContent='center' justifyItems='center' position='relative'>
-      <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: isDark ? '#05091C80' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', height: '34px', pr: '5px', width: 'fit-content' }}>
+      <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: theme.palette.surface.badge, border: theme.palette.mode === 'dark' ? 'none' : `1px solid ${theme.palette.border.strong}`, borderRadius: '14px', height: '34px', pr: '5px', width: 'fit-content' }}>
         <Avatar
           src={faviconUrl ?? undefined}
           sx={{ borderRadius: '8px !important', height: '26px', width: '26px' }}
           variant='circular'
         />
-        <Typography color={isDark ? '#BEAAD8' : theme.palette.text.secondary} variant='B-1'>
+        <Typography color={theme.palette.text.secondary} variant='B-1'>
           {dapp}
         </Typography>
       </Grid>
@@ -97,7 +96,7 @@ export default function RawData({ account, error, request, setError, setMode, si
         width: '100%'
       }}
       >
-        <Grid container item justifyContent='center' sx={{ alignItems: 'center', bgcolor: isDark ? '#1B133C' : '#FFFFFF', borderRadius: '10px', height: '100%', maxHeight: '65px', minHeight: '50px', overflowWrap: 'anywhere', overflowY: 'auto', px: '10px', py: '5px', textAlign: 'center', width: '100%' }}>
+        <Grid container item justifyContent='center' sx={{ alignItems: 'center', bgcolor: theme.palette.surface.popover, borderRadius: '10px', height: '100%', maxHeight: '65px', minHeight: '50px', overflowWrap: 'anywhere', overflowY: 'auto', px: '10px', py: '5px', textAlign: 'center', width: '100%' }}>
           <Typography color={theme.palette.text.primary} variant='B-1'>
             {text}
           </Typography>
@@ -105,7 +104,7 @@ export default function RawData({ account, error, request, setError, setMode, si
       </Box>
       {(isHardware || isExternal) && (
         <Stack alignItems='center' columnGap='5px' direction='row' sx={{ p: '15px 8px 0px', width: '100%' }}>
-          <Warning2 color='#FFCE4F' size={24} variant='Bold' />
+          <Warning2 color={theme.palette.warning.light} size={24} variant='Bold' />
           <Typography sx={{ color: 'text.secondary', width: '100%' }} variant='B-4'>
             {isHardware
               ? t('Raw data signing is not supported for hardware wallets.')

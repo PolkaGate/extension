@@ -55,7 +55,7 @@ function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props
 
   return (
     <Container disableGutters sx={{ mb: '10px', position: 'relative', width: '100%', zIndex: 1 }}>
-      <Typography color={isDark ? '#BEAAD8' : '#745E9F'} display='flex' justifySelf='center' my='5px' textAlign='center' variant='B-4'>
+      <Typography color={theme.palette.accent.textStrong} display='flex' justifySelf='center' my='5px' textAlign='center' variant='B-4'>
         {!isScanning
           ? <> {t('First scan the QR code with your mobile wallet. Then scan the generated QR code by your mobile wallet on the next screen')}</>
           : <> {t('Scan your mobile wallet generated QR code')}</>
@@ -104,7 +104,7 @@ function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props
           onClick={onClick}
           style={{ height: '44px', width: '100%' }}
           text={t('Back')}
-        />
+          />
         : onCancel
           ? <DecisionButtons
             direction='vertical'
@@ -112,11 +112,11 @@ function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props
             onSecondaryClick={onCancel}
             primaryBtnText={t('Next')}
             secondaryBtnText={t('Cancel')}
-          />
+            />
           : <GradientButton
             onClick={onClick}
             text={t('Next')}
-          />
+            />
       }
     </Container>
   );

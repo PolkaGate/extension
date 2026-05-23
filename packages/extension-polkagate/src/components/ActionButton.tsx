@@ -74,6 +74,7 @@ export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 's
   const borderRadius = isExtension ? '12px' : '18px';
   const finalDisabledIconColor = disabledIconColor ?? '#BEAAD84D';
   const finalDisabledTextColor = disabledTextColor ?? '#BEAAD84D';
+  const styleWithBorderRadius = style as { borderRadius?: string | number } | undefined;
 
   const ButtonFontStyle = useMemo(() => ({
     ...theme.typography['B-2'],
@@ -89,7 +90,7 @@ export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 's
     },
     background: isDark ? isBlueish ? '#809ACB26' : '#2D1E4A' : '#FFFFFF',
     border: isDark ? (isBlueish ? '1px solid #2E2948' : 'none') : '1px solid #DDE3F4',
-    borderRadius: `${(style as Record<string, any>)?.['borderRadius'] ?? borderRadius}`,
+    borderRadius: `${styleWithBorderRadius?.borderRadius ?? borderRadius}`,
     boxShadow: isDark ? 'unset' : '0 8px 20px rgba(133, 140, 176, 0.10)',
     justifyContent: 'flex-start',
     padding: '10px 24px',
@@ -119,7 +120,7 @@ export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 's
 
   const renderText = useMemo(() => {
     if (typeof text === 'string') {
-      return <span style={{ color: disabled ? finalDisabledTextColor : isDark ? isBlueish ? '#809ACB' : '#BEAAD8' : '#745D8B', whiteSpace: 'nowrap', ...ButtonFontStyle }}>
+      return <span style={{ color: disabled ? finalDisabledTextColor : isDark && isBlueish ? '#809ACB' : theme.palette.accent.text, whiteSpace: 'nowrap', ...ButtonFontStyle }}>
         {text}
       </span>;
     } else {

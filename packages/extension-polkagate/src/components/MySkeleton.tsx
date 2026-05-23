@@ -15,14 +15,13 @@ interface Props {
 
 function MySkeleton({ animation, bgcolor, height = 12, style = {}, variant, width = 0 }: Props): React.ReactElement {
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
   const _width = typeof width === 'number' ? `${width}px` : width;
 
   return (
     <Skeleton
       animation={animation ?? 'wave'}
       sx={{
-        bgcolor: bgcolor ?? (isDark ? '#946CC840' : '#E4EAF9'),
+        bgcolor: bgcolor ?? theme.palette.skeleton.default,
         borderRadius: '50px',
         display: 'inline-block',
         fontWeight: 'bold',

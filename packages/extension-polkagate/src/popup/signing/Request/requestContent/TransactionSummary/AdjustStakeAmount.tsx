@@ -5,7 +5,7 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight } from 'iconsax-react';
 import React, { useMemo } from 'react';
 
-import { Logo, DisplayBalance } from '../../../../../components';
+import { DisplayBalance, Logo } from '../../../../../components';
 import { useChainInfo, useTranslation } from '../../../../../hooks';
 
 interface Props {
@@ -64,7 +64,7 @@ function AdjustStakeAmount({ action, amount, genesisHash }: Props): React.ReactE
           token={token}
         />
         <Stack alignItems='center' columnGap='5px' direction='row'>
-          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
+          <Typography color={theme.palette.accent.textStrong} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {text}
           </Typography>
           <ArrowRight

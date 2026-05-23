@@ -7,7 +7,7 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight, MagicStar } from 'iconsax-react';
 import React from 'react';
 
-import { Logo, DisplayBalance } from '../../../../../components';
+import { DisplayBalance, Logo } from '../../../../../components';
 import { useChainInfo, useTranslation } from '../../../../../hooks';
 
 interface Props {
@@ -38,7 +38,7 @@ function NominationPoolsBondExtra({ amount, genesisHash }: Props): React.ReactEl
           />
         }
         <Stack alignItems='center' columnGap='5px' direction='row'>
-          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
+          <Typography color={theme.palette.accent.textStrong} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {maybeAmount
               ? t('Increase stake')
               : t('Re-stake rewards')

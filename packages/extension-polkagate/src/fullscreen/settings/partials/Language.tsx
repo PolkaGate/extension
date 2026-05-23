@@ -52,12 +52,12 @@ export default function Language(): React.ReactElement {
             width: '454px'
           }}
         >
-          <Translate color={isDark ? '#AA83DC' : '#745D8B'} size='18' variant='Bulk' />
+          <Translate color={theme.palette.accent.icon} size='18' variant='Bulk' />
           <Stack columnGap='5px' direction='row' justifyContent='space-between' sx={{ alignItems: 'center', width: '100%' }}>
             <Typography color={theme.palette.text.secondary} variant='B-4'>
               {language}
             </Typography>
-            <ArrowDown2 color={isDark ? '#AA83DC' : '#745D8B'} size='14px' style={{ marginTop: '5px' }} variant='Bold' />
+            <ArrowDown2 color={theme.palette.accent.icon} size='14px' style={{ marginTop: '5px' }} variant='Bold' />
           </Stack>
         </Stack>
       </Stack>

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChevronRight } from '@mui/icons-material';
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Add } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
@@ -67,6 +67,7 @@ function Item({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: Item
 
 function AddButton(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
@@ -75,7 +76,7 @@ function AddButton(): React.ReactElement {
       <VelvetBox style={{ minWidth: 'fit-content', width: 'auto' }}>
         <Stack direction='row' onClick={extensionPopupOpener(ExtensionPopups.NEW_NETWORK)} sx={{ '&:hover': { bgcolor: isDark ? '#2D1E4A' : '#FFFFFF', transform: 'translateY(-1px)' }, alignItems: 'center', bgcolor: isDark ? '#2D1E4A' : '#FFFFFF', borderRadius: '14px', columnGap: '3px', cursor: 'pointer', height: '40px', p: '0 15px 0 5px', transition: 'all 250ms ease-out', width: '100%' }}>
           <Add color='#FF4FB9' size='24' variant='Linear' />
-          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ textWrap: 'nowrap', width: 'fit-content' }} variant='B-6'>
+          <Typography color={theme.palette.accent.textStrong} sx={{ textWrap: 'nowrap', width: 'fit-content' }} variant='B-6'>
             {t('Add New Network')}
           </Typography>
         </Stack>

@@ -60,7 +60,7 @@ export default function Password(): React.ReactElement {
             width: '454px'
           }}
         >
-          <Key color={isDark ? '#AA83DC' : '#745D8B'} size='18' variant='Bulk' />
+          <Key color={theme.palette.accent.icon} size='18' variant='Bulk' />
           <Stack columnGap='5px' direction='column' justifyContent='center' sx={{ alignItems: 'start', width: '100%' }}>
             <Typography color={theme.palette.text.secondary} fontSize='16px' variant='B-2'>
               ••••••••••••••
@@ -74,7 +74,7 @@ export default function Password(): React.ReactElement {
               </Typography>
             </Stack>
           </Stack>
-          <ArrowDown2 color={isDark ? '#AA83DC' : '#745D8B'} size='16px' style={{ marginTop: '5px', transform: 'rotate(270deg)' }} variant='Bold' />
+          <ArrowDown2 color={theme.palette.accent.icon} size='16px' style={{ marginTop: '5px', transform: 'rotate(270deg)' }} variant='Bold' />
         </Stack>
       </Stack>
       <SetPassword

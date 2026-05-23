@@ -65,7 +65,7 @@ function TopRightIcons(): React.ReactElement {
             width: 'fit-content'
           }}
         >
-          <Typography color={hovered === ExtensionPopups.LANGUAGE ? '#EAEBF1' : isDark ? '#AA83DC' : '#745D8B'} sx={{ textTransform: 'uppercase', transition: 'all 250ms ease-out' }} variant='B-1'>
+          <Typography color={hovered === ExtensionPopups.LANGUAGE ? '#EAEBF1' : theme.palette.accent.icon} sx={{ textTransform: 'uppercase', transition: 'all 250ms ease-out' }} variant='B-1'>
             {languageTicker}
           </Typography>
           <ArrowDown2

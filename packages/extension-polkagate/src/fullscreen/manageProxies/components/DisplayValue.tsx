@@ -25,7 +25,7 @@ function DisplayValue({ balance, canPayFee, decimal, genesisHash, label, token }
 
   return (
     <Stack direction='row' justifyContent='space-between'>
-      <Typography color={isDark ? '#AA83DC' : '#745D8B'} variant='B-1'>
+      <Typography color={theme.palette.accent.icon} variant='B-1'>
         {label}
       </Typography>
       <Stack alignItems='center' columnGap={1} direction='row'>

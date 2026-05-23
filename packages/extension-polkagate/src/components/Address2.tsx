@@ -54,7 +54,7 @@ function Address2({ address, charsCount = 5, identiconSize = 24, inTitleCase, la
           {label}
         </Typography>
       }
-      <Stack alignItems='center' direction='row' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid', borderColor: isDark ? 'transparent' : '#DDE3F4', borderRadius: '18px', columnGap: '10px', height: showAddress ? '71px' : '52px', pl: '10px', width: '100%', ...style }}>
+      <Stack alignItems='center' direction='row' sx={{ bgcolor: theme.palette.surface.input, border: isDark ? 'none' : '1px solid', borderColor: isDark ? 'transparent' : theme.palette.border.strong, borderRadius: '18px', columnGap: '10px', height: showAddress ? '71px' : '52px', pl: '10px', width: '100%', ...style }}>
         {address &&
           <PolkaGateIdenticon
             address={address}
@@ -74,7 +74,7 @@ function Address2({ address, charsCount = 5, identiconSize = 24, inTitleCase, la
               address={address}
               charsCount={charsCount}
               showCopy={showCopy}
-              style={{ color: isDark ? (isExtension ? 'text.secondary' : '#AA83DC') : 'text.secondary', justifyContent: 'flex-start' }}
+              style={{ color: isDark ? (isExtension ? 'text.secondary' : 'primary.main') : 'text.secondary', justifyContent: 'flex-start' }}
               variant={(variant || 'B-4') as Variant}
             />
           }

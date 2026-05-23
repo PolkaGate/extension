@@ -18,7 +18,6 @@ interface Props {
 function AddToAddressBook({ input }: Props) {
     const { t } = useTranslation();
     const theme = useTheme();
-    const isDark = theme.palette.mode === 'dark';
     const contacts = useAddressBook(); // default value is [], and when it's undefined means it's fetching!
     const accounts = useAccounts();
     const containerRef = useRef(null);
@@ -65,14 +64,14 @@ function AddToAddressBook({ input }: Props) {
                 ref={containerRef}
                 sx={{
                     ':hover': {
-                        borderColor: isDark ? '#2D1E4A' : '#DDE3F4',
+                        borderColor: theme.palette.border.strong,
                         opacity: 1,
                         transition: 'all 250ms ease-out'
                     },
                     alignItems: 'center',
-                    bgcolor: isDark ? '#1B133C' : '#FFFFFF',
+                    bgcolor: theme.palette.surface.popover,
                     border: '1px solid',
-                    borderColor: openPopper ? (isDark ? '#2D1E4A' : '#DDE3F4') : 'transparent',
+                    borderColor: openPopper ? theme.palette.border.strong : 'transparent',
                     borderRadius: '6px',
                     cursor: 'pointer',
                     gap: isHovered || openPopper ? '12px' : 0,

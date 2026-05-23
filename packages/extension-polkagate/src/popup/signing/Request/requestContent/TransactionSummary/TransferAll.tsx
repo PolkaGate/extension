@@ -30,7 +30,7 @@ function TransferAll({ genesisHash, to }: Props): React.ReactElement<Props> {
           {t('Entire balance')}
         </Typography>
         <Stack alignItems='center' columnGap='5px' direction='row'>
-          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
+          <Typography color={theme.palette.accent.textStrong} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {t('Transfer to')}
           </Typography>
           <PolkaGateIdenticon

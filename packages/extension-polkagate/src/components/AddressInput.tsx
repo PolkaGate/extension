@@ -43,11 +43,14 @@ interface AdornmentActionProps {
 }
 
 function AdornmentAction({ actionKey, children, hoverActionBackground, onClick, setHoveredAction, wide = false }: AdornmentActionProps): React.ReactElement {
+  const handleMouseEnter = useCallback(() => setHoveredAction(actionKey), [actionKey, setHoveredAction]);
+  const handleMouseLeave = useCallback(() => setHoveredAction(undefined), [setHoveredAction]);
+
   return (
     <Box
       onClick={onClick}
-      onMouseEnter={() => setHoveredAction(actionKey)}
-      onMouseLeave={() => setHoveredAction(undefined)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       sx={{
         '&:hover': {
           background: hoverActionBackground
@@ -67,7 +70,7 @@ function AdornmentAction({ actionKey, children, hoverActionBackground, onClick, 
   );
 }
 
-export default function AddressInput({ addWithQr = false, address, genesisHash, disabled = false, inlineActionLabel, onInlineActionClick, label, placeHolder, setAddress, setIsError, setType, showAddressBook, style, withSelect }: Props): React.ReactElement<Props> {
+export default function AddressInput({ addWithQr = false, address, disabled = false, genesisHash, inlineActionLabel, label, onInlineActionClick, placeHolder, setAddress, setIsError, setType, showAddressBook, style, withSelect }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const isBlueish = useIsBlueish();
@@ -80,8 +83,8 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
   const [invalidAddress, setInvalidAddress] = useState<boolean>(false);
   const [enteredAddress, setEnteredAddress] = useState<string | undefined | null>();
   const [hoveredAction, setHoveredAction] = useState<'clear' | 'inline' | 'qr' | 'select' | 'paste' | undefined>(undefined);
-  const defaultActionColor = isDark ? '#AA83DC' : '#8D7AAF';
-  const hoverActionColor = '#EAEBF1';
+  const defaultActionColor = isDark ? theme.palette.primary.main : theme.palette.text.secondary;
+  const hoverActionColor = theme.palette.text.primary;
   const hoverActionBackground = 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)';
   const getActionColor = useCallback((action: 'clear' | 'inline' | 'qr' | 'select' | 'paste') =>
     hoveredAction === action ? hoverActionColor : defaultActionColor
@@ -129,7 +132,7 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
     onSet(value);
   }, [onReset, onSet]);
 
-  // @ts-ignore
+  // @ts-expect-error simulate a minimal input event for the existing account-list callback contract
   const _selectAddress = useCallback((newAddr?: string) => handleAddress({ target: { value: newAddr } }), [handleAddress]);
   const openQrScanner = useCallback(() => setOpenCamera(true), []);
   const onOpenAccountList = useCallback(() => setOpenAccountList(true), []);
@@ -157,16 +160,16 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
     <>
       <Stack direction='column' justifyContent='start' ref={containerRef} rowGap='5px' sx={{ position: 'relative', ...style }}>
         {label &&
-          <Typography color={isDark ? '#EAEBF1' : theme.palette.text.primary} sx={{ textAlign: 'left' }} variant='B-1'>
+          <Typography color={theme.palette.text.primary} sx={{ textAlign: 'left' }} variant='B-1'>
             {label}
           </Typography>
         }
         <TextField
           InputProps={{
             endAdornment: (
-              <InputAdornment position='end' sx={{ bgcolor: isDark ? '#2D1E4A' : '#F3F6FD', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '8px', height: '80%', maxHeight: '80%', px: '5px' }}>
+              <InputAdornment position='end' sx={{ bgcolor: theme.palette.surface.hover, border: isDark ? 'none' : `1px solid ${theme.palette.border.strong}`, borderRadius: '8px', height: '80%', maxHeight: '80%', px: '5px' }}>
                 {!disabled && <>
-                  {!!enteredAddress
+                  {enteredAddress
                     ? (
                       <AdornmentAction
                         actionKey='clear'
@@ -191,7 +194,7 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
                           {inlineActionLabel}
                         </Typography>
                       </AdornmentAction>
-                      <Divider orientation='vertical' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '18px', mx: '2px' }} />
+                      <Divider orientation='vertical' sx={{ background: theme.palette.dividerGradient, height: '18px', mx: '2px' }} />
                     </>
                   }
                   {!!withSelect &&
@@ -204,7 +207,7 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
                       >
                         <ArrowCircleDown color={getActionColor('select')} size='18' variant='Bulk' />
                       </AdornmentAction>
-                      <Divider orientation='vertical' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '18px', mx: '2px' }} />
+                      <Divider orientation='vertical' sx={{ background: theme.palette.dividerGradient, height: '18px', mx: '2px' }} />
                     </>
                   }
                   {addWithQr &&
@@ -217,7 +220,7 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
                       >
                         <ScanBarcode color={getActionColor('qr')} size='18' variant='Bulk' />
                       </AdornmentAction>
-                      <Divider orientation='vertical' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '18px', mx: '2px' }} />
+                      <Divider orientation='vertical' sx={{ background: theme.palette.dividerGradient, height: '18px', mx: '2px' }} />
                     </>
                   }
                   <AdornmentAction
@@ -241,11 +244,11 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
                       size={18}
                     />)
                   : <Hashtag
-                    color={invalidAddress ? '#FF4FB9' : focus ? '#3988FF' : defaultActionColor}
+                    color={invalidAddress ? theme.palette.error.main : focus ? theme.palette.text.highlight : defaultActionColor}
                     size='18'
                     style={{ cursor: 'pointer', margin: '0 2px 0' }}
                     variant='Bulk'
-                  />
+                    />
                 }
               </InputAdornment>
             ),
@@ -263,7 +266,7 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
           placeholder={placeHolder ?? t('Enter your account ID')}
           sx={{
             '&:hover': {
-              bgcolor: isDark ? '#2D1E4A' : '#F3F6FD'
+              bgcolor: theme.palette.surface.hover
             },
             '> div.MuiOutlinedInput-root': {
               '> fieldset':
@@ -284,9 +287,9 @@ export default function AddressInput({ addWithQr = false, address, genesisHash, 
               height: '100%',
               p: '0 3px 0 5px'
             },
-            bgcolor: isDark ? '#1B133CB2' : '#FFFFFF',
+            bgcolor: theme.palette.surface.popover,
             border: '1px solid',
-            borderColor: `${invalidAddress ? 'warning.main' : focus ? 'action.focus' : isDark ? '#BEAAD833' : '#DDE3F4'}`,
+            borderColor: invalidAddress ? 'warning.main' : focus ? 'action.focus' : theme.palette.border.input,
             borderRadius: '12px',
             height: '44px'
           }}

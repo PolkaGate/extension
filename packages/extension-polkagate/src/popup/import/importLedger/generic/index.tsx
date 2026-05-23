@@ -49,7 +49,7 @@ export const AddItem = ({ disabled, label, onClick }: AddItemProps) => {
   return (
     <Grid alignItems='center' container item justifyContent='center' onClick={disabled ? noop : onClick} sx={{ '&:hover': { background: isDark ? '#6743944D' : '#F3F6FD' }, background: isDark ? 'transparent' : '#FFFFFF', border: `1px solid ${isDark ? '#2D1E4A' : '#DDE3F4'}`, borderRadius: '18px', boxShadow: isDark ? 'none' : '0 8px 20px rgba(133, 140, 176, 0.10)', cursor: disabled ? 'context-menu' : 'pointer', height: '44px', opacity: disabled ? 0.5 : 1, transition: 'all 250ms ease-out', width: '100%' }}>
       <AddCircle color={isDark ? '#AA83DC' : '#7A69A8'} size='20' variant='Bold' />
-      <Typography color={isDark ? '#BEAAD8' : '#745E9F'} pl='10px' variant='B-2'>
+      <Typography color={theme.palette.accent.textStrong} pl='10px' variant='B-2'>
         {label}
       </Typography>
     </Grid>
@@ -101,7 +101,7 @@ export default function GenericApp({ setMode }: Props): React.ReactElement {
     });
 
     if (ref.current) {
-      // @ts-ignore
+      // @ts-expect-error ref is untyped in this legacy scroll container.
       ref.current.scrollTop = ref.current.scrollHeight - ref.current.offsetHeight;
     }
   }, [accountIndex, address]);

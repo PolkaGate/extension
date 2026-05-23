@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Option } from '@polkadot/types';
-//@ts-ignore
+// @ts-expect-error recovery config lookup is not exposed by generated package types
 import type { PalletRecoveryRecoveryConfig } from '@polkadot/types/lookup';
 
-import { Grid, type SxProps, type Theme } from '@mui/material';
+import { Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import { Shield } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -22,6 +22,7 @@ interface Props {
 
 function Recoverability({ style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
   const address = useSelectedAccount()?.address;
   const { api: westendApi } = useChainInfo(WESTEND_GENESIS_HASH);
@@ -75,12 +76,12 @@ function Recoverability({ style = {} }: Props): React.ReactElement {
 
   const containerStyle: SxProps<Theme> = {
     '&:hover': {
-      bgcolor: isDark ? '#674394' : '#EEF1FF'
+      bgcolor: theme.palette.surface.hover
     },
     alignItems: 'center',
-    bgcolor: isDark ? '#05091C' : '#FFFFFF',
+    bgcolor: theme.palette.surface.input,
     border: '1px solid',
-    borderColor: isDark ? '#1B133C' : '#DDE3F4',
+    borderColor: isDark ? theme.palette.border.paper : theme.palette.border.strong,
     borderRadius: '12px',
     cursor: 'pointer',
     height: '40px',
@@ -102,7 +103,7 @@ function Recoverability({ style = {} }: Props): React.ReactElement {
           })}
         >
           <Grid container item onClick={onClick} sx={containerStyle}>
-            <Shield color={isDark ? '#AA83DC' : '#745E9F'} size='20' variant='Bulk' />
+            <Shield color={isDark ? theme.palette.primary.main : theme.palette.text.secondary} size='20' variant='Bulk' />
           </Grid>
         </MyTooltip>
       }

@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Grid } from '@mui/material';
+import { Container, Grid, useTheme } from '@mui/material';
 import React from 'react';
 
 import { MySkeleton } from '@polkadot/extension-polkagate/src/components';
@@ -11,6 +11,7 @@ import { useIsDark } from '../../../hooks/index';
 import Drawer from './Drawer';
 
 function Loading({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
+  const theme = useTheme();
   const isDark = useIsDark();
 
   return (
@@ -22,16 +23,16 @@ function Loading({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
               <PolkaGateTransparentLogo />
               <Grid container direction='column' item sx={{ rowGap: '8px', width: 'fit-content' }}>
                 <MySkeleton
-                  bgcolor={isDark ? '#946CC826' : '#99A1C459'}
+                  bgcolor={theme.palette.skeleton.muted}
                   width={30}
                 />
                 <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content' }}>
                   <MySkeleton
-                    bgcolor={isDark ? '#946CC840' : '#99A1C440'}
+                    bgcolor={theme.palette.skeleton.subtle}
                     width={45}
                   />
                   <MySkeleton
-                    bgcolor={isDark ? '#BEAAD826' : '#99A1C440'}
+                    bgcolor={theme.palette.skeleton.subtle}
                     width={25}
                   />
                 </Grid>
@@ -39,11 +40,11 @@ function Loading({ noDrawer }: { noDrawer?: boolean }): React.ReactElement {
             </Grid>
             <Grid alignItems='flex-end' container direction='column' item sx={{ rowGap: '6px', width: 'fit-content' }}>
               <MySkeleton
-                bgcolor={isDark ? '#B094D340' : '#99A1C440'}
+                bgcolor={theme.palette.skeleton.subtle}
                 width={70}
               />
               <MySkeleton
-                bgcolor={isDark ? '#946CC826' : '#99A1C459'}
+                bgcolor={theme.palette.skeleton.muted}
                 width={50}
               />
             </Grid>

@@ -20,7 +20,7 @@ function Portfolio(): React.ReactElement {
 
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
-  const eyeColor = isDark ? '#BEAAD8' : '#745D8B';
+  const eyeColor = theme.palette.accent.text;
   const EyeIcon = isHideNumbers ? EyeSlash : Eye;
 
   return (
@@ -38,9 +38,9 @@ function Portfolio(): React.ReactElement {
             ? <Skeleton
               animation='wave'
               height='24px'
-              sx={{ bgcolor: '#BEAAD840', borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', transform: 'none', width: '100%' }}
+              sx={{ bgcolor: theme.palette.skeleton.accent, borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', transform: 'none', width: '100%' }}
               variant='text'
-            />
+              />
             : <FormatPrice
               commify
               decimalColor={theme.palette.text.secondary}
@@ -52,7 +52,7 @@ function Portfolio(): React.ReactElement {
               num={youHave?.portfolio}
               width='fit-content'
               withSmallDecimal
-            />
+              />
           }
         </Grid>
         <DailyChange

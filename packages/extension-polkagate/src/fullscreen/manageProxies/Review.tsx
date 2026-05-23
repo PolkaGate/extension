@@ -41,7 +41,7 @@ function Review({ address, call, depositToPay, fee, genesisHash, onClose, proxyI
   const isDark = theme.palette.mode === 'dark';
   const refContainer = useRef<HTMLDivElement>(null);
   const { decimal, token } = useChainInfo(genesisHash, true);
-  const reviewTextColor = isDark ? '#BEAAD8' : '#745D8B';
+  const reviewTextColor = theme.palette.accent.text;
   const panelBg = isDark ? '#05091C' : '#FFFFFF';
   const panelBorder = isDark ? 'transparent' : '#E3E8F7';
   const panelShadow = isDark ? 'none' : '0 10px 24px rgba(106, 116, 156, 0.12)';

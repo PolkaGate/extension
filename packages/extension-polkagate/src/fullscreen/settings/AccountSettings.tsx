@@ -57,9 +57,8 @@ function AccountSettings(): React.ReactElement {
   const selectedAccount = useSelectedAccount();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
-  const removeActionColor = isDark ? '#BEAAD8' : '#745D8B';
-  const removeActionIconColor = isDark ? '#AA83DC' : '#745D8B';
+  const removeActionColor = theme.palette.accent.text;
+  const removeActionIconColor = theme.palette.accent.icon;
 
   const popups = useMemo(() => {
     switch (extensionPopup) {

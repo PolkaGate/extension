@@ -20,22 +20,18 @@ interface Props {
 
 function ItemValue({ item, value }: { item: string, value: string }): React.ReactElement<Props> {
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
-  const dividerBackground = isDark
-    ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)'
-    : 'linear-gradient(90deg, rgba(221, 227, 244, 0.1) 0%, rgba(221, 227, 244, 0.9) 50.06%, rgba(221, 227, 244, 0.1) 100%)';
 
   return (
     <>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ minHeight: '36px', px: '8px' }}>
-        <Typography color={isDark ? '#AA83DC' : theme.palette.primary.main} variant='B-4'>
+        <Typography color={theme.palette.primary.main} variant='B-4'>
           {toTitleCase(item)}
         </Typography>
         <Typography color={theme.palette.text.primary} sx={{ mr: '3px' }} variant='B-4'>
           {value}
         </Typography>
       </Grid>
-      <Box sx={{ background: dividerBackground, height: '1px', width: '345px' }} />
+      <Box sx={{ background: theme.palette.dividerGradient, height: '1px', width: '345px' }} />
     </>
   );
 }
@@ -43,8 +39,6 @@ function ItemValue({ item, value }: { item: string, value: string }): React.Reac
 export default function Request({ metaId, request, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
-  const headerColor = isDark ? '#7956A5' : theme.palette.text.secondary;
 
   const chain = useMetadata(request.genesisHash, true);
   const onAction = useContext(ActionContext);
@@ -76,10 +70,10 @@ export default function Request({ metaId, request, url }: Props): React.ReactEle
     <>
       <Grid container fontSize='16px' sx={{ m: '0 15px auto', width: '92%', zIndex: 100 }}>
         <Stack direction='row' justifyContent='space-between' sx={{ m: '10px 0 10px', p: '0 15px 0 5px', width: '100%' }}>
-          <Typography color={headerColor} sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
+          <Typography color={theme.palette.text.muted} sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
             {t('item')}
           </Typography>
-          <Typography color={headerColor} sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
+          <Typography color={theme.palette.text.muted} sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
             {t('value')}
           </Typography>
         </Stack>

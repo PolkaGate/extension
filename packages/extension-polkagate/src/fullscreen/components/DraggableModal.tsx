@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChevronLeft, Close } from '@mui/icons-material';
-import { Box, Grid, IconButton, Modal, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Grid, IconButton, Modal, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { modalEffect } from '@polkadot/extension-polkagate/src/assets/img/index';
@@ -74,9 +74,9 @@ export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, chil
     '&:focus': {
       outline: 'none' // Remove outline when Box is focused
     },
-    bgcolor: isDarkMode ? '#1B133C' : '#F8F9FF',
+    bgcolor: theme.palette.surface.panel,
     border: '0.5px solid',
-    borderColor: isDarkMode ? '#FFFFFF0D' : '#DDE3F4',
+    borderColor: theme.palette.border.subtle,
     borderRadius: '32px',
     cursor: draggable
       ? isDragging ? 'grabbing' : 'grab'
@@ -120,7 +120,7 @@ export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, chil
           backgroundPosition: 'top center',
           backgroundRepeat: 'no-repeat',
           backgroundSize: '100% auto'
-        }}
+        } as SxProps<Theme>}
       >
         <Grid alignItems='center' container item>
           <IconButton
@@ -138,7 +138,7 @@ export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, chil
               zIndex: 2
             }}
           >
-            <CLoseIcon sx={{ color: isDarkMode ? '#AA83DC' : '#745D8B', fontSize: 20, stroke: isDarkMode ? '#AA83DC' : '#745D8B' }} />
+            <CLoseIcon sx={{ color: theme.palette.accent.icon, fontSize: 20, stroke: theme.palette.accent.icon }} />
           </IconButton>
           <Stack alignItems='center' direction='row' justifyContent='center' sx={{ width: '100%' }}>
             {TitleLogo &&
@@ -146,7 +146,7 @@ export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, chil
                 {TitleLogo}
               </span>
             }
-            <Typography color={isDarkMode ? '#EAEBF1' : theme.palette.text.primary} sx={{ ml: RightItem ? '60px' : 0, textAlign: RightItem || TitleLogo ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
+            <Typography color={theme.palette.text.primary} sx={{ ml: RightItem ? '60px' : 0, textAlign: RightItem || TitleLogo ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
               {title}
             </Typography>
             {
@@ -160,9 +160,7 @@ export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, chil
         {
           !noDivider &&
           <Box sx={{
-            background: isDarkMode
-              ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)'
-              : 'linear-gradient(90deg, rgba(221, 227, 244, 0.1) 0%, rgba(221, 227, 244, 0.9) 50.06%, rgba(221, 227, 244, 0.1) 100%)',
+            background: theme.palette.dividerGradient,
             height: '1px',
             justifySelf: 'center',
             m: '5px 0 15px',

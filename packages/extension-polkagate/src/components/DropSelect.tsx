@@ -21,20 +21,18 @@ interface DropSelectContainerProps {
 }
 
 const DropSelectContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'disabled' && prop !== 'focused' })<DropSelectContainerProps>(({ disabled, focused, theme }) => {
-  const isDark = theme.palette.mode === 'dark';
-
   return ({
     '&:hover': {
       background: disabled
-        ? (isDark ? '#1B133C' : '#EFF1F9')
-        : (isDark ? '#2D1E4A' : '#F3F6FD')
+        ? theme.palette.surface.disabled
+        : theme.palette.surface.hover
     },
     alignItems: 'center',
     background: focused && !disabled
-      ? (isDark ? '#05091C' : '#FFFFFF')
-      : (isDark ? '#1B133C' : disabled ? '#EFF1F9' : '#FFFFFF'),
+      ? theme.palette.surface.input
+      : disabled ? theme.palette.surface.disabled : theme.palette.surface.popover,
     border: '1px solid',
-    borderColor: isDark ? '#BEAAD833' : '#DDE3F4',
+    borderColor: theme.palette.border.input,
     borderRadius: '12px',
     columnGap: '5px',
     cursor: 'pointer',
@@ -57,7 +55,7 @@ function OptionLogo({ text }: { text: string }) {
       variant='square'
     >
       {!icon &&
-        <Global color='#AA83DC' size='18' variant='Bulk' />
+        <Global color={theme.palette.primary.main} size='18' variant='Bulk' />
       }
     </Avatar>
   );
@@ -106,7 +104,7 @@ function DropSelect({ Icon, contentDropWidth, defaultValue, disabled, displayCon
   }, [value]);
 
   const textColor = disabled ? 'text.disabled' : style?.color ?? 'text.secondary';
-  const arrowColor = open ? '#FF4FB9' : disabled ? theme.palette.text.disabled : isDark ? '#AA83DC' : theme.palette.text.secondary;
+  const arrowColor = open ? theme.palette.error.main : disabled ? theme.palette.text.disabled : isDark ? theme.palette.primary.main : theme.palette.text.secondary;
 
   return (
     <>
@@ -130,7 +128,7 @@ function DropSelect({ Icon, contentDropWidth, defaultValue, disabled, displayCon
               </>
             }
             {displayContentType === 'icon' && Icon &&
-              <Icon color={isDark ? '#BEAAD8' : theme.palette.text.secondary} size='18' variant='Bulk' />
+              <Icon color={theme.palette.text.secondary} size='18' variant='Bulk' />
             }
             {scrollTextOnOverflow && _contentDropWidth
               ? (

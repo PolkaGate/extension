@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Grid, Stack, Typography } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
@@ -9,16 +9,18 @@ import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { MySkeleton } from '../../components';
 
 const ChartHeader = () => {
+  const theme = useTheme();
+
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '20px', justifyContent: 'space-between', m: 'auto', width: '98%' }}>
       <MySkeleton
-        bgcolor='#BEAAD840'
+        bgcolor={theme.palette.skeleton.accent}
         height={43.5}
         style={{ borderRadius: '11px' }}
         width={190}
       />
       <MySkeleton
-        bgcolor='#BEAAD840'
+        bgcolor={theme.palette.skeleton.accent}
         height={43.5}
         style={{ borderRadius: '11px' }}
         width={71.27}
@@ -34,6 +36,7 @@ interface RewardsLoadingProps {
 
 const RewardTable = ({ type }: RewardsLoadingProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Stack direction='column' sx={{ gap: '10px', width: '100%' }}>
@@ -52,7 +55,7 @@ const RewardTable = ({ type }: RewardsLoadingProps) => {
         Array.from({ length: 5 }).map((_, index) => {
           return (
             <MySkeleton
-              bgcolor='#946CC840'
+              bgcolor={theme.palette.skeleton.default}
               height={48}
               key={index}
               style={{ borderRadius: '11px' }}

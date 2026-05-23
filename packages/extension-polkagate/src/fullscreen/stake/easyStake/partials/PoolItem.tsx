@@ -66,7 +66,7 @@ function PoolItem({ genesisHash, onDetailClick, poolInfo, selectable, selected, 
   const rowBorderColor = isSelected ? '#FF4FB9' : isDark ? 'transparent' : '#E3E8F7';
   const rowShadow = isDark ? 'none' : '0 10px 22px rgba(106, 116, 156, 0.12)';
   const detailBg = isDark ? '#2D1E4A' : '#E4D9F2';
-  const detailIconColor = isDark ? '#AA83DC' : '#745D8B';
+  const detailIconColor = theme.palette.accent.icon;
 
   return (
     <Stack direction='column' sx={{ bgcolor: rowBg, border: '1px solid', borderColor: rowBorderColor, borderRadius: '14px', boxShadow: rowShadow, p: '8px 0 8px 8px', transition: 'all 150ms ease-out', width: '100%', ...style }}>

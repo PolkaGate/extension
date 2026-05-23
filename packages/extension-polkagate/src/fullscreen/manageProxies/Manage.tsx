@@ -38,7 +38,6 @@ export default function Manage({ api, decimal, depositedValue, genesisHash, isDi
   const isDark = theme.palette.mode === 'dark';
   const depositLabelColor = isDark ? '#AA83DC' : '#9B6BE8';
   const depositValueColor = isDark ? '#EAEBF1' : theme.palette.text.primary;
-  const depositSkeletonColor = isDark ? '#946CC840' : '#D9DFF0';
 
   const proxyDepositBase = api ? api.consts['proxy']['proxyDepositBase'] as unknown as BN : BN_ZERO;
   const proxyDepositFactor = api ? api.consts['proxy']['proxyDepositFactor'] as unknown as BN : BN_ZERO;
@@ -140,7 +139,7 @@ export default function Manage({ api, decimal, depositedValue, genesisHash, isDi
           <DisplayBalance
             balance={proxyItems === undefined ? undefined : depositedValue ?? newDepositValue ?? BN_ZERO}
             decimal={decimal}
-            skeletonStyle={{ backgroundColor: depositSkeletonColor }}
+            skeletonStyle={{ backgroundColor: theme.palette.skeleton.default }}
             style={{ color: depositValueColor }}
             token={token}
           />

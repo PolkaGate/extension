@@ -14,7 +14,7 @@ import React, { useMemo } from 'react';
 
 import { bnToBn } from '@polkadot/util';
 
-import { Logo, DisplayBalance, Identity, TwoToneText } from '../../../components';
+import { DisplayBalance, Identity, Logo, TwoToneText } from '../../../components';
 import { useAccountAssets, useAllChains, useChainInfo, useEstimatedFee, useFavIcon, useIsExtensionPopup, useMetadata, useSelectedChains, useTranslation } from '../../../hooks';
 import { getSubstrateAddress, isOnAssetHub } from '../../../util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '../../../util/constants';
@@ -128,7 +128,7 @@ function SignerContext({ address, genesisHash, showBalance = true }: SignerConte
             <DisplayBalance
               balance={nativeAssetBalance ? getValue('transferable', nativeAssetBalance) : undefined}
               decimal={decimal}
-              style={{ color: isDark ? '#BEAAD8' : '#745E9F', ...theme.typography['B-4'] }}
+              style={{ color: theme.palette.accent.textStrong, ...theme.typography['B-4'] }}
               token={token}
             />
           }

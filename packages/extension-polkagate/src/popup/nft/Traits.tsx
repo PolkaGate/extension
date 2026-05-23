@@ -31,7 +31,7 @@ function ItemInfo({ label, link, markDown, showDivider = true, value }: { label:
   return (
     <Stack direction='column' justifyItems='center'>
       <Grid container direction='row' item justifyContent='space-between' justifyItems='space-between' sx={{ lineHeight: '35px' }}>
-        <Typography color={isDark ? '#BEAAD8' : '#745D8B'} textAlign='left' variant='B-1'>
+        <Typography color='accent.text' textAlign='left' variant='B-1'>
           {label}
         </Typography>
         {React.isValidElement(value)
@@ -76,7 +76,7 @@ export default function Traits({ nft }: { nft: ItemInformation | undefined }): R
   const [gifHash, setGifHash] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    const getUniqueGif = async () => {
+    const getUniqueGif = async() => {
       if (nft?.isNft || !nft?.mediaUri) {
         setGifSource(null);
 

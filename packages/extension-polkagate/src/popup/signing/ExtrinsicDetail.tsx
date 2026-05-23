@@ -84,7 +84,7 @@ function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.Rea
     <>
       <Grid container item sx={{ display: 'block', fontSize: '16px', justifyContent: 'center', justifyItems: 'center', maxHeight: '465px', minHeight: '465px', overflowY: 'auto' }}>
         <Grid alignItems='center' container item justifyContent='space-between' sx={STYLE}>
-          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} fontSize='13px' variant='B-1'>
+          <Typography color={theme.palette.accent.textStrong} fontSize='13px' variant='B-1'>
             {t('Tip')}
           </Typography>
           <DisplayBalance
@@ -96,7 +96,7 @@ function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.Rea
           />
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-between' sx={STYLE}>
-          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} fontSize='13px' variant='B-1'>
+          <Typography color={theme.palette.accent.textStrong} fontSize='13px' variant='B-1'>
             {t('Nonce')}
           </Typography>
           <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} fontSize='13px' variant='B-1'>
@@ -104,7 +104,7 @@ function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.Rea
           </Typography>
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-between' sx={STYLE}>
-          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} fontSize='13px' variant='B-1'>
+          <Typography color={theme.palette.accent.textStrong} fontSize='13px' variant='B-1'>
             {t('Pallet')}
           </Typography>
           <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} fontSize='13px' variant='B-1'>
@@ -112,7 +112,7 @@ function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.Rea
           </Typography>
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '10px' }}>
-          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} fontSize='13px' variant='B-1'>
+          <Typography color={theme.palette.accent.textStrong} fontSize='13px' variant='B-1'>
             {t('Method')}
           </Typography>
           <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} fontSize='13px' variant='B-1'>
@@ -151,7 +151,7 @@ function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.Rea
           </Grid>
         }
         <Stack direction='column' sx={{ mx: '10px' }}>
-          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ m: '15px 0 5px', textAlign: 'left', width: '100%' }} variant='B-1'>
+          <Typography color={theme.palette.accent.textStrong} sx={{ m: '15px 0 5px', textAlign: 'left', width: '100%' }} variant='B-1'>
             {t('Documentation')}
           </Typography>
           <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} sx={{ mb: '10px', pb: '5px', textAlign: 'left', width: '100%' }} variant='B-5'>

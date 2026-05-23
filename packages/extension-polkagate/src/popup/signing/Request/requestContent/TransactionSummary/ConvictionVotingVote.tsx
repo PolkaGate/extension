@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
-// @ts-ignore
+// @ts-expect-error generated lookup type is unavailable in some metadata builds.
 import type { PalletConvictionVotingVoteAccountVote } from '@polkadot/types/lookup';
 import type { AnyTuple } from '@polkadot/types-codec/types';
 import type { BN } from '@polkadot/util';
@@ -109,7 +109,7 @@ function ConvictionVotingVote({ args, genesisHash }: Props): React.ReactElement<
           />
         }
         <Stack alignItems='center' columnGap='5px' direction='row'>
-          <Typography color={isDark ? '#BEAAD8' : '#745E9F'} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
+          <Typography color={theme.palette.accent.textStrong} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             <TwoToneText
               color={isDark ? theme.palette.text.primary : '#2D1E4A'}
               text={text}

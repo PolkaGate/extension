@@ -4,11 +4,11 @@
 import type { Variant } from '@mui/material/styles/createTypography';
 import type { OverridableStringUnion } from '@mui/types';
 
-import { Box, Container, Dialog, Grid, type SxProps, type Theme, Typography, type TypographyPropsVariantOverrides } from '@mui/material';
+import { Box, Container, Dialog, Grid, type SxProps, type Theme, Typography, type TypographyPropsVariantOverrides, useTheme } from '@mui/material';
 import { ArrowCircleLeft, ArrowCircleRight, type Icon } from 'iconsax-react';
 import React from 'react';
 
-import { useIsBlueish, useIsDark, useTranslation } from '../hooks';
+import { useIsBlueish, useTranslation } from '../hooks';
 import { GradientBorder, GradientDivider, RedGradient } from '../style';
 import BlueGradient from '../style/BlueGradient';
 import CustomCloseSquare from './SVG/CustomCloseSquare';
@@ -63,12 +63,13 @@ const Gradient = React.memo(function MemoGradient({ pt, withoutBackground }: { p
 function ExtensionPopup({ RightItem, TitleIcon, children, contentContainerStyle, darkBackground = false, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, onNext, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
-  const isDark = useIsDark();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const modalBg = darkBackground
-    ? (isDark ? '#110F2A' : '#EEF1FF')
-    : (isDark ? '#1B133C' : '#F8F9FF');
-  const borderColor = isDark ? '#FFFFFF0D' : '#DDE3F4';
-  const navTextColor = isDark ? '#EAEBF1' : '#4F4779';
+    ? theme.palette.surface.panelAlt
+    : theme.palette.surface.panel;
+  const borderColor = theme.palette.border.subtle;
+  const navTextColor = theme.palette.text.primary;
 
   return (
     <Dialog
@@ -114,7 +115,7 @@ function ExtensionPopup({ RightItem, TitleIcon, children, contentContainerStyle,
             </Grid>
           }
           {onNext &&
-            <Grid alignItems='center' container item onClick={onNext} sx={{ cursor: 'pointer', position: 'absolute', right: '15px', pt: '15px', width: 'fit-content', zIndex: 2 }}>
+            <Grid alignItems='center' container item onClick={onNext} sx={{ cursor: 'pointer', position: 'absolute', pt: '15px', right: '15px', width: 'fit-content', zIndex: 2 }}>
               <Typography color={navTextColor} mr='4px' variant='B-1'>
                 {t('Next')}
               </Typography>
