@@ -1,12 +1,12 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, type SxProps, type Theme } from '@mui/material';
+import { Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import { Data } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useIsDark, useProxies, useTranslation } from '../hooks';
+import { useProxies, useTranslation } from '../hooks';
 import { PASEO_ASSET_HUB_GENESIS_HASH, STATEMINE_GENESIS_HASH, STATEMINT_GENESIS_HASH } from '../util/constants';
 import MyTooltip from './MyTooltip';
 
@@ -17,7 +17,8 @@ interface Props {
 
 function HasProxyOnHubIndicator({ address, style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const isDark = useIsDark();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const navigate = useNavigate();
 
   const paseoProxies = useProxies(PASEO_ASSET_HUB_GENESIS_HASH, address);
@@ -102,7 +103,7 @@ function HasProxyOnHubIndicator({ address, style = {} }: Props): React.ReactElem
           })}
         >
           <Grid container item onClick={onClick} sx={containerStyle}>
-            <Data color={isDark ? '#AA83DC' : '#745E9F'} size='20' variant='Bulk' />
+            <Data color={theme.palette.accent.highlight} size='20' variant='Bulk' />
           </Grid>
         </MyTooltip>
       }

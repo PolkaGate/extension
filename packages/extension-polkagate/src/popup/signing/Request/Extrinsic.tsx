@@ -115,7 +115,7 @@ function SignerContext({ address, genesisHash, showBalance = true }: SignerConte
         }}
         withShortAddress
       />
-      <Typography color={isDark ? '#AA83DC' : '#745E9F'} fontSize='13px' textTransform='uppercase' variant='B-2'>
+      <Typography color={theme.palette.accent.highlight} fontSize='13px' textTransform='uppercase' variant='B-2'>
         {t('on')}
       </Typography>
       <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', borderRadius: '14px', height: '56px', pl: '10px', width: '45%' }}>

@@ -70,15 +70,15 @@ const WindowChanger = ({ dateInterval, onNextPeriod, onPreviousPeriod }: WindowC
   const isDark = theme.palette.mode === 'dark';
 
   const chevronStyle = {
-    ':hover': { color: isDark ? '#EAEBF1' : '#FFFFFF', bgcolor: isDark ? undefined : '#745E9F' },
+    ':hover': { bgcolor: isDark ? undefined : '#745E9F', color: isDark ? '#EAEBF1' : '#FFFFFF' },
     backdropFilter: 'blur(20px)',
+    bgcolor: isDark ? 'transparent' : '#FFFFFF',
+    border: isDark ? 'none' : '1px solid #DDE3F4',
     borderRadius: '10px',
     boxShadow: isDark ? '0px 0px 24px 8px #4E2B7259 inset' : '0 6px 16px rgba(133, 140, 176, 0.12)',
     color: isDark ? '#AA83DC' : theme.palette.text.highlight,
     cursor: 'pointer',
-    fontSize: '30px',
-    bgcolor: isDark ? 'transparent' : '#FFFFFF',
-    border: isDark ? 'none' : '1px solid #DDE3F4'
+    fontSize: '30px'
   };
 
   return (
@@ -272,7 +272,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward, type }: Re
             width: '36px'
           }}
         >
-          <ArrowDown2 color={isDark ? '#AA83DC' : '#745E9F'} size='14' style={{ rotate: isExpanded ? '180deg' : 'none', transition: 'all 150ms ease-out' }} variant='Bold' />
+          <ArrowDown2 color={theme.palette.accent.highlight} size='14' style={{ rotate: isExpanded ? '180deg' : 'none', transition: 'all 150ms ease-out' }} variant='Bold' />
         </Grid>
       </Container>
       <Container
@@ -309,7 +309,7 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward, type }: Re
               width: '330px'
             }}
             withShortAddress
-          />}
+            />}
       </Container>
     </Collapse>
   );
@@ -384,7 +384,7 @@ export default function Rewards({ genesisHash, popupOpener, rewardInfo, token, t
           ? <RewardsLoading
             isDark={isDark}
             type={type}
-          />
+            />
           : (
             <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
               <Stack

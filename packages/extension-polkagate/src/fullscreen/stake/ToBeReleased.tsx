@@ -3,7 +3,7 @@
 
 import type { DateAmount } from '../../hooks/useSoloStakingInfo';
 
-import { Container, Grid, Stack, Typography } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { DisplayBalance, GradientButton, GradientDivider } from '../../components';
@@ -20,10 +20,11 @@ interface Props {
 
 export default function ToBeReleased({ genesisHash, onClose, onRestake, toBeReleased }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
   const { decimal, token } = useChainInfo(genesisHash, true);
 
-  const labelColor = isDark ? '#AA83DC' : '#745E9F';
+  const labelColor = theme.palette.accent.highlight;
   const valueColor = isDark ? '#FFFFFF' : '#3B2C68';
   const rowTextColor = isDark ? '#FFFFFF' : '#6F5A96';
   const rowBgColor = isDark ? '#05091C' : '#FFFFFF';

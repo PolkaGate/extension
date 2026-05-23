@@ -121,7 +121,7 @@ function ExtrinsicDetail({ mode: { data }, request, setMode }: Props): React.Rea
         </Grid>
         {!!data?.argsEntries?.length &&
           <Grid alignItems='start' container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #E3E8F7', borderRadius: '14px', p: '10px', pl: '20px' }}>
-            <Typography color={isDark ? '#AA83DC' : '#745E9F'} sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, mb: '10px', pb: '5px', position: 'relative', textAlign: 'left', width: '100%' }} textTransform='uppercase' variant='S-1'>
+            <Typography color={theme.palette.accent.highlight} sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, mb: '10px', pb: '5px', position: 'relative', textAlign: 'left', width: '100%' }} textTransform='uppercase' variant='S-1'>
               {t('Arguments')}
             </Typography>
             <Grid container fontSize='11px' sx={{ overflowY: 'auto' }} textAlign='left'>

@@ -148,7 +148,7 @@ export const ContentItem = memo(function ContentItemMemo({ Icon, content, decima
             <UnableToPayFee warningText={warningText} />
           }
           {Icon &&
-            <Icon color={isExtension ? (isDark ? '#AA83DC' : '#745E9F') : '#AA83DC'} size={18} variant='Bulk' />
+            <Icon color={isExtension ? theme.palette.accent.highlight : '#AA83DC'} size={18} variant='Bulk' />
           }
           {withLogo &&
             <Logo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />

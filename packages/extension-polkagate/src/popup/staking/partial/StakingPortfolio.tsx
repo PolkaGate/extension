@@ -118,12 +118,13 @@ const Buttons = ({ buttons, disabled, isFullScreen, isLoading }: ButtonsProps) =
 
 const OnChainInfo = ({ onClick }: { onClick: () => void }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
 
   return (
     <Container disableGutters onClick={onClick} sx={{ bgcolor: isDark ? '#AA83DC26' : '#F3F6FD', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '9px', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '4px', m: '-6px 0 -14px auto', p: '2px 4px', width: 'fit-content' }}>
-      <Sticker color={isDark ? '#AA83DC' : '#745E9F'} size='20' variant='Bulk' />
-      <Typography color={isDark ? '#AA83DC' : '#745E9F'} variant='B-2'>
+      <Sticker color={theme.palette.accent.highlight} size='20' variant='Bulk' />
+      <Typography color={theme.palette.accent.highlight} variant='B-2'>
         {t('On-chain staking info')}
       </Typography>
     </Container>

@@ -7,6 +7,7 @@ import type { ThemeOptions, TypeAction } from '@mui/material';
 import type { CSSProperties } from 'react';
 
 interface PolkaGateAccent {
+  highlight: string;
   icon: string;
   text: string;
   textStrong: string;

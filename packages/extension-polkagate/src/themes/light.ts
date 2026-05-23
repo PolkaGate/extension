@@ -24,7 +24,7 @@ export const lightTheme: ExtendedThemeOptions = {
     background: { default: '#D8DDF1', paper: '#FFFFFF' },
     backgroundFL: { primary: '#EEF0FB', secondary: '#F8F9FF' },
     border: { default: '#C7D0EA', input: '#DDE3F4', paper: '#EEF0FB', strong: '#DDE3F4', subtle: '#E3E8F7' },
-    accent: { icon: '#745D8B', text: '#745D8B', textStrong: '#745E9F' },
+    accent: { highlight: '#745E9F', icon: '#745D8B', text: '#745D8B', textStrong: '#745E9F' },
     surface: { badge: '#FFFFFF', disabled: '#EFF1F9', hover: '#F3F6FD', input: '#FFFFFF', panel: '#F8F9FF', panelAlt: '#EEF1FF', popover: '#FFFFFF', selected: '#EEF2FB' },
     text: { primary: '#31285A', secondary: '#7B84AC', disabled: '#A6ADC7', highlight: '#4A86F7', muted: '#7B84AC' },
     action: { disabled: '#FFFFFF', disabledBackground: '#B7C4E8', focus: '#D7B3E0' },

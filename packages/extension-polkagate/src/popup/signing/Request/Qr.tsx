@@ -66,8 +66,8 @@ function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props
           <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} variant='B-2'>
             {t('Hold the QR code in front of the')}
           </Typography>
-          <Mobile color={isDark ? '#AA83DC' : '#745E9F'} size={16} style={{ marginLeft: '4px' }} variant='Bold' />
-          <Typography color={isDark ? '#AA83DC' : '#745E9F'} variant='B-2'>
+          <Mobile color={theme.palette.accent.highlight} size={16} style={{ marginLeft: '4px' }} variant='Bold' />
+          <Typography color={theme.palette.accent.highlight} variant='B-2'>
             {t('device’s camera')}
           </Typography>
         </Grid>

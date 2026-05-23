@@ -32,7 +32,7 @@ export default function RewardConfigureButton({ onClick }: { onClick: () => void
           border: isDark ? '2px solid #1B133C' : '1px solid #DDE3F4',
           borderRadius: '12px',
           boxShadow: isDark ? 'none' : '0 6px 16px rgba(133, 140, 176, 0.12)',
-          color: isDark ? '#AA83DC' : '#745E9F',
+          color: theme.palette.accent.highlight,
           cursor: 'pointer',
           height: '40px',
           justifyContent: 'center',

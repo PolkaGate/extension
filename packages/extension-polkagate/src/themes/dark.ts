@@ -34,7 +34,7 @@ export const darkTheme: ExtendedThemeOptions = {
     background: { default: '#05091C', paper: '#05091C' },
     border: { default: '#05091C', input: '#BEAAD833', paper: '#1B133C', strong: '#2D1E4A', subtle: '#FFFFFF0D' },
     backgroundFL: { primary: '#1B133C', secondary: '#171717' },
-    accent: { icon: '#AA83DC', text: '#BEAAD8', textStrong: '#BEAAD8' },
+    accent: { highlight: '#AA83DC', icon: '#AA83DC', text: '#BEAAD8', textStrong: '#BEAAD8' },
     surface: { badge: '#05091C80', disabled: '#1B133C', hover: '#2D1E4A', input: '#05091C', panel: '#1B133C', panelAlt: '#110F2A', popover: '#1B133C', selected: '#2D1E4A' },
     text: { primary: '#EAEBF1', secondary: '#BEAAD8', disabled: '#4B4B4B', highlight: '#809ACB', muted: '#7956A5' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },

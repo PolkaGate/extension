@@ -3,7 +3,7 @@
 
 import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { LockSlash } from 'iconsax-react';
 import React from 'react';
 
@@ -23,9 +23,10 @@ interface Props {
 
 export default function ToBeReleased({ decimal, handleClose, onRestake, openMenu, toBeReleased, token }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
 
-  const labelColor = isDark ? '#AA83DC' : '#745E9F';
+  const labelColor = theme.palette.accent.highlight;
   const valueColor = isDark ? '#FFFFFF' : '#3B2C68';
   const rowTextColor = isDark ? '#FFFFFF' : '#6F5A96';
   const rowBgColor = isDark ? 'transparent' : '#FFFFFF';
