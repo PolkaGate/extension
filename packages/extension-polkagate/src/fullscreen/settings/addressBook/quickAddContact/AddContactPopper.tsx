@@ -5,7 +5,7 @@ import type { Contact } from '../types';
 
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import CheckIcon from '@mui/icons-material/Check';
-import { ClickAwayListener, Fade, IconButton, Popper, Stack } from '@mui/material';
+import { ClickAwayListener, Fade, IconButton, Popper, Stack, useTheme } from '@mui/material';
 import { User } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 
@@ -26,6 +26,8 @@ interface Props {
 
 function AddContactPopper({ addingContact, contactAddress, containerRef, open, setAddingContact, togglePopper }: Props) {
     const { t } = useTranslation();
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const [name, setName] = useState<string | undefined>(undefined);
@@ -77,9 +79,11 @@ function AddContactPopper({ addingContact, contactAddress, containerRef, open, s
                             direction='row'
                             sx={{
                                 alignItems: 'flex-end',
-                                bgcolor: '#1B133C',
-                                border: '1px solid #2D1E4A',
+                                bgcolor: isDark ? '#1B133C' : '#FFFFFF',
+                                border: '1px solid',
+                                borderColor: isDark ? '#2D1E4A' : '#DDE3F4',
                                 borderRadius: '6px',
+                                boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.14)',
                                 // boxShadow: '0 0 5px 4px #2D1E4A',
                                 gap: '10px',
                                 justifyContent: 'space-between',
@@ -102,13 +106,13 @@ function AddContactPopper({ addingContact, contactAddress, containerRef, open, s
                                     loop={false}
                                     src={checked as string}
                                     style={{ height: 'auto', marginBottom: '10px', marginInline: '-7px', width: '45px' }}
-                                />
+                                  />
                                 : <IconButton
                                     disabled={!name}
                                     onClick={addToContacts}
                                     sx={{ m: 0, mb: '8px', p: '4px' }}
-                                >
-                                    <CheckIcon sx={{ color: 'success.light' }} />
+                                  >
+                                    <CheckIcon sx={{ color: isDark ? 'success.light' : 'success.main' }} />
                                 </IconButton>
                             }
 

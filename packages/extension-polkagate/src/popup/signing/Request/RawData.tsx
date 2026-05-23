@@ -4,7 +4,7 @@
 import type { AccountJson, RequestSign } from '@polkadot/extension-base/background/types';
 import type { SignerPayloadRaw } from '@polkadot/types/types';
 
-import { Avatar, Box, Grid, Stack, Typography } from '@mui/material';
+import { Avatar, Box, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Edit2, Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -29,6 +29,8 @@ interface Props {
 
 export default function RawData({ account, error, request, setError, setMode, signId, url }: Props): React.ReactElement<Props> | null {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const navigate = useNavigate();
   const dapp = new URL(url).origin;
   const faviconUrl = useFavIcon(dapp);
@@ -63,13 +65,13 @@ export default function RawData({ account, error, request, setError, setMode, si
 
   return (
     <Grid container display='block' fontSize='16px' height='490px' justifyContent='center' justifyItems='center' position='relative'>
-      <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: '#05091C80', borderRadius: '14px', height: '34px', pr: '5px', width: 'fit-content' }}>
+      <Grid alignItems='center' columnGap='5px' container direction='row' item justifyContent='center' sx={{ bgcolor: isDark ? '#05091C80' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', height: '34px', pr: '5px', width: 'fit-content' }}>
         <Avatar
           src={faviconUrl ?? undefined}
           sx={{ borderRadius: '8px !important', height: '26px', width: '26px' }}
           variant='circular'
         />
-        <Typography color='#BEAAD8' variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : theme.palette.text.secondary} variant='B-1'>
           {dapp}
         </Typography>
       </Grid>
@@ -81,7 +83,7 @@ export default function RawData({ account, error, request, setError, setMode, si
           inTitleCase
           showAddress
           showCopy={false}
-          style={{ bgcolor: '#05091C', borderRadius: '14px', height: '55px', mt: '30px', width: '100%' }}
+          style={{ borderRadius: '14px', height: '55px', mt: '30px', width: '100%' }}
         />
       </Grid>
       <Box sx={{
@@ -95,8 +97,8 @@ export default function RawData({ account, error, request, setError, setMode, si
         width: '100%'
       }}
       >
-        <Grid container item justifyContent='center' sx={{ alignItems: 'center', bgcolor: '#1B133C', borderRadius: '10px', height: '100%', maxHeight: '65px', minHeight: '50px', overflowWrap: 'anywhere', overflowY: 'auto', px: '10px', py: '5px', textAlign: 'center', width: '100%' }}>
-          <Typography color='#EAEBF1' variant='B-1'>
+        <Grid container item justifyContent='center' sx={{ alignItems: 'center', bgcolor: isDark ? '#1B133C' : '#FFFFFF', borderRadius: '10px', height: '100%', maxHeight: '65px', minHeight: '50px', overflowWrap: 'anywhere', overflowY: 'auto', px: '10px', py: '5px', textAlign: 'center', width: '100%' }}>
+          <Typography color={theme.palette.text.primary} variant='B-1'>
             {text}
           </Typography>
         </Grid>

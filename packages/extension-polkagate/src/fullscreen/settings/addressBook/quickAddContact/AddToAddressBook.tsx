@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { BookSaved } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 
@@ -17,6 +17,8 @@ interface Props {
 
 function AddToAddressBook({ input }: Props) {
     const { t } = useTranslation();
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
     const contacts = useAddressBook(); // default value is [], and when it's undefined means it's fetching!
     const accounts = useAccounts();
     const containerRef = useRef(null);
@@ -63,14 +65,14 @@ function AddToAddressBook({ input }: Props) {
                 ref={containerRef}
                 sx={{
                     ':hover': {
-                        borderColor: '#2D1E4A',
+                        borderColor: isDark ? '#2D1E4A' : '#DDE3F4',
                         opacity: 1,
                         transition: 'all 250ms ease-out'
                     },
                     alignItems: 'center',
-                    bgcolor: '#1B133C',
+                    bgcolor: isDark ? '#1B133C' : '#FFFFFF',
                     border: '1px solid',
-                    borderColor: openPopper ? '#2D1E4A' : 'transparent',
+                    borderColor: openPopper ? (isDark ? '#2D1E4A' : '#DDE3F4') : 'transparent',
                     borderRadius: '6px',
                     cursor: 'pointer',
                     gap: isHovered || openPopper ? '12px' : 0,
@@ -96,7 +98,7 @@ function AddToAddressBook({ input }: Props) {
                 >
                     {t('Add to address book')}
                 </Typography>
-                <BookSaved color='#AA83DC' size='20' variant='Linear' />
+                <BookSaved color={theme.palette.primary.main} size='20' variant='Linear' />
             </Stack>
             <AddContactPopper
                 addingContact={addingContact}
