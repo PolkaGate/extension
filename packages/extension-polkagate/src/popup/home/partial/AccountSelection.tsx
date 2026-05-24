@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
+import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -43,7 +43,6 @@ const AccountsIcon = ({ accountsLength, address, isInAccountLists, noSelection }
               alignContent='center' container item justifyContent='center' sx={{
                 background: isInAccountLists ? 'transparent' : theme.palette.gradient.brand,
                 borderRadius: '1024px',
-                color: isDark ? '#EAEBF1' : '#FFFFFF',
                 fontFamily: 'Inter',
                 fontSize: '12px',
                 fontWeight: 700,
@@ -53,7 +52,9 @@ const AccountsIcon = ({ accountsLength, address, isInAccountLists, noSelection }
                 width: '100%'
               }}
             >
-              {accountsLength ?? 0}
+              <Typography color={isInAccountLists ? isDark ? '#EAEBF1' : '#05091C' : '#FFFFFF'} fontFamily='Inter' fontSize='12px' fontWeight={700} lineHeight='11px'>
+                {accountsLength ?? 0}
+              </Typography>
             </Grid>
           </Grid>)}
     </>

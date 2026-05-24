@@ -14,7 +14,7 @@ import { DraggableModal } from '../components/DraggableModal';
 import SelectAccount from './partials/SelectAccount';
 import SelectChain from './partials/SelectChain';
 
-const CARD_STYLE = { alignItems: 'center', borderColor: '#2D1E4A', height: '64px' };
+const CARD_STYLE = { alignItems: 'center', height: '64px' };
 
 interface SettingUIProps {
   openPopup: (popup: Popups) => () => void;

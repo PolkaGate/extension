@@ -361,7 +361,14 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, logo,
       <>
         {priceData.length === 0
           ? (
-            <SineWaveLoader height={300} width={637} />
+            <SineWaveLoader
+              axisColor={theme.palette.mode === 'dark' ? '#999' : '#7B84AC'}
+              color={theme.palette.mode === 'dark' ? '#e0e0e0' : '#745E9F'}
+              height={300}
+              highlightColor={theme.palette.mode === 'dark' ? 'rgba(192,192,192,0.8)' : 'rgba(255,79,185,0.8)'}
+              lineWidth={1}
+              width={637}
+            />
           )
           : (
             <Line data={chartData} options={options} plugins={[logoWatermarkPlugin, gradientFillPlugin]} ref={chartRef} />

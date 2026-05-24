@@ -173,7 +173,7 @@ function ProfilesDropDown({ mode, setMode, style }: Props) {
                 {`${selectedProfile} accounts`}
               </Typography>
               <Box sx={{ background: theme.palette.gradient.brand, borderRadius: '50%', display: 'flex', height: '20px', justifyContent: 'center', minWidth: '20px' }}>
-                <Typography fontWeight={700} variant='B-1'>
+                <Typography color='#FFFFFF' fontWeight={700} variant='B-1'>
                   {profileAccounts?.length}
                 </Typography>
               </Box>
