@@ -11,7 +11,7 @@ import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { BN_ZERO } from '@polkadot/util';
 
-import { DisplayBalance, FadeOnScroll, FormatPrice, GradientButton, Identity, Transition } from '../../../components';
+import { CopyAddressButton, DisplayBalance, FadeOnScroll, FormatPrice, GradientButton, Identity, Transition } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsExtensionPopup, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
@@ -205,40 +205,45 @@ function DetailCard({ historyItem }: Props) {
                 <Typography color='text.secondary' textTransform='capitalize' variant='B-1' width='fit-content'>
                   {toTitleCase(key)}
                 </Typography>
-                <Typography color={color} sx={{ bgcolor: isHash ? (isDark ? '#C6AECC26' : '#EEF2FB') : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
-                  {isBlock && '#'}
-                  {isAddress
-                    ? <Identity
-                      address={value.toString()}
-                      addressStyle={{ backgroundColor: isDark ? '#C6AECC26' : '#EEF2FB', borderRadius: '9px', marginTop: '-3%', padding: '2px 3px' }}
-                      charsCount={4}
-                      direction='row'
-                      genesisHash={historyItem.chain?.genesisHash || POLKADOT_GENESIS}
-                      identiconSize={18}
-                      nameStyle={{ py: '2px' }}
-                      showSocial={false}
-                      style={{ color: 'text.primary', variant: 'B-1' }}
-                      withShortAddress={true}
-                    />
-                    : isHash
-                      ? toShortAddress(value.toString(), 6)
-                      : isDate
-                        ? formatTimestamp(value)
-                        : isVoteType
-                          ? getVoteType(value as number)
-                          : isFee
-                            ? <DisplayBalance
-                              balance={value as string}
-                              decimal={decimal}
-                              style={{
-                                color: '#AA83DC',
-                                width: 'max-content'
-                              }}
-                              token={token}
-                            />
-                            : value
+                <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='end'>
+                  <Typography color={color} sx={{ bgcolor: isHash ? (isDark ? '#C6AECC26' : '#EEF2FB') : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
+                    {isBlock && '#'}
+                    {isAddress
+                      ? <Identity
+                        address={value.toString()}
+                        addressStyle={{ backgroundColor: isDark ? '#C6AECC26' : '#EEF2FB', borderRadius: '9px', marginTop: '-3%', padding: '2px 3px' }}
+                        charsCount={4}
+                        direction='row'
+                        genesisHash={historyItem.chain?.genesisHash || POLKADOT_GENESIS}
+                        identiconSize={18}
+                        nameStyle={{ py: '2px' }}
+                        showSocial={false}
+                        style={{ color: 'text.primary', variant: 'B-1' }}
+                        withShortAddress={true}
+                      />
+                      : isHash
+                        ? toShortAddress(value.toString(), 6)
+                        : isDate
+                          ? formatTimestamp(value)
+                          : isVoteType
+                            ? getVoteType(value as number)
+                            : isFee
+                              ? <DisplayBalance
+                                balance={value as string}
+                                decimal={decimal}
+                                style={{
+                                  color: '#AA83DC',
+                                  width: 'max-content'
+                                }}
+                                token={token}
+                              />
+                              : value
+                    }
+                  </Typography>
+                  {isHash && Boolean(value) &&
+                    <CopyAddressButton address={String(value)} padding={0} size={16} />
                   }
-                </Typography>
+                </Stack>
               </Container>
               {withDivider && <GradientDivider style={{ my: '7px' }} />}
             </React.Fragment>
