@@ -38,12 +38,18 @@ export default function useCustomEndpoint(genesisHash: string | null | undefined
       return false;
     }
 
-    const latestCustomEndpoints = await getStorage(STORAGE_KEY.CUSTOM_ENDPOINTS) as CustomEndpoints | undefined;
-    const updated = { ...(latestCustomEndpoints ?? {}) };
+    try {
+      const latestCustomEndpoints = await getStorage(STORAGE_KEY.CUSTOM_ENDPOINTS) as CustomEndpoints | undefined;
+      const updated = { ...(latestCustomEndpoints ?? {}) };
 
-    delete updated[genesisHash];
+      delete updated[genesisHash];
 
-    return setStorage(STORAGE_KEY.CUSTOM_ENDPOINTS, updated);
+      return setStorage(STORAGE_KEY.CUSTOM_ENDPOINTS, updated);
+    } catch (error) {
+      console.error('Error while removing custom endpoint', error);
+
+      return false;
+    }
   }, [genesisHash]);
 
   return { customEndpoint, removeCustomEndpoint, setCustomEndpoint };
