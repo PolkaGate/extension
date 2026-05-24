@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.9.0](https://github.com/polkagate/extension/compare/v2.8.0...v2.9.0) (2026-05-24)
+
+
+### Features
+
+* allow users to add custom RPC endpoints ([#2170](https://github.com/polkagate/extension/issues/2170)) ([3bde49d](https://github.com/polkagate/extension/commit/3bde49ddb81fe8f8c95afec30834434c4f84f8f0)), closes [#2166](https://github.com/polkagate/extension/issues/2166) [#2167](https://github.com/polkagate/extension/issues/2167)
+
 # [2.8.0](https://github.com/polkagate/extension/compare/v2.7.9...v2.8.0) (2026-05-24)
 
 
