@@ -12,7 +12,7 @@ import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/par
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import Subscan from '../assets/icons/Subscan';
-import { ActionButton, DisplayBalance, GradientButton, Identity, NeonButton } from '../components';
+import { ActionButton, CopyAddressButton, DisplayBalance, GradientButton, Identity, NeonButton } from '../components';
 import { DraggableModal } from '../fullscreen/components/DraggableModal';
 import { useChainInfo, useIsBlueish, useIsExtensionPopup, useRouteRefresh, useStakingConsts, useTranslation } from '../hooks';
 import { getLink } from '../popup/history/explorer';
@@ -229,7 +229,7 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                 <Typography color={isBlueish ? 'text.highlight' : 'text.secondary'} textTransform='capitalize' variant='B-1' width='fit-content'>
                   {key === 'txHash' ? t('Transaction ID') : toTitleCase(key)}
                 </Typography>
-                <Stack columnGap='3px' direction='row' justifyContent='end'>
+                <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='end'>
                   {
                     isFromToAddress &&
                     <Identity
@@ -280,6 +280,9 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                           : content as string
                     }
                   </Typography>
+                  {isHash && Boolean(content) &&
+                    <CopyAddressButton address={String(content)} padding={0} size={16} />
+                  }
                 </Stack>
               </Container>
               {
