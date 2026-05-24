@@ -10,7 +10,7 @@ export function chooseTheme(): 'dark' | 'light' {
     return preferredTheme;
   }
 
-  return window.matchMedia?.('(prefers-color-scheme: light)').matches
+  return window.matchMedia?.('(prefers-color-scheme: light)')?.matches
     ? 'light'
     : 'dark';
 }
