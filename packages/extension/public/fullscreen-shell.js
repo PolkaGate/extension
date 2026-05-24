@@ -1,5 +1,4 @@
 (() => {
-  const search = window.location.search || '';
   const hashPath = (window.location.hash || '#/').replace(/^#/, '');
   const fullscreenHashes = [
     '/historyfs',
@@ -32,8 +31,7 @@
     isPopupView = false;
   }
 
-  const hasFullscreenMarker = search.includes('view=fullscreen');
-  const isFullscreenShell = hasFullscreenMarker || matchesFullscreenHash || (!isPopupView && window.innerWidth > 357 && window.innerHeight > 621);
+  const isFullscreenShell = matchesFullscreenHash || (!isPopupView && window.innerWidth > 357 && window.innerHeight > 621);
 
   if (isFullscreenShell) {
     document.documentElement.classList.add('fullscreen-shell');

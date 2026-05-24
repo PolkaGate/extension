@@ -10,11 +10,9 @@ export const switchToOrOpenTab = (relativeUrl: string, closeCurrentTab?: boolean
   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
     if (tabs[0]?.url) {
       const extensionUrl = tabs[0].url;
-      const extensionBaseUrl = new URL(extensionUrl.split('#')[0]);
+      const extensionBaseUrl = extensionUrl.split('#')[0];
 
-      extensionBaseUrl.searchParams.set('view', 'fullscreen');
-
-      const tabUrl = `${extensionBaseUrl.toString()}#${relativeUrl}`;
+      const tabUrl = `${extensionBaseUrl}#${relativeUrl}`;
 
       chrome.tabs.query({}, function (allTabs) {
         const existingTab = allTabs.find(function (tab) {
