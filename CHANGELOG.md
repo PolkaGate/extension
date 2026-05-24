@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.8.0](https://github.com/polkagate/extension/compare/v2.7.9...v2.8.0) (2026-05-24)
+
+
+### Features
+
+* add light mode theme ([#2159](https://github.com/polkagate/extension/issues/2159)) ([60a3e15](https://github.com/polkagate/extension/commit/60a3e153a82853b9cefbcb6030a44825732316d5))
+
 ## [2.7.9](https://github.com/polkagate/extension/compare/v2.7.8...v2.7.9) (2026-05-17)
 
 
