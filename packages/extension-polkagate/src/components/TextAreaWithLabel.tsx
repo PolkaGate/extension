@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useTheme } from '@mui/material';
@@ -21,7 +21,7 @@ interface Props {
   height?: string;
 }
 
-export default function TextAreaWithLabel ({ fontSize, height = '88px', isError, isFocused, isReadOnly, label, onChange, rowsCount, style, value }: Props): React.ReactElement<Props> {
+export default function TextAreaWithLabel({ fontSize, height = '88px', isError, isFocused, isReadOnly, label, onChange, rowsCount, style, value }: Props): React.ReactElement<Props> {
   const theme = useTheme();
 
   const _onChange = useCallback(

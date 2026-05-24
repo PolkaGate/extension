@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
@@ -15,7 +15,7 @@ interface Props {
   openMenu: boolean;
 }
 
-function SetPassword ({ onClose, openMenu }: Props): React.ReactElement {
+function SetPassword({ onClose, openMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (

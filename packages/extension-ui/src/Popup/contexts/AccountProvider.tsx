@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, AccountsContext } from '@polkadot/extension-base/background/types';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { canDerive } from '@polkadot/extension-base/utils';
 import { AccountContext } from '@polkadot/extension-polkagate/src/components/contexts';
@@ -14,7 +14,7 @@ import { getStorage, setStorage, updateStorage } from '@polkadot/extension-polka
 import { buildHierarchy } from '@polkadot/extension-polkagate/src/util/buildHierarchy';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-function initAccountContext (accounts: AccountJson[]): AccountsContext {
+function initAccountContext(accounts: AccountJson[]): AccountsContext {
   const hierarchy = buildHierarchy(accounts);
   const master = hierarchy.find(({ isExternal, type }) => !isExternal && canDerive(type));
 
@@ -25,14 +25,24 @@ function initAccountContext (accounts: AccountJson[]): AccountsContext {
   };
 }
 
-export default function AccountProvider ({ children }: { children: React.ReactNode }) {
+export default function AccountProvider({ children }: { children: React.ReactNode }) {
   const [accounts, setAccounts] = useState<null | AccountJson[]>(null);
-  const [accountCtx, setAccountCtx] = useState<AccountsContext>({ accounts: [], hierarchy: [] });
   const isForgotten = useIsForgotten();
   const { setExtensionLock } = useExtensionLockContext();
 
+  const accountCtx = useMemo((): AccountsContext => {
+    if (!accounts || isForgotten === undefined) {
+      return initAccountContext([]);
+    }
+
+    return initAccountContext(isForgotten?.status ? [] : accounts);
+  }, [accounts, isForgotten]);
+
   useEffect(() => {
-    subscribeAccounts(setAccounts).catch(console.log);
+    subscribeAccounts(setAccounts).catch((error) => {
+      console.error(error);
+      setAccounts([]);
+    });
   }, []);
 
   useEffect(() => {
@@ -67,21 +77,14 @@ export default function AccountProvider ({ children }: { children: React.ReactNo
   }, [accounts?.length]);
 
   useEffect(() => {
-    if (isForgotten === undefined) {
-      return;
-    }
-
-    if (!isForgotten?.status) {
-      setAccountCtx(initAccountContext(accounts || []));
-    } else {
-      setAccountCtx(initAccountContext([]));
-      const addresses = accounts?.map((account) => account.address);
+    if (isForgotten?.status && accounts) {
+      const addresses = accounts.map((account) => account.address);
 
       updateStorage(STORAGE_KEY.IS_FORGOTTEN, { addressesToForget: addresses }).catch(console.error);
     }
   }, [accounts, isForgotten]);
 
-  if (!accounts) {
+  if (!accounts || isForgotten === undefined) {
     return null;
   }
 

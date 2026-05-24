@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
@@ -12,7 +12,7 @@ interface Props {
   onClose: () => void;
 }
 
-function Restake ({ address, genesisHash, onClose }: Props) {
+function Restake({ address, genesisHash, onClose }: Props) {
   const { t } = useTranslation();
 
   const { errorMessage,

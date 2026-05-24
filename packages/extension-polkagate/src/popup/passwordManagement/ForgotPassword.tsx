@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid, Typography } from '@mui/material';
@@ -23,7 +23,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
-export function ForgotPasswordContent ({ onClose }: { onClose: () => void }): React.ReactElement<Props> {
+export function ForgotPasswordContent({ onClose }: { onClose: () => void }): React.ReactElement<Props> {
   const { t } = useTranslation();
   const { setExtensionLock } = useExtensionLockContext();
   const isExtension = useIsExtensionPopup();
@@ -75,7 +75,7 @@ export function ForgotPasswordContent ({ onClose }: { onClose: () => void }): Re
   );
 }
 
-export default function ForgotPassword ({ setStep }: Props): React.ReactElement<Props> {
+export default function ForgotPassword({ setStep }: Props): React.ReactElement<Props> {
   useBackground('drops') as void;
 
   const { t } = useTranslation();

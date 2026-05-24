@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolInfo } from '../../../../util/types';
@@ -17,7 +17,7 @@ interface PoolsTableProp {
   setSelectedPool?: React.Dispatch<React.SetStateAction<PoolInfo | undefined>>;
 }
 
-function PoolsTable ({ genesisHash, poolsInformation, selectable, selected, setSelectedPool }: PoolsTableProp): React.ReactElement {
+function PoolsTable({ genesisHash, poolsInformation, selectable, selected, setSelectedPool }: PoolsTableProp): React.ReactElement {
   const [poolDetail, setPoolDetail] = useState<PoolInfo | undefined>(undefined);
 
   const togglePoolDetail = useCallback((validatorInfo: PoolInfo | undefined) => () => {

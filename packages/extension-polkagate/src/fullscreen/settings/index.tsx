@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography } from '@mui/material';
@@ -16,7 +16,7 @@ import AccountSettings from './AccountSettings';
 import ExtensionSettings from './ExtensionSettings';
 import NetworkSettings from './NetworkSettings';
 
-function Settings (): React.ReactElement {
+function Settings(): React.ReactElement {
   const { t } = useTranslation();
   const { pathname } = useLocation();
 
@@ -45,7 +45,7 @@ function Settings (): React.ReactElement {
         <ActionRow />
       </Stack>
       <TopMenus />
-      <VelvetBox style={{ margin: '5px 20px 0 0', padding: 0 }}>
+      <VelvetBox style={{ margin: '5px 20px 0 0', maxHeight: 'calc(100vh - 190px)', overflowY: 'auto', padding: 0 }}>
         <Grid container item>
           {content}
         </Grid>

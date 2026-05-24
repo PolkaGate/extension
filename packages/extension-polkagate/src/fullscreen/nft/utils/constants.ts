@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 export const IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
@@ -16,8 +16,8 @@ export const HARDBIN_IPFS_GATEWAY = 'https://hardbin.com/ipfs/';
 export const FOREVERLAND_IPFS_GATEWAY = 'https://4everland.io/ipfs/';
 
 export const IPFS_GATEWAYS = [
-  KODADOT_IPFS_GATEWAY,
   IPFS_GATEWAY,
+  KODADOT_IPFS_GATEWAY,
   INFURA_IPFS_GATEWAY,
   PINATA_IPFS_GATEWAY,
   CLOUDFLARE_IPFS_GATEWAY,

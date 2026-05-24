@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MyIconTheme } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { PolkaGateIdenticon } from '@polkadot/extension-polkagate/src/style/index';
@@ -12,14 +12,17 @@ import { getAndWatchStorage, setStorage } from '@polkadot/extension-polkagate/sr
 
 import { useTranslation } from '../../../components/translate';
 
-export interface ItemProps{
+export interface ItemProps {
   address?: string;
   iconTheme: MyIconTheme
   label: string;
   selectedTheme: MyIconTheme | undefined
 }
 
-function Item ({ address, iconTheme, label, selectedTheme }: ItemProps): React.ReactElement {
+function Item({ address, iconTheme, label, selectedTheme }: ItemProps): React.ReactElement {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   const onClick = useCallback(() => {
     setStorage(STORAGE_KEY.ICON_THEME, iconTheme).catch(console.error);
   }, [iconTheme]);
@@ -31,8 +34,10 @@ function Item ({ address, iconTheme, label, selectedTheme }: ItemProps): React.R
       onClick={onClick}
       sx={{
         background: isSelected
-          ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)'
-          : '#BEAAD833',
+          ? theme.palette.gradient.brand
+          : isDark ? '#BEAAD833' : '#FFFFFF',
+        border: '1px solid',
+        borderColor: isSelected ? 'transparent' : isDark ? '#BEAAD833' : '#DDE3F4',
         borderRadius: '12px',
         cursor: 'pointer',
         height: '44px',
@@ -47,8 +52,8 @@ function Item ({ address, iconTheme, label, selectedTheme }: ItemProps): React.R
         direction='row'
         justifyContent='start'
         sx={{
-          ':hover': { background: '#2D1E4A' },
-          background: isSelected ? '#1A1B20' : '#1B133CB2',
+          ':hover': { background: isDark ? '#2D1E4A' : '#F3F6FD' },
+          background: isSelected ? (isDark ? '#1A1B20' : '#FFFFFF') : (isDark ? '#1B133CB2' : '#F5F6FF'),
           borderRadius: '10px',
           height: '40px',
           minWidth: '81px',
@@ -71,7 +76,7 @@ function Item ({ address, iconTheme, label, selectedTheme }: ItemProps): React.R
   );
 }
 
-export default function AccountIcon (): React.ReactElement {
+export default function AccountIcon(): React.ReactElement {
   const { t } = useTranslation();
   const [selectedTheme, setSelectedTheme] = useState<MyIconTheme>();
 
@@ -90,25 +95,25 @@ export default function AccountIcon (): React.ReactElement {
         <Item
           address={DEMO_ACCOUNT}
           iconTheme='polkasoul'
-          label= {t('Polka Soul')}
+          label={t('Polka Soul')}
           selectedTheme={selectedTheme}
         />
         <Item
           address={DEMO_ACCOUNT}
           iconTheme='polkadot'
-          label= {t('Dots')}
+          label={t('Dots')}
           selectedTheme={selectedTheme}
         />
         <Item
           address={DEMO_ACCOUNT}
           iconTheme='beachball'
-          label= {t('Ball')}
+          label={t('Ball')}
           selectedTheme={selectedTheme}
         />
         <Item
           address={DEMO_ACCOUNT}
           iconTheme='ethereum'
-          label= {t('Cube')}
+          label={t('Cube')}
           selectedTheme={selectedTheme}
         />
       </Stack>

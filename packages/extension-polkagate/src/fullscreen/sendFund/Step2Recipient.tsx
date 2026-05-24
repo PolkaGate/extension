@@ -1,11 +1,11 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
 import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 import type { Inputs } from './types';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
@@ -27,13 +27,24 @@ interface Props {
   teleportState: Teleport;
 }
 
-export default function Step2Recipient ({ assetId, genesisHash, inputs, setInputs, teleportState }: Props): React.ReactElement {
+export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs, teleportState }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { chainName } = useChainInfo(genesisHash, true);
 
   const [selectedChain, setSelectedChain] = useState<DropdownOption>({ text: inputs?.recipientChain?.text ?? chainName ?? '', value: inputs?.recipientChain?.value ?? genesisHash ?? '' });
 
-  const destinationOptions = useMemo((): DropdownOption[] => {
+  useEffect(() => {
+    const maybeRecipientChainName = inputs?.recipientChain?.text ?? chainName;
+    const maybeRecipientGenesisHash = inputs?.recipientChain?.value ?? genesisHash;
+
+    if (maybeRecipientChainName && maybeRecipientGenesisHash) {
+      setSelectedChain({ text: maybeRecipientChainName, value: maybeRecipientGenesisHash });
+    }
+  }, [chainName, genesisHash, inputs?.recipientChain?.text, inputs?.recipientChain?.value]);
+
+  const chainOptions = useMemo((): DropdownOption[] => {
     if (!chainName || !inputs?.token) {
       return [];
     }
@@ -65,9 +76,9 @@ export default function Step2Recipient ({ assetId, genesisHash, inputs, setInput
     selectedChain && setInputs((prevInputs) => ({
       ...(prevInputs || {}),
       fee: undefined,
-      recipientChain: selectedChain,
+      recipientChain: selectedChain
     }));
-  }, [destinationOptions, selectedChain, setInputs]);
+  }, [chainOptions, selectedChain, setInputs]);
 
   return (
     <Motion variant='slide'>
@@ -76,11 +87,11 @@ export default function Step2Recipient ({ assetId, genesisHash, inputs, setInput
       </Typography>
       <Stack columnGap='15px' direction='row' sx={{ my: '20px' }}>
         <RecipientAddress
-          genesisHash={genesisHash}
+          genesisHash={selectedChain?.value as string | undefined || genesisHash}
           inputs={inputs}
           setInputs={setInputs}
         />
-        <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '108px', p: '15px', width: '379px' }}>
+        <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#DDE3F4', borderRadius: '14px', boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)', height: '108px', p: '15px', width: '379px' }}>
           <NumberedTitle
             number={2}
             textPartInColor={t('recipient')}
@@ -88,7 +99,7 @@ export default function Step2Recipient ({ assetId, genesisHash, inputs, setInput
           />
           <SelectYourChain
             chainName={selectedChain?.text ?? inputs?.recipientChain?.text ?? chainName}
-            destinationOptions={destinationOptions}
+            chainOptions={chainOptions}
             setSelectedChain={setSelectedChain}
             style={{ width: '100%' }}
             withTitle={false}

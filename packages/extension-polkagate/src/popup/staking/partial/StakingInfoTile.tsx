@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
@@ -6,12 +6,13 @@
 import { ExpandMoreRounded } from '@mui/icons-material';
 import { Box, Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, type Icon } from 'iconsax-react';
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 
+import { PENDING_REWARDS_TEXT } from '@polkadot/extension-polkagate/src/fullscreen/stake/partials/StakingPortfolioAndTiles';
 import { type BN, noop } from '@polkadot/util';
 
 import { CryptoFiatBalance, DisplayBalance, FormatPrice, MySkeleton, MyTooltip } from '../../../components';
-import { useIsDark, useIsHideNumbers, useIsHovered } from '../../../hooks';
+import { useIsHideNumbers, useTranslation } from '../../../hooks';
 
 interface TileActionButtonProps {
   text: string;
@@ -26,42 +27,60 @@ interface TileActionButtonProps {
   isFullScreen?: boolean;
 }
 
-export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = false, isFullScreen, isLoading = false, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
+export function TileActionButton({ Icon, iconVariant = 'Bulk', isDisabled = false, isFullScreen, isLoading = false, isRow = false, noText = false, onClick, style, text }: TileActionButtonProps): React.ReactElement {
   const theme = useTheme();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const hovered = useIsHovered(containerRef);
+  const isDark = theme.palette.mode === 'dark';
+  const isLightPopup = !isFullScreen && !isDark;
 
   const color = useMemo(() =>
     isDisabled
       ? isFullScreen ? '#AA83DC' : '#809acb8c'
-      : hovered
-        ? '#ffffff'
         : isFullScreen
-          ? '#AA83DC'
-          : theme.palette.text.highlight
-  , [hovered, isDisabled, isFullScreen, theme.palette.text.highlight]);
+          ? isDark ? '#AA83DC' : theme.palette.primary.main
+        : isLightPopup ? '#6F5A96' : theme.palette.text.highlight
+    , [isDark, isDisabled, isFullScreen, isLightPopup, theme.palette.primary.main, theme.palette.text.highlight]);
 
   const isLoadingOnFullscreen = isFullScreen && isLoading;
 
   if (isLoadingOnFullscreen) {
     return (
       <MySkeleton
-        bgcolor='#1A1836'
+        bgcolor={isDark ? '#1A1836' : '#EEF2FB'}
         height={38}
-        style={{ borderRadius: '11px', marginTop: '8px', width: '100%' }}
+        style={{ borderRadius: '11px', width: '100%' }}
       />
     );
   }
 
   return (
     <>
-      <MyTooltip color='#1c498a' content={text} notShow={!noText} placement='top'>
-        <Grid alignItems='center' container item justifyContent='center' onClick={isDisabled ? noop : onClick} ref={containerRef}
+      <MyTooltip content={text} notShow={!noText} placement='top'>
+        <Grid
+          alignItems='center'
+          container
+          item
+          justifyContent='center'
+          onClick={isDisabled ? noop : onClick}
           sx={{
-            ':hover': isDisabled ? {} : { bgcolor: isFullScreen ? '#674394' : theme.palette.text.highlight, borderColor: 'transparent' },
-            bgcolor: isFullScreen ? isDisabled ? '#1B133C' : '#2D1E4A' : '#110F2A',
-            border: isRow ? 'none' : '2px solid #060518',
+            ':hover': isDisabled
+              ? {}
+              : {
+                '& .staking-tile-action-text': {
+                  color: isLightPopup ? '#6F5A96' : '#FFFFFF'
+                },
+                bgcolor: isFullScreen ? '#674394' : isLightPopup ? '#F0F3FF' : theme.palette.text.highlight,
+                borderColor: isLightPopup ? '#C8D2EC' : 'transparent',
+                color: isLightPopup ? '#6F5A96' : '#FFFFFF'
+              },
+            bgcolor: isFullScreen
+              ? isDisabled
+                ? isDark ? '#1B133C' : '#EEF2FB'
+                : isDark ? '#2D1E4A' : '#FFFFFF'
+              : isLightPopup ? '#FFFFFF' : '#110F2A',
+            border: isRow ? 'none' : `2px solid ${isFullScreen ? (isDark ? '#060518' : '#DDE3F4') : isLightPopup ? '#D2DAEF' : '#060518'}`,
             borderRadius: '11px',
+            boxShadow: isLightPopup ? '0 6px 16px rgba(106, 116, 156, 0.14)' : 'none',
+            color,
             columnGap: '4px',
             cursor: isDisabled ? 'default' : 'pointer',
             flexWrap: 'nowrap',
@@ -72,9 +91,9 @@ export function TileActionButton ({ Icon, iconVariant = 'Bulk', isDisabled = fal
           }}
           xs
         >
-          <Icon color={color} size='19' variant={iconVariant} />
+          <Icon color='currentColor' size='19' variant={iconVariant} />
           {!noText &&
-            <Typography color={color} sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-4'>
+            <Typography className='staking-tile-action-text' color='inherit' sx={{ transition: 'all 150ms ease-out', width: 'max-content' }} variant='B-4'>
               {text}
             </Typography>
           }
@@ -93,7 +112,6 @@ interface StakingFiatCryptoFSProps {
 
 const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: StakingFiatCryptoFSProps) => {
   const theme = useTheme();
-  const isDark = useIsDark();
 
   const { isHideNumbers } = useIsHideNumbers();
 
@@ -112,7 +130,7 @@ const StakingFiatCryptoFS = ({ decimal, staked, stakedInCurrency, token }: Staki
             width={77}
           />
           <MySkeleton
-            bgcolor={isDark ? '#1A1836' : '#99A1C440'}
+            bgcolor={theme.palette.skeleton.subtle}
             style={{ marginTop: '6px' }}
             width={48}
           />
@@ -163,20 +181,48 @@ export interface Props {
   isFullScreen?: boolean;
 }
 
-export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, icon, isFullScreen, layoutDirection = 'column', onExpand, style, title, token }: Props): React.ReactElement {
+export default function StakingInfoTile({ Icon, buttonsArray = [], cryptoAmount, decimal, fiatAmount, icon, isFullScreen, layoutDirection = 'column', onExpand, style, title, token }: Props): React.ReactElement {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const isLightPopup = !isFullScreen && !isDark;
+  const { t } = useTranslation();
 
   const isDisabled = useMemo(() => Boolean(cryptoAmount?.isZero()), [cryptoAmount]);
   const isRow = useMemo(() => layoutDirection === 'row', [layoutDirection]);
-  const disabledColor = isFullScreen ? '#674394' : '#809acb8c';
-  const adjustedIconColor = isDisabled ? disabledColor : isFullScreen ? '#AA83DC' : theme.palette.text.highlight;
-  const adjustedTextColor = isDisabled ? disabledColor : isFullScreen ? '#BEAAD8' : theme.palette.text.highlight;
+  const disabledColor = useMemo(
+    () => (isFullScreen ? '#674394' : isLightPopup ? '#8E7AB0' : '#809acb8c'),
+    [isFullScreen, isLightPopup]
+  );
+  const adjustedIconColor = useMemo(
+    () =>
+      isDisabled
+        ? disabledColor
+        : isFullScreen
+          ? (isDark ? '#AA83DC' : theme.palette.primary.main)
+          : isLightPopup
+            ? '#6F5A96'
+            : theme.palette.text.highlight,
+    [disabledColor, isDark, isDisabled, isFullScreen, isLightPopup, theme.palette.primary.main, theme.palette.text.highlight]
+  );
+  const adjustedTextColor = useMemo(
+    () =>
+      isDisabled
+        ? disabledColor
+        : isFullScreen
+          ? (isDark ? '#BEAAD8' : theme.palette.text.primary)
+          : isLightPopup
+            ? '#6F5A96'
+            : theme.palette.text.highlight,
+    [disabledColor, isDark, isDisabled, isFullScreen, isLightPopup, theme.palette.text.primary, theme.palette.text.highlight]
+  );
 
   return (
     <Grid alignItems={isRow ? 'flex-start' : 'center'} container item
       sx={{
-        bgcolor: isFullScreen ? '#05091C' : '#2D1E4A4D',
+        bgcolor: isFullScreen ? (isDark ? '#05091C' : '#FFFFFF') : isLightPopup ? '#FFFFFF' : '#2D1E4A4D',
+        border: (isFullScreen || isLightPopup) && !isDark ? '1px solid #D8DFF2' : 'none',
         borderRadius: '14px',
+        boxShadow: isLightPopup ? '0px 10px 22px rgba(106, 116, 156, 0.16)' : 'none',
         minWidth: 'calc((100% - 8px) / 3)',
         overflow: 'hidden',
         p: '4px',
@@ -199,17 +245,17 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
         <Grid alignItems='center' container item justifyContent='space-between' sx={{ width: isRow ? '100%' : 'fit-content' }}>
           {
             icon &&
-            <Box color={adjustedIconColor} style={isFullScreen ? { alignItems: 'center', backgroundColor: '#2D1E4A', borderRadius: '999px', display: 'flex', height: '36px', justifyContent: 'center', padding: '8px', width: '36px' } : {}}>
+            <Box color={adjustedIconColor} style={isFullScreen ? { alignItems: 'center', backgroundColor: isDark ? '#2D1E4A' : '#EEF2FB', border: isDark ? undefined : '1px solid #DDE3F4', borderRadius: '999px', display: 'flex', height: '36px', justifyContent: 'center', padding: '8px', width: '36px' } : {}}>
               {icon}
             </Box>
           }
           {
             Icon &&
-            <Icon color={adjustedIconColor} size='20' style={isFullScreen ? { backgroundColor: '#2D1E4A', borderRadius: '999px', height: '36px', padding: '8px', width: '36px' } : {}} variant='Bulk' />
+            <Icon color={adjustedIconColor} size='20' style={isFullScreen ? { backgroundColor: isDark ? '#2D1E4A' : '#EEF2FB', border: isDark ? undefined : '1px solid #DDE3F4', borderRadius: '999px', height: '36px', padding: '8px', width: '36px' } : {}} variant='Bulk' />
           }
           {
             isRow && onExpand &&
-            <Box onClick={onExpand} sx={{ alignItems: 'center', bgcolor: isFullScreen ? '#2D1E4A' : '#272A4A', borderRadius: '999px', cursor: 'pointer', display: 'flex', height: '20px', justifyContent: 'center', marginRight: isFullScreen ? '-14px' : '-4px', marginTop: isFullScreen ? '-42px' : '-4px', width: '20px' }}>
+            <Box onClick={onExpand} sx={{ alignItems: 'center', bgcolor: isFullScreen ? (isDark ? '#2D1E4A' : '#EEF2FB') : isLightPopup ? '#EEF2FB' : '#272A4A', border: (isFullScreen || isLightPopup) && !isDark ? '1px solid #D2DAEF' : 'none', borderRadius: '999px', boxShadow: isLightPopup ? '0 4px 10px rgba(106, 116, 156, 0.14)' : 'none', cursor: 'pointer', display: 'flex', height: '20px', justifyContent: 'center', marginRight: isFullScreen ? '-14px' : '-4px', marginTop: isFullScreen ? '-42px' : '-4px', width: '20px' }}>
               <ExpandMoreRounded style={{ color: adjustedIconColor, fontSize: 18 }} />
             </Box>
           }
@@ -236,7 +282,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
               cryptoProps={{ style: { color: adjustedIconColor } }}
               decimal={decimal}
               fiatBalance={fiatAmount}
-              fiatProps={{ decimalColor: adjustedIconColor, textColor: isDisabled ? '#809acb8c' : theme.palette.text.primary }}
+              fiatProps={{ decimalColor: adjustedIconColor, textColor: isDisabled ? disabledColor : theme.palette.text.primary }}
               skeletonAlignment='flex-start'
               skeletonColor='none'
               style={{
@@ -252,7 +298,8 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
         <Container disableGutters
           sx={{
             alignItems: 'center',
-            bgcolor: isRow ? '#060518' : 'none',
+            bgcolor: isRow ? (isDark ? '#060518' : '#F5F7FF') : 'none',
+            border: isRow && !isDark ? '1px solid #E3E8F7' : 'none',
             borderRadius: '12px',
             display: 'flex',
             gap: isRow ? '2px' : '4px',
@@ -268,7 +315,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
               <TileActionButton
                 Icon={button.Icon}
                 iconVariant={button.iconVariant}
-                isDisabled={isDisabled}
+                isDisabled={button.text !== t(PENDING_REWARDS_TEXT) && isDisabled}
                 isFullScreen={isFullScreen}
                 isLoading={cryptoAmount === undefined}
                 isRow={isRow}
@@ -281,7 +328,7 @@ export default function StakingInfoTile ({ Icon, buttonsArray = [], cryptoAmount
         </Container>
       }
       {isDisabled && !isFullScreen &&
-        <Grid container item sx={{ bgcolor: '#0802144D', height: '100%', inset: 0, position: 'absolute', width: '100%', zIndex: 10 }} />
+        <Grid container item sx={{ bgcolor: isLightPopup ? 'rgba(248, 250, 255, 0.42)' : '#0802144D', height: '100%', inset: 0, position: 'absolute', width: '100%', zIndex: 10 }} />
       }
     </Grid>
   );

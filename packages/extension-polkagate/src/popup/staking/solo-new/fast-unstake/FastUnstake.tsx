@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
@@ -110,7 +110,7 @@ export const EligibilityStatus = ({ onBack, status }: { status: boolean | undefi
   );
 };
 
-export default function FastUnstake (): React.ReactElement {
+export default function FastUnstake(): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();

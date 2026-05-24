@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DotLottie } from '@lottiefiles/dotlottie-react';
@@ -19,10 +19,11 @@ interface Props {
   isModal?: boolean;
 }
 
-function Content ({ isModal }: Props) {
+function Content({ isModal }: Props) {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [text, setText] = useState({ highlightText: t('working'), title: t('We are working on your transaction.') });
   const [lottiePlay, setLottiePlay] = useState(false);
@@ -35,9 +36,9 @@ function Content ({ isModal }: Props) {
   }, []);
 
   useEffect(() => {
-  if (lottiePlay && dotLottie) {
-    dotLottie.play();
-  }
+    if (lottiePlay && dotLottie) {
+      dotLottie.play();
+    }
   }, [dotLottie, lottiePlay]);
 
   const handleTxEvent = useCallback((s: CustomEventInit<unknown>) => {
@@ -71,12 +72,25 @@ function Content ({ isModal }: Props) {
       onAnimationComplete={onAnimationComplete}
       variant={isModal ? 'fade' : 'slide'}
     >
-      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : 'transparent', borderRadius: '14px', gap: '12px', justifyContent: 'center', m: '0 15px 15px', p: '0 32px 32px' }}>
+      <Stack
+        direction='column'
+        sx={{
+          alignItems: 'center',
+          bgcolor: isExtension ? (isDark ? '#110F2A' : '#FFFFFF') : 'transparent',
+          border: isExtension && !isDark ? '1px solid #DDE3F4' : 'none',
+          borderRadius: '14px',
+          boxShadow: isExtension && !isDark ? '0 10px 24px rgba(133, 140, 176, 0.12)' : 'none',
+          gap: '12px',
+          justifyContent: 'center',
+          m: '0 15px 15px',
+          p: '0 32px 32px'
+        }}
+      >
         <DotLottieReact
           autoplay={false}
           dotLottieRefCallback={setDotLottie}
           loop
-          src={sendingLottie}
+          src={sendingLottie as string}
           style={{ height: 'auto', width: '300px' }}
         />
         <Fade in={true} timeout={1000}>
@@ -96,7 +110,7 @@ function Content ({ isModal }: Props) {
   );
 }
 
-function WaitScreen ({ isModal }: Props): React.ReactElement {
+function WaitScreen({ isModal }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   return (

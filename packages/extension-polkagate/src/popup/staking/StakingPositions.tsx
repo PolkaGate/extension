@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
@@ -8,10 +8,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { type BN } from '@polkadot/util';
 
-import { ActionButton, BackWithLabel, ChainLogo, FadeOnScroll, Motion, SearchField } from '../../components';
+import { ActionButton, BackWithLabel, FadeOnScroll, Logo, Motion, SearchField } from '../../components';
 import SnowFlake from '../../components/SVG/SnowFlake';
-import { useAccountAssets, useBackground, useIsDark, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
-import { HomeMenu, UserDashboardHeader } from '../../partials';
+import { useAccountAssets, useBackground, useChainInfo, useIsDark, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
+import { HomeMenu, NothingFound, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 import { amountToHuman } from '../../util';
 import { TEST_NETS } from '../../util/constants';
@@ -38,13 +38,14 @@ interface StakingBadgeProps {
 
 export const StakingBadge = ({ hasPoolStaking, isFullscreen, style }: StakingBadgeProps) => {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
-  const poolColor = isFullscreen ? ' #82FFA5' : '#A7DFB7';
-  const soloColor = '#809ACB';
+  const poolColor = isDark ? '#82FFA5' : '#14B874';
+  const soloColor = isFullscreen ? '#8C78B2' : '#8C78B2';
   const textColor = hasPoolStaking ? poolColor : soloColor;
 
-  const soloBgcolor = isFullscreen ? '#809ACB26' : '#C6AECC26';
-  const poolBgcolor = isFullscreen ? '#82FFA526' : '#A7DFB726';
+  const soloBgcolor = '#C6AECC26';
+  const poolBgcolor = isDark ? '#82FFA526' : '#DDF8EA';
   const bgcolor = hasPoolStaking ? poolBgcolor : soloBgcolor;
 
   return (
@@ -70,19 +71,20 @@ interface Props {
   type: 'solo' | 'pool';
 }
 
-function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
+function PositionRow({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
   const navigate = useNavigate();
   const isDark = useIsDark();
   const hasPoolStaking = type === 'pool';
   const isTestNet = TEST_NETS.includes(genesisHash);
+  const { chainName } = useChainInfo(genesisHash, true);
   const value = amountToHuman(balance.muln(price), decimal);
 
   const openStaking = useCallback(() => navigate(`/${type}/` + genesisHash) as void, [genesisHash, navigate, type]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' onClick={openStaking} sx={{ ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' }, bgcolor: '#05091C', borderBottom: '1px solid #1B133C', borderBottomLeftRadius: isLast ? '14px' : 0, borderBottomRightRadius: isLast ? '14px' : 0, borderTopLeftRadius: isFirst ? '14px' : 0, borderTopRightRadius: isFirst ? '14px' : 0, cursor: 'pointer', lineHeight: '25px', p: '10px', transition: 'all 250ms ease-out' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' onClick={openStaking} sx={{ ':hover': { background: isDark ? '#1B133C' : '#EEF1FF', px: '8px' }, bgcolor: isDark ? '#05091C' : '#FFFFFF', borderBottom: `1px solid ${isDark ? '#1B133C' : '#EEF1FF'}`, borderBottomLeftRadius: isLast ? '14px' : 0, borderBottomRightRadius: isLast ? '14px' : 0, borderTopLeftRadius: isFirst ? '14px' : 0, borderTopRightRadius: isFirst ? '14px' : 0, cursor: 'pointer', lineHeight: '25px', p: '10px', transition: 'all 250ms ease-out' }}>
       <Stack alignItems='center' direction='row' justifyContent='start'>
-        <ChainLogo genesisHash={genesisHash} size={36} />
+        <Logo chainName={chainName} size={36} />
         <Stack alignItems='start' direction='column' sx={{ ml: '10px' }}>
           <Typography sx={{ mt: '-7px' }} variant='B-2'>
             {token}
@@ -103,7 +105,7 @@ function PositionRow ({ balance, decimal, genesisHash, isFirst, isLast, price, t
   );
 }
 
-export default function StakingPositions (): React.ReactElement {
+export default function StakingPositions(): React.ReactElement {
   useBackground('default');
 
   const { t } = useTranslation();
@@ -165,7 +167,7 @@ export default function StakingPositions (): React.ReactElement {
             style={{ padding: '4%' }}
           />
           <VelvetBox style={{ margin: '0 4%', maxHeight: '305px', minHeight: '63px', overflowY: 'auto', width: '92%' }}>
-            <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '15px', width: '100%' }}>
+            <Grid container item sx={{ bgcolor: '#FFFFFF', borderRadius: '15px', width: '100%' }}>
               {filteredToken?.map(({ decimal, genesisHash, pooledBalance, priceId, soloTotal, token }, index) => {
                 const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;
 
@@ -202,7 +204,12 @@ export default function StakingPositions (): React.ReactElement {
                   </Fragment>
                 );
               })}
-              <FadeOnScroll containerRef={refContainer} />
+              <NothingFound
+                show={filteredToken?.length === 0}
+                style={{ pb: '50px' }}
+                text={t('Token Not Found')}
+              />
+              <FadeOnScroll containerRef={refContainer}  />
             </Grid>
           </VelvetBox>
           <Stack direction='row' justifyContent='center'>

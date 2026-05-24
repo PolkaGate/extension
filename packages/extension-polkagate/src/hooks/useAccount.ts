@@ -1,28 +1,32 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 import type { AccountId } from '@polkadot/types/interfaces/runtime';
 
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 
-import { AccountContext } from '../components';
+import { isEthereumAddress } from '@polkadot/util-crypto';
+
 import { getSubstrateAddress } from '../util';
+import useAccounts from './useAccounts';
 
-export default function useAccount (address: string | AccountId | null | undefined): AccountJson | undefined {
-  const { accounts } = useContext(AccountContext);
+export default function useAccount(address: string | AccountId | null | undefined): AccountJson | undefined {
+  const accounts = useAccounts();
 
-return useMemo(() => {
+  return useMemo(() => {
     if (!address) {
       return undefined;
     }
 
-    const substrateAddress = getSubstrateAddress(address);
+    const normalizedAddress = isEthereumAddress(String(address))
+      ? String(address)
+      : getSubstrateAddress(address);
 
-    if (!substrateAddress) {
+    if (!normalizedAddress) {
       return undefined;
     }
 
-    return accounts.find((acc) => acc.address === substrateAddress);
+    return accounts.find(({ address }) => address.toLowerCase() === normalizedAddress.toLowerCase());
   }, [accounts, address]);
 }

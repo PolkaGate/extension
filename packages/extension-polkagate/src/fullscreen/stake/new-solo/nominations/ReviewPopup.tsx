@@ -1,9 +1,8 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Content } from '@polkadot/extension-polkagate/partials/Review';
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
-import type { StakingConsts } from '../../../../util/types';
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -16,12 +15,12 @@ import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow } from '../.
 interface Props {
   address: string | undefined;
   genesisHash: string | undefined;
+  maximum: number;
   onClose: () => void;
   newSelectedValidators: ValidatorInformation[];
-  stakingConsts: StakingConsts | null | undefined;
 }
 
-export default function ReviewPopup ({ address, genesisHash, newSelectedValidators, onClose, stakingConsts }: Props): React.ReactElement {
+export default function ReviewPopup({ address, genesisHash, maximum, newSelectedValidators, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api } = useChainInfo(genesisHash);
   const navigate = useNavigate();
@@ -35,7 +34,7 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
 
   const transactionInformation: Content[] = useMemo(() => {
     return [{
-      content: `${newSelectedValidators.length} / ${stakingConsts?.maxNominations ?? 16}`,
+      content: `${newSelectedValidators.length} / ${maximum}`,
       title: t('Validators')
     },
     {
@@ -43,7 +42,7 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
       itemKey: 'fee',
       title: t('Fee')
     }];
-  }, [estimatedFee, newSelectedValidators.length, stakingConsts?.maxNominations, t]);
+  }, [estimatedFee, maximum, newSelectedValidators.length, t]);
   const tx = useMemo(() => nominate?.(params), [params, nominate]);
   const extraDetailConfirmationPage = useMemo(() => {
     const nominators = newSelectedValidators.map(({ accountId }) => accountId.toString());
@@ -65,6 +64,7 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
 
   return (
     <StakingPopup
+      _onClose={handleClose}
       address={address}
       extraDetailConfirmationPage={extraDetailConfirmationPage}
       flowStep={flowStep}
@@ -72,6 +72,7 @@ export default function ReviewPopup ({ address, genesisHash, newSelectedValidato
       onClose={handleClose}
       proxyTypeFilter={PROXY_TYPE.STAKING}
       setFlowStep={setFlowStep}
+      showBack
       title={t('Manage Nominations')}
       transaction={tx}
       transactionInformation={transactionInformation}

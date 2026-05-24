@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { KeypairType } from '@polkadot/util-crypto/types';
@@ -22,7 +22,7 @@ import { type AccountInfo, STEP } from '../../newAccount/createAccountFullScreen
 import { useAccountImportOrCreate } from '../../newAccount/createAccountFullScreen/useAccountImportOrCreate';
 import MyPhraseArea from '../importSeedFullScreen/MyPhraseArea';
 
-export default function ImportRawSeed (): React.ReactElement {
+export default function ImportRawSeed(): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const localAccounts = useLocalAccounts();
@@ -38,7 +38,7 @@ export default function ImportRawSeed (): React.ReactElement {
     }).catch(() => null);
   }, []);
 
-  const validateSeed = useCallback(async (seed: string, type?: KeypairType): Promise<AccountInfo> => {
+  const validateSeed = useCallback(async(seed: string, type?: KeypairType): Promise<AccountInfo> => {
     if (!(seed.startsWith('0x') && seed.length === 66)) {
       throw new Error('The raw seed is invalid. It should be 66 characters long and start with 0x');
     }
@@ -85,9 +85,9 @@ export default function ImportRawSeed (): React.ReactElement {
       }).catch(console.error);
   }, [seed, onValidateSeed, setError]);
 
-  const onImport = useCallback(async () => {
+  const onImport = useCallback(async() => {
     try {
-      await onConfirm(account?.suri);
+      await onConfirm({ seed: account?.suri });
     } catch (e) {
       console.error(e);
     }

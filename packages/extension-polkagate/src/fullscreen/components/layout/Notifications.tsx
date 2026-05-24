@@ -1,53 +1,49 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid } from '@mui/material';
-import { Notification } from 'iconsax-react';
-import React, { useCallback } from 'react';
+/* eslint-disable react/jsx-first-prop-new-line */
 
-import { useAlerts, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import type { NotificationsType } from '@polkadot/extension-polkagate/src/popup/notification/types';
 
-function Notifications (): React.ReactElement {
-    const { notify } = useAlerts();
-    const { t } = useTranslation();
+import { Box, Grid, useTheme } from '@mui/material';
+import { Notification as NotificationIcon } from 'iconsax-react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-    const onClick = useCallback(() => {
-      notify(t('Coming Soon!'), 'info');
-    }, [notify, t]);
+import { useIsBlueish, useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
+import { getAndWatchStorage } from '@polkadot/extension-polkagate/src/util';
+import { ExtensionPopups, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
-  return (
-    <Grid
-      alignItems='center'
-      container
-      item
-      justifyContent='center'
-      onClick={onClick}
+import Notification from '../../notification';
+
+const NotificationButton = ({ hasNewNotification, isBlueish, onClick }: { hasNewNotification: boolean; onClick: () => void; isBlueish: boolean; }) => {
+ const theme = useTheme();
+ const isDark = theme.palette.mode === 'dark';
+ 
+ return (
+    <Grid alignItems='center' container item justifyContent='center' onClick={onClick}
       sx={{
-        '&:hover': {
-          background: '#674394'
-        },
-        '&:hover .notification-dot': {
-          borderColor: '#674394'
-        },
-
+        '&:hover': { background: isDark ? '#674394' : '#F3F6FD' },
+        '&:hover .notification-dot': { borderColor: isDark ? '#674394' : '#F3F6FD' },
         backdropFilter: 'blur(20px)',
-        background: '#2D1E4A80',
+        background: isDark ? '#2D1E4A80' : '#FFFFFF',
+        border: isDark ? 'none' : '1px solid #DDE3F4',
         borderRadius: '12px',
-        boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
+        boxShadow: isDark ? '0px 0px 24px 8px #4E2B7259 inset' : '0px 8px 22px rgba(133, 140, 176, 0.12)',
         cursor: 'pointer',
         height: '32px',
         position: 'relative',
         transition: 'all 250ms ease-out',
         width: '32px'
-
       }}
     >
-      <Box
-        className='notification-dot'
+      <Box className='notification-dot'
         sx={{
-          bgcolor: '#FF4FB9',
-          border: '1.5px solid #2D1E4A',
+          bgcolor: isBlueish ? '#809ACB' : '#FF4FB9',
+          border: `1.5px solid ${isDark ? '#2D1E4A' : '#FFFFFF'}`,
           borderRadius: '50%',
+          display: hasNewNotification ? 'block' : 'none',
           height: '9px',
           position: 'absolute',
           right: '5px',
@@ -57,13 +53,55 @@ function Notifications (): React.ReactElement {
           zIndex: 1
         }}
       />
-      <Notification
-        color='#AA83DC'
+      <NotificationIcon
+        color={isBlueish ? theme.palette.text.highlight : isDark ? '#AA83DC' : theme.palette.text.secondary}
         size='20'
         style={{ cursor: 'pointer', transform: 'rotate(30deg)' }}
         variant='Bold'
       />
     </Grid>
+  );
+};
+
+function Notifications(): React.ReactElement {
+  const isExtension = useIsExtensionPopup();
+  const isBlueish = useIsBlueish();
+
+  const navigate = useNavigate();
+  const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
+
+  const [hasNewNotification, setHasNewNotification] = useState<boolean>(false);
+
+  useEffect(() => {
+    const unsubscribe = getAndWatchStorage(STORAGE_KEY.NOTIFICATIONS, (result: NotificationsType | undefined) => {
+      setHasNewNotification(Object.values(result?.notificationMessages ?? []).flat().some(({ read }) => !read));
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const onClick = useCallback(() => {
+    if (isExtension) {
+      navigate('/notification') as void;
+
+      return;
+    }
+
+    extensionPopupOpener(ExtensionPopups.NOTIFICATION)();
+  }, [extensionPopupOpener, isExtension, navigate]);
+
+  return (
+    <>
+      <NotificationButton
+        hasNewNotification={hasNewNotification}
+        isBlueish={isBlueish}
+        onClick={onClick}
+      />
+      {extensionPopup === ExtensionPopups.NOTIFICATION &&
+        <Notification
+          handleClose={extensionPopupCloser}
+        />}
+    </>
   );
 }
 

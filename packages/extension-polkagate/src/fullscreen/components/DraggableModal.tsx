@@ -1,8 +1,8 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChevronLeft, Close } from '@mui/icons-material';
-import { Box, Grid, IconButton, Modal, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Grid, IconButton, Modal, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { modalEffect } from '@polkadot/extension-polkagate/src/assets/img/index';
@@ -10,25 +10,25 @@ import { modalEffect } from '@polkadot/extension-polkagate/src/assets/img/index'
 export interface DraggableModalProps {
   blurBackdrop?: boolean;
   children: React.ReactElement;
+  closeOnAnyWhereClick?: boolean;
   dividerStyle?: React.CSSProperties;
   draggable?: boolean;
   maxHeight?: number;
   minHeight?: number | string;
+  noCloseButton?: boolean;
   noDivider?: boolean;
   open: boolean;
   onClose: () => void
+  RightItem?: React.ReactNode;
+  rightItemStyle?: React.CSSProperties;
   showBackIconAsClose?: boolean;
   style?: React.CSSProperties;
   title?: string;
   TitleLogo?: React.ReactNode;
   width?: number;
-  RightItem?: React.ReactNode;
-  rightItemStyle?: React.CSSProperties;
-  noCloseButton?: boolean;
-  closeOnAnyWhereClick?: boolean;
 }
 
-export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, children, closeOnAnyWhereClick = false, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noCloseButton, noDivider, onClose, open, rightItemStyle, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
+export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, children, closeOnAnyWhereClick = false, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noCloseButton, noDivider, onClose, open, rightItemStyle, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
@@ -74,9 +74,9 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
     '&:focus': {
       outline: 'none' // Remove outline when Box is focused
     },
-    bgcolor: '#1B133C',
-    border: isDarkMode ? '0.5px solid' : 'none',
-    borderColor: '#FFFFFF0D',
+    bgcolor: theme.palette.surface.panel,
+    border: '0.5px solid',
+    borderColor: theme.palette.border.subtle,
     borderRadius: '32px',
     cursor: draggable
       ? isDragging ? 'grabbing' : 'grab'
@@ -104,7 +104,7 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
           style: blurBackdrop
             ? {
               backdropFilter: 'blur(5px)',
-              backgroundColor: 'rgba(0, 0, 0, 0.4)'
+              backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.4)' : 'rgba(214, 220, 242, 0.55)'
             }
             : {}
         }
@@ -120,13 +120,14 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
           backgroundPosition: 'top center',
           backgroundRepeat: 'no-repeat',
           backgroundSize: '100% auto'
-        }}
+        } as SxProps<Theme>}
       >
         <Grid alignItems='center' container item>
           <IconButton
             onClick={onClose}
             sx={{
-              background: '#BFA1FF26',
+              background: isDarkMode ? '#BFA1FF26' : '#FFFFFF',
+              border: !isDarkMode ? '1px solid #E1E5F3' : 'none',
               borderRadius: '10px',
               height: '36px',
               left: '20px',
@@ -137,7 +138,7 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
               zIndex: 2
             }}
           >
-            <CLoseIcon sx={{ color: '#AA83DC', fontSize: 20, stroke: '#AA83DC' }} />
+            <CLoseIcon sx={{ color: theme.palette.accent.icon, fontSize: 20, stroke: theme.palette.accent.icon }} />
           </IconButton>
           <Stack alignItems='center' direction='row' justifyContent='center' sx={{ width: '100%' }}>
             {TitleLogo &&
@@ -145,7 +146,7 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
                 {TitleLogo}
               </span>
             }
-            <Typography color='#EAEBF1' sx={{ ml: RightItem ? '60px' : 0, textAlign: RightItem || TitleLogo ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
+            <Typography color={theme.palette.text.primary} sx={{ ml: RightItem ? '60px' : 0, textAlign: RightItem || TitleLogo ? 'left' : 'center', textTransform: 'uppercase', width: '100%' }} variant='H-2'>
               {title}
             </Typography>
             {
@@ -159,7 +160,7 @@ export function DraggableModal ({ RightItem, TitleLogo, blurBackdrop = true, chi
         {
           !noDivider &&
           <Box sx={{
-            background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
+            background: theme.palette.dividerGradient,
             height: '1px',
             justifySelf: 'center',
             m: '5px 0 15px',

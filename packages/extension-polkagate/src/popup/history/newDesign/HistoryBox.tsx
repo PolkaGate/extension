@@ -1,27 +1,29 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useRef } from 'react';
 
 import { FadeOnScroll } from '@polkadot/extension-polkagate/src/components/index';
 
-import { emptyList } from '../../../assets/icons/index';
+import { emptyList, emptyListLight } from '../../../assets/icons/index';
 import { useIsExtensionPopup, useTranslation } from '../../../hooks';
 import VelvetBox from '../../../style/VelvetBox';
 import AssetLoading from '../../home/partial/AssetLoading';
 import HistoryItem from './HistoryItem';
 
-function EmptyHistoryBox () {
+function EmptyHistoryBox() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <>
       <Box
         component='img'
-        src={emptyList as string}
+        src={(isDark ? emptyList : emptyListLight) as string}
         sx={{ height: 'auto', m: '30px auto 15px', width: '125px' }}
       />
       <Typography color='text.secondary' mb='30px' variant='B-2'>
@@ -33,11 +35,12 @@ function EmptyHistoryBox () {
 
 interface Props {
   historyItems: Record<string, TransactionDetail[]> | null | undefined;
+  isFetchingMore?: boolean;
   style?: React.CSSProperties;
   notReady?: boolean;
 }
 
-function HistoryBox ({ historyItems, notReady = false, style }: Props) {
+function HistoryBox({ historyItems, isFetchingMore = false, notReady = false, style }: Props) {
   const { t } = useTranslation();
   const refContainer = useRef<HTMLDivElement>(null);
 
@@ -80,12 +83,15 @@ function HistoryBox ({ historyItems, notReady = false, style }: Props) {
     return inputDate;
   }, []);
 
-  const isLoading = !notReady && historyItems === undefined;
+  const hasHistoryItems = Boolean(historyItems && Object.keys(historyItems).length);
+  const isLoading = !notReady && (historyItems === undefined || (!hasHistoryItems && isFetchingMore));
+  const showEmptyState = !notReady && !hasHistoryItems && historyItems !== undefined && !isFetchingMore && !isLoading;
+  const showFetchingMore = hasHistoryItems && !isLoading && isFetchingMore;
 
   return (
     <VelvetBox style={style}>
       <Stack direction='column' id='scrollArea' ref={refContainer} sx={{ height: isExtension ? 'inherit' : 'calc(100vh - 633px)', overflowY: 'auto', rowGap: isLoading ? 0 : '4px' }}>
-        {!notReady && historyItems && Object.entries(historyItems).map(([date, items], index) => (
+        {hasHistoryItems && Object.entries(historyItems as Record<string, TransactionDetail[]>).map(([date, items], index) => (
           <HistoryItem
             historyDate={formatDate(date)}
             historyItems={items}
@@ -95,8 +101,11 @@ function HistoryBox ({ historyItems, notReady = false, style }: Props) {
         ))
         }
         <div id='observerObj' style={{ height: '1px' }} />
-        {!notReady && historyItems === null &&
+        {showEmptyState &&
           <EmptyHistoryBox />
+        }
+        {showFetchingMore &&
+          <AssetLoading itemsCount={1} noDrawer />
         }
         {isLoading &&
           <AssetLoading itemsCount={short ? 2 : 5} noDrawer />

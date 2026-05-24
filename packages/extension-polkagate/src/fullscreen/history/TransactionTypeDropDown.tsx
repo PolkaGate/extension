@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '@polkadot/extension-polkagate/src/util/types';
@@ -18,7 +18,7 @@ interface Props {
   extraFilters: ExtraFilters
 }
 
-function TransactionTypeDropDown ({ allHistories, extraFilters, setExtraFilters }: Props): React.ReactElement {
+function TransactionTypeDropDown({ allHistories, extraFilters, setExtraFilters }: Props): React.ReactElement {
   const options = useMemo(() => {
     const _actions: Record<string, { Icon?: React.JSX.Element; action: string; count: number }> = {
       [ALL_TYPES]: {

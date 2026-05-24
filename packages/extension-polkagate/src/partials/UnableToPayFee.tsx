@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { keyframes, styled } from '@mui/system';
@@ -18,7 +18,7 @@ const BeatWarning = styled(Warning2)`
   animation: ${BEAT_ANIMATION} 0.8s infinite;
 `;
 
-function UnableToPayFee ({ warningText }: { warningText: string | undefined }) {
+function UnableToPayFee({ warningText }: { warningText: string | undefined }) {
   return (
     <MyTooltip
       content={warningText}

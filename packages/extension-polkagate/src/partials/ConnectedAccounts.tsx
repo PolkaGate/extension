@@ -1,17 +1,17 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, AuthUrlInfo } from '@polkadot/extension-base/background/types';
 
-import { Container, Grid, type SxProps, type Theme,Typography } from '@mui/material';
+import { Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { User } from 'iconsax-react';
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { AccountContext, DecisionButtons, GradientDivider, GradientSwitch } from '../components';
+import { DecisionButtons, GradientDivider, GradientSwitch } from '../components';
 import { sortAccounts } from '../components/sortAccounts';
-import { useTranslation } from '../hooks';
+import { useAccounts, useTranslation } from '../hooks';
 import { approveAuthRequest, ignoreAuthRequest, updateAuthorization } from '../messaging';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 
@@ -24,9 +24,11 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, requestId, setRefresh, style }: Props) {
+export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, requestId, setRefresh, style }: Props) {
   const { t } = useTranslation();
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
 
@@ -108,16 +110,27 @@ export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, re
   return (
     <Grid container item justifyContent='center' sx={{ position: 'relative', zIndex: 1, ...style }}>
       <Grid container item sx={{ height: 'fit-content', pb: '10px' }}>
-        <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', height: 'fit-content', justifyContent: 'flex-start', p: '4px' }}>
-          <Grid alignItems='center' container item justifyContent='space-between' p='10px 15px'>
+        <Container disableGutters sx={{ alignItems: 'center', bgcolor: theme.palette.surface.input, border: isDark ? 'none' : '1px solid', borderColor: isDark ? 'transparent' : theme.palette.border.strong, borderRadius: '14px', display: 'flex', flexDirection: 'column', height: 'fit-content', justifyContent: 'flex-start', p: '4px' }}>
+          <Grid
+            alignItems='center'
+            container
+            item
+            justifyContent='space-between'
+            sx={{
+              pb: '10px',
+              pl: '15px',
+              pr: isDark ? '15px' : '12px',
+              pt: '10px'
+            }}
+          >
             <Grid container item sx={{ columnGap: '8px', width: 'fit-content' }}>
-              <User color='#AA83DC' size='18' variant='Bulk' />
-              <Typography color='#AA83DC' variant='B-2'>
+              <User color={isDark ? theme.palette.primary.main : theme.palette.text.secondary} size='18' variant='Bulk' />
+              <Typography color={isDark ? theme.palette.primary.main : theme.palette.text.secondary} variant='B-2'>
                 {t('Accounts')}
               </Typography>
             </Grid>
             <Grid container item onClick={selectAllAccounts} sx={{ columnGap: '8px', cursor: 'pointer', width: 'fit-content' }}>
-              <Typography color='#AA83DC' variant='B-4'>
+              <Typography color={isDark ? theme.palette.primary.main : theme.palette.text.secondary} variant='B-4'>
                 {isAllSelected ? t('Disconnect all') : t('Connect all')}
               </Typography>
               <GradientSwitch
@@ -126,26 +139,41 @@ export default function ConnectedAccounts ({ closePopup, dappInfo, hasBanner, re
               />
             </Grid>
           </Grid>
-          <Container disableGutters sx={{ background: '#1B133C', borderRadius: '10px', height: 'fit-content', maxHeight: hasBanner ? '185px' : '223px', overflowY: 'auto', p: '8px 12px', width: '100%' }}>
+          <Container disableGutters sx={{ background: theme.palette.surface.panel, border: isDark ? 'none' : `1px solid ${theme.palette.border.subtle}`, borderRadius: '10px', height: 'fit-content', maxHeight: hasBanner ? '185px' : '223px', overflowY: 'auto', p: isDark ? '8px 12px' : 'none', width: '100%' }}>
             {accountsToShow.map(({ address, name }, index) => {
               const noDivider = accountsToShow.length === index + 1;
 
               return (
                 <React.Fragment key={index}>
-                  <Grid alignItems='center' container item justifyContent='space-between' key={index} py='8px'>
-                    <Grid alignItems='center' container item sx={{ columnGap: '8px', width: 'fit-content' }}>
-                      <PolkaGateIdenticon
-                        address={address}
-                        size={24}
+                  <Grid alignItems='center' container item justifyContent='space-between' key={index} py={isDark ? '8px' : '2px'}>
+                    <Grid
+                      alignItems='center'
+                      container
+                      item
+                      justifyContent='space-between'
+                      sx={{
+                        background: isDark ? 'transparent' : theme.palette.surface.input,
+                        border: isDark ? 'none' : `1px solid ${theme.palette.border.subtle}`,
+                        borderRadius: '12px',
+                        boxShadow: isDark ? 'none' : theme.palette.shadow.card,
+                        px: isDark ? 0 : '10px',
+                        py: isDark ? 0 : '6px'
+                      }}
+                    >
+                      <Grid alignItems='center' container item sx={{ columnGap: '8px', width: 'fit-content' }}>
+                        <PolkaGateIdenticon
+                          address={address}
+                          size={24}
+                        />
+                        <Typography color='text.primary' sx={{ maxWidth: '150px', overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-4'>
+                          {name}
+                        </Typography>
+                      </Grid>
+                      <GradientSwitch
+                        checked={selectedAccounts.includes(address)}
+                        onChange={handleSelect(address)}
                       />
-                      <Typography color='text.primary' sx={{ maxWidth: '150px', overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-4'>
-                        {name}
-                      </Typography>
                     </Grid>
-                    <GradientSwitch
-                      checked={selectedAccounts.includes(address)}
-                      onChange={handleSelect(address)}
-                    />
                   </Grid>
                   {!noDivider && <GradientDivider />}
                 </React.Fragment>

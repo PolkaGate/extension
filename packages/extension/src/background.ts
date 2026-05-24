@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension authors & contributors
+// Copyright 2019-2026 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // Runs in the extension background, handling all keyring access
@@ -34,7 +34,7 @@ cryptoWaitReady()
     console.debug('crypto initialized');
 
     // load all the keyring data
-    keyring.loadAll({ store: new AccountsStore(), type: 'sr25519' });
+    keyring.loadAll({ store: new AccountsStore() });
 
     console.debug('initialization completed');
   })

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect } from 'react';
@@ -36,10 +36,10 @@ const AUTO_LOCK_THROTTLE_INTERVAL_MS = 10_000;
  *
  * @see {@link useAutoLockPeriod} for retrieving the configured auto-lock duration.
  */
-export default function useAutoLockRefresher (isLocked: boolean) {
+export default function useAutoLockRefresher(isLocked: boolean) {
   const autoLockPeriod = useAutoLockPeriod();
 
- useEffect(() => {
+  useEffect(() => {
     if (!autoLockPeriod || isLocked) {
       return;
     }

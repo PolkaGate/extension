@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect } from 'react';
@@ -29,7 +29,7 @@ import useStakingPositions from './useStakingPositions';
  *
  * @returns {void} - This hook performs side-effects but does not return a value.
  */
-export default function useUpdateSelectedAccount (address: string | undefined, changeUrl = false, onClose?: () => void): void {
+export default function useUpdateSelectedAccount(address: string | undefined, changeUrl = false, onClose?: () => void): void {
   const location = useLocation();
   const navigate = useNavigate();
 

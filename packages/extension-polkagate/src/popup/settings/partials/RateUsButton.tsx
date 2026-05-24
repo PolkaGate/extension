@@ -1,13 +1,17 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import { Like1 } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
+import { useTranslation } from '@polkadot/extension-polkagate/src/components/translate';
+
 const EXTENSION_URL = 'https://chromewebstore.google.com/detail/polkagate-the-gateway-to/ginchbkmljhldofnbjabmeophlhdldgp';
 
-export default function RateUsButton (): React.ReactElement {
+export default function RateUsButton(): React.ReactElement {
+  const { t } = useTranslation();
+  const theme = useTheme();
   const onClick = useCallback(() => window.open(EXTENSION_URL), []);
 
   return (
@@ -19,7 +23,7 @@ export default function RateUsButton (): React.ReactElement {
       justifyItems='center'
       onClick={onClick}
       sx={{
-        background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+        background: theme.palette.gradient.brand,
         borderRadius: '14px',
         cursor: 'pointer',
         height: '36px',
@@ -40,7 +44,7 @@ export default function RateUsButton (): React.ReactElement {
         pl='5px'
         variant='B-2'
       >
-        Rate the app
+        {t('Rate the app')}
       </Typography>
     </Grid>
 

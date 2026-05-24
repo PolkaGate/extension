@@ -1,7 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
+import type { ISubmittableResult } from '@polkadot/types/types';
 import type { CanPayFee } from '../../util/types';
 import type { Inputs } from './types';
 
@@ -10,9 +12,9 @@ import { ArrowCircleRight2 } from 'iconsax-react';
 import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
-import { AssetLogo, DisplayBalance, Motion } from '../../components';
+import { DisplayBalance, Logo, Motion } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
 import FeeRow from './partials/FeeRow';
 import FromToBox from './partials/FromToBox';
@@ -22,11 +24,13 @@ interface Props {
   inputs: Inputs;
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
   teleportState: Teleport;
+  transaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
 }
 
-export default function Step4Summary ({ canPayFee, inputs, setInputs }: Props): React.ReactElement {
+export default function Step4Summary({ canPayFee, inputs, setInputs, transaction }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const accountAssets = useAccountAssets(address);
@@ -36,7 +40,7 @@ export default function Step4Summary ({ canPayFee, inputs, setInputs }: Props): 
     accountAssets?.find((asset) => asset.genesisHash === genesisHash && String(asset.assetId) === assetId),
     [accountAssets, assetId, genesisHash]);
 
-  const logoInfo = useMemo(() => getLogo2(genesisHash, assetToTransfer?.token), [assetToTransfer?.token, genesisHash]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, assetToTransfer?.token), [assetToTransfer?.token, genesisHash]);
 
   return (
     <Motion variant='fade'>
@@ -45,7 +49,7 @@ export default function Step4Summary ({ canPayFee, inputs, setInputs }: Props): 
           {t('Amount')}
         </Typography>
         <Stack alignItems='center' columnGap='8px' direction='row' justifyContent='start' sx={{ height: '45px' }}>
-          <AssetLogo assetSize='32px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+          <Logo assetSize='36px' genesisHash={genesisHash} logo={logoInfo?.logo} token={inputs?.token} />
           <DisplayBalance
             balance={inputs.amountAsBN}
             decimal={inputs?.decimal}
@@ -56,15 +60,48 @@ export default function Step4Summary ({ canPayFee, inputs, setInputs }: Props): 
           />
         </Stack>
       </Stack>
-      <Stack alignItems='start' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '146px', mt: '20px', p: '15px', width: '766px' }}>
+      <Stack
+        alignItems='start'
+        direction='row'
+        justifyContent='space-between'
+        sx={{
+          bgcolor: isDark ? '#05091C' : '#FFFFFF',
+          border: isDark ? 'none' : '1px solid #DDE3F4',
+          borderRadius: '14px',
+          boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)',
+          height: '146px',
+          mt: '20px',
+          p: '15px',
+          width: '766px'
+        }}
+      >
         <FromToBox
           address={address}
           chainName={chainName}
           genesisHash={genesisHash}
           label={t('From')}
         />
-        <Divider orientation='vertical' sx={{ color: '#67439433', height: '110px', mx: '15px' }} textAlign='center'>
-          <Box sx={{ alignItems: 'center', bgcolor: '#2D1E4A', border: '2px solid #674394', borderRadius: '50%', display: 'flex', height: '32px', justifyContent: 'center', width: '32px' }}>
+        <Divider
+          orientation='vertical'
+          sx={{
+            color: isDark ? '#67439433' : '#DDE3F4',
+            height: '110px',
+            mx: '15px'
+          }}
+          textAlign='center'
+        >
+          <Box
+            sx={{
+              alignItems: 'center',
+              bgcolor: isDark ? '#2D1E4A' : '#F3F6FD',
+              border: isDark ? '2px solid #674394' : '1px solid #DDE3F4',
+              borderRadius: '50%',
+              display: 'flex',
+              height: '32px',
+              justifyContent: 'center',
+              width: '32px'
+            }}
+          >
             <ArrowCircleRight2 color={theme.palette.primary.main} size='24px' variant='Bold' />
           </Box>
         </Divider>
@@ -81,6 +118,7 @@ export default function Step4Summary ({ canPayFee, inputs, setInputs }: Props): 
         genesisHash={genesisHash}
         inputs={inputs}
         setInputs={setInputs}
+        transaction={transaction}
       />
     </Motion>
   );

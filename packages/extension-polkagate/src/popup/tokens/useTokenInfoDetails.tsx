@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -29,7 +29,7 @@ export interface UnlockType {
   unlockableAmount: BN | undefined;
 }
 
-export function useTokenInfoDetails (address: string | undefined, genesisHash: string | undefined, token: FetchedBalance | undefined) {
+export function useTokenInfoDetails(address: string | undefined, genesisHash: string | undefined, token: FetchedBalance | undefined) {
   const { t } = useTranslation();
   const pricesInCurrency = usePrices();
   const formatted = useFormatted(address, genesisHash);
@@ -199,17 +199,15 @@ export function useTokenInfoDetails (address: string | undefined, genesisHash: s
 
   const unlockTracks: UnlockType = useMemo(() => ({ classToUnlock, isDisable, lockedTooltip, openLocked, unlockDate, unlockableAmount }), [classToUnlock, isDisable, lockedTooltip, openLocked, unlockDate, unlockableAmount]);
 
-  const UnlockTrackElement = useMemo(() => (
-    openUnlockReview
-      ? (
-        <UnlockTrack
-          address={address}
-          genesisHash={genesisHash}
-          setOpenUnlockReview={setOpenUnlockReview}
-          unlockTracks={unlockTracks}
-        />)
-      : undefined
-  ), [address, genesisHash, openUnlockReview, unlockTracks]);
+  const UnlockTrackElement = openUnlockReview
+    ? (
+      <UnlockTrack
+        address={address}
+        genesisHash={genesisHash}
+        setOpenUnlockReview={setOpenUnlockReview}
+        unlockTracks={unlockTracks}
+      />)
+    : null;
 
   return {
     UnlockTrackElement,

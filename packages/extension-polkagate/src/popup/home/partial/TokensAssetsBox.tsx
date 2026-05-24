@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
@@ -14,10 +14,10 @@ import { useNavigate } from 'react-router-dom';
 import { calcPrice, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo } from '../../../components';
-import { useIsDark, useIsExtensionPopup, useSelectedAccount } from '../../../hooks';
+import { AssetNull, Logo } from '../../../components';
+import { useIsDark, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../hooks';
 import allChains from '../../../util/chains';
-import getLogo2, { type LogoInfo } from '../../../util/getLogo2';
+import resolveLogoInfo, { type LogoInfo } from '../../../util/logo/resolveLogoInfo';
 import Drawer from './Drawer';
 import { TokenBalanceDisplay } from './TokenBalanceDisplay';
 import { TokenPriceInfo } from './TokenPriceInfo';
@@ -36,16 +36,16 @@ interface AssetDetailType {
 
 type Summary = AssetDetailType[] | null | undefined;
 
-function TokensItems ({ onTokenClick, theme, tokenDetail }: { onTokenClick: () => void, tokenDetail: FetchedBalance & { totalPrice: number }, theme: Theme }) {
+function TokensItems({ onTokenClick, theme, tokenDetail }: { onTokenClick: () => void, tokenDetail: FetchedBalance & { totalPrice: number }, theme: Theme }) {
   const bgcolor = theme.palette.mode === 'dark' ? '#2D1E4A' : '#CCD2EA59';
   const { chainName, decimal, genesisHash, token, totalBalance, totalPrice } = tokenDetail;
-  const logoInfo = getLogo2(genesisHash, token);
+  const logoInfo = resolveLogoInfo(genesisHash, token);
 
   return (
     <Grid alignItems='center' container item justifyContent='space-between' onClick={onTokenClick} sx={{ ':hover': { background: bgcolor }, borderRadius: '12px', cursor: 'pointer', p: '4px 8px', transition: 'all 250ms ease-out' }}>
       <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
         <Grid item sx={{ border: '3px solid', borderColor: bgcolor, borderRadius: '8px' }}>
-          <AssetLogo
+          <Logo
             assetSize='26px'
             baseTokenSize='18px'
             genesisHash={genesisHash}
@@ -60,7 +60,7 @@ function TokensItems ({ onTokenClick, theme, tokenDetail }: { onTokenClick: () =
           <Typography color='text.secondary' sx={{ bgcolor, borderRadius: '8px', px: '3px', width: 'fit-content' }} variant='B-1'>
             {token}
           </Typography>
-          <Typography color='text.secondary' variant='S-2'>
+          <Typography color='text.secondary' textAlign='left' variant='S-2'>
             {toTitleCase(chainName)}
           </Typography>
         </Grid>
@@ -77,26 +77,26 @@ function TokensItems ({ onTokenClick, theme, tokenDetail }: { onTokenClick: () =
 
 const MemoizedTokensItems = memo(TokensItems);
 
-function TokenBox ({ address, theme, tokenDetail }: { address: string | undefined, theme: Theme, tokenDetail: AssetDetailType }) {
+function TokenBox({ address, theme, tokenDetail }: { address: string | undefined, theme: Theme, tokenDetail: AssetDetailType }) {
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();
   const isDark = useIsDark();
 
-  const bgColor = isDark ? '#05091C' : '#EDF1FF';
+  const [expand, setExpand] = useState<boolean>(false);
+
+  const bgColor = isDark ? '#05091C' : expand ? '#F5F4FF' : '#FFFFFF';
   const badgeBgColor = isDark ? '#05091C' : '#F5F4FF';
-  const closeColor = isDark ? '#674394' : '#CCD2EA';
+  const closeColor = isDark ? '#674394' : theme.palette.text.secondary;
   const dividerColor = isDark ? '#2D1E4A' : '#CCD2EA66';
   const tokenBoxColor = isDark ? '#1B133C' : '#FFFFFF';
   const { assets, assetsTotalBalanceBN, assetsTotalBalancePrice, decimal, genesisHash, logoInfo, priceId, token } = tokenDetail;
-
-  const [expand, setExpand] = useState<boolean>(false);
 
   const toggleExpand = useCallback(() => setExpand((isExpanded) => !isExpanded), []);
   const closeCircleStyle = useMemo(() => ({
     marginLeft: '8px',
     transition: 'all 250ms ease-out',
     transitionDelay: expand ? '200ms' : 'unset',
-    width: expand ? '42px' : 0
+    width: expand ? '32px' : 0
   }), [expand]);
 
   const getTokenClickHandler = useCallback((token: FetchedBalance) => () => {
@@ -125,7 +125,7 @@ function TokenBox ({ address, theme, tokenDetail }: { address: string | undefine
                   }
                 }}
               >
-                <AssetLogo
+                <Logo
                   assetSize='36px'
                   baseTokenSize='16px'
                   genesisHash={genesisHash}
@@ -145,7 +145,7 @@ function TokenBox ({ address, theme, tokenDetail }: { address: string | undefine
               totalBalancePrice={assetsTotalBalancePrice}
             />
           </Grid>
-          <CloseCircle color={closeColor} size='32' style={closeCircleStyle} variant='Bold' />
+          <CloseCircle color={closeColor} size='32' style={closeCircleStyle} variant={isDark ? 'Bold' : 'Linear'} />
         </Container>
         <Collapse in={expand} sx={{ width: '100%' }}>
           <Grid container item sx={{ background: tokenBoxColor, borderRadius: '12px', mt: '10px', p: '4px 2px', rowGap: '4px' }}>
@@ -180,7 +180,8 @@ const itemVariants = {
   visible: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' }, y: 0 }
 };
 
-function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+function TokensAssetsBox({ accountAssets, pricesInCurrency, selectedChains }: { accountAssets: FetchedBalance[]; selectedChains: string[]; pricesInCurrency: Prices; }) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const address = useSelectedAccount()?.address;
 
@@ -251,14 +252,14 @@ function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
       if (baseToken) {
         genesisHash = baseToken.genesisHash.toString();
         decimal = baseToken.decimal;
-      } else { // @AMIRKHANEF does this fallback really needed?
+      } else { // is this fallback really needed?
         const baseTokenFallback = allChains.find(({ name, tokenSymbol }) => !/Asset Hub|People/.test(name) && tokenSymbol.toLowerCase() === token.toLowerCase());
 
         genesisHash = baseTokenFallback?.genesisHash;
         decimal = baseTokenFallback?.tokenDecimal;
       }
 
-      const logoInfo = getLogo2(genesisHash, token);
+      const logoInfo = resolveLogoInfo(genesisHash, token);
 
       return {
         assets: sortedAssets,
@@ -274,17 +275,19 @@ function TokensAssetsBox ({ accountAssets, pricesInCurrency, selectedChains }: {
   }, [tokens, priceMap]);
 
   return (
-    <>
-      {summary?.map((tokenDetail) => (
-        <motion.div key={tokenDetail.token} variants={itemVariants}>
-          <MemoizedTokenBox
-            address={address}
-            theme={theme}
-            tokenDetail={tokenDetail}
-          />
-        </motion.div>
-      ))}
-    </>
+    !summary?.length
+      ? <AssetNull text={t('No tokens on selected networks')} />
+      : <>
+        {summary.map((tokenDetail) => (
+          <motion.div key={tokenDetail.token} variants={itemVariants}>
+            <MemoizedTokenBox
+              address={address}
+              theme={theme}
+              tokenDetail={tokenDetail}
+            />
+          </motion.div>
+        ))}
+      </>
   );
 }
 

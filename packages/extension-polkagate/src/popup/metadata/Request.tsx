@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
 
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext } from 'react';
 
 import { toShortAddress, toTitleCase } from '@polkadot/extension-polkagate/src/util';
@@ -18,24 +18,27 @@ interface Props {
   url: string;
 }
 
-function ItemValue ({ item, value }: { item: string, value: string }): React.ReactElement<Props> {
+function ItemValue({ item, value }: { item: string, value: string }): React.ReactElement<Props> {
+  const theme = useTheme();
+
   return (
     <>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ minHeight: '36px', px: '8px' }}>
-        <Typography color= '#AA83DC' variant='B-4'>
+        <Typography color={theme.palette.primary.main} variant='B-4'>
           {toTitleCase(item)}
         </Typography>
-        <Typography color='#EAEBF1' sx={{ mr: '3px' }} variant='B-4'>
+        <Typography color={theme.palette.text.primary} sx={{ mr: '3px' }} variant='B-4'>
           {value}
         </Typography>
       </Grid>
-      <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '345px' }} />
+      <Box sx={{ background: theme.palette.dividerGradient, height: '1px', width: '345px' }} />
     </>
   );
 }
 
-export default function Request ({ metaId, request, url }: Props): React.ReactElement<Props> {
+export default function Request({ metaId, request, url }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const chain = useMetadata(request.genesisHash, true);
   const onAction = useContext(ActionContext);
@@ -67,10 +70,10 @@ export default function Request ({ metaId, request, url }: Props): React.ReactEl
     <>
       <Grid container fontSize='16px' sx={{ m: '0 15px auto', width: '92%', zIndex: 100 }}>
         <Stack direction='row' justifyContent='space-between' sx={{ m: '10px 0 10px', p: '0 15px 0 5px', width: '100%' }}>
-          <Typography color='#7956A5' sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
+          <Typography color={theme.palette.text.muted} sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
             {t('item')}
           </Typography>
-          <Typography color='#7956A5' sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
+          <Typography color={theme.palette.text.muted} sx={{ fontWeight: 600, textTransform: 'uppercase' }} variant='B-5'>
             {t('value')}
           </Typography>
         </Stack>
@@ -82,7 +85,7 @@ export default function Request ({ metaId, request, url }: Props): React.ReactEl
         <ItemValue item={t('symbol')} value={request.tokenSymbol} />
         <ItemValue item={t('upgrade')} value={`${chain ? chain.specVersion : t('<unknown>')} => ${request.specVersion}`} />
       </Grid>
-      <Typography color='#BEAAD8' sx={{ display: 'flex', p: ' 30px 10px 10px', textAlign: 'center', width: '100%' }} variant='B-4'>
+      <Typography color={theme.palette.text.secondary} sx={{ display: 'flex', p: ' 30px 10px 10px', textAlign: 'center', width: '100%' }} variant='B-4'>
         {t('This approval adds the metadata to your extension so future requests can be decoded with it')}
       </Typography>
       <DecisionButtons

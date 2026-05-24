@@ -1,78 +1,65 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
 import type { Compact, u64, u128 } from '@polkadot/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { INumber } from '@polkadot/types-codec/types';
+import type { BN } from '@polkadot/util';
+import type { DotsVariant } from './Dots';
 
 import { Fade, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import React, { memo, useMemo } from 'react';
+import React, { type CSSProperties, memo, useMemo } from 'react';
 
-import { type BN, formatBalance } from '@polkadot/util';
+import { formatBalance } from '@polkadot/util';
 
-import { useChainInfo, useIsDark } from '../hooks';
-import { FLOATING_POINT_DIGIT } from '../util/constants';
-import { MySkeleton } from '.';
+import { useChainInfo, useIsHideNumbers } from '../hooks';
+import { amountToHuman, shouldUseSi, toBN } from '../util';
+import { Dots, MySkeleton } from '.';
 
-const THOUSAND_LENGTH = 4;
-const DEFAULT_DECIMAL_PRECISION = 2;
-const HIGH_PRECISION_DECIMAL = 4;
+/**
+ * Trims a decimal string for UI display without hiding significance.
+ *
+ * For values >= 1, it keeps up to `decimalPoint` fractional digits and drops
+ * trailing zeros. For values between 0 and 1, it preserves leading zeros after
+ * the decimal point and keeps the first non-zero digit so tiny balances like
+ * `0.0000123` do not collapse to `0`.
+ *
+ * Expects a plain decimal string such as the numeric part returned from
+ * `amountToHuman` or `formatBalance`.
+ */
+function formatAdaptive(num: string, decimalPoint = 4): string {
+  const [int, frac] = num.split('.');
 
-function createElement (prefix: string, postfix: string, unit: string, isShort = false, decimalPoint: number, tokenColor?: string): React.ReactNode {
-  return (
-    <>
-      {`${prefix}${isShort ? '' : '.'}`}
-      {!isShort &&
-        <span className='ui--FormatBalance-postfix'>
-          {`00${postfix?.slice(0, decimalPoint) || ''}`.slice(-decimalPoint)}
-        </span>
-      }
-      <span className='ui--FormatBalance-unit' style={{ color: tokenColor ?? 'inherit' }}> {unit}</span>
-    </>
-  );
-}
-
-function applyFormat (
-  decimalPoint: number,
-  value: Balance | Compact<u128 | u64 | INumber> | BN | string,
-  decimal: number,
-  token: string,
-  withCurrency = true,
-  withSi?: boolean,
-  _isShort?: boolean,
-  tokenColor?: string
-): React.ReactNode {
-  const [prefix, postfix] = formatBalance(value, { decimals: decimal, forceUnit: '-', withSi: false }).split('.');
-  const isShort = _isShort || (withSi && prefix.length >= THOUSAND_LENGTH);
-  const unitPost = withCurrency ? token : '';
-
-  if (prefix.length > THOUSAND_LENGTH) {
-    const [major, rest] = formatBalance(value, { decimals: decimal, withUnit: false }).split('.');
-    const minor = rest.substring(0, decimalPoint);
-    const unit = rest.substring(4);
-
-    return (
-      <>
-        {major}.
-        <span className='ui--FormatBalance-postfix'>{minor}</span>
-        <span className='ui--FormatBalance-unit' style={{ color: tokenColor ?? 'inherit' }}>{unit}{unit ? unitPost : ` ${unitPost}`}</span>
-      </>
-    );
+  if (!frac) {
+    return int;
   }
 
-  return createElement(prefix, postfix, unitPost, isShort, decimalPoint, tokenColor);
+  if (int === '0') {
+    const leadingZeros = frac.match(/^0*/)?.[0].length ?? 0;
+    const digitsToKeep = Math.max(decimalPoint, leadingZeros + 1);
+    const significantFraction = frac.slice(0, digitsToKeep).replace(/0+$/, '');
+
+    return significantFraction ? `${int}.${significantFraction}` : int;
+  }
+
+  const trimmed = frac
+    .slice(0, decimalPoint)
+    .replace(/0+$/, ''); // remove trailing zeros
+
+  return trimmed ? `${int}.${trimmed}` : int;
 }
 
 interface DisplayBalanceProps {
   api?: ApiPromise;
   balance: Balance | Compact<u128 | u64 | INumber> | string | BN | null | undefined;
   decimal?: number;
+  decimalColor?: string;
   decimalPoint?: number;
+  dotStyle?: DotsVariant;
   genesisHash?: string | undefined;
-  isShort?: boolean;
   skeletonStyle?: SxProps<Theme>;
-  style?: SxProps<Theme>;
+  style?: CSSProperties;
   token?: string;
   tokenColor?: string;
   useAdaptiveDecimalPoint?: boolean;
@@ -80,51 +67,40 @@ interface DisplayBalanceProps {
   withSi?: boolean;
 }
 
-function DisplayBalance ({ api, balance, decimal, decimalPoint, genesisHash, isShort, skeletonStyle, style, token, tokenColor, useAdaptiveDecimalPoint, withCurrency, withSi }: DisplayBalanceProps) {
-  const isDark = useIsDark();
+/**
+ * Renders a chain balance with token metadata and UI-friendly formatting.
+ *
+ * The component resolves decimal precision and token symbol from explicit props,
+ * chain metadata, or the provided API. While those inputs are unavailable, it
+ * shows a skeleton placeholder. When `withSi` is enabled, very small non-zero
+ * balances are formatted with SI units; otherwise the balance is rendered as a
+ * human-readable decimal string and can be further trimmed with
+ * `decimalPoint`/`formatAdaptive`.
+ */
+function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dotStyle, genesisHash, skeletonStyle, style, token, tokenColor, useAdaptiveDecimalPoint, withCurrency = true, withSi = true }: DisplayBalanceProps) {
   const theme = useTheme();
+  const { isHideNumbers } = useIsHideNumbers();
+
   const { decimal: nativeDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
-  const { apiDecimal, apiToken } = useMemo(() => {
-    if (!api) {
-      return { apiDecimal: undefined, apiToken: undefined };
-    }
+  const resolvedDecimal = useMemo(() =>
+    decimal ?? nativeDecimal ?? api?.registry?.chainDecimals?.[0],
+    [api?.registry?.chainDecimals, decimal, nativeDecimal]);
 
-    return {
-      apiDecimal: api.registry.chainDecimals[0],
-      apiToken: api.registry.chainTokens[0]
-    };
-  }, [api]);
+  const resolvedToken = useMemo(() =>
+    token ?? nativeToken ?? api?.registry?.chainTokens?.[0],
+    [api?.registry?.chainTokens, nativeToken, token]);
 
-  const resolvedDecimal = useMemo(() => decimal || nativeDecimal || apiDecimal, [apiDecimal, decimal, nativeDecimal]);
-  const resolvedToken = useMemo(() => token || nativeToken || apiToken, [apiToken, nativeToken, token]);
-
-  const adaptiveDecimalPoint = useMemo(() =>
-    balance && resolvedDecimal
-      ? (String(balance).length >= resolvedDecimal - 1
-        ? DEFAULT_DECIMAL_PRECISION
-        : HIGH_PRECISION_DECIMAL)
-      : undefined
-    , [balance, resolvedDecimal]);
-
-  const resolvedDecimalPoint = useMemo(() => {
-    if (decimalPoint) {
-      return decimalPoint;
-    }
-
-    if (useAdaptiveDecimalPoint && adaptiveDecimalPoint) {
-      return adaptiveDecimalPoint;
-    }
-
-    return FLOATING_POINT_DIGIT;
-  }, [adaptiveDecimalPoint, decimalPoint, useAdaptiveDecimalPoint]);
-
-  const isLoading = balance === undefined || balance === null || !resolvedDecimal || !resolvedToken;
+  const maybeToken = withCurrency ? resolvedToken : '';
+  const isLoading =
+    balance == null ||
+    resolvedDecimal == null ||
+    (withCurrency && resolvedToken == null);
 
   if (isLoading) {
     return (
       <MySkeleton
-        bgcolor={isDark ? '#946CC826' : '#99A1C459'}
+        bgcolor={theme.palette.skeleton.muted}
         height={15}
         style={skeletonStyle}
         width={90}
@@ -132,11 +108,45 @@ function DisplayBalance ({ api, balance, decimal, decimalPoint, genesisHash, isS
     );
   }
 
+  const balanceBn = toBN(balance);
+  const isZero = balanceBn.isZero();
+  const useSi = withSi && shouldUseSi(balanceBn, resolvedDecimal);
+  const formattedBalance = useSi
+    ? formatBalance(balance, { decimals: resolvedDecimal, withSi: true, withUnit: maybeToken, withZero: false })
+    : `${amountToHuman(balance.toString(), resolvedDecimal, undefined, true)} ${maybeToken}`.trim();
+  const [num, unit = maybeToken] = formattedBalance.trim().split(/\s+/);
+
+  const displayNum = isZero
+    ? '0.00'
+    : useAdaptiveDecimalPoint
+      ? formatAdaptive(num, decimalPoint)
+      : typeof decimalPoint === 'number'
+        ? formatAdaptive(num, decimalPoint)
+        : num;
+
+  const { maxWidth, width, ...restStyle } = style || {};
+
   return (
     <Fade in={true} timeout={1000}>
-      <Typography sx={{ ...theme.typography['B-1'], width: 'fit-content', ...style }}>
-        {applyFormat(resolvedDecimalPoint, balance, resolvedDecimal, resolvedToken, withCurrency, withSi, isShort, tokenColor)}
-      </Typography>
+      <div style={{ maxWidth, width }}>
+        {isHideNumbers
+          ? (
+            <Dots
+              color={typeof style?.color === 'string' ? style.color : tokenColor}
+              decimalColor={decimalColor}
+              variant={dotStyle}
+            />
+          )
+          : (
+            <Typography sx={{ ...theme.typography['B-1'], width: 'fit-content', ...restStyle }}>
+              {displayNum}
+              <span style={{ color: tokenColor ?? 'inherit' }}>
+                {` ${unit}`}
+              </span>
+            </Typography>
+          )
+        }
+      </div>
     </Fade>
   );
 }

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -14,3 +14,4 @@ export { default as logoTransparent } from './logoTransparent.svg';
 export { default as logoWhite } from './logoWhite.svg';
 export { default as logoWhiteTransparent } from './logoWhiteTransparent.svg';
 export { default as polkagateVector } from './polkagateVector.svg';
+export { default as polkagateVectorBlack } from './polkagateVectorBlack.svg';

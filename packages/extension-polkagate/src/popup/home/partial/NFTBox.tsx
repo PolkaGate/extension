@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ItemInformation } from '../../../fullscreen/nft/utils/types';
 
-import { Box, Container, Grid, Typography } from '@mui/material';
+import { Box, Container, Grid, Typography, useTheme } from '@mui/material';
 import { ArrowRight2 } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -29,15 +29,16 @@ const NoNftAlert = () => {
         src={logoBlackBirdTransparent as string}
         sx={{ opacity: 0.4, width: '129px' }}
       />
-      <Typography pt='10px' variant='B-2'>
+      <Typography color='#BEAAD8' pt='10px' variant='B-2'>
         {t("You don't have any NFTs yet")}
       </Typography>
     </Container>
   );
 };
 
-function NFTBox () {
+function NFTBox() {
   const { t } = useTranslation();
+  const theme = useTheme();
   const account = useSelectedAccount();
   const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
@@ -70,7 +71,7 @@ function NFTBox () {
 
   const itemsToShow = useMemo(() => nfts?.filter(({ isCollection }) => !isCollection)?.slice(0, MAX_NFT_TO_SHOW), [MAX_NFT_TO_SHOW, nfts]);
 
-  const fetchMetadata = useCallback(async () => {
+  const fetchMetadata = useCallback(async() => {
     if (!itemsToShow || itemsToShow?.length === 0 || !account) {
       return;
     }
@@ -94,8 +95,8 @@ function NFTBox () {
     const path = `/nft/${account?.address ?? ''}`;
 
     isExtension
-    ? windowOpen(path).catch(console.error)
-    : switchToOrOpenTab(path, true);
+      ? windowOpen(path).catch(console.error)
+      : switchToOrOpenTab(path, true);
   }, [account?.address, isExtension]);
 
   return (
@@ -108,13 +109,13 @@ function NFTBox () {
                 index={index}
                 info={item}
                 key={index}
-                onClick ={isExtension ? undefined : openNft}
+                onClick={isExtension ? undefined : openNft}
               />
             ))}
           </Container>
           {isExtension
             ? <Grid alignItems='center' columnGap='5px' container item justifyContent='center' onClick={openNft} sx={{ cursor: 'pointer', p: '8px 0 4px' }}>
-              <Typography color={isDark ? '#BEAAD8' : '#745D8B'} variant='B-2'>
+              <Typography color={theme.palette.accent.text} variant='B-2'>
                 {t('See all')}
               </Typography>
               <ArrowRight2 color='#BEAAD880' size='14' />

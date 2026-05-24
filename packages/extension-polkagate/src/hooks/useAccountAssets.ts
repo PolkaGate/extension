@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '../util/types';
@@ -42,14 +42,14 @@ export const BN_MEMBERS = [
  *   - `undefined` if the address is not provided or balances are unavailable.
  */
 
-export default function useAccountAssets (address: string | undefined, genesisHash?: string): FetchedBalance[] | undefined | null {
+export default function useAccountAssets(address: string | undefined, genesisHash?: string): FetchedBalance[] | undefined | null {
   const { accountsAssets } = useContext(AccountsAssetsContext);
   const isTestnetEnabled = useIsTestnetEnabled();
 
   return useMemo(() => {
     const userBalances = address ? accountsAssets?.balances?.[address] : undefined;
 
-    if (!address || !userBalances) {
+    if (!address || !userBalances || isTestnetEnabled === undefined) {
       return undefined;
     }
 

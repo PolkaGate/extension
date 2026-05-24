@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PaletteMode, Theme } from '@mui/material';
@@ -10,43 +10,71 @@ import { createGlobalStyle } from 'styled-components';
 
 import { darkTheme as dark } from '../themes/dark';
 import { lightTheme as light } from '../themes/light';
+import { STORAGE_KEY } from '../util/constants';
+import { getAndWatchStorage, setStorage } from '../util/storage';
 import { chooseTheme, ColorContext, Main } from '.';
 
 interface Props {
   children: React.ReactNode;
 }
 
-function View ({ children }: Props): React.ReactElement<Props> {
+function View({ children }: Props): React.ReactElement<Props> {
   const [mode, setMode] = useState<PaletteMode>(chooseTheme());
 
+  const persistMode = (nextMode: PaletteMode) => {
+    localStorage.setItem(STORAGE_KEY.THEME, nextMode);
+    setStorage(STORAGE_KEY.THEME, nextMode).catch(console.error);
+    setMode(nextMode);
+  };
+
   useEffect(() => {
-    // Handler for storage events
+    const updateMode = (nextMode: PaletteMode | undefined) => {
+      if (nextMode !== 'dark' && nextMode !== 'light') {
+        return;
+      }
+
+      localStorage.setItem(STORAGE_KEY.THEME, nextMode);
+      setMode(nextMode);
+    };
+
+    const unsubscribe = getAndWatchStorage<PaletteMode>(
+      STORAGE_KEY.THEME,
+      updateMode,
+      false,
+      chooseTheme()
+    );
+
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'theme') {
-        // Type assertion since we know theme can only be 'light' or 'dark'
-        setMode(event.newValue as PaletteMode);
+      if (event.key === STORAGE_KEY.THEME && (event.newValue === 'dark' || event.newValue === 'light')) {
+        setMode(event.newValue);
       }
     };
 
-    // Add event listener
     window.addEventListener('storage', handleStorageChange);
 
-    // Cleanup
     return () => {
+      unsubscribe();
       window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
   const colorMode = useMemo(() => ({
     toggleColorMode: () => {
-      const toMode = mode === 'light' ? 'dark' : 'light';
-
-      localStorage.setItem('theme', toMode);
-      setMode(toMode);
+      persistMode(mode === 'light' ? 'dark' : 'light');
+    },
+    setColorMode: (nextMode: PaletteMode) => {
+      persistMode(nextMode);
     }
   }), [mode]);
 
-  const theme = useMemo(() => createTheme(mode === 'light' ? light : dark), [mode]);
+  const theme = useMemo(() => {
+    const base = mode === 'light' ? light : dark;
+
+    return createTheme({
+      ...base,
+      components: base.components
+    });
+  }, [mode]);
 
   return (
     <ColorContext.Provider value={colorMode}>
@@ -65,6 +93,7 @@ const BodyTheme = createGlobalStyle<{ theme: Theme }>`
   body {
     background-color: ${(props) => props.theme.palette.background.paper};
     position: relative;
+    cursor: default;
   }
 
   div#root{

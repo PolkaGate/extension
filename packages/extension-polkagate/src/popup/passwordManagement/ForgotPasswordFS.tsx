@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback } from 'react';
@@ -8,7 +8,7 @@ import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switch
 
 import { ForgotPasswordContent } from './ForgotPassword';
 
-export default function ForgotPasswordFS (): React.ReactElement {
+export default function ForgotPasswordFS(): React.ReactElement {
   const onClose = useCallback(() => {
     switchToOrOpenTab('/');
   }, []);

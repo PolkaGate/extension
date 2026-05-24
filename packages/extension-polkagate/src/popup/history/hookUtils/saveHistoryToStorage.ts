@@ -1,15 +1,20 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '../../../util/types';
 
 import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { normalizeHistoryGenesis } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 
 import { log } from './utils';
 
+function isUnsafeObjectKey(key: string): boolean {
+  return key === '__proto__' || key === 'constructor' || key === 'prototype';
+}
+
 // Saves transaction history to Chrome's local storage for a specific address and chain
-export async function saveHistoryToStorage (address: string, genesisHash: string, transactions: TransactionDetail[]): Promise<void> {
+export async function saveHistoryToStorage(address: string, genesisHash: string, transactions: TransactionDetail[]): Promise<void> {
   if (!address || !genesisHash || !transactions?.length) {
     log('Missing required parameters for saving history');
 
@@ -17,7 +22,27 @@ export async function saveHistoryToStorage (address: string, genesisHash: string
   }
 
   try {
-    log(`Saving ${transactions.length} transactions for ${address} on chain ${genesisHash}`);
+    const normalizedGenesisHash = normalizeHistoryGenesis(genesisHash);
+
+    if (!normalizedGenesisHash || isUnsafeObjectKey(address) || isUnsafeObjectKey(normalizedGenesisHash)) {
+      log('Unsafe storage key detected, skipping history save');
+
+      return Promise.resolve();
+    }
+
+    const filteredTransactions = transactions.filter((tx) => normalizeHistoryGenesis(tx.chain?.genesisHash) === normalizedGenesisHash);
+
+    if (!filteredTransactions.length) {
+      log(`Skipped saving wrong-chain transactions for ${address} on chain ${genesisHash}`);
+
+      return Promise.resolve();
+    }
+
+    if (filteredTransactions.length !== transactions.length) {
+      log(`Filtered out ${transactions.length - filteredTransactions.length} wrong-chain transactions before saving for ${address} on chain ${genesisHash}`);
+    }
+
+    log(`Saving ${filteredTransactions.length} transactions for ${address} on chain ${genesisHash}`);
 
     const storageData = (await getStorage(STORAGE_KEY.HISTORY)) as
       | Record<string, Record<string, TransactionDetail[]>>
@@ -29,13 +54,13 @@ export async function saveHistoryToStorage (address: string, genesisHash: string
     allHistories[address] ??= {};
 
     // Update the history for this specific address and chain
-    allHistories[address][genesisHash] = transactions;
+    allHistories[address][normalizedGenesisHash] = filteredTransactions;
 
     // Save the updated history object back to storage
     const success = await setStorage(STORAGE_KEY.HISTORY, allHistories);
 
     if (success) {
-      log('History saved successfully to chrome storage, items:');
+      log('History saved successfully to chrome storage!');
     }
   } catch (error) {
     console.error('Error in saveHistoryToStorage:', error);

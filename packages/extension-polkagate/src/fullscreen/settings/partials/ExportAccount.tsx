@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
@@ -21,7 +21,7 @@ interface Props {
  *
  * Only has been used in full-screen mode!
  */
-function ExportAccount ({ address, name, onClose }: Props): React.ReactElement {
+function ExportAccount({ address, name, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const handleClose = useCallback(() => {

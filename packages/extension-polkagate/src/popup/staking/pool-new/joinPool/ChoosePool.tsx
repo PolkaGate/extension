@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { UsePools } from '../../../../hooks/usePools';
@@ -33,7 +33,7 @@ interface Props {
   pools: UsePools;
 }
 
-export default function ChoosePool ({ filter, onNext, pools, searchedQuery, selectedPool, setSelectedPool }: Props) {
+export default function ChoosePool({ filter, onNext, pools, searchedQuery, selectedPool, setSelectedPool }: Props) {
   const { t } = useTranslation();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const refContainer = useRef(null);

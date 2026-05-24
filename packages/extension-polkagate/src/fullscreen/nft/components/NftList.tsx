@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ItemInformation, ItemsListProps } from '../utils/types';
@@ -17,7 +17,7 @@ import { NftPopup } from './NftPopup';
 
 const DEFAULT_ITEMS_PER_PAGE = 12;
 
-function NftList ({ nfts }: ItemsListProps): React.ReactElement {
+function NftList({ nfts }: ItemsListProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [page, setPage] = useState(1);

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance, PositionInfo } from '../../util/types';
@@ -9,14 +9,14 @@ import { sanitizeChainName } from '../../util';
 import { STAKING_CHAINS, TEST_NETS } from '../../util/constants';
 import getChain from '../../util/getChain';
 
-export function getStakingAsset (accountAssets: FetchedBalance[] | null | undefined, genesisHash: string | undefined) {
+export function getStakingAsset(accountAssets: FetchedBalance[] | null | undefined, genesisHash: string | undefined) {
   const _assetId = resolveStakingAssetId(genesisHash);
   const asset = accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === _assetId);
 
   return asset ?? null;
 }
 
-export function getEarningOptions (accountAssets: FetchedBalance[] | null | undefined, isTestnetEnabled: boolean | undefined) {
+export function getEarningOptions(accountAssets: FetchedBalance[] | null | undefined, isTestnetEnabled: boolean | undefined) {
   const _stakingChains = isTestnetEnabled ? STAKING_CHAINS : STAKING_CHAINS.filter((genesisHash) => !TEST_NETS.includes(genesisHash));
 
   return _stakingChains.map((genesisHash) => {

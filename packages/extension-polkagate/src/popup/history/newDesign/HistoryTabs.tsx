@@ -1,7 +1,7 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Tab, Tabs, Typography } from '@mui/material';
+import { Container, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
 import { useChainInfo, useTranslation } from '../../../hooks';
@@ -20,8 +20,9 @@ interface Props {
   selectedChain: string;
 }
 
-function HistoryTabs ({ selectedChain, setTab, tab }: Props): React.ReactElement {
+function HistoryTabs({ selectedChain, setTab, tab }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { chainName } = useChainInfo(selectedChain, true);
 
   const unSupportedTabs = useMemo(() => {
@@ -53,7 +54,7 @@ function HistoryTabs ({ selectedChain, setTab, tab }: Props): React.ReactElement
             columnGap: '20px'
           },
           '& span.MuiTabs-indicator': {
-            background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+            background: theme.palette.gradient.brand,
             borderRadius: '999px',
             height: '2px'
           },

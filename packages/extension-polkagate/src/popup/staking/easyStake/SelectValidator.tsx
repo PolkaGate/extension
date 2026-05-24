@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SelectValidatorProps } from '../../../fullscreen/stake/easyStake/SelectValidator';
@@ -12,7 +12,7 @@ import { useStakingConsts, useTranslation, useValidatorsInformation } from '../.
 import Search from '../components/Search';
 import NominatorsTable from '../partial/NominatorsTable';
 
-export default function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: SelectValidatorProps) {
+export default function SelectValidator({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: SelectValidatorProps) {
   const { t } = useTranslation();
   const stakingConsts = useStakingConsts(genesisHash);
   const validatorsInfo = useValidatorsInformation(genesisHash);

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Typography } from '@mui/material';
@@ -15,7 +15,7 @@ interface SystemSuggestionProps {
   disabled: boolean;
 }
 
-export default function SystemSuggestion ({ disabled, onSystemSuggestion, systemSuggestion }: SystemSuggestionProps) {
+export default function SystemSuggestion({ disabled, onSystemSuggestion, systemSuggestion }: SystemSuggestionProps) {
   const { t } = useTranslation();
 
   return (

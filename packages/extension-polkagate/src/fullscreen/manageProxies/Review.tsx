@@ -1,21 +1,21 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
 import type { Balance } from '@polkadot/types/interfaces';
 import type { ISubmittableResult } from '@polkadot/types/types';
 import type { BN } from '@polkadot/util';
-import type { CanPayFee, Proxy, ProxyItem, TxInfo } from '../../util/types';
+import type { Proxy, ProxyItem, TxInfo } from '../../util/types';
 
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useMemo, useRef } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { ChainLogo, DisplayBalance, FadeOnScroll, SignArea3 } from '../../components';
+import { FadeOnScroll, SignArea3 } from '../../components';
 import { useCanPayFeeAndDeposit, useChainInfo, useTranslation } from '../../hooks';
-import { UnableToPayFee } from '../../partials';
 import { PROXY_TYPE, type TransactionFlowStep } from '../../util/constants';
+import DisplayValue from './components/DisplayValue';
 import ProxyAccountInfo from './components/ProxyAccountInfo';
 import { type ProxyFlowStep } from './types';
 
@@ -24,7 +24,7 @@ interface Props {
   call: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined
   genesisHash: string | undefined;
   depositToPay: BN | undefined;
-  fee: Balance | undefined;
+  fee: Balance | undefined | null;
   setStep: React.Dispatch<React.SetStateAction<ProxyFlowStep>>;
   proxyItems: ProxyItem[] | null | undefined;
   setTxInfo: React.Dispatch<React.SetStateAction<TxInfo | undefined>>;
@@ -35,39 +35,19 @@ interface Props {
   onClose: () => void
 }
 
-function DisplayValue ({ balance, canPayFee, decimal, genesisHash, label, token }: {
-  canPayFee?: CanPayFee;
-  label: string;
-  genesisHash: string | undefined;
-  balance: BN | undefined;
-  decimal: number | undefined;
-  token: string | undefined;
-}): React.ReactElement {
-  return (
-    <Stack direction='row' justifyContent='space-between'>
-      <Typography color='#AA83DC' variant='B-1'>
-        {label}
-      </Typography>
-      <Stack alignItems='center' columnGap={1} direction='row'>
-        {canPayFee?.isAbleToPay === false && canPayFee?.warning &&
-          <UnableToPayFee warningText={canPayFee.warning} />
-        }
-        <ChainLogo genesisHash={genesisHash} size={18} />
-        <DisplayBalance
-          balance={balance}
-          decimal={decimal}
-          style={{ color: '#EAEBF1' }}
-          token={token}
-        />
-      </Stack>
-    </Stack>
-  );
-}
-
-function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxyItems, selectedProxy, setSelectedProxy, setShowProxySelection, setStep, setTxInfo, showProxySelection }: Props): React.ReactElement {
+function Review({ address, call, depositToPay, fee, genesisHash, onClose, proxyItems, selectedProxy, setSelectedProxy, setShowProxySelection, setStep, setTxInfo, showProxySelection }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const refContainer = useRef<HTMLDivElement>(null);
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const reviewTextColor = theme.palette.accent.text;
+  const panelBg = isDark ? '#05091C' : '#FFFFFF';
+  const panelBorder = isDark ? 'transparent' : '#E3E8F7';
+  const panelShadow = isDark ? 'none' : '0 10px 24px rgba(106, 116, 156, 0.12)';
+  const dividerBg = isDark
+    ? theme.palette.dividerGradient
+    : 'linear-gradient(90deg, rgba(227, 232, 247, 0) 0%, rgba(199, 208, 234, 0.85) 50.06%, rgba(227, 232, 247, 0) 100%)';
 
   const { changingItems, reviewText } = useMemo(() => {
     const newProxies = proxyItems?.filter(({ status }) => status === 'new');
@@ -99,7 +79,7 @@ function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxy
   return (
     <Grid container item>
       <Grid container direction='column' item justifyContent='start'>
-        <Typography color='#BEAAD8' my='15px' textAlign='center' variant='B-4'>
+        <Typography color={reviewTextColor} my='15px' textAlign='center' variant='B-4'>
           {reviewText}
         </Typography>
         <Stack direction='column' sx={{ height: 'fit-content', position: 'relative' }}>
@@ -119,7 +99,7 @@ function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxy
                       changingItems.length > 1
                         ? {
                           border: 'none',
-                          borderBottom: !isLast ? '1px solid #1B133C' : 'none',
+                          borderBottom: !isLast ? `1px solid ${isDark ? '#1B133C' : '#E3E8F7'}` : 'none',
                           borderRadius: isFirst ? '14px 14px 0 0' : isLast ? ' 0 0 14px 14px' : '0',
                           height: '75px'
                         }
@@ -133,7 +113,7 @@ function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxy
           </Grid>
           <FadeOnScroll containerRef={refContainer} height='25px' ratio={0.3} style={{ borderRadius: '0 0 14px 14px' }} />
         </Stack>
-        <Stack columnGap='10px' sx={{ bgcolor: '#05091C', borderRadius: '14px', marginTop: '15px', padding: '10px 15px' }}>
+        <Stack columnGap='10px' sx={{ bgcolor: panelBg, border: `1px solid ${panelBorder}`, borderRadius: '14px', boxShadow: panelShadow, marginTop: '15px', padding: '10px 15px' }}>
           <DisplayValue
             balance={depositToPay}
             decimal={decimal}
@@ -141,7 +121,7 @@ function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxy
             label={t('Deposit')}
             token={token}
           />
-          <Box sx={{ background: ' linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', m: '10px 0 5px', width: '100%' }} />
+          <Box sx={{ background: dividerBg, height: '1px', m: '10px 0 5px', width: '100%' }} />
           <DisplayValue
             balance={fee}
             canPayFee={feeAndDeposit}
@@ -170,7 +150,6 @@ function Review ({ address, call, depositToPay, fee, genesisHash, onClose, proxy
           withCancel
         />}
     </Grid>
-
   );
 }
 

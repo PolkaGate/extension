@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TLocation, TXcmFeeBase, UnableToComputeError } from '@paraspell/sdk-pjs';
@@ -10,7 +10,7 @@ import type { BN } from '@polkadot/util';
 
 export interface ParaspellFees {
   originFee: TXcmFeeBase & { sufficient: boolean; balanceAfter: bigint; };
-  destinationFee: TXcmFeeBase & { balanceAfter: bigint | UnableToComputeError; };
+  destinationFee?: TXcmFeeBase & { balanceAfter: bigint | UnableToComputeError; };
 }
 
 export type TransferType = 'All' | 'Normal';
@@ -19,12 +19,13 @@ export interface Inputs {
   amount?: string | undefined;
   amountAsBN?: BN | undefined;
   assetId?: string | number;
+  call?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   decimal?: number;
   error?: string;
   fee?: ParaspellFees;
   feeInfo?: FeeInfo | undefined; // fee extra info
   isCrossChain?: boolean;
-  paraSpellTransaction?: SubmittableExtrinsic<'promise', ISubmittableResult>;
+  tx?: SubmittableExtrinsic<'promise', ISubmittableResult>;
   recipientAddress?: string | undefined;
   recipientChain?: DropdownOption | undefined; // NOTE: value cold be genesishash or para id!
   recipientGenesisHashOrParaId?: string | undefined;

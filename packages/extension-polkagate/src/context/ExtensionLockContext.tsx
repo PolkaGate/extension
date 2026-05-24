@@ -1,10 +1,12 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { useIsPasswordMigrated } from '../hooks';
 import { areAccountsLocksExpired } from '../messaging';
+import { getAndWatchStorage, setStorage } from '../util';
+import { STORAGE_KEY } from '../util/constants';
 import useAutoLockRefresher from './useAutoLockRefresher';
 
 interface ExtensionLockContextProps {
@@ -28,33 +30,50 @@ interface LockExpiredMessage { type: 'LOCKED_ACCOUNTS_EXPIRED' }
 
 export const ExtensionLockProvider: React.FC<{ children: React.ReactElement }> = ({ children }: any) => {
   const isPasswordsMigrated = useIsPasswordMigrated();
-
-  
-  // Note: extensionLock is initially set to true.
   const [isExtensionLocked, setIsExtensionLocked] = useState(true);
 
   useAutoLockRefresher(isExtensionLocked);
 
   useEffect(() => {
-     isPasswordsMigrated && areAccountsLocksExpired()
-      .then((res) => {
-        setIsExtensionLocked(res);
-      })
-      .catch(console.error);
+    let unsubscribe: (() => void) | undefined;
+
+    const init = async (): Promise<void> => {
+      if (isPasswordsMigrated) {
+        try {
+          const res = await areAccountsLocksExpired();
+
+          setIsExtensionLocked(res);
+          await setStorage(STORAGE_KEY.IS_EXTENSION_LOCKED, res);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      unsubscribe = getAndWatchStorage<boolean>(STORAGE_KEY.IS_EXTENSION_LOCKED, (locked) => {
+        setIsExtensionLocked(locked ?? true);
+      }, false, true);
+    };
+
+    void init();
 
     const handleLockExpiredMessage = (msg: LockExpiredMessage) => {
       if (msg.type === 'LOCKED_ACCOUNTS_EXPIRED') {
+        window.sessionStorage.setItem(STORAGE_KEY.AUTO_LOCK_EXPIRED_SESSION, 'true');
         window.location.reload();
       }
     };
 
     chrome.runtime.onMessage.addListener(handleLockExpiredMessage);
 
-    return () => chrome.runtime.onMessage.removeListener(handleLockExpiredMessage);
+    return () => {
+      unsubscribe?.();
+      chrome.runtime.onMessage.removeListener(handleLockExpiredMessage);
+    };
   }, [isPasswordsMigrated]);
 
   const setExtensionLock = useCallback((lock: boolean) => {
     setIsExtensionLocked(lock);
+    setStorage(STORAGE_KEY.IS_EXTENSION_LOCKED, lock).catch(console.error);
   }, []);
 
   const contextValue = useMemo(

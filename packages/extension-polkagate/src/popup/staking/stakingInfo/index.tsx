@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -28,23 +28,26 @@ interface Props {
   onClose?: () => void;
 }
 
-function AvailableBalance ({ availableBalance, decimal, isExtension, token }: { availableBalance: BN, decimal: number, isExtension: boolean, token: string }): React.ReactElement {
+function AvailableBalance({ availableBalance, decimal, isExtension, token }: { availableBalance: BN, decimal: number, isExtension: boolean, token: string }): React.ReactElement {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const pillBg = isDark ? '#BFA1FF26' : '#EAE4F5';
+  const pillTextColor = isDark ? '#BEAAD8' : '#9B6BE8';
 
   return (
-    <Box sx={{ alignContent: 'center', bgcolor: '#BFA1FF26', borderRadius: '12px', height: '32px', margin: isExtension ? 0 : '20px auto 0', position: isExtension ? 'absolute' : 'initial', px: '10px', right: '15px', width: 'fit-content' }}>
+    <Box sx={{ alignContent: 'center', bgcolor: pillBg, borderRadius: '12px', height: '32px', margin: isExtension ? 0 : '20px auto 0', position: isExtension ? 'absolute' : 'initial', px: '10px', right: '15px', width: 'fit-content' }}>
       <DisplayBalance
         balance={availableBalance}
         decimal={decimal}
         decimalPoint={2}
-        style={{ color: '#BEAAD8', ...theme.typography['B-2'] }}
+        style={{ color: pillTextColor, ...theme.typography['B-2'] }}
         token={token}
       />
     </Box>
   );
 }
 
-function StakingInfo ({ onClose, onNext, selectedPosition, setSelectedPosition }: Props): React.ReactElement {
+function StakingInfo({ onClose, onNext, selectedPosition, setSelectedPosition }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
   const navigate = useNavigate();

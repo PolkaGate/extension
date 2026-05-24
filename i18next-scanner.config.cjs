@@ -1,11 +1,11 @@
-// Copyright 2019-2025 @polkadot/extension authors & contributors
+// Copyright 2019-2026 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 const fs = require('fs');
 const path = require('path');
 const typescript = require('typescript');
 
-function transform (file, enc, done) {
+function transform(file, enc, done) {
   const { ext } = path.parse(file.path);
 
   if (ext === '.tsx') {

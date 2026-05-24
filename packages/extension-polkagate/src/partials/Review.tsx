@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -7,21 +7,21 @@ import type { ISubmittableResult } from '@polkadot/types/types';
 import type { TransactionFlowStep } from '../util/constants';
 import type { PoolInfo, Proxy, ProxyTypes, TxInfo } from '../util/types';
 
-import { Container, Grid, Stack, type SxProps, type Theme,Typography, useTheme } from '@mui/material';
+import { Container, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { type Icon as IconType, InfoCircle } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
 import { type BN, isBn, noop } from '@polkadot/util';
 import { isAddress } from '@polkadot/util-crypto';
 
-import { AssetLogo, DisplayBalance, GradientDivider, Identity2, MySkeleton, MyTooltip, SignArea3 } from '../components';
+import { DisplayBalance, GradientDivider, Identity, Logo, MySkeleton, MyTooltip, SignArea3 } from '../components';
 import RestakeRewardToggler from '../fullscreen/stake/new-pool/claimReward/partials/RestakeRewardToggler';
 import { RewardHeaderAmount } from '../fullscreen/stake/new-pool/claimReward/partials/Review';
 import { useChainInfo, useFormatted, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
 import { PoolItem } from '../popup/staking/partial/PoolsTable';
 import { PolkaGateIdenticon } from '../style';
 import { toShortAddress } from '../util';
-import getLogo2 from '../util/getLogo2';
+import resolveLogoInfo from '../util/logo/resolveLogoInfo';
 import UnableToPayFee from './UnableToPayFee';
 
 interface AccountBoxProps {
@@ -31,13 +31,26 @@ interface AccountBoxProps {
 
 const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const formatted = useFormatted(selectedAccount?.address, genesisHash);
   const isExtension = useIsExtensionPopup();
+  const isDark = theme.palette.mode === 'dark';
 
-  const color = useMemo(() => isExtension ? 'text.highlight' : '#AA83DC', [isExtension]);
+  const color = useMemo(() => isExtension ? (isDark ? theme.palette.text.highlight : '#745E9F') : '#AA83DC', [isDark, isExtension, theme.palette.text.highlight]);
+  const accountBoxStyle = isExtension
+    ? {
+      bgcolor: theme.palette.surface.input,
+      border: isDark ? 'none' : `1px solid ${theme.palette.border.strong}`,
+      boxShadow: theme.palette.shadow.card,
+      p: '12px 8px'
+    }
+    : {
+      bgcolor: 'transparent',
+      p: '4px 8px'
+    };
 
   return (
-    <Stack direction='column' sx={{ alignItems: 'center', bgcolor: isExtension ? '#05091C' : 'transparent', borderRadius: '14px', p: isExtension ? '12px 8px' : '4px 8px', rowGap: '12px' }}>
+    <Stack direction='column' sx={{ alignItems: 'center', borderRadius: '14px', rowGap: '12px', ...accountBoxStyle }}>
       <Typography color={color} sx={{ textAlign: 'center', width: '100%' }} variant='B-2'>
         {t('Account')}
       </Typography>
@@ -54,13 +67,16 @@ const AccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
 };
 
 const RowAccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
+  const theme = useTheme();
   const isExtension = useIsExtensionPopup();
+  const isDark = theme.palette.mode === 'dark';
+  const identitySecondaryColor = isExtension ? (isDark ? 'text.highlight' : '#745E9F') : '#AA83DC';
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', borderRadius: '14px', display: 'flex', gap: '12px', mb: '8px', p: '12px 8px' }}>
-      <Identity2
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isExtension ? isDark ? theme.palette.surface.panelAlt : theme.palette.surface.input : theme.palette.background.default, border: isExtension && !isDark ? `1px solid ${theme.palette.border.strong}` : 'none', borderRadius: '14px', boxShadow: isExtension ? theme.palette.shadow.card : 'none', display: 'flex', gap: '12px', mb: '8px', p: '12px 8px' }}>
+      <Identity
         address={selectedAccount?.address}
-        addressStyle={{ color: isExtension ? 'text.highlight' : '#AA83DC', variant: 'B-4' }}
+        addressStyle={{ color: identitySecondaryColor, variant: 'B-4' }}
         charsCount={12}
         columnGap='5px'
         genesisHash={genesisHash ?? ''}
@@ -76,6 +92,7 @@ const RowAccountBox = ({ genesisHash, selectedAccount }: AccountBoxProps) => {
 export const DescriptionTip = ({ description }: { description: string | undefined }) => {
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
+  const isDark = theme.palette.mode === 'dark';
 
   if (!description) {
     return null;
@@ -86,7 +103,7 @@ export const DescriptionTip = ({ description }: { description: string | undefine
       content={description}
       placement='top'
     >
-      <InfoCircle color={isExtension ? theme.palette.text.highlight : '#AA83DC'} size='18' style={{ cursor: 'help' }} variant='Bold' />
+      <InfoCircle color={isExtension ? (isDark ? theme.palette.text.highlight : '#745E9F') : '#AA83DC'} size='18' style={{ cursor: 'help' }} variant='Bold' />
     </MyTooltip>
   );
 };
@@ -105,14 +122,17 @@ interface ContentItemProps extends Content {
   decimal?: number;
   token?: string;
   genesisHash: string;
+  itemKey?: 'fee' | 'amount';
   noDivider?: boolean;
 }
 
-export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decimal, description, genesisHash, noDivider = false, title, token, warningText, withLogo }: ContentItemProps) {
+export const ContentItem = memo(function ContentItemMemo({ Icon, content, decimal, description, genesisHash, itemKey, noDivider = false, title, token, warningText, withLogo }: ContentItemProps) {
+  const theme = useTheme();
   const isExtension = useIsExtensionPopup();
+  const isDark = theme.palette.mode === 'dark';
 
-  const logoInfo = useMemo(() => withLogo ? getLogo2(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
-  const color = useMemo(() => isExtension ? 'text.highlight' : '#BEAAD8', [isExtension]);
+  const logoInfo = useMemo(() => withLogo ? resolveLogoInfo(genesisHash, token) : undefined, [genesisHash, token, withLogo]);
+  const color = useMemo(() => isExtension ? (isDark ? theme.palette.text.highlight : '#745E9F') : '#BEAAD8', [isDark, isExtension, theme.palette.text.highlight]);
 
   return (
     <>
@@ -128,10 +148,10 @@ export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decim
             <UnableToPayFee warningText={warningText} />
           }
           {Icon &&
-            <Icon color='#AA83DC' size={18} variant='Bulk' />
+            <Icon color={isExtension ? theme.palette.accent.highlight : '#AA83DC'} size={18} variant='Bulk' />
           }
           {withLogo &&
-            <AssetLogo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
+            <Logo assetSize='18px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
           }
           {content
             ? isBn(content)
@@ -140,14 +160,15 @@ export const ContentItem = memo(function ContentItemMemo ({ Icon, content, decim
                   balance={content}
                   decimal={decimal}
                   style={{
-                    color: '#ffffff',
+                    color: theme.palette.text.primary,
                     width: 'max-content'
                   }}
                   token={token}
+                  withSi={itemKey === 'fee'}
                 />)
               : isAddress(content)
                 ? (
-                  <Identity2
+                  <Identity
                     address={content}
                     genesisHash={genesisHash}
                     identiconSize={22}
@@ -194,14 +215,25 @@ export interface ReviewProps {
   style?: SxProps<Theme>
 }
 
-export default function Review ({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, style = {}, transaction, transactionInformation }: ReviewProps): React.ReactElement {
+export default function Review({ amount, closeReview, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, selectedProxy, setFlowStep, setRestakeReward, setSelectedProxy, setShowProxySelection, setTxInfo, showAccountBox = true, showProxySelection, style = {}, transaction, transactionInformation }: ReviewProps): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
   const isExtension = useIsExtensionPopup();
+  const isDark = theme.palette.mode === 'dark';
 
   const isRow = useMemo(() => (pool && pool?.bondedPool?.state?.toString() !== 'Creating'), [pool]);
-  const fsStyle = isExtension ? {} : { bgcolor: '#05091C', borderRadius: '14px', gap: '7px', padding: '15px 15px 8px' };
+  const fsStyle = isExtension
+    ? {}
+    : {
+      bgcolor: theme.palette.surface.input,
+      border: isDark ? 'none' : `1px solid ${theme.palette.border.strong}`,
+      borderRadius: '14px',
+      boxShadow: theme.palette.shadow.card,
+      gap: '7px',
+      padding: '15px 15px 8px'
+    };
 
   return (
     <Stack direction='column' sx={{ height: '515px', p: '15px', pb: 0, position: 'relative', width: '100%', zIndex: 1, ...style }}>
@@ -210,7 +242,13 @@ export default function Review ({ amount, closeReview, genesisHash, pool, proxyT
         <RewardHeaderAmount
           amount={amount}
           genesisHash={genesisHash}
-          style={{ bgcolor: '#110F2A', borderRadius: '14px', p: '24px' }}
+          style={{
+            bgcolor: isDark ? theme.palette.surface.panelAlt : theme.palette.surface.input,
+            border: isDark ? 'none' : `1px solid ${theme.palette.border.strong}`,
+            borderRadius: '14px',
+            boxShadow: theme.palette.shadow.card,
+            p: '24px'
+          }}
           token={token}
         />
       }
@@ -235,12 +273,13 @@ export default function Review ({ amount, closeReview, genesisHash, pool, proxyT
         />
       }
       <Grid container item sx={{ flexDirection: 'column', gap: '6px', maxHeight: '170px', mt: '20px', overflow: 'hidden', overflowY: 'auto', width: '100%', ...fsStyle }}>
-        {transactionInformation.map(({ content, description, title, warningText, withLogo }, index) => (
+        {transactionInformation.map(({ content, description, itemKey, title, warningText, withLogo }, index) => (
           <ContentItem
             content={content}
             decimal={decimal}
             description={description}
             genesisHash={genesisHash}
+            itemKey={itemKey}
             key={index}
             noDivider={pool && !isRow}
             title={title}

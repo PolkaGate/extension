@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography } from '@mui/material';
@@ -9,7 +9,7 @@ import settings from '@polkadot/ui-settings';
 import MySwitch from '../../../../components/MySwitch';
 import { useTranslation } from '../../../../components/translate';
 
-export default function EnableCamera (): React.ReactElement {
+export default function EnableCamera(): React.ReactElement {
   const { t } = useTranslation();
 
   const onChange = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {

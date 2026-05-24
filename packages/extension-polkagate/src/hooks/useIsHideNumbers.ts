@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { getStorage, setStorage, watchStorage } from '../components/Loading';
+import { getStorage, setStorage, watchStorage } from '../util';
 
 interface HideNumbersProps {
   isHideNumbers: boolean | undefined;

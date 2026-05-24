@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 export const LOGIN_STATUS = {
@@ -20,7 +20,7 @@ export interface LoginInfo {
   addressesToForget?: string[];
 }
 
-export interface ForgottenInfo{
+export interface ForgottenInfo {
   status: boolean | undefined;
   addressesToForget?: string[];
 }

@@ -1,24 +1,24 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FeeInfo } from '../fullscreen/sendFund/types';
 import type { TransactionDetail } from '../util/types';
 
 import { Avatar, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import FailSuccessIcon from '@polkadot/extension-polkagate/src/popup/history/partials/FailSuccessIcon';
-import getLogo from '@polkadot/extension-polkagate/src/util/getLogo';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import Subscan from '../assets/icons/Subscan';
-import { ActionButton, DisplayBalance, GradientButton, Identity2, NeonButton } from '../components';
+import { ActionButton, CopyAddressButton, DisplayBalance, GradientButton, Identity, NeonButton } from '../components';
 import { DraggableModal } from '../fullscreen/components/DraggableModal';
 import { useChainInfo, useIsBlueish, useIsExtensionPopup, useRouteRefresh, useStakingConsts, useTranslation } from '../hooks';
+import { getLink } from '../popup/history/explorer';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { GlowBox, GradientDivider, VelvetBox } from '../style';
-import { getSubscanChainName, isValidAddress, toShortAddress, toTitleCase, updateStorage } from '../util';
+import { isValidAddress, toShortAddress, toTitleCase, updateStorage } from '../util';
 import { STORAGE_KEY } from '../util/constants';
 import { mapRelayToSystemGenesisIfMigrated } from '../util/migrateHubUtils';
 import DisplayAmount from './DisplayAmount';
@@ -29,17 +29,28 @@ interface ProxyAccountsProps {
 }
 
 const ProxyAccounts = ({ accounts, genesisHash }: ProxyAccountsProps) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   return (
     <Grid alignItems='center' container direction='row' item justifyContent='center' margin='10px 0 15px' width='90%'>
       {accounts?.map((acc, index) => (
-        <Identity2
+        <Identity
           address={acc}
           genesisHash={genesisHash}
           identiconSize={16}
           key={index}
           nameStyle={{ textAlign: 'center' }}
           showShortAddress
-          style={{ backgroundColor: '#C6AECC26', borderRadius: '9px', color: '#AA83DC', margin: '3px', padding: '4px 8px 4px 4px', variant: 'B-2' }}
+          style={{
+            backgroundColor: theme.palette.surface.selected,
+            border: isDark ? undefined : `1px solid ${theme.palette.border.strong}`,
+            borderRadius: '9px',
+            color: isDark ? theme.palette.primary.main : theme.palette.text.secondary,
+            margin: '3px',
+            padding: '4px 8px 4px 4px',
+            variant: 'B-2'
+          }}
         />
       ))}
     </Grid>
@@ -55,7 +66,7 @@ const ValidatorsConfirm = ({ genesisHash, nominators }: { genesisHash: string | 
       <Typography color='text.primary' lineHeight='normal' variant='H-1'>
         {nominators.length}
       </Typography>
-      <Typography color='#AA83DC' variant='H-3'>
+      <Typography color='primary.main' variant='H-3'>
         {`/ ${stakingConst?.maxNominations ?? 16}`}
       </Typography>
       <Typography color='text.secondary' pl='3px' variant='H-3'>
@@ -72,13 +83,28 @@ interface HeaderProps {
 }
 
 const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { accounts, amount, assetDecimal, description, failureText, nominators, success, token } = transactionDetail;
 
   return (
-    <GlowBox isBlueish={isBlueish} style={{ m: 0, width: '100%' }}>
+    <GlowBox
+      isBlueish={isBlueish}
+      noGlowBall={!isDark}
+      style={{
+        backgroundColor: isDark ? undefined : theme.palette.surface.input,
+        border: isDark ? undefined : `1px solid ${theme.palette.border.subtle}`,
+        borderRadius: '24px',
+        boxShadow: isDark ? undefined : theme.palette.shadow.card,
+        m: 0,
+        minHeight: '150px',
+        width: '100%'
+      }}
+    >
       <FailSuccessIcon
         description={description}
         failureText={failureText}
+        isBlueish={isBlueish}
         success={success}
       >
         {nominators &&
@@ -96,9 +122,9 @@ const Header = ({ genesisHash, isBlueish, transactionDetail }: HeaderProps) => {
                     accounts={accounts}
                     genesisHash={genesisHash}
                     />
-                  : <Identity2
+                  : <Identity
                     address={accounts[0]}
-                    addressStyle={{ color: '#AA83DC', variant: 'B-1' }}
+                    addressStyle={{ color: isDark ? '#AA83DC' : theme.palette.text.secondary, variant: 'B-1' }}
                     charsCount={5}
                     genesisHash={genesisHash}
                     nameStyle={{ paddingBottom: '7px', textAlign: 'center' }}
@@ -128,9 +154,13 @@ interface DetailProps {
   transactionDetail: TransactionDetail;
 }
 
+const isFeeInfo = (content: TransactionDetail[keyof TransactionDetail]): content is FeeInfo =>
+  typeof content === 'object' && content !== null && 'fee' in content;
+
 const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { decimal: nativeAssetDecimal, token: nativeToken } = useChainInfo(genesisHash, true);
 
   const { accounts, amount, assetDecimal, decimal, extra, token = nativeToken } = transactionDetail;
@@ -176,7 +206,19 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
 
   return (
     <VelvetBox>
-      <Stack direction='column' sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', justifyContent: 'center', maxHeight: '260px', overflow: 'auto', p: '12px 18px' }}>
+      <Stack
+        direction='column'
+        sx={{
+          alignItems: 'center',
+          bgcolor: theme.palette.surface.input,
+          border: isDark ? 'none' : `1px solid ${theme.palette.border.subtle}`,
+          borderRadius: '14px',
+          justifyContent: 'center',
+          maxHeight: '260px',
+          overflow: 'auto',
+          p: '12px 18px'
+        }}
+      >
         {entriesToRender.map(([key, content], index) => {
           const withDivider = entriesToRender.length > index + 1;
           const { color, isAddress, isBalance, isBlock, isDate, isFee, isFromToAddress, isHash } = getContentTypeAndColor(key, content);
@@ -187,19 +229,30 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                 <Typography color={isBlueish ? 'text.highlight' : 'text.secondary'} textTransform='capitalize' variant='B-1' width='fit-content'>
                   {key === 'txHash' ? t('Transaction ID') : toTitleCase(key)}
                 </Typography>
-                <Stack columnGap='3px' direction='row' justifyContent='end'>
+                <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='end'>
                   {
                     isFromToAddress &&
-                    <Identity2
+                    <Identity
                       address={content as string}
-                      genesisHash={POLKADOT_GENESIS}
                       identiconSize={18}
                       showSocial={false}
                       style={{ color: 'text.primary', variant: 'B-1' }}
                       withShortAddress={false}
                     />
                   }
-                  <Typography color={color} sx={{ bgcolor: isHash || isAddress ? '#C6AECC26' : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
+                  <Typography
+                    color={color}
+                    sx={{
+                      bgcolor: isHash || isAddress ? theme.palette.surface.selected : 'none',
+                      border: isHash || isAddress
+                        ? `1px solid ${isDark ? 'transparent' : theme.palette.border.strong}`
+                        : 'none',
+                      borderRadius: '9px',
+                      p: '2px 3px'
+                    }}
+                    variant='B-1'
+                    width='fit-content'
+                  >
                     {isBlock && '#'}
                     {isHash || isAddress
                       ? toShortAddress(String(content), 6)
@@ -207,19 +260,19 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                         ? (
                           <DisplayBalance
                             balance={
-                              isFee && typeof content === 'object' && 'fee' in (content as any)
-                                ? (content as FeeInfo).fee
+                              isFeeInfo(content)
+                                ? content.fee
                                 : (content as string)
                             }
-                            decimal={(isFee && typeof content === 'object' && 'decimal' in (content as any)
-                              ? (content as FeeInfo).decimal
+                            decimal={(isFeeInfo(content)
+                              ? content.decimal
                               : isFee ? nativeAssetDecimal : _decimal) ?? 0}
                             style={{
                               color: isBlueish ? theme.palette.text.highlight : theme.palette.primary.main,
                               width: 'max-content'
                             }}
-                            token={(isFee && typeof content === 'object' && 'token' in (content as any)
-                              ? (content as FeeInfo).token
+                            token={(isFeeInfo(content)
+                              ? content.token
                               : isFee ? nativeToken : token) ?? ''}
                           />)
                         : isDate
@@ -227,6 +280,9 @@ const Detail = ({ genesisHash, isBlueish, showDate, transactionDetail }: DetailP
                           : content as string
                     }
                   </Typography>
+                  {isHash && Boolean(content) &&
+                    <CopyAddressButton address={String(content)} padding={0} size={16} />
+                  }
                 </Stack>
               </Container>
               {
@@ -245,23 +301,27 @@ interface ButtonsProps {
   address: string;
   backToHome?: () => void;
   backToHomeText?: string;
+  extrinsicIndex?: string;
   genesisHash: string | undefined;
   goToHistory?: () => void;
   isBlueish: boolean;
   success: boolean;
+  txHash?: string;
 }
 
-function Buttons ({ address, backToHome, backToHomeText, genesisHash, goToHistory, isBlueish, success }: ButtonsProps) {
+function Buttons({ address, backToHome, backToHomeText, extrinsicIndex, genesisHash, goToHistory, isBlueish, success, txHash }: ButtonsProps) {
   const { t } = useTranslation();
   const { chainName } = useChainInfo(genesisHash, true);
 
   const goToExplorer = useCallback(() => {
-    const network = getSubscanChainName(chainName);
+    const { link } = chainName && (extrinsicIndex || txHash)
+      ? getLink(chainName, 'extrinsic', extrinsicIndex || txHash || '')
+      : { link: undefined };
+    const url = link ?? `https://subscan.io/account/${address}`;
 
-    const url = `https://${network}.subscan.io/account/${address}`;
-
+    // eslint-disable-next-line no-undef
     chrome.tabs.create({ url }).catch(console.error);
-  }, [address, chainName]);
+  }, [address, chainName, extrinsicIndex, txHash]);
 
   const btnStyle = {
     height: '44px',
@@ -306,7 +366,7 @@ function Buttons ({ address, backToHome, backToHomeText, genesisHash, goToHistor
           onClick={goToExplorer}
           startIconNode={
             <Avatar
-              src={getLogo('subscan')}
+              src={resolveLogoInfo('subscan')?.logo}
               sx={{ borderRadius: '50%', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
               variant='square'
             />
@@ -332,7 +392,7 @@ interface ContentProps {
   transactionDetail: TransactionDetail;
 }
 
-function Content ({ address, backToHome, backToHomeText, genesisHash, isModal, onClose, showDate, showHistoryButton, showStakingHome, transactionDetail }: ContentProps) {
+function Content({ address, backToHome, backToHomeText, genesisHash, isModal, onClose, showDate, showHistoryButton, showStakingHome, transactionDetail }: ContentProps) {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   const isBlueish = useIsBlueish();
@@ -410,10 +470,12 @@ function Content ({ address, backToHome, backToHomeText, genesisHash, isModal, o
           address={address}
           backToHome={(backToHome || showStakingHome) ? handleHome : undefined}
           backToHomeText={_backToHomeText}
+          extrinsicIndex={transactionDetail.extrinsicIndex}
           genesisHash={genesisHash}
           goToHistory={showHistoryButton ? goToHistory : undefined}
           isBlueish={isBlueish}
           success={transactionDetail.success}
+          txHash={transactionDetail.txHash}
         />
       </Stack>
     </Stack>
@@ -433,8 +495,10 @@ interface Props {
   transactionDetail: TransactionDetail;
 }
 
-export default function Confirmation ({ address, backToHome, backToHomeText, genesisHash, isModal, onClose, showDate, showHistoryButton = true, showStakingHome = true, transactionDetail }: Props) {
+export default function Confirmation({ address, backToHome, backToHomeText, genesisHash, isModal, onClose, showDate, showHistoryButton = true, showStakingHome = true, transactionDetail }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [openModal, setOpenModal] = useState(true);
   const _onCloseModal = useCallback(() => {
@@ -463,7 +527,13 @@ export default function Confirmation ({ address, backToHome, backToHomeText, gen
             onClose={onClose ?? _onCloseModal}
             open={openModal}
             showBackIconAsClose
-            style={{ backgroundColor: '#1B133C', minHeight: '600px', padding: '20px 9px 10px' }}
+            style={{
+              backgroundColor: theme.palette.surface.panel,
+              border: isDark ? undefined : `1px solid ${theme.palette.border.subtle}`,
+              boxShadow: isDark ? undefined : theme.palette.shadow.card,
+              minHeight: '600px',
+              padding: '20px 9px 10px'
+            }}
             title={transactionDetail.success ? t('Completed') : t('Failed')}
           >
             <Content {...contentProps} />

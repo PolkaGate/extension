@@ -1,5 +1,7 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
+
+import type { Icon } from 'iconsax-react';
 
 import { Grid, IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
 import { Check, Eye, EyeSlash } from 'iconsax-react';
@@ -11,7 +13,7 @@ const StyledTextField = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'hasError' && prop !== 'isBlueish'
 })<{ hasError?: boolean; isBlueish?: boolean }>(({ hasError, isBlueish, theme }) => ({
   '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: hasError ? theme.palette.error.main : '#BEAAD833'
+    borderColor: hasError ? theme.palette.error.main : theme.palette.border.input
   },
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
@@ -25,22 +27,22 @@ const StyledTextField = styled(TextField, {
       },
       '& fieldset.MuiOutlinedInput-notchedOutline': {
         backgroundColor: 'unset',
-        borderColor: hasError ? theme.palette.error.main : '#3988FF',
+        borderColor: hasError ? theme.palette.error.main : theme.palette.text.highlight,
         borderWidth: '2px',
         transition: 'all 150ms ease-out'
       }
     },
     '&:hover': {
-      backgroundColor: theme.palette.mode === 'dark' ? isBlueish ? '#222442' : '#2D1E4A' : '#e5e7ed',
+      backgroundColor: theme.palette.mode === 'dark' && isBlueish ? '#222442' : theme.palette.surface.hover,
       transition: 'all 150ms ease-out'
     },
     '&:hover fieldset': {
-      borderColor: isBlueish ? '#2E2B52' : '#BEAAD833',
+      borderColor: isBlueish ? '#2E2B52' : theme.palette.border.input,
       transition: 'all 150ms ease-out',
       zIndex: 0
     },
-    backgroundColor: theme.palette.mode === 'dark' ? isBlueish ? '#2224424D' : '#1B133C' : '#EFF1F9',
-    borderColor: isBlueish ? '#2E2B52' : '#BEAAD833',
+    backgroundColor: theme.palette.mode === 'dark' && isBlueish ? '#2224424D' : theme.palette.surface.popover,
+    borderColor: isBlueish ? '#2E2B52' : theme.palette.border.input,
     borderRadius: '12px',
     color: hasError ? theme.palette.error.main : isBlueish ? theme.palette.text.highlight : theme.palette.text.secondary,
     height: '44px',
@@ -57,26 +59,28 @@ const StyledTextField = styled(TextField, {
 }));
 
 interface Props {
+  errorMessage?: string;
   title?: string;
+  Icon?: Icon;
   onPassChange: (pass: string) => void;
   onEnterPress?: () => unknown;
   style?: React.CSSProperties;
   focused?: boolean;
   hasError?: boolean;
   value?: string;
+  placeholder?: string;
 }
 
-function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPassChange, style, title, value }: Props): React.ReactElement {
+function PasswordInput({ Icon, errorMessage, focused = false, hasError = false, onEnterPress, onPassChange, placeholder, style, title, value }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
   const isBlueish = useIsBlueish();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [focusing, setFocused] = useState<boolean>(false);
+  const [focusing, setFocused] = useState<boolean>(focused);
 
   const toggle = useCallback(() => setFocused((isFocused) => !isFocused), []);
-
   const onChange = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
     onPassChange(value ?? null);
   }, [onPassChange]);
@@ -90,8 +94,10 @@ function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPas
   }, [onEnterPress]);
 
   const commonColor = useMemo(() => isDark
-    ? isBlueish ? theme.palette.text.highlight : '#AA83DC'
-    : '#8F97B8', [isBlueish, isDark, theme.palette.text.highlight]);
+    ? isBlueish ? theme.palette.text.highlight : theme.palette.primary.main
+    : theme.palette.text.secondary, [isBlueish, isDark, theme.palette.primary.main, theme.palette.text.highlight, theme.palette.text.secondary]);
+
+  const InputIcon = Icon ?? Check;
 
   return (
     <Grid container item sx={style}>
@@ -108,7 +114,7 @@ function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPas
                 aria-label='toggle password visibility'
                 edge='end'
                 onClick={handleClickShowPassword}
-                sx={{ bgcolor: isDark ? isBlueish ? '#222442' : '#2D1E4A' : '#FFFFFF', borderRadius: '8px' }}
+                sx={{ bgcolor: isDark && isBlueish ? '#222442' : theme.palette.surface.input, borderRadius: '8px' }}
                 tabIndex={-1}
               >
                 {showPassword
@@ -120,8 +126,8 @@ function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPas
           ),
           startAdornment: (
             <InputAdornment position='start'>
-              <Check
-                color={hasError ? '#FF4FB9' : focusing ? '#3988FF' : commonColor}
+              <InputIcon
+                color={hasError ? theme.palette.error.main : focusing ? theme.palette.text.highlight : commonColor}
                 size='22'
                 variant={focusing ? 'Bold' : 'Bulk'}
               />
@@ -137,14 +143,14 @@ function PasswordInput ({ focused = false, hasError = false, onEnterPress, onPas
         onChange={onChange}
         onFocus={toggle}
         onKeyDown={handleKeyDown}
-        placeholder={t('Password')}
+        placeholder={placeholder || t('Password')}
         theme={theme}
         type={showPassword ? 'text' : 'password'}
         value={value}
       />
       {hasError &&
-        <Typography color='#FF4FB9' sx={{ display: 'flex', height: '6px' }} variant='B-1'>
-          {t('Wrong password.')}
+        <Typography color='error.main' sx={{ display: 'flex', height: '6px' }} variant='B-1'>
+          { errorMessage ?? t('Wrong password.')}
         </Typography>
       }
     </Grid>

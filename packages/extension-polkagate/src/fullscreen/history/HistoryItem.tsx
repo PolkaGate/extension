@@ -1,17 +1,17 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '../../util/types';
 
-import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { alpha, Box, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { ArrowRight2, CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
 import HistoryDetail from '@polkadot/extension-polkagate/src/popup/history/newDesign/HistoryDetail';
-import PolkaGateIdenticon from '@polkadot/extension-polkagate/src/style/PolkaGateIdenticon';
 import { BN_ZERO } from '@polkadot/util';
 
-import { CryptoFiatBalance, ScrollingTextBox } from '../../components';
+import { CryptoFiatBalance, Identity, ScrollingTextBox } from '../../components';
 import { useTokenPriceBySymbol, useTranslation } from '../../hooks';
 import { amountToMachine, calcPrice, historyIconBgColor, resolveActionType } from '../../util';
 import { COLUMN_WIDTH } from './consts';
@@ -22,6 +22,9 @@ interface HistoryItemProps {
 }
 
 const TimeOfTX = ({ date, style = {} }: { date: number, style: React.CSSProperties }) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   const formatTimestamp = useCallback((timestamp: number) => {
     const date = new Date(timestamp);
 
@@ -41,23 +44,26 @@ const TimeOfTX = ({ date, style = {} }: { date: number, style: React.CSSProperti
   }, []);
 
   return (
-    <Typography color='#BEAAD8' sx={{ textAlign: 'left', ...style }} variant='B-2'>
+    <Typography color={isDark ? '#BEAAD8' : theme.palette.text.primary} sx={{ textAlign: 'left', ...style }} variant='B-2'>
       {formatTimestamp(date)}
     </Typography>
   );
 };
 
-const HistoryStatus = memo(function HistoryStatus ({ historyItem }: { historyItem: TransactionDetail }) {
+const HistoryStatus = memo(function HistoryStatus({ historyItem }: { historyItem: TransactionDetail }) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const success = historyItem.success;
+  const successColor = theme.palette.success.main;
+  const successBg = theme.palette.mode === 'dark' ? alpha(theme.palette.success.main, 0.15) : theme.palette.success.light;
 
   return (
-    <Grid alignItems='center' columnGap='4px' container item justifyContent='center' sx={{ bgcolor: !success ? '#FF4FB926' : '#82FFA526', borderRadius: '9px', p: '2px 5px' }} width='fit-content'>
+    <Grid alignItems='center' columnGap='4px' container item justifyContent='center' sx={{ bgcolor: !success ? '#FF4FB926' : successBg, borderRadius: '9px', p: '2px 5px' }} width='fit-content'>
       {success
-        ? <TickCircle color='#82FFA5' size='14' variant='Bold' />
+        ? <TickCircle color={successColor} size='14' variant='Bold' />
         : <CloseCircle color='#FF4FB9' size='14' variant='Bold' />
       }
-      <Typography color={success ? '#82FFA5' : '#FF4FB9'} variant='B-2'>
+      <Typography color={success ? successColor : '#FF4FB9'} variant='B-2'>
         {success ? t('Completed') : t('Failed')}
       </Typography>
     </Grid>
@@ -65,8 +71,9 @@ const HistoryStatus = memo(function HistoryStatus ({ historyItem }: { historyIte
   );
 });
 
-function HistoryItem ({ historyItem }: HistoryItemProps) {
+function HistoryItem({ historyItem }: HistoryItemProps) {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [historyItemDetail, setHistoryItemDetail] = useState<TransactionDetail>();
 
@@ -79,16 +86,32 @@ function HistoryItem ({ historyItem }: HistoryItemProps) {
   const price = useTokenPriceBySymbol(token ?? '', chain?.genesisHash ?? '');
   const fiatBalance = useMemo(() => calcPrice(price.price, amountToMachine(amount, decimal) ?? BN_ZERO, decimal), [amount, decimal, price.price]);
 
-  const iconBgColor = historyIconBgColor(action);
+  const iconBgColor = isDark
+    ? historyIconBgColor(action)
+    : ['receive', 'reward'].includes(action.toLowerCase())
+      ? '#E9FFF1'
+      : ['send', 'proxy', 'utility'].includes(action.toLowerCase())
+        ? '#FFFFFF'
+        : '#F5F4FF';
   const isTransfer = hAction.toLowerCase() === 'balances';
   const isSend = subAction?.toLowerCase() === 'send';
+  const rowBg = isDark ? '#05091C' : '#FFFFFF';
+  const rowHoverBg = isDark ? '#1B133C' : '#F3F6FD';
+  const rowBorder = isDark ? 'none' : '1px solid #DDE3F4';
+  const iconBorderColor = isDark ? '#2D1E4A' : '#DDE3F4';
+  const chipBg = isDark ? '#C6AECC26' : '#EEF2FB';
+  const actionButtonBg = isDark ? '#2D1E4A' : '#F3F6FD';
+  const actionButtonIconColor = isDark ? '#AA83DC' : '#7D66A8';
+  const primaryText = theme.palette.text.primary;
+  const secondaryText = isDark ? '#BEAAD8' : theme.palette.text.secondary;
+  const cryptoText = isDark ? '#AA83DC' : '#7D66A8';
 
   return (
     <>
-      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ background: '#05091C', borderRadius: '14px', display: 'flex', height: '50px', p: '0 7px 0 10px' }}>
-        <Grid alignItems='center' columnGap='30px' container item justifyContent='start' onClick={openDetail(historyItem)} sx={{ ':hover': { background: '#1B133C', my: '1px', p: '5px 8px' }, borderRadius: '12px 0 0 12px', cursor: 'pointer', transition: 'all 250ms ease-out' }}>
+      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ background: rowBg, border: rowBorder, borderRadius: '14px', display: 'flex', height: '50px', p: '0 7px 0 10px' }}>
+        <Grid alignItems='center' columnGap='30px' container item justifyContent='start' onClick={openDetail(historyItem)} sx={{ ':hover': { background: rowHoverBg, my: '1px', p: '5px 8px' }, borderRadius: '12px 0 0 12px', cursor: 'pointer', transition: 'all 250ms ease-out' }}>
           <Stack direction='row' sx={{ alignItems: 'center', justifyContent: 'start', mx: '5px' }} width={COLUMN_WIDTH.ACTION}>
-            <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: '#2D1E4A', borderRadius: '999px', height: '24px', width: '24px' }}>
+            <Grid alignItems='center' container item justifyContent='center' sx={{ background: iconBgColor, border: '2px solid', borderColor: iconBorderColor, borderRadius: '999px', height: '24px', width: '24px' }}>
               <HistoryIcon action={action} />
             </Grid>
             <ScrollingTextBox
@@ -105,34 +128,30 @@ function HistoryItem ({ historyItem }: HistoryItemProps) {
           <Grid alignItems='center' columnGap='4px' container item width={COLUMN_WIDTH.SUB_ACTION}>
             {isTransfer
               ? <Stack alignItems='center' direction='row' sx={{ columnGap: '5px', justifyContent: 'start' }} width='fit-content'>
-                <PolkaGateIdenticon
-                  address={to?.address || from.address}
-                  size={24}
-                />
-                <ScrollingTextBox
-                  scrollOnHover
-                  text={isSend
-                    ? (to?.name || to?.address) ?? ''
-                    : (from.name || from.address) ?? ''
-                  }
-                  textStyle={{
-                    color: '#BEAAD8',
-                    ...theme.typography['B-2']
-                  }}
-                  width={120}
+                <Identity
+                  address={isSend ? to?.address ?? '' : from.address}
+                  addressStyle={{ backgroundColor: chipBg, borderRadius: '9px', marginTop: '-3%', padding: '2px 3px' }}
+                  charsCount={4}
+                  direction='row'
+                  genesisHash={chain?.genesisHash ?? POLKADOT_GENESIS}
+                  identiconSize={24}
+                  nameStyle={{ py: '2px' }}
+                  showSocial={false}
+                  style={{ color: secondaryText, maxWidth: 'inherit', overflow: 'auto', variant: 'B-2' }}
+                  withShortAddress={true}
                 />
               </Stack>
-              : (<Typography color='#BEAAD8' textTransform='capitalize' variant='B-2'>
+              : (<Typography color={secondaryText} textTransform='capitalize' variant='B-2'>
                 {hAction}
               </Typography>)
             }
           </Grid>
           <CryptoFiatBalance
             cryptoBalance={amountToMachine(amount, decimal)}
-            cryptoProps={{ style: { color: '#AA83DC', fontSize: '11px' } }}
+            cryptoProps={{ style: { color: cryptoText, fontSize: '11px' } }}
             decimal={decimal}
             fiatBalance={fiatBalance}
-            fiatProps={{ decimalColor: theme.palette.text.primary }}
+            fiatProps={{ decimalColor: primaryText }}
             style={{
               alignItems: 'end',
               rowGap: 0,
@@ -144,8 +163,8 @@ function HistoryItem ({ historyItem }: HistoryItemProps) {
           <TimeOfTX date={date} style={{ paddingLeft: '15px', width: COLUMN_WIDTH.DATE }} />
           <HistoryStatus historyItem={historyItem} />
         </Grid>
-        <Box onClick={openDetail(historyItem)} sx={{ alignItems: 'center', bgcolor: '#2D1E4A', borderRadius: '8px', cursor: 'pointer', display: 'flex', height: '36px', justifyContent: 'center', width: '34px' }}>
-          <ArrowRight2 color='#AA83DC' size='16px' variant='Bold' />
+        <Box onClick={openDetail(historyItem)} sx={{ alignItems: 'center', bgcolor: actionButtonBg, border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '8px', cursor: 'pointer', display: 'flex', height: '36px', justifyContent: 'center', width: '34px' }}>
+          <ArrowRight2 color={actionButtonIconColor} size='16px' variant='Bold' />
         </Box>
       </Stack>
       <HistoryDetail

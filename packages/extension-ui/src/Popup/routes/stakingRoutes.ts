@@ -1,10 +1,11 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { RouteConfig } from './RouteDefinitions';
 
 import PoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-pool';
 import JoinPoolFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-pool/joinPool';
+import PoolManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/new-pool/nominations/ManageValidators';
 import SoloFS from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo';
 import ManageValidators from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/nominations/ManageValidators';
 import StakingIndex from '@polkadot/extension-polkagate/src/popup/staking';
@@ -146,6 +147,11 @@ export const STAKING_ROUTES: RouteConfig[] = [
     Component: PoolFS,
     path: '/fullscreen-stake/pool/:address/:genesisHash',
     trigger: 'pool-staking-fullscreen'
+  },
+  {
+    Component: PoolManageValidators,
+    path: '/fullscreen-stake/pool/manage-validator/:address/:genesisHash',
+    trigger: 'pool-staking-manage-validator-fullscreen'
   },
   {
     Component: JoinPoolFS,

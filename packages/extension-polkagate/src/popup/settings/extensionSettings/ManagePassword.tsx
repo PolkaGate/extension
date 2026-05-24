@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack } from '@mui/material';
@@ -6,7 +6,7 @@ import React, { useCallback, useState } from 'react';
 
 import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
 import useIsPasswordCorrect from '@polkadot/extension-polkagate/src/hooks/useIsPasswordCorrect';
-import { accountsChangePasswordAll } from '@polkadot/extension-polkagate/src/messaging';
+import { accountsChangePasswordAll, lockExtension } from '@polkadot/extension-polkagate/src/messaging';
 import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { blake2AsHex } from '@polkadot/util-crypto';
@@ -18,14 +18,14 @@ import { type LoginInfo } from '../../passwordManagement/types';
 import WarningBox from '../partials/WarningBox';
 
 // DEPRECATED, and will be removed int he future versions
-export const isPasswordCorrect = async (password: string, isHashed?: boolean) => {
+export const isPasswordCorrect = async(password: string, isHashed?: boolean) => {
   const hashedPassword = isHashed ? password : blake2AsHex(password, 256);
   const info = await getStorage(STORAGE_KEY.LOGIN_INFO) as LoginInfo;
 
   return info?.hashedPassword === hashedPassword;
 };
 
-export default function ManagePassword ({ onBack }: { onBack?: () => void }): React.ReactElement {
+export default function ManagePassword({ onBack }: { onBack?: () => void }): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 
@@ -43,6 +43,7 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
     setShowSnackbar(false);
 
     if (missionSucceeded) {
+      lockExtension().catch(console.error);
       window.location.hash = '/';
     }
 
@@ -56,7 +57,7 @@ export default function ManagePassword ({ onBack }: { onBack?: () => void }): Re
     setCurrentPassword(pass || '');
   }, []);
 
-  const onSetPassword = useCallback(async () => {
+  const onSetPassword = useCallback(async() => {
     if (!oldPass || !newPass) {
       return;
     }

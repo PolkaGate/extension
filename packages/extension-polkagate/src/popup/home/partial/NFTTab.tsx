@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TabProps } from './AssetTabs';
@@ -9,7 +9,7 @@ import React, { memo } from 'react';
 
 import { useTranslation } from '../../../hooks';
 
-function NFTTab ({ isSelected = false }: TabProps) {
+function NFTTab({ isSelected = false }: TabProps) {
   const { t } = useTranslation();
   const theme = useTheme();
 

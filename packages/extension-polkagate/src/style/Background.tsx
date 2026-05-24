@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, styled, type SxProps, type Theme, useTheme } from '@mui/material';
@@ -43,7 +43,7 @@ const backgroundImageStyle: SxProps<Theme> = {
   width: '370px'
 };
 
-const FadeOut = styled('div')(({ backgroundColor }: {backgroundColor: string}) => ({
+const FadeOut = styled('div')(({ backgroundColor }: { backgroundColor: string }) => ({
   background: `linear-gradient(180deg, transparent 13.79%, ${backgroundColor} 100%)`,
   height: '220px',
   inset: 0,
@@ -68,7 +68,7 @@ interface Props {
   imageStyle?: React.CSSProperties;
 }
 
-function Background ({ imageStyle, style, type = 'default' }: Props): React.ReactNode {
+function Background({ imageStyle, style, type = 'default' }: Props): React.ReactNode {
   const theme = useTheme();
   const isDark = useIsDark();
   const [imageLoaded, setImageLoaded] = useState(false);

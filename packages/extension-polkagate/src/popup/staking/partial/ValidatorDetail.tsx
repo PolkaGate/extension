@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -6,7 +6,7 @@
 import type { SpStakingIndividualExposure } from '@polkadot/types/lookup';
 import type { ValidatorInformation } from '../../../hooks/useValidatorsInformation';
 
-import { Container, Dialog, Grid, Link, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { Container, Dialog, Grid, Link, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import Riot from '@polkadot/extension-polkagate/src/assets/icons/Riot';
@@ -16,7 +16,9 @@ import { Transition } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsBlueish, useTranslation, useValidatorApy } from '../../../hooks';
 import { GradientDivider, PolkaGateIdenticon } from '../../../style';
-import { getSubscanChainName, isHexToBn, toShortAddress } from '../../../util';
+import { isHexToBn, toShortAddress } from '../../../util';
+import { normalizeDiscordUrl, normalizeGithubUrl, normalizeMailtoUrl, normalizeMatrixUrl, normalizeTwitterUrl, normalizeUrl } from '../../../util/socialLinks';
+import { getLink } from '../../history/explorer';
 import { Discord, Email, Github, Web, XIcon } from '../../settings/icons';
 import SocialIcon from '../../settings/partials/SocialIcon';
 import BlueGradient from '../stakingStyles/BlueGradient';
@@ -37,26 +39,40 @@ interface ValidatorIdSocialsProps {
 
 export const ValidatorIdSocials = ({ style, validatorDetail }: ValidatorIdSocialsProps) => {
   const isBlueish = useIsBlueish();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
-  const bgColor = isBlueish ? '#FFFFFF1A' : '#AA83DC26';
-  const color = isBlueish ? '#809ACB' : '#AA83DC';
+  const bgColor = isDark
+    ? isBlueish ? '#FFFFFF1A' : '#AA83DC26'
+    : '#EEF1FF';
+  const color = isDark
+    ? isBlueish ? '#809ACB' : '#AA83DC'
+    : theme.palette.text.highlight;
+  const { discord, email, github, matrix, riot, twitter, web } = validatorDetail.identity ?? {};
+
+  const discordLink = normalizeDiscordUrl(discord);
+  const emailLink = normalizeMailtoUrl(email);
+  const githubLink = normalizeGithubUrl(github);
+  const matrixLink = normalizeMatrixUrl(matrix || riot);
+  const twitterLink = normalizeTwitterUrl(twitter);
+  const webLink = normalizeUrl(web);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', m: 0, width: '32%', ...style }}>
-      {validatorDetail.identity?.discord &&
-        <SocialIcon Icon={<Discord color={color} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+      {discordLink &&
+        <SocialIcon Icon={<Discord color={color} width='14px' />} bgColor={bgColor} link={discordLink} size={24} />
       }
-      {validatorDetail.identity?.email &&
-        <SocialIcon Icon={<Email color={color} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+      {emailLink &&
+        <SocialIcon Icon={<Email color={color} width='14px' />} bgColor={bgColor} link={emailLink} size={24} />
       }
-      {validatorDetail.identity?.github &&
-        <SocialIcon Icon={<Github color={color} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+      {githubLink &&
+        <SocialIcon Icon={<Github color={color} width='14px' />} bgColor={bgColor} link={githubLink} size={24} />
       }
-      {(validatorDetail.identity?.matrix || validatorDetail.identity?.riot) &&
+      {matrixLink &&
         <Link
-          href={''}
+          href={matrixLink}
           rel='noreferrer'
-          sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
+          sx={{ alignItems: 'center', bgcolor: bgColor, borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
           target='_blank'
           underline='none'
         >
@@ -67,11 +83,11 @@ export const ValidatorIdSocials = ({ style, validatorDetail }: ValidatorIdSocial
           />
         </Link>
       }
-      {validatorDetail.identity?.twitter &&
-        <SocialIcon Icon={<XIcon color={color} width='13px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+      {twitterLink &&
+        <SocialIcon Icon={<XIcon color={color} width='13px' />} bgColor={bgColor} link={twitterLink} size={24} />
       }
-      {validatorDetail.identity?.web &&
-        <SocialIcon Icon={<Web color={color} width='14px' />} bgColor={bgColor} link='https://www.youtube.com/@polkagate' size={24} />
+      {webLink &&
+        <SocialIcon Icon={<Web color={color} width='14px' />} bgColor={bgColor} link={webLink} size={24} />
       }
     </Container>
   );
@@ -83,29 +99,34 @@ interface ValidatorIdentityDetailProps {
 }
 
 const ValidatorIdentityDetail = ({ genesisHash, validatorDetail }: ValidatorIdentityDetailProps) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { chainName } = useChainInfo(genesisHash, true);
-  const network = getSubscanChainName(chainName);
+  const accountId = validatorDetail.accountId.toString();
+  const { link } = getLink(chainName, 'account', accountId);
+  const iconBgColor = isDark ? '#FFFFFF1A' : '#EEF1FF';
+  const accentColor = isDark ? '#809ACB' : theme.palette.text.highlight;
 
   return (
     <Stack direction='column' sx={{ p: '12px', width: '100%' }}>
       <Container disableGutters sx={{ alignItems: 'flex-start', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <ValidatorIdSocials validatorDetail={validatorDetail} />
-        <Grid container item sx={{ border: '8px solid #00000033', borderRadius: '999px', height: 'fit-content', width: 'fit-content' }}>
+        <Grid container item sx={{ border: '8px solid', borderColor: isDark ? '#00000033' : '#FFFFFF99', borderRadius: '999px', height: 'fit-content', width: 'fit-content' }}>
           <PolkaGateIdenticon
-            address={validatorDetail.accountId.toString()}
+            address={accountId}
             size={48}
           />
         </Grid>
         <Grid container item sx={{ justifyContent: 'flex-end', width: '32%' }}>
           <Link
-            href={`https://${network}.subscan.io/account/${validatorDetail.accountId.toString()}`}
+            href={link}
             rel='noreferrer'
-            sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
+            sx={{ alignItems: 'center', bgcolor: iconBgColor, borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
             target='_blank'
             underline='none'
           >
             <Subscan
-              color='#809ACB'
+              color={accentColor}
             />
           </Link>
         </Grid>
@@ -117,23 +138,36 @@ const ValidatorIdentityDetail = ({ genesisHash, validatorDetail }: ValidatorIden
               {validatorDetail.identity.displayParent ?? validatorDetail.identity.display}
             </Typography>}
           {validatorDetail.identity?.displayParent &&
-            <Typography color='text.highlight' sx={{ bgcolor: '#809ACB26', borderRadius: '6px', p: '4px' }} variant='B-5'>
+            <Typography color='text.highlight' sx={{ bgcolor: isDark ? '#809ACB26' : '#EEF1FF', borderRadius: '6px', p: '4px' }} variant='B-5'>
               {validatorDetail.identity.display}
             </Typography>}
         </Grid>
-        <Typography color='#82FFA5' sx={{ fontFamily: 'JetBrainsMono', fontSize: '14px', fontWeight: 700 }}>
-          {toShortAddress(validatorDetail.accountId)}
+        <Typography color={isDark ? '#82FFA5' : theme.palette.success.main} sx={{ fontFamily: 'JetBrainsMono', fontSize: '14px', fontWeight: 700 }}>
+          {toShortAddress(accountId)}
         </Typography>
       </Container>
     </Stack>
   );
 };
 
-export default function ValidatorDetail ({ genesisHash, handleClose, validatorDetail }: ValidatorDetailProps): React.ReactElement {
+export default function ValidatorDetail({ genesisHash, handleClose, validatorDetail }: ValidatorDetailProps): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { api, decimal, token } = useChainInfo(genesisHash);
 
   const validatorAPY = useValidatorApy(api, String(validatorDetail?.accountId), !!(isHexToBn(validatorDetail?.stakingLedger.total as unknown as string))?.gtn(0));
+
+  if (!validatorDetail) {
+    return <></>;
+  }
+
+  const comm = Number(validatorDetail.validatorPrefs.commission) / (10 ** 7);
+  const commissionToShow = isNaN(comm) ? '--' : `${comm < 1 ? 0 : comm}%`;
+  const panelBgColor = isDark ? '#110F2A' : theme.palette.background.paper;
+  const dividerStyle = {
+    background: theme.palette.dividerGradientFade
+  };
 
   return (
     <Dialog
@@ -149,7 +183,9 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
         backdrop: {
           sx: {
             backdropFilter: 'blur(10px)',
-            background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
+            background: isDark
+              ? 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)'
+              : 'radial-gradient(50% 44.61% at 50% 50%, rgba(216, 221, 241, 0.1) 0%, rgba(49, 40, 90, 0.20) 100%)',
             bgcolor: 'transparent'
           }
         }
@@ -157,44 +193,44 @@ export default function ValidatorDetail ({ genesisHash, handleClose, validatorDe
       fullScreen
       open={!!validatorDetail}
     >
-      {validatorDetail &&
-        <Container disableGutters sx={{ height: '100%', width: '100%' }}>
-          <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-            <CustomCloseSquare color='#809ACB' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
-          </Grid>
-          <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#110F2A', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', pb: 0, position: 'relative', zIndex: 1 }}>
-            <BlueGradient style={{ top: '-120px' }} />
-            <DetailGradientBox />
-            <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
-              <ValidatorIdentityDetail
-                genesisHash={genesisHash}
-                validatorDetail={validatorDetail}
-              />
-              <GradientDivider style={{ mb: '12px' }} />
-              <Container disableGutters sx={{ alignItems: 'flex-end', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '0 12px 0 10px' }}>
-                <StakingInfoStack amount={validatorDetail.exposureMeta?.own ?? 0} decimal={decimal} title={t('Own')} token={token} />
-                <StakingInfoStack text={String(Number(validatorDetail.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorDetail.validatorPrefs.commission) / (10 ** 7)) + '%'} title={t('Commission')} />
-                <StakingInfoStack amount={validatorDetail.exposureMeta?.total ?? 0} decimal={decimal} title={t('Total')} token={token} />
-                <StakingInfoStack text={validatorAPY != null ? `${validatorAPY}%` : '...'} title={t('APY')} />
-              </Container>
-              <GradientDivider style={{ my: '12px' }} />
-              <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', flexDirection: 'row', mb: '8px', pl: '6px' }}>
-                <Typography color='text.primary' variant='B-2'>
-                  {t('Nominators')}
-                </Typography>
-                <Typography color='text.highlight' sx={{ bgcolor: '#809ACB26', borderRadius: '8px', p: '2px 4px' }} variant='B-4'>
-                  {validatorDetail.exposureMeta?.nominatorCount as unknown as string ?? '0'}
-                </Typography>
-              </Container>
-              <AccountsTable
-                accounts={validatorDetail.exposurePaged?.others as unknown as SpStakingIndividualExposure[] ?? []}
-                genesisHash={genesisHash}
-                style={{ px: '6px' }}
-                totalStaked={validatorDetail.exposureMeta?.total as string ?? '0'}
-              />
-            </Stack>
-          </Grid>
-        </Container>}
+      <Container disableGutters sx={{ height: '100%', width: '100%' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
+          <CustomCloseSquare color={isDark ? '#809ACB' : theme.palette.text.highlight} onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
+        </Grid>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: panelBgColor, border: '2px solid', borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', boxShadow: isDark ? 'none' : '0 -12px 36px rgba(133, 140, 176, 0.16)', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', pb: 0, position: 'relative', zIndex: 1 }}>
+          <BlueGradient style={{ opacity: isDark ? 1 : 0.55, top: '-120px' }} />
+          <DetailGradientBox />
+          <Stack direction='column' sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
+            <ValidatorIdentityDetail
+              genesisHash={genesisHash}
+              validatorDetail={validatorDetail}
+            />
+            <GradientDivider style={{ mb: '12px', ...dividerStyle }} />
+            <Container disableGutters sx={{ alignItems: 'flex-end', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '0 12px 0 10px' }}>
+              <StakingInfoStack amount={validatorDetail.exposureMeta?.own ?? 0} decimal={decimal} title={t('Own')} token={token} />
+              <StakingInfoStack text={commissionToShow} title={t('Commission')} />
+              <StakingInfoStack amount={validatorDetail.exposureMeta?.total ?? 0} decimal={decimal} title={t('Total')} token={token} />
+              <StakingInfoStack text={validatorAPY != null ? `${validatorAPY}%` : '...'} title={t('APY')} />
+            </Container>
+            <GradientDivider style={{ my: '12px', ...dividerStyle }} />
+            <Container disableGutters sx={{ alignItems: 'center', columnGap: '8px', display: 'flex', flexDirection: 'row', mb: '8px', pl: '6px' }}>
+              <Typography color='text.primary' variant='B-2'>
+                {t('Nominators')}
+              </Typography>
+              <Typography color='text.highlight' sx={{ bgcolor: '#809ACB26', borderRadius: '8px', p: '2px 4px' }} variant='B-4'>
+                {validatorDetail.exposureMeta?.nominatorCount as unknown as string ?? '0'}
+              </Typography>
+            </Container>
+            <AccountsTable
+              accounts={validatorDetail.exposurePaged?.others as unknown as SpStakingIndividualExposure[] ?? []}
+              genesisHash={genesisHash}
+              panelBgColor={panelBgColor}
+              style={{ px: '6px' }}
+              totalStaked={validatorDetail.exposureMeta?.total as string ?? '0'}
+            />
+          </Stack>
+        </Grid>
+      </Container>
     </Dialog>
   );
 }

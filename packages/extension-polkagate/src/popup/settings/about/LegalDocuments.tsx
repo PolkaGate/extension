@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography } from '@mui/material';
@@ -14,7 +14,7 @@ interface ItemProps {
   link: string;
 }
 
-function Item ({ label, link }: ItemProps): React.ReactElement {
+function Item({ label, link }: ItemProps): React.ReactElement {
   const goToLink = useCallback(() => window.open(link, '_blank'), [link]);
 
   return (
@@ -31,7 +31,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function LegalDocuments ({ style = {} }: Props): React.ReactElement {
+export default function LegalDocuments({ style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 

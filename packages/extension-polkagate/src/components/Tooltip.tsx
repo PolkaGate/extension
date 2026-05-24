@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { RefObject } from 'react';
@@ -37,6 +37,10 @@ interface Position {
 
 const CustomTooltip = ({ content, placement = 'bottom', positionAdjustment, targetRef }: CustomTooltipProps) => {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const tooltipColor = isDark ? '#674394' : '#FFFFFF';
+  const textColor = isDark ? '#FFFFFF' : theme.palette.text.primary;
+  const borderColor = isDark ? 'transparent' : '#DADFF1';
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState<Position | null>(null);
 
@@ -102,12 +106,15 @@ const CustomTooltip = ({ content, placement = 'bottom', positionAdjustment, targ
           style: { margin: '5px', marginTop: '12px' },
           sx: {
             '& .MuiTooltip-arrow': {
-              color: '#674394',
+              color: tooltipColor,
               height: '9px'
             },
-            backgroundColor: '#674394',
+            backgroundColor: tooltipColor,
+            border: '1px solid',
+            borderColor,
             borderRadius: '8px',
-            color: '#fff',
+            boxShadow: isDark ? 'none' : '0px 8px 24px rgba(125, 129, 173, 0.18)',
+            color: textColor,
             ...theme.typography['B-4'],
             p: '8px'
           }

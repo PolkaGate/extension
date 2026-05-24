@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
@@ -12,7 +12,7 @@ import { AUTO_LOCK_PERIOD_DEFAULT } from '@polkadot/extension-polkagate/src/util
 import { useTranslation } from '../../../components/translate';
 import useAdjustAutoLockTimer from './useAdjustAutoLockTimer';
 
-export default function AutoLockTimerAdjustment (): React.ReactElement {
+export default function AutoLockTimerAdjustment(): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 
@@ -28,7 +28,7 @@ export default function AutoLockTimerAdjustment (): React.ReactElement {
       <Typography
         color={isExtension ? 'label.secondary' : 'text.primary'}
         fontSize={isExtension ? undefined : '22px'}
-        m={isExtension ? '15px 0 5px' : '35px 0 5px'}
+        m={isExtension ? '15px 0 5px' : '35px 0 0'}
         sx={{ display: 'block', textAlign: 'left', textTransform: 'uppercase' }} variant='H-4'
       >
         {t('Auto-Lock Timer')}

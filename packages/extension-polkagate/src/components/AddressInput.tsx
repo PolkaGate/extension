@@ -1,11 +1,13 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Chain } from '@polkadot/extension-chains/types';
+import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { Divider, InputAdornment, Stack, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
-import { ArrowCircleDown, Document, Hashtag, ScanBarcode } from 'iconsax-react';
+import { Box, Divider, InputAdornment, Stack, type SxProps, TextField, type Theme, Typography, useTheme } from '@mui/material';
+import { ArrowCircleDown, CloseCircle, Document, Hashtag, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import AccountListModal from '../fullscreen/components/AccountListModal';
 import { useIsBlueish, useTranslation } from '../hooks';
@@ -17,30 +19,79 @@ interface Props {
   allAddresses?: [string, string | null, string | undefined][]// todo : remove
   address: string | null | undefined;
   addWithQr?: boolean;
-  chain?: Chain | null;
   disabled?: boolean;
+  genesisHash?: string | undefined;
+  inlineActionLabel?: string;
   label?: string;
+  onInlineActionClick?: () => void;
   placeHolder?: string;
   setAddress?: React.Dispatch<React.SetStateAction<string | null | undefined>>;
   style?: SxProps<Theme>;
-  withSelect?: boolean;
   setIsError?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setType?: React.Dispatch<React.SetStateAction<KeypairType | undefined>>;
+  showAddressBook?: boolean;
+  withSelect?: boolean;
 }
 
-export default function AddressInput ({ addWithQr = false, address, chain, disabled = false, label, placeHolder, setAddress, setIsError, style, withSelect }: Props): React.ReactElement<Props> {
+interface AdornmentActionProps {
+  actionKey: 'clear' | 'inline' | 'qr' | 'select' | 'paste';
+  children: React.ReactNode;
+  hoverActionBackground: string;
+  onClick: () => void;
+  setHoveredAction: React.Dispatch<React.SetStateAction<'clear' | 'inline' | 'qr' | 'select' | 'paste' | undefined>>;
+  wide?: boolean;
+}
+
+function AdornmentAction({ actionKey, children, hoverActionBackground, onClick, setHoveredAction, wide = false }: AdornmentActionProps): React.ReactElement {
+  const handleMouseEnter = useCallback(() => setHoveredAction(actionKey), [actionKey, setHoveredAction]);
+  const handleMouseLeave = useCallback(() => setHoveredAction(undefined), [setHoveredAction]);
+
+  return (
+    <Box
+      onClick={onClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      sx={{
+        '&:hover': {
+          background: hoverActionBackground
+        },
+        alignItems: 'center',
+        borderRadius: '8px',
+        cursor: 'pointer',
+        display: 'flex',
+        height: '24px',
+        justifyContent: 'center',
+        transition: 'all 150ms ease-out',
+        ...(wide ? { mr: '6px', px: '6px' } : { width: '24px' })
+      }}
+    >
+      {children}
+    </Box>
+  );
+}
+
+export default function AddressInput({ addWithQr = false, address, disabled = false, genesisHash, inlineActionLabel, label, onInlineActionClick, placeHolder, setAddress, setIsError, setType, showAddressBook, style, withSelect }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const isBlueish = useIsBlueish();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [focus, setFocus] = useState<boolean>(false);
   const [openCamera, setOpenCamera] = useState<boolean>(false);
   const [openAccountList, setOpenAccountList] = useState<boolean>(false);
   const [invalidAddress, setInvalidAddress] = useState<boolean>(false);
-  const [enteredAddress, setEnteredAddress] = useState<string | undefined>();
+  const [enteredAddress, setEnteredAddress] = useState<string | undefined | null>();
+  const [hoveredAction, setHoveredAction] = useState<'clear' | 'inline' | 'qr' | 'select' | 'paste' | undefined>(undefined);
+  const defaultActionColor = isDark ? theme.palette.primary.main : theme.palette.text.secondary;
+  const hoverActionColor = isDark ? theme.palette.text.primary : '#FFFFFF';
+  const hoverActionBackground = theme.palette.gradient.brand;
+  const getActionColor = useCallback((action: 'clear' | 'inline' | 'qr' | 'select' | 'paste') =>
+    hoveredAction === action ? hoverActionColor : defaultActionColor
+  , [defaultActionColor, hoverActionColor, hoveredAction]);
 
   useEffect(() => {
-    if (address) {
+    if (address || address === null) {
       setEnteredAddress(address);
       setInvalidAddress(false);
     }
@@ -50,74 +101,138 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
     setIsError && setIsError(invalidAddress);
   }, [address, invalidAddress, setIsError]);
 
+  const onReset = useCallback((): void => {
+    setAddress?.(null);
+    setEnteredAddress(undefined);
+    setInvalidAddress(false);
+    setType?.((prev) => (prev === 'ethereum' ? undefined : prev));
+  }, [setAddress, setType]);
+
+  const onSet = useCallback((value: string): void => {
+    const isEvm = isEthereumAddress(value);
+
+    isEvm && setType?.('ethereum');
+    const isValid = isValidAddress(value);
+
+    isValid
+      ? setAddress?.(value)
+      : setAddress?.(undefined);
+
+    setEnteredAddress(value);
+    setInvalidAddress(!isValid);
+  }, [setAddress, setType]);
+
   const handleAddress = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>): void => {
     if (!value) {
-      setAddress && setAddress(null);
-      setEnteredAddress(undefined);
-      setInvalidAddress(false);
+      onReset();
 
       return;
     }
 
-    setInvalidAddress(!(isValidAddress(value)));
-    setEnteredAddress(value);
-    isValidAddress(value) ? setAddress && setAddress(value) : setAddress && setAddress(undefined);
-  }, [setAddress]);
+    onSet(value);
+  }, [onReset, onSet]);
 
-  // @ts-ignore
+  // @ts-expect-error simulate a minimal input event for the existing account-list callback contract
   const _selectAddress = useCallback((newAddr?: string) => handleAddress({ target: { value: newAddr } }), [handleAddress]);
-
   const openQrScanner = useCallback(() => setOpenCamera(true), []);
   const onOpenAccountList = useCallback(() => setOpenAccountList(true), []);
-
   const handleInputAddress = useCallback((value: React.ChangeEvent<HTMLInputElement>) => {
     handleAddress(value);
   }, [handleAddress]);
+  const handleInlineActionClick = useCallback(() => {
+    onInlineActionClick?.();
+  }, [onInlineActionClick]);
 
   const pasteAddress = useCallback(() => {
     if (enteredAddress || address) {
-      setAddress && setAddress(null);
-      setEnteredAddress(undefined);
-      setInvalidAddress(false);
-    } else {
-      navigator.clipboard.readText().then((clipText) => {
-       const isValid = isValidAddress(clipText);
+      onReset();
 
-       isValid ? setAddress?.(clipText) : setAddress?.(undefined);
-        setEnteredAddress(clipText);
-        setInvalidAddress(!isValid);
-      }).catch(console.error);
+      return;
     }
-  }, [address, enteredAddress, setAddress]);
+
+    navigator.clipboard.readText()
+      .then((clipText) => {
+        onSet(clipText);
+      }).catch(console.error);
+  }, [address, enteredAddress, onReset, onSet]);
 
   return (
     <>
       <Stack direction='column' justifyContent='start' ref={containerRef} rowGap='5px' sx={{ position: 'relative', ...style }}>
         {label &&
-          <Typography color='#EAEBF1' sx={{ textAlign: 'left' }} variant='B-1'>
+          <Typography color={theme.palette.text.primary} sx={{ textAlign: 'left' }} variant='B-1'>
             {label}
           </Typography>
         }
         <TextField
           InputProps={{
             endAdornment: (
-              <InputAdornment position='end' sx={{ bgcolor: '#2D1E4A', borderRadius: '8px', height: '80%', maxHeight: '80%', px: '5px' }}>
+              <InputAdornment position='end' sx={{ bgcolor: theme.palette.surface.hover, border: isDark ? 'none' : `1px solid ${theme.palette.border.strong}`, borderRadius: '8px', height: '80%', maxHeight: '80%', px: '5px' }}>
                 {!disabled && <>
-                  {addWithQr &&
+                  {enteredAddress
+                    ? (
+                      <AdornmentAction
+                        actionKey='clear'
+                        hoverActionBackground={hoverActionBackground}
+                        onClick={onReset}
+                        setHoveredAction={setHoveredAction}
+                      >
+                        <CloseCircle color={getActionColor('clear')} size='18' variant='Bulk' />
+                      </AdornmentAction>
+                    )
+                    : <>
+                  {!enteredAddress && inlineActionLabel && onInlineActionClick &&
                     <>
-                      <ScanBarcode color='#AA83DC' onClick={openQrScanner} size='18' style={{ cursor: 'pointer', margin: '0 5px' }} variant='Bulk' />
-                      <Divider orientation='vertical' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '18px', mx: '2px' }} />
+                      <AdornmentAction
+                        actionKey='inline'
+                        hoverActionBackground={hoverActionBackground}
+                        onClick={handleInlineActionClick}
+                        setHoveredAction={setHoveredAction}
+                        wide
+                      >
+                        <Typography color={getActionColor('inline')} sx={{ transition: 'color 150ms ease-out' }} variant='B-4'>
+                          {inlineActionLabel}
+                        </Typography>
+                      </AdornmentAction>
+                      <Divider orientation='vertical' sx={{ background: theme.palette.dividerGradient, height: '18px', mx: '2px' }} />
                     </>
                   }
                   {!!withSelect &&
                     <>
-                      <ArrowCircleDown color='#AA83DC' onClick={onOpenAccountList} size='18' style={{ cursor: 'pointer', margin: '0 5px' }} variant='Bulk' />
-                      <Divider orientation='vertical' sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '18px', mx: '2px' }} />
+                      <AdornmentAction
+                        actionKey='select'
+                        hoverActionBackground={hoverActionBackground}
+                        onClick={onOpenAccountList}
+                        setHoveredAction={setHoveredAction}
+                      >
+                        <ArrowCircleDown color={getActionColor('select')} size='18' variant='Bulk' />
+                      </AdornmentAction>
+                      <Divider orientation='vertical' sx={{ background: theme.palette.dividerGradient, height: '18px', mx: '2px' }} />
                     </>
                   }
-                  <Document color='#AA83DC' onClick={pasteAddress} size='18' style={{ cursor: 'pointer', margin: '0 5px' }} variant='Bulk' />
+                  {addWithQr &&
+                    <>
+                      <AdornmentAction
+                        actionKey='qr'
+                        hoverActionBackground={hoverActionBackground}
+                        onClick={openQrScanner}
+                        setHoveredAction={setHoveredAction}
+                      >
+                        <ScanBarcode color={getActionColor('qr')} size='18' variant='Bulk' />
+                      </AdornmentAction>
+                      <Divider orientation='vertical' sx={{ background: theme.palette.dividerGradient, height: '18px', mx: '2px' }} />
+                    </>
+                  }
+                  <AdornmentAction
+                    actionKey='paste'
+                    hoverActionBackground={hoverActionBackground}
+                    onClick={pasteAddress}
+                    setHoveredAction={setHoveredAction}
+                  >
+                    <Document color={getActionColor('paste')} size='18' variant='Bulk' />
+                  </AdornmentAction>
+                    </>}
                 </>}
-                {/* icon={enteredAddress || address ? faXmarkCircle : faPaste} */}
               </InputAdornment>
             ),
             startAdornment: (
@@ -129,7 +244,7 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
                       size={18}
                     />)
                   : <Hashtag
-                    color={invalidAddress ? '#FF4FB9' : focus ? '#3988FF' : '#AA83DC'}
+                    color={invalidAddress ? theme.palette.error.main : focus ? theme.palette.text.highlight : defaultActionColor}
                     size='18'
                     style={{ cursor: 'pointer', margin: '0 2px 0' }}
                     variant='Bulk'
@@ -151,7 +266,7 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
           placeholder={placeHolder ?? t('Enter your account ID')}
           sx={{
             '&:hover': {
-              bgcolor: '#2D1E4A'
+              bgcolor: theme.palette.surface.hover
             },
             '> div.MuiOutlinedInput-root': {
               '> fieldset':
@@ -172,9 +287,9 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
               height: '100%',
               p: '0 3px 0 5px'
             },
-            bgcolor: '#1B133CB2',
+            bgcolor: theme.palette.surface.popover,
             border: '1px solid',
-            borderColor: `${invalidAddress ? 'warning.main' : focus ? 'action.focus' : '#BEAAD833'}`,
+            borderColor: invalidAddress ? 'warning.main' : focus ? 'action.focus' : theme.palette.border.input,
             borderRadius: '12px',
             height: '44px'
           }}
@@ -194,11 +309,12 @@ export default function AddressInput ({ addWithQr = false, address, chain, disab
       }
       {openAccountList &&
         <AccountListModal
-          genesisHash={chain?.genesisHash}
+          genesisHash={genesisHash}
           // eslint-disable-next-line react/jsx-no-bind
           handleClose={() => setOpenAccountList(false)}
           open={openAccountList}
           setAddress={setAddress}
+          showAddressBook={showAddressBook}
         />
       }
     </>

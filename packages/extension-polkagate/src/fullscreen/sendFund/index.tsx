@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Proxy, TransactionDetail, TxInfo } from '@polkadot/extension-polkagate/util/types';
 
-import { Fade, Grid, Typography } from '@mui/material';
+import { Fade, Grid, Typography, useTheme } from '@mui/material';
 import { ArrowLeft } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { PROXY_TYPE, TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { DecisionButtons, SignArea3 } from '../../components';
-import { useCanPayFeeAndDeposit, useFormatted, useTeleport, useTranslation } from '../../hooks';
+import { useAccountAssets, useCanPayFeeAndDeposit, useFormatted, useTeleport, useTranslation } from '../../hooks';
 import { Confirmation, WaitScreen } from '../../partials';
 import { toBN } from '../../util';
 import HomeLayout from '../components/layout';
@@ -21,59 +21,51 @@ import Step2Recipient from './Step2Recipient';
 import Step3Amount from './Step3Amount';
 import Step4Summary from './Step4Summary';
 import { type Inputs } from './types';
-import useParaSpellFeeCall from './useParaSpellFeeCall';
+import useFeeCall from './useFeeCall';
 
-export default function SendFund (): React.ReactElement {
+export default function SendFund(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
 
   const ref = useRef<HTMLDivElement | null>(null);
+  // const ethFeeRef = useRef<boolean>(false);
   const teleportState = useTeleport(genesisHash);
   const navigate = useNavigate();
   const formatted = useFormatted(address, genesisHash);
+  const accountAssets = useAccountAssets(address);
 
   const [inputs, setInputs] = useState<Inputs>();
-  const [error, setError] = useState<string | undefined>();
   const [inputStep, setInputStep] = useState<INPUT_STEPS>(INPUT_STEPS.SENDER);
   const [flowStep, setFlowStep] = useState<TransactionFlowStep>(TRANSACTION_FLOW_STEPS.REVIEW);
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
   const [selectedProxy, setSelectedProxy] = useState<Proxy | undefined>(undefined);
   const [showProxySelection, setShowProxySelection] = useState<boolean>(false);
 
+  const assetToTransfer = useMemo(() => accountAssets?.find((asset) => asset.genesisHash === genesisHash && String(asset.assetId) === assetId), [accountAssets, assetId, genesisHash]);
+
   const isReadyToMakeTx = inputStep === INPUT_STEPS.SUMMARY;
-  const { isCrossChain, paraSpellFee, paraSpellTransaction } = useParaSpellFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setError);
+  const { fee, isContract, isCrossChain, tx, unsignedEthTx } = useFeeCall(address, isReadyToMakeTx, genesisHash, inputs, setInputs, assetToTransfer, teleportState);
   const canPayFee = useCanPayFeeAndDeposit(address, genesisHash, selectedProxy?.delegate, inputs?.fee?.originFee.fee ? toBN(inputs?.fee?.originFee.fee) : undefined);
 
   useEffect(() => {
-    if (!genesisHash) {
+    if (!fee) {
       return;
     }
 
-    paraSpellFee && setInputs((prevInputs) => {
+    setInputs((prev) => {
+      if (String(prev?.fee) === String(fee) && prev?.isCrossChain === isCrossChain) {
+        return prev; // nothing changed, avoid loop
+      }
+
       return {
-        ...prevInputs,
-        fee: paraSpellFee,
+        ...(prev || {}),
+        fee,
         isCrossChain
       };
     });
-  }, [genesisHash, isCrossChain, paraSpellFee, setInputs]);
-
-  useEffect(() => {
-    if (error) {
-      return;
-    }
-
-    setInputs((prevInputs) => {
-      return { ...prevInputs, error };
-    });
-  }, [error, setInputs]);
-
-  useEffect(() => {
-    paraSpellTransaction && setInputs((prevInputs) => ({
-      ...(prevInputs || {}),
-      paraSpellTransaction
-    }));
-  }, [paraSpellTransaction, setInputs]);
+  }, [isCrossChain, fee]);
 
   const onReset = useCallback(() => {
     const RESET_INPUTS: Partial<Inputs> = {
@@ -81,7 +73,6 @@ export default function SendFund (): React.ReactElement {
       amountAsBN: undefined,
       fee: undefined,
       feeInfo: undefined,
-      paraSpellTransaction: undefined,
       recipientAddress: undefined,
       recipientChain: undefined,
       recipientGenesisHashOrParaId: undefined
@@ -137,14 +128,33 @@ export default function SendFund (): React.ReactElement {
       description: t('Amount'),
       extra: {
         from: formatted,
-        to: inputs?.recipientAddress,
-        recipientNetwork: inputs?.recipientChain?.text
+        recipientNetwork: inputs?.recipientChain?.text,
+        to: inputs?.recipientAddress
       },
       ...txInfo,
-      fee: inputs?.feeInfo,
+      fee: txInfo?.fee ?? inputs?.feeInfo,
       token: inputs?.token // since a token other than native token might be transferred, hence we overwrite native token
     } as TransactionDetail;
   }, [formatted, inputs?.amountAsBN, inputs?.decimal, inputs?.feeInfo, inputs?.recipientAddress, inputs?.recipientChain?.text, inputs?.token, t, txInfo]);
+
+  const backButtonStyle = useMemo(() => ({
+    ...(!isDark
+      ? {
+        '&.Mui-disabled': {
+          background: '#EEF2FB',
+          borderColor: '#DDE3F4',
+          boxShadow: 'none'
+        },
+        '&:hover': {
+          background: '#F3F6FD',
+          borderColor: '#DDE3F4'
+        },
+        background: '#FFFFFF',
+        border: '1px solid #DDE3F4',
+        color: '#745E9F'
+      }
+      : {})
+  }), [isDark]);
 
   return (
     <HomeLayout
@@ -179,6 +189,7 @@ export default function SendFund (): React.ReactElement {
           inputStep === INPUT_STEPS.AMOUNT &&
           <Step3Amount
             inputs={inputs}
+            isContract={isContract}
             setInputs={setInputs}
             teleportState={teleportState}
           />
@@ -190,6 +201,7 @@ export default function SendFund (): React.ReactElement {
             inputs={inputs}
             setInputs={setInputs}
             teleportState={teleportState}
+            transaction={tx}
           />
         }
       </Grid>
@@ -214,8 +226,10 @@ export default function SendFund (): React.ReactElement {
             secondaryButtonProps={{
               StartIcon: ArrowLeft,
               disabled: inputStep === INPUT_STEPS.SENDER,
+              disabledIconColor: isDark ? undefined : '#AEB7D3',
+              disabledTextColor: isDark ? undefined : '#9CA8C8',
               iconVariant: 'Linear',
-              style: { width: '15%' }
+              style: { ...backButtonStyle, width: '15%' }
             }}
             style={{ justifyContent: 'start', margin: '0', marginTop: '32px', transition: 'all 250ms ease-out', width: ref?.current?.offsetWidth ? `${ref.current.offsetWidth}px` : '80%' }}
           />)
@@ -224,13 +238,14 @@ export default function SendFund (): React.ReactElement {
             <SignArea3
               address={address}
               direction='horizontal'
-              disabled={!inputs?.paraSpellTransaction}
+              disabled={!(tx || unsignedEthTx)}
               extraProps={{
                 decisionButtonProps: {
                   primaryButtonProps: { style: { width: '148%' } },
                   secondaryButtonProps: {
                     StartIcon: ArrowLeft,
                     iconVariant: 'Linear',
+                    style: backButtonStyle,
                     text: t('Back')
                   }
                 }
@@ -247,7 +262,8 @@ export default function SendFund (): React.ReactElement {
               showProxySelection={showProxySelection}
               signerOption={inputs?.feeInfo?.assetId ? { assetId: inputs.feeInfo.assetId } : undefined}
               style={{ position: 'unset', width: '73%' }}
-              transaction={inputs?.paraSpellTransaction}
+              transaction={tx}
+              unsignedEthTx={unsignedEthTx}
               withCancel
             />
           </div>

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ItemInformation } from '@polkadot/extension-polkagate/fullscreen/nft/utils/types';
@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { IPFS_GATEWAY } from '@polkadot/extension-polkagate/fullscreen/nft/utils/constants';
 import { fetchWithRetry, getContentUrl } from '@polkadot/extension-polkagate/fullscreen/nft/utils/util';
 
-export default function IllustrateNft ({ height = '144px', nft, width = '144px' }: { nft: ItemInformation | undefined, height?: string, width?: string }): React.ReactElement {
+export default function IllustrateNft({ height = '144px', nft, width = '144px' }: { nft: ItemInformation | undefined, height?: string, width?: string }): React.ReactElement {
   const [gifSource, setGifSource] = useState<string | null | undefined>(undefined);
 
   const isHtmlContent = nft?.animation_url && nft?.animationContentType === 'text/html';

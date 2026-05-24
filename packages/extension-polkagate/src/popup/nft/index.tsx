@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ItemInformation } from '@polkadot/extension-polkagate/fullscreen/nft/utils/types';
@@ -25,7 +25,7 @@ export enum TAB {
 
 const nftManager = new NftManager();
 
-export default function Nft (): React.ReactElement {
+export default function Nft(): React.ReactElement {
   const onAction = useContext(ActionContext);
   const refContainer = useRef<HTMLDivElement>(null);
   const { address, index } = useParams<{ address: string; index: string }>();

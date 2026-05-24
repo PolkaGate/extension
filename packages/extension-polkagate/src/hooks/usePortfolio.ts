@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useContext, useMemo } from 'react';
@@ -20,7 +20,7 @@ export interface PortfolioType {
  * @param address Optional address to fetch portfolio for a single account
  * @returns null: no data found, undefined: still loading, PortfolioType: the portfolio info
  */
-export default function usePortfolio (address?: string): PortfolioType | undefined | null {
+export default function usePortfolio(address?: string): PortfolioType | undefined | null {
   const pricesInCurrencies = usePrices();
   const { accountsAssets } = useContext(AccountsAssetsContext);
 

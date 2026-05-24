@@ -1,15 +1,18 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Grid, Typography } from '@mui/material';
-import { ArrowRight2 } from 'iconsax-react';
+// @ts-ignore
+import type { PalletNominationPoolsClaimPermission } from '@polkadot/types/lookup';
+
+import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { ArrowRight2, InfoCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { mapHubToRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { type BN, noop } from '@polkadot/util';
 
-import { ChainLogo, CryptoFiatBalance } from '../../../components';
+import { CryptoFiatBalance, Logo, Motion, MyTooltip } from '../../../components';
 import { useChainInfo } from '../../../hooks';
 import { StakingBadge, TestnetBadge } from '../../../popup/staking/StakingPositions';
 import { amountToHuman, updateStorage } from '../../../util';
@@ -25,7 +28,7 @@ export const TokenInfo = ({ genesisHash }: TokenInfoProps) => {
 
   return (
     <Grid container item sx={{ alignItems: 'center', flexWrap: 'nowrap', gap: '6px', minWidth: '100px', width: 'fit-content' }}>
-      <ChainLogo genesisHash={_genesisHash} size={24} />
+      <Logo genesisHash={_genesisHash} size={30} />
       <Grid container item sx={{ alignItems: 'flex-start', display: 'flex', flexDirection: 'column', width: 'fit-content' }}>
         <Typography color='text.primary' textTransform='uppercase' variant='B-2'>
           {token}
@@ -39,9 +42,11 @@ export const TokenInfo = ({ genesisHash }: TokenInfoProps) => {
 };
 
 const ArrowButton = ({ onClick }: { onClick: () => void }) => {
+  const theme = useTheme();
+
   return (
-    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#1B133C', borderRadius: '8px', cursor: 'pointer', height: '36px', justifyContent: 'center', width: '36px' }}>
-      <ArrowRight2 color='#AA83DC' size='16' variant='Bold' />
+    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: theme.palette.mode === 'dark' ? '#1B133C' : '#EEF1FF', border: '1px solid', borderColor: theme.palette.mode === 'dark' ? 'transparent' : '#DDE3F4', borderRadius: '8px', cursor: 'pointer', height: '36px', justifyContent: 'center', width: '36px' }}>
+      <ArrowRight2 color={theme.palette.mode === 'dark' ? '#AA83DC' : theme.palette.primary.main} size='16' variant='Bold' />
     </Grid>
   );
 };
@@ -71,11 +76,11 @@ const Staked = ({ balance, decimal, price, token }: StakedProps) => {
 };
 
 export const ChainIdentifier = ({ genesisHash }: TokenInfoProps) => {
-  const { displayName } = useChainInfo(genesisHash, true);
+  const { chainName, displayName } = useChainInfo(genesisHash, true);
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', gap: '6px', m: 0, minWidth: '200px', width: 'fit-content' }}>
-      <ChainLogo genesisHash={genesisHash} size={24} />
+      <Logo chainName={chainName} size={30} />
       <Typography color='text.secondary' variant='B-2'>
         {displayName}
       </Typography>
@@ -84,15 +89,18 @@ export const ChainIdentifier = ({ genesisHash }: TokenInfoProps) => {
 };
 
 interface Props extends TokenInfoProps {
-  type: 'pool' | 'solo';
   balance: BN;
-  price: number;
+  claimPermissions?: PalletNominationPoolsClaimPermission['type'],
   decimal: number;
-  token: string;
   isSelected?: boolean;
+  price: number;
+  token: string;
+  totalPositions: number;
+  type: 'pool' | 'solo';
 }
 
-function PositionItem ({ balance, decimal, genesisHash, isSelected, price, token, type }: Props) {
+function PositionItem({ balance, claimPermissions, decimal, genesisHash, isSelected, price, token, totalPositions, type }: Props) {
+  const theme = useTheme();
   const { address } = useParams<{ address: string }>();
   const navigate = useNavigate();
   const hasPoolStaking = useMemo(() => type === 'pool', [type]);
@@ -108,15 +116,37 @@ function PositionItem ({ balance, decimal, genesisHash, isSelected, price, token
       .catch(console.error);
   }, [genesisHash, navigate, address, type]);
 
+  const claimPermissionTooltips: Record<string, string> = {
+    Permissioned: 'Only this account can claim its rewards.',
+    PermissionlessAll: 'Anyone can claim or compound rewards. Rewards always stay in this account.',
+    PermissionlessCompound: 'Anyone can compound rewards. Rewards always stay in this account.',
+    PermissionlessWithdraw: 'Anyone can claim rewards. Rewards always stay in this account.'
+  };
+
+  const claimPermissionTooltip = claimPermissions ? claimPermissionTooltips[claimPermissions] || 'Unknown claim permission.' : '';
+
   return (
-    <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: isSelected ? '#2D1E4A' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
-      <TokenInfo genesisHash={genesisHash} />
-      <StakingBadge hasPoolStaking={hasPoolStaking} isFullscreen />
-      <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
-      <ChainIdentifier genesisHash={genesisHash} />
-      <Staked balance={balance} decimal={decimal} price={price} token={token} />
-      <ArrowButton onClick={noop} />
-    </Container>
+    <Motion variant='zoom'>
+      <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: theme.palette.mode === 'dark' ? (isSelected ? '#2D1E4A' : '#05091C') : (isSelected ? '#EEF1FF' : '#FFFFFF'), border: '1px solid', borderColor: theme.palette.mode === 'dark' ? 'transparent' : '#EEF1FF', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: totalPositions > 1 ? '4px' : '4px 30px 4px 4px', pl: '18px' }}>
+        <TokenInfo genesisHash={genesisHash} />
+        <Stack columnGap='5px' direction='row'>
+          <StakingBadge hasPoolStaking={hasPoolStaking} isFullscreen />
+          <Box sx={{ width: '20px' }}>
+            {claimPermissionTooltip &&
+              <MyTooltip content={claimPermissionTooltip}>
+                <InfoCircle color={theme.palette.mode === 'dark' ? '#674394' : theme.palette.primary.main} size={20} variant='Bulk' />
+              </MyTooltip>
+            }
+          </Box>
+        </Stack>
+        <TestnetBadge style={{ mt: 0, visibility: isTestNet ? 'visible' : 'hidden' }} />
+        <ChainIdentifier genesisHash={genesisHash} />
+        <Staked balance={balance} decimal={decimal} price={price} token={token} />
+        {totalPositions > 1 &&
+          <ArrowButton onClick={noop} />
+        }
+      </Container>
+    </Motion>
   );
 }
 

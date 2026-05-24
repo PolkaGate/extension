@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
@@ -9,7 +9,7 @@ import React, { memo, useCallback } from 'react';
 
 import { GradientButton } from '@polkadot/extension-polkagate/src/components';
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import { useTranslation } from '../../hooks';
 
@@ -30,11 +30,11 @@ const POWERED_BY = {
   subsquare: 'OpenSquare'
 };
 
-function Item ({ chainName, name }: ItemProps): React.ReactElement {
+function Item({ chainName, name }: ItemProps): React.ReactElement {
   const { t } = useTranslation();
 
   const _name = name === 'polkassembly' ? 'PolkassemblyIo' : name;
-  const logo = getLogo2(_name)?.logo;
+  const logo = resolveLogoInfo(_name)?.logo;
 
   return (
     <Link href={`https://${chainName ?? 'polkadot'}.${name}.io/`} rel='noreferrer' sx={{ bgcolor: 'background.default', borderRadius: '14px', my: '5px', width: '100%' }} target='_blank' underline='none'>
@@ -59,7 +59,7 @@ function Item ({ chainName, name }: ItemProps): React.ReactElement {
   );
 }
 
-function GovernanceModal ({ chainName, setOpen }: Props): React.ReactElement {
+function GovernanceModal({ chainName, setOpen }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const onClose = useCallback(() => {
@@ -96,7 +96,7 @@ function GovernanceModal ({ chainName, setOpen }: Props): React.ReactElement {
             height: '44px',
             marginTop: '20px'
           }}
-          text={t('Cancel')}
+          text={t('Close')}
         />
       </Grid>
     </SharePopup>

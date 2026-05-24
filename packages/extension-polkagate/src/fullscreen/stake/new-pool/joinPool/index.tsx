@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolInfo } from '../../../../util/types';
@@ -23,7 +23,7 @@ import { DEFAULT_POOL_ITEMS_PER_PAGE, POOL_ITEMS_PAGINATION_OPTIONS, sortingFunc
 import JoinPoolInput from './JoinPoolInput';
 import PoolItem from './PoolItem';
 
-function JoinPool () {
+function JoinPool() {
   const { t } = useTranslation();
   const selectedAccount = useSelectedAccount();
   const { genesisHash } = useParams<{ genesisHash: string }>();

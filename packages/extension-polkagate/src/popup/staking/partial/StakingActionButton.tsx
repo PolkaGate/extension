@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Button, type SxProps, type Theme, useTheme } from '@mui/material';
@@ -16,14 +16,17 @@ interface Props {
   text?: string;
 }
 
-export default function StakingActionButton ({ buttonFontStyle, disabled, isBusy, onClick, startIcon, style = {}, text }: Props): React.ReactElement<Props> {
+export default function StakingActionButton({ buttonFontStyle, disabled, isBusy, onClick, startIcon, style = {}, text }: Props): React.ReactElement<Props> {
   const theme = useTheme();
+  const isLightPopup = theme.palette.mode === 'light';
 
   const isButtonDisabled = disabled || isBusy;
 
   const ButtonFontStyle = {
     ...theme.typography['B-2'],
-    color: isButtonDisabled ? '#EAEBF14D' : theme.palette.text.primary,
+    color: isLightPopup
+      ? isButtonDisabled ? '#B7BEDA' : '#FFFFFF'
+      : isButtonDisabled ? '#EAEBF14D' : theme.palette.text.primary,
     justifyContent: 'center',
     position: 'relative',
     textTransform: 'none',
@@ -46,16 +49,20 @@ export default function StakingActionButton ({ buttonFontStyle, disabled, isBusy
       zIndex: 1
     },
     '&:disabled': {
-      background: 'linear-gradient(262.56deg, rgba(0, 148, 255, 0.3) 0%, rgba(89, 106, 255, 0.3) 45%, rgba(0, 148, 255, 0.3) 100%)',
+      background: isLightPopup
+        ? '#DDE9FF'
+        : 'linear-gradient(262.56deg, rgba(0, 148, 255, 0.3) 0%, rgba(89, 106, 255, 0.3) 45%, rgba(0, 148, 255, 0.3) 100%)',
       cursor: 'default'
     },
     '&:hover::before': {
       opacity: 1
     },
     background:
-    isButtonDisabled
-      ? 'linear-gradient(262.56deg, rgba(0, 148, 255, 0.3) 0%, rgba(89, 106, 255, 0.3) 45%, rgba(0, 148, 255, 0.3) 100%)'
-      : 'linear-gradient(262.56deg, #0094ff 0%, #596aff 45%, #0094ff 100%)',
+      isButtonDisabled
+        ? isLightPopup
+          ? '#DDE9FF'
+          : 'linear-gradient(262.56deg, rgba(0, 148, 255, 0.3) 0%, rgba(89, 106, 255, 0.3) 45%, rgba(0, 148, 255, 0.3) 100%)'
+        : 'linear-gradient(262.56deg, #0094ff 0%, #596aff 45%, #0094ff 100%)',
     borderRadius: '12px',
     boxShadow: 'unset',
     height: '44px',

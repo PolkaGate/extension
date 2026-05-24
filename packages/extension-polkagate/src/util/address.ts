@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TLocationValue } from '@paraspell/sdk-pjs';
@@ -7,15 +7,19 @@ import type { AccountId } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 
 import { hexToString, hexToU8a, isHex, stringToU8a, u8aToHex, u8aToString } from '@polkadot/util';
-import { decodeAddress, encodeAddress } from '@polkadot/util-crypto';
+import { decodeAddress, encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 import allChains from './chains';
 import { SHORT_ADDRESS_CHARACTERS, WESTEND_GENESIS_HASH } from './constants';
 
-export function isValidAddress (address: string | undefined): boolean {
+export function isValidAddress(address: string | undefined): boolean {
   try {
     if (!address || address === 'undefined') {
       return false;
+    }
+
+    if (isEthereumAddress(address)) {
+      return true;
     }
 
     encodeAddress(
@@ -30,16 +34,24 @@ export function isValidAddress (address: string | undefined): boolean {
   }
 }
 
-export function getFormattedAddress (_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
+export function getFormattedAddress(_address: string | null | undefined, _chain: Chain | null | undefined, settingsPrefix: number): string {
+  if (_address && isEthereumAddress(_address)) {
+    return _address;
+  }
+
   const publicKey = decodeAddress(_address);
   const prefix = _chain ? _chain.ss58Format : (settingsPrefix === -1 ? 42 : settingsPrefix);
 
   return encodeAddress(publicKey, prefix);
 }
 
-export function getSubstrateAddress (address: AccountId | string | null | undefined): string | undefined {
+export function getSubstrateAddress(address: AccountId | string | null | undefined): string | undefined {
   if (!address) {
     return undefined;
+  }
+
+  if (isEthereumAddress(String(address))) { // TODO: can be removed
+    return String(address);
   }
 
   let substrateAddress;
@@ -58,7 +70,7 @@ export function getSubstrateAddress (address: AccountId | string | null | undefi
   return substrateAddress;
 }
 
-export function toShortAddress (address?: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
+export function toShortAddress(address?: string | AccountId, count = SHORT_ADDRESS_CHARACTERS): string {
   if (!address) {
     return '';
   }
@@ -104,13 +116,22 @@ export const decodeHexValues = (obj: unknown) => {
 
 export const decodeMultiLocation = (hexString: HexString) => {
   const decodedU8a = hexToU8a(hexString);
-  const decodedJsonString = u8aToString(decodedU8a);
+  const decodedJsonString = u8aToString(decodedU8a).trim();
+
+  // Quick sanity check to avoid parsing random binary as JSON
+  if (!decodedJsonString.startsWith('{') && !decodedJsonString.startsWith('[')) {
+    return hexString;
+  }
+
   let decodedMultiLocation: unknown;
 
   try {
     decodedMultiLocation = JSON.parse(decodedJsonString);
   } catch (error) {
-    console.error('Error parsing JSON string in decodeMultiLocation, using the asset id as is:', error);
+    console.warn(
+      'decodeMultiLocation: invalid JSON, fallback to raw hex',
+      { decodedJsonString, error: (error as Error)?.message }
+    );
 
     return hexString;
   }

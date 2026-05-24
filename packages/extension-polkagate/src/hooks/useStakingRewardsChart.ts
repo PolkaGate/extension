@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ActiveElement, BubbleDataPoint, Chart, ChartData, ChartEvent, ChartTypeRegistry, PluginChartOptions, Point } from 'chart.js';
@@ -28,6 +28,7 @@ ChartJS.register(
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 const DAYS_TO_SHOW = 10;
+const EMPTY_CHART_VALUES: string[] = [];
 
 interface GradientObject {
   x: number;
@@ -68,6 +69,7 @@ const createGradient = (ctx: CanvasRenderingContext2D, element: GradientObject, 
   return gradient;
 };
 
+type RewardStatus = 'loading' | 'error' | 'ready';
 export interface UseStakingRewards {
   chartData: ChartData<'bar', string[] | undefined, string>;
   dateInterval: string | undefined;
@@ -78,7 +80,7 @@ export interface UseStakingRewards {
   totalClaimedReward: BN | undefined;
   detail: string | undefined;
   expand: Dispatch<SetStateAction<string | undefined>>;
-  status: 'loading' | 'error' | 'ready';
+  status: RewardStatus;
 }
 
 /**
@@ -89,8 +91,9 @@ export interface UseStakingRewards {
  * @param isFullScreen - Whether the chart is displayed in full screen mode
  * @returns Object containing chart data, options, and control functions
  */
-export default function useStakingRewardsChart (address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool', isFullScreen?: boolean): UseStakingRewards {
+export default function useStakingRewardsChart(address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool', isFullScreen?: boolean): UseStakingRewards {
   const theme = useTheme();
+  const isLightExtension = !isFullScreen && theme.palette.mode === 'light';
   const { chainName, decimal, token } = useChainInfo(genesisHash, true);
 
   // Determine how many days to show based on display mode
@@ -107,6 +110,10 @@ export default function useStakingRewardsChart (address: string | undefined, gen
   const [totalClaimedReward, setTotalClaimedReward] = useState<BN | undefined>(undefined);
   // Currently selected/hovered reward detail
   const [detail, expand] = useState<string | undefined>(undefined);
+  const safeIndex = useMemo(() => Math.min(pageIndex, Math.max((dataToShow?.length ?? 1) - 1, 0)), [dataToShow?.length, pageIndex]);
+  const period = useMemo(() => dataToShow?.[safeIndex], [dataToShow, safeIndex]);
+  const amounts = period?.[0] ?? EMPTY_CHART_VALUES;
+  const labels = period?.[1] ?? EMPTY_CHART_VALUES;
 
   // Date formatting options for consistent display
   const dateOptions = useMemo((): Intl.DateTimeFormatOptions => ({ day: 'numeric', month: 'short' }), []);
@@ -150,10 +157,10 @@ export default function useStakingRewardsChart (address: string | undefined, gen
           setTotalClaimedReward(totalClaimedRewardAmount);
 
           return setClaimedRewardsInfo(claimedRewardsFromSubscan);
-        } else {
-          // No rewards found - set to null (different from undefined/loading)
-          return setClaimedRewardsInfo(null);
         }
+
+        // No rewards found - set to null (different from undefined/loading)
+        return setClaimedRewardsInfo(null);
       }).catch(console.error);
   }, [chainName, address, type]);
 
@@ -251,18 +258,18 @@ export default function useStakingRewardsChart (address: string | undefined, gen
       return;
     }
 
-    // Get dates available in the current period
-    const availableDates = weeksRewards[pageIndex].map((item) => formateDate(item.timestamp));
-    const rewardsDetailInAWeek = ascSortedRewards.filter(({ date }) => availableDates.includes(date ?? ''));
-
-    // Get the expected date range for this period from weeksRewards
-    // This gives us the actual intended time range, not just the dates that happen to have rewards
-    const currentPeriodData = weeksRewards[pageIndex];
+    const currentPeriodData = weeksRewards[safeIndex];
 
     if (!currentPeriodData?.length) {
       return [];
     }
 
+    // Get dates available in the current period
+    const availableDates = currentPeriodData.map((item) => formateDate(item.timestamp));
+    const rewardsDetailInAWeek = ascSortedRewards.filter(({ date }) => availableDates.includes(date ?? ''));
+
+    // Get the expected date range for this period from weeksRewards
+    // This gives us the actual intended time range, not just the dates that happen to have rewards
     // Calculate threshold based on the period's actual time range, not just the available rewards
     const periodStartTimestamp = Math.min(...currentPeriodData.map(({ timestamp }) => timestamp));
     const periodEndTimestamp = Math.max(...currentPeriodData.map(({ timestamp }) => timestamp));
@@ -279,7 +286,7 @@ export default function useStakingRewardsChart (address: string | undefined, gen
 
     // Return in descending order (newest first) for display
     return filteredRewardsDetail.reverse();
-  }, [ascSortedRewards, formateDate, pageIndex, weeksRewards]);
+  }, [ascSortedRewards, formateDate, safeIndex, weeksRewards]);
 
   /**
    * Effect: Process aggregated rewards into paginated periods for chart display
@@ -341,6 +348,12 @@ export default function useStakingRewardsChart (address: string | undefined, gen
     setWeekRewards(rewardPeriods);
   }, [INTERVAL_PERIOD, aggregatedRewards, formateDate]);
 
+  useEffect(() => {
+    if (dataToShow?.length && pageIndex > dataToShow.length - 1) {
+      setPageIndex(dataToShow.length - 1);
+    }
+  }, [dataToShow?.length, pageIndex]);
+
   /**
    * Memoized computation: Generate human-readable date range for current period
    * Creates strings like "Dec 1 - 10" or "Dec 25 - Jan 5"
@@ -350,7 +363,7 @@ export default function useStakingRewardsChart (address: string | undefined, gen
       return undefined;
     }
 
-    const currentPeriodData = weeksRewards[pageIndex];
+    const currentPeriodData = weeksRewards[safeIndex];
 
     if (!currentPeriodData?.length) {
       return undefined;
@@ -374,7 +387,7 @@ export default function useStakingRewardsChart (address: string | undefined, gen
 
     // If different months, show like "Dec 25 - Jan 5"
     return `${firstMonth} ${firstDay} - ${lastMonth} ${lastDay}`;
-  }, [dataToShow, weeksRewards, pageIndex]);
+  }, [dataToShow?.length, safeIndex, weeksRewards]);
 
   /**
    * Memoized chart configuration with interactive features
@@ -397,12 +410,16 @@ export default function useStakingRewardsChart (address: string | undefined, gen
         const hoveredIndex = activeElements[0].index;
         const dataset = chart.data.datasets[0];
 
+        if (!Array.isArray(dataset?.data)) {
+          return;
+        }
+
         // Get the date label for the hovered bar (this is the date without month)
         const hoveredDateLabel = chart.data.labels?.[hoveredIndex] as string;
 
         // Find corresponding item(s) in descSortedRewards
         const correspondingRewards = descSortedRewards?.filter((reward) => {
-        // Remove month from reward.date to match the chart label
+          // Remove month from reward.date to match the chart label
           const rewardDateWithoutMonth = reward.date?.replace(/^[A-Za-z]{3}\s/, '');
 
           return rewardDateWithoutMonth === hoveredDateLabel;
@@ -420,11 +437,17 @@ export default function useStakingRewardsChart (address: string | undefined, gen
             return index === hoveredIndex ? createGradient(ctx, element, true) : createGradient(ctx, element, false);
           }
 
-          return index === hoveredIndex ? '#809ACB' : '#596AFF80';
+          return index === hoveredIndex
+            ? isLightExtension ? '#5E8FF6' : '#809ACB'
+            : isLightExtension ? '#AFC8FF80' : '#596AFF80';
         });
       } else {
         // No bar is being hovered - reset all bars to normal color
         const dataset = chart.data.datasets[0];
+
+        if (!Array.isArray(dataset?.data)) {
+          return;
+        }
 
         expand(undefined); // Reset detail when no bar is hovered
         dataset.backgroundColor = dataset.data.map((_, index: number) => {
@@ -434,7 +457,7 @@ export default function useStakingRewardsChart (address: string | undefined, gen
             return createGradient(ctx, element, false);
           }
 
-          return '#596AFF';
+          return isLightExtension ? '#4C84F6' : '#596AFF';
         });
       }
 
@@ -463,10 +486,10 @@ export default function useStakingRewardsChart (address: string | undefined, gen
           drawTicks: true,
           tickColor: 'transparent'
         },
-        labels: dataToShow?.[pageIndex][0], // Reward amounts
+        labels: amounts, // Reward amounts
         position: 'top',
         ticks: {
-          color: isFullScreen ? '#AA83DC' : theme.palette.text.highlight,
+          color: isFullScreen ? '#AA83DC' : isLightExtension ? '#745E9F' : theme.palette.text.highlight,
           font: { family: 'Inter', size: 12, weight: 'bold' }
         }
       },
@@ -480,7 +503,7 @@ export default function useStakingRewardsChart (address: string | undefined, gen
           color: isFullScreen ? '#2D1E4A59' : 'transparent'
         },
         ticks: {
-          color: isFullScreen ? '#AA83DC' : theme.palette.text.highlight,
+          color: isFullScreen ? '#AA83DC' : isLightExtension ? '#745E9F' : theme.palette.text.highlight,
           font: { family: 'Inter', size: 12, weight: 'bold' }
         }
       },
@@ -499,7 +522,7 @@ export default function useStakingRewardsChart (address: string | undefined, gen
         }
       }
     }
-  }), [dataToShow, descSortedRewards, isFullScreen, pageIndex, theme.palette.text.highlight]) as unknown as PluginChartOptions<'bar'>;
+  }), [amounts, descSortedRewards, isFullScreen, isLightExtension, theme.palette.text.highlight]) as unknown as PluginChartOptions<'bar'>;
 
   /**
    * Memoized chart data configuration
@@ -516,7 +539,7 @@ export default function useStakingRewardsChart (address: string | undefined, gen
           const element = meta.data[context.dataIndex] as unknown as GradientObject;
 
           if (!element || !isFullScreen) {
-            return '#596AFF'; // Fallback color for extension mode
+            return isLightExtension ? '#4C84F6' : '#596AFF'; // Fallback color for extension mode
           }
 
           return createGradient(ctx, element, false);
@@ -524,7 +547,7 @@ export default function useStakingRewardsChart (address: string | undefined, gen
         barThickness: 28,
         borderRadius: 12,
         borderSkipped: false,
-        data: dataToShow?.[pageIndex][0], // Reward amounts for current period
+        data: amounts, // Reward amounts for current period
         // Hover color function (similar to backgroundColor but for hover state)
         hoverBackgroundColor: (context: { chart: ChartType, dataIndex: number }) => {
           const chart = context.chart;
@@ -533,7 +556,7 @@ export default function useStakingRewardsChart (address: string | undefined, gen
           const element = meta.data[context.dataIndex] as unknown as GradientObject;
 
           if (!element || !isFullScreen) {
-            return '#809ACB'; // Fallback color
+            return isLightExtension ? '#5E8FF6' : '#809ACB'; // Fallback color
           }
 
           return createGradient(ctx, element, true);
@@ -541,28 +564,30 @@ export default function useStakingRewardsChart (address: string | undefined, gen
         label: token // Dataset label (token name)
       }
     ],
-    labels: dataToShow?.[pageIndex][1] // Date labels for current period
-  }), [dataToShow, isFullScreen, pageIndex, token]);
+    labels // Date labels for current period
+  }), [amounts, isFullScreen, labels, token]);
 
   // Navigation function: Move to next (more recent) period
   const onNextPeriod = useCallback(() => {
-    pageIndex && setPageIndex(pageIndex - 1);
-  }, [pageIndex]);
+    safeIndex && setPageIndex(safeIndex - 1);
+  }, [safeIndex]);
 
   // Navigation function: Move to previous (older) period
   const onPreviousPeriod = useCallback(() => {
-    dataToShow && pageIndex !== (dataToShow.length - 1) && setPageIndex(pageIndex + 1);
-  }, [dataToShow, pageIndex]);
+    dataToShow && safeIndex !== (dataToShow.length - 1) && setPageIndex(safeIndex + 1);
+  }, [dataToShow, safeIndex]);
 
   // Compute loading/error/ready status based on data state
-  const status = useMemo((): 'loading' | 'error' | 'ready' => {
+  const status = useMemo((): RewardStatus => {
     if (claimedRewardsInfo === undefined) {
       return 'loading'; // Still fetching data
-    } else if (claimedRewardsInfo === null) {
-      return 'error'; // No data found or API error
-    } else {
-      return 'ready'; // Data successfully loaded
     }
+
+    if (claimedRewardsInfo === null) {
+      return 'error'; // No data found or API error
+    }
+
+    return 'ready'; // Data successfully loaded
   }, [claimedRewardsInfo]);
 
   return {

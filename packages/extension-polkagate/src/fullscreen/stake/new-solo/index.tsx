@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PositionInfo } from '../../../util/types';
@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
 import { type BN, BN_ZERO } from '@polkadot/util';
 
-import { useAccountAssets, useChainInfo, usePrices, useRouteRefresh, useSoloStakingInfo, useStakingRewardsChart } from '../../../hooks';
+import { useAccountAssets, useChainInfo, useHighCommissionNominationAlert, usePrices, useRouteRefresh, useSoloStakingInfo, useStakingRewardsChart } from '../../../hooks';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
@@ -18,7 +18,7 @@ import StakingTabs from '../partials/StakingTabs';
 import { useStakingPopups } from '../util/utils';
 import PopUpHandlerSolo from './PopUpHandlerSolo';
 
-export default function SoloFullScreen (): React.ReactElement {
+export default function SoloFullScreen(): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
 
   useRouteRefresh(() => setRefresh(true));
@@ -30,6 +30,12 @@ export default function SoloFullScreen (): React.ReactElement {
   const pricesInCurrency = usePrices();
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();
   const rewardInfo = useStakingRewardsChart(address, genesisHash, 'solo', true);
+
+  useHighCommissionNominationAlert({
+    genesisHash,
+    nominatedValidatorsIds: stakingInfo.stakingAccount?.nominators?.map((item) => item.toString()),
+    stakingType: 'solo'
+  });
 
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -7,8 +7,7 @@ import { type Dispatch, type SetStateAction, useCallback, useEffect, useMemo } f
 
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
-import { getStorage, setStorage } from '../components/Loading';
-import { removeZeroBalanceRecords } from '../util';
+import { getStorage, removeZeroBalanceRecords, setStorage } from '../util';
 import { DEFAULT_SAVED_ASSETS, type SavedAssets } from './useAssetsBalances';
 import { useAlerts } from '.';
 
@@ -31,7 +30,7 @@ interface Params {
 /**
  * Hook to handle saving and loading assets from localStorage.
  */
-export default function useSavedAssetsCache ({ addresses,
+export default function useSavedAssetsCache({ addresses,
   fetchedAssets,
   roundDone,
   selectedChains,
@@ -44,7 +43,7 @@ export default function useSavedAssetsCache ({ addresses,
 
   // Alert function
   const addAlert = useCallback(() => {
-   notify(t("Accounts' balances updated!"), 'success');
+    notify(t("Accounts' balances updated!"), 'success');
   }, [notify, t]);
 
   // Save assets to storage

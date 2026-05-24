@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -18,7 +18,7 @@ import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { GradientButton, GradientDivider, TwoToneText } from '../../../components';
 import Ice from '../../../components/SVG/Ice';
 import SnowFlake from '../../../components/SVG/SnowFlake';
-import { useTranslation } from '../../../hooks';
+import { useIsDark, useTranslation } from '../../../hooks';
 import AssetLoading from '../../home/partial/AssetLoading';
 import { ColumnAmounts } from './ColumnAmounts';
 
@@ -114,7 +114,8 @@ const BeatUnlockIcon = styled(Unlock, {
   transformOrigin: 'center'
 }));
 
-function Item ({ amount, decimal, noDivider, price, reason, token, unlockTracks }: ItemProps) {
+function Item({ amount, decimal, noDivider, price, reason, token, unlockTracks }: ItemProps) {
+  const isDark = useIsDark();
   const totalBalance = useMemo(() => calcPrice(price, amount, decimal), [amount, decimal, price]);
 
   const isGovernance = useMemo(() => reason.toLocaleLowerCase().includes('gov'), [reason]);
@@ -122,7 +123,7 @@ function Item ({ amount, decimal, noDivider, price, reason, token, unlockTracks 
   return (
     <>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ borderRadius: '12px', columnGap: '8px', py: '4px' }}>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ background: '#6743944D', border: '2px solid', borderColor: '#2D1E4A', borderRadius: '999px', height: '36px', width: '36px' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ background: isDark ? '#6743944D' : '#EEF1FF', border: '2px solid', borderColor: isDark ? '#2D1E4A' : '#DDE3F4', borderRadius: '999px', height: '36px', width: '36px' }}>
           {reasonIcon(reason)}
         </Grid>
         <Grid alignItems='center' container item justifyContent='space-between' xs>
@@ -179,8 +180,9 @@ interface ContentProps {
   unlockTracks: UnlockType | undefined;
 }
 
-function Content ({ decimal, handleClose, items, price, style = {}, token, unlockTracks }: ContentProps) {
+function Content({ decimal, handleClose, items, price, style = {}, token, unlockTracks }: ContentProps) {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
   const { reasonsToShow, stillLoading } = useMemo(() => ({
     reasonsToShow: Object.entries(items).filter(([_, amount]) => amount !== undefined) as [string, BN][],
@@ -191,7 +193,7 @@ function Content ({ decimal, handleClose, items, price, style = {}, token, unloc
 
   return (
     <>
-      <Container disableGutters sx={{ background: '#05091C', borderRadius: '14px', maxHeight: '360px', my: '15px', overflowY: 'auto', p: '8px', ...style }}>
+      <Container disableGutters sx={{ background: isDark ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#EEF1FF', borderRadius: '14px', maxHeight: '360px', my: '15px', overflowY: 'auto', p: '8px', ...style }}>
         {reasonsToShow.map(([reason, amount], index) => {
           const noDivider = reasonsToShow.length === index + 1;
 
@@ -236,7 +238,7 @@ function Content ({ decimal, handleClose, items, price, style = {}, token, unloc
   );
 }
 
-function ReservedLockedPopup ({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token, unlockTracks }: Props) {
+function ReservedLockedPopup({ TitleIcon, decimal, handleClose, items, openMenu, price, title, token, unlockTracks }: Props) {
   return (
     <SharePopup
       modalProps={{

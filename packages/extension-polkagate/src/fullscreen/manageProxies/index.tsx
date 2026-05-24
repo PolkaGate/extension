@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -11,7 +11,6 @@ import { useParams } from 'react-router-dom';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { useChainInfo, useTranslation, useUpdateSelectedAccount } from '../../hooks';
-import { PROXY_CHAINS } from '../../util/constants';
 import { NotSupportedBox } from '../components';
 import HomeLayout from '../components/layout';
 import AddProxy from './AddProxy';
@@ -20,7 +19,7 @@ import Manage from './Manage';
 import TransactionFlow from './TransactionFlow';
 import { type ProxyFlowStep } from './types';
 
-function ManageProxies (): React.ReactElement {
+function ManageProxies(): React.ReactElement {
   const { t } = useTranslation();
   const { address, genesisHash } = useParams<{ address: string; genesisHash: string; }>();
   const { api, chain, decimal, token } = useChainInfo(genesisHash);
@@ -57,12 +56,18 @@ function ManageProxies (): React.ReactElement {
   }, []);
 
   useLayoutEffect(() => {
-    if (!PROXY_CHAINS.includes(genesisHash ?? '')) {
+    if (!api) {
+      return;
+    }
+
+    const hasProxy = 'proxy' in api.tx;
+
+    if (!hasProxy) {
       return setStep(STEPS.UNSUPPORTED);
     }
 
     setStep(STEPS.INIT);
-  }, [genesisHash, chain, refresh]);
+  }, [genesisHash, chain, refresh, api]);
 
   useEffect(() => {
     // Reset UI state on chain switch while the API might still be fetching data from the old chain
@@ -103,9 +108,9 @@ function ManageProxies (): React.ReactElement {
         {step !== STEPS.UNSUPPORTED &&
           <Manage
             api={api}
-            chain={chain}
             decimal={decimal}
             depositedValue={depositedValue}
+            genesisHash={chain?.genesisHash ?? genesisHash}
             isDisabledAddProxyButton={proxyItems === undefined}
             newDepositValue={newDepositValue}
             proxyItems={proxyItems}
@@ -117,7 +122,7 @@ function ManageProxies (): React.ReactElement {
         }
         {step === STEPS.ADD_PROXY &&
           <AddProxy
-            chain={chain}
+            genesisHash={chain?.genesisHash}
             proxiedAddress={address}
             proxyItems={proxyItems}
             setNewDepositedValue={setNewDepositedValue}

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 export interface StakingRecommended {
@@ -11,7 +11,7 @@ export interface StakingRecommended {
  * @returns A promise that resolves with staking rates and recommended validators.
  * @throws An error if the fetch request fails.
  */
-export async function fetchStaking (): Promise<StakingRecommended> {
+export async function fetchStaking(): Promise<StakingRecommended> {
   const response = await fetch('https://raw.githubusercontent.com/PolkaGate/snap/refs/heads/main/packages/snap/staking.json');
 
   if (!response.ok) {

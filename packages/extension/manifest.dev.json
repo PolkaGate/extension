@@ -1,0 +1,52 @@
+{
+  "author": "PolkaGate",
+  "description": "A user-friendly wallet for seamless browser-based interaction with Polkadot/Substrate-based blockchains.",
+  "homepage_url": "https://polkagate.xyz",
+  "name": "PolkaGate",
+  "short_name": "PolkaGate",
+  "manifest_version": 3,
+  "version": "1.0.0",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "tabs",
+    "offscreen"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "PolkaGate",
+    "default_popup": "index.html"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "content.js"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "icons": {
+    "16": "images/16b.png",
+    "32": "images/32b.png",
+    "48": "images/48b.png",
+    "64": "images/64b.png",
+    "128": "images/128b.png"
+  },
+  "web_accessible_resources": [{
+    "resources":  ["page.js"],
+    "matches": [ "https://*/*" ]
+  },{
+    "resources":  ["page.js"],
+    "matches": [ "http://*/*" ]
+  }],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
+}

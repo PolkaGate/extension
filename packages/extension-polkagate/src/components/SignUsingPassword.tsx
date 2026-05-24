@@ -1,6 +1,7 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Transaction } from 'ethers';
 import type { ApiPromise } from '@polkadot/api';
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
@@ -13,12 +14,12 @@ import React, { memo, useCallback, useState } from 'react';
 import { BeatLoader } from 'react-spinners';
 
 import { useIsBlueish, useTranslation } from '../hooks';
-import { getSignature } from '../messaging';
+import { getSignature, signEthereumRaw } from '../messaging';
 import StakingActionButton from '../popup/staking/partial/StakingActionButton';
 import { DecisionButtons, GradientButton, MyTooltip } from '.';
 
 interface UseProxyProps {
-  proxies: Proxy[] | undefined;
+  proxies: Proxy[] | undefined | null;
   onClick: (() => void) | undefined;
 }
 
@@ -27,9 +28,11 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
 
-  if ((proxies && proxies.length === 0) || !onClick) {
+  if ((proxies && proxies.length === 0) || !onClick || proxies === null) {
     return null;
   }
+
+  const color = isBlueish ? theme.palette.text.highlight : theme.palette.primary.main;
 
   if (!proxies) {
     return (
@@ -39,7 +42,7 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
           placement='top'
         >
           <Grid container item sx={{ alignItems: 'center', p: '4px', width: 'fit-content' }}>
-            <BeatLoader color={theme.palette.text.highlight} loading size={5} />
+            <BeatLoader color={color} loading size={5} />
           </Grid>
         </MyTooltip>
       </Grid>
@@ -48,8 +51,8 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 
   return (
     <Grid container item onClick={onClick} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '4px', width: 'fit-content' }}>
-      <Data color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} size='12' />
-      <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} variant='B-1'>
+      <Data color={color} size='12' />
+      <Typography color={color} variant='B-1'>
         {t('Use Proxy')}
       </Typography>
     </Grid>
@@ -57,20 +60,22 @@ const UseProxy = ({ onClick, proxies }: UseProxyProps) => {
 };
 
 export interface SignUsingPasswordProps {
-  api: ApiPromise | undefined;
+  address: string | undefined;
+  api: ApiPromise | undefined | null;
   direction?: 'horizontal' | 'vertical';
   disabled?: boolean;
-  decisionButtonProps?: Partial<DecisionButtonProps>
+  decisionButtonProps?: Partial<DecisionButtonProps>;
+  unsignedEthTx?: Transaction;
   onCancel: () => void;
   onSignature: ({ signature }: { signature: HexString; }) => Promise<void>;
   onUseProxy: (() => void) | undefined;
-  proxies: Proxy[] | undefined;
+  proxies: Proxy[] | undefined | null;
   style?: React.CSSProperties;
   withCancel: boolean | undefined;
   signerPayload: SignerPayloadJSON | undefined;
 }
 
-function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', disabled, onCancel, onSignature, onUseProxy, proxies, signerPayload, style, withCancel }: SignUsingPasswordProps) {
+function SignUsingPassword({ address, api, decisionButtonProps, direction = 'vertical', disabled, onCancel, onSignature, onUseProxy, proxies, signerPayload, style, unsignedEthTx, withCancel }: SignUsingPasswordProps) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
@@ -79,12 +84,24 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
 
   const onConfirm = useCallback(async () => {
     try {
-      if (!signerPayload) {
+      if (!(signerPayload || unsignedEthTx)) {
+        console.log('No signer payload found');
+
+        return;
+      }
+
+      if (!address) {
+        console.log('No address provided to be the signer');
+
         return;
       }
 
       setBusy(true);
-      const signature = await getSignature(signerPayload);
+      const signature = unsignedEthTx
+        ? await signEthereumRaw(address, unsignedEthTx.unsignedSerialized)
+        : signerPayload
+          ? await getSignature(signerPayload)
+          : undefined;
 
       if (!signature) {
         // TODO: show login page
@@ -98,17 +115,21 @@ function SignUsingPassword ({ api, decisionButtonProps, direction = 'vertical', 
       setHasError(true);
       setBusy(false);
     }
-  }, [onSignature, signerPayload]);
+  }, [address, unsignedEthTx, onSignature, signerPayload]);
 
   const confirmText = !api ? t('Loading ...') : t('Approve');
 
   return (
     <Stack direction='column' sx={{ width: '100%' }}>
       <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', height: '65px', justifyContent: 'end', p: '0 12px 0 5px' }}>
-        <UseProxy
-          onClick={onUseProxy}
-          proxies={proxies}
-        />
+        {!unsignedEthTx &&
+          // ERC20 transfers use eth_sendRawTransaction which bypasses the Substrate extrinsic layer,
+          // making proxy support incompatible. Proxy can be re-enabled if this is rewritten using ethereum.transact.
+          <UseProxy
+            onClick={onUseProxy}
+            proxies={proxies}
+          />
+        }
       </Container>
       {withCancel
         ? (

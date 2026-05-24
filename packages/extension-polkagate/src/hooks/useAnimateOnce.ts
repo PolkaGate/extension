@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-ui authors & contributors
+// Copyright 2019-2026 @polkadot/extension-ui authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -24,7 +24,7 @@ type Timer = ReturnType<typeof setTimeout>;
  * @param config - Configuration options for the animation
  * @returns animate: boolean - Current animation state
  */
-export default function useAnimateOnce (condition: boolean | undefined, config = {} as AnimateOnceConfig): boolean {
+export default function useAnimateOnce(condition: boolean | undefined, config = {} as AnimateOnceConfig): boolean {
   const [animate, setAnimate] = useState(false);
   const timeoutRef = useRef<Timer>(null);
 

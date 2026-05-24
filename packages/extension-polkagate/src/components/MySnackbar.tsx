@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-no-bind */
@@ -38,6 +38,27 @@ const SNACK_BAR_VISIBILITY_DURATION = 2000;
  */
 const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isError, onClose, open, text }: Props) => {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
+  const background = isError
+    ? (isDark
+      ? 'linear-gradient(262.56deg, #B1004D 0%, #DC45A0 45%, #B1004D 100%)'
+      : 'linear-gradient(180deg, #FFF6FA 0%, #FFE8F1 100%)')
+    : (isDark
+      ? theme.palette.gradient.brand
+      : 'linear-gradient(180deg, #FFFFFF 0%, #F6F1FF 100%)');
+  const borderColor = isError
+    ? (isDark ? '#8F0040' : '#FFD0E0')
+    : (isDark ? '#4A217A' : '#E6DDF7');
+  const textColor = isError
+    ? (isDark ? '#EAEBF1' : '#7A244B')
+    : theme.palette.text.primary;
+  const progressTrackColor = isError
+    ? (isDark ? '#8F0040' : '#FFD0E0')
+    : (isDark ? '#674394' : '#DDD6F6');
+  const progressFillColor = isError
+    ? (isDark ? '#EAEBF1' : '#FF4FB9')
+    : (isDark ? '#EAEBF1' : '#8A56F8');
 
   useEffect(() => {
     if (open) {
@@ -61,17 +82,19 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
       <Box
         sx={{
           alignItems: 'center',
-          background: isError ? 'linear-gradient(262.56deg, #B1004D 0%, #DC45A0 45%, #B1004D 100%)' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+          background,
+          border: `1px solid ${borderColor}`,
           borderRadius: '12px',
           boxShadow: 3,
-          color: '#fff',
+          color: textColor,
           columnGap: '5px',
           display: 'flex',
-          height: '52px',
           justifyContent: 'center',
+          minHeight: '52px',
           overflow: 'hidden',
-          position: 'relative',
           pointerEvents: 'auto',
+          position: 'relative',
+          px: 2,
           py: 1.5,
           textAlign: 'center',
           width: '330px'
@@ -79,19 +102,28 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
       >
         {
           isError
-            ? <CloseCircle color='#EAEBF1' size='24' />
+            ? <CloseCircle color={textColor} size='24' />
             : <Box
               component='img'
               src={check as string}
               sx={{ height: '28px', left: '20px', position: 'absolute', width: '28px' }}
-            />
+              />
         }
-        <Typography color={theme.palette.text.primary} variant='B-2'>
+        <Typography
+          color={textColor}
+          sx={{
+            overflowWrap: 'anywhere',
+            pr: isError ? 0 : '22px',
+            whiteSpace: 'normal',
+            wordBreak: 'break-word'
+          }}
+          variant='B-2'
+        >
           {text}
         </Typography>
         <Box
           sx={{
-            backgroundColor: '#674394',
+            backgroundColor: progressTrackColor,
             bottom: '1px',
             height: '3px',
             position: 'absolute',
@@ -101,7 +133,7 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
           <Box
             sx={{
               animation: `${progressAnimation} 2s linear`,
-              backgroundColor: '#EAEBF1',
+              backgroundColor: progressFillColor,
               height: '100%',
               width: '100%'
             }}

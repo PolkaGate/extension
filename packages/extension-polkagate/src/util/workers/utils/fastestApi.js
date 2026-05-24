@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import getChainName from '../../getChainName';
@@ -8,14 +8,14 @@ import { getChainEndpoints } from './getChainEndpoints';
 /**
  * @param {string | undefined} genesisHash
  */
-export async function fastestApi (genesisHash) {
+export async function fastestApi(genesisHash) {
   const chainName = getChainName(genesisHash);
   const endpoints = getChainEndpoints(chainName ?? '');
 
-  const { api, connections } = await fastestEndpoint(endpoints);
+  const { api, selectedEndpoint } = await fastestEndpoint(endpoints);
 
   return {
     api,
-    connections
+    selectedEndpoint
   };
 }

@@ -1,10 +1,10 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
 import type { Inputs } from './types';
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { getExistentialDeposit, type TChain } from '@paraspell/sdk-pjs';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -12,58 +12,68 @@ import { useParams } from 'react-router-dom';
 
 import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { amountToHuman, amountToMachine } from '@polkadot/extension-polkagate/src/util';
-import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
-import { BN, BN_ZERO, noop } from '@polkadot/util';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
+import { BN, noop } from '@polkadot/util';
 
-import { ActionButton, AssetLogo, DisplayBalance, Motion, MyTextField } from '../../components';
+import { ActionButton, DisplayBalance, Logo, Motion, MyTextField } from '../../components';
 import { useAccountAssets, useChainInfo, useTranslation } from '../../hooks';
 import NumberedTitle from './partials/NumberedTitle';
-import useLimitedFeeCall from './useLimitedFeeCall';
 import useWarningMessage from './useWarningMessage';
 import { getCurrency, normalizeChainName } from './utils';
 
 interface Props {
   inputs: Inputs | undefined;
+  isContract: boolean | undefined;
   teleportState: Teleport;
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>;
 }
 
-export default function Step3Amount ({ inputs, setInputs, teleportState }: Props): React.ReactElement {
+export default function Step3Amount({ inputs, isContract, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
   const accountAssets = useAccountAssets(address);
-  const { api, chainName: senderChainName } = useChainInfo(genesisHash);
+  const { chainName: senderChainName } = useChainInfo(genesisHash, true);
   const decimal = inputs?.decimal;
 
   const [error, setError] = useState<string | undefined>();
   const [amount, setAmount] = useState<string | undefined>(inputs?.amount);
   const assetToTransfer = useMemo(() => accountAssets?.find((asset) => asset.genesisHash === genesisHash && String(asset.assetId) === assetId), [accountAssets, assetId, genesisHash]);
   const transferableBalance = useMemo(() => getValue('transferable', assetToTransfer), [assetToTransfer]);
-  const logoInfo = useMemo(() => getLogo2(genesisHash, assetToTransfer?.token), [assetToTransfer?.token, genesisHash]);
-  const isNativeToken = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, assetToTransfer?.token), [assetToTransfer?.token, genesisHash]);
   const amountAsBN = useMemo(() => decimal ? amountToMachine(amount, decimal) : undefined, [amount, decimal]);
 
-  const { maxFee } = useLimitedFeeCall(address, assetId, assetToTransfer, inputs, genesisHash, teleportState);
   const warningMessage = useWarningMessage(assetId, amountAsBN, assetToTransfer, decimal, inputs?.transferType ?? 'Normal', new BN(inputs?.fee?.originFee?.fee || 0));
+  const amountShortcutButtonStyle = useMemo(() => ({
+    '&:hover': {
+      backgroundColor: isDark ? undefined : '#E9DDFB',
+      borderColor: isDark ? undefined : '#D3C3EE'
+    },
+    backgroundColor: isDark ? undefined : '#F3F6FD',
+    border: isDark ? undefined : '1px solid #DDE3F4',
+    borderRadius: '999px',
+    color: isDark ? undefined : '#745E9F',
+    height: '26px',
+    minWidth: 'fit-content',
+    padding: '0 14px',
+    width: 'fit-content'
+  }), [isDark]);
 
   useEffect(() => {
-    amountAsBN && setInputs((prevInputs) => ({
-      ...(prevInputs || {}),
+    amountAsBN && setInputs((pre) => ({
+      ...(pre || {}),
       amountAsBN
     }));
   }, [amountAsBN, setInputs]);
 
   const onMaxClick = useCallback(() => {
-    if (!transferableBalance || !maxFee || !assetToTransfer) {
+    if (!transferableBalance || !assetToTransfer) {
       return setError(t('We’re updating your balance — please wait a moment and try again.'));
     }
 
-    const isAvailableZero = transferableBalance.isZero();
-    const _maxFee = isNativeToken ? maxFee : BN_ZERO;
-    const canNotTransfer = isAvailableZero || _maxFee.gte(transferableBalance);
-    const allAmount = canNotTransfer ? '0' : amountToHuman(transferableBalance.sub(_maxFee).toString(), decimal);
+    const allAmount = amountToHuman(transferableBalance.toString(), decimal);
 
     setError(undefined);
 
@@ -71,9 +81,10 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
     setInputs((prevInputs) => ({
       ...(prevInputs || {}),
       amount: allAmount,
+      error: undefined,
       transferType: 'All'
     }));
-  }, [assetToTransfer, decimal, isNativeToken, maxFee, setInputs, t, transferableBalance]);
+  }, [assetToTransfer, decimal, setInputs, t, transferableBalance]);
 
   const onAmountChange = useCallback((value: string) => {
     if (!assetToTransfer || !decimal) {
@@ -92,23 +103,27 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
     setInputs((prevInputs) => ({
       ...(prevInputs || {}),
       amount: value,
+      error: undefined,
       transferType: 'Normal'
     }));
   }, [assetToTransfer, decimal, setInputs, t, transferableBalance]);
 
   const ED = useMemo(() => {
-    let maybeED = '1';
+    const DEFAULT_ED = '0.01';
+    let maybeED = DEFAULT_ED;
 
     try {
       const { assetId, token } = inputs || {};
 
-      if (senderChainName && assetId !== undefined && token && api) {
+      if (senderChainName && assetId !== undefined && token && !isContract) {
+        const currency = getCurrency(senderChainName, token, assetId);
         const _senderChainName = normalizeChainName(senderChainName);
-        const currency = getCurrency(api, token, assetId);
         const mayBeEDasBN = getExistentialDeposit(_senderChainName as TChain, currency);
 
         if (mayBeEDasBN && decimal !== undefined) {
-          maybeED = amountToHuman(mayBeEDasBN, decimal);
+          const EDinHuman = amountToHuman(mayBeEDasBN, decimal);
+
+          maybeED = EDinHuman === '0' ? DEFAULT_ED : EDinHuman;
         }
       }
 
@@ -118,7 +133,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
 
       return maybeED;
     }
-  }, [api, decimal, inputs?.token, inputs?.assetId, senderChainName]);
+  }, [decimal, inputs, isContract, senderChainName]);
 
   const onMinClick = useCallback(() => {
     setError(undefined);
@@ -126,6 +141,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
     setInputs((prevInputs) => ({
       ...(prevInputs || {}),
       amount: ED,
+      error: undefined,
       transferType: 'Normal'
     }));
   }, [ED, setInputs]);
@@ -135,7 +151,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
       <Typography color='text.secondary' sx={{ mt: '15px', textAlign: 'left', width: '100%' }} variant='B-4'>
         {t('Input transfer amount')}
       </Typography>
-      <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: '#05091C', border: `2px solid ${error || warningMessage ? '#FF4FB9' : '#3988FF'}`, borderRadius: '14px', height: '196px', mt: '20px', p: '15px', width: '766px' }}>
+      <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: `2px solid ${error || warningMessage ? '#FF4FB9' : isDark ? '#3988FF' : '#DDE3F4'}`, borderRadius: '14px', boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)', height: '196px', mt: '20px', p: '15px', width: '766px' }}>
         <Stack direction='row' justifyContent='space-between'>
           <NumberedTitle
             number={1}
@@ -145,12 +161,7 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
             <ActionButton
               contentPlacement='center'
               onClick={onMaxClick}
-              style={{
-                height: '26px',
-                minWidth: 'fit-content',
-                padding: '0 10px',
-                width: 'fit-content'
-              }}
+              style={amountShortcutButtonStyle}
               text={t('Max')}
               variant='text'
             />
@@ -158,18 +169,15 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
               contentPlacement='center'
               onClick={onMinClick}
               style={{
-                color: '#AA83DC',
-                height: '26px',
-                minWidth: 'fit-content',
-                padding: '0 10px',
-                width: 'fit-content'
+                ...amountShortcutButtonStyle,
+                color: isDark ? '#AA83DC' : theme.palette.text.secondary
               }}
               text={t('Min')}
               variant='text'
             />
           </Stack>
         </Stack>
-        <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', my: '10px', width: '100%' }} />
+        <Box sx={{ background: theme.palette.dividerGradientStrong, height: '1px', my: '10px', width: '100%' }} />
         <MyTextField
           focused
           inputType='number'
@@ -180,12 +188,12 @@ export default function Step3Amount ({ inputs, setInputs, teleportState }: Props
           onTextChange={onAmountChange}
           placeholder='0.00'
         />
-        <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', my: '10px', width: '100%' }} />
-        <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start'>
+        <Box sx={{ background: theme.palette.dividerGradientStrong, height: '1px', my: '10px', width: '100%' }} />
+        <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' onClick={onMaxClick} sx={{ cursor: 'pointer' }}>
           <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
             {t('Available')}
           </Typography>
-          <AssetLogo assetSize='18px' genesisHash={genesisHash} logo={logoInfo?.logo} />
+          <Logo assetSize='20px' genesisHash={genesisHash} logo={logoInfo?.logo} token={inputs?.token} />
           <DisplayBalance
             balance={transferableBalance}
             decimal={decimal}

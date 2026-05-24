@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid } from '@mui/material';
@@ -29,7 +29,7 @@ const carouselItems: string[] = [
 ];
 const WIDE_ITEM_INDEX = 2;
 
-function Indicators ({ currentIndex, isBlueish }: { currentIndex: number, isBlueish: boolean }) {
+function Indicators({ currentIndex, isBlueish }: { currentIndex: number, isBlueish: boolean }) {
   const DISPLAYED_ITEM_COLOR = isBlueish ? '#3988FF' : '#AA83DC';
 
   return (
@@ -95,7 +95,7 @@ const BlurEffects = ({ isBlueish }: { isBlueish: boolean }) => {
   );
 };
 
-function Slides ({ currentIndex }: { currentIndex: number }) {
+function Slides({ currentIndex }: { currentIndex: number }) {
   return (
     <Grid container item justifyContent='center' sx={{ height: '192px', overflow: 'hidden', position: 'relative', width: '100%', zIndex: 3 }}>
       {carouselItems.map((item, index) => (
@@ -129,7 +129,7 @@ interface Props {
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>
 }
 
-function Carousel ({ currentIndex, setCurrentIndex }: Props) {
+function Carousel({ currentIndex, setCurrentIndex }: Props) {
   const isBlueish = currentIndex > 1;
 
   useEffect(() => {

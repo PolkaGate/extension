@@ -1,37 +1,90 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable header/header */
 
-import type { ThemeOptions, TypeAction, TypeBackground } from '@mui/material';
+import type { ThemeOptions, TypeAction } from '@mui/material';
 import type { CSSProperties } from 'react';
 
+interface PolkaGateAccent {
+  highlight: string;
+  icon: string;
+  text: string;
+  textStrong: string;
+}
+
+interface PolkaGateShadow {
+  card: string;
+  popover: string;
+}
+
+interface PolkaGateSkeleton {
+  accent: string;
+  default: string;
+  muted: string;
+  subtle: string;
+}
+
+interface PolkaGateSurface {
+  badge: string;
+  disabled: string;
+  hover: string;
+  input: string;
+  panel: string;
+  panelAlt: string;
+  popover: string;
+  selected: string;
+}
+
 declare module '@mui/material/styles' {
+  interface TypeBackground {
+    input: string;
+    strong: string;
+    subtle: string;
+  }
+
   interface TypeText {
+    brand: string;
     highlight: string;
+    muted: string;
+    radialOverlay: string;
   }
   interface Palette {
+    accent: PolkaGateAccent;
     approval: Palette['primary'];
     aye: Palette['primary'];
     backgroundFL: TypeText;
     border: Partial<TypeBackground>;
+    dividerGradient: string;
+    dividerGradientFade: string;
+    dividerGradientStrong: string;
     gradient: TypeText;
     icon: Partial<TypeText>;
     label: Partial<TypeText>;
     menuIcon: TypeAction;
     nay: Palette['primary'];
+    shadow: PolkaGateShadow;
+    skeleton: PolkaGateSkeleton;
+    surface: PolkaGateSurface;
     support: Palette['primary'];
   }
   interface PaletteOptions {
+    accent?: Partial<PolkaGateAccent>;
     approval?: PaletteOptions['primary'];
     aye?: PaletteOptions['primary'];
     backgroundFL?: Partial<TypeText>;
     border?: Partial<TypeBackground>;
+    dividerGradient?: string;
+    dividerGradientFade?: string;
+    dividerGradientStrong?: string;
     icon?: Partial<TypeText>;
     gradient?: Partial<TypeText>;
     label?: Partial<TypeText>;
     menuIcon?: Partial<TypeAction>;
     nay?: PaletteOptions['primary'];
+    shadow?: Partial<PolkaGateShadow>;
+    skeleton?: Partial<PolkaGateSkeleton>;
+    surface?: Partial<PolkaGateSurface>;
     support?: PaletteOptions['primary'];
   }
 }
@@ -133,35 +186,35 @@ export const baseTheme: ThemeOptions = {
       textAlign: 'center'
     },
     'H-1': {
-      fontFamily: 'OdibeeSans',
+      fontFamily: "'OdibeeSans', 'Oswald', sans-serif",
       fontSize: '40px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
       textAlign: 'center'
     },
     'H-2': {
-      fontFamily: 'OdibeeSans',
+      fontFamily: "'OdibeeSans', 'Oswald', sans-serif",
       fontSize: '29px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
       textAlign: 'center'
     },
     'H-3': {
-      fontFamily: 'OdibeeSans',
+      fontFamily: "'OdibeeSans', 'Oswald', sans-serif",
       fontSize: '24px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
       textAlign: 'center'
     },
     'H-4': {
-      fontFamily: 'OdibeeSans',
+      fontFamily: "'OdibeeSans', 'Oswald', sans-serif",
       fontSize: '18px',
       fontWeight: 400,
       letterSpacing: '-0.19px',
       textAlign: 'center'
     },
     'H-5': {
-      fontFamily: 'OdibeeSans',
+      fontFamily: "'OdibeeSans', 'Oswald', sans-serif",
       fontSize: '16px',
       fontWeight: 400,
       letterSpacing: '-0.19px',

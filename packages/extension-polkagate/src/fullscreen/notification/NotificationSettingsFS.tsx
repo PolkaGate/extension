@@ -1,0 +1,193 @@
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import { Stack, Typography } from '@mui/material';
+import { ArrowCircleDown2, BuyCrypto, Notification as NotificationIcon, Record, UserOctagon } from 'iconsax-react';
+import React, { useMemo } from 'react';
+
+import { ActionCard, MySwitch } from '@polkadot/extension-polkagate/src/components';
+import { useIsDark, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { SUPPORTED_GOVERNANCE_NOTIFICATION_CHAIN, SUPPORTED_STAKING_NOTIFICATION_CHAIN } from '@polkadot/extension-polkagate/src/popup/notification/constant';
+import useNotificationSettings, { type NotificationSettingType, Popups } from '@polkadot/extension-polkagate/src/popup/notification/hook/useNotificationSettings';
+
+import { DraggableModal } from '../components/DraggableModal';
+import SelectAccount from './partials/SelectAccount';
+import SelectChain from './partials/SelectChain';
+
+const CARD_STYLE = { alignItems: 'center', height: '64px' };
+
+interface SettingUIProps {
+  openPopup: (popup: Popups) => () => void;
+  toggleNotification: () => void;
+  notificationSetting: NotificationSettingType;
+  toggleReceivedFunds: () => void;
+}
+
+const SettingUI = ({ notificationSetting, openPopup, toggleNotification, toggleReceivedFunds }: SettingUIProps) => {
+  const { t } = useTranslation();
+  const isDark = useIsDark();
+
+  return (
+    <Stack direction='column' sx={{ gap: '8px', p: '15px 5px 0', width: '100%' }}>
+      <ActionCard
+        Icon={NotificationIcon}
+        iconColor='#FF4FB9'
+        iconSize={24}
+        iconWithoutTransform
+        onClick={toggleNotification}
+        showChevron={false}
+        showColorBall={false}
+        style={{ ...CARD_STYLE, bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4' }}
+        title={t('Enable Notifications')}
+      >
+        <MySwitch
+          checked={notificationSetting.enable}
+          value={notificationSetting.enable}
+        />
+      </ActionCard>
+      <ActionCard
+        Icon={ArrowCircleDown2}
+        iconColor='#FF4FB9'
+        iconSize={24}
+        iconWithoutTransform
+        onClick={toggleReceivedFunds}
+        showChevron={false}
+        showColorBall={false}
+        style={{ ...CARD_STYLE, bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4' }}
+        title={t('Enable Received Funds')}
+      >
+        <MySwitch
+          checked={notificationSetting.receivedFunds}
+          value={notificationSetting.receivedFunds}
+        />
+      </ActionCard>
+      <ActionCard
+        Icon={UserOctagon}
+        iconColor='#FF4FB9'
+        iconSize={24}
+        iconWithoutTransform
+        onClick={openPopup(Popups.ACCOUNTS)}
+        style={{ mt: '16px', ...CARD_STYLE }}
+        title={t('Accounts')}
+      >
+        <Typography color={isDark ? '#AA83DC' : '#7A69A8'} sx={{ bgcolor: isDark ? '#BFA1FF26' : '#EEF2FB', borderRadius: '10px', mr: '2px', p: '3px 10px' }} variant='B-3'>
+          {notificationSetting.accounts?.length}
+        </Typography>
+      </ActionCard>
+      <ActionCard
+        Icon={Record}
+        iconColor='#FF4FB9'
+        iconSize={24}
+        iconWithoutTransform
+        onClick={openPopup(Popups.GOVERNANCE)}
+        style={{ ...CARD_STYLE }}
+        title={t('Governance')}
+      />
+      <ActionCard
+        Icon={BuyCrypto}
+        iconColor='#FF4FB9'
+        iconSize={24}
+        iconWithoutTransform
+        onClick={openPopup(Popups.STAKING_REWARDS)}
+        style={{ ...CARD_STYLE }}
+        title={t('Staking Rewards')}
+      />
+    </Stack>
+  );
+};
+
+interface Props {
+  handleClose: () => void;
+}
+
+function NotificationSettingsFS({ handleClose }: Props) {
+  const { t } = useTranslation();
+
+  const { closePopup,
+    notificationSetting,
+    openPopup,
+    popups,
+    setAccounts,
+    setGovernanceChains,
+    setStakingRewardsChains,
+    toggleNotification,
+    toggleReceivedFunds } = useNotificationSettings();
+
+  const ui = useMemo(() => {
+    switch (popups) {
+      case Popups.NONE:
+        return (
+          <SettingUI
+            notificationSetting={notificationSetting}
+            openPopup={openPopup}
+            toggleNotification={toggleNotification}
+            toggleReceivedFunds={toggleReceivedFunds}
+          />);
+
+      case Popups.ACCOUNTS:
+        return (
+          <SelectAccount
+            onAccounts={setAccounts}
+            previousSelectedAccounts={notificationSetting.accounts}
+          />);
+
+      case Popups.GOVERNANCE:
+        return (
+          <SelectChain
+            onChains={setGovernanceChains}
+            options={SUPPORTED_GOVERNANCE_NOTIFICATION_CHAIN}
+            previousState={notificationSetting.governance}
+          />);
+
+      case Popups.STAKING_REWARDS:
+        return (
+          <SelectChain
+            onChains={setStakingRewardsChains}
+            options={SUPPORTED_STAKING_NOTIFICATION_CHAIN}
+            previousState={notificationSetting.stakingRewards}
+          />);
+    }
+  }, [notificationSetting, openPopup, popups, setAccounts, setGovernanceChains, setStakingRewardsChains, toggleNotification, toggleReceivedFunds]);
+
+  const { onClose, title }: { onClose: () => void, title: string } = useMemo(() => {
+    switch (popups) {
+      case Popups.ACCOUNTS:
+        return {
+          onClose: closePopup,
+          title: t('Select Accounts')
+        };
+
+      case Popups.GOVERNANCE:
+        return {
+          onClose: closePopup,
+          title: t('Select Networks')
+        };
+
+      case Popups.STAKING_REWARDS:
+        return {
+          onClose: closePopup,
+          title: t('Select Networks')
+        };
+
+      default:
+        return {
+          onClose: handleClose,
+          title: t('Notification Settings')
+        };
+    }
+  }, [closePopup, handleClose, popups, t]);
+
+  return (
+    <DraggableModal
+      onClose={onClose}
+      open={true}
+      showBackIconAsClose
+      style={{ minHeight: '600px', overflow: 'clip', padding: ' 20px 10px 10px' }}
+      title={title}
+    >
+      {ui}
+    </DraggableModal>
+  );
+}
+
+export default NotificationSettingsFS;

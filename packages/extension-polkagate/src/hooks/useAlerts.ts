@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Severity } from '../util/types';
@@ -7,9 +7,8 @@ import { Chance } from 'chance';
 import { useCallback, useContext, useMemo } from 'react';
 
 import { AlertContext } from '../components';
-import { TIME_TO_REMOVE_ALERT } from '../util/constants';
 
-export default function useAlerts () {
+export default function useAlerts() {
   const { alerts, setAlerts } = useContext(AlertContext);
 
   const random = useMemo(() => new Chance(), []);
@@ -18,13 +17,12 @@ export default function useAlerts () {
     setAlerts((prev) => prev.filter(({ id }) => id !== idToRemove));
   }, [setAlerts]);
 
-  const notify = useCallback((text: string, severity?: Severity) => {
+  const notify = useCallback((text: string, severity?: Severity, persist = false) => {
     const id = random.string({ length: 10 });
 
-    setAlerts((prev) => [...prev, { id, severity: severity || 'info', text }]);
-    const timeout = setTimeout(() => removeAlert(id), TIME_TO_REMOVE_ALERT);
+    setAlerts((prev) => [...prev, { id, persist, severity: severity || 'info', text }]);
 
-    return () => clearTimeout(timeout);
+    return () => removeAlert(id);
   }, [random, removeAlert, setAlerts]);
 
   return { alerts, notify, removeAlert };

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
@@ -7,7 +7,7 @@ import type { Prices } from '../../util/types';
 
 import { calcPrice, sanitizeChainName, toTitleCase } from '@polkadot/extension-polkagate/src/util';
 
-import getLogo2, { type LogoInfo } from '../../util/getLogo2';
+import resolveLogoInfo, { type LogoInfo } from '../../util/logo/resolveLogoInfo';
 
 export interface AssetDetailType {
   assets: (FetchedBalance & { totalPrice: number })[];
@@ -18,7 +18,7 @@ export interface AssetDetailType {
   token?: string | undefined;
 }
 
-export function buildChainsAssetsSummary (
+export function buildChainsAssetsSummary(
   chains: NetworkInfo[],
   assets: Record<string, FetchedBalance[]> | null | undefined,
   pricesInCurrency: Prices
@@ -34,12 +34,13 @@ export function buildChainsAssetsSummary (
     }));
 
     const chainTotalBalance = enrichedBalances.reduce((sum, b) => sum + b.totalPrice, 0);
+    const fallbackAsset = enrichedBalances.find(({ isNative }) => isNative) ?? enrichedBalances[0];
     const sortedAssets = enrichedBalances.sort((a, b) => b.totalPrice - a.totalPrice);
 
-    const network = chains.find(({ genesisHash: networkGenesisHash, tokenSymbol }) => genesisHash === networkGenesisHash && tokenSymbol);
-    const token = network?.tokenSymbol;
-    const logoInfo = getLogo2(genesisHash);
-    const chainName = toTitleCase(sanitizeChainName(network?.name, true));
+    const network = chains.find(({ genesisHash: networkGenesisHash }) => genesisHash === networkGenesisHash);
+    const token = network?.tokenSymbol ?? fallbackAsset?.token;
+    const logoInfo = resolveLogoInfo(genesisHash);
+    const chainName = toTitleCase(sanitizeChainName(network?.name ?? fallbackAsset?.chainName, true));
 
     return {
       assets: sortedAssets,

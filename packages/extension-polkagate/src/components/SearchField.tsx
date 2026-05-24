@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, styled, TextField, useTheme } from '@mui/material';
@@ -15,16 +15,16 @@ const StyledTextField = styled(TextField, { shouldForwardProp: (prop) => prop !=
       }
     },
     '&:hover': {
-      backgroundColor: '#2D1E4A',
+      backgroundColor: theme.palette.mode === 'dark' ? theme.palette.surface.selected : theme.palette.surface.hover,
       transition: 'all 150ms ease-out'
     },
     '&:hover fieldset': {
-      border: '1px solid #BEAAD833',
+      border: `1px solid ${theme.palette.border.input}`,
       transition: 'all 150ms ease-out',
       zIndex: 0
     },
-    backgroundColor: '#1B133C',
-    border: '1px solid #BEAAD833',
+    backgroundColor: theme.palette.surface.popover,
+    border: `1px solid ${theme.palette.border.input}`,
     borderRadius: '12px',
     color: theme.palette.text.secondary,
     height: height ?? '43px',
@@ -47,7 +47,7 @@ interface Props {
   placeholderStyle?: React.CSSProperties;
 }
 
-function SearchField ({ focused = false, onInputChange, placeholder, placeholderStyle, style }: Props) {
+function SearchField({ focused = false, onInputChange, placeholder, placeholderStyle, style }: Props) {
   const theme = useTheme();
 
   const onChange = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,9 +58,14 @@ function SearchField ({ focused = false, onInputChange, placeholder, placeholder
     <Container disableGutters sx={style}>
       <StyledTextField
         autoComplete='off'
+        autoCorrect='off'
         autoFocus={focused}
         fullWidth
         height={style?.height as string}
+        inputProps={{
+          autoCapitalize: 'none',
+          spellCheck: false
+        }}
         onChange={onChange}
         placeholder={placeholder}
         placeholderStyle={placeholderStyle}

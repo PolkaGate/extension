@@ -1,10 +1,16 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Stack } from '@mui/material';
 import React from 'react';
 
-export function HideNumberShape1 (): React.ReactElement {
+import useIsDark from '../../hooks/useIsDark';
+
+export function HideNumberShape1(): React.ReactElement {
+  const isDark = useIsDark();
+  const primaryBlockColor = isDark ? 'rgba(73, 26, 125, 0.34)' : 'rgba(151, 120, 180, 0.15)';
+  const secondaryBlockColor = isDark ? 'rgba(0, 0, 0, 0.23)' : 'rgba(123, 113, 138, 0.20)';
+
   const renderRow = (count: number, offset = 0, rowId: number) => (
     <Stack direction='row' key={`row-${rowId}-${offset}`} sx={{ ml: offset ? '12px' : 0 }}>
       {Array.from({ length: count }).map((_, index) => (
@@ -13,8 +19,8 @@ export function HideNumberShape1 (): React.ReactElement {
             sx={{
               animation: 'fadeIn 0.4s forwards',
               animationDelay: `${(offset + index) * 0.05}s`,
-              background: 'rgba(73, 26, 125, 0.34)',
-              filter: 'brightness(115%) contrast(120%)',
+              background: primaryBlockColor,
+              filter: isDark ? 'brightness(115%) contrast(120%)' : 'none',
               height: '12px',
               width: '12px'
             }}
@@ -23,8 +29,8 @@ export function HideNumberShape1 (): React.ReactElement {
             sx={{
               animation: 'fadeIn 0.4s forwards',
               animationDelay: `${(offset + index) * 0.05 + 0.02}s`,
-              background: 'rgba(0, 0, 0, 0.23)',
-              filter: 'brightness(150%) contrast(120%)',
+              background: secondaryBlockColor,
+              filter: isDark ? 'brightness(150%) contrast(120%)' : 'none',
               height: '12px',
               width: '12px'
             }}
@@ -53,8 +59,12 @@ export function HideNumberShape1 (): React.ReactElement {
   );
 }
 
-export function HideNumberShape2 ({ style = {} }: { style: React.CSSProperties }): React.ReactElement {
-  const renderRow = (count: number, offset = 0, rowId: number) => (
+export function HideNumberShape2({ style = {} }: { style: React.CSSProperties }): React.ReactElement {
+  const isDark = useIsDark();
+  const primaryBlockColor = '#c6aed759';
+  const secondaryBlockColor = '#DED2E8';
+
+  const renderDarkRow = (count: number, offset = 0, rowId: number) => (
     <Stack
       direction='row'
       key={`row-${rowId}-${offset}`}
@@ -92,8 +102,42 @@ export function HideNumberShape2 ({ style = {} }: { style: React.CSSProperties }
     </Stack>
   );
 
+  const getBlockColor = (rowId: number, index: number) => {
+    if ((rowId + index) % 2 !== 0) {
+      return 'transparent';
+    }
+
+    return index % 3 === 0 ? primaryBlockColor : secondaryBlockColor;
+  };
+
+  const renderLightRow = (count: number, rowId: number) => (
+    <Stack
+      direction='row'
+      key={`row-${rowId}`}
+      sx={{
+        flexShrink: 1,
+        minWidth: 0,
+        overflow: 'hidden'
+      }}
+    >
+      {Array.from({ length: count }).map((_, index) => (
+        <Box
+          key={`cell-${rowId}-${index}`}
+          sx={{
+            animation: 'fadeInUp 0.4s forwards',
+            animationDelay: `${(rowId + index) * 0.04}s`,
+            background: getBlockColor(rowId, index),
+            flexShrink: 0,
+            height: '12px',
+            width: '12px'
+          }}
+        />
+      ))}
+    </Stack>
+  );
+
   return (
-    <Grid container item sx={{ ...style }}>
+    <Grid container item sx={isDark ? { ...style } : { alignItems: 'center', justifyContent: 'flex-end', minWidth: 0, overflow: 'hidden', ...style }}>
       <>
         <style>
           {`
@@ -103,9 +147,19 @@ export function HideNumberShape2 ({ style = {} }: { style: React.CSSProperties }
             }
           `}
         </style>
-        <Stack direction='column' sx={{ flexShrink: 1, minWidth: 0, overflow: 'hidden', width: '67px' }}>
-          {renderRow(3, 12, 0)}
-          {renderRow(3, 0, 1)}
+        <Stack direction='column' sx={isDark ? { flexShrink: 1, minWidth: 0, overflow: 'hidden', width: '67px' } : { alignItems: 'flex-end', flexShrink: 0, ml: 'auto', minWidth: 0, overflow: 'hidden', width: '67px' }}>
+          {isDark
+            ? (
+              <>
+                {renderDarkRow(3, 12, 0)}
+                {renderDarkRow(3, 0, 1)}
+              </>)
+            : (
+              <>
+                {renderLightRow(6, 0)}
+                {renderLightRow(6, 1)}
+              </>)
+          }
         </Stack>
       </>
     </Grid>

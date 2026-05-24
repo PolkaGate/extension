@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ResponseJsonGetAccountInfo } from '@polkadot/extension-base/background/types';
@@ -6,18 +6,20 @@ import type { KeyringPair$Json } from '@polkadot/keyring/types';
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 
 import { Stack, Typography, useTheme } from '@mui/material';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 
-import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
+import { useExtensionLockContext } from '@polkadot/extension-polkagate/src/context/ExtensionLockContext';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { AUTO_LOCK_PERIOD_DEFAULT, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { stringToU8a, u8aToString } from '@polkadot/util';
-import { jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
+import { ethereumEncode, jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
-import { AccountContext, ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
-import { useAlerts, useTranslation } from '../../../hooks';
+import { ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
+import { useAccounts, useAlerts, useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore, unlockAllAccounts, updateMeta } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
 import { isKeyringPairs$Json } from '../../../util/typeGuards';
@@ -29,11 +31,13 @@ export interface JsonGetAccountInfo extends ResponseJsonGetAccountInfo {
   isExternal?: boolean;
 }
 
-export default function RestoreJson (): React.ReactElement {
+export default function RestoreJson(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
   const navigate = useNavigate();
-  const { accounts: maybeExistingAccounts } = useContext(AccountContext);
+  const { setExtensionLock } = useExtensionLockContext();
+  const maybeExistingAccounts = useAccounts();
   const { notify } = useAlerts();
 
   const [isBusy, setIsBusy] = useState(false);
@@ -115,7 +119,7 @@ export default function RestoreJson (): React.ReactElement {
     }
   }, []);
 
-  const filterAndEncryptFile = useCallback(async (jsonFile: KeyringPairs$Json, selected: string[]) => {
+  const filterAndEncryptFile = useCallback((jsonFile: KeyringPairs$Json, selected: string[]) => {
     const decryptedFile = jsonDecrypt(jsonFile, password);
     const parsedFile = JSON.parse(u8aToString(decryptedFile)) as KeyringPair$Json[];
     const filteredAccounts = parsedFile.filter(({ address }) => selected.includes(address));
@@ -124,43 +128,52 @@ export default function RestoreJson (): React.ReactElement {
     return jsonEncrypt(fileAsU8a, jsonFile.encoding.content, password) as KeyringPairs$Json;
   }, [password]);
 
-  const handleKeyringPairsJson = useCallback(async (jsonFile: KeyringPairs$Json) => {
+  const handleKeyringPairsJson = useCallback(async(jsonFile: KeyringPairs$Json) => {
     const selected = selectedAccountsInfo.map(({ address }) => address);
     let encryptFile = jsonFile;
     let accountToAddTime = accountsInfo.map(({ address }) => address);
 
     if (selected.length !== accountsInfo.length) {
       accountToAddTime = selected;
-      encryptFile = await filterAndEncryptFile(encryptFile, selected);
+      encryptFile = filterAndEncryptFile(encryptFile, selected);
     }
 
     await batchRestore(encryptFile, password);
-    const updateMetaList = accountToAddTime.map((address) => updateMeta(address, JSON.stringify({ addedTime: Date.now(), genesisHash: null })));
+    const updateMetaList = accountToAddTime.map((address) => {
+      // JSON exports may contain compressed secp256k1 public keys (0x02/0x03…);
+      // convert them to the corresponding EVM (H160) address so keyring.getPair() can resolve the account
+      if (address.startsWith('0x')) {
+        address = ethereumEncode(address);
+      }
+
+      return updateMeta(address, JSON.stringify({ addedTime: Date.now(), genesisHash: null }));
+    });
 
     await Promise.all(updateMetaList);
   }, [accountsInfo, filterAndEncryptFile, password, selectedAccountsInfo]);
 
-  const handleRegularJson = useCallback(async (jsonFile: KeyringPair$Json) => {
+  const handleRegularJson = useCallback(async(jsonFile: KeyringPair$Json) => {
     await jsonRestore(jsonFile, password);
   }, [password]);
 
-  const onRestore = useCallback(async (): Promise<void> => {
+  const onRestore = useCallback(async(): Promise<void> => {
     if (!file || (requirePassword && !password)) {
       return;
     }
 
     setIsBusy(true);
+    window.sessionStorage.setItem(STORAGE_KEY.AUTH_HANDOFF_SESSION, 'true');
 
     try {
       const resetOk = await resetOnForgotPassword();
 
       if (!resetOk) {
-         setIsBusy(false);
+        setIsBusy(false);
 
-         notify(t('Failed to reset accounts'), 'error');
+        notify(t('Failed to reset accounts'), 'error');
 
-         return;
-       }
+        return;
+      }
 
       if (isKeyringPairs$Json(file)) {
         await handleKeyringPairsJson(file);
@@ -179,21 +192,30 @@ export default function RestoreJson (): React.ReactElement {
       );
 
       if (localAccountsToUnlock.length > 0) {
+        await Promise.all([
+          setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true) as unknown as void,
+          setStorage(STORAGE_KEY.IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN, false) as unknown as void // may import accounts with old format, so reset to trigger migration in account provider
+        ]);
         const success = await unlockAllAccounts(password, AUTO_LOCK_PERIOD_DEFAULT * 60 * 1000);
 
+        await setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, success);
+
         if (success) {
-          setStorage(STORAGE_KEY.IS_PASSWORD_MIGRATED, true) as unknown as void;
-          navigate('/') as void;
+          flushSync(() => setExtensionLock(false));
         } else {
-          navigate('/migratePasswords') as void;
+          setExtensionLock(true);
         }
       }
+
+      window.sessionStorage.removeItem(STORAGE_KEY.AUTH_HANDOFF_SESSION);
+      navigate('/') as void;
     } catch (error) {
+      window.sessionStorage.removeItem(STORAGE_KEY.AUTH_HANDOFF_SESSION);
       console.error(error);
       setIsPasswordError(true);
       setIsBusy(false);
     }
-  }, [file, requirePassword, password, selectedAccountsInfo, maybeExistingAccounts, notify, t, handleKeyringPairsJson, handleRegularJson, navigate]);
+  }, [file, requirePassword, password, selectedAccountsInfo, maybeExistingAccounts, notify, t, handleKeyringPairsJson, handleRegularJson, navigate, setExtensionLock]);
 
   const onSelectDeselectAll = useCallback(() => {
     setSelectedAccountsInfo((prev) =>
@@ -221,13 +243,13 @@ export default function RestoreJson (): React.ReactElement {
       />
       <Stack direction='column' sx={{ position: 'relative', width: '500px' }}>
         {stepOne &&
-          <Typography color='#BEAAD8' sx={{ my: '15px', textAlign: 'left', width: '369px' }} variant='B-1'>
+          <Typography color={isLight ? '#8A74AF' : '#BEAAD8'} sx={{ my: '15px', textAlign: 'left', width: '369px' }} variant='B-1'>
             {t('Upload a JSON file containing the account(s) you previously exported from this extension or other compatible extensions/wallets.')}
           </Typography>
         }
         {!stepOne && accountsInfo.length &&
           <>
-            <Typography color='#BEAAD8' sx={{ my: '15px', textAlign: 'left' }} variant='B-1' width='100%'>
+            <Typography color={isLight ? '#8A74AF' : '#BEAAD8'} sx={{ my: '15px', textAlign: 'left' }} variant='B-1' width='100%'>
               {accountsInfo?.length === 1
                 ? t('Import the account into the extension')
                 : t('Select accounts to import into the extension')

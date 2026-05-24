@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useTheme } from '@mui/material';
@@ -12,7 +12,7 @@ import useTranslation from '../../hooks/useTranslation';
 import { rejectMetaRequest } from '../../messaging';
 import Request from './Request';
 
-export default function Metadata (): React.ReactElement {
+export default function Metadata(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const requests = useContext(MetadataReqContext);

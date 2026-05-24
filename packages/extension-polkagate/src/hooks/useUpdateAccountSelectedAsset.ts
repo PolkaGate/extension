@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback, useEffect } from 'react';
@@ -21,7 +21,7 @@ export const ACCOUNT_SELECTED_ASSET_ID_IN_STORAGE = 'accountSelectedAssetId';
  * @param {() => void} [onClose] - Optional callback function to be called after updating and changing the URL.
  */
 
-export default function useUpdateAccountSelectedAsset (address: string | undefined, genesisHash: string | undefined, assetId: string | number | undefined, changeUrl = false, onClose?: () => void): void {
+export default function useUpdateAccountSelectedAsset(address: string | undefined, genesisHash: string | undefined, assetId: string | number | undefined, changeUrl = false, onClose?: () => void): void {
   const location = useLocation();
   const navigate = useNavigate();
 

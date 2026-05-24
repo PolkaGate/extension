@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
@@ -10,7 +10,7 @@ import { OnboardTitle } from '../components';
 import AdaptiveLayout from '../components/layout/AdaptiveLayout';
 import CreationButton from './CreationButton';
 
-function HaveWallet (): React.ReactElement {
+function HaveWallet(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

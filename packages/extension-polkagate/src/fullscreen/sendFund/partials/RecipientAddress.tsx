@@ -1,13 +1,13 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Inputs } from '../types';
 
-import { Stack, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { Stack, Typography, useTheme } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { AddressInput } from '../../../components';
-import { useChainInfo, useTranslation } from '../../../hooks';
+import { useAddressBook, useFormatted, useSelectedAccount, useTranslation } from '../../../hooks';
 import NumberedTitle from './NumberedTitle';
 
 interface Props {
@@ -16,9 +16,13 @@ interface Props {
   setInputs: React.Dispatch<React.SetStateAction<Inputs | undefined>>
 }
 
-export default function RecipientAddress ({ genesisHash, inputs, setInputs }: Props): React.ReactElement {
+export default function RecipientAddress({ genesisHash, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const { chain } = useChainInfo(genesisHash, true);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const contacts = useAddressBook();
+  const selectedAccount = useSelectedAccount();
+  const formattedSelectedAccount = useFormatted(selectedAccount?.address, genesisHash);
 
   const [address, setAddress] = useState<string | null | undefined>(inputs?.recipientAddress);
   const [isError, setIsError] = useState<boolean>();
@@ -30,9 +34,31 @@ export default function RecipientAddress ({ genesisHash, inputs, setInputs }: Pr
     }));
   }, [address, setInputs]);
 
+  useEffect(() => {
+    if (genesisHash && genesisHash !== inputs?.recipientChain?.value) {
+      setAddress(null);
+
+      setInputs((prevInputs) => ({
+        ...(prevInputs || {}),
+        recipientAddress: undefined
+      }));
+    }
+  }, [genesisHash, inputs?.recipientChain?.value, setInputs]);
+
+  const useMyselfAsRecipient = useCallback(() => {
+    const recipientAddress = formattedSelectedAccount ?? selectedAccount?.address;
+
+    if (!recipientAddress) {
+      return;
+    }
+
+    setAddress(recipientAddress);
+    setIsError(false);
+  }, [formattedSelectedAccount, selectedAccount?.address]);
+
   return (
     <Stack direction='column'>
-      <Stack sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '108px', overflow: 'hidden', p: '15px', rowGap: '6px', width: '379px' }}>
+      <Stack sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#DDE3F4', borderRadius: '14px', boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)', height: '108px', overflow: 'hidden', p: '15px', rowGap: '6px', width: '379px' }}>
         <NumberedTitle
           number={1}
           textPartInColor={t('Recipient')}
@@ -41,9 +67,12 @@ export default function RecipientAddress ({ genesisHash, inputs, setInputs }: Pr
         <Stack alignItems='end' direction='row' justifyContent='space-between' width='100%'>
           <AddressInput
             address={address}
-            chain={chain}
+            genesisHash={genesisHash}
+            inlineActionLabel={selectedAccount?.address ? t('Myself') : undefined}
+            onInlineActionClick={useMyselfAsRecipient}
             setAddress={setAddress}
             setIsError={setIsError}
+            showAddressBook={contacts && contacts.length > 0}
             style={{ mt: '10px', width: '100%' }}
             withSelect
           />

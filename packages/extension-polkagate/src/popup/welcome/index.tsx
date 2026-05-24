@@ -1,7 +1,7 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Container, Grid, Typography } from '@mui/material';
 import { AddCircle, Wallet } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
@@ -20,9 +20,8 @@ export enum Popups {
   ADD_ACCOUNT
 }
 
-function Welcome (): React.ReactElement {
+function Welcome(): React.ReactElement {
   const { t } = useTranslation();
-  const theme = useTheme();
   const [popup, setPopup] = useState<Popups>(Popups.NONE);
   const [currentIndex, setCurrentIndex] = useState(0);
   const isBlueish = currentIndex > 1;
@@ -71,9 +70,10 @@ function Welcome (): React.ReactElement {
             />
             <StakingActionButton
               onClick={onCreateAccount}
-              startIcon={<AddCircle color={theme.palette.text.primary} size={20} variant='Bulk' />}
+              startIcon={<AddCircle color='#FFFFFF' size={20} variant='Bulk' />}
               style={{
-                '& .MuiButton-startIcon': { mr: '12px' },
+                '& .MuiButton-startIcon': { mr: '12px', zIndex: 2 },
+                '& .MuiButton-startIcon svg': { color: '#FFFFFF' },
                 borderRadius: '18px',
                 bottom: '86px',
                 height: '48px',

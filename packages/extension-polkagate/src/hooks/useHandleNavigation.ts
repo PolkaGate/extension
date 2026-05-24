@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useCallback } from 'react';
@@ -20,7 +20,7 @@ import useIsExtensionPopup from './useIsExtensionPopup';
  * handleNav('/dashboard');           // normal navigation
  * handleNav('/dashboard', {}, true); // fullscreen popup
  */
-export default function useHandleNavigation () {
+export default function useHandleNavigation() {
   const navigate = useNavigate();
   const isExtension = useIsExtensionPopup();
 

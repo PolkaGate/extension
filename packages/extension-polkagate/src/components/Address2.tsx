@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
 
-import { Stack, type SxProps, Typography } from '@mui/material';
+import { Stack, type SxProps, Typography, useTheme } from '@mui/material';
 import React, { } from 'react';
 
 import { useAccountName, useIsExtensionPopup, useTranslation } from '../hooks';
@@ -40,10 +40,12 @@ interface Props {
  *
  * @returns {React.ReactElement} The rendered address component.
  */
-function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, label, labelMarginTop, name, showAddress, showCopy = true, showName = true, style = {}, variant }: Props): React.ReactElement {
+function Address2({ address, charsCount = 5, identiconSize = 24, inTitleCase, label, labelMarginTop, name, showAddress, showCopy = true, showName = true, style = {}, variant }: Props): React.ReactElement {
   const { t } = useTranslation();
   const accountName = useAccountName(address || '');
   const isExtension = useIsExtensionPopup();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Stack alignItems='center' direction='column' sx={{ rowGap: '10px', width: '100%' }}>
@@ -52,7 +54,7 @@ function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, l
           {label}
         </Typography>
       }
-      <Stack alignItems='center' direction='row' sx={{ bgcolor: '#05091C', borderRadius: '18px', columnGap: '10px', height: showAddress ? '71px' : '52px', pl: '10px', width: '100%', ...style }}>
+      <Stack alignItems='center' direction='row' sx={{ bgcolor: theme.palette.surface.input, border: isDark ? 'none' : '1px solid', borderColor: isDark ? 'transparent' : theme.palette.border.strong, borderRadius: '18px', columnGap: '10px', height: showAddress ? '71px' : '52px', pl: '10px', width: '100%', ...style }}>
         {address &&
           <PolkaGateIdenticon
             address={address}
@@ -72,7 +74,7 @@ function Address2 ({ address, charsCount = 5, identiconSize = 24, inTitleCase, l
               address={address}
               charsCount={charsCount}
               showCopy={showCopy}
-              style={{ color: isExtension ? 'text.secondary' : '#AA83DC', justifyContent: 'flex-start' }}
+              style={{ color: isDark ? (isExtension ? 'text.secondary' : 'primary.main') : 'text.secondary', justifyContent: 'flex-start' }}
               variant={(variant || 'B-4') as Variant}
             />
           }

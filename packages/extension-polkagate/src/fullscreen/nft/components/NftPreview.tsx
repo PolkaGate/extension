@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable camelcase */
@@ -15,8 +15,8 @@ import { PREVIEW_SIZE } from '../utils/constants';
 import AudioPlayer from './AudioPlayer';
 import ItemAvatar from './ItemAvatar';
 
-function NftPreview ({ gifSource, info }: { gifSource: string | null | undefined; info: ItemInformation }) {
-    const { t } = useTranslation();
+function NftPreview({ gifSource, info }: { gifSource: string | null | undefined; info: ItemInformation }) {
+  const { t } = useTranslation();
 
   const [loaded, setLoaded] = useState<boolean>(false);
 

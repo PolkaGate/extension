@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension authors & contributors
+// Copyright 2019-2026 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, RequestTypes, ResponseTypes, SubscriptionMessageTypes, TransportRequestMessage, TransportResponseMessage } from '../background/types';

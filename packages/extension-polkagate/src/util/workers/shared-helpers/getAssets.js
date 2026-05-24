@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { BN_ZERO } from '@polkadot/util';
@@ -6,7 +6,7 @@ import { BN_ZERO } from '@polkadot/util';
 import { decodeMultiLocation } from '../../address';
 
 // @ts-ignore
-export async function getAssets (addresses, api, assets, chainName, results) {
+export async function getAssets(addresses, api, assets, chainName, results) {
   try {
     for (const asset of assets) {
       const isForeignAssets = asset.isForeign;

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Stack, Typography, useTheme } from '@mui/material';
@@ -12,13 +12,14 @@ interface Props {
   textPartInColor?: string | undefined;
 }
 
-export default function NumberedTitle ({ number, textPartInColor, title }: Props): React.ReactElement {
+export default function NumberedTitle({ number, textPartInColor, title }: Props): React.ReactElement {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Stack columnGap='5px' direction='row'>
-      <Box sx={{ alignItems: 'center', background: '#6743944D', border: '1px solid #2D1E4A', borderRadius: '50%', display: 'flex', height: '20px', justifyContent: 'center', width: '20px' }}>
-        <Typography color='#AA83DC' sx={{ textAlign: 'center' }} variant='B-3'>
+      <Box sx={{ alignItems: 'center', background: isDark ? '#6743944D' : '#EEF2FB', border: '1px solid', borderColor: isDark ? '#2D1E4A' : '#DDE3F4', borderRadius: '50%', display: 'flex', height: '20px', justifyContent: 'center', width: '20px' }}>
+        <Typography color={isDark ? '#AA83DC' : '#7D66A8'} sx={{ textAlign: 'center' }} variant='B-3'>
           {number}
         </Typography>
       </Box>

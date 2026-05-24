@@ -1,16 +1,17 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import { Eye, EyeSlash } from 'iconsax-react';
 import React from 'react';
 
 import { useIsDark, useIsHideNumbers } from '../../../hooks';
 
-function HideNumbers (): React.ReactElement {
+function HideNumbers(): React.ReactElement {
+  const theme = useTheme();
   const isDark = useIsDark();
-
-  const eyeColor = isDark ? '#AA83DC' : '#745D8B';
+  const hoverBg = isDark ? '#674394' : '#F3F6FD';
+  const eyeColor = theme.palette.accent.icon;
 
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
@@ -18,13 +19,13 @@ function HideNumbers (): React.ReactElement {
     <Grid
       alignItems='center' container item justifyContent='center' onClick={toggleHideNumbers}
       sx={{
-        ':hover': { background: '#674394' },
+        ':hover': { background: hoverBg },
         alignItems: 'center',
         backdropFilter: 'blur(20px)',
-        background: isDark ? '#2D1E4A80' : '#FFFFFF8C',
-        border: '2px solid #2D1E4A80',
+        background: isDark ? '#2D1E4A80' : '#FFFFFF',
+        border: isDark ? 'none' : '1px solid #DDE3F4',
         borderRadius: '12px',
-        boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
+        boxShadow: isDark ? '0px 0px 24px 8px #4E2B7259 inset' : '0px 8px 22px rgba(133, 140, 176, 0.12)',
         cursor: 'pointer',
         height: '32px',
         transition: 'all 250ms ease-out',

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -8,7 +8,7 @@ import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { BackWithLabel, Motion } from '../../../../components';
-import { useBackground, useBondExtraPool, useChainInfo, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useBondExtraPool, useChainInfo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
 import UserDashboardHeader from '../../../../partials/UserDashboardHeader';
 import { PROXY_TYPE } from '../../../../util/constants';
 import FeeValue from '../../partial/FeeValue';
@@ -16,19 +16,19 @@ import StakeAmountInput from '../../partial/StakeAmountInput';
 import StakingActionButton from '../../partial/StakingActionButton';
 import TokenStakeStatus from '../../partial/TokenStakeStatus';
 
-export default function BondExtra (): React.ReactElement {
+export default function BondExtra(): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();
   const navigate = useNavigate();
   const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
-  const stakingInfo = usePoolStakingInfo(address, genesisHash);
   const { api, decimal, token } = useChainInfo(genesisHash);
 
   const [review, setReview] = useState<boolean>(false);
 
-  const { bondAmount,
+  const { availableBalanceToStake,
+    bondAmount,
     errorMessage,
     estimatedFee,
     onInputChange,
@@ -69,7 +69,7 @@ export default function BondExtra (): React.ReactElement {
           />
           <Stack direction='column' justifyContent='space-between' sx={{ mt: '16px', px: '15px' }}>
             <TokenStakeStatus
-              amount={stakingInfo.availableBalanceToStake}
+              amount={availableBalanceToStake}
               decimal={decimal}
               genesisHash={genesisHash}
               style={{ mt: '8px' }}

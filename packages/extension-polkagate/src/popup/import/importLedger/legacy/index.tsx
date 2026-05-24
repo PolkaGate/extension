@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Chain } from '@polkadot/extension-chains/types';
@@ -8,8 +8,8 @@ import type { HexString } from '@polkadot/util/types';
 import { Grid, Stack, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { openOrFocusTab } from '@polkadot/extension-polkagate/src/fullscreen/accountDetails/components/CommonTasks';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import settings from '@polkadot/ui-settings';
 
@@ -27,7 +27,7 @@ interface Props {
   setMode: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export default function LegacyApps ({ setMode }: Props): React.ReactElement {
+export default function LegacyApps({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
 
@@ -61,6 +61,7 @@ export default function LegacyApps ({ setMode }: Props): React.ReactElement {
       createAccountHardware(address, 'ledger', accountIndex, addressOffset, name(accountIndex, addressOffset), genesis as HexString)
         .then(() => {
           setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
+          setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
           openOrFocusTab('/', true);
         })
         .catch((error: Error) => {
@@ -84,7 +85,7 @@ export default function LegacyApps ({ setMode }: Props): React.ReactElement {
       />
       <Steps />
       <Grid container item justifyContent='space-between' mb='25px' mt='10px'>
-        <Typography color='#EAEBF1' variant='B-1'>
+        <Typography color='text.secondary' variant='B-1'>
           {t('Select the chain')}
         </Typography>
         <DropSelect

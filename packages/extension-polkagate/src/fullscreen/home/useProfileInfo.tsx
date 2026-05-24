@@ -1,10 +1,13 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { ColorSwatch, Eye, Folder, type Icon, KeySquare, ScanBarcode, UserOctagon } from 'iconsax-react';
+import { Book, ColorSwatch, Data2, Eye, Folder, type Icon, KeySquare, ScanBarcode, UserOctagon } from 'iconsax-react';
 import { useMemo } from 'react';
 
-import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
+import { useIsDark } from '@polkadot/extension-polkagate/src/hooks';
+import { ADDRESS_BOOK_LABEL, PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
+
+import { PROXIED_PROFILE_LABEL } from '../settings/importProxied/ProxiedAccount';
 
 interface IconInfo {
   Icon: Icon;
@@ -12,7 +15,9 @@ interface IconInfo {
   color?: string
 }
 
-export default function useProfileInfo (label?: string | null): IconInfo {
+export default function useProfileInfo(label?: string | null): IconInfo {
+  const isDark = useIsDark();
+  
   return useMemo(() => {
     switch (label) {
       case PROFILE_TAGS.ALL:
@@ -29,7 +34,7 @@ export default function useProfileInfo (label?: string | null): IconInfo {
         return {
           Icon: ColorSwatch,
           bgcolor: '#A7DFB726',
-          color: '#A7DFB7'
+          color: isDark ? '#A7DFB7' : '#00CA8D'
         };
       case PROFILE_TAGS.WATCH_ONLY:
         return {
@@ -42,6 +47,19 @@ export default function useProfileInfo (label?: string | null): IconInfo {
           Icon: ScanBarcode,
           bgcolor: '#3988FF26',
           color: '#3988FF'
+        };
+      case ADDRESS_BOOK_LABEL:
+        return {
+          Icon: Book,
+          bgcolor: '#74687626',
+          color: '#746876'
+        };
+
+      case PROXIED_PROFILE_LABEL:
+        return {
+          Icon: Data2,
+          bgcolor: '#ff398826',
+          color: '#ff3988'
         };
 
       default:

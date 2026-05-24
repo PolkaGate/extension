@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /**
@@ -9,7 +9,7 @@
  * @returns A Date object representing the estimated time when the blocks will be mined.
  */
 
-export default function RemainingDateByBlock (nextBlock: number): Date {
+export default function RemainingDateByBlock(nextBlock: number): Date {
   const remainingInSeconds = nextBlock * 6;
   const nowInSeconds = Date.now() / 1000;
   const remainingTimestamp = (nowInSeconds + remainingInSeconds) * 1000;

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Typography } from '@mui/material';
@@ -10,7 +10,7 @@ import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { info } from '../../assets/gif';
 import { DecisionButtons, TwoToneText } from '../../components';
-import { useAccountsOrder, useIsExtensionPopup, useProfileAccounts, useTranslation } from '../../hooks';
+import { useAccountsOrder, useIsDark, useIsExtensionPopup, useProfileAccounts, useTranslation } from '../../hooks';
 import { removeProfileTag } from './utils';
 
 interface Props {
@@ -18,10 +18,11 @@ interface Props {
   label: string;
 }
 
-function ConfirmationOfAction ({ label, setPopup }: Props): React.ReactElement {
+function ConfirmationOfAction({ label, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const initialAccountList = useAccountsOrder();
   const profileAccounts = useProfileAccounts(initialAccountList, label);
+  const isDark = useIsDark();
   const isExtension = useIsExtensionPopup();
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
@@ -75,6 +76,7 @@ function ConfirmationOfAction ({ label, setPopup }: Props): React.ReactElement {
         }
         <Typography color='text.primary' sx={{ mt: isExtension ? '15px' : '30px' }} variant='B-4'>
           <TwoToneText
+            color={isDark ? '#BEAAD8' : '#674394'}
             text={t('Profile "{{label}}" will be deleted.', { replace: { label } })}
             textPartInColor={`"${label}"`}
           />

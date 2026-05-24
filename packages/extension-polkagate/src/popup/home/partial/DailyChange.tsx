@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -7,8 +7,8 @@ import React, { useMemo } from 'react';
 
 import { FormatPrice, MySkeleton } from '../../../components';
 import { useIsDark, useIsHideNumbers, usePortfolio } from '../../../hooks';
-import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 import { formatDecimal } from '../../../util';
+import { COIN_GECKO_PRICE_CHANGE_DURATION } from '../../../util/api/getPrices';
 
 const PORTFOLIO_CHANGE_DECIMAL = 2;
 
@@ -22,7 +22,7 @@ interface DailyChangeProps {
   showPercentage?: boolean;
 }
 
-function DailyChange ({ address, change = null, iconSize = 15, showHours = true, showPercentage, style = {}, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
+function DailyChange({ address, change = null, iconSize = 15, showHours = true, showPercentage, style = {}, textVariant = 'B-1' }: DailyChangeProps): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const youHave = usePortfolio(address);
@@ -66,10 +66,10 @@ function DailyChange ({ address, change = null, iconSize = 15, showHours = true,
       : changed > 0
         ? isDark ? '#82FFA5' : '#00CA8D'
         : '#FF165C'
-  , [changed, isDark]);
+    , [changed, isDark]);
 
   if (changed === undefined) {
-    return (<MySkeleton height={20} style={{ background: '#BEAAD826', width: style?.minWidth ?? '122px' }} />);
+    return (<MySkeleton height={20} style={{ background: theme.palette.skeleton.subtle, width: style?.minWidth ?? '122px' }} />);
   }
 
   return (
@@ -91,7 +91,7 @@ function DailyChange ({ address, change = null, iconSize = 15, showHours = true,
           textColor={color}
           width='fit-content'
           {...(theme.typography[textVariant as never] as object)}
-        />
+          />
       }
       {showHours && !isHideNumbers &&
         <Typography style={{ color, fontWeight: 900, lineHeight: '15px' }} variant={textVariant as never}>

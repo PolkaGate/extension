@@ -1,14 +1,14 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
 import { getAssetsObject } from '@paraspell/sdk-pjs';
 
 import { getSubstrateAddress } from '../../address';
-import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
+import { FETCHING_ASSETS_FN } from '../../constants';
 import { toTitleCase } from '../../string';
 // eslint-disable-next-line import/extensions
-import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
+import { balancifyAsset, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
 
 /**
  *
@@ -18,93 +18,96 @@ import { balancifyAsset, closeWebsockets, fastestEndpoint, getChainEndpoints, me
  * @param {import('../../types').UserAddedChains} userAddedEndpoints
  * @param {MessagePort} port
  */
-export async function getAssetOnMultiAssetChain (assetsToBeFetched, addresses, chainName, userAddedEndpoints, port) {
+export async function getAssetOnMultiAssetChain(assetsToBeFetched, addresses, chainName, userAddedEndpoints, port) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
-  const { api, connections } = await fastestEndpoint(endpoints);
+  const { api } = await fastestEndpoint(endpoints);
 
-  const { metadata } = metadataFromApi(api);
+  let results = {};
 
-  console.info(chainName, 'metadata : fetched and saved.');
-  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET, metadata }));
+  try {
+    if (api.isConnected) {
+      const { metadata } = await metadataFromApi(api);
 
-  const results = await toGetNativeToken(addresses, api, chainName);
+      console.info(chainName, 'metadata : fetched and saved.(getAssetOnMultiAssetChain)');
+      port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.MULTI_ASSET, metadata }));
 
-  const maybeTheAssetOfAddresses = addresses.map((address) => api.query['tokens']['accounts'].entries(address));
-  const balanceOfAssetsOfAddresses = await Promise.all(maybeTheAssetOfAddresses);
+      results = await toGetNativeToken(addresses, api, chainName);
 
-  balanceOfAssetsOfAddresses.flat().forEach((entry) => {
-    if (!entry.length) {
-      return;
-    }
+      const maybeTheAssetOfAddresses = addresses.map((address) => api.query['tokens']['accounts'].entries(address));
+      const balanceOfAssetsOfAddresses = await Promise.all(maybeTheAssetOfAddresses);
 
-    // @ts-ignore
-    const [formatted, assetIdRaw] = entry[0].toHuman() ?? [];
+      balanceOfAssetsOfAddresses.flat().forEach((entry) => {
+        if (!entry.length) {
+          return;
+        }
 
-    let assetId;
+        // @ts-ignore
+        const [formatted, assetIdRaw] = entry[0].toHuman() ?? [];
 
-    if (typeof assetIdRaw === 'object') {
-      assetId = JSON.stringify(assetIdRaw);
-    } else {
-      // ensure assetId is a string and remove commas
-      assetId = assetIdRaw?.toString().replace(/,/g, '');
-    }
+        let assetId;
 
-    const storageKey = entry[0].toString();
+        if (typeof assetIdRaw === 'object') {
+          assetId = JSON.stringify(assetIdRaw);
+        } else {
+          // ensure assetId is a string and remove commas
+          assetId = assetIdRaw?.toString().replace(/,/g, '');
+        }
 
-    // @ts-ignore
-    let maybeAssetInfo = assetsToBeFetched.find((_asset) => {
-      const currencyId = _asset?.extras?.['currencyIdScale'].replace('0x', '');
+        const storageKey = entry[0].toString();
 
-      return currencyId && storageKey.endsWith(currencyId);
-    });
+        // @ts-ignore
+        let maybeAssetInfo = assetsToBeFetched.find((_asset) => {
+          const currencyId = _asset?.extras?.['currencyIdScale']?.replace('0x', '');
 
-    const balance = entry[1];
+          return currencyId && storageKey.endsWith(currencyId);
+        });
 
-    if (!maybeAssetInfo) {
-      const assetObj = getAssetsObject(toTitleCase(chainName));
+        const balance = entry[1];
 
-      if (assetObj) {
-        const maybeAssetId = entry[0].toHuman()[1].replace(/,/g, '');
+        if (!maybeAssetInfo) {
+          const assetObj = getAssetsObject(toTitleCase(chainName));
 
-        const assets = assetObj.nativeAssets.concat(assetObj.otherAssets);
+          if (assetObj?.assets) {
+            maybeAssetInfo = assetObj.assets.find(({ assetId: candidateId }) => candidateId === assetId);
 
-        maybeAssetInfo = assets.find(({ assetId }) => assetId === maybeAssetId);
+            if (maybeAssetInfo) {
+              maybeAssetInfo.id = maybeAssetInfo.assetId;
+              maybeAssetInfo.decimal = maybeAssetInfo.decimals;
+              console.log(' found:', maybeAssetInfo);
+            }
+          }
+        }
 
         if (maybeAssetInfo) {
-          maybeAssetInfo.id = maybeAssetInfo.assetId;
-          maybeAssetInfo.decimal = maybeAssetInfo.decimals;
-          console.log(' found:', maybeAssetInfo);
+          // @ts-ignore
+          const totalBalance = balance.free.add(balance.reserved);
+
+          const asset = {
+            ED: maybeAssetInfo?.extras?.existentialDeposit ?? maybeAssetInfo?.existentialDeposit,
+            assetId: assetId ?? maybeAssetInfo.id,
+            balanceDetails: balancifyAsset(balance),
+            chainName,
+            decimal: maybeAssetInfo.decimal,
+            formatted,
+            genesisHash: api.genesisHash.toString(),
+            priceId: maybeAssetInfo?.priceId,
+            token: maybeAssetInfo.symbol,
+            totalBalance: String(totalBalance)
+          };
+
+          const address = getSubstrateAddress(formatted);
+
+          // @ts-ignore
+          results[address]?.push(asset) ?? (results[address] = [asset]);
+        } else {
+          console.info(`NOTE: There is an asset on ${chainName} for ${formatted} which is not whitelisted. assetInfo`, storageKey, balance?.toHuman());
         }
-      }
+      });
     }
-
-    if (maybeAssetInfo) {
-      // @ts-ignore
-      const totalBalance = balance.free.add(balance.reserved);
-
-      const asset = {
-        ED: maybeAssetInfo?.extras?.existentialDeposit ?? maybeAssetInfo?.existentialDeposit,
-        assetId: assetId ?? maybeAssetInfo.id,
-        balanceDetails: balancifyAsset(balance),
-        chainName,
-        decimal: maybeAssetInfo.decimal,
-        formatted,
-        genesisHash: api.genesisHash.toString(),
-        priceId: maybeAssetInfo?.priceId,
-        token: maybeAssetInfo.symbol,
-        totalBalance: String(totalBalance)
-      };
-
-      const address = getSubstrateAddress(formatted);
-
-      // @ts-ignore
-      results[address]?.push(asset) ?? (results[address] = [asset]);
-    } else {
-      console.info(`NOTE: There is an asset on ${chainName} for ${formatted} which is not whitelisted. assetInfo`, storageKey, balance?.toHuman());
-    }
-  });
+  } finally {
+    await api.disconnect().catch(console.error);
+  }
 
   console.info(chainName, ': account assets fetched.');
-  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET, results }));
-  closeWebsockets(connections);
+  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.MULTI_ASSET, results }));
 }

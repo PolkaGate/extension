@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { RadioProps } from '@mui/material/Radio';
@@ -10,9 +10,11 @@ import React, { useState } from 'react';
 
 import useIsBlueish from '@polkadot/extension-polkagate/src/hooks/useIsBlueish';
 
-const UnChecked = styled('span')<{ size: number; isBlueish: boolean; isHovered?: boolean }>(({ isBlueish, isHovered, size }) => ({
+const UnChecked = styled('span')<{ size: number; isBlueish: boolean; isHovered?: boolean }>(({ isBlueish, isHovered, size, theme }) => ({
   '&::after': {
-    backgroundColor: isBlueish ? '#809ACB' : '#FFF',
+    backgroundColor: isBlueish
+      ? theme.palette.mode === 'dark' ? '#809ACB' : theme.palette.text.highlight
+      : theme.palette.mode === 'dark' ? '#FFF' : theme.palette.text.highlight,
     borderRadius: '999px',
     content: isHovered ? '""' : 'none',
     height: size * 0.6,
@@ -29,7 +31,7 @@ const UnChecked = styled('span')<{ size: number; isBlueish: boolean; isHovered?:
     outlineOffset: 2
   },
   backgroundColor: 'transparent',
-  border: `3px solid ${isBlueish ? '#222442' : '#2D1E4A'}`,
+  border: `3px solid ${isBlueish ? theme.palette.mode === 'dark' ? '#222442' : '#B7C4E8' : theme.palette.mode === 'dark' ? '#2D1E4A' : '#B7C4E8'}`,
   borderRadius: '999px',
   height: size,
   padding: 0,
@@ -58,7 +60,7 @@ const Checked = styled('span')<{ checked: boolean; isBlueish: boolean; theme: Th
     WebkitMaskComposite: isBlueish ? 'none' : 'xor',
     background: isBlueish
       ? 'transparent'
-      : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+      : theme.palette.gradient.brand,
     backgroundClip: isBlueish ? 'none' : 'border-box',
     border: isBlueish ? '3px solid #3988FF' : 'none',
     borderRadius: '999px',
@@ -96,7 +98,7 @@ interface Props extends RadioProps {
   isHovered?: boolean;
 }
 
-export default function PRadio ({ boxStyle = {}, checked, circleSize = 18, isHovered: isHoveredProp, labeStyle, label, onChange, props, value }: Props) {
+export default function PRadio({ boxStyle = {}, checked, circleSize = 18, isHovered: isHoveredProp, labeStyle, label, onChange, props, value }: Props) {
   const theme = useTheme();
   const isBlueish = useIsBlueish();
   const [internalHovered, setInternalHovered] = useState(false);
@@ -139,7 +141,9 @@ export default function PRadio ({ boxStyle = {}, checked, circleSize = 18, isHov
               ? isBlueish
                 ? 'text.highlight'
                 : 'text.secondary'
-              : 'text.primary'
+              : theme.palette.mode === 'dark'
+                ? 'text.primary'
+                : 'text.secondary'
           } sx={labeStyle} variant='B-2'
         >
           {label}

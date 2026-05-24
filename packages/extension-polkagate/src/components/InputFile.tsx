@@ -1,4 +1,4 @@
-// Copyright 2017-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2017-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DropzoneRef } from 'react-dropzone';
@@ -14,7 +14,7 @@ import { useIsDark } from '../hooks';
 import useTranslation from '../hooks/useTranslation';
 import ActionButton from './ActionButton';
 
-function formatBytes (bytes?: number, decimals = 2): string {
+function formatBytes(bytes?: number, decimals = 2): string {
   if (!bytes || bytes === 0) {
     return '0 B';
   }
@@ -26,7 +26,7 @@ function formatBytes (bytes?: number, decimals = 2): string {
   return `${value.toFixed(decimals)} ${units[i]}`;
 }
 
-function classes (...classNames: (boolean | null | string | undefined)[]): string {
+function classes(...classNames: (boolean | null | string | undefined)[]): string {
   return classNames
     .filter((className): boolean => !!className)
     .join(' ');
@@ -51,7 +51,7 @@ interface FileState {
 const BYTE_STR_0 = '0'.charCodeAt(0);
 const BYTE_STR_X = 'x'.charCodeAt(0);
 
-function convertResult (result: ArrayBuffer, convertHex?: boolean): Uint8Array {
+function convertResult(result: ArrayBuffer, convertHex?: boolean): Uint8Array {
   const data = new Uint8Array(result);
 
   // this converts the input (if detected as hex), vai the hex conversion route
@@ -66,9 +66,13 @@ function convertResult (result: ArrayBuffer, convertHex?: boolean): Uint8Array {
   return data;
 }
 
-function FileInfo ({ file, onBack }: { file: FileState | undefined, onBack: () => void }): React.ReactElement<InputFileProps> {
+function FileInfo({ file, onBack }: { file: FileState | undefined, onBack: () => void }): React.ReactElement<InputFileProps> {
   const isDark = useIsDark();
   const { t } = useTranslation();
+  const cardBg = isDark ? '#1B133CB2' : '#FFFFFF';
+  const cardBorder = isDark ? '#1B133CB2' : '#DDE3F4';
+  const primaryText = isDark ? '#BEAAD8' : '#6F5A96';
+  const secondaryText = isDark ? '#AA83DC' : '#7B84AC';
   const truncate = (str: string, max = 40): string =>
     str.length > max ? str.slice(0, max - 1) + '…' : str;
 
@@ -77,14 +81,14 @@ function FileInfo ({ file, onBack }: { file: FileState | undefined, onBack: () =
       <Typography sx={{ mb: '5px' }} variant='B-1'>
         {t('File name')}
       </Typography>
-      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#1B133CB2', border: '1px solid #1B133CB2', borderRadius: '12px', height: '56px', px: '5px', width: '100%' }}>
+      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: cardBg, border: `1px solid ${cardBorder}`, borderRadius: '12px', boxShadow: isDark ? 'none' : '0 8px 20px rgba(133, 140, 176, 0.10)', height: '56px', px: '5px', width: '100%' }}>
         <Stack alignItems='center' columnGap='10px' direction='row'>
-          <DocumentText color='#AA83DC' size='18' variant='Bulk' />
+          <DocumentText color={secondaryText} size='18' variant='Bulk' />
           <Stack alignItems='start' direction='column'>
-            <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-4'>
+            <Typography color={primaryText} sx={{ textAlign: 'left' }} variant='B-4'>
               {truncate(file?.name || '')}
             </Typography>
-            <Typography color='#AA83DC' variant='B-4'>
+            <Typography color={secondaryText} variant='B-4'>
               {formatBytes(file?.size)}
             </Typography>
           </Stack>
@@ -119,16 +123,17 @@ function FileInfo ({ file, onBack }: { file: FileState | undefined, onBack: () =
   );
 }
 
-function DropZoneContent (): React.ReactElement<InputFileProps> {
+function DropZoneContent(): React.ReactElement<InputFileProps> {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
   return (
     <Stack alignItems='center' direction='column' justifyContent='center' rowGap='20px' sx={{ m: '30px 0 20px' }}>
-      <FolderOpen color='#AA83DC' size='36' variant='Bulk' />
-      <Typography color='#BEAAD8' variant='B-1'>
+      <FolderOpen color={isDark ? '#AA83DC' : '#7B84AC'} size='36' variant='Bulk' />
+      <Typography color={isDark ? '#BEAAD8' : '#6F5A96'} variant='B-1'>
         {t('Drag and drop the file here')}
       </Typography>
-      <Typography color='#674394' variant='B-1' width='60%'>
+      <Typography color={isDark ? '#674394' : '#7B84AC'} variant='B-1' width='60%'>
         {t('Only JSON files are accepted here; DOC, JPEG, and other formats are not accepted.')}
       </Typography>
       <ActionButton
@@ -141,7 +146,8 @@ function DropZoneContent (): React.ReactElement<InputFileProps> {
           borderRadius: '8px',
           height: '32px',
           marginTop: '5px',
-          width: '100px'
+          minWidth: '100px',
+          width: 'fit-content'
         }}
         text={t('Browse')}
         variant='contained'
@@ -180,7 +186,8 @@ function DropZoneContent (): React.ReactElement<InputFileProps> {
  *   onChange={(data, name) => console.log('File loaded:', name, data)}
  * />
  */
-function InputFile ({ accept, convertHex, isDisabled, isError = false, onBack, onChange, reset, style }: InputFileProps): React.ReactElement<InputFileProps> {
+function InputFile({ accept, convertHex, isDisabled, isError = false, onBack, onChange, reset, style }: InputFileProps): React.ReactElement<InputFileProps> {
+  const isDark = useIsDark();
   const dropRef = createRef<DropzoneRef>();
 
   const [file, setFile] = useState<FileState | undefined>();
@@ -227,7 +234,7 @@ function InputFile ({ accept, convertHex, isDisabled, isError = false, onBack, o
       {({ getInputProps, getRootProps }): React.JSX.Element => (
         <>
           <Box
-            border={hovered ? '1px dashed #AA83DC' : '1px solid #2D1E4A'}
+            border={hovered ? `1px dashed ${isDark ? '#AA83DC' : '#7B84AC'}` : `1px solid ${isDark ? '#2D1E4A' : '#DDE3F4'}`}
             borderRadius='18px'
             boxSizing='border-box'
             display={reset ? 'inherit' : 'none'}

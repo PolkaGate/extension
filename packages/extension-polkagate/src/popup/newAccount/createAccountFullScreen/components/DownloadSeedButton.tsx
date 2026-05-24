@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, type SxProps, type Theme } from '@mui/material';
@@ -15,7 +15,7 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-function DownloadSeedButton ({ iconSize = 18, style = {}, text, value }: Props): React.ReactElement<Props> {
+function DownloadSeedButton({ iconSize = 18, style = {}, text, value }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const onDownload = useCallback(() => {
     const element = document.createElement('a');
@@ -42,7 +42,7 @@ function DownloadSeedButton ({ iconSize = 18, style = {}, text, value }: Props):
           height: '32px',
           padding: '5px 10px'
         }}
-        text={text ?? t('Download') }
+        text={text ?? t('Download')}
         variant='contained'
       />
     </Grid>

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
@@ -11,7 +11,7 @@ import React, { useCallback, useState } from 'react';
 
 import { deriveAccount } from '@polkadot/extension-polkagate/src/messaging';
 
-import { DecisionButtons, Identity2, MySnackbar, MyTextField } from '../../../components';
+import { DecisionButtons, Identity, MySnackbar, MyTextField } from '../../../components';
 import { useTranslation } from '../../../hooks';
 import { DERIVATION_STEPS } from './types';
 
@@ -33,7 +33,7 @@ interface Props {
   setStep: React.Dispatch<React.SetStateAction<DERIVATION_STEPS>>;
 }
 
-function ChildInfo ({ genesisHash, maybeChidAccount, onClose, parentAddress, parentPassword, setMaybeChidAccount, setStep }: Props): React.ReactElement {
+function ChildInfo({ genesisHash, maybeChidAccount, onClose, parentAddress, parentPassword, setMaybeChidAccount, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const parentGenesis = (genesisHash ?? POLKADOT_GENESIS) as HexString;
@@ -86,7 +86,7 @@ function ChildInfo ({ genesisHash, maybeChidAccount, onClose, parentAddress, par
         <Typography color='#BEAAD8' sx={{ lineHeight: '16.8px', mx: '15px' }} textAlign='center' variant='B-4'>
           {t('This child account will be created from your parent account. Give it a name.')}
         </Typography>
-        <Identity2
+        <Identity
           address={maybeChidAccount?.address}
           addressStyle={{ color: 'primary.main', variant: 'B-1' }}
           charsCount={14}

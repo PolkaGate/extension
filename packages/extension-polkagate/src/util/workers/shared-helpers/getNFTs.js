@@ -1,13 +1,14 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
 
+import { isEthereumAddress } from '@polkadot/util-crypto';
+
 import { SUPPORTED_NFT_CHAINS } from '../../../fullscreen/nft/utils/constants';
 import { getFormattedAddress } from '../../address';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
-
-const NFT_FUNCTION_NAME = 'getNFTs';
+import { WORKER_TASKS } from '../../constants';
+import { fastestEndpoint, getChainEndpoints } from '../utils';
 
 /**
  * Fetches NFT or unique collections for a given chain and set of addresses
@@ -17,7 +18,7 @@ const NFT_FUNCTION_NAME = 'getNFTs';
  * @param {boolean} isNft - Whether to fetch NFT collections (true) or unique collections (false)
  * @returns {Promise<ItemInformation[]>} Array of collection information
  */
-async function fetchCollections (api, addresses, chainName, isNft) {
+async function fetchCollections(api, addresses, chainName, isNft) {
   // Determine which query method to use based on item type
   const queryMethod = isNft ? api.query.nfts.collectionAccount : api.query.uniques.classAccount;
   const requests = addresses.map(async (address) => await queryMethod.entries(address));
@@ -69,7 +70,7 @@ async function fetchCollections (api, addresses, chainName, isNft) {
  * @param {boolean} isNft - Whether to fetch NFTs (true) or uniques (false)
  * @returns {Promise<Array>} Array of item information
  */
-async function fetchItems (api, addresses, chainName, isNft) {
+async function fetchItems(api, addresses, chainName, isNft) {
   // Determine which query method to use based on item type
   const queryMethod = isNft ? api.query.nfts.account : api.query.uniques.account;
   const requests = addresses.map(async (address) => await queryMethod.entries(address));
@@ -167,7 +168,7 @@ async function fetchItems (api, addresses, chainName, isNft) {
  * @param {string} chainName - The chain identifier
  * @returns {Promise<ItemInformation[]>} Combined array of NFTs and uniques
  */
-async function fetchNFTsForChain (api, addresses, chainName) {
+async function fetchNFTsForChain(api, addresses, chainName) {
   const [nfts, uniques, nftCollections, uniqueCollections] = await Promise.all([
     fetchItems(api, addresses, chainName, true),
     fetchItems(api, addresses, chainName, false),
@@ -183,7 +184,7 @@ async function fetchNFTsForChain (api, addresses, chainName) {
  * @param {string[]} addresses - Array of addresses to fetch items for
  * @returns {Promise<Record<string, ItemInformation[]>>} Combined array of all NFT and unique items and collections across all chains, categorized by addresses
  */
-async function getNFTs (addresses) {
+async function getNFTs(addresses) {
   const chainNames = Object.entries(SUPPORTED_NFT_CHAINS);
 
   // Initialize API connections for all chainNames
@@ -191,9 +192,9 @@ async function getNFTs (addresses) {
     const formattedAddresses = addresses.map((address) => getFormattedAddress(address, undefined, prefix));
     const endpoints = getChainEndpoints(name, undefined);
 
-    const { api, connections } = await fastestEndpoint(endpoints);
+    const { api } = await fastestEndpoint(endpoints);
 
-    return ({ api, chainName, connections, formattedAddresses, originalAddresses: addresses });
+    return ({ api, chainName, formattedAddresses, originalAddresses: addresses });
   });
 
   const apis = await Promise.all(apiPromises);
@@ -223,8 +224,9 @@ async function getNFTs (addresses) {
 
     return itemsByAddress;
   } finally {
-    // Ensure all websocket connections are closed
-    apis.forEach(({ connections }) => closeWebsockets(connections));
+    await Promise.allSettled(
+      apis.map(({ api }) => api.disconnect().catch(console.error))
+    );
   }
 }
 
@@ -233,19 +235,21 @@ async function getNFTs (addresses) {
  * @param {string[]} addresses
  * @param {MessagePort } port
  */
-export default async function getNftHandler (addresses, port) {
-  if (!addresses) {
+export default async function getNftHandler(addresses, port) {
+  const filteredAddresses = addresses?.filter((addr) => !isEthereumAddress(addr));
+
+  if (!filteredAddresses) {
     console.warn('Shared worker, No addresses to NFTs');
 
-    return port.postMessage(JSON.stringify({ functionName: NFT_FUNCTION_NAME, results: undefined }));
+    return port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.GET_NFTS, results: undefined }));
   }
 
   for (let tryCount = 1; tryCount <= 5; tryCount++) {
     try {
-      const allItems = await getNFTs(addresses);
+      const allItems = await getNFTs(filteredAddresses);
 
       console.info('Shared worker, accounts NFTs fetched!');
-      port.postMessage(JSON.stringify({ functionName: NFT_FUNCTION_NAME, results: allItems }));
+      port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.GET_NFTS, results: allItems }));
 
       return;
     } catch (error) {
@@ -253,7 +257,7 @@ export default async function getNftHandler (addresses, port) {
 
       if (tryCount === 5) {
         console.warn('Shared worker, Unable to fetch NFTs');
-        port.postMessage(JSON.stringify({ functionName: NFT_FUNCTION_NAME, results: undefined }));
+        port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.GET_NFTS, results: undefined }));
       } else {
         // Wait for a delay before retrying (e.g., exponential backoff)
         await new Promise((resolve) => setTimeout(resolve, tryCount * 1000));

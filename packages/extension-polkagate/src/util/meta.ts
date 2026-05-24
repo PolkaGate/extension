@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DeriveBalancesAll } from '@polkadot/api-derive/types';
@@ -11,17 +11,17 @@ interface Meta {
   docs: Text[];
 }
 
-function splitSingle (value: string[], sep: string): string[] {
+function splitSingle(value: string[], sep: string): string[] {
   return value.reduce((result: string[], value: string): string[] => {
     return value.split(sep).reduce((result: string[], value: string) => result.concat(value), result);
   }, []);
 }
 
-function splitParts (value: string): string[] {
+function splitParts(value: string): string[] {
   return ['[', ']'].reduce((result: string[], sep) => splitSingle(result, sep), [value]);
 }
 
-export function prepareMetaData (chain: Chain | null | string, label: string, metaData: unknown): string {
+export function prepareMetaData(chain: Chain | null | string, label: string, metaData: unknown): string {
   const chainName = sanitizeChainName((chain as Chain)?.name) ?? chain;
 
   if (label === 'balances') {
@@ -48,7 +48,7 @@ export function prepareMetaData (chain: Chain | null | string, label: string, me
   });
 }
 
-export function formatMeta (meta?: Meta): string[] | null {
+export function formatMeta(meta?: Meta): string[] | null {
   if (!meta?.docs.length) {
     return null;
   }

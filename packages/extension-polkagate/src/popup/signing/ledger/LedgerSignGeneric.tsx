@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
@@ -25,7 +25,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-function LedgerSignGeneric ({ account, disabled, error, onCancel, onSignature, payload, setError, style }: Props): React.ReactElement<Props> {
+function LedgerSignGeneric({ account, disabled, error, onCancel, onSignature, payload, setError, style }: Props): React.ReactElement<Props> {
   const { accountIndex, addressOffset, isGeneric } = account;
   const payloadGenesis = payload?.genesisHash;
   const { api } = useChainInfo(payloadGenesis);
@@ -47,7 +47,7 @@ function LedgerSignGeneric ({ account, disabled, error, onCancel, onSignature, p
     return null;
   }, [isGeneric, payloadGenesis]);
 
-  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
+  const { error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, ledger, refresh } = useGenericLedger(accountIndex, addressOffset, chainSlip44);
 
   useEffect(() => {
     if (ledgerError) {
@@ -95,8 +95,8 @@ function LedgerSignGeneric ({ account, disabled, error, onCancel, onSignature, p
       disabled={disabled}
       error={error}
       isBusy={isBusy || ledgerLoading}
+      isMetadataProofReady = { !!metadataProof}
       ledgerLocked={ledgerLocked}
-      ledgerWarning={ledgerWarning}
       onCancel={onCancel}
       onRefresh={onRefresh}
       onSignLedger={onSignLedger}

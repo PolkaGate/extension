@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
@@ -13,7 +13,7 @@ export interface StakingConsts {
   expectedBlockTime: number;
 }
 
-export default function useStakingConstRelay (genesisHash: string | undefined) {
+export default function useStakingConstRelay(genesisHash: string | undefined) {
   const relayGenesisHash = mapHubToRelay(genesisHash);
   const { api: relayChainApi } = useChainInfo(relayGenesisHash);
 

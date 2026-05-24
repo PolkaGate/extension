@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -9,10 +9,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useBackground, useChainInfo, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
+import { useBackground, useChainInfo, useHighCommissionNominationAlert, useSelectedAccount, useSoloStakingInfo, useTransactionFlow, useTranslation, useWithdrawSolo } from '../../../hooks';
 import UserDashboardHeader from '../../../partials/UserDashboardHeader';
 import { updateStorage } from '../../../util';
-import { STORAGE_KEY, PROXY_TYPE } from '../../../util/constants';
+import { PROXY_TYPE, STORAGE_KEY } from '../../../util/constants';
 import AvailableToStake from '../partial/AvailableToStake';
 import StakingMenu from '../partial/StakingMenu';
 import StakingPortfolio from '../partial/StakingPortfolio';
@@ -33,7 +33,7 @@ const Back = () => {
   );
 };
 
-export default function Solo (): React.ReactElement {
+export default function Solo(): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();
@@ -43,6 +43,12 @@ export default function Solo (): React.ReactElement {
 
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
   const { api, decimal, token } = useChainInfo(genesisHash);
+
+  useHighCommissionNominationAlert({
+    genesisHash,
+    nominatedValidatorsIds: stakingInfo.stakingAccount?.nominators?.map((item) => item.toString()),
+    stakingType: 'solo'
+  });
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
   const [review, setReview] = useState<boolean>(false);

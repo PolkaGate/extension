@@ -1,13 +1,18 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AudioPlayerProps } from '../utils/types';
 
-import { Grid, IconButton, Slider, Stack, Typography } from '@mui/material';
+import { Grid, IconButton, Slider, Stack, Typography, useTheme } from '@mui/material';
 import { PauseCircle, PlayCircle } from 'iconsax-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.ReactElement {
+import { useIsDark } from '../../../hooks';
+
+export default function AudioPlayer({ audioUrl }: AudioPlayerProps): React.ReactElement {
+  const theme = useTheme();
+  const isDark = useIsDark();
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -62,7 +67,7 @@ export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.Reac
   }, []);
 
   return (
-    <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '8px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.2)' }}>
+    <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '8px', boxShadow: isDark ? '0px 0px 10px rgba(0, 0, 0, 0.2)' : '0 8px 18px rgba(133, 140, 176, 0.12)' }}>
       <audio
         ref={audioRef}
         src={audioUrl ?? undefined}
@@ -73,8 +78,8 @@ export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.Reac
           sx={{ p: '5px', width: 'fit-content' }}
         >
           {isPlaying
-            ? <PauseCircle color='#AA83DC' size='18' variant='Bold' />
-            : <PlayCircle color='#AA83DC' size='18' variant='Bold' />
+            ? <PauseCircle color={theme.palette.accent.icon} size='18' variant='Bold' />
+            : <PlayCircle color={theme.palette.accent.icon} size='18' variant='Bold' />
           }
         </IconButton>
         <Grid alignItems='center' container item justifyContent='space-between' px='10px' xs>
@@ -88,7 +93,7 @@ export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.Reac
                 height: 8,
                 width: 8
               },
-              color: '#AA83DC',
+              color: theme.palette.accent.icon,
               height: '2px',
               py: '5px',
               width: '100%'
@@ -96,10 +101,10 @@ export default function AudioPlayer ({ audioUrl }: AudioPlayerProps): React.Reac
             value={currentTime}
           />
           <Stack direction='row' justifyContent='space-between' width='100%'>
-            <Typography color='#EAEBF1' fontSize='10px' variant='S-2'>
+            <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} fontSize='10px' variant='S-2'>
               {formatTime(currentTime)}
             </Typography>
-            <Typography color='#AA83DC' fontSize='10px' variant='S-2'>
+            <Typography color={theme.palette.accent.icon} fontSize='10px' variant='S-2'>
               {formatTime(duration)}
             </Typography>
           </Stack>

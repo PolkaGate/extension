@@ -1,40 +1,44 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import { Moon, Sun1 } from 'iconsax-react';
-import React, { useCallback } from 'react';
+import React, { useCallback, useContext } from 'react';
 
 import { useAlerts, useIsDark } from '@polkadot/extension-polkagate/src/hooks/index';
 import { toTitleCase } from '@polkadot/extension-polkagate/src/util/string';
 
+import { ColorContext } from '../../../components';
 import { useTranslation } from '../../../components/translate';
 
-export interface ItemProps{
-  Icon: Icon
+export interface ItemProps {
+  Icon: Icon;
+  mode: 'dark' | 'light';
   label: string;
   isSelected: boolean;
 }
 
-function Item ({ Icon, isSelected, label }: ItemProps): React.ReactElement {
+function Item({ Icon, isSelected, label, mode }: ItemProps): React.ReactElement {
   const { notify } = useAlerts();
   const { t } = useTranslation();
-  // const colorMode = useContext(ColorContext);
+  const colorMode = useContext(ColorContext);
+  const isDark = useIsDark();
+  const theme = useTheme();
 
   const onClick = useCallback(() => {
-  //  colorMode.toggleColorMode();
-    notify(t('Coming Soon!'), 'info');
-  }, [notify, t]);
+    colorMode.setColorMode(mode);
+    !isSelected && notify(t('{{mode}} enabled', { replace: { mode: label } }), 'success');
+  }, [colorMode, isSelected, label, mode, notify, t]);
 
   return (
     <Stack
       onClick={onClick}
       sx={{
         background: isSelected
-          ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)'
-          : '#BEAAD833',
+          ? theme.palette.gradient.brand
+          : isDark ? '#BEAAD833' : '#FFFFFFB2',
         borderRadius: '12px',
         cursor: 'pointer',
         height: '40px',
@@ -50,8 +54,8 @@ function Item ({ Icon, isSelected, label }: ItemProps): React.ReactElement {
         direction='row'
         justifyContent='start'
         sx={{
-          ':hover': { background: '#2D1E4A' },
-          background: isSelected ? '#1A1B20' : '#1B133CB2',
+          ':hover': { background: isDark ? '#2D1E4A' : '#F5F4FF' },
+          background: isSelected ? (isDark ? '#1A1B20' : '#FFFFFF') : (isDark ? '#1B133CB2' : '#CCD2EA80'),
           borderRadius: '10px',
           height: '40px',
           minWidth: '81px',
@@ -59,7 +63,7 @@ function Item ({ Icon, isSelected, label }: ItemProps): React.ReactElement {
           transition: 'all 250ms ease-out'
         }}
       >
-        <Icon color={isSelected ? '#DC45A0' : '#AA83DC'} size={18} variant='Bold' />
+        <Icon color={isSelected ? '#DC45A0' : (isDark ? '#AA83DC' : theme.palette.primary.main)} size={18} variant='Bold' />
         <Typography color='text.primary' sx={{ textAlign: 'left' }} variant='B-4'>
           {toTitleCase(label)}
         </Typography>
@@ -68,7 +72,7 @@ function Item ({ Icon, isSelected, label }: ItemProps): React.ReactElement {
   );
 }
 
-export default function Appearance (): React.ReactElement {
+export default function Appearance(): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
 
@@ -81,12 +85,14 @@ export default function Appearance (): React.ReactElement {
         <Item
           Icon={Moon}
           isSelected={isDark}
-          label= {t('Dark Mode')}
+          label={t('Dark Mode')}
+          mode='dark'
         />
         <Item
           Icon={Sun1}
           isSelected={!isDark}
-          label= {t('Light Mode')}
+          label={t('Light Mode')}
+          mode='light'
         />
       </Stack>
     </Stack>

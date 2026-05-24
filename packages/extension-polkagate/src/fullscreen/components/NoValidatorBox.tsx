@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Grid, Typography } from '@mui/material';
@@ -13,7 +13,7 @@ interface Props {
   text?: string;
 }
 
-function NoValidatorBox ({ style = {}, text }: Props) {
+function NoValidatorBox({ style = {}, text }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -25,7 +25,7 @@ function NoValidatorBox ({ style = {}, text }: Props) {
           sx={{ height: 'auto', m: '30px auto 15px', width: '150px' }}
         />
         <Typography color='text.secondary' mb='30px' variant='B-2'>
-          {text ?? t('The are no validators yet.')}
+          {text ?? t('There are no validators yet.')}
         </Typography>
       </Grid>
     </Motion>

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
@@ -17,7 +17,7 @@ interface NominatorsTableProp {
   selected?: string[];
 }
 
-function ValidatorsTable ({ genesisHash, onSelect, selected, validatorsInformation }: NominatorsTableProp): React.ReactElement {
+function ValidatorsTable({ genesisHash, onSelect, selected, validatorsInformation }: NominatorsTableProp): React.ReactElement {
   const [validatorDetail, setValidatorDetail] = React.useState<ValidatorInformation | undefined>(undefined);
 
   const toggleValidatorDetail = useCallback((validatorInfo: ValidatorInformation | undefined) => () => {

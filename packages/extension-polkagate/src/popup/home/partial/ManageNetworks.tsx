@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useTheme } from '@mui/material';
@@ -10,7 +10,7 @@ import { MyTooltip } from '@polkadot/extension-polkagate/src/components';
 import { useIsExtensionPopup, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 
-function ManageNetworks (): React.ReactElement {
+function ManageNetworks(): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
@@ -37,7 +37,7 @@ function ManageNetworks (): React.ReactElement {
           color={isHovered ? '#EAEBF1' : theme.palette.menuIcon.active}
           onClick={onClick}
           size={isExtension ? '22' : '20'}
-          variant={ isExtension ? 'Bulk' : 'Bold'}
+          variant={isExtension ? 'Bulk' : 'Bold'}
         />
       </div>
     </MyTooltip>

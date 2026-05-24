@@ -1,120 +1,24 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
-import type { DropdownOption } from '../../../util/types';
-
 import { ChevronRight } from '@mui/icons-material';
-import { Grid, Stack, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 
-import { ActionButton, ChainLogo, Motion, SearchField } from '../../../components';
-import { getStorage, setStorage } from '../../../components/Loading';
+import { ActionButton, Logo, Motion, SearchField } from '../../../components';
 import MySwitch from '../../../components/MySwitch';
 import { useTranslation } from '../../../components/translate';
-import { useGenesisHashOptions } from '../../../hooks';
+import useChainSelectionSettings from '../../../hooks/useChainSelectionSettings';
 import { windowOpen } from '../../../messaging';
-import { DEFAULT_SELECTED_CHAINS } from '../../../util/defaultSelectedChains';
 
-export default function Chains (): React.ReactElement {
+export default function Chains(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const navigate = useNavigate();
-
-  const allChains = useGenesisHashOptions(false);
-
-  const [searchedChain, setSearchedChain] = useState<DropdownOption[]>();
-  const [selectedChains, setSelectedChains] = useState<Set<string>>(new Set());
-  const [initialChains, setInitialChains] = useState<Set<string>>(new Set());
-  const selectedChainsRef = useRef(selectedChains);
-
-  useEffect(() => {
-    // Update the ref whenever selectedChains changes
-    selectedChainsRef.current = selectedChains;
-  }, [selectedChains]);
-
-  const sortedChainsToShow = useMemo(() => [...allChains].sort((a, b) => {
-    const aInSet = initialChains.has(a.value as string);
-    const bInSet = initialChains.has(b.value as string);
-
-    if (aInSet && !bInSet) {
-      return -1; // Move 'a' before 'b'
-    } else if (!aInSet && bInSet) {
-      return 1; // Move 'b' before 'a'
-    } else {
-      return 0; // Keep the original order
-    }
-  }), [allChains, initialChains]);
-
-  useEffect(() => {
-    const defaultSelectedGenesisHashes = DEFAULT_SELECTED_CHAINS.map(({ value }) => value as string);
-
-    getStorage(STORAGE_KEY.SELECTED_CHAINS).then((res) => {
-      (res as string[])?.length
-        ? setInitialChains(new Set(res as string[]))
-        : setInitialChains(new Set(defaultSelectedGenesisHashes));
-    }).catch(console.error);
-  }, [allChains]);
-
-  const updateSavedAssetsInStorage = useCallback(() => {
-    getStorage(STORAGE_KEY.ASSETS, true).then((info) => {
-      const assets = info as SavedAssets;
-
-      assets && Object.keys(assets.balances).forEach((addresses) => {
-        Object.keys(assets.balances[addresses]).forEach((genesisHash) => {
-          if (!selectedChains.has(genesisHash)) {
-            assets.balances[addresses][genesisHash] && delete assets.balances[addresses][genesisHash];
-          }
-        });
-      });
-      setStorage(STORAGE_KEY.ASSETS, assets, true).catch(console.error);
-    }).catch(console.error);
-  }, [selectedChains]);
-
-  const handleChainsChanges = useCallback((chains: Set<string>) => {
-    setStorage(STORAGE_KEY.SELECTED_CHAINS, [...chains]).catch(console.error);
-    updateSavedAssetsInStorage();
-  }, [updateSavedAssetsInStorage]);
-
-  useEffect(() => {
-    // Apply chain changes function that runs on unmount
-    return () => {
-      console.log('apply chain changes function that runs on unmount');
-      handleChainsChanges(selectedChainsRef.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    initialChains?.size && setSelectedChains(initialChains);
-  }, [initialChains]);
-
-  const onChainSelect = useCallback((value: string) => {
-    setSelectedChains((prevChains) => {
-      const updatedChains = new Set(prevChains);
-
-      if (updatedChains.has(value)) {
-        updatedChains.delete(value);
-      } else {
-        updatedChains.add(value);
-      }
-
-      return updatedChains;
-    });
-  }, []);
-
-  const onSearch = useCallback((keyword: string) => {
-    if (!keyword) {
-      return setSearchedChain(undefined);
-    }
-
-    keyword = keyword.trim().toLowerCase();
-    const _filtered = allChains.filter(({ text }) => text.toLowerCase().includes(keyword));
-
-    setSearchedChain([..._filtered]);
-  }, [allChains]);
+  const { chainsToList, onSearch, selectedChains, setChainSelection } = useChainSelectionSettings();
 
   const chainEndpoints = useCallback((genesisHash: string) => {
     return () => navigate(`/endpoints/${genesisHash}`) as void;
@@ -124,15 +28,13 @@ export default function Chains (): React.ReactElement {
     windowOpen('/settingsfs/network').catch(console.error);
   }, []);
 
-  const chainsToList = useMemo(() => searchedChain ?? sortedChainsToShow, [searchedChain, sortedChainsToShow]);
-
   return (
     <Motion>
       <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '14px', display: 'block', p: '10px' }}>
         <Grid container item>
           <SearchField
             onInputChange={onSearch}
-            placeholder='🔍 Search chain'
+            placeholder={t('🔍 Search networks')}
             style={{ borderRadius: '12px', height: '36px', marginBottom: '10px' }}
           />
         </Grid>
@@ -142,7 +44,7 @@ export default function Chains (): React.ReactElement {
           return (
             <Grid
               alignItems='center' container item justifyContent='space-between' key={value} sx={{
-                backgroundImage: chainsToList.length - 1 === index ? '' : 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
+                backgroundImage: chainsToList.length - 1 === index ? '' : theme.palette.dividerGradient,
                 backgroundPosition: 'bottom',
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: '100% 2px',
@@ -152,7 +54,7 @@ export default function Chains (): React.ReactElement {
               }}
             >
               <Stack alignItems='center' className='hoverable' direction='row' onClick={chainEndpoints(value as string)} sx={{ cursor: 'pointer' }}>
-                <ChainLogo genesisHash={value as string} size={24} />
+                <Logo genesisHash={value as string} size={24} />
                 <Typography color={isSelected ? 'text.primary' : 'primary.main'} ml='8px' variant='B-1'>
                   {text}
                 </Typography>
@@ -169,11 +71,16 @@ export default function Chains (): React.ReactElement {
               <MySwitch
                 checked={isSelected}
                 // eslint-disable-next-line react/jsx-no-bind
-                onChange={() => onChainSelect(value as string)}
+                onChange={() => setChainSelection(value as string)}
               />
             </Grid>
           );
         })}
+        <NothingFound
+          show={chainsToList?.length === 0}
+          style={{ pb: '65px' }}
+          text={t('Network Not Found')}
+        />
       </Grid>
       <ActionButton
         contentPlacement='center'

@@ -1,15 +1,14 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Stack, Typography } from '@mui/material';
-import { Data, Edit2, ExportCurve, ImportCurve, LogoutCurve, Notification, ShieldSecurity } from 'iconsax-react';
+import { Container, Stack, Typography, useTheme } from '@mui/material';
+import { Data, Edit2, ExportCurve, ImportCurve, LogoutCurve, More2, Notification, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { windowOpen } from '@polkadot/extension-polkagate/src/messaging';
 import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
-import { noop } from '@polkadot/util';
 
 import { ActionCard, BackWithLabel, Motion } from '../../../components';
 import { useAccountSelectedChain, useTranslation } from '../../../hooks';
@@ -21,13 +20,17 @@ import { ExtensionPopups, STORAGE_KEY } from '../../../util/constants';
 
 type State = { pathname: string } | undefined;
 
-function AccountSettings (): React.ReactElement {
+function AccountSettings(): React.ReactElement {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { address } = useParams<{ address: string }>();
   const selectedChain = useAccountSelectedChain(address);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
+  const theme = useTheme();
+  const footerActionColor = theme.palette.accent.text;
+  const footerActionHoverColor = '#AA83DC';
+  const footerActionIconColor = theme.palette.accent.icon;
 
   useEffect(() => {
     if (!address) {
@@ -40,12 +43,11 @@ function AccountSettings (): React.ReactElement {
   const isComingFromAccountsList = (location.state as State)?.pathname === '/accounts';
   const onBack = useCallback(() => navigate(isComingFromAccountsList ? (location.state as State)?.pathname ?? '' : '/settings') as void, [isComingFromAccountsList, location, navigate]);
 
+  const onNotificationSettings = useCallback(() => navigate('/notification/settings') as void, [navigate]);
   const onExport = useCallback(() => navigate('/settings-account-export') as void, [navigate]);
   const onImport = useCallback(() => windowOpen('/account/have-wallet') as unknown as void, []);
   const onManageProxy = useCallback(() => windowOpen(`/proxyManagement/${address}/${selectedChain}`) as unknown as void, [address, selectedChain]);
-  const onCloseRemove = useCallback(() => {
-    navigate('/') as void;
-  }, [navigate]);
+  const onMore = useCallback(() => windowOpen('/settingsfs/account') as unknown as void, []);
 
   const CARD_STYLE = { alignItems: 'center', height: '58px', mt: '5px' };
 
@@ -62,7 +64,7 @@ function AccountSettings (): React.ReactElement {
           iconColor='#FF4FB9'
           iconSize={24}
           iconWithoutTransform
-          onClick={noop}
+          onClick={onNotificationSettings}
           style={{ ...CARD_STYLE }}
           title={t('Notifications')}
         />
@@ -111,11 +113,19 @@ function AccountSettings (): React.ReactElement {
           style={{ ...CARD_STYLE }}
           title={t('Websites Access')}
         />
-        <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)} sx={{ cursor: 'pointer', mt: '25px' }}>
-          <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />
-          <Typography sx={{ '&:hover': { color: '#AA83DC' }, color: '#BEAAD8', transition: 'all 250ms ease-out' }} variant='B-1'>
-            {t('Remove account')}
-          </Typography>
+        <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ cursor: 'pointer', m: '19px 0 0 7px' }}>
+          <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)}>
+            <LogoutCurve color={footerActionIconColor} size={18} variant='Bulk' />
+            <Typography sx={{ '&:hover': { color: footerActionHoverColor }, color: footerActionColor, transition: 'all 250ms ease-out' }} variant='B-1'>
+              {t('Remove account')}
+            </Typography>
+          </Stack>
+          <Stack alignItems='center' columnGap='5px' direction='row' onClick={onMore}>
+            <Typography sx={{ '&:hover': { color: footerActionHoverColor }, color: footerActionColor, transition: 'all 250ms ease-out' }} variant='B-1'>
+              {t('More')}
+            </Typography>
+            <More2 color={footerActionIconColor} size={18} variant='Linear' />
+          </Stack>
         </Stack>
       </Motion>
       <HomeMenu />
@@ -125,7 +135,6 @@ function AccountSettings (): React.ReactElement {
       />
       <RemoveAccount
         onClose={extensionPopupCloser}
-        onRemoved={onCloseRemove}
         open={extensionPopup === ExtensionPopups.REMOVE}
       />
       <WebsitesAccess

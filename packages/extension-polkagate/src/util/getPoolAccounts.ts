@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ApiPromise } from '@polkadot/api';
@@ -12,7 +12,7 @@ import { bnToU8a, stringToU8a, u8aConcat } from '@polkadot/util';
 const EMPTY_H256 = new Uint8Array(32);
 const MOD_PREFIX = stringToU8a('modl');
 
-export function createAccount (api: ApiPromise, poolId: number | bigint | BN | null | undefined, index: number): string {
+export function createAccount(api: ApiPromise, poolId: number | bigint | BN | null | undefined, index: number): string {
   return api.registry.createType(
     'AccountId32',
     u8aConcat(
@@ -25,7 +25,7 @@ export function createAccount (api: ApiPromise, poolId: number | bigint | BN | n
   ).toString();
 }
 
-function getPoolAccounts (api: ApiPromise, poolId: number | bigint | BN | null | undefined): PoolAccounts {
+function getPoolAccounts(api: ApiPromise, poolId: number | bigint | BN | null | undefined): PoolAccounts {
   return {
     rewardId: createAccount(api, poolId, 1),
     stashId: createAccount(api, poolId, 0)

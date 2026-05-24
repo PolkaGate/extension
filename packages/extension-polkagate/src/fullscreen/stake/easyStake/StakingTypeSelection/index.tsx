@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolInfo, PositionInfo } from '../../../../util/types';
@@ -22,15 +22,16 @@ export interface StakingTypeSelectionProps {
   selectedPosition: PositionInfo | undefined;
 }
 
-export default function StakingTypeSelection ({ initialPool, selectedPosition, selectedStakingType, setSelectedStakingType, setSide }: StakingTypeSelectionProps) {
+export default function StakingTypeSelection({ initialPool, selectedPosition, selectedStakingType, setSelectedStakingType, setSide }: StakingTypeSelectionProps) {
   const { t } = useTranslation();
   const theme = useTheme();
   const poolStakingConsts = usePoolConst(selectedPosition?.genesisHash);
   const stakingConsts = useStakingConsts(selectedPosition?.genesisHash);
   const { decimal, token } = useChainInfo(selectedPosition?.genesisHash, true);
   const isExtension = useIsExtensionPopup();
+  const isDark = theme.palette.mode === 'dark';
 
-  const textColor = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
+  const textColor = useMemo(() => isExtension ? (isDark ? theme.palette.text.highlight : '#745D8B') : '#AA83DC', [isDark, isExtension, theme.palette.text.highlight]);
 
   const isRecommendedValidators = useMemo(() =>
     !selectedStakingType?.validators ||

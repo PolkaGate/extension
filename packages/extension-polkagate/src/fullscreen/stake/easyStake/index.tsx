@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -26,7 +26,7 @@ interface Props {
   selectedPosition: PositionInfo | undefined;
 }
 
-function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }: Props) {
+function EasyStake({ address, onClose, selectedPosition, setSelectedPosition }: Props) {
   const { t } = useTranslation();
   const genesisHash = selectedPosition?.genesisHash;
   const { token } = useChainInfo(genesisHash);
@@ -194,7 +194,7 @@ function EasyStake ({ address, onClose, selectedPosition, setSelectedPosition }:
           onPrimaryClick={handleNext}
           onSecondaryClick={handleBack}
           primaryBtnText={!initialPool ? t('Loading ...') : side === EasyStakeSide.INPUT ? t('Continue') : t('Apply')}
-          secondaryBtnText={t('Back')}
+          secondaryBtnText={t('Close')}
           style={{ display: [EasyStakeSide.SELECT_POOL, EasyStakeSide.SELECT_VALIDATORS].includes(side) ? 'none' : 'flex', paddingInline: '18px' }}
         />
       </>

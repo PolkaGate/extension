@@ -1,64 +1,145 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type React from 'react';
 import type { SubmittableExtrinsicFunction } from '@polkadot/api-base/types';
 import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTeleport';
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Balance } from '@polkadot/types/interfaces';
-import type { BN } from '@polkadot/util';
 import type { HexString } from '@polkadot/util/types';
-import type { Inputs } from './types';
+import type { Inputs, ParaspellFees } from './types';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ethers, Interface } from 'ethers';
+import { useEffect, useMemo, useState } from 'react';
 
-import { getValue } from '@polkadot/extension-polkagate/src/popup/account/util';
 import { amountToMachine, decodeMultiLocation, isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
 import { BN_ONE, BN_ZERO, isFunction } from '@polkadot/util';
 
 import { useChainInfo } from '../../hooks';
+import { ERC20_ABI } from '../../util/evmUtils/constantsEth';
 import { INVALID_PARA_ID, XCM_LOC } from './utils';
 
-/** This hook is DEPRECATED */
+/**
+ * React hook to estimate origin and cross-chain (XCM teleport) fees and
+ * construct a limited transfer extrinsic for chains or scenarios where
+ * Paraspell is not used or not supported.
+ *
+ * Primarily used for:
+ * - Testnet transfers
+ * - Native / non-native asset transfers on chains without Paraspell support
+ * - Limited teleport fee estimation
+ *
+ * The hook prepares:
+ * - On-chain transfer calls
+ * - Cross-chain limitedTeleportAssets calls
+ * - Origin and XCM fee estimations via paymentInfo
+ *
+ * @param address - Sender account address used to estimate fees.
+ * @param assetId - Asset identifier (native, foreign, or parsed numeric ID).
+ * @param assetToTransfer - Asset metadata and balance information.
+ * @param inputs - User transfer inputs including amount, recipient, token, and transfer type.
+ * @param genesisHash - Chain genesis hash used to resolve API and chain context.
+ * @param teleportState - Teleport configuration including para-teleport flags.
+ * @param isCrossChain - Indicates whether the transfer is cross-chain.
+ * @param isSupportedByParaspell - If true, Paraspell handles the flow and this hook skips fee estimation.
+ *
+ * @returns An object containing:
+ * - `fee`: structured origin and destination fee details
+ * - `tx`: prepared SubmittableExtrinsic ready to be signed/submitted
+ *
+ * Notes:
+ * - Returns an empty object until origin fee is resolved.
+ * - Destination fee is currently zero for limited teleport scenarios.
+ * - Uses transactionPaymentApi when available; otherwise applies a dummy fee fallback.
+ */
+export default function useLimitedFeeCall(address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, inputs: Inputs | undefined, genesisHash: string | undefined, teleportState: Teleport, isCrossChain: boolean | undefined, isSupportedByParaspell: boolean) {
+  const { api } = useChainInfo(genesisHash);
 
-// This hook is used to estimate fees and prepare the transaction for sending funds for testnets mostly and non xcm transfers on other chains since paraspell does not support transfer all as well
-export default function useLimitedFeeCall (address: string | undefined, assetId: string | undefined, assetToTransfer: FetchedBalance | undefined, inputs: Inputs | undefined, genesisHash: string | undefined, teleportState: Teleport) {
-  const { api, chainName: senderChainName } = useChainInfo(genesisHash);
+  const [unsignedEthTx, setUnsignedEthTx] = useState<ethers.Transaction>();
+  const [isContract, setIsContract] = useState<boolean>();
 
-  const [estimatedFee, setEstimatedFee] = useState<Balance>();
-  const [estimatedCrossChainFee, setEstimatedCrossChainFee] = useState<Balance>();
-  const [maxFee, setMaxFee] = useState<Balance>();
+  useEffect(() => {
+    assetId?.startsWith('0x') && api?.rpc.eth?.getCode?.(assetId).then((code) => {
+      setIsContract(code.toHex() !== '0x');
+    }).catch(console.error);
+  }, [address, api, assetId, inputs]);
 
-  const { decimal, recipientAddress, transferType } = inputs || {};
+  useEffect(() => {
+    const { amountAsBN, recipientAddress } = inputs || {};
 
-  const transferableBalance = useMemo(() => getValue('transferable', assetToTransfer), [assetToTransfer]);
+    if (!address || !api || !isContract || !recipientAddress || !amountAsBN || amountAsBN?.isZero()) {
+      return;
+    }
+
+    const getErc20Call = async () => {
+      const iface = new Interface(ERC20_ABI);
+      const data = iface.encodeFunctionData(
+        'transfer',
+        [recipientAddress, amountAsBN.toString()]
+      );
+
+      const estimatedGas = await api.rpc.eth.estimateGas({
+        data,
+        from: address,
+        to: assetId
+      });
+
+      const nonce = await api.rpc.eth.getTransactionCount(address);
+      const chainId = await api.rpc.eth.chainId();
+      const gasPrice = await api.rpc.eth.gasPrice();
+      const gasLimitBig = BigInt(estimatedGas.toString());
+
+      const unsignedEthTx = ethers.Transaction.from({
+        accessList: [],
+        chainId: Number(chainId),
+        data,
+        gasLimit: gasLimitBig,
+        maxFeePerGas: BigInt(gasPrice.toString()),
+        maxPriorityFeePerGas: 0n,
+        nonce: Number(nonce),
+        to: assetId,
+        type: 2,
+        value: 0n
+      });
+
+      setUnsignedEthTx(unsignedEthTx);
+      setOriginFee(api.createType('Balance', estimatedGas.mul(gasPrice)) as unknown as Balance);
+    };
+
+    getErc20Call().catch(console.error);
+  }, [address, api, assetId, inputs, isContract]);
+
+  const [originFee, setOriginFee] = useState<Balance>();
+  const [xcmFee, setXcmFee] = useState<Balance>();
+
+  const { decimal, recipientAddress, recipientChain, token, transferType } = inputs || {};
+
   const isForeignAsset = assetId ? assetId.startsWith('0x') : undefined;
   const noAssetId = assetId === undefined || assetId === 'undefined';
   const isNativeToken = String(assetId) === String(NATIVE_TOKEN_ASSET_ID) || String(assetId) === String(NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB);
   const isNonNativeToken = !noAssetId && !isNativeToken;
-  const parsedAssetId = useMemo(() => noAssetId || isNativeToken
-    ? undefined
-    : isForeignAsset
-      ? decodeMultiLocation(assetId as HexString)
-      : parseInt(assetId)
-  , [assetId, isForeignAsset, isNativeToken, noAssetId]);
+  const parsedAssetId = useMemo(() =>
+    noAssetId || isNativeToken || isContract
+      ? undefined
+      : isForeignAsset
+        ? decodeMultiLocation(assetId as HexString)
+        : parseInt(assetId)
+    , [assetId, isContract, isForeignAsset, isNativeToken, noAssetId]);
 
   const amountAsBN = useMemo(() => decimal ? amountToMachine(inputs?.amount, decimal) : undefined, [decimal, inputs?.amount]);
-  const isCrossChain = useMemo(() => senderChainName !== inputs?.recipientChain?.text, [inputs?.recipientChain?.text, senderChainName]);
 
   const recipientParaId = useMemo(() => {
-    const mayParaId = inputs?.recipientChain?.value;
+    const mayParaId = recipientChain?.value;
 
     try {
       return isCrossChain ? parseInt(String(mayParaId)) : INVALID_PARA_ID;
     } catch {
       return INVALID_PARA_ID;
     }
-  }, [inputs?.recipientChain, isCrossChain]);
+  }, [recipientChain, isCrossChain]);
 
   const onChainCall = useMemo(() => {
-    if (!api || !genesisHash) {
+    if (isSupportedByParaspell || !api || !genesisHash || isContract) {
       return undefined;
     }
 
@@ -73,7 +154,7 @@ export default function useLimitedFeeCall (address: string | undefined, assetId:
             : 'tokens'
         : 'balances';
 
-      if (['currencies', 'tokens'].includes(module)) {
+      if (['currencies', 'tokens'].includes(module) && api.tx[module]) {
         return api.tx[module]['transfer'];
       }
 
@@ -85,14 +166,14 @@ export default function useLimitedFeeCall (address: string | undefined, assetId:
             : api.tx[module]['transferAll']
       );
     } catch (e) {
-      console.log('Something wrong while making on network call!', e);
+      console.log('Something wrong while making on-chain call!', e);
 
       return undefined;
     }
-  }, [api, isNonNativeToken, genesisHash, isForeignAsset, transferType]);
+  }, [isSupportedByParaspell, api, genesisHash, isContract, isNonNativeToken, isForeignAsset, transferType]);
 
   const call = useMemo((): SubmittableExtrinsicFunction<'promise'> | undefined => {
-    if (!api) {
+    if (isSupportedByParaspell || !api) {
       return;
     }
 
@@ -103,10 +184,10 @@ export default function useLimitedFeeCall (address: string | undefined, assetId:
     }
 
     return onChainCall;
-  }, [api, isCrossChain, onChainCall]);
+  }, [api, isCrossChain, isSupportedByParaspell, onChainCall]);
 
   const crossChainParams = useMemo(() => {
-    if (!api || !assetToTransfer || !teleportState || isCrossChain === false || (recipientParaId === INVALID_PARA_ID && !teleportState?.isParaTeleport) || !amountAsBN || amountAsBN.isZero()) {
+    if (isSupportedByParaspell || !api || !assetToTransfer || !teleportState || isCrossChain === false || (recipientParaId === INVALID_PARA_ID && !teleportState?.isParaTeleport) || !amountAsBN || amountAsBN.isZero()) {
       return;
     }
 
@@ -143,58 +224,85 @@ export default function useLimitedFeeCall (address: string | undefined, assetId:
       0,
       { Unlimited: null }
     ];
-  }, [api, assetToTransfer, teleportState, isCrossChain, recipientParaId, amountAsBN, recipientAddress]);
+  }, [isSupportedByParaspell, api, assetToTransfer, teleportState, isCrossChain, recipientParaId, amountAsBN, recipientAddress]);
 
-  const calculateFee = useCallback((_amount: Balance | BN, setFeeCall: React.Dispatch<React.SetStateAction<Balance | undefined>>) => {
-    /** to set Maximum fee which will be used to estimate and show max transferable amount */
-    if (!api || !assetToTransfer || !address || !onChainCall) {
+  const onChainParams = useMemo((): unknown[] | undefined => {
+    if (!api || !assetToTransfer || !address || !onChainCall || !recipientAddress) {
+      return;
+    }
+
+    const { method, section } = onChainCall;
+
+    return (
+      isNonNativeToken
+        ? ['currencies', 'tokens'].includes(section)
+          ? [recipientAddress, assetToTransfer.currencyId, method === 'transferAll' ? false : amountAsBN]
+          : [parsedAssetId, recipientAddress, amountAsBN]
+        : [recipientAddress, method === 'transferAll' ? false : amountAsBN]
+    ) as unknown[];
+  }, [api, assetToTransfer, address, onChainCall, isNonNativeToken, recipientAddress, amountAsBN, parsedAssetId]);
+
+  useEffect(() => {
+    if (!api || !onChainParams || !address || !onChainCall || isSupportedByParaspell) {
       return;
     }
 
     if (!api?.call?.['transactionPaymentApi']) {
       const dummyAmount = api.createType('Balance', BN_ONE) as unknown as Balance;
 
-      return setFeeCall(dummyAmount);
+      return setOriginFee(dummyAmount);
     }
 
-    const _params: unknown[] = isNonNativeToken
-      ? ['currencies', 'tokens'].includes(onChainCall.section)
-        ? [address, assetToTransfer.currencyId, _amount]
-        : [parsedAssetId, address, _amount]
-      : [address, _amount];
-
-    onChainCall(..._params).paymentInfo(address).then((i) => setFeeCall(i?.partialFee)).catch(console.error);
-  }, [api, address, assetToTransfer, onChainCall, isNonNativeToken, parsedAssetId]);
-
-  useEffect(() => {
-    // This is to estimate fee for max transferable amount
-    if (!api || !transferableBalance) {
-      return;
-    }
-
-    calculateFee(transferableBalance, setMaxFee);
-  }, [api, calculateFee, transferableBalance]);
-
-  useEffect(() => {
-    // This is to estimate fee for transfer
-    if (!api || amountAsBN === undefined || !assetToTransfer) {
-      return;
-    }
-
-    calculateFee(amountAsBN || BN_ZERO, setEstimatedFee);
-  }, [amountAsBN, api, assetToTransfer, calculateFee]);
+    onChainCall(...onChainParams)
+      .paymentInfo(address)
+      .then((i) => setOriginFee(i?.partialFee))
+      .catch(console.error);
+  }, [address, api, isSupportedByParaspell, onChainCall, onChainParams]);
 
   useEffect(() => {
     // This is to estimate cross network fee for teleport
-    if (!call || !crossChainParams || !address) {
-      return setEstimatedCrossChainFee(undefined);
+    if (!call || !crossChainParams || !address || isSupportedByParaspell) {
+      return setXcmFee(undefined);
     }
 
-    isCrossChain && call(...crossChainParams).paymentInfo(address).then((i) => setEstimatedCrossChainFee(i?.partialFee)).catch(console.error);
-  }, [call, address, isCrossChain, crossChainParams]);
+    isCrossChain && call(...crossChainParams).paymentInfo(address).then((i) => setXcmFee(i?.partialFee)).catch(console.error);
+  }, [call, address, isCrossChain, crossChainParams, isSupportedByParaspell]);
 
-  return {
-    maxFee,
-    totalFee: estimatedFee ? estimatedFee.add(estimatedCrossChainFee || BN_ZERO) : undefined,
-  };
+  return useMemo(() => {
+    const tx = isCrossChain
+      ? crossChainParams && call
+        ? call?.(...crossChainParams)
+        : undefined
+      : onChainParams && onChainCall
+        ? onChainCall?.(...onChainParams)
+        : undefined;
+
+    const asset = {
+      assetId,
+      decimals: decimal,
+      isNative: isNativeToken,
+      symbol: token
+    };
+
+    const fee = originFee
+      ? {
+        destinationFee: {
+          asset,
+          fee: BN_ZERO
+        },
+        isCrossChain,
+        originFee: {
+          asset,
+          fee: isCrossChain ? xcmFee : originFee
+        }
+      } as unknown as ParaspellFees
+      : undefined;
+
+    return {
+      fee,
+      isContract,
+      tx,
+      unsignedEthTx
+    };
+  }, [originFee, isCrossChain, crossChainParams, call, onChainParams, onChainCall, assetId, decimal, isNativeToken, token, isContract, xcmFee, unsignedEthTx]);
 }

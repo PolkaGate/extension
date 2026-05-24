@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Track } from '../fullscreen/governance/types';
@@ -9,7 +9,7 @@ import useChainInfo from './useChainInfo';
 
 interface TracksType { fellowshipTracks: Track[] | undefined, tracks: Track[] | undefined }
 
-export default function useTracks (genesisHash: string | null | undefined): TracksType {
+export default function useTracks(genesisHash: string | null | undefined): TracksType {
   const { api, chain } = useChainInfo(genesisHash);
 
   const tracks: TracksType = useMemo(() => {

@@ -1,48 +1,55 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Container, Grid, Stack, Typography } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { memo, useRef } from 'react';
 
 import { useTranslation } from '../../hooks';
 import EmptyListBox from '../components/EmptyListBox';
 import { COLUMN_WIDTH } from './consts';
 import HistoryItem from './HistoryItem';
-import HistoryLoading from './HistoryLoading';
+import HistoryLoading from './loading';
 
 interface Props {
   historyItems: TransactionDetail[] | null | undefined;
+  isFetchingMore?: boolean;
   notReady?: boolean;
 }
 
-function HistoryBox ({ historyItems, notReady = false }: Props) {
+function HistoryBox({ historyItems, isFetchingMore = false, notReady = false }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const refContainer = useRef<HTMLDivElement>(null);
+  const hasHistoryItems = Boolean(historyItems?.length);
+  const isLoading = !notReady && (historyItems === undefined || (!hasHistoryItems && isFetchingMore));
+  const showEmptyState = !notReady && !hasHistoryItems && historyItems !== undefined && !isFetchingMore && !isLoading;
+  const showFetchingMore = hasHistoryItems && !isLoading && isFetchingMore;
 
   return (
     <Grid container item>
       <Stack columnGap='30px' direction='row' sx={{ height: '40px', padding: '10px 15px', width: '100%' }}>
-        <Typography color='#BEAAD8' sx={{ textAlign: 'left', width: COLUMN_WIDTH.ACTION }} variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : theme.palette.text.secondary} sx={{ textAlign: 'left', width: COLUMN_WIDTH.ACTION }} variant='B-1'>
           {t('Type')}
         </Typography>
-        <Typography color='#BEAAD8' sx={{ textAlign: 'left', width: COLUMN_WIDTH.SUB_ACTION }} variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : theme.palette.text.secondary} sx={{ textAlign: 'left', width: COLUMN_WIDTH.SUB_ACTION }} variant='B-1'>
           {t('Object info')}
         </Typography>
-        <Typography color='#BEAAD8' sx={{ textAlign: 'right', width: COLUMN_WIDTH.AMOUNT }} variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : theme.palette.text.secondary} sx={{ textAlign: 'right', width: COLUMN_WIDTH.AMOUNT }} variant='B-1'>
           {t('Amount')}
         </Typography>
-        <Typography color='#BEAAD8' sx={{ paddingLeft: '15px', textAlign: 'left', width: COLUMN_WIDTH.DATE }} variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : theme.palette.text.secondary} sx={{ paddingLeft: '15px', textAlign: 'left', width: COLUMN_WIDTH.DATE }} variant='B-1'>
           {t('Date')}
         </Typography>
-        <Typography color='#BEAAD8' sx={{ textAlign: 'left', width: COLUMN_WIDTH.STATUS }} variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : theme.palette.text.secondary} sx={{ textAlign: 'left', width: COLUMN_WIDTH.STATUS }} variant='B-1'>
           {t('Status')}
         </Typography>
       </Stack>
       <Container disableGutters id='scrollArea' ref={refContainer} sx={{ alignContent: 'start', display: 'grid', height: 'calc(100vh - 360px)', minHeight: '422px', overflow: 'hidden', overflowY: 'auto', position: 'relative', rowGap: '3px' }}>
         {
-          !notReady && historyItems?.map((item, index) => (
+          hasHistoryItems && historyItems?.map((item, index) => (
             <HistoryItem
               historyItem={item}
               key={index}
@@ -51,12 +58,12 @@ function HistoryBox ({ historyItems, notReady = false }: Props) {
         }
         <div id='observerObj' style={{ height: '1px' }} />
         {
-          !notReady && historyItems === null &&
+          showEmptyState &&
           <EmptyListBox style={{ marginTop: '20px' }} />
         }
         {
-          !notReady && historyItems === undefined &&
-          <HistoryLoading itemsCount={7} />
+          (isLoading || showFetchingMore) &&
+          <HistoryLoading itemsCount={isLoading ? 7 : 1} />
         }
         {
           notReady &&

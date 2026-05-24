@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -22,7 +22,7 @@ interface Props {
   onClose: () => void;
 }
 
-export default function CreatePool ({ address, genesisHash, onClose }: Props): React.ReactElement {
+export default function CreatePool({ address, genesisHash, onClose }: Props): React.ReactElement {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);

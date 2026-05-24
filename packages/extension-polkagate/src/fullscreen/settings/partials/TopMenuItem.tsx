@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -20,7 +20,7 @@ interface Props {
   setPosition: React.Dispatch<React.SetStateAction<DOMRect | null>>
 }
 
-function TopMenuItem ({ Icon, iconVariant = 'Bulk', label, path, setPosition }: Props): React.ReactElement {
+function TopMenuItem({ Icon, iconVariant = 'Bulk', label, path, setPosition }: Props): React.ReactElement {
   const onAction = useContext(ActionContext);
   const { pathname } = useLocation();
   const isDark = useIsDark();
@@ -36,7 +36,7 @@ function TopMenuItem ({ Icon, iconVariant = 'Bulk', label, path, setPosition }: 
   }, [isSelected, setPosition]);
 
   return (
-    <Stack alignItems= 'center' columnGap='4px' direction='row' onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer' }}>
+    <Stack alignItems='center' columnGap='4px' direction='row' onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer' }}>
       <Icon color={isDark ? (isSelected ? '#FF4FB9' : '#AA83DC') : (isSelected ? '#FF4FB9' : '#8F97B8')} onClick={noop} size='18' style={{ cursor: 'pointer' }} variant={iconVariant} />
       <Typography color={isDark ? (isSelected ? '#FF4FB9' : '#EAEBF1') : (isSelected ? '#291443' : '#8F97B8')} variant='B-2'>
         {label}

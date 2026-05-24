@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Typography } from '@mui/material';
@@ -22,7 +22,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function ManualLedgerImport ({ accountIndex, address, addressOffset, genesisHash, ledgerLoading, name, ref, setAccountIndex, setAddressOffset, style }: Props): React.ReactElement {
+export default function ManualLedgerImport({ accountIndex, address, addressOffset, genesisHash, ledgerLoading, name, ref, setAccountIndex, setAddressOffset, style }: Props): React.ReactElement {
   const { t } = useTranslation();
 
   const _onSetAccountIndex = useCallback((_value: number | string) => {
@@ -41,7 +41,7 @@ export default function ManualLedgerImport ({ accountIndex, address, addressOffs
     <Grid container item sx={{ mt: '15px', ...style }}>
       <Grid container item justifyContent='space-between'>
         <Grid item md={5.5} xs={12}>
-          <Typography color='#EAEBF1' variant='B-1'>
+          <Typography color='text.secondary' variant='B-1'>
             {t('Account index')}
           </Typography>
           <DropSelect
@@ -56,7 +56,7 @@ export default function ManualLedgerImport ({ accountIndex, address, addressOffs
           />
         </Grid>
         <Grid item md={5.5} xs={12}>
-          <Typography color='#EAEBF1' variant='B-1'>
+          <Typography color='text.secondary' variant='B-1'>
             {t('Address offset')}
           </Typography>
           <DropSelect

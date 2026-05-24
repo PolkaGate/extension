@@ -1,7 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ProxyTypes } from './types';
+
+import { ETHEREUM_TEST_CHAINS_GENESISHASH } from './evmUtils/constantsEth';
 
 export const EXTENSION_NAME = 'PolkaGate';
 export const PREFERRED_POOL_NAME = EXTENSION_NAME;
@@ -24,7 +26,7 @@ export const PRIVACY_POLICY_LINK = 'https://docs.polkagate.xyz/polkagate/polkaga
 
 export const BALANCES_VALIDITY_PERIOD = 5 * 60 * 1000; // to show outdated balance in grey
 export const MAX_NOMINATIONS = 16;
-export const FLOATING_POINT_DIGIT = 4;
+export const DEFAULT_DECIMAL_POINT_DIGIT = 4;
 export const BLOCK_RATE = 6; // sec
 export const DEFAULT_TOKEN_DECIMALS = 12;
 
@@ -35,16 +37,15 @@ export const MAX_HISTORY_RECORD_TO_SHOW = 40;
 export const MAX_AMOUNT_LENGTH = 15;
 export const TIME_TO_SHAKE_ICON = 5000;// msec
 
-export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'KusamaAssetHub', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
-export const TOKENS_WITH_BLACK_LOGO = ['BILL', 'BILLCOIN', 'CFG', 'INTR', 'KSM', 'PEN', 'ZTG'];
-export const CHAINS_ON_POLKAHOLIC = ['Pendulum', 'Pendulum chain', 'Amplitude', 'Amplitude chain'];
+export const CHAINS_WITH_BLACK_LOGO = ['statescan', 'Bittensor', 'Centrifuge', 'Centrifuge Chain', 'Kusama', 'Kusama Relay Chain', 'KusamaAssetHub', 'NeuroWeb', 'Pendulum', 'Pendulum chain', 'Zeitgeist', 'Westend Collectives'];
+export const TOKENS_WITH_BLACK_LOGO = ['BILL', 'BILLCOIN', 'BNC', 'CFG', 'INTR', 'KSM', 'PEN', 'TAO', 'ZTG'];
 export const DISABLED_NETWORKS = ['3DP network', 'xx network', 'Polkadex Mainnet', 'Stafi', 'Peaq Network', 'Genshiro Network'];
 
 export const ACALA_GENESIS_HASH = '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c';
 
 export const WESTMINT_GENESIS_HASH = '0x67f9723393ef76214df0118c34bbbd3dbebc8ed46a10973a8c969d48fe7598c9';
 export const STATEMINE_GENESIS_HASH = '0x48239ef607d7928874027a43a67689209727dfb3d3dc5e5b03a39bdc2eda771a'; // KUSAMA ASSET HUB
-export const STATEMINT_GENESIS_HASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f';
+export const STATEMINT_GENESIS_HASH = '0x68d56f15f85d3136970ec16946040bc1752654e906147f7e43e9d539d7c3de2f'; // POLKADOT ASSET HUB
 export const PASEO_ASSET_HUB_GENESIS_HASH = '0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2';
 
 export const POLKADOT_PEOPLE_GENESIS_HASH = '0x67fa177a097bfa18f77ea95ab56e9bcdfeb0e5b8a40e46298bb93e16b6fc5008';
@@ -60,6 +61,9 @@ export const KUSAMA_GENESIS_HASH = '0xb0a8d493285c2df73290dfb7e61f870f17b4180119
 export const WESTEND_GENESIS_HASH = '0xe143f23803ac50e8f6f8e62695d1ce9e4e1d68aa36c1cd2cfd15340213f3423e';
 export const PASEO_GENESIS_HASH = '0x77afd6190f1554ad45fd0d31aee62aacc33c6db0ea801129acb813f913e0764f';
 
+// evm chains
+export const MOONBASE_GENESIS = '0x91bc6e169807aaa54802737e1c504b2577d4fafedd5a02c10293b1cd60e39527';
+
 export const RELAY_CHAINS_GENESISHASH = [
   POLKADOT_GENESIS_HASH,
   KUSAMA_GENESIS_HASH,
@@ -74,18 +78,19 @@ export const ASSET_HUBS = [
   PASEO_ASSET_HUB_GENESIS_HASH
 ];
 
-export const TEST_NETS = [
+export const POLKADOT_TEST_NETS = [
   WESTEND_GENESIS_HASH,
   WESTMINT_GENESIS_HASH,
   WESTEND_PEOPLE_GENESIS_HASH,
   PASEO_GENESIS_HASH,
   PASEO_ASSET_HUB_GENESIS_HASH,
-  PASEO_PEOPLE_GENESIS_HASH
+  PASEO_PEOPLE_GENESIS_HASH,
+  MOONBASE_GENESIS
 ];
 
-export const PROXY_CHAINS = [
-  ...RELAY_CHAINS_GENESISHASH,
-  ...ASSET_HUBS
+export const TEST_NETS = [
+  ...POLKADOT_TEST_NETS,
+  ...ETHEREUM_TEST_CHAINS_GENESISHASH
 ];
 
 export const GOVERNANCE_CHAINS = [
@@ -114,7 +119,8 @@ export const NFT_CHAINS = [
 
 // used to enable/disable staking icon in account page
 export const STAKING_CHAINS = [
-  ...ASSET_HUBS
+  ...ASSET_HUBS,
+  // MOONBASE_GENESIS
 ];
 
 export const PEOPLE_CHAINS = ['Polkadot', 'Kusama', 'Westend', 'PolkadotPeople', 'KusamaPeople', 'WestendPeople'];
@@ -254,6 +260,8 @@ export const PROFILE_COLORS = [
   { light: '#FCF0CC', dark: '#5F4842' }
 ];
 
+export const ADDRESS_BOOK_LABEL = 'Address Book';
+
 export const PROFILE_TAGS = {
   ALL: 'All',
   LEDGER: 'Hardware',
@@ -279,21 +287,25 @@ export const KODADOT_URL = 'https://kodadot.xyz';
 export const DEMO_ACCOUNT = '1ChFWeNRLarAPRCTM3bfJmncJbSAbSS9yqjueWz7jX7iTVZ';
 
 export enum ExtensionPopups {
-  LANGUAGE,
-  GOVERNANCE,
-  NEW_NETWORK,
-  NONE,
-  PASSWORD,
-  PRIVACY,
-  WARNING,
-  // Account Popups
+  ADDRESS_BOOK,
+  CHECK_PROXIED,
+  IMPORT_PROXIED,
   DAPPS,
   DERIVE,
   EXPORT,
+  GOVERNANCE,
+  LANGUAGE,
+  NEW_NETWORK,
+  NONE,
+  NOTIFICATION,
+  PASSWORD,
+  PRIVACY,
+  // Account Popups
   IMPORT,
   RECEIVE,
   RENAME,
   REMOVE,
+  WARNING
 }
 
 export const TRANSACTION_FLOW_STEPS = {
@@ -309,35 +321,59 @@ export const DEFAULT_ACCOUNT_ICON_THEME = 'polkasoul';
 export const PRICE_VALIDITY_PERIOD = 2 * 60 * 1000; // 2 minutes
 
 export const TIME_TO_REMOVE_ALERT = 5 * 1000; // 5 secs
+export const HIGH_COMMISSION_THRESHOLD = 50;
+export const HIGH_COMMISSION_WARNING_COLOR = '#FFCE4F';
 
 export const STORAGE_KEY = {
   ACCOUNT_SELECTED_CHAIN: 'accountSelectedChain',
+  ADDRESS_BOOK: 'addressBook',
+  AI_TX_INFO: 'aiTransactionInfo',
   ASSETS: 'migratedAssets',
+  AUTH_HANDOFF_SESSION: 'authHandoff',
   AUTO_LOCK: 'autoLock',
+  AUTO_LOCK_EXPIRED_SESSION: 'autoLockExpired',
+  CHECK_BALANCE_ON_ALL_CHAINS: 'checkBalancesOnAllChains',
+  CHECK_PROXIED: 'checkProxied',
   CURRENCY: 'currency',
+  CUSTOM_ENDPOINTS: 'customEndpoints',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   HISTORY: 'history',
   ICON_THEME: 'identiconType',
   IS_ACCOUNT_MIGRATED_TO_ANY_CHAIN: 'accountsMigratedToAnyChain',
+  IS_EXTENSION_LOCKED: 'isExtensionLocked',
   IS_FORGOTTEN: 'isForgotten',
   IS_PASSWORD_MIGRATED: 'passwordMigrated',
   LAST_PASS_CHANGE: 'lastPasswordChange',
   LOGIN_INFO: 'loginInfo',
   MY_POOL: 'MyPool',
+  NOTIFICATIONS: 'notificationsV2',
+  NOTIFICATION_SETTINGS: 'notificationSetting',
   PRICE_IN_CURRENCIES: 'pricesInCurrencies',
   SELECTED_ACCOUNT: 'selectedAccount',
   SELECTED_CHAINS: 'selectedChains',
   SELECTED_PROFILE: 'profile',
+  SUBSCAN_API_KEY: 'subscanApiKey',
   TEST_NET_ENABLED: 'testnet_enabled',
+  THEME: 'theme',
   USER_ADDED_ENDPOINT: 'userAddedEndpoint',
-  VALIDATORS_INFO: 'validatorsInfo',
+  VALIDATORS_INFO: 'validatorsInfo'
 };
 
 // Function names for asset fetching worker calls
-export const FETCHING_ASSETS_FUNCTION_NAMES = {
+export const FETCHING_ASSETS_FN = {
   ASSET_HUB: 'getAssetOnAssetHub',
+  ETH: 'getAssetOnEthereum',
+  EVM: 'getAssetOnEVMChain',
   MULTI_ASSET: 'getAssetOnMultiAssetChain',
-  RELAY: 'getAssetOnRelayChain'
+  RELAY: 'getAssetOnRelayChain',
+  SINGLE_ASSET: 'getAssetOnSingleAssetChain'
+};
+
+export const WORKER_TASKS = {
+  GET_NFTS: 'getNFTs',
+  GET_POOL: 'getPool',
+  VALIDATORS_INFO: 'getValidatorsInformation'
 };
 
 export const PROCESSING_TITLE = 'Processing';
+export const COINGECKO_WEB = 'https://www.coingecko.com/en/coins/';

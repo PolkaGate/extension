@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -17,9 +17,10 @@ import PoolDetail from './PoolDetail';
 const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
   backdropFilter: 'blur(20px)',
   background: mode === 'light' ? '#FFFFFF' : 'transparent',
+  border: mode === 'light' ? '1px solid #E3E8F7' : 'none',
   borderRadius: '16px',
   boxShadow: mode === 'light'
-    ? '0px 0px 24px 8px #9A9EFF59 inset'
+    ? '0 12px 24px rgba(133, 140, 176, 0.12), inset 0px 0px 24px 8px rgba(154, 158, 255, 0.18)'
     : '0px 0px 24px 8px #4E2B7280 inset',
   inset: 0,
   position: 'absolute',
@@ -35,10 +36,16 @@ interface MenuItemProps {
   setLeftPosition: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
+function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
   const theme = useTheme();
   const refContainer = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(refContainer);
+  const isDark = theme.palette.mode === 'dark';
+  const iconColor = hovered || isSelected
+    ? '#3F76FF'
+    : isDark
+      ? theme.palette.text.highlight
+      : '#8FA1BE';
 
   useEffect(() => {
     if (isSelected && refContainer.current) {
@@ -54,7 +61,7 @@ function MenuItem ({ ButtonIcon, isSelected = false, onClick, setLeftPosition, t
         placement='top'
       >
         <Grid container item onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
-          <ButtonIcon color={hovered || isSelected ? '#3F76FF' : theme.palette.text.highlight} size='24' variant={isSelected ? 'Bold' : 'Bulk'} />
+          <ButtonIcon color={iconColor} size='24' variant={isSelected ? 'Bold' : 'Bulk'} />
         </Grid>
       </MyTooltip>
       {withBorder &&
@@ -98,7 +105,7 @@ interface Props {
   pool?: PoolInfo | null;
 }
 
-function StakingMenu ({ genesisHash, pool, type }: Props): React.ReactElement {
+function StakingMenu({ genesisHash, pool, type }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
 

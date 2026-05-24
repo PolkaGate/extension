@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension authors & contributors
+// Copyright 2019-2026 @polkadot/extension authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable no-use-before-define */
@@ -11,6 +11,8 @@ import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types'
 import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
+import type { AiTxAnyJson } from '../utils/AiUtils/aiTypes';
+import type { RequestBiometricEnable, RequestBiometricUnlock, ResponseBiometricStatus } from '../utils/biometric';
 import type { AuthResponse } from './handlers/State';
 
 export type AuthUrls = Record<string, AuthUrlInfo>;
@@ -104,6 +106,8 @@ export interface RequestSignatures {
 
   // added for polkagate
   'pri(accounts.updateMeta)': [RequestUpdateMeta, boolean];
+  'pri(ai.agentLoad)': [RequestCreateAgent, Promise<boolean>];
+  'pri(ai.explainTransaction)': [RequestExplainTx, Promise<string>];
   'pri(extension.lock)': [null, boolean];
   'pri(authorize.ignore)': [string, void];
   'pri(metadata.update)': [MetadataDef, boolean];
@@ -121,7 +125,12 @@ export interface RequestSignatures {
   'pri(accounts.validate)': [RequestAccountValidate, boolean];
   'pri(accounts.changePassword)': [RequestAccountChangePassword, boolean];
   'pri(accounts.changePasswordAll)': [RequestAccountChangePasswordAll, boolean];
+  'pri(accounts.biometric.disable)': [null, boolean];
+  'pri(accounts.biometric.enable)': [RequestBiometricEnable, boolean];
+  'pri(accounts.biometric.status)': [null, ResponseBiometricStatus];
+  'pri(accounts.biometric.unlock)': [RequestBiometricUnlock, boolean];
   'pri(signing.getSignature)': [RequestSigningSignature, HexString | null];
+  'pri(signing.signEthereumRaw)': [RequestSigningEthereumRawSignature, HexString | null];
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
   'pri(authorize.update)': [RequestUpdateAuthorizedAccounts, void];
   'pri(authorize.list)': [null, ResponseAuthorizeList];
@@ -210,6 +219,7 @@ export interface RequestAccountCreateExternal {
   address: string;
   genesisHash?: HexString | null;
   name: string;
+  type?: KeypairType;
 }
 
 export interface RequestAccountCreateSuri {
@@ -224,9 +234,18 @@ export interface RequestAccountCreateHardware {
   accountIndex: number;
   address: string;
   addressOffset: number;
-  genesisHash: HexString | null | undefined ;
+  genesisHash: HexString | null | undefined;
   hardwareType: string;
   name: string;
+}
+
+export interface RequestCreateAgent {
+  modelId?: string;
+  progressCallback?: (progress: number) => void;
+}
+
+export interface RequestExplainTx {
+  txJson: AiTxAnyJson;
 }
 
 export interface RequestAccountChangePassword {
@@ -325,6 +344,10 @@ export interface RequestSigningApprovePassword {
 export interface RequestSigningSignature {
   payload: SignerPayloadJSON;
 }
+export interface RequestSigningEthereumRawSignature {
+  address: string;
+  data: string;
+}
 
 export interface RequestSigningApproveSignature {
   id: string;
@@ -367,6 +390,7 @@ export interface RequestUpdateMeta {
 export interface RequestUnlockAllAccounts {
   password: string;
   cacheTime: number; // milliseconds
+  lazy?: boolean;
 }
 
 // Responses

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/prefer-for-of */
@@ -30,7 +30,7 @@ export interface Lock {
 export type PalletReferenda = 'referenda' | 'rankedPolls' | 'fellowshipReferenda';
 export type PalletVote = 'convictionVoting' | 'rankedCollective' | 'fellowshipCollective';
 
-function getLocks (api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, refIds: BN[], casting: PalletConvictionVotingVoteCasting][], referenda: [BN, PalletReferendaReferendumInfoConvictionVotingTally][]): Lock[] {
+function getLocks(api: ApiPromise, palletVote: PalletVote, votes: [classId: BN, refIds: BN[], casting: PalletConvictionVotingVoteCasting][], referenda: [BN, PalletReferendaReferendumInfoConvictionVotingTally][]): Lock[] {
   const lockPeriod = api.consts[palletVote]?.['voteLockingPeriod'] as unknown as BN | undefined;
   const locks: Lock[] = [];
 
@@ -106,7 +106,7 @@ interface Info {
   priors: Lock[]
 }
 
-export default function useAccountLocks (address: string | undefined, genesisHash: string | null | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean, refresh?: boolean): Lock[] | undefined | null {
+export default function useAccountLocks(address: string | undefined, genesisHash: string | null | undefined, palletReferenda: PalletReferenda, palletVote: PalletVote, notExpired?: boolean, refresh?: boolean): Lock[] | undefined | null {
   const { api, chain } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
   const currentBlock = useCurrentBlockNumber(genesisHash);
@@ -122,7 +122,7 @@ export default function useAccountLocks (address: string | undefined, genesisHas
       setInfo(undefined);
     }
 
-    async function getLockClass () {
+    async function getLockClass() {
       if (!api || !palletVote || !formatted) {
         return undefined;
       }

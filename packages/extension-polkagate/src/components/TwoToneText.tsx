@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
@@ -11,9 +11,9 @@ interface Props {
   backgroundColor?: string;
 }
 
-function TwoToneText ({ backgroundColor, color = '#BEAAD8', style = {}, text, textPartInColor = '' }: Props): React.ReactElement {
+function TwoToneText({ backgroundColor, color = '#BEAAD8', style = {}, text, textPartInColor = '' }: Props): React.ReactElement {
   if (!textPartInColor) {
-    return <span>{text}</span>;
+    return <span style={{ ...style }}>{text}</span>;
   }
 
   return (
@@ -21,8 +21,7 @@ function TwoToneText ({ backgroundColor, color = '#BEAAD8', style = {}, text, te
       dangerouslySetInnerHTML={{
         __html: text.replace(
           textPartInColor,
-          `<span style="color: ${color}; ${
-            backgroundColor ? `background-color: ${backgroundColor}; border-radius: 6px; padding: 0 5px 0` : ''
+          `<span style="color: ${color}; ${backgroundColor ? `background-color: ${backgroundColor}; border-radius: 6px; padding: 0 5px 0` : ''
           }">${textPartInColor}</span>`
         )
       }}

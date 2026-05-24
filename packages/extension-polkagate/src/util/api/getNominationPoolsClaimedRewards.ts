@@ -1,21 +1,30 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransferRequest } from '../types';
 
-import request from 'umi-request';
+import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
 
-import { getSubscanChainName } from '../chain';
+import { fetchFromSubscan } from '..';
 
-export function getNominationPoolsClaimedRewards (chainName: string, address: string, pageSize: number): Promise<TransferRequest> {
-   const network = getSubscanChainName(chainName) as unknown as string;
+export function getNominationPoolsClaimedRewards(chainName: string, address: string, pageSize: number): Promise<TransferRequest> {
+  const { link } = getLink(chainName, 'pool_rewards');
 
-   return postReq(`https://${network}.api.subscan.io/api/scan/nomination_pool/rewards`, {
-    address,
-    row: pageSize
-  });
-}
+  if (!link) {
+    return Promise.resolve({
+      code: 0,
+      data: {
+        count: 0,
+        list: null,
+        transfers: null
+      },
+      for: ''
+    });
+  }
 
-function postReq (api: string, data: Record<string, unknown> = {}, option?: Record<string, unknown>): Promise<TransferRequest> {
-  return request.post(api, { data, ...option });
+  return fetchFromSubscan(link,
+    {
+      address,
+      row: pageSize
+    });
 }

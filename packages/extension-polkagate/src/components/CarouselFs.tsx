@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -31,7 +31,7 @@ const carouselItems = [
   welcomeScreen4
 ];
 
-function Indicators ({ currentIndex, onClick }: { currentIndex: number, onClick: (index: number) => void }) {
+function Indicators({ currentIndex, onClick }: { currentIndex: number, onClick: (index: number) => void }) {
   const SELECTED_SIZE = 12;
   const hiddenIndicators = [8, 6, 4];
   const indicatorsDimensions = [
@@ -78,7 +78,7 @@ function Indicators ({ currentIndex, onClick }: { currentIndex: number, onClick:
   );
 }
 
-function Slides ({ currentIndex }: { currentIndex: number }) {
+function Slides({ currentIndex }: { currentIndex: number }) {
   return (
     <Grid container sx={{ height: '100%', position: 'relative', width: '100%' }}>
       {carouselItems.map((item, index) => (
@@ -108,7 +108,7 @@ function Slides ({ currentIndex }: { currentIndex: number }) {
   );
 }
 
-function Subtitles ({ index, subTitles }: { index: number, subTitles: { Icon: Icon; title: string; }[] }) {
+function Subtitles({ index, subTitles }: { index: number, subTitles: { Icon: Icon; title: string; }[] }) {
   const Icon = subTitles[index].Icon;
 
   return (
@@ -121,7 +121,7 @@ function Subtitles ({ index, subTitles }: { index: number, subTitles: { Icon: Ic
   );
 }
 
-function Carousel () {
+function Carousel() {
   const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
 

@@ -1,13 +1,31 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-export const updateStorage = async (label: string, newInfo: object) => {
+/**
+ * @description
+ * Updates extension storage for a given key.
+ *
+ * @param {string} key
+ *        Storage key to update.
+ *
+ * @param {unknown} value
+ *        Value to store.
+ *
+ * @param {boolean} [isArray=false]
+ *        Indicates that the stored value is expected to be an array type.
+ *        Used to control how the value is handled internally.
+ *
+ * @returns {Promise<void>}
+ */
+export const updateStorage = async (label: string, newInfo: object, isArray = false) => {
   try {
     // Retrieve the previous value
     const previousData = await getStorage(label) as object;
 
     // Update the previous data with the new data
-    const updatedData = { ...previousData, ...newInfo } as unknown;
+    const updatedData = isArray
+      ? [...new Set([...(previousData as unknown[] || []), ...(newInfo as unknown[])])]
+      : { ...(previousData || {}), ...newInfo } as unknown;
 
     // Set the updated data in storage
     await setStorage(label, updatedData);
@@ -59,7 +77,7 @@ export const getAndWatchStorage = <T = unknown>(
   parse = false,
   defaultValue?: T
 ): (() => void) => {
-    getStorage(key, parse)
+  getStorage(key, parse)
     .then((value) => {
       const useDefault =
         value === undefined ||

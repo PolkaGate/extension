@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
@@ -9,11 +9,11 @@ import React, { memo, useCallback, useMemo } from 'react';
 import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, DisplayBalance, FormatPrice } from '../../../components';
+import { DisplayBalance, FormatPrice, Logo } from '../../../components';
 import { usePrices } from '../../../hooks';
 import DailyChange from '../../../popup/home/partial/DailyChange';
 import { GlowBox } from '../../../style';
-import getLogo2 from '../../../util/getLogo2';
+import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import Explorer from '../Explorer';
 
 interface Props {
@@ -21,27 +21,29 @@ interface Props {
   token: FetchedBalance | undefined;
 }
 
-function TokenSummary ({ address, token }: Props): React.ReactElement {
+function TokenSummary({ address, token }: Props): React.ReactElement {
   const theme = useTheme();
   const pricesInCurrency = usePrices();
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
   const tokenPrice = pricesInCurrency?.prices[token?.priceId ?? '']?.value ?? 0;
-  const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change ?? 0;
-  const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange);
+  const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change;
+  const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange ?? 0);
 
   const totalBalancePrice = useMemo(() =>
     token?.decimal ? calcPrice(priceOf(token?.priceId ?? '') ?? 0, token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0) : undefined
-  , [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
+    , [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
 
-  const logoInfo = useMemo(() => getLogo2(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
+  const mutedAmountColor = theme.palette.mode === 'dark' ? '#BEAAD8' : theme.palette.text.secondary;
+  const logoBorderColor = theme.palette.mode === 'dark' ? '#00000033' : '#FFFFFF99';
 
   return (
     <GlowBox style={{ height: '187px', justifyContent: 'start', justifyItems: 'start', pl: '30px', rowGap: '5px' }}>
       <Grow
-        in={!!token}
-        key={token?.genesisHash ?? token?.token}
+        in
+        key={token?.genesisHash ?? token?.token ?? 'token-summary'}
         style={{ transformOrigin: 'center center' }} timeout={1000}
       >
         <Grid
@@ -49,7 +51,7 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
           sx={{
             backdropFilter: 'blur(4px)',
             border: '8px solid',
-            borderColor: '#00000033',
+            borderColor: logoBorderColor,
             borderRadius: '999px',
             height: 'fit-content',
             ml: '-10px',
@@ -57,7 +59,30 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
             width: 'fit-content'
           }}
         >
-          <AssetLogo assetSize='36px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='5px -18px auto auto' />
+          {!token
+            ? (
+              <Skeleton
+                animation='wave'
+                sx={{
+                  borderRadius: '50%',
+                  height: '45px',
+                  width: '45px'
+                }}
+                variant='circular'
+              />
+            )
+            : (
+              <Logo
+                assetSize='45px'
+                baseTokenSize='24px'
+                fallbackBackgroundColor={theme.palette.action.hover}
+                fallbackText={token?.token}
+                genesisHash={token?.genesisHash}
+                logo={logoInfo?.logo}
+                subLogo={logoInfo?.subLogo}
+                subLogoPosition='5px -13px auto auto'
+              />
+            )}
         </Grid>
       </Grow>
       <Explorer
@@ -83,7 +108,7 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
         fontWeight={400}
         num={totalBalancePrice}
         skeletonHeight={30}
-        style= {{ height: '49.5px' }}
+        style={{ height: '49.5px' }}
         width={totalBalancePrice === undefined ? '100px' : 'fit-content'}
         withSmallDecimal
       />
@@ -95,12 +120,12 @@ function TokenSummary ({ address, token }: Props): React.ReactElement {
           skeletonStyle={{ width: '130px' }}
           style={{
             ...theme.typography['B-4'],
-            color: '#BEAAD8',
+            color: mutedAmountColor,
             width: 'max-content'
           }}
           token={token?.token}
         />
-        {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&
+        {token?.priceId && tokenPriceChange !== undefined &&
           <DailyChange
             change={change}
             textVariant='B-1'

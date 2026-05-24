@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Option, StorageKey } from '@polkadot/types';
@@ -12,14 +12,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { BN, BN_ZERO } from '@polkadot/util';
 
-import { ASSET_HUBS, PROXY_CHAINS } from '../util/constants';
+import { ASSET_HUBS } from '../util/constants';
 import useActiveRecoveries from './useActiveRecoveries';
 import useChainInfo from './useChainInfo';
 
 type Item = 'identity' | 'proxy' | 'bounty' | 'recovery' | 'referenda' | 'index' | 'society' | 'multisig' | 'preimage' | 'assets' | 'uniques' | 'NFT';
 export type Reserved = { [key in Item]?: Balance | null | undefined };
 
-export default function useReservedDetails (formatted: string | undefined, genesisHash: string | undefined): Reserved {
+export default function useReservedDetails(formatted: string | undefined, genesisHash: string | undefined): Reserved {
   const { api, decimal } = useChainInfo(genesisHash);
   const activeRecoveries = useActiveRecoveries(api);
   const [reserved, setReserved] = useState<Reserved>({});
@@ -53,7 +53,7 @@ export default function useReservedDetails (formatted: string | undefined, genes
   }, [toBalance]);
 
   useEffect(() => {
-    if (!api || !genesisHash) {
+    if (!api || !genesisHash || !formatted) {
       return;
     }
 
@@ -82,7 +82,7 @@ export default function useReservedDetails (formatted: string | undefined, genes
       });
 
       /** fetch proxy  */
-      if (api.query?.['proxy'] && PROXY_CHAINS.includes(genesisHash)) {
+      if (api.query?.['proxy']?.['proxies']) {
         setValue('proxy', undefined);
 
         api.query['proxy']['proxies'](formatted).then((proxyInformation) => {
@@ -596,7 +596,7 @@ export default function useReservedDetails (formatted: string | undefined, genes
 
   useEffect(() => {
     setReserved({});
-  }, [genesisHash]);
+  }, [genesisHash, formatted]);
 
   return reserved;
 }

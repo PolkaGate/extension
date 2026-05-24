@@ -1,29 +1,15 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
 import { hexToString } from '@polkadot/util';
 
-import { KUSAMA_GENESIS_HASH, POLKADOT_GENESIS_HASH } from '../../constants';
+import { WORKER_TASKS } from '../../constants';
 import getChainName from '../../getChainName';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints } from '../utils';
+import { getPeopleChainName } from '../../peopleChainUtils';
+import { fastestEndpoint, getChainEndpoints } from '../utils';
 
 const BATCH_SIZE = 50;
-
-/**
- * Fetches the chain name based on the genesis hash
- * @param {string} genesisHash - The genesis hash of the chain
- * @returns {string} The name of the chain
-*/
-const getPeopleChainName = (genesisHash) => {
-  if (genesisHash === POLKADOT_GENESIS_HASH) {
-    return 'PolkadotPeople';
-  } else if (genesisHash === KUSAMA_GENESIS_HASH) {
-    return 'KusamaPeople';
-  } else {
-    return 'WestendPeople';
-  }
-};
 
 /**
  * Extended version of DeriveStakingQuery which includes identity information
@@ -59,12 +45,12 @@ const convertId = (id) => ({
  * @param {string} genesisHash - The Polkadot API instance
  * @param {MessagePort } port
  */
-export default async function getValidatorsInformation (genesisHash, port) {
+export default async function getValidatorsInformation(genesisHash, port) {
   const chainName = getChainName(genesisHash);
 
   if (!chainName) {
     console.error('Invalid genesisHash provided:', genesisHash);
-    port.postMessage(JSON.stringify({ functionName: 'getValidatorsInformation', results: null }));
+    port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.VALIDATORS_INFO, results: null }));
 
     return;
   }
@@ -72,86 +58,88 @@ export default async function getValidatorsInformation (genesisHash, port) {
   const endpoints = getChainEndpoints(chainName);
 
   try {
-    const { api, connections } = await fastestEndpoint(endpoints);
+    const { api } = await fastestEndpoint(endpoints);
 
-    console.log('getting validators information on ' + chainName);
+    try {
+      console.log('getting validators information on ' + chainName);
 
-    const [electedInfo, waitingInfo, currentEra] = await Promise.all([
-      api.derive.staking.electedInfo({ withClaimedRewardsEras: true, withController: true, withDestination: true, withExposure: true, withExposureMeta: true, withLedger: true, withNominations: true, withPrefs: true }),
-      api.derive.staking.waitingInfo({ withClaimedRewardsEras: true, withController: true, withDestination: true, withExposure: true, withExposureMeta: true, withLedger: true, withNominations: true, withPrefs: true }),
-      api.query['staking']['currentEra']()
-    ]);
+      const [electedInfo, waitingInfo, currentEra] = await Promise.all([
+        api.derive.staking.electedInfo({ withClaimedRewardsEras: true, withController: true, withDestination: true, withExposure: true, withExposureMeta: true, withLedger: true, withNominations: true, withPrefs: true }),
+        api.derive.staking.waitingInfo({ withClaimedRewardsEras: true, withController: true, withDestination: true, withExposure: true, withExposureMeta: true, withLedger: true, withNominations: true, withPrefs: true }),
+        api.query['staking']['currentEra']()
+      ]);
 
-    console.log('electedInfo, waitingInfo, currentEra fetched successfully');
+      console.log('electedInfo, waitingInfo, currentEra fetched successfully');
 
-    // Close the initial connections to the relay chain
-    closeWebsockets(connections);
+      // Start connect to the People chain endpoints in order to fetch identities
+      const peopleChainName = getPeopleChainName(genesisHash);
+      const peopleEndpoints = getChainEndpoints(peopleChainName);
+      const { api: peopleApi } = await fastestEndpoint(peopleEndpoints);
 
-    // Start connect to the People chain endpoints in order to fetch identities
-    console.log('Connecting to People chain endpoints...');
-    const peopleChainName = getPeopleChainName(genesisHash);
-    const peopleEndpoints = getChainEndpoints(peopleChainName);
-    const { api: peopleApi, connections: peopleConnections } = await fastestEndpoint(peopleEndpoints);
+      try {
+        // Keep elected and waiting validators separate
+        const electedValidatorsInfo = electedInfo.info;
+        const waitingValidatorsInfo = waitingInfo.info;
 
-    // Keep elected and waiting validators separate
-    const electedValidatorsInfo = electedInfo.info;
-    const waitingValidatorsInfo = waitingInfo.info;
+        // Initialize separate result arrays
+        /**
+         * @type {ValidatorInformation[]}
+        */
+        const electedValidatorsInformation = [];
+        /**
+         * @type {import('@polkadot/api-derive/types').DeriveStakingQuery[]}
+        */
+        const electedMayHaveSubId = [];
+        /**
+         * @type {ValidatorInformation[]}
+        */
+        const electedAccountSubInfo = [];
 
-    // Initialize separate result arrays
-    /**
-     * @type {ValidatorInformation[]}
-    */
-    const electedValidatorsInformation = [];
-    /**
-     * @type {import('@polkadot/api-derive/types').DeriveStakingQuery[]}
-    */
-    const electedMayHaveSubId = [];
-    /**
-     * @type {ValidatorInformation[]}
-    */
-    const electedAccountSubInfo = [];
+        /**
+         * @type {ValidatorInformation[]}
+        */
+        const waitingValidatorsInformation = [];
+        /**
+         * @type {import('@polkadot/api-derive/types').DeriveStakingQuery[]}
+        */
+        const waitingMayHaveSubId = [];
+        /**
+         * @type {ValidatorInformation[]}
+        */
+        const waitingAccountSubInfo = [];
 
-    /**
-     * @type {ValidatorInformation[]}
-    */
-    const waitingValidatorsInformation = [];
-    /**
-     * @type {import('@polkadot/api-derive/types').DeriveStakingQuery[]}
-    */
-    const waitingMayHaveSubId = [];
-    /**
-     * @type {ValidatorInformation[]}
-    */
-    const waitingAccountSubInfo = [];
+        // Process elected validators
+        console.log('Processing elected validators identities...');
+        await processDirectIdentities(peopleApi, electedValidatorsInfo, electedValidatorsInformation, electedMayHaveSubId);
+        await processSubIdentities(peopleApi, electedMayHaveSubId, electedValidatorsInformation, electedAccountSubInfo);
+        await processParentIdentities(peopleApi, electedAccountSubInfo, electedValidatorsInformation);
 
-    // Process elected validators
-    console.log('Processing elected validators identities...');
-    await processDirectIdentities(peopleApi, electedValidatorsInfo, electedValidatorsInformation, electedMayHaveSubId);
-    await processSubIdentities(peopleApi, electedMayHaveSubId, electedValidatorsInformation, electedAccountSubInfo);
-    await processParentIdentities(peopleApi, electedAccountSubInfo, electedValidatorsInformation);
+        // Process waiting validators
+        console.log('Processing waiting validators identities...');
+        await processDirectIdentities(peopleApi, waitingValidatorsInfo, waitingValidatorsInformation, waitingMayHaveSubId);
+        await processSubIdentities(peopleApi, waitingMayHaveSubId, waitingValidatorsInformation, waitingAccountSubInfo);
+        await processParentIdentities(peopleApi, waitingAccountSubInfo, waitingValidatorsInformation);
 
-    // Process waiting validators
-    console.log('Processing waiting validators identities...');
-    await processDirectIdentities(peopleApi, waitingValidatorsInfo, waitingValidatorsInformation, waitingMayHaveSubId);
-    await processSubIdentities(peopleApi, waitingMayHaveSubId, waitingValidatorsInformation, waitingAccountSubInfo);
-    await processParentIdentities(peopleApi, waitingAccountSubInfo, waitingValidatorsInformation);
+        const results = {
+          eraIndex: Number(currentEra?.toString() || '0'),
+          genesisHash,
+          validatorsInformation: {
+            elected: electedValidatorsInformation,
+            waiting: waitingValidatorsInformation
+          }
+        };
 
-    closeWebsockets(peopleConnections);
-
-    const results = {
-      eraIndex: Number(currentEra?.toString() || '0'),
-      genesisHash,
-      validatorsInformation: {
-        elected: electedValidatorsInformation,
-        waiting: waitingValidatorsInformation
+        port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.VALIDATORS_INFO, results: JSON.stringify(results) }));
+      } finally {
+        await peopleApi.disconnect().catch(console.error);
       }
-    };
-
-    port.postMessage(JSON.stringify({ functionName: 'getValidatorsInformation', results: JSON.stringify(results) }));
+    } finally {
+      await api.disconnect().catch(console.error);
+    }
   } catch (e) {
     console.error('Something went wrong while fetching validators', e);
 
-    port.postMessage(JSON.stringify({ functionName: 'getValidatorsInformation', results: null }));
+    port.postMessage(JSON.stringify({ functionName: WORKER_TASKS.VALIDATORS_INFO, results: null }));
   }
 }
 
@@ -163,7 +151,7 @@ export default async function getValidatorsInformation (genesisHash, port) {
  * @param {import("@polkadot/api-derive/types").DeriveStakingQuery[]} mayHaveSubId - Output array for validators without direct identities
  * @private
  */
-async function processDirectIdentities (api, validatorsInfo, validatorsInformation, mayHaveSubId) {
+async function processDirectIdentities(api, validatorsInfo, validatorsInformation, mayHaveSubId) {
   let totalProcessed = 0;
 
   try {
@@ -179,7 +167,7 @@ async function processDirectIdentities (api, validatorsInfo, validatorsInformati
       // Process results
       const processedBatch = currentBatch.map((validatorInfo, index) => {
         const identityOption = identityEntries[index];
-        const identity = !identityOption.isSome ? undefined : identityOption.unwrap();
+        const identity = identityOption.isSome ? identityOption.unwrap() : undefined;
 
         return {
           ...validatorInfo,
@@ -193,10 +181,10 @@ async function processDirectIdentities (api, validatorsInfo, validatorsInformati
 
       // Add to appropriate result arrays
       noIdentity.length > 0 &&
-      mayHaveSubId.push(...noIdentity);
+        mayHaveSubId.push(...noIdentity);
 
       withIdentity.length > 0 &&
-      validatorsInformation.push(...withIdentity);
+        validatorsInformation.push(...withIdentity);
 
       totalProcessed += BATCH_SIZE;
     }
@@ -215,7 +203,7 @@ async function processDirectIdentities (api, validatorsInfo, validatorsInformati
  * @param {ValidatorInformation[]} accountSubInfo - Output array for validators with sub-identity
  * @private
  */
-async function processSubIdentities (api, mayHaveSubId, validatorsInformation, accountSubInfo) {
+async function processSubIdentities(api, mayHaveSubId, validatorsInformation, accountSubInfo) {
   let totalProcessed = 0;
 
   try {
@@ -281,7 +269,7 @@ async function processSubIdentities (api, mayHaveSubId, validatorsInformation, a
  * @param {ValidatorInformation[]} validatorsInformation - Output array for results
  * @private
  */
-async function processParentIdentities (api, accountSubInfo, validatorsInformation) {
+async function processParentIdentities(api, accountSubInfo, validatorsInformation) {
   let totalProcessed = 0;
 
   try {

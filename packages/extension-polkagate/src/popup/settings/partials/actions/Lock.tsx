@@ -1,18 +1,18 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Unlock } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useExtensionLockContext } from '../../../../context/ExtensionLockContext';
-import { useAutoLockPeriod, useIsDark, useTranslation } from '../../../../hooks';
+import { useAutoLockPeriod, useTranslation } from '../../../../hooks';
 import { lockExtension } from '../../../../messaging';
 
-export default function Lock ({ isExtension, style }: { isExtension: boolean, style: SxProps<Theme> }): React.ReactElement {
+export default function Lock({ isExtension, style }: { isExtension: boolean, style: SxProps<Theme> }): React.ReactElement {
   const { t } = useTranslation();
-  const isDark = useIsDark();
+  const theme = useTheme();
   const navigate = useNavigate();
   const autoLockPeriod = useAutoLockPeriod();
 
@@ -33,7 +33,7 @@ export default function Lock ({ isExtension, style }: { isExtension: boolean, st
       alignItems='center' container item justifyContent='center' justifyItems='center' onClick={onClick}
       sx={{ ...style }}
     >
-      <Unlock color={isDark ? '#AA83DC' : '#745D8B'} size={18} variant='Bulk' />
+      <Unlock color={theme.palette.accent.icon} size={18} variant='Bulk' />
       {
         isExtension &&
         <Typography color='text.primary' pl='3px' pt='3px' variant='B-4'>

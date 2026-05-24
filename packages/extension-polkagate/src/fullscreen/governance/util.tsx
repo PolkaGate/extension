@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 //@ts-nocheck
@@ -39,7 +39,7 @@ interface Voting {
   delegating: unknown; // needs to be fixed
 }
 
-export async function getAddressVote (address: string, api: ApiPromise, referendumIndex: number, trackId: number): Promise<Vote | null> {
+export async function getAddressVote(address: string, api: ApiPromise, referendumIndex: number, trackId: number): Promise<Vote | null> {
   const voting = await api.query['convictionVoting']['votingFor'](address, trackId) as unknown as PalletConvictionVotingVoteVoting;
 
   if (voting.isEmpty) {
@@ -107,7 +107,7 @@ export async function getAddressVote (address: string, api: ApiPromise, referend
   return null;
 }
 
-export async function getAllVotes (address: string, api: ApiPromise, tracks: Track[]): Promise<number[] | null> {
+export async function getAllVotes(address: string, api: ApiPromise, tracks: Track[]): Promise<number[] | null> {
   const queries = tracks.map((t) => api.query['convictionVoting']['votingFor'](address, t[0]));
   const voting = await Promise.all(queries);
   const castedRefIndexes = voting?.map((v) => {

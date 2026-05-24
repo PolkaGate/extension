@@ -18,11 +18,18 @@
         margin: 0 auto;
         max-width: 100%;
         padding: 0;
+        position: relative;
         text-align: left;
         width: 375px;
-        position: relative;
+      }
+
+      html.fullscreen-shell div#root {
+        margin: 0;
+        max-width: 100%;
+        width: 100%;
       }
     </style>
+    <script src="./fullscreen-shell.js"></script>
   </head>
   <body>
     <div id="root"></div>

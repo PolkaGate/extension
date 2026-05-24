@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DeriveAccountRegistration } from '@polkadot/api-derive/types';
@@ -11,27 +11,35 @@ import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material
 import React, { type CSSProperties, memo, useCallback, useMemo, useState } from 'react';
 import { FixedSizeList as List } from 'react-window';
 
-import { ActionButton, DetailPanel, DisplayBalance, GradientButton, Identity2 } from '../../../components';
+import { ActionButton, DetailPanel, DisplayBalance, GradientButton, Identity } from '../../../components';
 import { useChainInfo, useTranslation, useValidatorApy } from '../../../hooks';
 import { Email, Web, XIcon } from '../../../popup/settings/icons';
 import SocialIcon from '../../../popup/settings/partials/SocialIcon';
 import { PolkaGateIdenticon, VelvetBox } from '../../../style';
 import { getSubstrateAddress, isHexToBn, toShortAddress } from '../../../util';
+import { normalizeMailtoUrl, normalizeMatrixUrl, normalizeTwitterUrl, normalizeUrl } from '../../../util/socialLinks';
 import { getTokenUnit } from '../util/utils';
 import { InfoBox } from './InfoBox';
 
-const Socials = ({ accountInfo }: { accountInfo: DeriveAccountRegistration | undefined }) => {
+export const MiniSocials = ({ accountInfo }: { accountInfo: DeriveAccountRegistration | undefined }) => {
+  const emailLink = normalizeMailtoUrl(accountInfo?.email);
+  const webLink = normalizeUrl(accountInfo?.web);
+  const twitterLink = normalizeTwitterUrl(accountInfo?.twitter);
+  const matrixLink = normalizeMatrixUrl(accountInfo?.matrix || accountInfo?.riot);
+
   return (
     <Grid alignItems='center' columnGap='2px' container item sx={{ width: 'fit-content' }}>
-      {accountInfo?.email &&
-        <SocialIcon Icon={<Email color='#AA83DC' width='18px' />} link={`mailto:${accountInfo.email}`} size={24} />
+      {emailLink &&
+        <SocialIcon Icon={<Email color='#AA83DC' width='18px' />} link={emailLink} size={24} />
       }
-      {accountInfo?.web &&
-        <SocialIcon Icon={<Web color='#AA83DC' width='18px' />} link={accountInfo.web} size={24} />
-
+      {webLink &&
+        <SocialIcon Icon={<Web color='#AA83DC' width='18px' />} link={webLink} size={24} />
       }
-      {accountInfo?.twitter &&
-        <SocialIcon Icon={<XIcon color='#AA83DC' width='18px' />} bgColor='#AA83DC26' link={`https://twitter.com/${accountInfo.twitter}`} size={24} />
+      {twitterLink &&
+        <SocialIcon Icon={<XIcon color='#AA83DC' width='18px' />} bgColor='#AA83DC26' link={twitterLink} size={24} />
+      }
+      {matrixLink &&
+        <SocialIcon Icon={<Web color='#AA83DC' width='18px' />} bgColor='#AA83DC26' link={matrixLink} size={24} tooltip='Element / Matrix' />
       }
     </Grid>
   );
@@ -45,14 +53,15 @@ interface NominatorItemProps {
 const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { decimal, token } = useChainInfo(genesisHash, true);
 
   const [accountInfo, setAccountInfo] = useState<DeriveAccountRegistration | undefined>(undefined);
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '18px' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '18px' }}>
       <Stack direction='column' sx={{ width: 'max-content' }}>
-        <Identity2
+        <Identity
           address={getSubstrateAddress(nominator.who.toString())}
           genesisHash={genesisHash ?? ''}
           identiconSize={24}
@@ -62,19 +71,19 @@ const NominatorItem = ({ genesisHash, nominator }: NominatorItemProps) => {
           style={{ width: '210px' }}
         />
         <Grid container item sx={{ alignItems: 'center', gap: '4px', ml: '30px', width: 'fit-content' }}>
-          <Typography color='#AA83DC' textAlign='left' variant='B-4'>
+          <Typography color={isDark ? '#AA83DC' : theme.palette.text.highlight} textAlign='left' variant='B-4'>
             {t('Staked')}:
           </Typography>
           <DisplayBalance
             balance={nominator.value}
             decimal={decimal}
             decimalPoint={2}
-            style={{ color: theme.palette.text.primary, fontFamily: 'Inter', fontSize: '12px', fontWeight: 500}}
+            style={{ color: theme.palette.text.primary, fontFamily: 'Inter', fontSize: '12px', fontWeight: 500 }}
             token={token}
           />
         </Grid>
       </Stack>
-      <Socials accountInfo={accountInfo} />
+      <MiniSocials accountInfo={accountInfo} />
     </Container>
   );
 };
@@ -87,11 +96,13 @@ interface LeftColumnContentProps {
 
 const LeftColumnContent = ({ genesisHash, nominators, onClose }: LeftColumnContentProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Stack direction='column' sx={{ gap: '6px', p: '50px 18px 0', width: '100%', zIndex: 1 }}>
       <Box
-        sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', justifySelf: 'center', m: '5px 0 15px', width: '100%' }}
+        sx={{ background: theme.palette.dividerGradientFade, height: '1px', justifySelf: 'center', m: '5px 0 15px', width: '100%' }}
       />
       <Stack direction='column' sx={{ gap: '4px', height: '350px', maxHeight: '350px', overflow: 'auto', pb: '18px', width: '100%' }}>
         {nominators.length > 0 &&
@@ -115,7 +126,7 @@ const LeftColumnContent = ({ genesisHash, nominators, onClose }: LeftColumnConte
             }}
           </List>}
         {nominators.length === 0 &&
-          <Typography color='#AA83DC' sx={{ pt: '25px', textAlign: 'center', width: '100%' }} variant='B-2'>
+          <Typography color={isDark ? '#AA83DC' : theme.palette.text.highlight} sx={{ pt: '25px', textAlign: 'center', width: '100%' }} variant='B-2'>
             {t('No nominators')}
           </Typography>
         }
@@ -193,7 +204,11 @@ const RightColumnContent = ({ genesisHash, onSelect, validator }: RightColumnCon
   );
 };
 
-const ValidatorIdentityFs = memo(function ValidatorIdentity ({ validatorInfo }: { validatorInfo: ValidatorInformation }) {
+const ValidatorIdentityFs = memo(function ValidatorIdentity({ validatorInfo }: { validatorInfo: ValidatorInformation }) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const accentColor = isDark ? '#AA83DC' : theme.palette.text.highlight;
+
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', maxWidth: '310px', overflow: 'hidden', width: 'fit-content' }}>
       <PolkaGateIdenticon
@@ -209,7 +224,7 @@ const ValidatorIdentityFs = memo(function ValidatorIdentity ({ validatorInfo }: 
           {validatorInfo.identity.displayParent ?? validatorInfo.identity.display}
         </Typography>}
       {validatorInfo.identity?.displayParent &&
-        <Typography color='#AA83DC' sx={{ bgcolor: '#AA83DC26', borderRadius: '6px', p: '4px' }} variant='B-5'>
+        <Typography color={accentColor} sx={{ bgcolor: isDark ? '#AA83DC26' : '#EEF1FF', borderRadius: '6px', p: '4px' }} variant='B-5'>
           {validatorInfo.identity.display}
         </Typography>}
     </Container>
@@ -223,7 +238,7 @@ interface Props {
   validator: ValidatorInformation;
 }
 
-export default function ValidatorInformationFS ({ genesisHash, onClose, onSelect, validator }: Props) {
+export default function ValidatorInformationFS({ genesisHash, onClose, onSelect, validator }: Props) {
   const handleSelect = useCallback(() => {
     onSelect?.();
     onClose();

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PositionInfo } from '../../../util/types';
@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
 import { BN_ZERO } from '@polkadot/util';
 
-import { useAccountAssets, useChainInfo, usePoolStakingInfo, usePrices, useRouteRefresh, useStakingRewardsChart } from '../../../hooks';
+import { useAccountAssets, useChainInfo, useHighCommissionNominationAlert, usePoolStakingInfo, usePrices, useRouteRefresh, useStakingRewardsChart } from '../../../hooks';
 import { isHexToBn } from '../../../util';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
@@ -19,7 +19,7 @@ import StakingTabs from '../partials/StakingTabs';
 import { useStakingPopups } from '../util/utils';
 import PopUpHandlerPool from './PopUpHandlerPool';
 
-export default function PoolFullScreen (): React.ReactElement {
+export default function PoolFullScreen(): React.ReactElement {
   const [refresh, setRefresh] = useState<boolean>(false);
 
   useRouteRefresh(() => setRefresh(true));
@@ -31,6 +31,13 @@ export default function PoolFullScreen (): React.ReactElement {
   const pricesInCurrency = usePrices();
   const { popupCloser, popupOpener, stakingPopup } = useStakingPopups();
   const rewardInfo = useStakingRewardsChart(address, genesisHash, 'pool', true);
+
+  useHighCommissionNominationAlert({
+    genesisHash,
+    nominatedValidatorsIds: stakingInfo.pool?.stashIdAccount?.nominators?.map((item) => item.toString()),
+    poolName: stakingInfo.pool?.metadata,
+    stakingType: 'pool'
+  });
 
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);
 
@@ -86,8 +93,10 @@ export default function PoolFullScreen (): React.ReactElement {
             unlockingAmount={unlockingAmount}
           />
           <StakingTabs
+            address={address}
             disabled={notStaked}
             genesisHash={genesisHash}
+            poolInfo={stakingInfo.pool}
             popupOpener={popupOpener}
             rewardInfo={rewardInfo}
             setSelectedPosition={setSelectedPosition}

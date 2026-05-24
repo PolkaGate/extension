@@ -1,22 +1,23 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { TransactionDetail } from '../../../util/types';
 
 import { Avatar, Collapse, Container, Dialog, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 
 import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
 import { BN_ZERO } from '@polkadot/util';
 
-import { DisplayBalance, FadeOnScroll, FormatPrice, GradientButton, Transition } from '../../../components';
+import { CopyAddressButton, DisplayBalance, FadeOnScroll, FormatPrice, GradientButton, Identity, Transition } from '../../../components';
 import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
 import { useChainInfo, useIsExtensionPopup, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
-import { amountToMachine, calcPrice, countDecimalPlaces, formatTimestamp, getVoteType, isReward, toShortAddress, toTitleCase } from '../../../util';
+import { amountToMachine, calcPrice, formatTimestamp, getVoteType, isReward, toShortAddress, toTitleCase } from '../../../util';
 import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
-import getLogo from '../../../util/getLogo';
+import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import { getLink } from '../explorer';
 
 interface Props {
@@ -31,7 +32,7 @@ interface HistoryDetailProps {
 const isReceived = (historyItem: TransactionDetail) => !historyItem.subAction && historyItem.action.toLowerCase() !== 'send';
 const isSend = (historyItem: TransactionDetail) => !historyItem.subAction && historyItem.action.toLowerCase() === 'send';
 
-const DisplayCalls = memo(function DisplayCalls ({ calls }: { calls: string[]; }) {
+const DisplayCalls = memo(function DisplayCalls({ calls }: { calls: string[]; }) {
   const { t } = useTranslation();
 
   const [open, setOpen] = useState<boolean>(false);
@@ -59,18 +60,21 @@ const DisplayCalls = memo(function DisplayCalls ({ calls }: { calls: string[]; }
   );
 });
 
-function HistoryStatus ({ action, success }: { action: string, success: boolean }) {
+function HistoryStatus({ action, success }: { action: string, success: boolean }) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const successColor = theme.palette.success.main;
 
   return (
     <Stack sx={{ alignItems: 'center', mt: '-5px' }}>
-      <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', overflow: 'hidden', width: 'fit-content' }}>
+      <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: isDark ? '#00000033' : '#FFFFFF66', borderRadius: '999px', overflow: 'hidden', width: 'fit-content' }}>
         {success
-          ? <TickCircle color='#82FFA5' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
-          : <CloseCircle color='#FF4FB9' size='50' style={{ background: '#000', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
+          ? <TickCircle color={successColor} size='50' style={{ background: isDark ? '#000' : '#FFFFFF', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
+          : <CloseCircle color='#FF4FB9' size='50' style={{ background: isDark ? '#000' : '#FFFFFF', borderRadius: '999px', margin: '-4px' }} variant='Bold' />
         }
       </Grid>
-      <Typography color='#AA83DC' pt='8px' textTransform='capitalize' variant='B-2'>
+      <Typography color='text.secondary' pt='8px' textTransform='capitalize' variant='B-2'>
         {action}
         {' - '}
         {success
@@ -82,22 +86,22 @@ function HistoryStatus ({ action, success }: { action: string, success: boolean 
   );
 }
 
-function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount: string, decimal: number, sign?: string, token?: string, genesisHash: string }) {
+function HistoryAmount({ amount, decimal, genesisHash, sign, token }: { amount: string, decimal: number, sign?: string, token?: string, genesisHash: string }) {
   const price = useTokenPriceBySymbol(token, genesisHash);
+  const sanitizedAmount = useMemo(() => amount.replace(/,/g, ''), [amount]);
 
-  const totalBalancePrice = useMemo(() => calcPrice(price.price, amountToMachine(amount, decimal) ?? BN_ZERO, decimal ?? 0), [amount, decimal, price.price]);
+  const totalBalancePrice = useMemo(() => calcPrice(price.price, amountToMachine(sanitizedAmount, decimal) ?? BN_ZERO, decimal ?? 0), [decimal, price.price, sanitizedAmount]);
 
-  const [integerPart, decimalPart] = amount.split('.');
+  const [integerPart, decimalPart] = sanitizedAmount.split('.');
 
   const decimalToShow = useMemo(() => {
-    if (decimalPart) {
-      const countDecimal = countDecimalPlaces(Number('0.' + decimalPart));
-      const toCut = countDecimal > 4 ? 4 : countDecimal;
-
-      return `.${decimalPart.slice(0, toCut)}`;
-    } else {
+    if (!decimalPart) {
       return '.00';
     }
+
+    const trimmedDecimal = decimalPart.slice(0, 4).replace(/0+$/, '');
+
+    return trimmedDecimal ? `.${trimmedDecimal}` : '.00';
   }, [decimalPart]);
 
   return (
@@ -128,13 +132,15 @@ function HistoryAmount ({ amount, decimal, genesisHash, sign, token }: { amount:
   );
 }
 
-function DetailHeader ({ historyItem }: Props) {
+function DetailHeader({ historyItem }: Props) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const sign = isReward(historyItem) || isReceived(historyItem) ? '+' : isSend(historyItem) ? '-' : '';
 
   const { action, amount = '0', chain, decimal = 0, subAction, success, token = '' } = historyItem;
 
   return (
-    <GlowBox style={{ m: 0, pb: '15px', width: '100%' }}>
+    <GlowBox style={{ bgcolor: isDark ? '#120D27' : theme.palette.background.paper, border: '1px solid', borderColor: isDark ? 'transparent' : '#DDE3F4', borderRadius: '24px', m: 0, pb: '15px', width: '100%' }}>
       <HistoryStatus
         action={subAction ?? action}
         success={success}
@@ -150,7 +156,9 @@ function DetailHeader ({ historyItem }: Props) {
   );
 }
 
-function DetailCard ({ historyItem }: Props) {
+function DetailCard({ historyItem }: Props) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { calls, conviction, decimal = 0, delegatee, from, refId, to, token = '', txHash: hash = '', voteType } = historyItem;
 
   const items = useMemo(() => {
@@ -174,7 +182,7 @@ function DetailCard ({ historyItem }: Props) {
 
   return (
     <VelvetBox style={{ padding: '4px' }}>
-      <Container disableGutters sx={{ bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', p: '12px 18px', width: '100%' }}>
+      <Container disableGutters sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', display: 'flex', flexDirection: 'column', p: '12px 18px', width: '100%' }}>
         {
           !!calls?.length &&
           <DisplayCalls calls={calls} />
@@ -189,7 +197,7 @@ function DetailCard ({ historyItem }: Props) {
           const isVoteType = key === 'voteType';
           const isFee = key === 'fee';
 
-          const color = isAddress || isHash ? 'text.secondary' : isDate ? 'text.primary' : '#AA83DC';
+          const color = isAddress || isHash ? 'text.secondary' : isDate ? 'text.primary' : (isDark ? '#AA83DC' : theme.palette.text.secondary);
 
           return (
             <React.Fragment key={index}>
@@ -197,29 +205,45 @@ function DetailCard ({ historyItem }: Props) {
                 <Typography color='text.secondary' textTransform='capitalize' variant='B-1' width='fit-content'>
                   {toTitleCase(key)}
                 </Typography>
-                <Typography color={color} sx={{ bgcolor: isAddress || isHash ? '#C6AECC26' : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
-                  {isBlock && '#'}
-                  {isAddress
-                    ? toShortAddress(value.toString())
-                    : isHash
-                      ? toShortAddress(value.toString(), 6)
-                      : isDate
-                        ? formatTimestamp(value)
-                        : isVoteType
-                          ? getVoteType(value as number)
-                          : isFee
-                            ? <DisplayBalance
-                              balance={value as string}
-                              decimal={decimal}
-                              style={{
-                                color: '#AA83DC',
-                                width: 'max-content'
-                              }}
-                              token={token}
+                <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='end'>
+                  <Typography color={color} sx={{ bgcolor: isHash ? (isDark ? '#C6AECC26' : '#EEF2FB') : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
+                    {isBlock && '#'}
+                    {isAddress
+                      ? <Identity
+                        address={value.toString()}
+                        addressStyle={{ backgroundColor: isDark ? '#C6AECC26' : '#EEF2FB', borderRadius: '9px', marginTop: '-3%', padding: '2px 3px' }}
+                        charsCount={4}
+                        direction='row'
+                        genesisHash={historyItem.chain?.genesisHash || POLKADOT_GENESIS}
+                        identiconSize={18}
+                        nameStyle={{ py: '2px' }}
+                        showSocial={false}
+                        style={{ color: 'text.primary', variant: 'B-1' }}
+                        withShortAddress={true}
+                      />
+                      : isHash
+                        ? toShortAddress(value.toString(), 6)
+                        : isDate
+                          ? formatTimestamp(value)
+                          : isVoteType
+                            ? getVoteType(value as number)
+                            : isFee
+                              ? <DisplayBalance
+                                balance={value as string}
+                                decimal={decimal}
+                                style={{
+                                  color: '#AA83DC',
+                                  width: 'max-content'
+                                }}
+                                token={token}
                               />
-                            : value
+                              : value
+                    }
+                  </Typography>
+                  {isHash && Boolean(value) &&
+                    <CopyAddressButton address={String(value)} padding={0} size={16} />
                   }
-                </Typography>
+                </Stack>
               </Container>
               {withDivider && <GradientDivider style={{ my: '7px' }} />}
             </React.Fragment>
@@ -230,9 +254,10 @@ function DetailCard ({ historyItem }: Props) {
   );
 }
 
-function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail | undefined, style?: React.CSSProperties }): React.ReactElement {
+function Content({ historyItem, style = {} }: { historyItem: TransactionDetail | undefined, style?: React.CSSProperties }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const containerRef = useRef<HTMLDivElement>(null);
   const { chainName } = useChainInfo(historyItem?.chain?.genesisHash, true);
 
@@ -241,20 +266,20 @@ function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail 
   const openExplorer = useCallback(() => link && window.open(link, '_blank'), [link]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid #FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1, ...style }}>
+    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: isDark ? '#120D27' : theme.palette.background.paper, border: '2px solid', borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1, ...style }}>
       {historyItem &&
         <>
           <DetailHeader historyItem={historyItem} />
           <Grid container item ref={containerRef} sx={{ height: 'fit-content', maxHeight: '330px', overflowY: 'auto', pb: '65px' }}>
             <DetailCard historyItem={historyItem} />
-            <FadeOnScroll containerRef={containerRef} />
+            <FadeOnScroll containerRef={containerRef} ratio={0.3} style={{ borderRadius: '8px', bottom: '15px', justifySelf: 'center', width: '93%' }} />
           </Grid>
           <GradientButton
             disabled={!link}
             onClick={openExplorer}
             startIconNode={
               <Avatar
-                src={getLogo(name)}
+                src={resolveLogoInfo(name)?.logo}
                 sx={{ borderRadius: '50%', filter: (CHAINS_WITH_BLACK_LOGO.includes(name ?? '') && theme.palette.mode === 'dark') ? 'invert(1)' : '', height: 20, marginRight: '8px', width: 20, zIndex: 2 }}
                 variant='square'
               />
@@ -273,8 +298,9 @@ function Content ({ historyItem, style = {} }: { historyItem: TransactionDetail 
   );
 }
 
-function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React.ReactElement {
+function HistoryDetail({ historyItem, setOpenMenu }: HistoryDetailProps): React.ReactElement {
   const isExtension = useIsExtensionPopup();
+  const theme = useTheme();
   const handleClose = useCallback(() => setOpenMenu(undefined), [setOpenMenu]);
 
   return (
@@ -294,14 +320,14 @@ function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React
               backdrop: {
                 sx: {
                   backdropFilter: 'blur(10px)',
-                  background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
+                  background: theme.palette.gradient.radialOverlay,
                   bgcolor: 'transparent'
                 }
               }
             }}
             fullScreen
             open={!!historyItem}
-            >
+          >
             <Container disableGutters sx={{ height: '100%', width: '100%' }}>
               <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
                 <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
@@ -317,12 +343,12 @@ function HistoryDetail ({ historyItem, setOpenMenu }: HistoryDetailProps): React
             onClose={handleClose}
             open={!!historyItem}
             showBackIconAsClose
-            style={{ backgroundColor: '#1B133C', minHeight: '400px', padding: ' 20px 10px 10px' }}
+            style={{ backgroundColor: theme.palette.mode === 'dark' ? '#1B133C' : theme.palette.background.paper, borderColor: theme.palette.mode === 'dark' ? '#FFFFFF0D' : '#DDE3F4', minHeight: '400px', padding: ' 20px 10px 10px' }}
             title={historyItem?.subAction ?? historyItem?.action}
-            >
+          >
             <Content
               historyItem={historyItem}
-              style={{ background: 'transparent', border: 0 }}
+              style={{ background: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.background.paper, border: 0 }}
             />
           </DraggableModal>
       }

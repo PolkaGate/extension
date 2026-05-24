@@ -1,11 +1,11 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowRight2, type Icon as IconType } from 'iconsax-react';
 import React, { useRef } from 'react';
 
-import { logoTransparent } from '../assets/logos';
+import { logoBlackBirdTransparent, logoTransparent } from '../assets/logos';
 import { useIsDark, useIsHovered } from '../hooks';
 
 interface Props {
@@ -19,18 +19,22 @@ interface Props {
   onClick: () => void;
   style?: SxProps<Theme>;
   title: string;
+  children?: React.ReactNode;
+  showColorBall?: boolean;
+  showChevron?: boolean;
 }
 
-function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, style, title }: Props): React.ReactElement {
+function ActionCard({ Icon, children, description, iconColor, iconSize = 30, iconWithBackground, iconWithoutTransform, logoIcon, onClick, showChevron = true, showColorBall = true, style, title }: Props): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
+  const resolvedIconColor = iconColor ?? theme.palette.primary.main;
 
   const actionCardStyle = {
-    bgcolor: isDark ? '#05091C' : '#FFFF',
+    bgcolor: theme.palette.surface.input,
     border: '4px solid',
-    borderColor: isDark ? '#1B133C' : '#F5F4FF',
+    borderColor: theme.palette.border.paper,
     borderRadius: '14px',
     columnGap: '10px',
     cursor: 'pointer',
@@ -44,6 +48,7 @@ function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, 
   const colorBallStyle: React.CSSProperties = {
     backgroundColor: '#CC429D',
     borderRadius: '50%',
+    display: showColorBall ? 'initial' : 'none',
     filter: 'blur(28px)', // Glow effect
     height: '42px',
     left: '1px',
@@ -79,25 +84,26 @@ function ActionCard ({ Icon, description, iconColor = '#AA83DC', iconSize = 30, 
       ref={containerRef}
       sx={actionCardStyle}
     >
-      {Icon && <Icon color={isDark ? iconColor : '#291443'} size={iconSize} style={IconStyle} variant='Bulk' />}
+      {Icon && <Icon color={isDark ? resolvedIconColor : theme.palette.text.primary} size={iconSize} style={IconStyle} variant='Bulk' />}
       {logoIcon &&
         <Box
           component='img'
-          src={logoTransparent as string}
+          src={(isDark ? logoTransparent : logoBlackBirdTransparent) as string}
           sx={{ ...IconStyle, height: '34px', p: '2px', width: '34px' }}
         />
       }
-      <Grid container item>
+      <Grid container item xs>
         <Grid alignItems='center' container item>
-          <Typography color={hovered ? '#AA83DC' : theme.palette.text.primary} sx={{ transition: 'all 250ms ease-out' }} variant='B-2'>
+          <Typography color={hovered ? theme.palette.primary.main : theme.palette.text.primary} sx={{ transition: 'all 250ms ease-out' }} variant='B-2'>
             {title}
           </Typography>
-          <ArrowRight2 color={hovered ? '#AA83DC' : theme.palette.text.primary} size='12' style={chevronStyle} />
+          {showChevron && <ArrowRight2 color={hovered ? theme.palette.primary.main : theme.palette.text.primary} size='12' style={chevronStyle} />}
         </Grid>
         <Typography color={theme.palette.text.secondary} textAlign='left' variant='B-4'>
           {description}
         </Typography>
       </Grid>
+      {children}
       <div style={colorBallStyle} />
     </Container>
   );

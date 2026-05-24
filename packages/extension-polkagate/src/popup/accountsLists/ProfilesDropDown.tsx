@@ -1,23 +1,23 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { ExpandMore } from '@mui/icons-material';
-import { Box, ClickAwayListener, Grid, Popover, Stack, styled, type SxProps, type Theme, Typography } from '@mui/material';
+import { alpha, Box, ClickAwayListener, Grid, Popover, Stack, styled, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useRef } from 'react';
 
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import useProfileInfo from '../../fullscreen/home/useProfileInfo';
-import { useAccountsOrder, useIsHovered, useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
+import { useAccountsOrder, useIsDark, useIsHovered, useProfileAccounts, useProfiles, useSelectedProfile, useTranslation } from '../../hooks';
 import { setStorage } from '../../util';
 import { PROFILE_MODE } from './type';
 
-const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'preferredWidth' })(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
-  background: '#05091C',
+const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'preferredWidth' })(({ preferredWidth, theme }: { preferredWidth: number | undefined, theme?: Theme }) => ({
+  background: theme?.palette.mode === 'dark' ? '#05091C' : '#FFFFFF',
   border: '4px solid',
-  borderColor: '#1B133C',
+  borderColor: theme?.palette.mode === 'dark' ? '#1B133C' : '#EEF0FB',
   borderRadius: '12px',
   columnGap: '5px',
   flexWrap: 'nowrap',
@@ -32,8 +32,10 @@ const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !=
   width: `${preferredWidth}px`
 }));
 
-function Tab ({ initialAccountList, label }: { initialAccountList: AccountJson[] | undefined, label: string }): React.ReactElement {
+function Tab({ initialAccountList, label }: { initialAccountList: AccountJson[] | undefined, label: string }): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = useIsDark();
   const profileAccounts = useProfileAccounts(initialAccountList, label);
   const selectedProfile = useSelectedProfile();
   const profileInfo = useProfileInfo(label);
@@ -47,17 +49,18 @@ function Tab ({ initialAccountList, label }: { initialAccountList: AccountJson[]
   }, [label]);
 
   return (
-    <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='space-between' onClick={onClick} ref={refContainer}
-      sx={{ backgroundColor: hovered ? '#6743944D' : 'transparent', borderRadius: '8px', cursor: 'pointer', height: '40px', px: '5px', width: '100%' }}
+    <Stack
+alignItems='center' columnGap='5px' direction='row' justifyContent='space-between' onClick={onClick} ref={refContainer}
+      sx={{ backgroundColor: hovered ? (isDark ? '#6743944D' : '#F4F6FF') : 'transparent', borderRadius: '8px', cursor: 'pointer', height: '40px', px: '5px', width: '100%' }}
     >
       <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start'>
-        <profileInfo.Icon color={isSelected || hovered ? '#FF4FB9' : '#AA83DC'} size='18' variant='Bulk' />
-        <Typography color={hovered ? '#FF4FB9' : '#EAEBF1'} sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }} variant='B-2'>
+        <profileInfo.Icon color={isSelected || hovered ? '#FF4FB9' : (isDark ? '#AA83DC' : theme.palette.primary.main)} size='18' variant='Bulk' />
+        <Typography color={hovered ? '#FF4FB9' : theme.palette.text.primary} sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }} variant='B-2'>
           {t(label)}
         </Typography>
       </Stack>
-      <Box alignItems='center' justifyContent='center' sx={{ background: isSelected ? '#05091C' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '1024px', display: 'flex', height: '20px', minWidth: '20px' }}>
-        <Typography color='#EAEBF1' variant='B-1'>
+      <Box alignItems='center' justifyContent='center' sx={{ background: isSelected ? (isDark ? '#05091C' : alpha(theme.palette.primary.main, 0.12)) : theme.palette.gradient.brand, borderRadius: '1024px', display: 'flex', height: '20px', minWidth: '20px' }}>
+        <Typography color={isSelected ? theme.palette.text.primary : '#EAEBF1'} variant='B-1'>
           {profileAccounts?.length ?? 0}
         </Typography>
       </Box>
@@ -73,7 +76,7 @@ interface DropContentProps {
   initialAccountList: AccountJson[] | undefined
 }
 
-function CustomizedDropDown ({ containerRef, contentDropWidth, initialAccountList, open, options }: DropContentProps) {
+function CustomizedDropDown({ containerRef, contentDropWidth, initialAccountList, open, options }: DropContentProps) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 
@@ -120,8 +123,9 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-function ProfilesDropDown ({ mode, setMode, style }: Props) {
+function ProfilesDropDown({ mode, setMode, style }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const initialAccountList = useAccountsOrder();
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
@@ -168,12 +172,12 @@ function ProfilesDropDown ({ mode, setMode, style }: Props) {
               <Typography sx={{ lineHeight: '100%', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', textTransform: 'uppercase', whiteSpace: 'nowrap' }} variant='H-3'>
                 {`${selectedProfile} accounts`}
               </Typography>
-              <Box sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '50%', display: 'flex', height: '20px', justifyContent: 'center', minWidth: '20px' }}>
-                <Typography fontWeight={700} variant='B-1'>
+              <Box sx={{ background: theme.palette.gradient.brand, borderRadius: '50%', display: 'flex', height: '20px', justifyContent: 'center', minWidth: '20px' }}>
+                <Typography color='#FFFFFF' fontWeight={700} variant='B-1'>
                   {profileAccounts?.length}
                 </Typography>
               </Box>
-              <ExpandMore sx={{ color: open || hovered ? '#FF4FB9' : '#FFFFFF', fontSize: '30px', ml: '-5px', transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out' }} />
+              <ExpandMore sx={{ color: open || hovered ? '#FF4FB9' : theme.palette.text.primary, fontSize: '30px', ml: '-5px', transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out' }} />
             </>
           }
         </Grid>

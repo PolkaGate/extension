@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AuthorizeRequest } from '@polkadot/extension-base/background/types';
@@ -19,7 +19,7 @@ export interface AuthorizeRequestHandlerProp {
   totalRequests: number;
 }
 
-export default function Authorize (): React.ReactElement {
+export default function Authorize(): React.ReactElement {
   const isExtensionMode = useIsExtensionPopup();
   const extensionMode = window.location.pathname.includes('notification');
   const requests = useContext(AuthorizeReqContext);

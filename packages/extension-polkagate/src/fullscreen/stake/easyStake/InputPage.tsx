@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -15,7 +15,7 @@ import { ScrollingTextBox } from '../../../components';
 import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../hooks';
 import StakeAmountInput from '../../../popup/staking/partial/StakeAmountInput';
 import { EXTENSION_NAME } from '../../../util/constants';
-import getLogo2 from '../../../util/getLogo2';
+import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import { EasyStakeSide, type SelectedEasyStakingType } from '../util/utils';
 
 interface StakingTypeOptionBoxProps {
@@ -29,8 +29,15 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConst
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
+  const isDark = theme.palette.mode === 'dark';
 
-  const textColor = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
+  const textColor = useMemo(() => isExtension ? (isDark ? theme.palette.text.highlight : '#745D8B') : '#AA83DC', [isDark, isExtension, theme.palette.text.highlight]);
+  const successColor = isDark ? '#82FFA5' : theme.palette.success.main;
+  const successBgColor = isDark ? '#82FFA526' : '#DDF8EA';
+  const cardBg = isDark ? (isExtension ? '#110F2A' : '#05091C') : '#FFFFFF';
+  const cardBorderColor = isDark ? 'transparent' : '#E3E8F7';
+  const cardShadow = isDark ? 'none' : '0 12px 26px rgba(106, 116, 156, 0.14)';
+  const chevronColor = isDark ? '#FFFFFF' : '#745D8B';
   const description = useMemo(() => {
     if (selectedStakingType?.pool) {
       return selectedStakingType.pool.metadata ?? '';
@@ -48,7 +55,7 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConst
 
   return (
     <Collapse in={open}>
-      <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: isExtension ? '#110F2A' : '#05091C', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, mt: '8px', p: '24px 18px' }}>
+      <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: cardBg, border: '1px solid', borderColor: cardBorderColor, borderRadius: '14px', boxShadow: cardShadow, cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, mt: '8px', p: '24px 18px' }}>
         <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
           {selectedStakingType?.type === 'pool'
             ? <People color={textColor} size='24' variant='Bulk' />
@@ -72,15 +79,15 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConst
             }
           </Stack>
           {isRecommended &&
-            <ChevronRightRounded sx={{ color: '#FFFFFF', fontSize: '25px' }} />
+            <ChevronRightRounded sx={{ color: chevronColor, fontSize: '25px' }} />
           }
         </Container>
         {isRecommended &&
-          <Typography color='#82FFA5' sx={{ bgcolor: '#82FFA526', borderRadius: '9px', p: '2px 6px' }} variant='B-2'>
+          <Typography color={successColor} sx={{ bgcolor: successBgColor, borderRadius: '9px', p: '2px 6px' }} variant='B-2'>
             {t('Recommended')}
           </Typography>}
         {!isRecommended &&
-          <ChevronRightRounded sx={{ color: '#FFFFFF', fontSize: '25px' }} />
+          <ChevronRightRounded sx={{ color: chevronColor, fontSize: '25px' }} />
         }
       </Container>
     </Collapse>
@@ -90,9 +97,12 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConst
 const EstimatedRate = ({ rate, show }: { show: boolean, rate: number | undefined }) => {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
-  const textColor = useMemo(() => isExtension ? 'text.highlight' : 'primary.main', [isExtension]);
-  const yearColor = useMemo(() => isExtension ? '#809acb8c' : '#674394', [isExtension]);
+  const textColor = useMemo(() => isExtension ? (isDark ? 'text.highlight' : '#745D8B') : 'primary.main', [isDark, isExtension]);
+  const yearColor = useMemo(() => isExtension ? (isDark ? '#809acb8c' : '#745D8B') : '#674394', [isDark, isExtension]);
+  const successColor = isDark ? '#82FFA5' : theme.palette.success.main;
 
   return (
     <Stack direction='row' sx={{ display: show ? 'flex' : 'none', justifyContent: 'space-between', m: '17px 0 3px', px: '5px', width: '100%' }}>
@@ -100,7 +110,7 @@ const EstimatedRate = ({ rate, show }: { show: boolean, rate: number | undefined
         {t('Estimated rewards')}
       </Typography>
       <Stack direction='row' sx={{ columnGap: '5px', justifyContent: 'end', width: 'fit-content' }}>
-        <Typography color='#82FFA5' variant='B-1'>
+        <Typography color={successColor} variant='B-1'>
           {rate}%
         </Typography>
         <Typography color={yearColor} variant='B-1'>
@@ -128,7 +138,7 @@ export interface InputPageProp {
 const InputPage = ({ amount, availableBalanceToStake, errorMessage, genesisHash, loading, onChangeAmount, onMaxMinAmount, rate, selectedStakingType, setSide, stakingConsts }: InputPageProp) => {
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
-  const logoInfo = useMemo(() => getLogo2(genesisHash, token), [genesisHash, token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
   const onTypeOption = useCallback(() => setSide(EasyStakeSide.STAKING_TYPE), [setSide]);
 

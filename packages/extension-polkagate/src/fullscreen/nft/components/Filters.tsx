@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FilterAction, FilterSectionProps, FilterState, ItemInformation, SortAction, SortState } from '../utils/types';
@@ -42,7 +42,7 @@ const sortReducer = (state: SortState, action: SortAction): SortState => {
   };
 };
 
-function Filters ({ items, setItemsToShow }: FilterSectionProps): React.ReactElement {
+function Filters({ items, setItemsToShow }: FilterSectionProps): React.ReactElement {
   const prices = usePrices();
   const { t } = useTranslation();
   const [filters, dispatchFilter] = useReducer(filterReducer, initialFilterState);
@@ -122,7 +122,7 @@ function Filters ({ items, setItemsToShow }: FilterSectionProps): React.ReactEle
   }, [items, filters, searchedTxt, sortItems, setItemsToShow]);
 
   return (
-    <Stack alignItems='center' columnGap='15px' direction= 'row' justifyContent='space-between' sx={{ mt: '20px' }}>
+    <Stack alignItems='center' columnGap='15px' direction='row' justifyContent='space-between' sx={{ mt: '20px' }}>
       <SearchField
         onInputChange={onSearch}
         placeholder={t('🔍 Search')}

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Prices, PricesInCurrencies } from '@polkadot/extension-polkagate/src/util/types';
@@ -6,8 +6,8 @@ import type { Prices, PricesInCurrencies } from '@polkadot/extension-polkagate/s
 import React, { useContext, useEffect, useState } from 'react';
 
 import { CurrencyContext, PricesContext } from '@polkadot/extension-polkagate/src/components/contexts';
-import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import usePriceIds from '@polkadot/extension-polkagate/src/hooks/usePriceIds';
+import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
 import { getPrices } from '@polkadot/extension-polkagate/src/util/api';
 import { EXTRA_PRICE_IDS } from '@polkadot/extension-polkagate/src/util/api/getPrices';
 import { PRICE_VALIDITY_PERIOD, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
@@ -19,11 +19,11 @@ interface Props {
 /** If we need to retrieve a price, and that price was fetched within the last PRICE_VALIDITY_PERIOD in seconds,
  *  there’s no need to fetch it again; we can simply use the previously saved value.
  * */
-function isPriceUpToDate (lastFetchDate?: number): boolean | undefined {
+function isPriceUpToDate(lastFetchDate?: number): boolean | undefined {
   return lastFetchDate ? Date.now() - lastFetchDate < PRICE_VALIDITY_PERIOD : undefined;
 }
 
-export default function PricesProvider ({ children }: Props) {
+export default function PricesProvider({ children }: Props) {
   const priceIdsInfo = usePriceIds();
   const { currency } = useContext(CurrencyContext);
 
@@ -62,6 +62,12 @@ export default function PricesProvider ({ children }: Props) {
                   return;
                 }
 
+                if (priceEntry?.value === undefined) {
+                  delete newPrices.prices[id];
+
+                  return;
+                }
+
                 priceEntry.genesisHash = genesisHash;
 
                 if (symbol) {
@@ -70,9 +76,9 @@ export default function PricesProvider ({ children }: Props) {
               });
 
               setPrices(newPrices);
-              savedPricesInCurrencies[currency.code] = newPrices;
-              setStorage(STORAGE_KEY.PRICE_IN_CURRENCIES, savedPricesInCurrencies)
-                .catch(console.error);
+                savedPricesInCurrencies[currency.code] = newPrices;
+                setStorage(STORAGE_KEY.PRICE_IN_CURRENCIES, savedPricesInCurrencies)
+                  .catch(console.error);
             })
             .catch(console.error);
         })

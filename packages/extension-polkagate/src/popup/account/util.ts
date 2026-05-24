@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable no-case-declarations */
@@ -14,7 +14,7 @@ import { BN, BN_ZERO, bnMax } from '@polkadot/util';
 
 import { toBN } from '../../util';
 
-function isEmptyObject (obj: object): boolean {
+function isEmptyObject(obj: object): boolean {
   return Object.keys(obj).length === 0;
 }
 

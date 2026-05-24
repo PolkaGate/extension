@@ -1,18 +1,17 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-first-prop-new-line */
 
 import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
-import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { ArrowDown2 } from 'iconsax-react';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useSelectedAccount, useUpdateSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
+import { useAccounts, useChainInfo, useSelectedAccount, useUpdateSelectedAccount } from '@polkadot/extension-polkagate/src/hooks/index';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 
-import { AccountContext, ChainLogo, ScrollingTextBox } from '../../components';
+import { Logo, ScrollingTextBox } from '../../components';
 import useIsDark from '../../hooks/useIsDark';
 import { identiconBlue, identiconPink } from '../../popup/home/svg';
 import PolkaGateIdenticon from '../../style/PolkaGateIdenticon';
@@ -26,6 +25,7 @@ interface AccountsIconProps {
 }
 
 const AccountsIcon = ({ accountsLength, address, noSelection }: AccountsIconProps) => {
+  const theme = useTheme();
   const isDark = useIsDark();
 
   return (
@@ -46,7 +46,7 @@ const AccountsIcon = ({ accountsLength, address, noSelection }: AccountsIconProp
             <Grid
               alignContent='center' container item justifyContent='center'
               sx={{
-                background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+                background: theme.palette.gradient.brand,
                 borderRadius: '999px',
                 color: isDark ? '#EAEBF1' : '#FFFFFF',
                 fontFamily: 'Inter',
@@ -74,18 +74,20 @@ enum MODAL_TO_OPEN {
   NONE
 }
 
-function ChainSwitcher ({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
+function ChainSwitcher({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
   const isDark = useIsDark();
   const selectedAccount = useSelectedAccount();
   const { genesisHash: maybeGenesisFromPath } = useParams<{ genesisHash: string }>();
   const savedGenesis = useAccountSelectedChain(selectedAccount?.address);
   const genesisHash = maybeGenesisFromPath ?? savedGenesis;
+  const { chainName } = useChainInfo(genesisHash, true);
 
   return (
     <Box onClick={onClick(MODAL_TO_OPEN.CHAINS)}
       sx={{
         alignItems: 'center',
-        bgcolor: isDark ? '#2D1E4A80' : '#CCD2EA',
+        bgcolor: isDark ? '#2D1E4A80' : '#F2F5FD',
+        border: isDark ? 'none' : '1px solid #DDE3F4',
         borderRadius: '8px',
         cursor: 'pointer',
         display: 'flex',
@@ -94,18 +96,18 @@ function ChainSwitcher ({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () =>
         width: '28px'
       }}
     >
-      <ChainLogo
-        genesisHash={genesisHash ?? POLKADOT_GENESIS}
+      <Logo
+        chainName={chainName}
         size={20}
       />
     </Box>
   );
 }
 
-function AccountSelect ({ modalToOpen, noSelection = false, onClick }: { modalToOpen: MODAL_TO_OPEN, noSelection: boolean, onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
+function AccountSelect({ modalToOpen, noSelection = false, onClick }: { modalToOpen: MODAL_TO_OPEN, noSelection: boolean, onClick: (toOpen: MODAL_TO_OPEN) => () => void }): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
   const selectedAccount = useSelectedAccount();
   const { address } = useParams<{ address: string; genesisHash: string }>();
 
@@ -136,6 +138,7 @@ function AccountSelect ({ modalToOpen, noSelection = false, onClick }: { modalTo
           noSelection={noSelection}
         />
         <ScrollingTextBox
+          fadeColor={isDark ? undefined : '#FFFFFF'}
           text={selectedAccount?.name ?? ''}
           textStyle={{
             color: 'text.primary',
@@ -157,7 +160,7 @@ function AccountSelect ({ modalToOpen, noSelection = false, onClick }: { modalTo
   );
 }
 
-export default function AccountChainSelect ({ noSelection = false }: Props): React.ReactElement {
+export default function AccountChainSelect({ noSelection = false }: Props): React.ReactElement {
   const isDark = useIsDark();
 
   const [modalToOpen, setModalToOpen] = React.useState<MODAL_TO_OPEN>(MODAL_TO_OPEN.NONE);
@@ -170,12 +173,14 @@ export default function AccountChainSelect ({ noSelection = false }: Props): Rea
     <>
       <Container disableGutters
         sx={{
-          ':hover': noSelection ? {} : { background: '#674394' },
+          ':hover': noSelection ? {} : { background: isDark ? '#674394' : '#F3F6FD' },
           alignItems: 'center',
           background: isDark
             ? '#2D1E4A80'
-            : '#FFFFFF8C',
+            : '#FFFFFF',
+          border: isDark ? 'none' : '1px solid #DDE3F4',
           borderRadius: '10px',
+          boxShadow: isDark ? 'none' : '0px 8px 22px rgba(133, 140, 176, 0.12)',
           display: 'flex',
           justifyContent: 'space-between',
           pr: noSelection ? '8px' : '2px',
@@ -193,6 +198,7 @@ export default function AccountChainSelect ({ noSelection = false }: Props): Rea
       <AccountListModal
         handleClose={onClick(MODAL_TO_OPEN.NONE)}
         open={modalToOpen === MODAL_TO_OPEN.ACCOUNTS}
+        showAll
       />
       <ChainListModal
         handleClose={onClick(MODAL_TO_OPEN.NONE)}

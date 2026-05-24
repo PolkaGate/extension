@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -8,7 +8,7 @@ import React, { } from 'react';
 
 import { DisplayBalance, FormatPrice } from '../../../components';
 
-export function TokenBalanceDisplay ({ decimal = 0, token = '', totalBalanceBN, totalBalancePrice }: { decimal?: number, totalBalanceBN: BN, totalBalancePrice: number, token?: string }) {
+export function TokenBalanceDisplay({ decimal = 0, token = '', totalBalanceBN, totalBalancePrice }: { decimal?: number, totalBalanceBN: BN, totalBalancePrice: number, token?: string }) {
   const theme = useTheme();
   const balanceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#291443';
   const priceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#8F97B8';

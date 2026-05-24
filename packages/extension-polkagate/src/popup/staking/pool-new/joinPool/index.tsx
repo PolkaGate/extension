@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
@@ -19,7 +19,7 @@ export enum POOL_STEPS {
   REVIEW = 3
 }
 
-export default function JoinPool () {
+export default function JoinPool() {
   useBackground('staking');
 
   const { t } = useTranslation();

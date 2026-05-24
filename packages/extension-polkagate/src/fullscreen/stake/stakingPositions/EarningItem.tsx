@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PositionInfo } from '../../../util/types';
@@ -28,7 +28,7 @@ const Available = ({ balance, decimal, token }: StakedProps) => {
 
   return (
     <Grid container item sx={{ alignItems: 'center', gap: '6px', justifyContent: 'flex-start', minWidth: '160px', width: 'fit-content' }}>
-      <Typography color='#AA83DC' variant='B-2'>
+      <Typography color={theme.palette.mode === 'dark' ? '#AA83DC' : theme.palette.text.secondary} variant='B-2'>
         {t('Available')}:
       </Typography>
       {balance === undefined
@@ -58,14 +58,20 @@ const Available = ({ balance, decimal, token }: StakedProps) => {
 };
 
 const YieldBadge = ({ rate }: { rate: number | undefined }) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const successColor = isDark ? '#82FFA5' : theme.palette.success.main;
+  const successMutedColor = isDark ? '#82FFA580' : '#5EBE82';
+  const successBgColor = isDark ? '#82FFA526' : '#DDF8EA';
+
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#82FFA526', borderRadius: '9px', display: 'flex', flexDirection: 'row', gap: '4px', m: 'auto', p: '2px 6px', whiteSpace: 'nowrap', width: 'fit-content' }}>
-      <PercentageCircle color='#82FFA5' size='16' variant='Bold' />
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: successBgColor, borderRadius: '9px', display: 'flex', flexDirection: 'row', gap: '4px', m: 'auto', p: '2px 6px', whiteSpace: 'nowrap', width: 'fit-content' }}>
+      <PercentageCircle color={successColor} size='16' variant='Bold' />
       <Grid container item sx={{ flexWrap: 'nowrap', fontSize: '14px', fontWeight: 600, gap: '3px', width: 'fit-content' }}>
-        <span style={{ color: '#82FFA5' }}>up</span>
-        <span style={{ color: '#82FFA580' }}>to</span>
-        <span style={{ color: '#82FFA5' }}>{rate}%</span>
-        <span style={{ color: '#82FFA580' }}>per year</span>
+        <span style={{ color: successColor }}>up</span>
+        <span style={{ color: successMutedColor }}>to</span>
+        <span style={{ color: successColor }}>{rate}%</span>
+        <span style={{ color: successMutedColor }}>per year</span>
       </Grid>
     </Container>
   );
@@ -73,11 +79,12 @@ const YieldBadge = ({ rate }: { rate: number | undefined }) => {
 
 const StakeButton = ({ onClick }: { onClick: () => void }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
-    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#2D1E4A', borderRadius: '11px', cursor: 'pointer', flexWrap: 'nowrap', gap: '6px', justifyContent: 'center', minWidth: '77px', p: '8px', width: 'fit-content' }}>
-      <Trade color='#AA83DC' size='18' variant='Bulk' />
-      <Typography color='primary.main' variant='B-4'>
+    <Grid container item onClick={onClick} sx={{ alignItems: 'center', bgcolor: theme.palette.mode === 'dark' ? '#2D1E4A' : '#EEF1FF', border: '1px solid', borderColor: theme.palette.mode === 'dark' ? 'transparent' : '#DDE3F4', borderRadius: '11px', cursor: 'pointer', flexWrap: 'nowrap', gap: '6px', justifyContent: 'center', minWidth: '77px', p: '8px', width: 'fit-content' }}>
+      <Trade color={theme.palette.mode === 'dark' ? '#AA83DC' : theme.palette.primary.main} size='18' variant='Bulk' />
+      <Typography color={theme.palette.mode === 'dark' ? 'primary.main' : 'text.highlight'} variant='B-4'>
         {t('Stake')}
       </Typography>
     </Grid>
@@ -90,7 +97,8 @@ interface Props {
   setSelectedPosition: React.Dispatch<React.SetStateAction<PositionInfo | undefined>>;
 }
 
-function EarningItem ({ info, popupOpener, setSelectedPosition }: Props) {
+function EarningItem({ info, popupOpener, setSelectedPosition }: Props) {
+  const theme = useTheme();
   const { availableBalance, decimal, freeBalance, genesisHash, rate, tokenSymbol } = info;
   const isTestNet = useMemo(() => TEST_NETS.includes(genesisHash), [genesisHash]);
 
@@ -101,7 +109,7 @@ function EarningItem ({ info, popupOpener, setSelectedPosition }: Props) {
   }, [info, popupOpener, setSelectedPosition]);
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'row', gap: '40px', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: theme.palette.mode === 'dark' ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: theme.palette.mode === 'dark' ? 'transparent' : '#EEF1FF', borderRadius: '14px', display: 'flex', flexDirection: 'row', gap: '40px', justifyContent: 'space-between', p: '4px', pl: '18px' }}>
       <TokenInfo genesisHash={genesisHash} />
       <Available balance={freeBalance || availableBalance || BN_ZERO} decimal={decimal} token={tokenSymbol} />
       <ChainIdentifier genesisHash={genesisHash} />

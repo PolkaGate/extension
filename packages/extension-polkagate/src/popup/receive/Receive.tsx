@@ -1,28 +1,30 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
-import { Container, Dialog, Grid, styled, Typography } from '@mui/material';
+import { Container, Dialog, Grid, styled, Typography, useTheme } from '@mui/material';
 import { ArrowCircleLeft, DocumentCopy, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
 
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
-import chains, { type NetworkInfo } from '@polkadot/extension-polkagate/src/util/chains';
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
-import { ChainLogo, NeonButton, SearchField, Transition } from '../../components';
+import { Logo, NeonButton, SearchField, Transition } from '../../components';
 import MySnackbar from '../../components/MySnackbar';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
-import { useFormatted, useSelectedAccount, useTranslation } from '../../hooks';
+import { useFormatted, useGenesisHashOptions, useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util';
 import BackButton from '../accountsLists/BackButton';
 
-const ListItem = styled(Grid)(() => ({
+const ListItem = styled(Grid)<{ isdark: boolean }>(({ isdark }) => ({
   '&:hover': {
-    backgroundColor: '#6743944D'
+    backgroundColor: isdark ? '#6743944D' : '#EEF2FB'
   },
   alignItems: 'center',
   borderRadius: '12px',
@@ -36,15 +38,17 @@ const chainNameSanitizer = (text: string) => sanitizeChainName(text)?.toLowerCas
 
 interface AddressComponentProp {
   address: string;
-  chain: NetworkInfo;
+  chain: DropdownOption;
 }
 
-function AddressComponent ({ address, chain }: AddressComponentProp) {
+function AddressComponent({ address, chain }: AddressComponentProp) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = useIsDark();
   const { isHovered, ref } = useIsHovered();
   const [showSnackbar, setShowSnackbar] = useState(false);
 
-  const chainName = useMemo(() => chainNameSanitizer(chain.name), [chain.name]);
+  const chainName = useMemo(() => chainNameSanitizer(chain.text), [chain.text]);
 
   const onCopy = useCallback(() => {
     navigator.clipboard.writeText(address).catch((err) => console.error('Error copying text: ', err));
@@ -55,14 +59,14 @@ function AddressComponent ({ address, chain }: AddressComponentProp) {
 
   return (
     <>
-      <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
+      <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? '#BEAAD833' : '#DDE3F4', borderRadius: '12px', p: '3px' }}>
         <Grid alignItems='center' columnGap='8px' container item pl='10px' width='fit-content'>
-          <ChainLogo chainName={chainName} size={18} />
+          <Logo chainName={chainName} size={18} />
           <Typography color='text.secondary' variant='B-4'>
             {toShortAddress(address, 12)}
           </Typography>
         </Grid>
-        <Grid container item onClick={onCopy} ref={ref} sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
+        <Grid container item onClick={onCopy} ref={ref} sx={{ background: theme.palette.gradient.brand, borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
           <DocumentCopy color='#fff' size='17' variant={isHovered ? 'Bulk' : 'Bold'} />
         </Grid>
       </Grid>
@@ -76,34 +80,30 @@ function AddressComponent ({ address, chain }: AddressComponentProp) {
 }
 
 interface SelectChainProp {
-  setSelectedChain: React.Dispatch<React.SetStateAction<NetworkInfo | undefined>>;
+  setSelectedChain: React.Dispatch<React.SetStateAction<DropdownOption | undefined>>;
+  isEthereum: boolean;
 }
 
-function SelectNetwork ({ setSelectedChain }: SelectChainProp) {
+function SelectNetwork({ isEthereum, setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
+  const isDark = useIsDark();
+  const networks = useGenesisHashOptions({ isEthereum, withRelay: false });
 
-  const customSort = useCallback((itemA: NetworkInfo, itemB: NetworkInfo) => {
-    const hasRelay = (str: string) => str.toLowerCase().includes('relay');
+  const [keyword, setKeyword] = useState<string>();
 
-    return (Number(hasRelay(itemB.name)) - Number(hasRelay(itemA.name))) || itemA.name.localeCompare(itemB.name);
-  }, []);
-
-  const networks = useMemo(() => chains.sort(customSort), [customSort]);
-
-  const [chainsToShow, setChainsToShow] = useState<NetworkInfo[]>(networks);
-
-  const onSearch = useCallback((keyword: string) => {
+  const chainsToShow = useMemo(() => {
     if (!keyword) {
-      return setChainsToShow(networks);
+      return networks;
     }
 
-    keyword = keyword.trim().toLowerCase();
-    const _filtered = networks.filter(({ name }) => name.toLowerCase().includes(keyword));
+    return networks.filter(({ text }) => text.toLowerCase().includes(keyword));
+  }, [keyword, networks]);
 
-    setChainsToShow([..._filtered]);
-  }, [networks]);
+  const onSearch = useCallback((keyword: string | undefined) => {
+    setKeyword(keyword?.trim()?.toLowerCase());
+  }, []);
 
-  const handleChainSelect = useCallback((chain: NetworkInfo) => () => {
+  const handleChainSelect = useCallback((chain: DropdownOption) => () => {
     setSelectedChain(chain);
   }, [setSelectedChain]);
 
@@ -122,16 +122,16 @@ function SelectNetwork ({ setSelectedChain }: SelectChainProp) {
           placeholder={t('🔍 Search networks')}
         />
       </Grid>
-      <Grid container item sx={{ maxHeight: '395px', my: '10px', overflowY: 'auto' }}>
+      <Grid container item sx={{ display: 'block', maxHeight: '395px', minHeight: '395px', my: '10px', overflowY: 'auto' }}>
         {
           chainsToShow.map((chain, index) => {
-            const chainName = chain.name;
+            const chainName = chain.text;
 
             return (
               <React.Fragment key={index}>
-                <ListItem container item onClick={handleChainSelect(chain)}>
+                <ListItem container isdark={isDark} item onClick={handleChainSelect(chain)}>
                   <Grid alignItems='center' container item sx={{ columnGap: '10px', width: 'fit-content' }}>
-                    <ChainLogo chainName={chainName} size={18} />
+                    <Logo chainName={chainName} size={24} />
                     <Typography color='text.primary' variant='B-2'>
                       {chainName}
                     </Typography>
@@ -144,6 +144,11 @@ function SelectNetwork ({ setSelectedChain }: SelectChainProp) {
               </React.Fragment>
             );
           })}
+        <NothingFound
+          show={chainsToShow.length === 0}
+          style={{ pb: '125px' }}
+          text={t('Network Not Found')}
+        />
       </Grid>
     </Grid>
   );
@@ -151,31 +156,32 @@ function SelectNetwork ({ setSelectedChain }: SelectChainProp) {
 
 interface QrCodeProps {
   address: string;
-  selectedChain: NetworkInfo;
-  setSelectedChain: React.Dispatch<React.SetStateAction<NetworkInfo | undefined>>;
+  selectedChain: DropdownOption;
+  setSelectedChain: React.Dispatch<React.SetStateAction<DropdownOption | undefined>>;
   onBackToAccount: () => void;
 }
 
-function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: QrCodeProps) {
+function QrCode({ address, onBackToAccount, selectedChain, setSelectedChain }: QrCodeProps) {
   const { t } = useTranslation();
-  const formattedAddress = useFormatted(address, selectedChain?.genesisHash);
+  const theme = useTheme();
+  const formattedAddress = useFormatted(address, selectedChain?.value as string);
 
   const chainLogo = useMemo(() => {
-    const chainName = sanitizeChainName(selectedChain?.name)?.toLowerCase();
+    const chainName = sanitizeChainName(selectedChain?.text)?.toLowerCase();
 
-    return getLogo2(chainName);
-  }, [selectedChain?.name]);
+    return resolveLogoInfo(chainName);
+  }, [selectedChain?.text]);
 
   const onBack = useCallback(() => setSelectedChain(undefined), [setSelectedChain]);
 
   return (
     <Grid container item justifyContent='center'>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '8px 6px' }}>
-          <BackButton
-            onClick={onBack}
-          />
+        <BackButton
+          onClick={onBack}
+        />
         <Grid alignItems='center' columnGap='8px' container item width='fit-content'>
-          <ChainLogo chainName={selectedChain.name} size={24} />
+          <Logo chainName={selectedChain.text} size={24} />
           <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
             {t('Your Address')}
           </Typography>
@@ -185,7 +191,7 @@ function QrCode ({ address, onBackToAccount, selectedChain, setSelectedChain }: 
       <Grid container item pt='6px' px='16px'>
         <AddressComponent address={formattedAddress ?? address} chain={selectedChain} />
       </Grid>
-      <Grid container item sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '17px', mb: '29px', mt: '25px', p: '4px', width: 'fit-content' }}>
+      <Grid container item sx={{ background: theme.palette.gradient.brand, borderRadius: '17px', mb: '29px', mt: '25px', p: '4px', width: 'fit-content' }}>
         <QRCode
           bgColor='#fff'
           ecLevel='H'
@@ -226,10 +232,12 @@ interface Props {
  *
  * Only has been used in extension mode!
  */
-export default function Receive ({ openPopup, setOpenPopup }: Props) {
+export default function Receive({ openPopup, setOpenPopup }: Props) {
+  const theme = useTheme();
+  const isDark = useIsDark();
   const selectedAddress = useSelectedAccount();
 
-  const [selectedChain, setSelectedChain] = useState<NetworkInfo | undefined>();
+  const [selectedChain, setSelectedChain] = useState<DropdownOption | undefined>();
 
   const handleClose = useCallback(() => {
     setOpenPopup();
@@ -250,7 +258,7 @@ export default function Receive ({ openPopup, setOpenPopup }: Props) {
         backdrop: {
           sx: {
             backdropFilter: 'blur(10px)',
-            background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
+            background: theme.palette.gradient.radialOverlay,
             bgcolor: 'transparent'
           }
         }
@@ -262,10 +270,11 @@ export default function Receive ({ openPopup, setOpenPopup }: Props) {
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
           <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', p: '10px', position: 'relative' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: isDark ? '#1B133C' : theme.palette.background.paper, border: '2px solid', borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', p: '10px', position: 'relative' }}>
           <div style={{ position: 'relative', zIndex: 1 }}>
             {!selectedChain &&
               <SelectNetwork
+                isEthereum={isEthereumAddress(selectedAddress?.address || '')}
                 setSelectedChain={setSelectedChain}
               />
             }

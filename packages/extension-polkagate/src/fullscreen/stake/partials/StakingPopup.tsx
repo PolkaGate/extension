@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -17,30 +17,30 @@ import { useRouteRefresh, useTranslation } from '../../../hooks';
 import TransactionFlow from '../partials/TransactionFlow';
 import { FULLSCREEN_STAKING_TX_FLOW, type FullScreenTransactionFlow, getCloseBehavior } from '../util/utils';
 
-interface Props extends Partial<DraggableModalProps>{
+interface Props extends Partial<DraggableModalProps> {
+  _onClose?: () => void;
   address: string | undefined;
-  title: string;
-  genesisHash: string | undefined;
-  onClose: () => void;
   children?: React.ReactElement;
-  setValue?: React.Dispatch<React.SetStateAction<BN | null | undefined>>;
-  transaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
-  transactionInformation: Content[];
+  extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
+  flowStep: FullScreenTransactionFlow;
+  genesisHash: string | undefined;
   maxHeight?: number;
   minHeight?: number;
-  setFlowStep: React.Dispatch<React.SetStateAction<FullScreenTransactionFlow>>;
-  flowStep: FullScreenTransactionFlow;
+  onClose: () => void;
   pool?: PoolInfo | undefined;
-  style?: React.CSSProperties;
-  _onClose?: () => void;
-  showBack?: boolean | undefined;
   proxyTypeFilter: ProxyTypes[] | undefined;
-  extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
   reviewHeader?: React.ReactNode;
+  setValue?: React.Dispatch<React.SetStateAction<BN | null | undefined>>;
+  setFlowStep: React.Dispatch<React.SetStateAction<FullScreenTransactionFlow>>;
   showAccountBoxInReview?: boolean;
+  showBack?: boolean | undefined;
+  style?: React.CSSProperties;
+  title: string;
+  transaction: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
+  transactionInformation: Content[];
 }
 
-export default function StakingPopup ({ _onClose, address, children, extraDetailConfirmationPage, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, proxyTypeFilter, reviewHeader, setFlowStep, setValue, showAccountBoxInReview, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
+export default function StakingPopup({ _onClose, address, children, extraDetailConfirmationPage, flowStep, genesisHash, maxHeight, minHeight, onClose, pool, proxyTypeFilter, reviewHeader, setFlowStep, setValue, showAccountBoxInReview, showBack, style, title, transaction, transactionInformation, ...rest }: Props) {
   const { t } = useTranslation();
   const refresh = useRouteRefresh();
 
@@ -65,16 +65,16 @@ export default function StakingPopup ({ _onClose, address, children, extraDetail
     <DraggableModal
       RightItem={
         selectedProxy && genesisHash &&
-          <SelectedProxy
-            genesisHash={genesisHash}
-            signerInformation={{
-              onClick: () => setShowProxySelection(true),
-              selectedProxyAddress
-            }}
-          />
+        <SelectedProxy
+          genesisHash={genesisHash}
+          signerInformation={{
+            onClick: () => setShowProxySelection(true),
+            selectedProxyAddress
+          }}
+        />
       }
       maxHeight={maxHeight ?? 700}
-      minHeight={ flowStep === FULLSCREEN_STAKING_TX_FLOW.WAIT_SCREEN ? 270 : minHeight ?? 605}
+      minHeight={flowStep === FULLSCREEN_STAKING_TX_FLOW.WAIT_SCREEN ? 270 : minHeight ?? 605}
       noCloseButton={showCloseIcon === undefined}
       {...rest}
       onClose={_onClose ?? handler}
@@ -89,7 +89,7 @@ export default function StakingPopup ({ _onClose, address, children, extraDetail
           ? (
             <TransactionFlow
               address={address}
-              closeReview={closeReview}
+              closeReview={_onClose ?? closeReview}
               extraDetailConfirmationPage={extraDetailConfirmationPage}
               flowStep={flowStep}
               genesisHash={genesisHash}
@@ -109,7 +109,7 @@ export default function StakingPopup ({ _onClose, address, children, extraDetail
           : (
             <Progress
               style={{ paddingTop: '50px' }}
-              title = {t('Loading, please wait')}
+              title={t('Loading, please wait')}
               withEllipsis
             />)
       }

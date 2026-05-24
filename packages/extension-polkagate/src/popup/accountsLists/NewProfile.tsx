@@ -1,15 +1,15 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Folder } from 'iconsax-react';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 
-import { AccountContext, DecisionButtons, GradientButton, MyTextField, TwoToneText } from '../../components';
-import { useCategorizedAccountsInProfiles, useTranslation } from '../../hooks';
+import { DecisionButtons, GradientButton, MyTextField, TwoToneText } from '../../components';
+import { useAccounts, useCategorizedAccountsInProfiles, useIsDark, useTranslation } from '../../hooks';
 import ProfileAccountSelection from './ProfileAccountSelection';
 import { PROFILE_MODE } from './type';
 import { addProfileTag } from './utils';
@@ -24,10 +24,11 @@ enum STEP {
   CHOOSE_ACCOUNTS
 }
 
-function NewProfile ({ defaultMode, setPopup }: Props): React.ReactElement {
+function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const { accounts } = useContext(AccountContext);
+  const isDark = useIsDark();
+  const accounts = useAccounts();
   const { categorizedAccounts } = useCategorizedAccountsInProfiles();
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
@@ -37,8 +38,8 @@ function NewProfile ({ defaultMode, setPopup }: Props): React.ReactElement {
 
   const handleClose = useCallback(() =>
     setPopup(defaultMode ?? PROFILE_MODE.NONE)
-  ,
-  [defaultMode, setPopup]);
+    ,
+    [defaultMode, setPopup]);
 
   const onNext = useCallback(() => {
     setStep(STEP.CHOOSE_ACCOUNTS);
@@ -90,7 +91,7 @@ function NewProfile ({ defaultMode, setPopup }: Props): React.ReactElement {
       <Grid container item>
         {step === STEP.ADD_NAME &&
           <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
-            <Typography color='#BEAAD8' variant='B-4'>
+            <Typography color={isDark ? '#BEAAD8' : '#674394'} variant='B-4'>
               {t('Give a name to the profile')}
             </Typography>
             <MyTextField
@@ -127,7 +128,7 @@ function NewProfile ({ defaultMode, setPopup }: Props): React.ReactElement {
                 textPartInColor={profileName ?? ''}
               />
             </Typography>
-            <Stack direction='column' sx={{ height: '350px', mt: '25px', overflowY: 'auto', width: '100%' }}>
+            <Stack direction='column' sx={{ boxSizing: 'border-box', height: '350px', mt: '25px', overflowY: 'auto', pb: '90px', width: '100%' }}>
               {Object.entries(categorizedAccounts)?.map(([label, accounts]) => {
                 return (
                   <>

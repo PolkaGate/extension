@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
@@ -7,7 +7,7 @@ import React from 'react';
 import { useTranslation } from '../../../../hooks';
 import Step from '../partials/Step';
 
-export default function Steps (): React.ReactElement {
+export default function Steps(): React.ReactElement {
   const { t } = useTranslation();
 
   return (

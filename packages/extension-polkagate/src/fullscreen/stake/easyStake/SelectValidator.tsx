@@ -1,8 +1,10 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack } from '@mui/material';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 
 import { DecisionButtons, FadeOnScroll, Progress, SearchField } from '../../../components';
 import { useStakingConsts, useTranslation, useValidatorsInformation } from '../../../hooks';
@@ -17,7 +19,7 @@ export interface SelectValidatorProps {
   selectedStakingType: SelectedEasyStakingType | undefined;
 }
 
-function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: SelectValidatorProps) {
+function SelectValidator({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: SelectValidatorProps) {
   const { t } = useTranslation();
   const refContainer = useRef(null);
 
@@ -161,11 +163,17 @@ function SelectValidator ({ genesisHash, selectedStakingType, setSelectedStaking
                 width: '410px'
               }}
             />
-            <ValidatorsTable
-              genesisHash={genesisHash ?? ''}
-              onSelect={onSelect}
-              selected={newSelectedValidators}
-              validatorsInformation={filtered ?? []}
+            {filtered && filtered.length > 0 && genesisHash &&
+              <ValidatorsTable
+                genesisHash={genesisHash}
+                onSelect={onSelect}
+                selected={newSelectedValidators}
+                validatorsInformation={filtered}
+              />}
+            <NothingFound
+              show={isLoaded && filtered?.length === 0}
+              style={{ pt: '80px' }}
+              text={t('Validator(s) Not Found')}
             />
           </>}
         <DecisionButtons

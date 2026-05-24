@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -34,7 +34,7 @@ export interface TransactionFlowProps {
   extraDetailConfirmationPage?: ExtraDetailConfirmationPage;
 }
 
-export default function TransactionFlow ({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, setRestakeReward, showAccountBox, showStakingHome, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
+export default function TransactionFlow({ address, backPathTitle, closeReview, extraDetailConfirmationPage, genesisHash, pool, proxyTypeFilter, restakeReward, reviewHeader, setRestakeReward, showAccountBox, showStakingHome, stepCounter, transaction, transactionInformation }: TransactionFlowProps): React.ReactElement {
   useBackground('staking');
   const { t } = useTranslation();
 
@@ -69,7 +69,7 @@ export default function TransactionFlow ({ address, backPathTitle, closeReview, 
               : flowStep === TRANSACTION_FLOW_STEPS.WAIT_SCREEN
                 ? t(PROCESSING_TITLE)
                 : backPathTitle
-              }
+          }
         />
         {flowStep === TRANSACTION_FLOW_STEPS.REVIEW &&
           <Review

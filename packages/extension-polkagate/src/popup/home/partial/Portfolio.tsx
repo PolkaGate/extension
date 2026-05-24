@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Skeleton, Typography, useTheme } from '@mui/material';
@@ -11,7 +11,7 @@ import { GlowBox } from '../../../style';
 import Currency from './Currency';
 import DailyChange from './DailyChange';
 
-function Portfolio (): React.ReactElement {
+function Portfolio(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
@@ -20,11 +20,11 @@ function Portfolio (): React.ReactElement {
 
   const { isHideNumbers, toggleHideNumbers } = useIsHideNumbers();
 
-  const eyeColor = isDark ? '#BEAAD8' : '#745D8B';
+  const eyeColor = theme.palette.accent.text;
   const EyeIcon = isHideNumbers ? EyeSlash : Eye;
 
   return (
-    <GlowBox>
+    <GlowBox openBottom>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ p: '15px 20px 5px' }}>
         <Grid alignItems='center' container item sx={{ columnGap: '5px', width: 'fit-content' }}>
           <Typography color={isDark ? 'text.secondary' : '#291443'} variant='B-2'>
@@ -33,14 +33,14 @@ function Portfolio (): React.ReactElement {
           <EyeIcon color={eyeColor} onClick={toggleHideNumbers} size='20' style={{ cursor: 'pointer' }} variant='Bulk' />
         </Grid>
         <Currency />
-        <Grid alignItems= 'center' container item sx={{ height: '40px' }}>
+        <Grid alignItems='center' container item sx={{ height: '40px' }}>
           {youHave?.portfolio === undefined
             ? <Skeleton
               animation='wave'
               height='24px'
-              sx={{ bgcolor: '#BEAAD840', borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', transform: 'none', width: '100%' }}
+              sx={{ bgcolor: theme.palette.skeleton.accent, borderRadius: '50px', fontWeight: 'bold', maxWidth: '245px', transform: 'none', width: '100%' }}
               variant='text'
-            />
+              />
             : <FormatPrice
               commify
               decimalColor={theme.palette.text.secondary}
@@ -52,7 +52,7 @@ function Portfolio (): React.ReactElement {
               num={youHave?.portfolio}
               width='fit-content'
               withSmallDecimal
-            />
+              />
           }
         </Grid>
         <DailyChange

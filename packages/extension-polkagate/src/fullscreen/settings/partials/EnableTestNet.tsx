@@ -1,13 +1,12 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback } from 'react';
 
-import { AccountContext } from '@polkadot/extension-polkagate/src/components/contexts';
 import { MySwitch } from '@polkadot/extension-polkagate/src/components/index';
-import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
-import { useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
+import { useAccounts, useIsExtensionPopup } from '@polkadot/extension-polkagate/src/hooks';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { ExtensionPopups, STORAGE_KEY, TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
@@ -16,9 +15,9 @@ import useIsTestnetEnabled from '../../../hooks/useIsTestnetEnabled';
 import { tieAccount } from '../../../messaging';
 import Warning from './Warning';
 
-export default function EnableTestNet (): React.ReactElement {
+export default function EnableTestNet(): React.ReactElement {
   const { t } = useTranslation();
-  const { accounts } = useContext(AccountContext);
+  const accounts = useAccounts();
   const isTestnetEnabled = useIsTestnetEnabled();
   const isExtension = useIsExtensionPopup();
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();

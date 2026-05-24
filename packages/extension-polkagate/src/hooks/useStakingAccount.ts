@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -8,7 +8,7 @@ import type { PalletStakingRewardDestination } from '@polkadot/types/lookup';
 import type { Codec } from '@polkadot/types/types';
 import type { AccountStakingInfo } from '../util/types';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { BN } from '@polkadot/util';
 
@@ -29,13 +29,20 @@ BN.prototype.toJSON = function () {
  * @param setRefresh
  * @returns account staking Info
  */
-export default function useStakingAccount (address: AccountId | string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
+export default function useStakingAccount(address: AccountId | string | undefined, genesisHash: string | undefined, refresh?: boolean, setRefresh?: React.Dispatch<React.SetStateAction<boolean>>): AccountStakingInfo | null | undefined {
   const { api, decimal, token } = useChainInfo(genesisHash);
   const stashId = useStashId(address, genesisHash);
 
   const [stakingInfo, setStakingInfo] = useState<AccountStakingInfo | null | undefined>(undefined);
+  const requestIdRef = useRef(0);
+
+  useEffect(() => {
+    setStakingInfo(undefined);
+  }, [address, genesisHash]);
 
   const fetch = useCallback(async () => {
+    const requestId = ++requestIdRef.current;
+
     if (!api || !stashId || !token || !decimal) {
       return;
     }
@@ -48,6 +55,10 @@ export default function useStakingAccount (address: AccountId | string | undefin
       api.derive.staking.account(stashId),
       api.query['staking']['currentEra']()
     ]);
+
+    if (requestId !== requestIdRef.current) {
+      return;
+    }
 
     if (!accountInfo) {
       console.log('Can not fetch accountInfo!');

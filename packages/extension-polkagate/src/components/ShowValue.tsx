@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /**
@@ -16,7 +16,7 @@ export interface Props {
   width?: string;
 }
 
-export default function ShowValue ({ height, unit = '', value, width = '90px' }: Props): React.ReactElement<Props> {
+export default function ShowValue({ height, unit = '', value, width = '90px' }: Props): React.ReactElement<Props> {
   return (
     <>
       {value !== undefined
@@ -25,7 +25,7 @@ export default function ShowValue ({ height, unit = '', value, width = '90px' }:
         </>
         : <MySkeleton
           height={height}
-          style= {{ width }}
+          style={{ width }}
         />
       }
     </>

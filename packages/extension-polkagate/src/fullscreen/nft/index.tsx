@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ItemInformation } from './utils/types';
@@ -19,7 +19,7 @@ enum STEPS {
   INDEX
 }
 
-function NFT (): React.ReactElement {
+function NFT(): React.ReactElement {
   const { t } = useTranslation();
   const { address } = useParams<{ address: string }>();
 

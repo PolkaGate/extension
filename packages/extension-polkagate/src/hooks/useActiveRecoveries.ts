@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // @ts-nocheck
@@ -6,9 +6,9 @@
 import type { ApiPromise } from '@polkadot/api';
 import type { BN } from '@polkadot/util';
 
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { AccountContext } from '../components/contexts';
+import useAccounts from './useAccounts';
 
 export interface ActiveRecoveryFor {
   rescuer: string;
@@ -18,8 +18,8 @@ export interface ActiveRecoveryFor {
   vouchedFriends: string[];
 }
 
-export default function useActiveRecoveries (api: ApiPromise | undefined, searchFor?: string): ActiveRecoveryFor[] | null | undefined {
-  const { accounts } = useContext(AccountContext);
+export default function useActiveRecoveries(api: ApiPromise | undefined | null, searchFor?: string): ActiveRecoveryFor[] | null | undefined {
+  const accounts = useAccounts();
 
   const [activeRecoveries, setActiveRecoveries] = useState<ActiveRecoveryFor[] | null>();
   const [fetching, setFetching] = useState<boolean | null>(false);
@@ -38,7 +38,7 @@ export default function useActiveRecoveries (api: ApiPromise | undefined, search
 
     setFetching(true);
 
-    api.query.recovery?.activeRecoveries.entries().then((actives) => {
+    api.query['recovery']?.['activeRecoveries'].entries().then((actives) => {
       const myActiveRecovery: ActiveRecoveryFor[] = [];
 
       if (actives.length === 0) {

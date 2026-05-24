@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable header/header */
@@ -32,14 +32,22 @@ export const darkTheme: ExtendedThemeOptions = {
     label: { primary: '#674394', secondary: '#BEAAD8' },
     error: { main: '#FF4FB9' },
     background: { default: '#05091C', paper: '#05091C' },
-    border: { default: '#05091C', paper: '#1B133C' },
+    border: { default: '#05091C', input: '#BEAAD833', paper: '#1B133C', strong: '#2D1E4A', subtle: '#FFFFFF0D' },
     backgroundFL: { primary: '#1B133C', secondary: '#171717' },
-    text: { primary: '#EAEBF1', secondary: '#BEAAD8', disabled: '#4B4B4B', highlight: '#809ACB' },
+    accent: { highlight: '#AA83DC', icon: '#AA83DC', text: '#BEAAD8', textStrong: '#BEAAD8' },
+    surface: { badge: '#05091C80', disabled: '#1B133C', hover: '#2D1E4A', input: '#05091C', panel: '#1B133C', panelAlt: '#110F2A', popover: '#1B133C', selected: '#2D1E4A' },
+    text: { primary: '#EAEBF1', secondary: '#BEAAD8', disabled: '#4B4B4B', highlight: '#809ACB', muted: '#7956A5' },
     action: { disabled: '#fff', disabledBackground: '#4B4B4B', focus: '#BA82A5' },
+    shadow: { card: 'none', popover: 'none' },
+    skeleton: { accent: '#BEAAD840', default: '#946CC840', muted: '#946CC826', subtle: '#B094D340' },
     success: { main: '#82FFA5', light: '#46890C', contrastText: '#2ECC71' },
-    warning: { main: '#FF4FB9' },
+    warning: { main: '#FF4FB9', light: '#FFCE4F' },
     divider: 'rgba(255, 255, 255, 0.1)',
+    dividerGradient: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
+    dividerGradientFade: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
+    dividerGradientStrong: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
     gradient: {
+      brand: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
       primary: `radial-gradient(
         circle at 95% 19%, 
         rgba(91, 0, 182, 0.35) 2%, 
@@ -55,6 +63,7 @@ export const darkTheme: ExtendedThemeOptions = {
         rgba(255, 26, 177, 0.5) -2%,
         transparent 40%
       )`,
+      radialOverlay: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
       secondary: 'linear-gradient(to bottom, #000000, #171717)'
     }
   },

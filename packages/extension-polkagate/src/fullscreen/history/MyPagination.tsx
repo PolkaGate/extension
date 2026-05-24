@@ -1,7 +1,7 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Pagination, PaginationItem, type PaginationRenderItemParams } from '@mui/material';
+import { Pagination, PaginationItem, type PaginationRenderItemParams, useTheme } from '@mui/material';
 import { ArrowLeft2, ArrowRight2 } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
@@ -11,7 +11,9 @@ interface Props {
   count: number;
 }
 
-function MyPagination ({ count, page, setPage }: Props): React.ReactElement {
+function MyPagination({ count, page, setPage }: Props): React.ReactElement {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const onChange = useCallback((_: unknown, value: number) => setPage(value), [setPage]);
 
   const renderFunction = useCallback((item: PaginationRenderItemParams) => (
@@ -34,14 +36,14 @@ function MyPagination ({ count, page, setPage }: Props): React.ReactElement {
       shape='rounded'
       sx={{
         '& .MuiPaginationItem-root': {
-          backgroundColor: '#2D1E4A',
-          border: 'none',
+          backgroundColor: isDark ? '#2D1E4A' : '#FFFFFF',
+          border: isDark ? 'none' : '1px solid #DDE3F4',
           borderRadius: '12px',
-          color: '#AA83DC',
+          color: isDark ? '#AA83DC' : theme.palette.text.primary,
           typography: 'B-6'
         },
         '& .MuiPaginationItem-root.Mui-selected': {
-          background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+          background: theme.palette.gradient.brand,
           border: 'none',
           color: '#fff'
         },

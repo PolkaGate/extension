@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable react/jsx-max-props-per-line */
@@ -11,7 +11,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useAccountAssets, useBackground, useChainInfo, useClaimRewardPool, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation, useWithdrawPool } from '../../../hooks';
+import { useAccountAssets, useBackground, useChainInfo, useClaimRewardPool, useHighCommissionNominationAlert, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation, useWithdrawPool } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import { isHexToBn } from '../../../util';
 import { PROXY_TYPE } from '../../../util/constants';
@@ -24,10 +24,11 @@ import Tiles from '../Tiles';
 const Back = () => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <>
-      <People color={theme.palette.text.highlight} size='24' variant='Bulk' />
+      <People color={isDark ? theme.palette.text.highlight : '#8C78B2'} size='24' variant='Bulk' />
       <Typography sx={{ fontFamily: 'OdibeeSans', fontSize: '24px', fontWeight: '400', lineHeight: '26px', textTransform: 'uppercase' }}>
         {t('pool staking')}
       </Typography>
@@ -41,7 +42,7 @@ export enum Review {
   Withdraw = 'Withdraw'
 }
 
-export default function Pool (): React.ReactElement {
+export default function Pool(): React.ReactElement {
   useBackground('staking');
 
   const { t } = useTranslation();
@@ -51,6 +52,13 @@ export default function Pool (): React.ReactElement {
   const { decimal, token } = useChainInfo(genesisHash, true);
   const stakingInfo = usePoolStakingInfo(address, genesisHash);
   const accountAssets = useAccountAssets(address);
+
+  useHighCommissionNominationAlert({
+    genesisHash,
+    nominatedValidatorsIds: stakingInfo.pool?.stashIdAccount?.nominators?.map((item) => item.toString()),
+    poolName: stakingInfo.pool?.metadata,
+    stakingType: 'pool'
+  });
 
   const [unstakingMenu, setUnstakingMenu] = useState<boolean>(false);
   const [restakeReward, setRestakeReward] = useState<boolean>(false);
@@ -66,7 +74,7 @@ export default function Pool (): React.ReactElement {
 
   const asset = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === '0')
-  , [accountAssets, genesisHash]);
+    , [accountAssets, genesisHash]);
   const staked = useMemo(() => stakingInfo.pool === undefined ? undefined : isHexToBn(stakingInfo.pool?.member?.points as string | undefined ?? '0'), [stakingInfo.pool]);
   const toBeReleased = useMemo(() => stakingInfo.sessionInfo?.toBeReleased, [stakingInfo.sessionInfo?.toBeReleased]);
   const unlockingAmount = useMemo(() => stakingInfo.sessionInfo?.unlockingAmount, [stakingInfo.sessionInfo?.unlockingAmount]);

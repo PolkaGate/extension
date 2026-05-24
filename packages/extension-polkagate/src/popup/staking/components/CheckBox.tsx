@@ -1,11 +1,15 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import CheckIcon from '@mui/icons-material/Check';
 import { Box, Checkbox } from '@mui/material';
 import React from 'react';
 
-export default function CustomCheckbox ({ checked, onChange }: { checked: boolean; onChange: () => void }) {
+import { useIsDark } from '../../../hooks';
+
+export default function CustomCheckbox({ checked, onChange }: { checked: boolean; onChange: () => void }) {
+  const isDark = useIsDark();
+
   return (
     <Checkbox
       checked={checked}
@@ -28,7 +32,8 @@ export default function CustomCheckbox ({ checked, onChange }: { checked: boolea
       icon={
         <Box
           sx={{
-            backgroundColor: '#222442',
+            backgroundColor: isDark ? '#222442' : '#F8FAFF',
+            border: isDark ? 'none' : '2px solid #B58DDF',
             borderRadius: '8px',
             height: 24,
             width: 24

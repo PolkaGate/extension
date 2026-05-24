@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SubmittableExtrinsic } from '@polkadot/api-base/types/submittable';
@@ -33,7 +33,7 @@ interface Props extends RestakeRewardTogglerProps {
   transactionInformation: Content[];
 }
 
-function ClaimRewardsTransactionFlow ({ address, amount, closeReview, flowStep, genesisHash, onClose, proxyTypeFilter, restake, selectedProxy, setFlowStep, setRestake, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
+function ClaimRewardsTransactionFlow({ address, amount, closeReview, flowStep, genesisHash, onClose, proxyTypeFilter, restake, selectedProxy, setFlowStep, setRestake, setSelectedProxy, setShowProxySelection, showAccountBox, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
   const [txInfo, setTxInfo] = useState<TxInfo | undefined>(undefined);
 
   const { transactionDetail, txInformation } = useTransactionData(address, genesisHash, selectedProxy?.delegate, txInfo, transactionInformation, undefined, amount);

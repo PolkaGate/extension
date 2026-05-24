@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid } from '@mui/material';
@@ -14,7 +14,7 @@ import HeaderSection from './HeaderSection';
 import NewProfile from './NewProfile';
 import { PROFILE_MODE } from './type';
 
-export function AccountsListManagement ({ defaultMode = PROFILE_MODE.NONE, onDone }: { defaultMode?: PROFILE_MODE, onDone?: () => void }): React.ReactElement {
+export function AccountsListManagement({ defaultMode = PROFILE_MODE.NONE, onDone }: { defaultMode?: PROFILE_MODE, onDone?: () => void }): React.ReactElement {
   const isExtension = useIsExtensionPopup();
   const { t } = useTranslation();
 
@@ -71,7 +71,7 @@ export function AccountsListManagement ({ defaultMode = PROFILE_MODE.NONE, onDon
   );
 }
 
-function AccountsLists (): React.ReactElement {
+function AccountsLists(): React.ReactElement {
   return (
     <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
       <UserDashboardHeader homeType='default' />

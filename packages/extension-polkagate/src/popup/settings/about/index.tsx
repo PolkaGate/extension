@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Container, Grid, Stack } from '@mui/material';
@@ -16,7 +16,7 @@ import LegalDocuments from './LegalDocuments';
 import RateUs from './RateUs';
 import Resources from './Resources';
 
-function About (): React.ReactElement {
+function About(): React.ReactElement {
   const { t } = useTranslation();
   const navigate = useNavigate();
 

@@ -1,20 +1,20 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { MoreVert } from '@mui/icons-material';
-import { ClickAwayListener, Grid, type SxProps, type Theme } from '@mui/material';
+import { ClickAwayListener, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import { ArrowCircleDown2, Data, DocumentDownload, Edit2, LogoutCurve, Setting3 } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import DropMenuContent from '@polkadot/extension-polkagate/src/components/DropMenuContent';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
+import RemoveAccount from '@polkadot/extension-polkagate/src/partials/RemoveAccount';
 import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
 import { useIsExtensionPopup, useTranslation } from '../../hooks';
 import Receive from '../accountDetails/rightColumn/Receive';
 import ExportAccount from '../settings/partials/ExportAccount';
-import RemoveAccount from './RemoveAccount';
 import RenameAccount from './RenameAccount';
 
 interface Props {
@@ -26,9 +26,10 @@ interface Props {
   style?: SxProps<Theme>;
 }
 
-function AccountDropDown ({ address, disabled, iconSize = '25px', isExternal, name, style }: Props) {
+function AccountDropDown({ address, disabled, iconSize = '25px', isExternal, name, style }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+  const theme = useTheme();
   const isExtension = useIsExtensionPopup();
   const genesisHash = useAccountSelectedChain(address);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
@@ -121,9 +122,9 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', isExternal, na
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           ref={containerRef}
-          sx={{ background: hovered || open ? 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)' : '#05091C', border: '2px solid #1B133C', borderRadius: '12px', cursor: 'pointer', height: '40px', transition: 'all 0.2s ease-in-out', width: '40px', ...style }}
+          sx={{ background: hovered || open ? theme.palette.gradient.brand : theme.palette.mode === 'dark' ? '#05091C' : '#FFFFFF', border: `2px solid ${hovered || open ? 'transparent' : theme.palette.mode === 'dark' ? '#1B133C' : theme.palette.border.paper}`, borderRadius: '12px', boxShadow: theme.palette.mode === 'dark' ? 'none' : '0px 6px 18px rgba(133, 140, 176, 0.16)', cursor: 'pointer', height: '40px', transition: 'all 0.2s ease-in-out', width: '40px', ...style }}
         >
-          <MoreVert sx={{ color: hovered || open ? '#EAEBF1' : '#AA83DC', fontSize: iconSize }} />
+          <MoreVert sx={{ color: hovered || open ? '#EAEBF1' : theme.palette.mode === 'dark' ? '#AA83DC' : theme.palette.primary.main, fontSize: iconSize }} />
         </Grid>
       </ClickAwayListener>
       <DropMenuContent
@@ -141,6 +142,7 @@ function AccountDropDown ({ address, disabled, iconSize = '25px', isExternal, na
         <RemoveAccount
           address={address}
           onClose={extensionPopupCloser}
+          open
         />}
       {extensionPopup === ExtensionPopups.EXPORT &&
         <ExportAccount

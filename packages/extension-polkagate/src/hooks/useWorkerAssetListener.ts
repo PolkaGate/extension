@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { MetadataDef } from '@polkadot/extension-inject/types';
@@ -11,9 +11,10 @@ import { isObject } from '@polkadot/util';
 
 import { updateMetadata } from '../messaging';
 import { isHexToBn } from '../util';
-import { FETCHING_ASSETS_FUNCTION_NAMES } from '../util/constants';
+import { FETCHING_ASSETS_FN } from '../util/constants';
 
 interface WorkerMessage { functionName?: string, metadata?: MetadataDef, results?: Record<string, MessageBody[]> }
+const FUNCTIONS = Object.values(FETCHING_ASSETS_FN);
 
 interface BalancesDetails {
   ED: BN,
@@ -43,7 +44,7 @@ interface MessageBody {
   balanceDetails?: string,
 }
 
-function allHexToBN (balances: object | string | undefined): BalancesDetails | object {
+function allHexToBN(balances: object | string | undefined): BalancesDetails | object {
   if (!balances) {
     return {};
   }
@@ -65,7 +66,7 @@ function allHexToBN (balances: object | string | undefined): BalancesDetails | o
 /**
  * Hook to listen to worker asset messages and handle asset updates.
  */
-export default function useWorkerAssetListener (
+export default function useWorkerAssetListener(
   worker: MessagePort | undefined,
   handleRequestCount: (functionName: string) => void,
   combineAndSetAssets: (assets: Record<string, FetchedBalance[]>) => void
@@ -75,7 +76,7 @@ export default function useWorkerAssetListener (
       return;
     }
 
-    function handleMessage (messageEvent: MessageEvent<string>) {
+    function handleMessage(messageEvent: MessageEvent<string>) {
       const message = messageEvent.data;
 
       if (!message) {
@@ -84,6 +85,12 @@ export default function useWorkerAssetListener (
 
       try {
         const { functionName, metadata, results } = JSON.parse(message) as WorkerMessage;
+
+        if (!FUNCTIONS.includes(functionName ?? '')) {
+          console.log('unrelated message received in useWorkerAssetListener:', functionName);
+
+          return;
+        }
 
         if (metadata) {
           updateMetadata(metadata).catch(console.error);
@@ -103,7 +110,7 @@ export default function useWorkerAssetListener (
 
         const _assets: Record<string, FetchedBalance[]> = {};
 
-        if (functionName === FETCHING_ASSETS_FUNCTION_NAMES.RELAY) {
+        if (functionName === FETCHING_ASSETS_FN.SINGLE_ASSET) {
           Object.keys(results).forEach((address) => {
             _assets[address] = [
               {
@@ -119,7 +126,12 @@ export default function useWorkerAssetListener (
           });
         }
 
-        if ([FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, FETCHING_ASSETS_FUNCTION_NAMES.MULTI_ASSET].includes(functionName)) {
+        if ([
+          FETCHING_ASSETS_FN.ASSET_HUB,
+          FETCHING_ASSETS_FN.MULTI_ASSET,
+          FETCHING_ASSETS_FN.ETH,
+          FETCHING_ASSETS_FN.EVM
+        ].includes(functionName)) {
           Object.keys(results).forEach((address) => {
             _assets[address] = results[address].map(
               (message: MessageBody) => {

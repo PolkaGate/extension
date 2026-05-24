@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /**
@@ -12,7 +12,7 @@
  * Closes the open connections
  * @param {ConnectionInfo[]} connections
  */
-export function closeWebsockets (connections) {
+export function closeWebsockets(connections) {
   Promise.allSettled(
     connections.map(({ wsProvider }) => wsProvider.disconnect())
   ).catch(console.error);

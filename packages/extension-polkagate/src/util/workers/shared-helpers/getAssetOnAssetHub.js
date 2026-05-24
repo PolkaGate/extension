@@ -1,8 +1,8 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { FETCHING_ASSETS_FUNCTION_NAMES } from '../../constants';
-import { closeWebsockets, fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
+import { FETCHING_ASSETS_FN } from '../../constants';
+import { fastestEndpoint, getChainEndpoints, metadataFromApi, toGetNativeToken } from '../utils';
 import { getAssets } from './getAssets.js';
 
 /**
@@ -13,34 +13,42 @@ import { getAssets } from './getAssets.js';
  * @param {import('../../types').UserAddedChains} userAddedEndpoints
  * @param {MessagePort} port
  */
-export async function getAssetOnAssetHub (addresses, assetsToBeFetched, chainName, userAddedEndpoints, port) {
+export async function getAssetOnAssetHub(addresses, assetsToBeFetched, chainName, userAddedEndpoints, port) {
   const endpoints = getChainEndpoints(chainName, userAddedEndpoints);
-  const { api, connections } = await fastestEndpoint(endpoints);
+  const { api } = await fastestEndpoint(endpoints);
 
-  const { metadata } = metadataFromApi(api);
+  let results = {};
 
-  console.info(chainName, 'metadata : fetched and saved.');
-  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, metadata }));
+  try {
+    if (api.isConnected) {
+      const { metadata } = await metadataFromApi(api);
 
-  const results = await toGetNativeToken(addresses, api, chainName);
+      console.info(chainName, 'metadata : fetched and saved. (getAssetOnAssetHub)');
+      port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.ASSET_HUB, metadata }));
 
-  // @ts-ignore
-  const nonNativeAssets = (assetsToBeFetched || []).filter((asset) => !asset.extras?.isNative);
+      results = await toGetNativeToken(addresses, api, chainName);
 
-  /** to calculate a new Foreign Token like MYTH asset id based on its XCM multi-location */
-  // const allForeignAssets = await api.query.foreignAssets.asset.entries();
-  // for (const [key, _others] of allForeignAssets) {
-  //   const id = key.args[0];
-  //   const assetMetaData = await api.query.foreignAssets.metadata(id);
+      // @ts-ignore
+      const nonNativeAssets = (assetsToBeFetched || []).filter((asset) => !asset.extras?.isNative);
 
-  //   if (assetMetaData.toHuman().symbol === 'MYTH') {
-  //     console.log('new foreign asset id:', encodeLocation(id));
-  //   }
-  // }
+      /** to calculate a new Foreign Token like MYTH asset id based on its XCM multi-location */
+      // const allForeignAssets = await api.query.foreignAssets.asset.entries();
+      // for (const [key, _others] of allForeignAssets) {
+      //   const id = key.args[0];
+      //   const assetMetaData = await api.query.foreignAssets.metadata(id);
 
-  await getAssets(addresses, api, nonNativeAssets, chainName, results);
+      //   if (assetMetaData.toHuman().symbol === 'MYTH') {
+      //     console.log('new foreign asset id:', encodeLocation(id));
+      //   }
+      // }
 
-  console.info(chainName, ': account assets fetched.');
-  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FUNCTION_NAMES.ASSET_HUB, results }));
-  closeWebsockets(connections);
+      await getAssets(addresses, api, nonNativeAssets, chainName, results);
+
+      console.info(chainName, ': account assets fetched.');
+    }
+  } finally {
+    await api.disconnect().catch(console.error);
+  }
+
+  port.postMessage(JSON.stringify({ functionName: FETCHING_ASSETS_FN.ASSET_HUB, results }));
 }

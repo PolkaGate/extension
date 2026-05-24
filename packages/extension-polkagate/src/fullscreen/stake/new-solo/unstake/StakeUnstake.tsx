@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SubmittableExtrinsic } from '@polkadot/api-base/types';
@@ -25,7 +25,7 @@ interface Props {
   genesisHash: string | undefined;
   onClose: () => void;
   errorMessage: string | undefined;
-  estimatedFee: Balance | undefined;
+  estimatedFee: Balance | undefined | null;
   onInputChange: (value: string | null | undefined) => void;
   onMaxValue: string;
   tx: SubmittableExtrinsic<'promise', ISubmittableResult> | undefined;
@@ -37,7 +37,7 @@ interface Props {
   title: string;
 }
 
-function StakeUnstake ({ address, amountLabel, balance, errorMessage, estimatedFee, genesisHash, onClose, onInputChange, onMaxValue, setValue, title, transactionInformation, tx, value }: Props) {
+function StakeUnstake({ address, amountLabel, balance, errorMessage, estimatedFee, genesisHash, onClose, onInputChange, onMaxValue, setValue, title, transactionInformation, tx, value }: Props) {
   const { t } = useTranslation();
   const { api, decimal, token } = useChainInfo(genesisHash);
 

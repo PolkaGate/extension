@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { ExtensionPopupProps } from '../components/ExtensionPopup';
@@ -21,7 +21,7 @@ interface Props {
 
 }
 
-function SharePopup ({ RightItem, children, modalProps, modalStyle, onClose, open, popupProps, title }: Props): React.ReactElement {
+function SharePopup({ RightItem, children, modalProps, modalStyle, onClose, open, popupProps, title }: Props): React.ReactElement {
   const isExtension = useIsExtensionPopup();
 
   return (

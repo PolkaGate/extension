@@ -1,7 +1,7 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Camera } from 'iconsax-react';
 import React, { useCallback } from 'react';
 
@@ -18,6 +18,7 @@ interface Props {
 
 export default function QrScanner({ setAddress, setOpenCamera }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const onClose = useCallback(() => setOpenCamera(false), [setOpenCamera]);
 
@@ -44,13 +45,13 @@ export default function QrScanner({ setAddress, setOpenCamera }: Props): React.R
 
   const page = (
     <Grid alignItems='flex-start' container display='block' item justifyItems='center' position='relative' sx={{ height: 'parent.innerHeight', zIndex: 1 }}>
-      <Typography color='#EAEBF1' sx={{ textAlign: 'center', width: '100%' }} variant='B-1'>
+      <Typography color={theme.palette.text.primary} sx={{ textAlign: 'center', width: '100%' }} variant='B-1'>
         {t('Scan account QR code')}
       </Typography>
       <QrScanSignature // TODO: consider using ScanAddress component
         onScan={onScan}
         style={{
-          background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+          background: theme.palette.gradient.brand,
           borderRadius: '14px',
           height: '200px',
           margin: '15px auto 5px',
@@ -60,11 +61,11 @@ export default function QrScanner({ setAddress, setOpenCamera }: Props): React.R
         }}
       />
       <Stack alignItems='center' direction='row' justifyContent='center' sx={{ mt: '20px' }}>
-        <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
+        <Typography color={theme.palette.text.secondary} sx={{ textAlign: 'left' }} variant='B-1'>
           {t('Hold the QR code in front of the ')}
         </Typography>
-        <Camera color='#AA83DC' size={16} style={{ marginLeft: '4px', marginRight: '4px' }} variant='Bold' />
-        <Typography color='#AA83DC' variant='B-1'>
+        <Camera color={theme.palette.primary.main} size={16} style={{ marginLeft: '4px', marginRight: '4px' }} variant='Bold' />
+        <Typography color={theme.palette.primary.main} variant='B-1'>
           {t('device’s camera')}
         </Typography>
       </Stack>
@@ -86,7 +87,8 @@ export default function QrScanner({ setAddress, setOpenCamera }: Props): React.R
       onClose={onClose}
       open
       style={{ minHeight: '100px' }}
-      title={t('Scan account QR code')}>
+      title={t('Scan account QR code')}
+    >
       {page}
     </DraggableModal>
   );

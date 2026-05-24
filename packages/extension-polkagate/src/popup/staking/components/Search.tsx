@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { alpha, Box, InputBase, styled, type SxProps, type Theme, useTheme } from '@mui/material';
@@ -58,7 +58,7 @@ interface SearchProps {
   defaultValue?: string;
 }
 
-export default function Search ({ defaultValue, inputColor, limits, noSearchIcon = false, onSearch, placeholder, style }: SearchProps) {
+export default function Search({ defaultValue, inputColor, limits, noSearchIcon = false, onSearch, placeholder, style }: SearchProps) {
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();

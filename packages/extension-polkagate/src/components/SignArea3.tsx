@@ -1,12 +1,10 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { Transaction } from 'ethers';
 import type { SignerOptions } from '@polkadot/api/types';
 import type { SubmittableExtrinsic } from '@polkadot/api/types/submittable';
-import type { Header } from '@polkadot/types/interfaces';
-// @ts-ignore
-import type { FrameSystemAccountInfo } from '@polkadot/types/lookup';
-import type { ISubmittableResult } from '@polkadot/types/types';
+import type { ISubmittableResult, SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 import type { Proxy, ProxyTypes, TxInfo, TxResult } from '../util/types';
 
@@ -16,9 +14,9 @@ import React, { memo, type ReactNode, useCallback, useEffect, useMemo, useState 
 
 import { noop } from '@polkadot/util';
 
-import { useAccount, useAccountDisplay, useChainInfo, useFormatted, useProxies, useTranslation } from '../hooks';
+import { useAccount, useAccountDisplay, useAlerts, useChainInfo, useFormatted, useProxies, useTranslation } from '../hooks';
 import { getSubstrateAddress } from '../util';
-import { send } from '../util/api';
+import { send, sendErc20 } from '../util/api';
 import { TRANSACTION_FLOW_STEPS, type TransactionFlowStep } from '../util/constants';
 import NoPrivateKeySigningButton from './NoPrivateKeySigningButton';
 import SignUsingPassword, { type SignUsingPasswordProps } from './SignUsingPassword';
@@ -38,6 +36,7 @@ interface Props {
   address: string | undefined;
   direction?: 'horizontal' | 'vertical';
   disabled?: boolean;
+  unsignedEthTx?: Transaction;
   genesisHash: string | null | undefined;
   ledgerStyle?: React.CSSProperties;
   onClose: () => void
@@ -57,24 +56,33 @@ interface Props {
 }
 
 /**
- *  @description
- * This puts usually at the end of review page where user can do enter password,
- * choose proxy or use other alternatives like signing using ledger
+ * @description
+ * Final step of the transaction flow where the user signs and submits a prepared
+ * Substrate transaction. This component is responsible for:
+ *
+ * - Building a correct `SignerPayload` (era, nonce, runtime version, extensions)
+ * - Supporting multiple signing methods:
+ *   - Password-based local accounts
+ *   - Ledger hardware wallets
+ *   - QR-based offline signing
+ *   - Proxy-based signing
+ * - Handling proxy wrapping of the original transaction
+ * - Submitting the signed extrinsic and tracking the result
  *
 */
-function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingQRProps, signerOption, style = {}, transaction, withCancel }: Props): React.ReactElement<Props> {
+function SignArea3({ address, direction, disabled, extraProps, genesisHash, ledgerStyle, onClose, proxyTypeFilter, selectedProxy, setFlowStep, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, signUsingQRProps, signerOption, style = {}, transaction, unsignedEthTx, withCancel }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
   const account = useAccount(address);
   const { api, chain, token } = useChainInfo(genesisHash);
   const formatted = useFormatted(address, genesisHash);
+  const { notify } = useAlerts();
 
   const senderName = useAccountDisplay(address, genesisHash);
   const proxies = useProxies(genesisHash, formatted);
 
   const [showQR, setShowQR] = useState<boolean>(false);
-  const [lastHeader, setLastHeader] = useState<Header>();
-  const [rawNonce, setRawNonce] = useState<number>();
+  const [signerPayload, setSignerPayload] = useState<SignerPayloadJSON>();
 
   const selectedProxyName = useAccountDisplay(getSubstrateAddress(selectedProxy?.delegate), genesisHash);
   const from = selectedProxy?.delegate ?? formatted ?? address;
@@ -88,36 +96,35 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
     if (!transaction || !api) {
       return;
     }
+    // TODO: Proxy accounts cannot be used here while we submit via sendRawTransaction.
+    // Proxy support may be added later by wrapping the call with transact instead.
 
     return selectedProxy ? api.tx['proxy']['proxy'](formatted, selectedProxy.proxyType, transaction) : transaction;
   }, [api, formatted, selectedProxy, transaction]);
 
-  const signerPayload = useMemo(() => {
-    if (!api || !preparedTransaction || !lastHeader || rawNonce === undefined) {
+  useEffect(() => {
+    if (!api || !from || !preparedTransaction) {
       return;
     }
 
-    try {
+    (async() => {
+      const [{ hash, number }, nonce] = await Promise.all([
+        api.rpc.chain.getHeader(),
+        api.rpc.system.accountNextIndex(from)
+      ]);
+      const current = number.toNumber();
+
       const _payload = {
         address: from,
         assetId: signerOption?.assetId,
-        blockHash: lastHeader.hash,
-        blockNumber: api.registry.createType('BlockNumber', lastHeader.number.toNumber()),
-        era: api.registry.createType('ExtrinsicEra', { current: lastHeader.number.toNumber(), period: 64 }),
+        blockHash: hash,
+        blockNumber: api.registry.createType('BlockNumber', current),
+        era: api.registry.createType('ExtrinsicEra', { current, period: 256 }),
         genesisHash: api.genesisHash,
-        method: api.createType('Call', preparedTransaction), // TODO: DOES SUPPORT nested calls, batches , ...
-        nonce: api.registry.createType('Compact<Index>', rawNonce),
+        method: api.createType('Call', preparedTransaction),
+        nonce,
         runtimeVersion: api.runtimeVersion,
-        signedExtensions: [
-          'CheckNonZeroSender',
-          'CheckSpecVersion',
-          'CheckTxVersion',
-          'CheckGenesis',
-          'CheckMortality',
-          'CheckNonce',
-          'CheckWeight',
-          'ChargeTransactionPayment'
-        ],
+        signedExtensions: api.registry.signedExtensions,
         tip: 0,
         version: preparedTransaction.version
       };
@@ -126,13 +133,11 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
         version: _payload.version
       });
 
-      return raw.toPayload();
-    } catch (error) {
-      console.error('Something went wrong when making payload:', error);
-
-      return undefined;
-    }
-  }, [api, preparedTransaction, lastHeader, rawNonce, from, signerOption?.assetId]);
+      setSignerPayload(raw.toPayload());
+    })().catch((error) =>
+      notify('Something went wrong when making payload:' + error, 'warning')
+    );
+  }, [api, preparedTransaction, from, signerOption?.assetId, notify]);
 
   const extrinsicPayload = useMemo(() => {
     if (!api || !signerPayload) {
@@ -143,13 +148,6 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
   }, [api, signerPayload]);
 
   const selectedProxyAddress = selectedProxy?.delegate as unknown as string;
-
-  useEffect((): void => {
-    if (api && from) {
-      api.rpc.chain.getHeader().then(setLastHeader).catch(console.error);
-      api.query['system']['account'](from).then((res) => setRawNonce((res as FrameSystemAccountInfo)?.nonce.toNumber() || 0)).catch(console.error);
-    }
-  }, [api, formatted, from, selectedProxy]);
 
   const toggleSelectProxy = useCallback(() => setShowProxySelection((show) => !show), [setShowProxySelection]);
   const toggleQrScan = useCallback(() => setShowQR((show) => !show), []);
@@ -206,14 +204,16 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
 
       const _token = token || api.registry.chainTokens[0];
       const decimal = api.registry.chainDecimals[0];
-      const { block = 0, failureText, success, txHash = '' } = txResult;
+      const { block = 0, extrinsicIndex, failureText, fee, success, txHash = '' } = txResult;
 
       const info = {
         block,
         chain,
         date: Date.now(),
         decimal, // in cross chain transfer this will be the sending chain decimal
+        extrinsicIndex,
         failureText,
+        fee,
         from: { address: String(formatted), name: senderName },
         success,
         throughProxy: selectedProxyAddress ? { address: selectedProxyAddress, name: selectedProxyName } : undefined,
@@ -227,19 +227,26 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
     }
   }, [api, chain, formatted, selectedProxyAddress, selectedProxyName, senderName, setTxInfo, token]);
 
-  const onSignature = useCallback(async ({ signature }: { signature: HexString }) => {
-    if (!api || !extrinsicPayload || !signature || !preparedTransaction || !from) {
+  const onSignature = useCallback(async({ signature }: { signature: HexString }) => {
+    const isContract = unsignedEthTx;
+    const isSubstrate = extrinsicPayload && preparedTransaction && from;
+
+    if (!api || !(isContract || isSubstrate) || !signature) {
       return;
     }
 
     setFlowStep(TRANSACTION_FLOW_STEPS.WAIT_SCREEN);
 
-    const txResult = await send(from, api, preparedTransaction, extrinsicPayload.toHex(), signature);
+    const txResult = isContract
+      ? await sendErc20(api, unsignedEthTx, signature)
+      : isSubstrate
+      ? await send(from, api, preparedTransaction, extrinsicPayload.toHex(), signature)
+      : {} as TxResult;
 
     setFlowStep(TRANSACTION_FLOW_STEPS.CONFIRMATION);
 
     handleTxResult(txResult);
-  }, [api, from, handleTxResult, extrinsicPayload, preparedTransaction, setFlowStep]);
+  }, [unsignedEthTx, extrinsicPayload, preparedTransaction, api, from, setFlowStep, handleTxResult]);
 
   return (
     <>
@@ -271,14 +278,16 @@ function SignArea3 ({ address, direction, disabled, extraProps, genesisHash, led
         {(selectedProxy || !noPrivateKeyAccount) &&
           <SignUsingPassword
             {...extraProps}
+            address={address}
             api={api}
             direction={direction}
-            disabled={disabled}
+            disabled={disabled || !(signerPayload || unsignedEthTx)}
             onCancel={onClose}
             onSignature={onSignature}
             onUseProxy={selectedProxy ? undefined : toggleSelectProxy}
             proxies={proxies}
             signerPayload={signerPayload}
+            unsignedEthTx={unsignedEthTx}
             withCancel={withCancel}
           />
         }

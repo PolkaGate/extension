@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Box, Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
@@ -13,7 +13,7 @@ import { useExtensionPopups } from '../util/handleExtensionPopup';
 import PrivacyPolicy from './PrivacyPolicy';
 import SelectLanguage from './SelectLanguage';
 
-function WelcomeHeader ({ isBlueish }: { isBlueish: boolean }): React.ReactElement {
+function WelcomeHeader({ isBlueish }: { isBlueish: boolean }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const privacyPolicyRef = useRef<HTMLDivElement>(null);
@@ -24,7 +24,7 @@ function WelcomeHeader ({ isBlueish }: { isBlueish: boolean }): React.ReactEleme
 
   const shieldHoveredStyle = useMemo(() => ({
     '&::after': {
-      background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+      background: theme.palette.gradient.brand,
       borderRadius: '10px',
       content: '""',
       inset: 0,
@@ -37,7 +37,7 @@ function WelcomeHeader ({ isBlueish }: { isBlueish: boolean }): React.ReactEleme
     inset: 0,
     position: 'absolute',
     transition: 'all 250ms ease-out'
-  } as SxProps<Theme>), [hovered, isBlueish]);
+  } as SxProps<Theme>), [hovered, isBlueish, theme.palette.gradient.brand]);
 
   const onHoveredPopup = useCallback((popup?: ExtensionPopups) => () => {
     setHovered(popup ?? ExtensionPopups.NONE);

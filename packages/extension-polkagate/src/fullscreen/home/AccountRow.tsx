@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
@@ -16,7 +16,7 @@ import { Account } from '../components';
 import OpenerButton from '../sendFund/partials/OpenerButton';
 import AccountDropDown from './AccountDropDown';
 
-function AccountRow ({ account }: { account: AccountWithChildren }): React.ReactElement {
+function AccountRow({ account }: { account: AccountWithChildren }): React.ReactElement {
   const navigate = useNavigate();
 
   const [defaultGenesisAndAssetId, setDefaultGenesisAndAssetId] = useState<string>(); // 'genesisHash/assetId'
@@ -41,7 +41,7 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
         />
         <Account
           account={account}
-          onClick ={goToAccountPage}
+          onClick={goToAccountPage}
           setDefaultGenesisAndAssetId={setDefaultGenesisAndAssetId}
         />
       </Stack>
@@ -52,8 +52,8 @@ function AccountRow ({ account }: { account: AccountWithChildren }): React.React
           name={account?.name}
         />
         <OpenerButton
-        onClick={goToAccountPage}
-        type='Arrow'
+          onClick={goToAccountPage}
+          type='Arrow'
         />
       </Stack>
     </Stack>

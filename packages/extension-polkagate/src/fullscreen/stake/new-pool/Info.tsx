@@ -1,15 +1,14 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolStakingInfo } from '../../../hooks/usePoolStakingInfo';
-import type { PopupCloser, Stats } from '../util/utils';
+import type { PopupCloser } from '../util/utils';
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
-import { Bank, Hierarchy, People, UserEdit } from 'iconsax-react';
-import React, { useCallback, useMemo } from 'react';
+import React from 'react';
 
 import { GradientButton } from '../../../components';
-import { useChainInfo, useTranslation } from '../../../hooks';
+import { useChainInfo, useStakingInfoPool, useTranslation } from '../../../hooks';
 import { DraggableModal } from '../../components/DraggableModal';
 import { InfoBox } from '../partials/InfoBox';
 
@@ -19,29 +18,13 @@ interface Props {
   onClose: PopupCloser;
 }
 
-export default function Info ({ genesisHash, onClose, stakingInfo }: Props): React.ReactElement {
+export default function Info({ genesisHash, onClose, stakingInfo }: Props): React.ReactElement {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { t } = useTranslation();
-  const { decimal, token } = useChainInfo(genesisHash, true);
+  const { decimal } = useChainInfo(genesisHash, true);
 
-  const getValue = useCallback((value: number | undefined) => {
-    if (value === undefined) {
-      return '-';
-    }
-
-    return value === -1
-      ? t('unlimited')
-      : value;
-  }, [t]);
-
-  const stakingStats: Stats[] = useMemo(() => ([
-    { label: t('Min {{token}} to join a pool', { replace: { token: token ?? '' } }), value: stakingInfo.poolStakingConsts?.minJoinBond, withLogo: true },
-    { label: t('Min {{token}} to create a pool', { replace: { token: token ?? '' } }), value: stakingInfo.poolStakingConsts?.minCreationBond, withLogo: true },
-    { InfoIcon: Bank, label: t('Number of existing pools'), value: stakingInfo.poolStakingConsts?.lastPoolId.toString() },
-    { InfoIcon: Hierarchy, label: t('Max possible pools'), value: getValue(stakingInfo.poolStakingConsts?.maxPools) },
-    { InfoIcon: People, label: t('Max possible pool members'), value: getValue(stakingInfo.poolStakingConsts?.maxPoolMembers) },
-    { InfoIcon: UserEdit, label: t('Max pool members per pool'), value: getValue(stakingInfo.poolStakingConsts?.maxPoolMembersPerPool) }
-  ]), [getValue, stakingInfo.poolStakingConsts?.lastPoolId, stakingInfo.poolStakingConsts?.maxPoolMembers, stakingInfo.poolStakingConsts?.maxPoolMembersPerPool, stakingInfo.poolStakingConsts?.maxPools, stakingInfo.poolStakingConsts?.minCreationBond, stakingInfo.poolStakingConsts?.minJoinBond, t, token]);
+  const stakingStats = useStakingInfoPool(stakingInfo, genesisHash);
 
   return (
     <DraggableModal
@@ -64,19 +47,43 @@ export default function Info ({ genesisHash, onClose, stakingInfo }: Props): Rea
             value={stat.value}
           />
         ))}
-        <Stack direction='column' sx={{ alignItems: 'flex-start', bgcolor: '#05091C', borderRadius: '14px', gap: '6px', p: '12px', width: '100%' }}>
-          <Typography color={theme.palette.primary.main} variant='B-4' width='fit-content'>
+        <Stack
+          direction='column'
+          sx={{
+            alignItems: 'flex-start',
+            bgcolor: isDark ? '#05091C' : '#FFFFFF',
+            border: isDark ? 'none' : '1px solid #DDE3F4',
+            borderRadius: '14px',
+            boxShadow: isDark ? 'none' : '0 8px 24px rgba(108, 76, 158, 0.08)',
+            gap: '6px',
+            p: '12px',
+            width: '100%'
+          }}
+        >
+          <Typography color={isDark ? theme.palette.primary.main : theme.palette.text.highlight} variant='B-4' width='fit-content'>
             {t('To leave a pool as a member')}:
           </Typography>
-          <Typography color={theme.palette.text.primary} pl='20px' variant='B-4'>
+          <Typography color='text.primary' pl='20px' variant='B-4'>
             {t('Unstake, wait for unstaking, then redeem')}.
           </Typography>
         </Stack>
-        <Stack direction='column' sx={{ alignItems: 'flex-start', bgcolor: '#05091C', borderRadius: '14px', gap: '6px', p: '12px', width: '100%' }}>
-          <Typography color={theme.palette.primary.main} variant='B-4' width='fit-content'>
+        <Stack
+          direction='column'
+          sx={{
+            alignItems: 'flex-start',
+            bgcolor: isDark ? '#05091C' : '#FFFFFF',
+            border: isDark ? 'none' : '1px solid #DDE3F4',
+            borderRadius: '14px',
+            boxShadow: isDark ? 'none' : '0 8px 24px rgba(108, 76, 158, 0.08)',
+            gap: '6px',
+            p: '12px',
+            width: '100%'
+          }}
+        >
+          <Typography color={isDark ? theme.palette.primary.main : theme.palette.text.highlight} variant='B-4' width='fit-content'>
             {t('To leave a pool as an owner')}:
           </Typography>
-          <Typography color={theme.palette.text.primary} pl='20px' variant='B-4'>
+          <Typography color='text.primary' pl='20px' variant='B-4'>
             {t('Destroy pool, remove all, then leave as member')}.
           </Typography>
         </Stack>

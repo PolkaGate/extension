@@ -1,19 +1,20 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { HexString } from '@polkadot/util/types';
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { Camera, User, Warning2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
-import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import { OnboardTitle } from '@polkadot/extension-polkagate/src/fullscreen/components/index';
 import AdaptiveLayout from '@polkadot/extension-polkagate/src/fullscreen/components/layout/AdaptiveLayout';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import { QrScanAddress } from '@polkadot/react-qr';
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { ActionButton, Address, DecisionButtons, MyTextField } from '../../../components';
 import { useFullscreen, useTranslation } from '../../../hooks';
@@ -26,26 +27,31 @@ export interface ScanType {
   name?: string | undefined;
 }
 
-export default function AttachQrFullScreen (): React.ReactElement {
+export default function AttachQrFullScreen(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const [account, setAccount] = useState<ScanType | null>(null);
   const [name, setName] = useState<string | null>(null);
   const [invalidQR, setInvalidQR] = useState<boolean>();
+  const [isEthereum, setIsEthereum] = useState(false);
 
   const setQrLabelAndGoToHome = useCallback(() => {
     const metaData = JSON.stringify({ isQR: true });
 
     account?.content && updateMeta(account.content, metaData).then(() => {
       setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.QR_ATTACHED).catch(console.error);
+      setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
       switchToOrOpenTab('/', true);
     }).catch(console.error);
   }, [account]);
 
   const onImport = useCallback(() => {
     if (account?.isAddress && name) {
-      createAccountExternal(name, account.content, account.genesisHash ?? POLKADOT_GENESIS)
+      const accountType = isEthereumAddress(account.content) ? 'ethereum' : undefined;
+
+      createAccountExternal(name, account.content, account.genesisHash ?? POLKADOT_GENESIS, accountType)
         .then(() => setQrLabelAndGoToHome())
         .catch((error: Error) => console.error(error));
     }
@@ -58,12 +64,18 @@ export default function AttachQrFullScreen (): React.ReactElement {
 
     setAccount(qrAccount);
     setInvalidQR(false);
-    setName(qrAccount?.name || null);
-  }, []);
+    setName(isEthereum ? 'Unknown' : qrAccount?.name || null);
+  }, [isEthereum]);
 
   const onCancel = useCallback(() => switchToOrOpenTab('/', true), []);
 
   const _onError = useCallback((error: Error) => {
+    if (String(error).includes('substrate')) {
+      setIsEthereum(true); // retry as ethereum
+
+      return;
+    }
+
     setInvalidQR(String(error).includes('Invalid prefix'));
   }, []);
 
@@ -97,10 +109,11 @@ export default function AttachQrFullScreen (): React.ReactElement {
           ? <>
             <Grid container sx={{ mb: '15px' }}>
               <QrScanAddress
+                isEthereum={isEthereum}
                 onError={_onError}
                 onScan={_setAccount}
                 style={{
-                  background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '14px', height: 'fit-content', minHeight: '200Px', padding: '3px', width: '272px'
+                  background: theme.palette.gradient.brand, borderRadius: '14px', height: 'fit-content', minHeight: '200Px', padding: '3px', width: '272px'
                 }}
               />
               {invalidQR && <QRWarning />}
@@ -117,7 +130,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
             <ActionButton
               contentPlacement='center'
               onClick={onCancel}
-              style={{ height: '44px', marginTop: '20px', width: '40%' }}
+              style={{ height: '44px', marginTop: '20px', width: '272px' }}
               text={t('Cancel')}
             />
           </>
@@ -127,6 +140,7 @@ export default function AttachQrFullScreen (): React.ReactElement {
               genesisHash={account?.genesisHash}
               name={name}
               style={{ margin: '5px auto 10px' }}
+              type={isEthereum ? 'ethereum' : undefined}
               width='100%'
             />
             <MyTextField

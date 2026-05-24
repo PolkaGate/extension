@@ -1,11 +1,11 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useEffect, useState } from 'react';
 
 const CHECK_INTERNET_CONNECTIVITY_PERIOD = 5000; // ms
 
-async function checkInternetAccess () {
+async function checkInternetAccess() {
   try {
     const response = await fetch('https://www.google.com', {
       cache: 'no-store', // Ensure it doesn't get cached
@@ -24,7 +24,7 @@ async function checkInternetAccess () {
   }
 }
 
-export default function useIsOnline (): boolean | undefined {
+export default function useIsOnline(): boolean | undefined {
   const [isOnline, setIsOnline] = useState<boolean>();
 
   useEffect(() => {

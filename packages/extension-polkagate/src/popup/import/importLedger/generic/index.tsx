@@ -1,15 +1,15 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { AddCircle } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { setStorage } from '@polkadot/extension-polkagate/src/components/Loading';
 import OnboardTitle from '@polkadot/extension-polkagate/src/fullscreen/components/OnboardTitle';
 import LedgerErrorMessage from '@polkadot/extension-polkagate/src/popup/signing/ledger/LedgerErrorMessage';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { POLKADOT_SLIP44, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { switchToOrOpenTab } from '@polkadot/extension-polkagate/src/util/switchToOrOpenTab';
 import settings from '@polkadot/ui-settings';
@@ -42,16 +42,21 @@ interface AddItemProps {
   onClick?: () => void;
 }
 
-export const AddItem = ({ disabled, label, onClick }: AddItemProps) => (
-  <Grid alignItems='center' container item justifyContent='center' onClick={disabled ? noop : onClick} sx={{ '&:hover': { background: '#6743944D' }, border: '1px solid #2D1E4A', borderRadius: '18px', cursor: disabled ? 'context-menu' : 'pointer', height: '44px', opacity: disabled ? 0.5 : 1, transition: 'all 250ms ease-out', width: '100%' }}>
-    <AddCircle color='#AA83DC' size='20' variant='Bold' />
-    <Typography color='#BEAAD8' pl='10px' variant='B-2'>
-      {label}
-    </Typography>
-  </Grid>
-);
+export const AddItem = ({ disabled, label, onClick }: AddItemProps) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
-export default function GenericApp ({ setMode }: Props): React.ReactElement {
+  return (
+    <Grid alignItems='center' container item justifyContent='center' onClick={disabled ? noop : onClick} sx={{ '&:hover': { background: isDark ? '#6743944D' : '#F3F6FD' }, background: isDark ? 'transparent' : '#FFFFFF', border: `1px solid ${isDark ? '#2D1E4A' : '#DDE3F4'}`, borderRadius: '18px', boxShadow: isDark ? 'none' : '0 8px 20px rgba(133, 140, 176, 0.10)', cursor: disabled ? 'context-menu' : 'pointer', height: '44px', opacity: disabled ? 0.5 : 1, transition: 'all 250ms ease-out', width: '100%' }}>
+      <AddCircle color={isDark ? '#AA83DC' : '#7A69A8'} size='20' variant='Bold' />
+      <Typography color={theme.palette.accent.textStrong} pl='10px' variant='B-2'>
+        {label}
+      </Typography>
+    </Grid>
+  );
+};
+
+export default function GenericApp({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
   const ref = useRef(null);
   const navigate = useNavigate();
@@ -65,17 +70,17 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
   const [error, setError] = useState<string | null>(null);
   const [isAdvancedMode, setAdvancedMode] = useState<boolean>(false);
 
-  const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh, warning: ledgerWarning } = useGenericLedger(accountIndex, addressOffset, POLKADOT_SLIP44);
+  const { address, error: ledgerError, isLoading: ledgerLoading, isLocked: ledgerLocked, refresh } = useGenericLedger(accountIndex, addressOffset, POLKADOT_SLIP44);
 
   const selectedAddresses = useMemo(() =>
     Object.entries(addressList).filter(([_, options]) => options.selected),
-  [addressList]);
+    [addressList]);
 
   const importDisabled = useMemo((): boolean =>
     isAdvancedMode
       ? !address
       : !selectedAddresses.length // if there is at least one address is selected
-  , [address, selectedAddresses, isAdvancedMode]);
+    , [address, selectedAddresses, isAdvancedMode]);
 
   useEffect(() => {
     if (!address) {
@@ -96,7 +101,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
     });
 
     if (ref.current) {
-      // @ts-ignore
+      // @ts-expect-error ref is untyped in this legacy scroll container.
       ref.current.scrollTop = ref.current.scrollHeight - ref.current.offsetHeight;
     }
   }, [accountIndex, address]);
@@ -110,8 +115,10 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
 
         updateMeta(String(address), metaData)
           .then(() => {
+            setStorage(STORAGE_KEY.CHECK_BALANCE_ON_ALL_CHAINS, true).catch(console.error);
+            setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
+
             if (isAdvancedMode) {
-              setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER).catch(console.error);
               switchToOrOpenTab('/', true);
             } else {
               finishedCountRef.current++;
@@ -121,9 +128,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
                 !hasNavigatedRef.current
               ) {
                 hasNavigatedRef.current = true;
-                setStorage(STORAGE_KEY.SELECTED_PROFILE, PROFILE_TAGS.LEDGER)
-                  .then(() => navigate('/'))
-                  .catch(console.error);
+                navigate('/') as void;
               }
             }
           }
@@ -178,7 +183,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
     setAddressList({ ..._addressList });
   }, [addressList]);
 
-  const hasError = !!ledgerWarning || !!error || !!ledgerError;
+  const hasError = !!error || !!ledgerError;
 
   return (
     <Stack direction='column' sx={{ maxHeight: 'calc(100vh - 260px)', minHeight: '545px', position: 'relative', width: '500px' }}>
@@ -232,7 +237,7 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
                 ref={ref}
                 setAccountIndex={setAccountIndex}
                 setAddressOffset={setAddressOffset}
-              />
+                />
             }
           </Grid>
         }
@@ -242,9 +247,6 @@ export default function GenericApp ({ setMode }: Props): React.ReactElement {
             src={ledgerErrorImage as string}
             sx={{ my: '65px' }}
           />}
-        {!!ledgerWarning &&
-          <LedgerErrorMessage error={ledgerWarning} />
-        }
         {(!!error || !!ledgerError) &&
           <LedgerErrorMessage error={error || ledgerError || ''} />
         }

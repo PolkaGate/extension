@@ -1,14 +1,14 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Dialog, Grid, Typography } from '@mui/material';
+import { Box, Container, Dialog, Grid, Typography, useTheme } from '@mui/material';
 import { Check, ColorSwatch, Convertshape2, Eye, FolderOpen, Key, ScanBarcode } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ActionButton, Transition } from '../../components';
 import { CustomCloseSquare } from '../../components/SVG/CustomCloseSquare';
-import { useTranslation } from '../../hooks';
+import { useIsDark, useTranslation } from '../../hooks';
 import { createAccountExternal, windowOpen } from '../../messaging';
 import { GradientBorder, GradientDivider, RedGradient } from '../../style';
 import { DEMO_ACCOUNT, POLKADOT_GENESIS_HASH } from '../../util/constants';
@@ -19,8 +19,10 @@ interface Props {
   openMenu: boolean;
 }
 
-function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
+function AddAccount({ openMenu, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = useIsDark();
   const navigate = useNavigate();
 
   const handleClose = useCallback(() => setPopup(Popups.NONE), [setPopup]);
@@ -71,7 +73,7 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
         backdrop: {
           sx: {
             backdropFilter: 'blur(10px)',
-            background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
+            background: theme.palette.gradient.radialOverlay,
             bgcolor: 'transparent'
           }
         }
@@ -81,16 +83,16 @@ function AddAccount ({ openMenu, setPopup }: Props): React.ReactElement {
     >
       <Container disableGutters sx={{ height: '100%', width: '100%' }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-          <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
+          <CustomCloseSquare color={theme.palette.accent.icon} onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: '#120D27', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative' }}>
+        <Grid alignItems='center' container item justifyContent='center' sx={{ background: isDark ? undefined : 'linear-gradient(180deg, #F1E4FF 0%, #F8FAFF 45%, #FFFFFF 100%)', bgcolor: isDark ? '#120D27' : '#F8FAFF', border: '2px solid', borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative' }}>
           <GradientBorder />
           <Grid alignItems='center' columnGap='10px' container item justifyContent='center' p='10px'>
-            <Typography color='#fff' textTransform='uppercase' variant='H-2'>
+            <Typography color={isDark ? '#FFFFFF' : '#2D1E4A'} textTransform='uppercase' variant='H-2'>
               {t('Already have accounts')}
             </Typography>
           </Grid>
-          <RedGradient style={{ top: '-130px' }} />
+          {isDark && <RedGradient style={{ top: '-130px' }} />}
           <Box sx={{ maxHeight: '440px', overflowY: 'auto', position: 'relative', width: '100%' }}>
             <Grid container item justifyContent='center' sx={{ pb: '5px', position: 'relative', px: '32px', rowGap: '12px', zIndex: 1 }}>
               <ActionButton

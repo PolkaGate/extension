@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { BN } from '@polkadot/util';
@@ -55,7 +55,7 @@ const LOOKUP = [
   { symbol: 'E', value: 1e18 }
 ];
 
-export function nFormatter (num: number, decimalPoint: number) {
+export function nFormatter(num: number, decimalPoint: number) {
   const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   const item = LOOKUP.slice().reverse().find((item) => num >= item.value);
 
@@ -77,7 +77,7 @@ const DecimalPart = ({ value, withCountUp }: { value: string | number, withCount
     : <>{`.${getDecimal(value)}`}</>
 );
 
-export function formatDecimalWithCommas (_number: number | string, decimalDigit = 2, commify?: boolean) {
+export function formatDecimalWithCommas(_number: number | string, decimalDigit = 2, commify?: boolean) {
   const sNumber = Number(_number) < 0 ? String(-Number(_number)) : String(_number);
   const dotIndex = sNumber.indexOf('.');
 
@@ -97,7 +97,7 @@ export function formatDecimalWithCommas (_number: number | string, decimalDigit 
   return { decimalPart: fractionalDigits, integerPart: integerDigits };
 }
 
-function FormatPrice ({ amount, commify, decimalColor, decimalPoint = 2, decimals, dotStyle, fontFamily, fontSize, fontWeight, formattedFrom, height, ignoreHide, lineHeight = 1, mt = '0px', num, onHideShape, price, sign, skeletonHeight = 15, style = {}, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
+function FormatPrice({ amount, commify, decimalColor, decimalPoint = 2, decimals, dotStyle, fontFamily, fontSize, fontWeight, formattedFrom, height, ignoreHide, lineHeight = 1, mt = '0px', num, onHideShape, price, sign, skeletonHeight = 15, style = {}, textAlign = 'left', textColor, width = '90px', withCountUp, withSmallDecimal }: Props): React.ReactElement<Props> {
   const { currency } = useContext(CurrencyContext);
   const theme = useTheme();
   const { isHideNumbers } = useIsHideNumbers();

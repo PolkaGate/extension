@@ -1,23 +1,24 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 import type { MyPoolInfo, PoolInfo } from '../../../../util/types';
 
-import { Container, Grid, Link, Stack, Typography } from '@mui/material';
-import { BuyCrypto, CommandSquare, DiscountCircle, FlashCircle, People } from 'iconsax-react';
+import { Container, Grid, Link, Stack, Typography, useTheme } from '@mui/material';
+import { BuyCrypto, CommandSquare, DiscountCircle, Discover, FlashCircle, People } from 'iconsax-react';
 import React, { Fragment, memo, useCallback, useMemo } from 'react';
 
+import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
 import { noop } from '@polkadot/util';
 
 import { useChainInfo, useIsExtensionPopup, usePoolDetail, useTranslation } from '../../../..//hooks';
 import Subscan from '../../../../assets/icons/Subscan';
 import { DetailPanel, GradientButton, GradientDivider } from '../../../../components';
 import SnowFlake from '../../../../components/SVG/SnowFlake';
-import { CollapseSection, PoolMembers, PoolReward, PoolStashIdSocials, RoleItem, StakingInfoStackWithIcon } from '../../../../popup/staking/partial/PoolDetail';
+import { CollapseSection, PoolMembers, PoolNominations, PoolReward, PoolStashIdSocials, RoleItem, StakingInfoStackWithIcon } from '../../../../popup/staking/partial/PoolDetail';
 import { PoolIdenticon } from '../../../../popup/staking/partial/PoolIdenticon';
-import { getSubscanChainName, toShortAddress } from '../../../../util';
+import { toShortAddress } from '../../../../util';
 
 interface PoolIdentityDetailProps {
   poolDetail: PoolInfo;
@@ -27,7 +28,8 @@ interface PoolIdentityDetailProps {
 
 const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentityDetailProps) => {
   const { chainName } = useChainInfo(genesisHash, true);
-  const network = getSubscanChainName(chainName);
+  const accountId = poolDetail.stashIdAccount?.accountId.toString();
+  const { link } = getLink(chainName, 'account', String(accountId));
 
   const { bgcolor, textColor } = useMemo(() => {
     const status = poolDetail.bondedPool?.state.toString();
@@ -54,12 +56,12 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentit
         </Typography>
       </Grid>
       <Typography color='#82FFA5' sx={{ fontFamily: 'JetBrainsMono', fontSize: '14px', fontWeight: 700 }}>
-        {toShortAddress(poolDetail.stashIdAccount?.accountId.toString())}
+        {toShortAddress(accountId)}
       </Typography>
       <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', m: 0, width: 'fit-content' }}>
         <PoolStashIdSocials poolDetail={poolDetail} />
         <Link
-          href={`https://${network}.subscan.io/account/${poolDetail.stashIdAccount?.accountId.toString()}`}
+          href={link}
           rel='noreferrer'
           sx={{ alignItems: 'center', bgcolor: '#FFFFFF1A', borderRadius: '999px', display: 'flex', height: '24px', justifyContent: 'center', width: '24px' }}
           target='_blank'
@@ -87,14 +89,14 @@ interface LeftColumnContentProps {
   poolStatus: string;
 }
 
-const LeftColumnContent = memo(function LeftColumnContentMemo ({ collapse, genesisHash, handleCollapses, ids, poolDetail, poolStatus, roles, totalPoolRewardAsFiat }: LeftColumnContentProps) {
+const LeftColumnContent = memo(function LeftColumnContentMemo({ collapse, genesisHash, handleCollapses, ids, poolDetail, poolStatus, roles, totalPoolRewardAsFiat }: LeftColumnContentProps) {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
 
   const getIconColor = useCallback((id: string) =>
     collapse[id] ? '#596AFF' : isExtension ? '#AA83DC' : '#FF4FB9'
-  ,
-  [collapse, isExtension]);
+    ,
+    [collapse, isExtension]);
 
   return (
     <Stack direction='column' sx={{ position: 'relative', px: '18px', width: '100%', zIndex: 1 }}>
@@ -168,6 +170,19 @@ const LeftColumnContent = memo(function LeftColumnContentMemo ({ collapse, genes
             totalPoolRewardAsFiat={totalPoolRewardAsFiat}
           />
         </CollapseSection>
+        <CollapseSection
+          TitleIcon={<Discover color={getIconColor('Nominations')} size='15' variant='Bulk' />}
+          onClick={handleCollapses('Nominations')}
+          open={collapse['Nominations']}
+          sideText={String(poolDetail?.stashIdAccount?.nominators?.length ?? 0)}
+          title={t('Nominations')}
+        >
+          <PoolNominations
+            genesisHash={genesisHash}
+            maxHeight='160px'
+            nominations={poolDetail?.stashIdAccount?.nominators?.map((item) => item.toString()) ?? []}
+          />
+        </CollapseSection>
       </Stack>
     </Stack>
   );
@@ -182,31 +197,40 @@ interface RightColumnContentProps {
 }
 
 const RightColumnContent = ({ commission, genesisHash, onClose, onSelect, poolDetail }: RightColumnContentProps) => {
+  const theme = useTheme();
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const isLight = theme.palette.mode === 'light';
 
   return (
     <Stack direction='column' sx={{ gap: '12px', width: '200px' }}>
-      <Stack direction='column' sx={{ bgcolor: '#05091C', border: '4px solid #1B133C', borderRadius: '27px', gap: '18px', p: '28px 22px' }}>
+      <Stack direction='column' sx={{
+        bgcolor: isLight ? '#FFFFFF' : '#05091C',
+        border: isLight ? '1px solid #DDE3F4' : '4px solid #1B133C',
+        borderRadius: '27px',
+        boxShadow: isLight ? '0px 14px 28px rgba(148, 163, 184, 0.12)' : 'none',
+        gap: '18px',
+        p: '28px 22px'
+      }}>
         <StakingInfoStackWithIcon
-          Icon={<SnowFlake color='#AA83DC' size='19' />}
+          Icon={<SnowFlake color={isLight ? '#745E9F' : '#AA83DC'} size='19' />}
           amount={poolDetail?.bondedPool?.points}
           decimal={decimal}
           title={t('Staked')}
-          titleColor='#AA83DC'
+          titleColor={isLight ? '#745E9F' : '#AA83DC'}
           token={token}
         />
         <StakingInfoStackWithIcon
-          Icon={<DiscountCircle color='#AA83DC' size='24' variant='Bulk' />}
+          Icon={<DiscountCircle color={isLight ? '#745E9F' : '#AA83DC'} size='24' variant='Bulk' />}
           text={String(commission) + '%'}
           title={t('Commission')}
-          titleColor='#AA83DC'
+          titleColor={isLight ? '#745E9F' : '#AA83DC'}
         />
         <StakingInfoStackWithIcon
-          Icon={<People color='#AA83DC' size='24' variant='Bulk' />}
+          Icon={<People color={isLight ? '#745E9F' : '#AA83DC'} size='24' variant='Bulk' />}
           text={poolDetail?.bondedPool?.memberCounter.toString()}
           title={t('Members')}
-          titleColor='#AA83DC'
+          titleColor={isLight ? '#745E9F' : '#AA83DC'}
         />
       </Stack>
       {(onSelect || onClose) &&
@@ -226,7 +250,7 @@ interface Props {
   onSelect?: () => void;
 }
 
-export default function PoolDetail ({ genesisHash, onClose, onSelect, poolDetail }: Props) {
+export default function PoolDetail({ genesisHash, onClose, onSelect, poolDetail }: Props) {
   const { t } = useTranslation();
 
   const { collapse,

@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon } from 'iconsax-react';
@@ -11,8 +11,44 @@ import { noop } from '@polkadot/util';
 import { useIsDark, useIsExtensionPopup, useIsHovered } from '../hooks';
 import TwoToneText from './TwoToneText';
 
+interface IconElementProp {
+  iconVariant?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
+  iconVariantOnHover?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
+  IconName: Icon | undefined;
+  disabled?: boolean;
+  isBlueish?: boolean;
+  iconSize?: number;
+  iconAlwaysBold?: boolean;
+  hovered: boolean;
+  disabledIconColor?: string;
+}
+
+const IconElement = ({ IconName, disabled, disabledIconColor, hovered, iconAlwaysBold, iconSize, iconVariant, iconVariantOnHover, isBlueish }: IconElementProp) => {
+  const theme = useTheme();
+
+  return (IconName
+    ? (
+      <IconName
+        color={
+          disabled
+            ? disabledIconColor ?? '#BEAAD84D'
+            : isBlueish
+              ? theme.palette.text.highlight
+              : theme.palette.primary.main
+        }
+        size={iconSize}
+        variant={
+          (iconAlwaysBold ?? hovered)
+            ? iconVariantOnHover ?? 'Bold'
+            : iconVariant ?? 'Bulk'
+        }
+      />)
+    : undefined);
+};
+
 export interface ActionButtonProps {
   StartIcon?: Icon;
+  EndIcon?: Icon;
   iconVariant?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
   iconVariantOnHover?: 'Bulk' | 'Broken' | 'TwoTone' | 'Outline' | 'Linear' | 'Bold';
   contentPlacement?: 'start' | 'center' | 'end';
@@ -21,19 +57,24 @@ export interface ActionButtonProps {
   iconSize?: number;
   iconAlwaysBold?: boolean;
   isBusy?: boolean;
+  disabledIconColor?: string;
+  disabledTextColor?: string;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   style?: SxProps<Theme> | undefined;
   text?: string | { text?: string; textPartInColor?: string; };
   variant?: 'text' | 'contained' | 'outlined';
 }
 
-export default function ActionButton ({ StartIcon, contentPlacement = 'start', disabled, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBlueish, isBusy, onClick, style, text, variant }: ActionButtonProps): React.ReactElement<ActionButtonProps> {
+export default function ActionButton({ EndIcon, StartIcon, contentPlacement = 'start', disabled, disabledIconColor, disabledTextColor, iconAlwaysBold, iconSize = 20, iconVariant, iconVariantOnHover, isBlueish, isBusy, onClick, style, text, variant }: ActionButtonProps): React.ReactElement<ActionButtonProps> {
   const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
   const isExtension = useIsExtensionPopup();
   const borderRadius = isExtension ? '12px' : '18px';
+  const finalDisabledIconColor = disabledIconColor ?? '#BEAAD84D';
+  const finalDisabledTextColor = disabledTextColor ?? '#BEAAD84D';
+  const styleWithBorderRadius = style as { borderRadius?: string | number } | undefined;
 
   const ButtonFontStyle = useMemo(() => ({
     ...theme.typography['B-2'],
@@ -44,12 +85,13 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
   const GeneralButtonStyle = {
     '&:hover': {
       background: isDark ? isBlueish ? '#2E2948' : '#674394' : '#EFF1F9',
+      borderColor: isDark ? undefined : '#DDE3F4',
       transition: 'all 250ms ease-out'
     },
     background: isDark ? isBlueish ? '#809ACB26' : '#2D1E4A' : '#FFFFFF',
-    border: isBlueish ? '1px solid #2E2948' : 'none',
-    borderRadius: `${(style as Record<string, any>)?.['borderRadius'] ?? borderRadius}`,
-    boxShadow: 'unset',
+    border: isDark ? (isBlueish ? '1px solid #2E2948' : 'none') : '1px solid #DDE3F4',
+    borderRadius: `${styleWithBorderRadius?.borderRadius ?? borderRadius}`,
+    boxShadow: isDark ? 'unset' : '0 8px 20px rgba(133, 140, 176, 0.10)',
     justifyContent: 'flex-start',
     padding: '10px 24px',
     transition: 'all 250ms ease-out',
@@ -62,13 +104,23 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
       marginRight: '16px'
     },
     '& .MuiButton-startIcon svg': {
-      color: disabled ? '#BEAAD84D' : '#BEAAD8'
+      color: disabled ? finalDisabledIconColor : '#BEAAD8'
+    }
+  };
+
+  const EndIconStyle = {
+    '& .MuiButton-endIcon': {
+      marginLeft: '10px',
+      marginRight: 0
+    },
+    '& .MuiButton-endIcon svg': {
+      color: disabled ? finalDisabledIconColor : '#BEAAD8'
     }
   };
 
   const renderText = useMemo(() => {
     if (typeof text === 'string') {
-      return <span style={{ color: disabled ? '#BEAAD84D' : isDark ? isBlueish ? '#809ACB' : '#BEAAD8' : '#745D8B', whiteSpace: 'nowrap', ...ButtonFontStyle }}>
+      return <span style={{ color: disabled ? finalDisabledTextColor : isDark && isBlueish ? '#809ACB' : theme.palette.accent.text, whiteSpace: 'nowrap', ...ButtonFontStyle }}>
         {text}
       </span>;
     } else {
@@ -83,37 +135,44 @@ export default function ActionButton ({ StartIcon, contentPlacement = 'start', d
         </Typography>
       );
     }
-  }, [ButtonFontStyle, disabled, isBlueish, isDark, text, theme]);
+  }, [ButtonFontStyle, disabled, finalDisabledTextColor, isBlueish, isDark, text, theme]);
 
   return (
     <Button
       disabled={disabled || isBusy}
+      endIcon={
+        <IconElement
+          IconName={EndIcon}
+          disabled={disabled}
+          disabledIconColor={finalDisabledIconColor}
+          hovered={hovered}
+          iconAlwaysBold={iconAlwaysBold}
+          iconSize={iconSize}
+          iconVariant={iconVariant}
+          iconVariantOnHover={iconVariantOnHover}
+          isBlueish={isBlueish}
+        />}
       onClick={onClick ?? noop}
       ref={containerRef}
-      startIcon={StartIcon
-        ? (
-          <StartIcon
-            color={
-              disabled
-                ? '#BEAAD84D'
-                : isBlueish
-                  ? theme.palette.text.highlight
-                  : theme.palette.primary.main
-            }
-            size={iconSize}
-            variant={
-              (iconAlwaysBold ?? hovered)
-                ? iconVariantOnHover ?? 'Bold'
-                : iconVariant ?? 'Bulk'
-            }
-          />)
-        : undefined}
+      startIcon={
+        <IconElement
+          IconName={StartIcon}
+          disabled={disabled}
+          disabledIconColor={finalDisabledIconColor}
+          hovered={hovered}
+          iconAlwaysBold={iconAlwaysBold}
+          iconSize={iconSize}
+          iconVariant={iconVariant}
+          iconVariantOnHover={iconVariantOnHover}
+          isBlueish={isBlueish}
+        />}
       sx={{
         '&.Mui-disabled': {
-          backgroundColor: '#2D1E4A4D'
+          backgroundColor: isDark ? '#2D1E4A4D' : '#E4E7F4'
         },
         ...GeneralButtonStyle,
         ...StartIconStyle,
+        ...EndIconStyle,
         ...style
       }}
       variant={variant}

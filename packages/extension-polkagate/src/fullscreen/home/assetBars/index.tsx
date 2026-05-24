@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AssetsWithUiAndPrice } from './types';
@@ -8,7 +8,7 @@ import React, { useContext, useMemo } from 'react';
 
 import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { TEST_NETS } from '@polkadot/extension-polkagate/src/util/constants';
-import getLogo2 from '@polkadot/extension-polkagate/src/util/getLogo2';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 import { BN, BN_ZERO } from '@polkadot/util';
 
 import { AccountsAssetsContext, AssetNull } from '../../../components';
@@ -18,7 +18,7 @@ import AssetsRows from './AssetsRows';
 import { adjustColor, getMaxBalanceAsset } from './helpers';
 import PortfolioBar from './PortfolioBar';
 
-function AssetsBars (): React.ReactElement {
+function AssetsBars(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const pricesInCurrencies = usePrices();
@@ -34,7 +34,7 @@ function AssetsBars (): React.ReactElement {
       Object.entries(byChain)
         .filter(([genesisHash]) => !TEST_NETS.includes(genesisHash))
         .flatMap(([, assets]) => assets as unknown as AssetsWithUiAndPrice[])
-    );
+    ).filter((asset) => new BN(asset.totalBalance).isZero() === false);
 
     const groupedAssets = allAccountsAssets.reduce((acc, asset) => {
       const key = asset.priceId; // Group by priceId
@@ -50,7 +50,7 @@ function AssetsBars (): React.ReactElement {
 
     const aggregatedAssets = Object.keys(groupedAssets).map((index) => {
       const assetSample = getMaxBalanceAsset(groupedAssets[index]);
-      const ui = getLogo2(assetSample?.genesisHash, assetSample?.token);
+      const ui = resolveLogoInfo(assetSample?.genesisHash, assetSample?.token);
       const assetPrice = pricesInCurrencies.prices[assetSample.priceId]?.value;
 
       const accumulatedBalancePerPriceId = groupedAssets[index].reduce((sum, { totalBalance }) => sum.add(new BN(totalBalance)), BN_ZERO);
@@ -69,7 +69,7 @@ function AssetsBars (): React.ReactElement {
           logo: ui?.logo
         }
       });
-    });
+    }).filter(({ totalBalance }) => totalBalance > 0);
 
     aggregatedAssets.sort((a, b) => b.percent - a.percent);
 

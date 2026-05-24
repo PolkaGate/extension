@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type React from 'react';
@@ -21,21 +21,37 @@ interface State {
 
 type Action =
   | { type: 'SET_ENABLED'; }
-  | { type: 'TOGGLE_AUTO'; }
+  | { type: 'SET_AUTO'; }
+  | { type: 'TOGGLE_AUTO'; payload?: string }
   | { type: 'SET_ENDPOINT'; payload: string | undefined }
   | { type: 'SET_ENDPOINTS_DELAY'; payload: EndpointsDelay }
   | { type: 'UPDATE_DELAY'; payload: { endpoint: string; delay: number } }
   | { type: 'RESET' };
 
-function reducer (state: State, action: Action): State {
+function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'SET_ENABLED':
-      return { ...state, mayBeEnabled: !state.mayBeEnabled };
+    case 'SET_ENABLED': {
+      const nextEnabled = !state.mayBeEnabled;
+
+      return {
+        ...state,
+        isOnAuto: nextEnabled,
+        mayBeEnabled: nextEnabled,
+        maybeNewEndpoint: nextEnabled ? undefined : state.maybeNewEndpoint
+      };
+    }
+
+    case 'SET_AUTO':
+      return { ...state, isOnAuto: true, maybeNewEndpoint: undefined };
 
     case 'TOGGLE_AUTO': {
       const toggle = !state.isOnAuto;
 
-      return { ...state, isOnAuto: toggle, maybeNewEndpoint: toggle ? undefined : state.maybeNewEndpoint };
+      return {
+        ...state,
+        isOnAuto: toggle,
+        maybeNewEndpoint: toggle ? undefined : action.payload ?? state.maybeNewEndpoint
+      };
     }
 
     case 'SET_ENDPOINT':
@@ -62,9 +78,9 @@ function reducer (state: State, action: Action): State {
 
 const endpointManager = new EndpointManager();
 
-export default function useEndpointsSetting (genesisHash: string | undefined, isEnabled: boolean, onEnableChain?: (value: string, checked: boolean) => void, onClose?: () => void) {
+export default function useEndpointsSetting(genesisHash: string | undefined, isEnabled: boolean, onEnableChain?: (value: string, checked: boolean) => void, onClose?: () => void) {
   const isExtension = useIsExtensionPopup();
-  const { endpoint, isAuto } = useEndpoint(genesisHash);
+  const { endpoint, isAuto } = useEndpoint(genesisHash, undefined, isEnabled);
   const endpointOptions = useEndpoints(genesisHash);
 
   const isFetching = useRef<Record<string, boolean>>({});
@@ -79,6 +95,7 @@ export default function useEndpointsSetting (genesisHash: string | undefined, is
   });
 
   const { endpointsDelay, isOnAuto, mayBeEnabled, maybeNewEndpoint } = state;
+  const resolvedIsOnAuto = mayBeEnabled ? (isOnAuto ?? (isEnabled ? isAuto : true)) : false;
 
   // Just to initialize
   useEffect(() => {
@@ -94,19 +111,47 @@ export default function useEndpointsSetting (genesisHash: string | undefined, is
   }, [endpoint, isAuto, maybeNewEndpoint, isOnAuto]);
 
   const onApply = useCallback((): void => {
-    genesisHash && onEnableChain?.(genesisHash, mayBeEnabled);
+    if (!genesisHash) {
+      onClose?.();
 
-    const checkForNewOne = Boolean(maybeNewEndpoint === AUTO_MODE.value && genesisHash && endpointManager.get(genesisHash)?.isAuto);
+      return;
+    }
 
-    genesisHash && endpointManager.set(genesisHash, {
+    onEnableChain?.(genesisHash, mayBeEnabled);
+
+    if (!mayBeEnabled) {
+      endpointManager.set(genesisHash, {
+        checkForNewOne: false,
+        endpoint: undefined,
+        isAuto: false,
+        timestamp: Date.now()
+      });
+      onClose?.();
+
+      return;
+    }
+
+    const resolvedEndpoint = resolvedIsOnAuto
+      ? AUTO_MODE.value
+      : maybeNewEndpoint;
+
+    if (!resolvedEndpoint) {
+      onClose?.();
+
+      return;
+    }
+
+    const checkForNewOne = Boolean(resolvedEndpoint === AUTO_MODE.value && endpointManager.get(genesisHash)?.isAuto);
+
+    endpointManager.set(genesisHash, {
       checkForNewOne,
-      endpoint: maybeNewEndpoint || AUTO_MODE.value,
-      isAuto: isOnAuto,
+      endpoint: resolvedEndpoint,
+      isAuto: resolvedIsOnAuto,
       timestamp: Date.now()
     });
 
     onClose?.();
-  }, [genesisHash, onEnableChain, mayBeEnabled, maybeNewEndpoint, isOnAuto, onClose]);
+  }, [genesisHash, mayBeEnabled, maybeNewEndpoint, onClose, onEnableChain, resolvedIsOnAuto]);
 
   // If we're in the extension popup context, auto-apply behavior
   useEffect(() => {
@@ -169,13 +214,67 @@ export default function useEndpointsSetting (genesisHash: string | undefined, is
     return endpointsDelay?.filter(({ name }) => name !== AUTO_MODE.text && !name.includes('light client'));
   }, [endpointsDelay]);
 
+  const preferredManualEndpoint = useMemo(() => {
+    const fastestEndpoint = filteredEndpoints
+      ?.filter(({ delay, value }) => delay != null && value !== AUTO_MODE.value)
+      .sort((a, b) => (a.delay ?? Number.POSITIVE_INFINITY) - (b.delay ?? Number.POSITIVE_INFINITY))[0]
+      ?.value;
+
+    return fastestEndpoint ?? filteredEndpoints?.[0]?.value;
+  }, [filteredEndpoints]);
+
   const onChangeEndpoint = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
+    if (!mayBeEnabled) {
+      return;
+    }
+
     dispatch({ payload: event.target.value, type: 'SET_ENDPOINT' });
-  }, []);
+  }, [mayBeEnabled]);
+
+  const onSelectEndpoint = useCallback((endpoint: string): void => {
+    if (!mayBeEnabled) {
+      return;
+    }
+
+    dispatch({ payload: endpoint, type: 'SET_ENDPOINT' });
+  }, [mayBeEnabled]);
+
+  const onSelectAuto = useCallback((): void => {
+    if (!mayBeEnabled) {
+      return;
+    }
+
+    dispatch({ type: 'SET_AUTO' });
+  }, [mayBeEnabled]);
+
+  const onActiveCustomEndpointChange = useCallback((previousEndpoint: string, nextEndpoint: string | undefined): void => {
+    if (!genesisHash || !mayBeEnabled || endpoint !== previousEndpoint) {
+      return;
+    }
+
+    const nextIsAuto = !nextEndpoint;
+    const resolvedEndpoint = nextEndpoint ?? AUTO_MODE.value;
+    const checkForNewOne = Boolean(nextIsAuto && endpointManager.get(genesisHash)?.isAuto);
+
+    endpointManager.set(genesisHash, {
+      checkForNewOne,
+      endpoint: resolvedEndpoint,
+      isAuto: nextIsAuto,
+      timestamp: Date.now()
+    });
+  }, [endpoint, genesisHash, mayBeEnabled]);
 
   const onToggleAuto = useCallback((_event: React.ChangeEvent<HTMLInputElement>): void => {
-    dispatch({ type: 'TOGGLE_AUTO' });
-  }, []);
+    if (!mayBeEnabled) {
+      return;
+    }
+
+    if (resolvedIsOnAuto && !preferredManualEndpoint) {
+      return;
+    }
+
+    dispatch({ payload: preferredManualEndpoint, type: 'TOGGLE_AUTO' });
+  }, [mayBeEnabled, preferredManualEndpoint, resolvedIsOnAuto]);
 
   const onEnableNetwork = useCallback((_event: React.ChangeEvent<HTMLInputElement>, _checked: boolean): void => {
     dispatch({ type: 'SET_ENABLED' });
@@ -185,9 +284,14 @@ export default function useEndpointsSetting (genesisHash: string | undefined, is
     ...state,
     dispatch,
     filteredEndpoints,
+    isEndpointSelectionDisabled: !mayBeEnabled,
+    isOnAuto: resolvedIsOnAuto,
+    onActiveCustomEndpointChange,
     onApply,
     onChangeEndpoint,
     onEnableNetwork,
+    onSelectAuto,
+    onSelectEndpoint,
     onToggleAuto
   };
 }

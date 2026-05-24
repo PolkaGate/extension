@@ -1,63 +1,58 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
-import type Transport from '@ledgerhq/hw-transport';
 import type { AccountOptions } from '@polkadot/hw-ledger/types';
 
-import { Ledger, type LedgerTypes } from './types';
+import { LedgerTransportManager } from './transportManager';
+import { Ledger } from './types';
 
-interface LedgerApp {
-  transport: Transport;
-}
-
-export abstract class BaseLedger<T extends LedgerApp> extends Ledger {
+export abstract class BaseLedger<T> extends Ledger {
   protected app: T | null = null;
-  readonly txMetadataChainId?: string;
-  readonly transport: LedgerTypes;
+  static readonly transportManager: LedgerTransportManager = LedgerTransportManager.getInstance();
+
   readonly slip44: number;
 
-  constructor (transport: LedgerTypes, slip44: number, txMetadataChainId?: string) {
+  constructor(slip44: number) {
     super();
 
-    // u2f is deprecated
-    if (!['hid', 'webusb'].includes(transport)) {
-      throw new Error(`Unsupported transport ${transport}`);
-    }
-
-    this.txMetadataChainId = txMetadataChainId;
-    this.transport = transport;
     this.slip44 = slip44;
   }
 
   protected abstract serializePath(accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): string
   protected abstract getApp(): Promise<T>
 
-  protected withApp = async (fn: (_app: T) => Promise<V>): Promise<V> => {
-    try {
-      const app = await this.getApp();
+  protected withApp = async<V>(fn: (_app: T) => Promise<V>): Promise<V> => {
+  try {
+    const app = await this.getApp();
 
-      return await fn(app);
-    } catch (error) {
-      this.app = null;
-      throw error;
-    }
-  };
-
-  protected wrapError = async (promise: Promise<V>): Promise<V> => {
-    try {
-      return await promise;
-    } catch (e) {
-      throw Error(this.mappingError(new Error((e as Error).message)));
-    }
-  };
-
-  disconnect (): Promise<void> {
-    return this.withApp(async (app) => {
-      await app.transport.close();
-    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return await fn(app);
+  } catch (error) {
+    this.app = null;
+    throw error;
   }
+};
+
+  protected wrapError = async<V>(promise: Promise<V>): Promise<V> => {
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_resolve, reject) => {
+        BaseLedger.transportManager.onTransportDisconnect(() => {
+          reject(new Error('Transport disconnected'));
+        });
+      })
+    ]);
+  } catch (e) {
+    throw Error(this.mappingError(new Error((e as Error).message)));
+  }
+};
+
+disconnect(): Promise < void> {
+  return this.withApp(async() => {
+      await BaseLedger.transportManager.closeTransport();
+  });
+}
 
   abstract mappingError(error: Error): string;
 }

@@ -1,10 +1,10 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Balance } from '@polkadot/types/interfaces';
 import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 
-import { Container, Grid } from '@mui/material';
+import { Container, Grid, useTheme } from '@mui/material';
 import { Add, Award, Coin, LockSlash, MedalStar, Moneys, Profile2User, Strongbox2, Timer, Timer1, Trade } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
@@ -19,6 +19,7 @@ import StakingPortfolio from '../../../popup/staking/partial/StakingPortfolio';
 import { GlowBall } from '../../../style/VelvetBox';
 import { type PopupOpener, StakingPopUps } from '../util/utils';
 
+export const PENDING_REWARDS_TEXT = 'Pending Rewards';
 interface TileBoxProps {
   genesisHash: string | undefined;
   redeemable: Balance | BN | undefined;
@@ -31,15 +32,34 @@ interface TileBoxProps {
   popupOpener: PopupOpener;
 }
 
-const TileBoxes = memo(function MemoTileBoxes ({ availableBalanceToStake, genesisHash, popupOpener, redeemable, rewards, toBeReleased, tokenPrice, type, unlockingAmount }: TileBoxProps) {
+const TileBoxes = memo(function MemoTileBoxes({ availableBalanceToStake, genesisHash, popupOpener, redeemable, rewards, toBeReleased, tokenPrice, type, unlockingAmount }: TileBoxProps) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const isDark = theme.palette.mode === 'dark';
 
   const isPoolStaking = useMemo(() => type === 'pool', [type]);
 
   return (
-    <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '18px', display: 'flex', flexDirection: 'row', gap: '5px', overflow: 'hidden', p: '4px', position: 'relative' }} xs>
-      <GlowBall />
+    <Grid
+      container
+      item
+      sx={{
+        bgcolor: isDark ? '#1B133C' : '#F8FAFF',
+        border: isDark ? 'none' : '1px solid #E3E8F7',
+        borderRadius: '18px',
+        boxShadow: isDark ? 'none' : '0 12px 24px rgba(133, 140, 176, 0.12)',
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'nowrap',
+        gap: '5px',
+        overflow: 'hidden',
+        p: '4px',
+        position: 'relative'
+      }}
+      xs
+    >
+      {isDark && <GlowBall />}
       <StakingInfoTile
         Icon={Award}
         buttonsArray={
@@ -54,7 +74,7 @@ const TileBoxes = memo(function MemoTileBoxes ({ availableBalanceToStake, genesi
 
               Icon: Timer,
               onClick: popupOpener(StakingPopUps.PENDING_REWARDS),
-              text: t('Pending Rewards')
+              text: t(PENDING_REWARDS_TEXT)
             }]}
         cryptoAmount={rewards}
         decimal={decimal ?? 0}
@@ -139,7 +159,7 @@ interface Props {
   disabled?: boolean;
 }
 
-export default function StakingPortfolioAndTiles ({ availableBalanceToStake, disabled, genesisHash, popupOpener, redeemable, rewards, staked, toBeReleased, tokenPrice, type, unlockingAmount }: Props) {
+export default function StakingPortfolioAndTiles({ availableBalanceToStake, disabled, genesisHash, popupOpener, redeemable, rewards, staked, toBeReleased, tokenPrice, type, unlockingAmount }: Props) {
   const { t } = useTranslation();
   const { api } = useChainInfo(genesisHash);
 

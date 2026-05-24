@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
@@ -11,14 +11,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
-import { AssetLogo, BackWithLabel, DisplayBalance, FadeOnScroll, FormatPrice, Motion } from '../../components';
+import { BackWithLabel, DisplayBalance, FadeOnScroll, FormatPrice, Logo, Motion } from '../../components';
 import { useAccountAssets, useBackground, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
 import { toTitleCase } from '../../util';
-import getLogo2, { type LogoInfo } from '../../util/getLogo2';
+import resolveLogoInfo, { type LogoInfo } from '../../util/logo/resolveLogoInfo';
 import DailyChange from '../home/partial/DailyChange';
 import ReservedLockedPopup from './partial/ReservedLockedPopup';
+import Symbol from './partial/Symbol';
 import TokenDetailBox from './partial/TokenDetailBox';
 import TokenHistory from './partial/TokenHistory';
 import TokenStakingInfo from './partial/TokenStakingInfo';
@@ -26,14 +27,14 @@ import { useTokenInfoDetails } from './useTokenInfoDetails';
 
 const BackButton = ({ logoInfo, token }: { token: FetchedBalance | undefined; logoInfo: LogoInfo | undefined }) => (
   <Grid alignItems='center' container item sx={{ columnGap: '6px', width: 'fit-content' }}>
-    <AssetLogo assetSize='24px' baseTokenSize='16px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={undefined} subLogoPosition='' />
+    <Logo assetSize='24px' baseTokenSize='16px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={undefined} subLogoPosition='' />
     <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
       {token?.chainName ? toTitleCase(token.chainName) : ''}
     </Typography>
   </Grid>
 );
 
-function Tokens (): React.ReactElement {
+function Tokens(): React.ReactElement {
   useBackground('default');
 
   const theme = useTheme();
@@ -46,9 +47,9 @@ function Tokens (): React.ReactElement {
   const accountAssets = useAccountAssets(address);
   const token = useMemo(() =>
     accountAssets?.find(({ assetId, genesisHash: accountGenesisHash }) => accountGenesisHash === genesisHash && String(assetId) === paramAssetId)
-  , [accountAssets, genesisHash, paramAssetId]);
+    , [accountAssets, genesisHash, paramAssetId]);
 
-  const logoInfo = useMemo(() => getLogo2(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
+  const logoInfo = useMemo(() => resolveLogoInfo(token?.genesisHash, token?.token), [token?.genesisHash, token?.token]);
 
   const { UnlockTrackElement,
     closeMenu,
@@ -66,9 +67,11 @@ function Tokens (): React.ReactElement {
 
   const priceOf = useCallback((priceId: string): number => pricesInCurrency?.prices?.[priceId]?.value || 0, [pricesInCurrency?.prices]);
 
-  const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change ?? 0;
-  const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange);
+  const tokenPriceChange = pricesInCurrency?.prices[token?.priceId ?? '']?.change;
+  const change = calcChange(tokenPrice, Number(token?.totalBalance) / (10 ** (token?.decimal ?? 0)), tokenPriceChange ?? 0);
   const totalBalancePrice = useMemo(() => calcPrice(priceOf(token?.priceId ?? '') ?? 0, token?.totalBalance ?? BN_ZERO, token?.decimal ?? 0), [priceOf, token?.decimal, token?.priceId, token?.totalBalance]);
+  const mutedAmountColor = theme.palette.mode === 'dark' ? '#BEAAD8' : theme.palette.text.secondary;
+  const logoBorderColor = theme.palette.mode === 'dark' ? '#00000033' : '#FFFFFF99';
 
   const backHome = useCallback(() => navigate('/') as void, [navigate]);
 
@@ -82,13 +85,11 @@ function Tokens (): React.ReactElement {
           style={{ height: '40px', pb: 0 }}
         />
         <Container disableGutters ref={refContainer} sx={{ display: 'block', height: 'fit-content', maxHeight: '504px', overflowY: 'auto', pb: '60px', pt: '15px' }}>
-          <GlowBox style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
-            <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: '#00000033', borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
-              <AssetLogo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-6px -8px auto auto' />
+          <GlowBox openBottom style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
+            <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: logoBorderColor, borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
+              <Logo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-6px -8px auto auto' />
             </Grid>
-            <Typography color='text.secondary' variant='B-2'>
-              {token?.token}
-            </Typography>
+            <Symbol token={token?.token} />
             <FormatPrice
               commify
               decimalColor={theme.palette.text.secondary}
@@ -106,12 +107,12 @@ function Tokens (): React.ReactElement {
                 balance={token?.totalBalance}
                 decimal={token?.decimal}
                 style={{
-                  color: '#BEAAD8',
+                  color: mutedAmountColor,
                   width: 'max-content'
                 }}
                 token={token?.token}
               />
-              {token?.priceId && pricesInCurrency?.prices[token?.priceId]?.change &&
+              {token?.priceId && tokenPriceChange !== undefined &&
                 <DailyChange
                   change={change}
                   textVariant='B-1'

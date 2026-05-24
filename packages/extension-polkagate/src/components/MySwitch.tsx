@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SwitchProps } from '@mui/material/Switch';
 
-import { Box, Stack, Typography, type TypographyOwnProps } from '@mui/material';
+import { Box, Stack, Typography, type TypographyOwnProps, useTheme } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { EyeSlash } from 'iconsax-react';
@@ -22,10 +22,12 @@ interface Props extends SwitchProps {
 }
 
 const HiddenIcon = () => {
+  const theme = useTheme();
+
   return (
     <Box sx={{
       alignItems: 'center',
-      background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+      background: theme.palette.gradient.brand,
       borderRadius: '50%',
       display: 'flex',
       height: '18px',
@@ -43,7 +45,7 @@ const MySwitch = ({ checked, columnGap, label, labelStyle = {}, onChange, showHi
   const isBlueish = useIsBlueish();
 
   return (
-    <Stack alignItems= 'center' columnGap={columnGap} component='label' direction='row' sx={{ ...style }}>
+    <Stack alignItems='center' columnGap={columnGap} component='label' direction='row' sx={{ ...style }}>
       <StyledSwitch
         checked={Boolean(checked)}
         checkedIcon={showHidden ? <HiddenIcon /> : <Box sx={{ borderRadius: '50%', height: '10px', width: '10px' }} />}
@@ -55,7 +57,7 @@ const MySwitch = ({ checked, columnGap, label, labelStyle = {}, onChange, showHi
         showHidden={showHidden}
         {...props}
       />
-      <Typography color={showHidden && !checked ? 'text.secondary' : 'text.primary'} sx={{ cursor: 'pointer', width: 'max-content' }} variant='B-1' {... labelStyle}>
+      <Typography color={showHidden && !checked ? 'text.secondary' : 'text.primary'} sx={{ cursor: 'pointer', width: 'max-content' }} variant='B-1' {...labelStyle}>
         {label}
       </Typography>
     </Stack>
@@ -65,9 +67,85 @@ const MySwitch = ({ checked, columnGap, label, labelStyle = {}, onChange, showHi
 const StyledSwitch = styled(Switch, {
   shouldForwardProp: (prop) => prop !== 'isBlueish' && prop !== 'isDark' && prop !== 'showHidden'
 })<{ isDark: boolean, isBlueish: boolean, showHidden: boolean }>(({ checked, isBlueish, isDark, showHidden, theme }) => ({
+  '& .MuiSwitch-root': {
+    height: '100%',
+    width: '100%'
+  },
+  '& .MuiSwitch-switchBase': {
+    '&.Mui-checked': {
+      '& + .MuiSwitch-track': {
+        backgroundColor: '#EAEBF1',
+        transition: theme.transitions.create('background-color', {
+          duration: 300,
+          easing: 'ease-in-out'
+        }),
+        ...theme.applyStyles('dark', {
+          backgroundColor: '#2D1E4A'
+        })
+      },
+      '& .MuiSwitch-thumb': {
+        background: isDark ? '#EAEBF1' : '#3988FF'
+      },
+      '&.Mui-disabled + .MuiSwitch-track': {
+        opacity: 0.5
+      },
+      background: showHidden ? undefined : isDark ? '#EAEBF1' : '#3988FF',
+      padding: showHidden ? 0 : 2,
+      transform: showHidden ? 'translate(12px, -50%)' : 'translate(16px, -50%)'
+    },
+    '&.Mui-disabled + .MuiSwitch-track': {
+      opacity: 0.7,
+      ...theme.applyStyles('dark', {
+        opacity: 0.3
+      })
+    },
+    '&.Mui-disabled .MuiSwitch-thumb': {
+      color: theme.palette.grey[100],
+      ...theme.applyStyles('dark', {
+        color: theme.palette.grey[600]
+      })
+    },
+    left: 0,
+    padding: 0,
+    position: 'absolute',
+    top: '50%',
+    transform: 'translate(3px, -50%)',
+    transition: theme.transitions.create(['transform', 'background-color', 'box-shadow'], {
+      duration: 300,
+      easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+    })
+  },
+  '& .MuiSwitch-thumb': {
+    background: isDark ? isBlueish ? '#809ACB' : '#674394' : '#CCD2EA',
+    boxSizing: 'border-box',
+    height: 'var(--pg-switch-thumb-size)',
+    transition: theme.transitions.create(['background-color', 'transform'], {
+      duration: 300,
+      easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+    }),
+    width: 'var(--pg-switch-thumb-size)'
+  },
+  '& .MuiSwitch-track': {
+    backgroundColor: isDark ? '#39393D' : '#FFFFFF',
+    transition: theme.transitions.create(['background-color'], {
+      duration: 500
+    })
+  },
+  '&:hover': {
+    border: checked ? undefined : `2px solid ${isBlueish ? '#3988FF66' : '#674394'}`
+  },
+  '&:hover .MuiSwitch-thumb': {
+    background: checked
+      ? isDark ? '#EAEBF1' : '#3988FF'
+      : isDark ? isBlueish ? '#AFC3E8' : '#BEAAD8' : '#CCD2EA'
+  },
+  '--pg-switch-thumb-size': showHidden ? '18px' : '10.29px',
+  '--pg-switch-track-height': '24px',
+  '--pg-switch-track-padding': '3px',
+  '--pg-switch-track-width': '36px',
   background: checked
     ? isDark
-      ? 'linear-gradient(#2D1E4A, #2D1E4A) padding-box, linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%) border-box'
+      ? `linear-gradient(#2D1E4A, #2D1E4A) padding-box, ${theme.palette.gradient.brand} border-box`
       : '#CCD2EA'
     : isDark
       ? '#2D1E4A'
@@ -81,85 +159,16 @@ const StyledSwitch = styled(Switch, {
         : 'transparent'
       : '#3988FF'
     : isDark
-      ? '#6743944D'
+      ? isBlueish
+        ? '#809ACB66'
+        : '#6743944D'
       : '#CCD2EA'
-  }`,
+    }`,
   borderRadius: '109.71px',
   cursor: 'pointer',
-  height: '24px',
+  height: 'var(--pg-switch-track-height)',
   padding: 0,
-  width: '36px',
-  '&:hover': {
-    border: checked ? undefined : '2px solid #674394'
-  },
-  '&:hover .MuiSwitch-thumb': {
-    background: checked
-      ? isDark ? '#EAEBF1' : '#3988FF'
-      : isDark ? '#BEAAD8' : '#CCD2EA'
-  },
-  '& .MuiSwitch-root': {
-    height: '100%',
-    width: '100%'
-  },
-  '& .MuiSwitch-switchBase': {
-    alignSelf: 'anchor-center',
-    left: 0,
-    margin: '0 3px',
-    padding: 0,
-    transition: theme.transitions.create(['transform', 'background-color', 'box-shadow'], {
-      duration: 300,
-      easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
-    }),
-    '&.Mui-checked': {
-      background: showHidden ? undefined : isDark ? '#EAEBF1' : '#3988FF',
-      padding: showHidden ? 0 : 2,
-      transform: `translateX(${showHidden ? 10 : 13}px)`,
-      '& .MuiSwitch-thumb': {
-        background: isDark ? '#EAEBF1' : '#3988FF'
-      },
-      '& + .MuiSwitch-track': {
-        backgroundColor: '#EAEBF1',
-        transition: theme.transitions.create('background-color', {
-          duration: 300,
-          easing: 'ease-in-out'
-        }),
-        ...theme.applyStyles('dark', {
-          backgroundColor: '#2D1E4A'
-        })
-      },
-      '&.Mui-disabled + .MuiSwitch-track': {
-        opacity: 0.5
-      }
-    },
-    '&.Mui-disabled .MuiSwitch-thumb': {
-      color: theme.palette.grey[100],
-      ...theme.applyStyles('dark', {
-        color: theme.palette.grey[600]
-      })
-    },
-    '&.Mui-disabled + .MuiSwitch-track': {
-      opacity: 0.7,
-      ...theme.applyStyles('dark', {
-        opacity: 0.3
-      })
-    }
-  },
-  '& .MuiSwitch-thumb': {
-    background: isDark ? '#674394' : '#CCD2EA',
-    boxSizing: 'border-box',
-    height: 10.29,
-    transition: theme.transitions.create(['background-color', 'transform'], {
-      duration: 300,
-      easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
-    }),
-    width: 10.29
-  },
-  '& .MuiSwitch-track': {
-    backgroundColor: isDark ? '#39393D' : '#FFFFFF',
-    transition: theme.transitions.create(['background-color'], {
-      duration: 500
-    })
-  }
+  width: 'var(--pg-switch-track-width)'
 }));
 
 export default MySwitch;

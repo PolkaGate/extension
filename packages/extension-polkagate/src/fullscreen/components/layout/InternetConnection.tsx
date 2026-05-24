@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Divider, Grid } from '@mui/material';
@@ -9,7 +9,7 @@ import Connection from '@polkadot/extension-polkagate/src/components/SVG/Connect
 
 import { useIsDark, useTranslation } from '../../../hooks';
 
-function InternetConnection (): React.ReactElement {
+function InternetConnection(): React.ReactElement {
   const isDark = useIsDark();
   const { t } = useTranslation();
 
@@ -19,9 +19,10 @@ function InternetConnection (): React.ReactElement {
       sx={{
         alignItems: 'center',
         backdropFilter: 'blur(20px)',
-        background: '#2D1E4A80',
+        background: isDark ? '#2D1E4A80' : '#FFFFFF',
+        border: isDark ? 'none' : '1px solid #DDE3F4',
         borderRadius: '12px',
-        boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
+        boxShadow: isDark ? '0px 0px 24px 8px #4E2B7259 inset' : '0px 8px 22px rgba(133, 140, 176, 0.12)',
         cursor: 'pointer',
         height: '32px',
         width: '32px'
@@ -30,12 +31,12 @@ function InternetConnection (): React.ReactElement {
       <Grid
         alignItems='center' container item justifyContent='center'
         sx={{
-          ':hover': { background: '#674394' },
+          ':hover': { background: isDark ? '#674394' : '#F3F6FD' },
           alignItems: 'center',
           backdropFilter: 'blur(20px)',
           background: isDark ? '#2D1E4A80' : '#FFFFFF8C',
           borderRadius: '12px',
-          boxShadow: '0px 0px 24px 8px #4E2B7259 inset',
+          boxShadow: isDark ? '0px 0px 24px 8px #4E2B7259 inset' : 'none',
           height: '28px',
           transition: 'all 250ms ease-out',
           width: '28px'

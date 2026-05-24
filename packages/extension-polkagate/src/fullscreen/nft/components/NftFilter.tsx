@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FilterAction, FilterState, SortAction, SortState } from '../utils/types';
@@ -10,7 +10,7 @@ import React, { useCallback } from 'react';
 import { GlowCheckbox, GradientDivider } from '@polkadot/extension-polkagate/src/components/index';
 import PRadio from '@polkadot/extension-polkagate/src/popup/staking/components/Radio';
 
-import { useTranslation } from '../../../hooks';
+import { useIsDark, useTranslation } from '../../../hooks';
 
 interface Props {
   dispatchFilter: React.Dispatch<FilterAction>;
@@ -19,9 +19,10 @@ interface Props {
   sort: SortState;
 }
 
-const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, filters, sort }: Props) {
+const Filters = React.memo(function Filters({ dispatchFilter, dispatchSort, filters, sort }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = useIsDark();
 
   const onFilters = useCallback((filter: keyof FilterState) => () => {
     dispatchFilter({ filter });
@@ -34,8 +35,8 @@ const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, fil
   return (
     <Grid alignItems='flex-start' container display='block' item sx={{ borderRadius: '10px', maxWidth: '300px', p: '10px 20px', width: 'max-content' }}>
       <Grid alignItems='center' container item>
-        <Filter color= '#674394' size= '20px' style={{ marginRight: '10px' }} />
-        <Typography color='text.secondary' variant='B-4'>
+        <Filter color={isDark ? '#674394' : '#745D8B'} size='20px' style={{ marginRight: '10px' }} />
+        <Typography color={isDark ? 'text.secondary' : '#745D8B'} variant='B-4'>
           {t('Filters')}
         </Typography>
         <GradientDivider style={{ my: '3px' }} />
@@ -76,8 +77,8 @@ const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, fil
         />
       </Grid>
       <Grid alignItems='center' container item mt='15px'>
-        <Sort color= '#674394' size= '20px' style={{ marginRight: '10px' }} />
-        <Typography color='text.secondary' variant='B-4'>
+        <Sort color={isDark ? '#674394' : '#745D8B'} size='20px' style={{ marginRight: '10px' }} />
+        <Typography color={isDark ? 'text.secondary' : '#745D8B'} variant='B-4'>
           {t('Sort')}
         </Typography>
         <GradientDivider style={{ my: '3px' }} />
@@ -100,8 +101,10 @@ const Filters = React.memo(function Filters ({ dispatchFilter, dispatchSort, fil
   );
 });
 
-function NftFilters ({ dispatchFilter, dispatchSort, filters, sort }: Props): React.ReactElement {
+function NftFilters({ dispatchFilter, dispatchSort, filters, sort }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = useIsDark();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
@@ -118,12 +121,12 @@ function NftFilters ({ dispatchFilter, dispatchSort, filters, sort }: Props): Re
 
   return (
     <>
-      <Grid alignItems= 'center' aria-describedby={id} columnGap='5px' component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: 'none', cursor: 'pointer', height: 'fit-content', p: 0, width: 'fit-content' }}>
-        <DocumentFilter color='#AA83DC' size='18px' variant='Bulk' />
-        <Typography color='#AA83DC' variant='B-4'>
+      <Grid alignItems='center' aria-describedby={id} columnGap='5px' component='button' container item onClick={handleClick} sx={{ bgcolor: 'transparent', border: 'none', cursor: 'pointer', height: 'fit-content', p: 0, width: 'fit-content' }}>
+        <DocumentFilter color={theme.palette.accent.icon} size='18px' variant='Bulk' />
+        <Typography color={theme.palette.accent.icon} variant='B-4'>
           {t('Filter/Sort')}
         </Typography>
-        <ArrowDown2 color={open ? '#FFF' : '#AA83DC' } size='17' style={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }} variant='Linear' />
+        <ArrowDown2 color={open ? (isDark ? '#FFF' : '#2D1E4A') : (theme.palette.accent.icon)} size='17' style={{ transform: open ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out ' }} variant='Linear' />
       </Grid>
       <Popover
         anchorEl={anchorEl}
@@ -137,10 +140,11 @@ function NftFilters ({ dispatchFilter, dispatchSort, filters, sort }: Props): Re
         slotProps={{
           paper: {
             sx: {
-              background: '#05091C',
+              background: isDark ? '#05091C' : '#FFFFFF',
               border: '4px solid',
-              borderColor: '#1B133C',
+              borderColor: isDark ? '#1B133C' : '#DDE3F4',
               borderRadius: '12px',
+              boxShadow: isDark ? undefined : '0 12px 28px rgba(133, 140, 176, 0.18)',
               transition: 'all 250ms ease-out'
             }
           }

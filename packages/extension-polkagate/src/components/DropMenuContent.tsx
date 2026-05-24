@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Popover, styled } from '@mui/material';
@@ -7,10 +7,10 @@ import React from 'react';
 import { GradientDivider } from '../style';
 import DropMenuRow, { type Options } from './DropMenuRow';
 
-const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'preferredWidth' })(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
-  background: '#05091C',
+const DropContentContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'preferredWidth' })<{ preferredWidth: number | undefined }>(({ preferredWidth, theme }) => ({
+  background: theme.palette.surface.input,
   border: '4px solid',
-  borderColor: '#1B133C',
+  borderColor: theme.palette.border.paper,
   borderRadius: '12px',
   columnGap: '5px',
   flexWrap: 'nowrap',
@@ -35,7 +35,7 @@ interface Props {
   withDivider?: boolean;
 }
 
-function DropMenuContent ({ containerRef, contentDropWidth, open, options, setOpen, withDivider }: Props) {
+function DropMenuContent({ containerRef, contentDropWidth, open, options, setOpen, withDivider }: Props) {
   const id = open ? 'dropContent-popover' : undefined;
   const anchorEl = open ? containerRef.current : null;
 

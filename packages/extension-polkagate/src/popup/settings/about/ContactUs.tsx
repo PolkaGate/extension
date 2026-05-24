@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, Typography } from '@mui/material';
@@ -13,7 +13,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export default function ContactUs ({ style = {} }: Props): React.ReactElement {
+export default function ContactUs({ style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
   const isDark = useIsDark();
@@ -31,7 +31,7 @@ export default function ContactUs ({ style = {} }: Props): React.ReactElement {
       >
         {t('Contact us')}
       </Typography>
-      <Grid alignItems= 'center' columnGap='5px' container justifyContent='flex-start' pt='7px' sx={{ flexWrap: 'nowrap' }}>
+      <Grid alignItems='center' columnGap='5px' container justifyContent='flex-start' pt='7px' sx={{ flexWrap: 'nowrap' }}>
         <AtSignIcon color={color} width='14px' />
         <Typography color={color} sx={{ textAlign: 'left' }} variant='B-1'>
           {SUPPORT_EMAIL}

@@ -1,9 +1,9 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { PoolInfo } from '../../../util/types';
 
-import { Container, IconButton, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { Container, IconButton, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowRight2 } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useRef } from 'react';
 
@@ -49,7 +49,7 @@ const PoolDetailHandler = ({ comprehensive, genesisHash, poolDetail, togglePoolD
   }, [comprehensive, genesisHash, isExtension, poolDetail, togglePoolDetail]);
 };
 
-export const PoolStashIdentity = memo(function MemoPoolStashIdentity ({ poolInfo, style }: { poolInfo: PoolInfo; style?: SxProps<Theme> }) {
+export const PoolStashIdentity = memo(function MemoPoolStashIdentity({ poolInfo, style }: { poolInfo: PoolInfo; style?: SxProps<Theme> }) {
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '4px', display: 'flex', flexDirection: 'row', ...style }}>
       <PoolIdenticon
@@ -76,9 +76,11 @@ interface PoolInfoProp {
 
 export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, selected, setSelectedPool, status, style }: PoolInfoProp) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const containerRef = useRef(null);
   const isHovered = useIsHovered(containerRef);
+  const isDark = theme.palette.mode === 'dark';
 
   const maybeCommission = poolInfo.bondedPool?.commission?.current?.isSome ? poolInfo.bondedPool.commission.current.value[0] : 0;
   const commission = Number(maybeCommission) / (10 ** 7) < 1 ? 0 : Number(maybeCommission) / (10 ** 7);
@@ -102,9 +104,14 @@ export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, sel
       onSelect(syntheticEvent);
     }
   }, [isSelected, onSelect, poolInfo]);
+  const rowBg = isDark ? (isSelected ? '#1C1D38' : '#110F2A') : '#FFFFFF';
+  const rowBorderColor = isSelected ? '#FF4FB9' : isDark ? 'transparent' : '#E3E8F7';
+  const rowShadow = isDark ? 'none' : '0 10px 22px rgba(106, 116, 156, 0.12)';
+  const detailBg = isDark ? 'transparent' : '#E4D9F2';
+  const detailIconColor = isDark ? '#FFFFFF' : '#745D8B';
 
   return (
-    <Stack direction='column' sx={{ bgcolor: isSelected ? '#1C1D38' : '#110F2A', borderRadius: '14px', p: '8px', transition: 'all 150ms ease-out', width: '100%', ...style }}>
+    <Stack direction='column' sx={{ bgcolor: rowBg, border: '1px solid', borderColor: rowBorderColor, borderRadius: '14px', boxShadow: rowShadow, p: '8px', transition: 'all 150ms ease-out', width: '100%', ...style }}>
       <Container
         disableGutters
         onClick={handleContainerClick}
@@ -132,8 +139,8 @@ export const PoolItem = ({ genesisHash, onDetailClick, poolInfo, selectable, sel
           }
         </Container>
         {!status &&
-          <IconButton onClick={onDetailClick} sx={{ m: 0, p: '6px' }}>
-            <ArrowRight2 color='#fff' size='20' />
+          <IconButton onClick={onDetailClick} sx={{ bgcolor: detailBg, borderRadius: '8px', m: 0, p: '6px' }}>
+            <ArrowRight2 color={detailIconColor} size='20' />
           </IconButton>
         }
       </Container>
@@ -150,7 +157,7 @@ interface PoolsTableProp {
   comprehensive?: boolean; // if it is true all the information will be shown in the table
 }
 
-export default function PoolsTable ({ comprehensive, genesisHash, poolsInformation, selectable, selected, setSelectedPool }: PoolsTableProp): React.ReactElement {
+export default function PoolsTable({ comprehensive, genesisHash, poolsInformation, selectable, selected, setSelectedPool }: PoolsTableProp): React.ReactElement {
   const [poolDetail, setPoolDetail] = React.useState<PoolInfo | undefined>(undefined);
 
   const togglePoolDetail = useCallback((validatorInfo: PoolInfo | undefined) => () => {

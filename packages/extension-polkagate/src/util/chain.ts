@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { ASSET_HUBS, RELAY_CHAINS_GENESISHASH } from './constants';
@@ -16,6 +16,8 @@ export const sanitizeChainName = (chainName: string | undefined, withMigration?:
     .replace(' Chain', '')
     .replace(' Finance', '')
     .replace(' Testnet', '')
+    .replace(' Mainnet', '')
+    .replace(' Main', '')
     .replace(/\s/g, '');
 
   sanitizedChainName = withMigration && isMigratedHub(sanitizedChainName)
@@ -48,6 +50,14 @@ export const getSubscanChainName = (chainName?: string): string | undefined => {
 
   if (lc.includes('people')) {
     return lc.replace(/^(.*)people$/, 'people-$1');
+  }
+
+  if (lc === 'moonbasealpha') {
+    return 'moonbase';
+  }
+
+  if (lc === 'hydration') {
+    return 'hydradx';
   }
 
   return lc;

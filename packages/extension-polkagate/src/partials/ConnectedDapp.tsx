@@ -1,10 +1,10 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AuthUrlInfo } from '@polkadot/extension-base/background/types';
 import type { AuthorizeRequestHandlerProp } from '../popup/authorize';
 
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { ArrowSwapHorizontal, MonitorMobbile } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -26,7 +26,7 @@ interface ConnectedDappContentsProps {
   authorizeRequestHandler?: AuthorizeRequestHandlerProp;
 }
 
-function ConnectedDappContents ({ authorizeRequestHandler, setOpenMenu }: ConnectedDappContentsProps): React.ReactElement {
+function ConnectedDappContents({ authorizeRequestHandler, setOpenMenu }: ConnectedDappContentsProps): React.ReactElement {
   const { t } = useTranslation();
 
   const [checking, setChecking] = useState<boolean>(false);
@@ -100,12 +100,12 @@ function ConnectedDappContents ({ authorizeRequestHandler, setOpenMenu }: Connec
   return (
     <Grid container item justifyContent='center' sx={{ overflow: 'hidden', position: 'relative', pt: '5px', zIndex: 1 }}>
       {authorizeRequestHandler?.hasBanner &&
-            <TransactionIndex
-              index={authorizeRequestHandler?.currentIndex}
-              onNextClick={authorizeRequestHandler?.onNext}
-              onPreviousClick={authorizeRequestHandler?.onPrevious}
-              totalItems={authorizeRequestHandler.totalRequests}
-            />
+        <TransactionIndex
+          index={authorizeRequestHandler?.currentIndex}
+          onNextClick={authorizeRequestHandler?.onNext}
+          onPreviousClick={authorizeRequestHandler?.onPrevious}
+          totalItems={authorizeRequestHandler.totalRequests}
+        />
       }
       <Typography color='text.secondary' pt={authorizeRequestHandler?.hasBanner ? '8px' : 0} variant='B-4'>
         {t('Here you can manage the current connections to your accounts')}
@@ -125,8 +125,14 @@ function ConnectedDappContents ({ authorizeRequestHandler, setOpenMenu }: Connec
   );
 }
 
-export default function ConnectedDapp ({ authorizeRequestHandler }: { authorizeRequestHandler?: AuthorizeRequestHandlerProp }): React.ReactElement {
+export default function ConnectedDapp({ authorizeRequestHandler }: { authorizeRequestHandler?: AuthorizeRequestHandlerProp }): React.ReactElement {
+  const theme = useTheme();
   const { t } = useTranslation();
+  const isLight = theme.palette.mode === 'light';
+  const indicatorBgColor = isLight ? '#DDE3F4CC' : '#82FFA533';
+  const indicatorBorderColor = isLight ? '#DDE3F4' : '#BFA1FF26';
+  const indicatorColor = isLight ? '#008080' : '#82FFA5';
+  const connectionArrowColor = isLight ? '#F8F8FF' : '#82FFA5';
 
   const [checking, setChecking] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean | undefined>(undefined);
@@ -205,10 +211,10 @@ export default function ConnectedDapp ({ authorizeRequestHandler }: { authorizeR
     <>
       {!authorizeRequestHandler &&
         <Container className='ConnectedDapp' disableGutters sx={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
-          <ArrowSwapHorizontal color='#82FFA5' size='15' style={{ background: '#BFA1FF26' }} />
-          <Grid alignItems='center' container item onClick={openPopup} sx={{ bgcolor: '#82FFA533', border: '2px solid', borderColor: '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '3px', width: 'fit-content' }}>
-            <MonitorMobbile color='#82FFA5' size='22' variant='Bulk' />
-            <Typography color='#82FFA5' fontFamily='Inter' fontSize='14px' fontWeight={700}>
+          <ArrowSwapHorizontal color={connectionArrowColor} size='15' />
+          <Grid alignItems='center' container item onClick={openPopup} sx={{ bgcolor: indicatorBgColor, border: '2px solid', borderColor: indicatorBorderColor, borderRadius: '10px', cursor: 'pointer', p: '3px', width: 'fit-content' }}>
+            <MonitorMobbile color={indicatorColor} size='22' variant='Bulk' />
+            <Typography color={indicatorColor} fontFamily='Inter' fontSize='14px' fontWeight={700}>
               {dapp?.authorizedAccounts.length}
             </Typography>
           </Grid>

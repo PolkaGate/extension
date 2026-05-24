@@ -1,10 +1,10 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Icon, IconProps } from 'iconsax-react';
 import type { TransactionDetail } from '../../../util/types';
 
-import { Container, Grid, IconButton, Typography } from '@mui/material';
+import { Container, Grid, IconButton, Typography, useTheme } from '@mui/material';
 import { ArrowSwapHorizontal, Record, Setting4 } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useReducer, useState } from 'react';
 
@@ -12,7 +12,8 @@ import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 
 import { DecisionButtons, GradientSwitch } from '../../../components';
 import SnowFlake from '../../../components/SVG/SnowFlake';
-import { useTranslation } from '../../../hooks';
+import { useIsDark, useTranslation } from '../../../hooks';
+import { normalizeHistoryGenesis } from '../../../util/migrateHubUtils';
 import HistoryBox from '../../history/newDesign/HistoryBox';
 import useTransactionHistory from '../../history/useTransactionHistory';
 
@@ -63,10 +64,12 @@ interface FilterItemProps {
 }
 
 const FilterItem = ({ Icon, Logo, checked, iconVariant, name, onClick }: FilterItemProps) => {
+  const isDark = useIsDark();
+
   return (
     <Grid alignItems='center' container item justifyContent='space-between'>
       <Grid alignItems='center' container item justifyContent='space-between' sx={{ columnGap: '8px', width: 'fit-content' }}>
-        {Icon && <Icon color='#AA83DC' size='24' style={{ background: '#05091C', borderRadius: '999px', padding: '3px' }} variant={ iconVariant ?? 'Outline'} />}
+        {Icon && <Icon color={isDark ? '#AA83DC' : '#4A86F7'} size='24' style={{ background: isDark ? '#05091C' : '#EEF1FF', borderRadius: '999px', padding: '3px' }} variant={iconVariant ?? 'Outline'} />}
         {Logo}
         <Typography color='text.primary' variant='B-1'>
           {name}
@@ -87,8 +90,9 @@ interface FilterHistoryProps {
   filter: FilterState;
 }
 
-function FilterHistory ({ dispatchFilter, filter, openMenu, setOpenMenu }: FilterHistoryProps) {
+function FilterHistory({ dispatchFilter, filter, openMenu, setOpenMenu }: FilterHistoryProps) {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
   const closePopup = useCallback(() => {
     setOpenMenu(false);
@@ -122,7 +126,7 @@ function FilterHistory ({ dispatchFilter, filter, openMenu, setOpenMenu }: Filte
             onClick={onFilters('governance')}
           />
           <FilterItem
-            Logo={<SnowFlake size='24' style={{ background: '#05091C', borderRadius: '999px', padding: '3px' }} />}
+            Logo={<SnowFlake size='24' style={{ background: isDark ? '#05091C' : '#EEF1FF', borderRadius: '999px', padding: '3px' }} />}
             checked={filter.staking}
             name={t('Staking')}
             onClick={onFilters('staking')}
@@ -147,13 +151,15 @@ interface Props {
   token: string | undefined;
 }
 
-function TokenHistory ({ address, decimal, genesisHash, token }: Props): React.ReactElement {
+function TokenHistory({ address, decimal, genesisHash, token }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = useIsDark();
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const [filter, dispatchFilter] = useReducer(filterReducer, INITIAL_STATE);
 
-  const { grouped } = useTransactionHistory(address, genesisHash, { governance: filter.governance, staking: filter.staking, transfers: filter.transfer });
+  const { grouped, isFetchingMore } = useTransactionHistory(address, genesisHash, { governance: filter.governance, staking: filter.staking, transfers: filter.transfer });
 
   const historyItemsToShow = useMemo(() => {
     if (!grouped) {
@@ -164,7 +170,9 @@ function TokenHistory ({ address, decimal, genesisHash, token }: Props): React.R
       Object.entries(grouped)
         .map(([date, items]) => {
           const filteredItems = items.filter(
-            ({ token: historyItemToken }) => historyItemToken === token
+            ({ chain, token: historyItemToken }) =>
+              historyItemToken?.toLowerCase() === token?.toLowerCase() &&
+              normalizeHistoryGenesis(chain?.genesisHash) === normalizeHistoryGenesis(genesisHash)
           )
             .map((item) => ({ ...item, decimal }));
 
@@ -175,7 +183,7 @@ function TokenHistory ({ address, decimal, genesisHash, token }: Props): React.R
 
     // Check if result is an empty object
     return Object.keys(result).length === 0 ? null : result;
-  }, [decimal, grouped, token]);
+  }, [decimal, genesisHash, grouped, token]);
 
   const openPopup = useCallback(() => setOpenMenu(true), []);
 
@@ -185,12 +193,13 @@ function TokenHistory ({ address, decimal, genesisHash, token }: Props): React.R
         <Typography color='text.primary' variant='B-3'>
           {t('History')}
         </Typography>
-        <IconButton onClick={openPopup} sx={{ ':hover': { background: '#674394' }, background: '#2D1E4A', borderRadius: '12px', p: '5px 8px' }}>
-          <Setting4 color='#AA83DC' size='18' variant='Bold' />
+        <IconButton onClick={openPopup} sx={{ ':hover': { background: isDark ? '#674394' : '#EEF1FF' }, background: isDark ? '#2D1E4A' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#E1E5F3', borderRadius: '12px', p: '5px 8px' }}>
+          <Setting4 color={isDark ? '#AA83DC' : theme.palette.text.primary} size='18' variant='Bold' />
         </IconButton>
       </Grid>
       <HistoryBox
         historyItems={historyItemsToShow}
+        isFetchingMore={isFetchingMore}
         notReady={!genesisHash}
         style={{ margin: '10px 12px 15px', width: 'calc(100% - 24px)' }}
       />

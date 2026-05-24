@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { useMemo } from 'react';
@@ -27,7 +27,7 @@ const MINUTE_IN_MILLI_SECONDS = 60 * 1000;
  * const lockPeriod = useAutoLockPeriod();
  * console.log(`Extension will auto-lock in ${lockPeriod} ms`);
  */
-export default function useAutoLockPeriod (): number | undefined {
+export default function useAutoLockPeriod(): number | undefined {
   const autoLock = useAutoLock();
 
   return useMemo(() => {

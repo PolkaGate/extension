@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { DeriveAccountRegistration, DeriveStakingQuery } from '@polkadot/api-derive/types';
@@ -7,7 +7,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 
 import { WorkerContext } from '../components';
 import { getStorage, setStorage } from '../util';
-import { STORAGE_KEY } from '../util/constants';
+import { STORAGE_KEY, WORKER_TASKS } from '../util/constants';
 
 export interface ValidatorInformation extends DeriveStakingQuery {
   identity: DeriveAccountRegistration | null | undefined;
@@ -27,7 +27,7 @@ interface WorkerMessage {
   results?: string;
 }
 
-export default function useValidatorsInformation (genesisHash: string | undefined) {
+export default function useValidatorsInformation(genesisHash: string | undefined) {
   const worker = useContext(WorkerContext);
 
   const [fetching, setFetching] = useState<string | undefined>();
@@ -62,9 +62,7 @@ export default function useValidatorsInformation (genesisHash: string | undefine
       return;
     }
 
-    const functionName = 'getValidatorsInformation';
-
-    worker.postMessage({ functionName, parameters: { genesisHash } });
+    worker.postMessage({ functionName: WORKER_TASKS.VALIDATORS_INFO, parameters: { genesisHash } });
   }, [genesisHash, worker]);
 
   const handleWorkerMessages = useCallback(() => {
@@ -81,20 +79,14 @@ export default function useValidatorsInformation (genesisHash: string | undefine
 
       const { functionName, results } = JSON.parse(message) as WorkerMessage;
 
-      if (!functionName) {
+      if (!functionName || !results || functionName !== WORKER_TASKS.VALIDATORS_INFO) {
         return;
       }
 
-      if (!results) {
-        return;
-      }
+      const receivedMessage = JSON.parse(results) as ValidatorsInformation;
 
-      if (functionName === 'getValidatorsInformation') {
-        const receivedMessage = JSON.parse(results) as ValidatorsInformation;
-
-        setFetchedValidatorsInformation(receivedMessage);
-        saveValidatorsInfoInStorage(receivedMessage);
-      }
+      setFetchedValidatorsInformation(receivedMessage);
+      saveValidatorsInfoInStorage(receivedMessage);
     };
 
     worker.addEventListener('message', handleMessage);

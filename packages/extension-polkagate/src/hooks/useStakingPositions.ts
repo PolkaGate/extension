@@ -1,4 +1,4 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { FetchedBalance } from '../util/types';
@@ -11,13 +11,13 @@ import { amountToHuman } from '../util';
 import useAccountAssets from './useAccountAssets';
 import usePrices from './usePrices';
 
-export default function useStakingPositions (address: string | undefined, active?: boolean): { positions: FetchedBalance[] | undefined | null, maxPosition: FetchedBalance | undefined, maxPositionType: 'solo' | 'pool' | undefined } {
+export default function useStakingPositions(address: string | undefined, active?: boolean): { positions: FetchedBalance[] | undefined | null, maxPosition: FetchedBalance | undefined, maxPositionType: 'solo' | 'pool' | undefined } {
   const accountAssets = useAccountAssets(address);
   const pricesInCurrency = usePrices();
 
   const positions = useMemo(() =>
     accountAssets?.filter(({ pooledBalance, soloTotal }) => (soloTotal && !soloTotal.isZero()) || (pooledBalance && !pooledBalance.isZero()))
-  , [accountAssets]);
+    , [accountAssets]);
 
   const { maxPosition, maxPositionType } = useMemo(() => {
     if (!positions?.length || !pricesInCurrency || !active) {

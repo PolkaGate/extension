@@ -1,10 +1,10 @@
-// Copyright 2019-2025 @polkadot/extension-polkagate authors & contributors
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import type { Variant } from '@mui/material/styles/createTypography';
 import type { OverridableStringUnion } from '@mui/types';
 
-import { Box, Container, Dialog, Grid, type SxProps, type Theme, Typography, type TypographyPropsVariantOverrides } from '@mui/material';
+import { Box, Container, Dialog, Grid, type SxProps, type Theme, Typography, type TypographyPropsVariantOverrides, useTheme } from '@mui/material';
 import { ArrowCircleLeft, ArrowCircleRight, type Icon } from 'iconsax-react';
 import React from 'react';
 
@@ -17,6 +17,7 @@ import { Transition } from '.';
 export interface ExtensionPopupProps {
   TitleIcon?: Icon;
   children: React.ReactNode;
+  contentContainerStyle?: SxProps<Theme>;
   handleClose?: () => void;
   iconSize?: number;
   iconColor?: string;
@@ -41,7 +42,7 @@ export interface ExtensionPopupProps {
   darkBackground?: boolean;
 }
 
-const Gradient = React.memo(function MemoGradient ({ pt, withoutBackground }: { pt?: number, withoutBackground?: boolean }) {
+const Gradient = React.memo(function MemoGradient({ pt, withoutBackground }: { pt?: number, withoutBackground?: boolean }) {
   const isBlueish = useIsBlueish();
 
   if (withoutBackground) {
@@ -59,9 +60,15 @@ const Gradient = React.memo(function MemoGradient ({ pt, withoutBackground }: { 
   );
 });
 
-function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = false, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, onNext, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
+function ExtensionPopup({ RightItem, TitleIcon, children, contentContainerStyle, darkBackground = false, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, onNext, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
+  const theme = useTheme();
+  const modalBg = darkBackground
+    ? theme.palette.surface.panelAlt
+    : theme.palette.surface.panel;
+  const borderColor = theme.palette.border.subtle;
+  const navTextColor = theme.palette.text.primary;
 
   return (
     <Dialog
@@ -78,7 +85,7 @@ function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = fals
         backdrop: {
           sx: {
             backdropFilter: 'blur(5px)',
-            background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
+            background: theme.palette.gradient.radialOverlay,
             bgcolor: 'transparent'
           }
         }
@@ -90,7 +97,7 @@ function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = fals
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: `${pt ?? 18}px` }}>
           <CustomCloseSquare color={isBlueish ? '#809ACB' : '#AA83DC'} onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
-        <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: darkBackground ? '#110F2A' : '#1B133C', border: '2px solid', borderColor: '#FFFFFF0D', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${60 + (pt ?? 18)}px)`, overflow: 'hidden', overflowY: 'auto', position: 'relative', px: `${px ?? 10}px`, width: '100%' }}>
+        <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: modalBg, border: '2px solid', borderColor, borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${60 + (pt ?? 18)}px)`, overflow: 'hidden', overflowY: 'auto', position: 'relative', px: `${px ?? 10}px`, width: '100%', ...contentContainerStyle }}>
           {withGradientBorder && <GradientBorder />}
           {!!onBack &&
             <Grid alignItems='center' container item onClick={onBack} sx={{ cursor: 'pointer', left: '15px', position: 'absolute', pt: '15px', width: 'fit-content', zIndex: 2 }}>
@@ -99,14 +106,14 @@ function ExtensionPopup ({ RightItem, TitleIcon, children, darkBackground = fals
                 size='24'
                 variant='Bulk'
               />
-              <Typography color='#EAEBF1' ml='4px' variant='B-1'>
+              <Typography color={navTextColor} ml='4px' variant='B-1'>
                 {t('Back')}
               </Typography>
             </Grid>
           }
           {onNext &&
-            <Grid alignItems='center' container item onClick={onNext} sx={{ cursor: 'pointer', position: 'absolute', right: '15px', pt: '15px', width: 'fit-content', zIndex: 2 }}>
-              <Typography color='#EAEBF1' mr='4px' variant='B-1'>
+            <Grid alignItems='center' container item onClick={onNext} sx={{ cursor: 'pointer', position: 'absolute', pt: '15px', right: '15px', width: 'fit-content', zIndex: 2 }}>
+              <Typography color={navTextColor} mr='4px' variant='B-1'>
                 {t('Next')}
               </Typography>
               <ArrowCircleRight
