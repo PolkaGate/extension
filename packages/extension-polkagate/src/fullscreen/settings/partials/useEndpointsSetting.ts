@@ -247,6 +247,23 @@ export default function useEndpointsSetting(genesisHash: string | undefined, isE
     dispatch({ type: 'SET_AUTO' });
   }, [mayBeEnabled]);
 
+  const onActiveCustomEndpointChange = useCallback((previousEndpoint: string, nextEndpoint: string | undefined): void => {
+    if (!genesisHash || !mayBeEnabled || endpoint !== previousEndpoint) {
+      return;
+    }
+
+    const nextIsAuto = !nextEndpoint;
+    const resolvedEndpoint = nextEndpoint ?? AUTO_MODE.value;
+    const checkForNewOne = Boolean(nextIsAuto && endpointManager.get(genesisHash)?.isAuto);
+
+    endpointManager.set(genesisHash, {
+      checkForNewOne,
+      endpoint: resolvedEndpoint,
+      isAuto: nextIsAuto,
+      timestamp: Date.now()
+    });
+  }, [endpoint, genesisHash, mayBeEnabled]);
+
   const onToggleAuto = useCallback((_event: React.ChangeEvent<HTMLInputElement>): void => {
     if (!mayBeEnabled) {
       return;
@@ -269,6 +286,7 @@ export default function useEndpointsSetting(genesisHash: string | undefined, isE
     filteredEndpoints,
     isEndpointSelectionDisabled: !mayBeEnabled,
     isOnAuto: resolvedIsOnAuto,
+    onActiveCustomEndpointChange,
     onApply,
     onChangeEndpoint,
     onEnableNetwork,
