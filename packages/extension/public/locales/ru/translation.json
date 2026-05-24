@@ -956,5 +956,16 @@
   "Confirm your current password to securely enable biometric unlock on this device.": "Подтвердите текущий пароль, чтобы безопасно включить биометрическую разблокировку на этом устройстве.",
   "Welcome back": "С возвращением",
   "Time": "Время",
-  "No rewards claimed in this period": "За этот период награды не были получены"
+  "No rewards claimed in this period": "За этот период награды не были получены",
+  "This RPC endpoint already exists.": "Этот RPC-эндпоинт уже существует.",
+  "Network information is unavailable.": "Информация о сети недоступна.",
+  "Enter a valid wss:// endpoint.": "Введите корректный эндпоинт wss://.",
+  "Unable to connect to this endpoint.": "Не удалось подключиться к этому эндпоинту.",
+  "This endpoint belongs to a different network.": "Этот эндпоинт принадлежит другой сети.",
+  "Unable to save this endpoint.": "Не удалось сохранить этот эндпоинт.",
+  "Edit Custom RPC": "Изменить пользовательский RPC",
+  "Add Custom RPC": "Добавить пользовательский RPC",
+  "Custom RPC": "Пользовательский RPC",
+  "Saved": "Сохранено",
+  "Checking": "Проверка"
 }

@@ -4,7 +4,8 @@
 import { Grid, Stack, useTheme } from '@mui/material';
 import React, { useCallback, useMemo, useRef } from 'react';
 
-import { Logo, DecisionButtons, FadeOnScroll } from '@polkadot/extension-polkagate/src/components/index';
+import { DecisionButtons, FadeOnScroll, Logo } from '@polkadot/extension-polkagate/src/components/index';
+import CustomEndpoint from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/CustomEndpoint';
 import EndpointRow from '@polkadot/extension-polkagate/src/popup/settings/extensionSettings/EndpointRow';
 
 import MySwitch from '../../../components/MySwitch';
@@ -24,10 +25,10 @@ interface Props {
 function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
-  const refContainer = useRef(null);
+  const refContainer = useRef<HTMLDivElement>(null);
   const isDark = theme.palette.mode === 'dark';
   const modalBodyBg = isDark ? '#1B133C' : '#F5F6FF';
-  const fadeBackgroundColor = isDark ? modalBodyBg : 'transparent';
+  const fadeBackgroundColor = isDark ? '#1B133C00' : 'transparent';
   const toggleBg = isDark ? '#05091C' : '#FFFFFF';
   const toggleBorderColor = isDark ? 'transparent' : '#DDE3F4';
 
@@ -44,6 +45,8 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
     onApply,
     onChangeEndpoint,
     onEnableNetwork,
+    onSelectAuto,
+    onSelectEndpoint,
     onToggleAuto } = useEndpointsSetting(genesisHash, isEnabled, onEnableChain, onClose);
 
   const isDisabled = useMemo(() => {
@@ -66,6 +69,16 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
     onClose();
   }, [dispatch, onClose]);
 
+  const endpointValues = useMemo(() => filteredEndpoints?.map(({ value }) => value) ?? [], [filteredEndpoints]);
+
+  const scrollToEnd = useCallback(() => {
+    setTimeout(() => {
+      const container = refContainer.current;
+
+      container?.scrollTo({ behavior: 'smooth', top: container.scrollHeight });
+    }, 100);
+  }, []);
+
   return (
     <DraggableModal
       TitleLogo={<Logo genesisHash={genesisHash} showSquare size={36} />}
@@ -77,7 +90,7 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
     >
       <Stack direction='column'>
         <Stack direction='column' sx={{ position: 'relative', width: '100%' }}>
-          <Grid container height='420px' item ref={refContainer} sx={{ bgcolor: modalBodyBg, border: '1px solid', borderColor: isDark ? 'transparent' : '#E3E8F7', borderRadius: '14px', display: 'block', overflowY: 'auto', position: 'relative' }}>
+          <Grid container height='420px' item ref={refContainer} sx={{ bgcolor: modalBodyBg, border: '1px solid', borderColor: isDark ? 'transparent' : '#E3E8F7', borderRadius: '14px', boxSizing: 'border-box', display: 'block', overflowY: 'auto', position: 'relative' }}>
             <MySwitch
               checked={mayBeEnabled}
               columnGap='8px'
@@ -108,8 +121,17 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
                 value={value}
               />
             ))}
+            <CustomEndpoint
+              disabled={isEndpointSelectionDisabled}
+              existingEndpoints={endpointValues}
+              genesisHash={genesisHash}
+              onScrollToEnd={scrollToEnd}
+              onSelectAuto={onSelectAuto}
+              onSelectEndpoint={onSelectEndpoint}
+              selectedEndpoint={maybeNewEndpoint}
+            />
           </Grid>
-          <FadeOnScroll containerRef={refContainer} height='50px' ratio={0.3} style={{ backgroundColor: fadeBackgroundColor, borderRadius: '14px', justifySelf: 'center', width: '100%' }} />
+          <FadeOnScroll containerRef={refContainer} height='28px' ratio={0.7} style={{ backgroundColor: fadeBackgroundColor, borderRadius: '0 0 14px 14px', justifySelf: 'center', width: '100%' }} />
         </Stack>
         <DecisionButtons
           cancelButton

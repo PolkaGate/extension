@@ -956,5 +956,16 @@
   "Confirm your current password to securely enable biometric unlock on this device.": "Confirma tu contraseña actual para activar de forma segura el desbloqueo biométrico en este dispositivo.",
   "Welcome back": "Bienvenido de nuevo",
   "Time": "Tiempo",
-  "No rewards claimed in this period": "No se reclamaron recompensas en este período"
+  "No rewards claimed in this period": "No se reclamaron recompensas en este período",
+  "This RPC endpoint already exists.": "Este endpoint RPC ya existe.",
+  "Network information is unavailable.": "La información de la red no está disponible.",
+  "Enter a valid wss:// endpoint.": "Introduce un endpoint wss:// válido.",
+  "Unable to connect to this endpoint.": "No se pudo conectar a este endpoint.",
+  "This endpoint belongs to a different network.": "Este endpoint pertenece a una red diferente.",
+  "Unable to save this endpoint.": "No se pudo guardar este endpoint.",
+  "Edit Custom RPC": "Editar RPC personalizado",
+  "Add Custom RPC": "Añadir RPC personalizado",
+  "Custom RPC": "RPC personalizado",
+  "Saved": "Guardado",
+  "Checking": "Comprobando"
 }

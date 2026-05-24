@@ -148,6 +148,7 @@ interface Props {
   Icon?: Icon;
   errorMessage?: string;
   disabled?: boolean;
+  endAdornment?: React.ReactNode;
   focused?: boolean;
   iconSize?: number;
   inputType?: string;
@@ -162,7 +163,7 @@ interface Props {
   tooltip?: string;
 }
 
-export default function MyTextField({ Icon, disabled, errorMessage, focused = false, iconSize = 22, inputType = 'text', inputValue, maxLength, mode = 'small', onEnterPress, onTextChange, placeholder, style, title, tooltip }: Props): React.ReactElement {
+export default function MyTextField({ Icon, disabled, endAdornment, errorMessage, focused = false, iconSize = 22, inputType = 'text', inputValue, maxLength, mode = 'small', onEnterPress, onTextChange, placeholder, style, title, tooltip }: Props): React.ReactElement {
   const theme = useTheme();
 
   const [focusing, setFocused] = useState<boolean>(false);
@@ -207,6 +208,13 @@ export default function MyTextField({ Icon, disabled, errorMessage, focused = fa
       }
       <TextFieldComponent
         InputProps={{
+          endAdornment: endAdornment
+            ? (
+              <InputAdornment position='end'>
+                {endAdornment}
+              </InputAdornment>
+            )
+            : undefined,
           startAdornment: (
             <InputAdornment position='start' sx={{ marginRight: Icon ? '5px' : 0 }}>
               {

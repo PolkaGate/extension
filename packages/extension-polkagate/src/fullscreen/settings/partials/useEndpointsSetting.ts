@@ -21,6 +21,7 @@ interface State {
 
 type Action =
   | { type: 'SET_ENABLED'; }
+  | { type: 'SET_AUTO'; }
   | { type: 'TOGGLE_AUTO'; payload?: string }
   | { type: 'SET_ENDPOINT'; payload: string | undefined }
   | { type: 'SET_ENDPOINTS_DELAY'; payload: EndpointsDelay }
@@ -39,6 +40,9 @@ function reducer(state: State, action: Action): State {
         maybeNewEndpoint: nextEnabled ? undefined : state.maybeNewEndpoint
       };
     }
+
+    case 'SET_AUTO':
+      return { ...state, isOnAuto: true, maybeNewEndpoint: undefined };
 
     case 'TOGGLE_AUTO': {
       const toggle = !state.isOnAuto;
@@ -227,6 +231,22 @@ export default function useEndpointsSetting(genesisHash: string | undefined, isE
     dispatch({ payload: event.target.value, type: 'SET_ENDPOINT' });
   }, [mayBeEnabled]);
 
+  const onSelectEndpoint = useCallback((endpoint: string): void => {
+    if (!mayBeEnabled) {
+      return;
+    }
+
+    dispatch({ payload: endpoint, type: 'SET_ENDPOINT' });
+  }, [mayBeEnabled]);
+
+  const onSelectAuto = useCallback((): void => {
+    if (!mayBeEnabled) {
+      return;
+    }
+
+    dispatch({ type: 'SET_AUTO' });
+  }, [mayBeEnabled]);
+
   const onToggleAuto = useCallback((_event: React.ChangeEvent<HTMLInputElement>): void => {
     if (!mayBeEnabled) {
       return;
@@ -252,6 +272,8 @@ export default function useEndpointsSetting(genesisHash: string | undefined, isE
     onApply,
     onChangeEndpoint,
     onEnableNetwork,
+    onSelectAuto,
+    onSelectEndpoint,
     onToggleAuto
   };
 }

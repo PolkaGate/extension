@@ -956,5 +956,16 @@
   "Confirm your current password to securely enable biometric unlock on this device.": "请确认当前密码，以便在此设备上安全启用生物识别解锁。",
   "Welcome back": "欢迎回来",
   "Time": "时间",
-  "No rewards claimed in this period": "此期间未领取任何奖励"
+  "No rewards claimed in this period": "此期间未领取任何奖励",
+  "This RPC endpoint already exists.": "此 RPC 端点已存在。",
+  "Network information is unavailable.": "网络信息不可用。",
+  "Enter a valid wss:// endpoint.": "请输入有效的 wss:// 端点。",
+  "Unable to connect to this endpoint.": "无法连接到此端点。",
+  "This endpoint belongs to a different network.": "此端点属于其他网络。",
+  "Unable to save this endpoint.": "无法保存此端点。",
+  "Edit Custom RPC": "编辑自定义 RPC",
+  "Add Custom RPC": "添加自定义 RPC",
+  "Custom RPC": "自定义 RPC",
+  "Saved": "已保存",
+  "Checking": "正在检查"
 }

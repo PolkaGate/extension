@@ -956,5 +956,16 @@
   "Confirm your current password to securely enable biometric unlock on this device.": "इस डिवाइस पर बायोमेट्रिक अनलॉक को सुरक्षित रूप से चालू करने के लिए अपना वर्तमान पासवर्ड पुष्टि करें।",
   "Welcome back": "वापसी पर स्वागत है",
   "Time": "समय",
-  "No rewards claimed in this period": "इस अवधि में कोई रिवॉर्ड क्लेम नहीं किया गया"
+  "No rewards claimed in this period": "इस अवधि में कोई रिवॉर्ड क्लेम नहीं किया गया",
+  "This RPC endpoint already exists.": "यह RPC एंडपॉइंट पहले से मौजूद है।",
+  "Network information is unavailable.": "नेटवर्क जानकारी उपलब्ध नहीं है।",
+  "Enter a valid wss:// endpoint.": "एक मान्य wss:// एंडपॉइंट दर्ज करें।",
+  "Unable to connect to this endpoint.": "इस एंडपॉइंट से कनेक्ट नहीं किया जा सका।",
+  "This endpoint belongs to a different network.": "यह एंडपॉइंट किसी अलग नेटवर्क से संबंधित है।",
+  "Unable to save this endpoint.": "इस एंडपॉइंट को सहेजा नहीं जा सका।",
+  "Edit Custom RPC": "कस्टम RPC संपादित करें",
+  "Add Custom RPC": "कस्टम RPC जोड़ें",
+  "Custom RPC": "कस्टम RPC",
+  "Saved": "सहेजा गया",
+  "Checking": "जाँच हो रही है"
 }
