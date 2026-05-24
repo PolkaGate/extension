@@ -22,9 +22,11 @@ function PolkaGateTransparentLogo(): React.ReactElement {
         color='primary'
         size={36.5}
         sx={{
+          color: 'primary.main',
           left: 0,
           position: 'absolute',
-          top: 0
+          top: 0,
+          visibility: isDark ? 'visible' : 'hidden'
         }}
         thickness={4}
       />
