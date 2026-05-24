@@ -6,7 +6,7 @@ import type { CustomEndpoints } from '../util/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { STORAGE_KEY } from '../util/constants';
-import { getAndWatchStorage, setStorage, updateStorage } from '../util/storage';
+import { getAndWatchStorage, getStorage, setStorage, updateStorage } from '../util/storage';
 
 export default function useCustomEndpoint(genesisHash: string | null | undefined) {
   const [customEndpoints, setCustomEndpoints] = useState<CustomEndpoints>({});
@@ -38,12 +38,13 @@ export default function useCustomEndpoint(genesisHash: string | null | undefined
       return false;
     }
 
-    const updated = { ...customEndpoints };
+    const latestCustomEndpoints = await getStorage(STORAGE_KEY.CUSTOM_ENDPOINTS) as CustomEndpoints | undefined;
+    const updated = { ...(latestCustomEndpoints ?? {}) };
 
     delete updated[genesisHash];
 
     return setStorage(STORAGE_KEY.CUSTOM_ENDPOINTS, updated);
-  }, [customEndpoints, genesisHash]);
+  }, [genesisHash]);
 
   return { customEndpoint, removeCustomEndpoint, setCustomEndpoint };
 }
