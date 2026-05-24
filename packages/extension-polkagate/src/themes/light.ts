@@ -42,6 +42,7 @@ export const lightTheme: ExtendedThemeOptions = {
         radial-gradient(circle at 56% 2%, rgba(248, 194, 255, 0.95) 0%, rgba(248, 194, 255, 0) 30%),
         radial-gradient(circle at 65% 18%, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0) 18%),
         linear-gradient(180deg, #E7E4F8 0%, #D8DDF1 100%)`,
+      radialOverlay: 'radial-gradient(50% 44.61% at 50% 50%, rgba(255, 255, 255, 0) 0%, #D8DDF1CC 100%)',
       secondary: 'linear-gradient(180deg, #FFFFFF 0%, #F5F6FF 100%)'
     }
   },

@@ -20,7 +20,6 @@ import { PROFILE_MODE } from './type';
 
 function BackDrop({ setMode }: { setMode: React.Dispatch<React.SetStateAction<PROFILE_MODE>> }): React.ReactElement {
   const theme = useTheme();
-  const isDark = useIsDark();
 
   return (
     <Box
@@ -28,9 +27,7 @@ function BackDrop({ setMode }: { setMode: React.Dispatch<React.SetStateAction<PR
       onClick={() => setMode(PROFILE_MODE.NONE)}
       sx={{
         backdropFilter: 'blur(5px)',
-        background: isDark
-          ? 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)'
-          : `radial-gradient(50% 44.61% at 50% 50%, rgba(255, 255, 255, 0) 0%, ${theme.palette.background.default}CC 100%)`,
+        background: theme.palette.gradient.radialOverlay,
         bottom: 0,
         height: 'calc(100% - 95px)',
         left: 0,

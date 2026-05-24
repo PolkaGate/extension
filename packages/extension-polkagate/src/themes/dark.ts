@@ -63,6 +63,7 @@ export const darkTheme: ExtendedThemeOptions = {
         rgba(255, 26, 177, 0.5) -2%,
         transparent 40%
       )`,
+      radialOverlay: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)',
       secondary: 'linear-gradient(to bottom, #000000, #171717)'
     }
   },

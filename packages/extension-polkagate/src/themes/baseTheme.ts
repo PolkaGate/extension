@@ -47,6 +47,7 @@ declare module '@mui/material/styles' {
     brand: string;
     highlight: string;
     muted: string;
+    radialOverlay: string;
   }
   interface Palette {
     accent: PolkaGateAccent;
