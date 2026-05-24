@@ -956,5 +956,16 @@
   "Welcome back": "",
   "Time": "",
   "No rewards claimed in this period": "",
-  "{{mode}} enabled": ""
+  "{{mode}} enabled": "",
+  "This RPC endpoint already exists.": "",
+  "Network information is unavailable.": "",
+  "Enter a valid wss:// endpoint.": "",
+  "Unable to connect to this endpoint.": "",
+  "This endpoint belongs to a different network.": "",
+  "Unable to save this endpoint.": "",
+  "Edit Custom RPC": "",
+  "Add Custom RPC": "",
+  "Custom RPC": "",
+  "Saved": "",
+  "Checking": ""
 }

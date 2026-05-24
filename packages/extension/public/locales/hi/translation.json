@@ -660,7 +660,6 @@
   "Hide Balance": "बैलेंस छिपाएँ",
   "This will permanently delete your accounts, and you won’t be able to recover your password. To restore access, import a backup (JSON file or recovery phrase).": "यह आपके खातों को स्थायी रूप से हटा देगा, और आप अपना पासवर्ड पुनर्प्राप्त नहीं कर पाएंगे। एक्सेस पुनर्स्थापित करने के लिए, बैकअप (JSON फ़ाइल या रिकवरी फ़्रेज़) आयात करें।",
   "I understand the accounts will be deleted.": "मैं समझता हूँ कि खाते हटाए जाएंगे।",
-  "Coming Soon!": "जल्द ही आ रहा है!",
   "customization": "अनुकूलन",
   "Diagnostic Reports": "डायग्नोस्टिक रिपोर्ट",
   "Opt Out of Sending Diagnostic Reports": "डायग्नोस्टिक रिपोर्ट भेजने से ऑप्ट आउट करें",
@@ -956,5 +955,17 @@
   "Confirm your current password to securely enable biometric unlock on this device.": "इस डिवाइस पर बायोमेट्रिक अनलॉक को सुरक्षित रूप से चालू करने के लिए अपना वर्तमान पासवर्ड पुष्टि करें।",
   "Welcome back": "वापसी पर स्वागत है",
   "Time": "समय",
-  "No rewards claimed in this period": "इस अवधि में कोई रिवॉर्ड क्लेम नहीं किया गया"
+  "No rewards claimed in this period": "इस अवधि में कोई रिवॉर्ड क्लेम नहीं किया गया",
+  "{{mode}} enabled": "{{mode}} चालू कर दिया गया है",
+  "This RPC endpoint already exists.": "यह RPC एंडपॉइंट पहले से मौजूद है।",
+  "Network information is unavailable.": "नेटवर्क जानकारी उपलब्ध नहीं है।",
+  "Enter a valid wss:// endpoint.": "एक मान्य wss:// एंडपॉइंट दर्ज करें।",
+  "Unable to connect to this endpoint.": "इस एंडपॉइंट से कनेक्ट नहीं किया जा सका।",
+  "This endpoint belongs to a different network.": "यह एंडपॉइंट किसी अलग नेटवर्क से संबंधित है।",
+  "Unable to save this endpoint.": "इस एंडपॉइंट को सहेजा नहीं जा सका।",
+  "Edit Custom RPC": "कस्टम RPC संपादित करें",
+  "Add Custom RPC": "कस्टम RPC जोड़ें",
+  "Custom RPC": "कस्टम RPC",
+  "Saved": "सहेजा गया",
+  "Checking": "जाँच हो रही है"
 }

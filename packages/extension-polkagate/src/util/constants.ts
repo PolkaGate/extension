@@ -335,6 +335,7 @@ export const STORAGE_KEY = {
   CHECK_BALANCE_ON_ALL_CHAINS: 'checkBalancesOnAllChains',
   CHECK_PROXIED: 'checkProxied',
   CURRENCY: 'currency',
+  CUSTOM_ENDPOINTS: 'customEndpoints',
   DISABLE_DIAGNOSTIC_REPORTS: 'diagnosticReports',
   HISTORY: 'history',
   ICON_THEME: 'identiconType',

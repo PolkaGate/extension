@@ -30,6 +30,7 @@ export { default as useCategorizedAccountsInProfiles } from './useCategorizedAcc
 export { default as useChainInfo } from './useChainInfo';
 export { default as useCurrentBlockNumber } from './useCurrentBlockNumber';
 export { default as useCurrentEraIndex } from './useCurrentEraIndex';
+export { default as useCustomEndpoint } from './useCustomEndpoint';
 export { default as useEndpoint } from './useEndpoint';
 export { useEndpoints } from './useEndpoints';
 export { default as useEraInfo } from './useEraInfo';

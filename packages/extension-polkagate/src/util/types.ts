@@ -886,6 +886,8 @@ export interface DropdownOption {
   value: string | number;
 }
 
+export type CustomEndpoints = Record<string, string>;
+
 export interface CanPayFee { isAbleToPay: boolean | undefined, statement: number, warning: string | undefined }
 
 export interface ProxiedAccounts {

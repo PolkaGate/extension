@@ -2,11 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { SavedAssets } from '@polkadot/extension-polkagate/src/hooks/useAssetsBalances';
+import type { HexString } from '@polkadot/util/types';
 import type { DropdownOption } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import EndpointManager from '../class/endpointManager';
+import { useUserAddedEndpoints } from '../fullscreen/addNewChain/utils';
 import { getBuiltInEndpointOptions } from '../hooks/useEndpoints';
 import { getStorage, setStorage } from '../util';
 import { AUTO_MODE_DEFAULT_ENDPOINT, STORAGE_KEY } from '../util/constants';
@@ -24,9 +26,18 @@ const endpointManager = new EndpointManager();
 
 export default function useChainSelectionSettings(): UseChainSelectionSettings {
   const allChains = useGenesisHashOptions({});
+  const userAddedEndpoints = useUserAddedEndpoints();
   const chainsWithEndpoints = useMemo(
-    () => allChains.filter(({ value }) => getBuiltInEndpointOptions(value as string).length > 0),
-    [allChains]
+    () => {
+      const userAddedOptions = Object.entries(userAddedEndpoints ?? {})
+        .filter(([genesisHash]) => !allChains.some(({ value }) => value === genesisHash))
+        .map(([genesisHash, { chain }]) => ({ text: chain, value: genesisHash }));
+
+      return allChains
+        .filter(({ value }) => getBuiltInEndpointOptions(value as string).length > 0 || Boolean(userAddedEndpoints?.[value as HexString]))
+        .concat(userAddedOptions);
+    },
+    [allChains, userAddedEndpoints]
   );
 
   const [searchedChain, setSearchedChain] = useState<DropdownOption[]>();

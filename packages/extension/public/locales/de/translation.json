@@ -660,7 +660,6 @@
   "Hide Balance": "Guthaben verbergen",
   "This will permanently delete your accounts, and you won’t be able to recover your password. To restore access, import a backup (JSON file or recovery phrase).": "Dies wird Ihre Konten dauerhaft löschen und Sie können Ihr Passwort nicht wiederherstellen. Um den Zugriff wiederherzustellen, importieren Sie ein Backup (JSON-Datei oder Wiederherstellungsphrase).",
   "I understand the accounts will be deleted.": "Ich verstehe, dass die Konten gelöscht werden.",
-  "Coming Soon!": "Demnächst verfügbar!",
   "customization": "Anpassung",
   "Diagnostic Reports": "Diagnoseberichte",
   "Opt Out of Sending Diagnostic Reports": "Versand von Diagnoseberichten abwählen",
@@ -956,5 +955,17 @@
   "Confirm your current password to securely enable biometric unlock on this device.": "Bestätige dein aktuelles Passwort, um das biometrische Entsperren auf diesem Gerät sicher zu aktivieren.",
   "Welcome back": "Willkommen zurück",
   "Time": "Zeit",
-  "No rewards claimed in this period": "In diesem Zeitraum wurden keine Belohnungen beansprucht"
+  "No rewards claimed in this period": "In diesem Zeitraum wurden keine Belohnungen beansprucht",
+  "{{mode}} enabled": "{{mode}} aktiviert",
+  "This RPC endpoint already exists.": "Dieser RPC-Endpunkt ist bereits vorhanden.",
+  "Network information is unavailable.": "Netzwerkinformationen sind nicht verfügbar.",
+  "Enter a valid wss:// endpoint.": "Geben Sie einen gültigen wss://-Endpunkt ein.",
+  "Unable to connect to this endpoint.": "Verbindung zu diesem Endpunkt nicht möglich.",
+  "This endpoint belongs to a different network.": "Dieser Endpunkt gehört zu einem anderen Netzwerk.",
+  "Unable to save this endpoint.": "Dieser Endpunkt konnte nicht gespeichert werden.",
+  "Edit Custom RPC": "Benutzerdefinierten RPC bearbeiten",
+  "Add Custom RPC": "Benutzerdefinierten RPC hinzufügen",
+  "Custom RPC": "Benutzerdefinierter RPC",
+  "Saved": "Gespeichert",
+  "Checking": "Wird geprüft"
 }

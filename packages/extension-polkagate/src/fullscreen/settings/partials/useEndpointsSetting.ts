@@ -21,6 +21,7 @@ interface State {
 
 type Action =
   | { type: 'SET_ENABLED'; }
+  | { type: 'SET_AUTO'; }
   | { type: 'TOGGLE_AUTO'; payload?: string }
   | { type: 'SET_ENDPOINT'; payload: string | undefined }
   | { type: 'SET_ENDPOINTS_DELAY'; payload: EndpointsDelay }
@@ -39,6 +40,9 @@ function reducer(state: State, action: Action): State {
         maybeNewEndpoint: nextEnabled ? undefined : state.maybeNewEndpoint
       };
     }
+
+    case 'SET_AUTO':
+      return { ...state, isOnAuto: true, maybeNewEndpoint: undefined };
 
     case 'TOGGLE_AUTO': {
       const toggle = !state.isOnAuto;
@@ -227,6 +231,39 @@ export default function useEndpointsSetting(genesisHash: string | undefined, isE
     dispatch({ payload: event.target.value, type: 'SET_ENDPOINT' });
   }, [mayBeEnabled]);
 
+  const onSelectEndpoint = useCallback((endpoint: string): void => {
+    if (!mayBeEnabled) {
+      return;
+    }
+
+    dispatch({ payload: endpoint, type: 'SET_ENDPOINT' });
+  }, [mayBeEnabled]);
+
+  const onSelectAuto = useCallback((): void => {
+    if (!mayBeEnabled) {
+      return;
+    }
+
+    dispatch({ type: 'SET_AUTO' });
+  }, [mayBeEnabled]);
+
+  const onActiveCustomEndpointChange = useCallback((previousEndpoint: string, nextEndpoint: string | undefined): void => {
+    if (!genesisHash || !mayBeEnabled || endpoint !== previousEndpoint) {
+      return;
+    }
+
+    const nextIsAuto = !nextEndpoint;
+    const resolvedEndpoint = nextEndpoint ?? AUTO_MODE.value;
+    const checkForNewOne = Boolean(nextIsAuto && endpointManager.get(genesisHash)?.isAuto);
+
+    endpointManager.set(genesisHash, {
+      checkForNewOne,
+      endpoint: resolvedEndpoint,
+      isAuto: nextIsAuto,
+      timestamp: Date.now()
+    });
+  }, [endpoint, genesisHash, mayBeEnabled]);
+
   const onToggleAuto = useCallback((_event: React.ChangeEvent<HTMLInputElement>): void => {
     if (!mayBeEnabled) {
       return;
@@ -249,9 +286,12 @@ export default function useEndpointsSetting(genesisHash: string | undefined, isE
     filteredEndpoints,
     isEndpointSelectionDisabled: !mayBeEnabled,
     isOnAuto: resolvedIsOnAuto,
+    onActiveCustomEndpointChange,
     onApply,
     onChangeEndpoint,
     onEnableNetwork,
+    onSelectAuto,
+    onSelectEndpoint,
     onToggleAuto
   };
 }
