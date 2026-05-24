@@ -42,6 +42,7 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
     isOnAuto,
     mayBeEnabled,
     maybeNewEndpoint,
+    onActiveCustomEndpointChange,
     onApply,
     onChangeEndpoint,
     onEnableNetwork,
@@ -125,6 +126,7 @@ function Endpoints({ genesisHash, isEnabled, onClose, onEnableChain, open }: Pro
               disabled={isEndpointSelectionDisabled}
               existingEndpoints={endpointValues}
               genesisHash={genesisHash}
+              onCustomEndpointChange={onActiveCustomEndpointChange}
               onScrollToEnd={scrollToEnd}
               onSelectAuto={onSelectAuto}
               onSelectEndpoint={onSelectEndpoint}

@@ -12,6 +12,7 @@ import chains from '../util/chains';
 import { AUTO_MODE } from '../util/constants';
 import { shouldSkipEndpointOption } from '../util/endpoint';
 import useCustomEndpoint from './useCustomEndpoint';
+import useTranslation from './useTranslation';
 
 const supportedLC = ['polkadot', 'kusama', 'westend']; // chains with supported light client
 const allEndpoints = createWsEndpoints();
@@ -77,6 +78,7 @@ export function getBuiltInEndpointOptions(genesisHash: string | null | undefined
  */
 export function useEndpoints(genesisHash: string | null | undefined): DropdownOption[] {
   const { customEndpoint } = useCustomEndpoint(genesisHash);
+  const { t } = useTranslation();
   const userAddedEndpoint = useUserAddedEndpoint(genesisHash);
 
   const endpoints = useMemo(
@@ -91,6 +93,6 @@ export function useEndpoints(genesisHash: string | null | undefined): DropdownOp
       return baseEndpoints;
     }
 
-    return [...baseEndpoints, { text: 'Custom RPC', value: customEndpoint }];
-  }, [customEndpoint, endpoints, userAddedEndpoint]);
+    return [...baseEndpoints, { text: t('Custom RPC'), value: customEndpoint }];
+  }, [customEndpoint, endpoints, t, userAddedEndpoint]);
 }

@@ -48,13 +48,14 @@ interface Props {
   disabled?: boolean;
   existingEndpoints: string[];
   genesisHash: string | undefined;
+  onCustomEndpointChange?: (previousEndpoint: string, nextEndpoint: string | undefined) => void;
   onSelectAuto: () => void;
   onSelectEndpoint: (endpoint: string) => void;
   onScrollToEnd?: () => void;
   selectedEndpoint: string | undefined;
 }
 
-function CustomEndpoint({ disabled = false, existingEndpoints, genesisHash, onScrollToEnd, onSelectAuto, onSelectEndpoint, selectedEndpoint }: Props): React.ReactElement {
+function CustomEndpoint({ disabled = false, existingEndpoints, genesisHash, onCustomEndpointChange, onScrollToEnd, onSelectAuto, onSelectEndpoint, selectedEndpoint }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
@@ -135,6 +136,7 @@ function CustomEndpoint({ disabled = false, existingEndpoints, genesisHash, onSc
         return;
       }
 
+      customEndpoint && customEndpoint !== endpoint && onCustomEndpointChange?.(customEndpoint, endpoint);
       onSelectEndpoint(endpoint);
       setIsFormOpen(false);
       onScrollToEnd?.();
@@ -148,7 +150,7 @@ function CustomEndpoint({ disabled = false, existingEndpoints, genesisHash, onSc
         ? api.disconnect().catch(console.error)
         : provider?.disconnect().catch(console.error);
     }
-  }, [customEndpoint, endpointInput, existingEndpoints, genesisHash, onScrollToEnd, onSelectEndpoint, setCustomEndpoint, t]);
+  }, [customEndpoint, endpointInput, existingEndpoints, genesisHash, onCustomEndpointChange, onScrollToEnd, onSelectEndpoint, setCustomEndpoint, t]);
 
   const onRemove = useCallback(async(): Promise<void> => {
     if (!customEndpoint) {
@@ -158,6 +160,8 @@ function CustomEndpoint({ disabled = false, existingEndpoints, genesisHash, onSc
     const success = await removeCustomEndpoint();
 
     if (success) {
+      onCustomEndpointChange?.(customEndpoint, undefined);
+
       if (selectedEndpoint === customEndpoint) {
         onSelectAuto();
       }
@@ -166,7 +170,7 @@ function CustomEndpoint({ disabled = false, existingEndpoints, genesisHash, onSc
       setErrorMessage(undefined);
       setIsFormOpen(false);
     }
-  }, [customEndpoint, onSelectAuto, removeCustomEndpoint, selectedEndpoint]);
+  }, [customEndpoint, onCustomEndpointChange, onSelectAuto, removeCustomEndpoint, selectedEndpoint]);
 
   const onOpenForm = useCallback((): void => {
     setEndpointInput(customEndpoint ?? '');
