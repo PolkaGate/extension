@@ -17,13 +17,13 @@ import DropMenuContent from './DropMenuContent';
 const DropSelectContainer = styled(Grid, {
   shouldForwardProp: (prop) => prop !== 'focused'
 })<{ focused: boolean }>(({ focused, theme }) => ({
-  ':hover': { background: theme.palette.mode === 'dark' ? '#674394' : '#F3F6FD' },
+  ':hover': { background: theme.palette.mode === 'dark' ? '#674394' : theme.palette.surface.hover },
   alignItems: 'center',
   backdropFilter: 'blur(20px)',
-  background: focused ? theme.palette.gradient.brand : theme.palette.mode === 'dark' ? '#1B133C' : '#FFFFFF',
-  border: focused ? 'none' : `1px solid ${theme.palette.mode === 'dark' ? 'transparent' : '#DDE3F4'}`,
+  background: focused ? theme.palette.gradient.brand : theme.palette.mode === 'dark' ? theme.palette.surface.panel : theme.palette.surface.input,
+  border: focused ? 'none' : `1px solid ${theme.palette.mode === 'dark' ? 'transparent' : theme.palette.border.strong}`,
   borderRadius: '12px',
-  boxShadow: theme.palette.mode === 'dark' ? '0px 0px 24px 8px #4E2B7259 inset' : '0px 8px 22px rgba(133, 140, 176, 0.12)',
+  boxShadow: theme.palette.mode === 'dark' ? '0px 0px 24px 8px #4E2B7259 inset' : theme.palette.shadow.card,
   columnGap: '2px',
   cursor: 'pointer',
   justifyContent: 'center',
@@ -87,8 +87,8 @@ function HomeAccountDropDown({ style }: Props) {
     <>
       <ClickAwayListener onClickAway={handleClickAway}>
         <DropSelectContainer container focused={open} item onClick={toggleOpen} ref={containerRef} sx={style}>
-          <User color={open ? '#EAEBF1' : theme.palette.mode === 'dark' ? '#AA83DC' : theme.palette.text.secondary} size='18' variant='Bulk' />
-          <ArrowDown2 color={open ? '#EAEBF1' : theme.palette.mode === 'dark' ? '#AA83DC' : theme.palette.text.secondary} size='16' style={{ rotate: open ? '180deg' : 'none', transition: 'all 250ms ease-out' }} variant='Bold' />
+          <User color={open ? '#EAEBF1' : theme.palette.mode === 'dark' ? theme.palette.accent.icon : theme.palette.text.secondary} size='18' variant='Bulk' />
+          <ArrowDown2 color={open ? '#EAEBF1' : theme.palette.mode === 'dark' ? theme.palette.accent.icon : theme.palette.text.secondary} size='16' style={{ rotate: open ? '180deg' : 'none', transition: 'all 250ms ease-out' }} variant='Bold' />
         </DropSelectContainer>
       </ClickAwayListener>
       <DropMenuContent

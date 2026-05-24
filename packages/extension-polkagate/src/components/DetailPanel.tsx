@@ -31,24 +31,24 @@ function LeftColumn({ LeftItem, RightItem, TitleLogo, children, dividerStyle, no
     backgroundPosition: 'top center',
     backgroundRepeat: 'no-repeat',
     backgroundSize: '100% auto',
-    bgcolor: isDark ? '#1B133C' : theme.palette.background.paper,
-    border: isDark ? 'none' : '1px solid #DDE3F4',
+    bgcolor: isDark ? theme.palette.surface.panel : theme.palette.background.paper,
+    border: isDark ? 'none' : `1px solid ${theme.palette.border.strong}`,
     borderRadius: '32px',
     boxShadow: isDark ? 'none' : '0 18px 48px rgba(133, 140, 176, 0.22)',
     position: 'relative',
     py: '20px',
     width: '451px',
     ...style
-  }), [isDark, style, theme.palette.background.paper]);
+  }), [isDark, style, theme.palette.background.paper, theme.palette.border.strong, theme.palette.surface.panel]);
 
   return (
     <Box sx={BoxStyle}>
       <Grid alignItems='center' container item>
         <IconButton
           onClick={onClose}
-          sx={{ background: isDark ? '#BFA1FF26' : '#EEF1FF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '10px', height: '36px', left: '20px', position: 'absolute', top: noDivider ? '20px' : 'inherit', visibility: noCloseButton ? 'hidden' : 'visible', width: '36px', zIndex: 2 }}
+          sx={{ background: isDark ? '#BFA1FF26' : theme.palette.surface.panelAlt, border: isDark ? 'none' : `1px solid ${theme.palette.border.strong}`, borderRadius: '10px', height: '36px', left: '20px', position: 'absolute', top: noDivider ? '20px' : 'inherit', visibility: noCloseButton ? 'hidden' : 'visible', width: '36px', zIndex: 2 }}
         >
-          <CLoseIcon sx={{ color: isDark ? '#AA83DC' : theme.palette.text.highlight, fontSize: 20, stroke: isDark ? '#AA83DC' : theme.palette.text.highlight }} />
+          <CLoseIcon sx={{ color: isDark ? theme.palette.accent.icon : theme.palette.text.highlight, fontSize: 20, stroke: isDark ? theme.palette.accent.icon : theme.palette.text.highlight }} />
         </IconButton>
         <Stack alignItems='center' direction='row' justifyContent='center' sx={{ width: '100%' }}>
           {TitleLogo &&
@@ -76,7 +76,7 @@ function LeftColumn({ LeftItem, RightItem, TitleLogo, children, dividerStyle, no
         <Box sx={{
           background: isDark
             ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)'
-            : 'linear-gradient(90deg, rgba(221, 227, 244, 0) 0%, #DDE3F4 50.06%, rgba(221, 227, 244, 0) 100%)',
+            : `linear-gradient(90deg, rgba(221, 227, 244, 0) 0%, ${theme.palette.border.strong} 50.06%, rgba(221, 227, 244, 0) 100%)`,
           height: '1px',
           justifySelf: 'center',
           m: '5px 0 15px',
