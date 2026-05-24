@@ -4,7 +4,7 @@
 import type { AuthUrlInfo } from '@polkadot/extension-base/background/types';
 import type { AuthorizeRequestHandlerProp } from '../popup/authorize';
 
-import { Container, Grid, Typography } from '@mui/material';
+import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { ArrowSwapHorizontal, MonitorMobbile } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
@@ -126,7 +126,13 @@ function ConnectedDappContents({ authorizeRequestHandler, setOpenMenu }: Connect
 }
 
 export default function ConnectedDapp({ authorizeRequestHandler }: { authorizeRequestHandler?: AuthorizeRequestHandlerProp }): React.ReactElement {
+  const theme = useTheme();
   const { t } = useTranslation();
+  const isLight = theme.palette.mode === 'light';
+  const indicatorBgColor = isLight ? '#DDE3F4CC' : '#82FFA533';
+  const indicatorBorderColor = isLight ? '#DDE3F4' : '#BFA1FF26';
+  const indicatorColor = isLight ? '#008080' : '#82FFA5';
+  const connectionArrowColor = isLight ? '#F8F8FF' : '#82FFA5';
 
   const [checking, setChecking] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean | undefined>(undefined);
@@ -205,10 +211,10 @@ export default function ConnectedDapp({ authorizeRequestHandler }: { authorizeRe
     <>
       {!authorizeRequestHandler &&
         <Container className='ConnectedDapp' disableGutters sx={{ alignItems: 'center', display: 'flex', width: 'fit-content' }}>
-          <ArrowSwapHorizontal color='#82FFA5' size='15' style={{ background: '#BFA1FF26' }} />
-          <Grid alignItems='center' container item onClick={openPopup} sx={{ bgcolor: '#82FFA533', border: '2px solid', borderColor: '#BFA1FF26', borderRadius: '10px', cursor: 'pointer', p: '3px', width: 'fit-content' }}>
-            <MonitorMobbile color='#82FFA5' size='22' variant='Bulk' />
-            <Typography color='#82FFA5' fontFamily='Inter' fontSize='14px' fontWeight={700}>
+          <ArrowSwapHorizontal color={connectionArrowColor} size='15' />
+          <Grid alignItems='center' container item onClick={openPopup} sx={{ bgcolor: indicatorBgColor, border: '2px solid', borderColor: indicatorBorderColor, borderRadius: '10px', cursor: 'pointer', p: '3px', width: 'fit-content' }}>
+            <MonitorMobbile color={indicatorColor} size='22' variant='Bulk' />
+            <Typography color={indicatorColor} fontFamily='Inter' fontSize='14px' fontWeight={700}>
               {dapp?.authorizedAccounts.length}
             </Typography>
           </Grid>
