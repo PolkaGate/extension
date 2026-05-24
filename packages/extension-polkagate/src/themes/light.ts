@@ -34,6 +34,7 @@ export const lightTheme: ExtendedThemeOptions = {
     warning: { main: '#FF8A3D' },
     divider: '#D8DDF1',
     dividerGradient: 'linear-gradient(90deg, rgba(221, 227, 244, 0.1) 0%, rgba(221, 227, 244, 0.9) 50.06%, rgba(221, 227, 244, 0.1) 100%)',
+    dividerGradientStrong: 'linear-gradient(90deg, rgba(221, 227, 244, 0.15) 0%, rgba(221, 227, 244, 1) 50.06%, rgba(221, 227, 244, 0.15) 100%)',
     gradient: {
       brand: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
       primary: `radial-gradient(circle at 22% 8%, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0) 22%),

@@ -177,7 +177,7 @@ export default function Step3Amount({ inputs, isContract, setInputs }: Props): R
             />
           </Stack>
         </Stack>
-        <Box sx={{ background: isDark ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' : 'linear-gradient(90deg, rgba(221, 227, 244, 0.15) 0%, rgba(221, 227, 244, 1) 50.06%, rgba(221, 227, 244, 0.15) 100%)', height: '1px', my: '10px', width: '100%' }} />
+        <Box sx={{ background: theme.palette.dividerGradientStrong, height: '1px', my: '10px', width: '100%' }} />
         <MyTextField
           focused
           inputType='number'
@@ -188,7 +188,7 @@ export default function Step3Amount({ inputs, isContract, setInputs }: Props): R
           onTextChange={onAmountChange}
           placeholder='0.00'
         />
-        <Box sx={{ background: isDark ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' : 'linear-gradient(90deg, rgba(221, 227, 244, 0.15) 0%, rgba(221, 227, 244, 1) 50.06%, rgba(221, 227, 244, 0.15) 100%)', height: '1px', my: '10px', width: '100%' }} />
+        <Box sx={{ background: theme.palette.dividerGradientStrong, height: '1px', my: '10px', width: '100%' }} />
         <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' onClick={onMaxClick} sx={{ cursor: 'pointer' }}>
           <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
             {t('Available')}
