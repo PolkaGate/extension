@@ -91,7 +91,7 @@ const PoolClaimReward = ({ decimal, disabled, onClaimReward, reward, rewardInCur
   const isDisabled = useMemo(() => disabled || reward === undefined || reward.isZero() || rewardInCurrency === undefined || rewardInCurrency === 0, [disabled, reward, rewardInCurrency]);
 
   return (
-    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isLight ? '#FFFFFF' : '#05091C', border: isLight ? '1px solid #DDE3F4' : 'none', borderRadius: '10px', boxShadow: isLight ? '0px 10px 24px rgba(148, 163, 184, 0.12)' : 'none', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px 12px' }}>
+    <Container disableGutters sx={{ alignItems: 'center', bgcolor: isLight ? '#EEF2FB' : '#05091C', borderRadius: '10px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '10px 12px' }}>
       <ColumnAmounts
         balanceColor={isLight ? '#745E9F' : theme.palette.text.highlight}
         color={isLight ? '#4D3A73' : theme.palette.text.primary}
@@ -204,7 +204,7 @@ const FlatRewardTile = ({ decimal, disabled, onClaimReward, onRewardChart, rewar
               : (
                 <FormatPrice
                   commify
-                  decimalColor={theme.palette.text.highlight}
+                  decimalColor={isLight ? '#745E9F' : theme.palette.text.highlight}
                   dotStyle={'big'}
                   fontFamily='OdibeeSans'
                   fontSize='40px'
