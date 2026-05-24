@@ -99,7 +99,7 @@ export default function GradientButton({ EndIcon, StartIcon, contentPlacement = 
       }
     }),
     /* BUTTON BACKGROUND GRADIENT */
-    background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+    background: theme.palette.gradient.brand,
     borderRadius: `${style?.borderRadius ?? borderRadius}`,
     inset: disabled ? 0 : '2px',
     position: 'absolute',
@@ -120,7 +120,7 @@ export default function GradientButton({ EndIcon, StartIcon, contentPlacement = 
 
   return (
     <Grid component='button' container item onClick={disabled ? noop : onClick} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} sx={GradientButtonStyle}>
-      {StartIcon && <StartIcon color={theme.palette.text.primary} size={startIconSize} style={{ marginRight: '2px', zIndex: 10 }} variant={startIconVariant} />}
+      {StartIcon && <StartIcon color='#FFFFFF' size={startIconSize} style={{ marginRight: '2px', zIndex: 10 }} variant={startIconVariant} />}
       {startIconNode && startIconNode}
       {isBusy
         ? <LoaderGif />
@@ -131,7 +131,7 @@ export default function GradientButton({ EndIcon, StartIcon, contentPlacement = 
           {showChevron && <ArrowRight2 color={hovered ? '#EAEBF1' : 'undefined'} size='12' style={chevronStyle} variant='Linear' />}
         </>
       }
-      {EndIcon && <EndIcon color={theme.palette.text.primary} size='20' style={{ zIndex: 10 }} variant='Bulk' />}
+      {EndIcon && <EndIcon color='#FFFFFF' size='20' style={{ zIndex: 10 }} variant='Bulk' />}
       {endIconNode && endIconNode}
       <Grid sx={GradientBackground}></Grid>
     </Grid>

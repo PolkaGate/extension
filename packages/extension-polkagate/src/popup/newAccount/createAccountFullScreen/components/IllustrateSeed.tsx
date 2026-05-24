@@ -1,10 +1,10 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { Box, Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
-import { useAnimateOnce, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useAnimateOnce, useIsDark, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
 
 interface WordProps {
@@ -14,6 +14,8 @@ interface WordProps {
 
 const Word = ({ index, word }: WordProps) => {
   const { isHovered, ref } = useIsHovered();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Stack
@@ -27,7 +29,8 @@ const Word = ({ index, word }: WordProps) => {
           to: { opacity: 1, transform: 'translateY(0)' }
         },
         animation: `fadeIn 0.5s ease-in-out ${index * 0.2}s forwards`,
-        background: isHovered ? '#2D1E4A' : '#2D1E4A8C',
+        background: isDark ? (isHovered ? '#2D1E4A' : '#2D1E4A8C') : (isHovered ? '#DDE3F4' : '#EEF2FB'),
+        border: isDark ? 'none' : '1px solid #DDE3F4',
         borderRadius: '18px',
         margin: '5px',
         minWidth: '100px',
@@ -41,18 +44,18 @@ const Word = ({ index, word }: WordProps) => {
         alignContent='center'
         justifyItems='center'
         sx={{
-          bgcolor: isHovered ? 'label.primary' : '#2D1E4A',
+          bgcolor: isDark ? (isHovered ? 'label.primary' : '#2D1E4A') : (isHovered ? '#FFFFFF' : '#F8FAFF'),
           borderRadius: '14px',
           height: '36px',
           m: '2px',
           width: '31px'
         }}
       >
-        <Typography alignSelf='center' color='text.secondary'>
+        <Typography alignSelf='center' color={isDark ? 'text.secondary' : '#7A69A8'}>
           {index + 1}
         </Typography>
       </Box>
-      <Typography color='text.secondary' sx={{ px: '10px' }} variant='B-2'>
+      <Typography color={isDark ? 'text.secondary' : 'text.primary'} sx={{ px: '10px' }} variant='B-2'>
         {word}
       </Typography>
     </Stack>
@@ -63,6 +66,7 @@ const TIME_OUT = 300;
 
 const SecretPhraseGuard = ({ revealed, setRevealed }: { revealed: boolean; setRevealed: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
   const [removeGlass, setRemoveGlass] = useState<boolean>(false);
 
@@ -87,9 +91,11 @@ const SecretPhraseGuard = ({ revealed, setRevealed }: { revealed: boolean; setRe
         alignItems: 'center',
         animation: 'fadeIn 0.5s',
         backdropFilter: 'blur(6px)',
-        bgcolor: 'rgba(20, 15, 30, 0.4)',
+        bgcolor: isDark ? 'rgba(20, 15, 30, 0.4)' : 'rgba(238, 242, 251, 0.82)',
         borderRadius: '14px',
-        boxShadow: 'inset 0 0 0 1000px rgba(255, 255, 255, 0.03), 0 0 14px rgba(255, 255, 255, 0.08)',
+        boxShadow: isDark
+          ? 'inset 0 0 0 1000px rgba(255, 255, 255, 0.03), 0 0 14px rgba(255, 255, 255, 0.08)'
+          : 'inset 0 0 0 1000px rgba(255, 255, 255, 0.22), 0 10px 24px rgba(133, 140, 176, 0.14)',
         cursor: 'pointer',
         display: removeGlass ? 'none' : 'flex',
         flexDirection: 'column',
@@ -105,7 +111,7 @@ const SecretPhraseGuard = ({ revealed, setRevealed }: { revealed: boolean; setRe
       }}
       tabIndex={0}
     >
-      <Typography color='primary.main' sx={{ mb: 2 }} variant='B-2'>
+      <Typography color={isDark ? 'primary.main' : '#674394'} sx={{ mb: 2 }} variant='B-2'>
         {t('Click to reveal — make sure no one is watching!')}
       </Typography>
     </Box>

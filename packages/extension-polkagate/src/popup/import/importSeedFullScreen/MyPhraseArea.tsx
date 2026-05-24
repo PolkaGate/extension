@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import { ClipboardText } from 'iconsax-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -17,6 +17,8 @@ export interface Props {
 
 export default function MyPhraseArea({ isCorrect, label, seed, setSeed }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const textareaRef = useRef<HTMLTextAreaElement | null>(null); // Ref for textarea
 
   const [isEditing, setIsEditing] = useState<boolean>(true);
@@ -52,11 +54,12 @@ export default function MyPhraseArea({ isCorrect, label, seed, setSeed }: Props)
   }, [isEditing]);
 
   const commonStyle = {
-    backgroundColor: '#1B133CB2',
+    backgroundColor: isDark ? '#1B133CB2' : '#FFFFFF',
     border: '1px solid transparent',
-    borderColor: hasError ? '#FF4FB9' : '#BEAAD833',
+    borderColor: hasError ? '#FF4FB9' : isDark ? '#BEAAD833' : '#DDE3F4',
     borderRadius: '12px',
-    color: '#BEAAD8',
+    boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)',
+    color: isDark ? '#BEAAD8' : theme.palette.text.primary,
     fontFamily: 'Inter',
     fontSize: '12px',
     fontWeight: 500,
@@ -64,6 +67,7 @@ export default function MyPhraseArea({ isCorrect, label, seed, setSeed }: Props)
     letterSpacing: '-0.19px',
     overflowWrap: 'anywhere',
     overflowY: 'auto',
+    outline: 'none',
     padding: '10px',
     textAlign: 'left',
     width: '100%'
@@ -72,7 +76,7 @@ export default function MyPhraseArea({ isCorrect, label, seed, setSeed }: Props)
   return (
     <>
       <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' m='15px 0 8px'>
-        <Typography color='#EAEBF1' sx={{ my: '15px', textAlign: 'left' }} variant='B-1'>
+        <Typography color={isDark ? '#EAEBF1' : 'text.secondary'} sx={{ my: '15px', textAlign: 'left' }} variant='B-1'>
           {label}
         </Typography>
         <ActionButton
@@ -123,7 +127,7 @@ export default function MyPhraseArea({ isCorrect, label, seed, setSeed }: Props)
                 <span
                   key={index}
                   style={{
-                    backgroundColor: '#2D1E4A',
+                    backgroundColor: isDark ? '#2D1E4A' : '#EEF2FB',
                     borderRadius: '8px',
                     display: 'inline-block',
                     margin: '2px',

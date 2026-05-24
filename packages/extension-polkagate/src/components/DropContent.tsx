@@ -3,7 +3,7 @@
 
 import type { AdvancedDropdownOption } from '../util/types';
 
-import { Avatar, Grid, Popover, styled, Typography } from '@mui/material';
+import { Avatar, Grid, Popover, styled, Typography, useTheme } from '@mui/material';
 import { Global } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -17,11 +17,12 @@ import SearchField from './SearchField';
 
 const DropContentContainer = styled(Grid, {
   shouldForwardProp: (prop) => prop !== 'preferredWidth'
-})(({ preferredWidth }: { preferredWidth: number | undefined }) => ({
-  background: '#05091C',
+})<{ preferredWidth: number | undefined }>(({ preferredWidth, theme }) => ({
+  background: theme.palette.surface.input,
   border: '4px solid',
-  borderColor: '#1B133C',
+  borderColor: theme.palette.border.paper,
   borderRadius: '12px',
+  boxShadow: theme.palette.shadow.popover,
   columnGap: '5px',
   flexWrap: 'nowrap',
   margin: 'auto',
@@ -35,10 +36,10 @@ const DropContentContainer = styled(Grid, {
   width: preferredWidth ? `${preferredWidth}px` : 'fit-content'
 }));
 
-const ContentDisplayContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'isSelectedItem' })(({ isSelectedItem, style }: { isSelectedItem: boolean, style: React.CSSProperties }) => ({
-  '&:hover': { background: '#6743944D' },
+const ContentDisplayContainer = styled(Grid, { shouldForwardProp: (prop) => prop !== 'isSelectedItem' })<{ isSelectedItem: boolean, style?: React.CSSProperties }>(({ isSelectedItem, style, theme }) => ({
+  '&:hover': { background: theme.palette.surface.hover },
   alignItems: 'center',
-  background: isSelectedItem ? '#6743944D' : 'transparent',
+  background: isSelectedItem ? theme.palette.surface.selected : 'transparent',
   borderRadius: '8px',
   columnGap: '5px',
   cursor: 'pointer',
@@ -61,6 +62,7 @@ interface ContentDisplayProps {
 }
 
 function OptionLogo({ text }: { text: string }) {
+  const theme = useTheme();
   const isDark = useIsDark();
   const icon = resolveLogoInfo(text)?.logo;
 
@@ -71,13 +73,14 @@ function OptionLogo({ text }: { text: string }) {
       variant='square'
     >
       {!icon &&
-        <Global color='#AA83DC' size='18' variant='Bulk' />
+        <Global color={isDark ? theme.palette.primary.main : theme.palette.text.secondary} size='18' variant='Bulk' />
       }
     </Avatar>
   );
 }
 
 function LogoContentDisplay({ Icon, logoType, onChange, selectedValue, setOpen, setSelectedValue, showCheckAsIcon, text, value }: ContentDisplayProps) {
+  const theme = useTheme();
   const isSelectedItem = useMemo(() => [text, value].includes(selectedValue ?? ''), [selectedValue, text, value]);
 
   const handleClick = useCallback(() => {
@@ -114,7 +117,7 @@ function LogoContentDisplay({ Icon, logoType, onChange, selectedValue, setOpen, 
       if (typeof Icon === 'function' || typeof Icon === 'object') {
         const Component = Icon as React.ElementType;
 
-        return <Component color='#BEAAD8' size='18' variant='Bulk' />;
+        return <Component color={theme.palette.text.secondary} size='18' variant='Bulk' />;
       }
     }
 
@@ -134,7 +137,7 @@ function LogoContentDisplay({ Icon, logoType, onChange, selectedValue, setOpen, 
               />)
             : renderLogo()
         }
-        <Typography color={isSelectedItem ? '#FF4FB9' : 'text.primary'} textTransform='capitalize' variant='B-2'>
+        <Typography color={isSelectedItem ? 'error.main' : 'text.primary'} textTransform='capitalize' variant='B-2'>
           {text}
         </Typography>
       </Grid>
@@ -169,7 +172,7 @@ function TextContentDisplay({ onChange, selectedValue, setOpen, setSelectedValue
           timeout={250}
         />
       }
-      <Typography color={isSelectedItem ? '#FF4FB9' : 'text.primary'} textTransform='capitalize' variant='B-2'>
+      <Typography color={isSelectedItem ? 'error.main' : 'text.primary'} textTransform='capitalize' variant='B-2'>
         {text}
       </Typography>
     </ContentDisplayContainer>
@@ -232,7 +235,8 @@ function DropSelect({ Icon, containerRef, contentDropWidth, displayContentType, 
         paper: {
           sx: {
             background: 'none',
-            backgroundImage: 'none'
+            backgroundImage: 'none',
+            boxShadow: 'none'
           }
         }
       }}

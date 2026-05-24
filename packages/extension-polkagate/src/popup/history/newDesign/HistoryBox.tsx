@@ -3,12 +3,12 @@
 
 import type { TransactionDetail } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import React, { memo, useCallback, useRef } from 'react';
 
 import { FadeOnScroll } from '@polkadot/extension-polkagate/src/components/index';
 
-import { emptyList } from '../../../assets/icons/index';
+import { emptyList, emptyListLight } from '../../../assets/icons/index';
 import { useIsExtensionPopup, useTranslation } from '../../../hooks';
 import VelvetBox from '../../../style/VelvetBox';
 import AssetLoading from '../../home/partial/AssetLoading';
@@ -16,12 +16,14 @@ import HistoryItem from './HistoryItem';
 
 function EmptyHistoryBox() {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <>
       <Box
         component='img'
-        src={emptyList as string}
+        src={(isDark ? emptyList : emptyListLight) as string}
         sx={{ height: 'auto', m: '30px auto 15px', width: '125px' }}
       />
       <Typography color='text.secondary' mb='30px' variant='B-2'>

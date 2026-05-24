@@ -69,7 +69,7 @@ function DailyChange({ address, change = null, iconSize = 15, showHours = true, 
     , [changed, isDark]);
 
   if (changed === undefined) {
-    return (<MySkeleton height={20} style={{ background: '#BEAAD826', width: style?.minWidth ?? '122px' }} />);
+    return (<MySkeleton height={20} style={{ background: theme.palette.skeleton.subtle, width: style?.minWidth ?? '122px' }} />);
   }
 
   return (
@@ -91,7 +91,7 @@ function DailyChange({ address, change = null, iconSize = 15, showHours = true, 
           textColor={color}
           width='fit-content'
           {...(theme.typography[textVariant as never] as object)}
-        />
+          />
       }
       {showHours && !isHideNumbers &&
         <Typography style={{ color, fontWeight: 900, lineHeight: '15px' }} variant={textVariant as never}>

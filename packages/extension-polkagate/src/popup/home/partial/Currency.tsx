@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, type SxProps, type Theme, Typography } from '@mui/material';
+import { Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Share } from 'iconsax-react';
 import React, { useCallback, useContext, useState } from 'react';
 
@@ -11,15 +11,20 @@ import { useIsDark } from '../../../hooks';
 import SelectCurrency from './SelectCurrency';
 
 function Currency() {
+  const theme = useTheme();
   const { currency } = useContext(CurrencyContext);
   const isDark = useIsDark();
+  const hoverBg = isDark ? '#674394' : '#EEF1FF';
+  const textColor = theme.palette.accent.text;
 
   const containerStyle: SxProps<Theme> = {
     '&:hover': {
-      bgcolor: '#674394',
+      bgcolor: hoverBg,
       transition: 'all 250ms ease-out'
     },
-    bgcolor: isDark ? '#BFA1FF26' : ' #FFFFFF',
+    bgcolor: isDark ? '#BFA1FF26' : '#FFFFFF',
+    border: '1px solid',
+    borderColor: isDark ? 'transparent' : '#E1E5F3',
     borderRadius: '12px',
     columnGap: '2px',
     cursor: 'pointer',
@@ -35,8 +40,8 @@ function Currency() {
   return (
     <>
       <Grid alignItems='center' container item justifyContent='center' onClick={toggleMenu} sx={containerStyle}>
-        <Share color={isDark ? '#BEAAD8' : '#745D8B'} size='18' variant='Bold' />
-        <Typography color={isDark ? '#BEAAD8' : '#745D8B'} textTransform='uppercase' variant='B-2'>
+        <Share color={textColor} size='18' variant='Bold' />
+        <Typography color={textColor} textTransform='uppercase' variant='B-2'>
           {currency?.code}
         </Typography>
       </Grid>

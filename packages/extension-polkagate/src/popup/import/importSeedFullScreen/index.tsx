@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Collapse, Stack, Typography } from '@mui/material';
+import { Collapse, Stack, Typography, useTheme } from '@mui/material';
 import { More, User } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +25,8 @@ export interface AccountInfo {
 
 export default function ImportSeed(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const navigate = useNavigate();
   const localAccounts = useLocalAccounts();
 
@@ -107,7 +109,7 @@ export default function ImportSeed(): React.ReactElement {
       <Stack direction='column' sx={{ mt: '15px', position: 'relative', width: '525px' }}>
         {step === STEP.SEED &&
           <>
-            <Typography color='#BEAAD8' sx={{ textAlign: 'left' }} variant='B-1'>
+            <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
               {t('Enter your account\'s recovery phrase (mnemonic seed) to seamlessly import it into the extension wallet, giving you quick and secure access to your assets and transactions.')}
             </Typography>
             <MyPhraseArea
@@ -122,14 +124,14 @@ export default function ImportSeed(): React.ReactElement {
               </Typography>
             }
             <Collapse in={!!seed}>
-              <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='flex-start' onClick={toggleMore} sx={{ bgcolor: showAdvanced ? '#BEAAD8' : '#2D1E4A', borderRadius: '8px', m: '15px 0 10px 0 ', p: '4px 6px', width: 'fit-content' }}>
-                <More color={showAdvanced ? '#05091C' : '#BEAAD8'} size='18' style={{ rotate: showAdvanced ? '180deg' : '90deg', transition: 'all 250ms ease-out' }} variant='Linear' />
-                <Typography sx={{ color: showAdvanced ? '#05091C' : '#BEAAD8', cursor: 'pointer', userSelect: 'none' }} variant='B-2'>
+              <Stack alignItems='center' columnGap='3px' direction='row' justifyContent='flex-start' onClick={toggleMore} sx={{ bgcolor: showAdvanced ? (isDark ? '#BEAAD8' : '#EEF2FB') : (isDark ? '#2D1E4A' : '#FFFFFF'), border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '8px', m: '15px 0 10px 0 ', p: '4px 6px', width: 'fit-content' }}>
+                <More color={showAdvanced ? (isDark ? '#05091C' : '#7A69A8') : (isDark ? '#BEAAD8' : '#7A69A8')} size='18' style={{ rotate: showAdvanced ? '180deg' : '90deg', transition: 'all 250ms ease-out' }} variant='Linear' />
+                <Typography sx={{ color: showAdvanced ? (isDark ? '#05091C' : '#7A69A8') : (isDark ? '#BEAAD8' : '#7A69A8'), cursor: 'pointer', userSelect: 'none' }} variant='B-2'>
                   {t('Advanced')}
                 </Typography>
               </Stack>
               <Collapse in={showAdvanced}>
-                <Typography color={'#BEAAD8'} sx={{ textAlign: 'left' }} variant='B-1'>
+                <Typography color='text.secondary' sx={{ textAlign: 'left' }} variant='B-1'>
                   {t('To import a specific account, use a derivation path like //0, //1, etc.')}
                 </Typography>
                 <MyTextField

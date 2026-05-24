@@ -3,31 +3,22 @@
 
 import type { RadioProps } from '@mui/material/Radio';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import Radio from '@mui/material/Radio';
 import { styled } from '@mui/material/styles';
 import * as React from 'react';
 
 const BpIcon = styled('span')(({ theme }) => ({
+  '.Mui-focusVisible &': {
+    outline: '2px auto rgba(19,124,189,.6)',
+    outlineOffset: 2
+  },
   backgroundColor: '#f5f8fa',
   backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.8),hsla(0,0%,100%,0))',
   border: '2px solid #2D1E4A',
   borderRadius: '50%',
   boxShadow: 'inset 0 0 0 1px rgba(16,22,26,.2), inset 0 -1px 0 rgba(16,22,26,.1)',
   height: 18,
-  width: 18,
-
-  '.Mui-focusVisible &': {
-    outline: '2px auto rgba(19,124,189,.6)',
-    outlineOffset: 2
-  },
-  'input:hover ~ &': {
-    backgroundColor: '#ebf1f5',
-    ...theme.applyStyles('dark', {
-      backgroundColor: '#AA83DC'
-    })
-  },
-
   'input:disabled ~ &': {
     background: 'rgba(206,217,224,.5)',
     boxShadow: 'none',
@@ -35,6 +26,13 @@ const BpIcon = styled('span')(({ theme }) => ({
       background: 'rgba(57,75,89,.5)'
     })
   },
+  'input:hover ~ &': {
+    backgroundColor: '#ebf1f5',
+    ...theme.applyStyles('dark', {
+      backgroundColor: '#AA83DC'
+    })
+  },
+  width: 18,
   ...theme.applyStyles('dark', {
     backgroundColor: '#110F2A',
     backgroundImage: 'linear-gradient(180deg,hsla(0,0%,100%,.05),hsla(0,0%,100%,0))',
@@ -42,7 +40,7 @@ const BpIcon = styled('span')(({ theme }) => ({
   })
 }));
 
-const BpCheckedIcon = styled(BpIcon)({
+const BpCheckedIcon = styled(BpIcon)(({ theme }) => ({
   '&::after': {
     backgroundColor: '#fff',
     borderRadius: '50%',
@@ -57,7 +55,7 @@ const BpCheckedIcon = styled(BpIcon)({
   '&::before': {
     WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
     WebkitMaskComposite: 'destination-out',
-    background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+    background: theme.palette.gradient.brand,
     borderRadius: '50%',
     bottom: '-2px',
     content: '""',
@@ -76,7 +74,7 @@ const BpCheckedIcon = styled(BpIcon)({
     backgroundColor: '#AA83DC'
   },
   position: 'relative'
-});
+}));
 
 interface Props extends RadioProps {
   columnGap?: string;
@@ -88,21 +86,25 @@ interface Props extends RadioProps {
 }
 
 export default function MyRadio({ checked, columnGap, label, onChange, props, value }: Props) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const inputId = `radio-${String(value)}`;
+
   return (
     <Stack columnGap={columnGap} direction='row' sx={{ alignItems: 'center' }}>
-      <label htmlFor={`radio-${value}`} style={{ alignItems: 'center', cursor: 'pointer', display: 'flex' }}>
+      <label htmlFor={inputId} style={{ alignItems: 'center', cursor: 'pointer', display: 'flex' }}>
         <Radio
           checked={checked}
           checkedIcon={<BpCheckedIcon />}
           color='default'
           disableRipple
           icon={<BpIcon />}
-          id={`radio-${value}`}
+          id={inputId}
           onChange={onChange}
           value={value}
           {...props}
         />
-        <Typography color='#AA83DC' variant='B-1'>
+        <Typography color={isDark ? '#AA83DC' : theme.palette.text.primary} variant='B-1'>
           {label}
         </Typography>
       </label>

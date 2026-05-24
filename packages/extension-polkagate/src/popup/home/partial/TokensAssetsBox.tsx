@@ -82,21 +82,21 @@ function TokenBox({ address, theme, tokenDetail }: { address: string | undefined
   const navigate = useNavigate();
   const isDark = useIsDark();
 
-  const bgColor = isDark ? '#05091C' : '#EDF1FF';
+  const [expand, setExpand] = useState<boolean>(false);
+
+  const bgColor = isDark ? '#05091C' : expand ? '#F5F4FF' : '#FFFFFF';
   const badgeBgColor = isDark ? '#05091C' : '#F5F4FF';
-  const closeColor = isDark ? '#674394' : '#CCD2EA';
+  const closeColor = isDark ? '#674394' : theme.palette.text.secondary;
   const dividerColor = isDark ? '#2D1E4A' : '#CCD2EA66';
   const tokenBoxColor = isDark ? '#1B133C' : '#FFFFFF';
   const { assets, assetsTotalBalanceBN, assetsTotalBalancePrice, decimal, genesisHash, logoInfo, priceId, token } = tokenDetail;
-
-  const [expand, setExpand] = useState<boolean>(false);
 
   const toggleExpand = useCallback(() => setExpand((isExpanded) => !isExpanded), []);
   const closeCircleStyle = useMemo(() => ({
     marginLeft: '8px',
     transition: 'all 250ms ease-out',
     transitionDelay: expand ? '200ms' : 'unset',
-    width: expand ? '42px' : 0
+    width: expand ? '32px' : 0
   }), [expand]);
 
   const getTokenClickHandler = useCallback((token: FetchedBalance) => () => {
@@ -145,7 +145,7 @@ function TokenBox({ address, theme, tokenDetail }: { address: string | undefined
               totalBalancePrice={assetsTotalBalancePrice}
             />
           </Grid>
-          <CloseCircle color={closeColor} size='32' style={closeCircleStyle} variant='Bold' />
+          <CloseCircle color={closeColor} size='32' style={closeCircleStyle} variant={isDark ? 'Bold' : 'Linear'} />
         </Container>
         <Collapse in={expand} sx={{ width: '100%' }}>
           <Grid container item sx={{ background: tokenBoxColor, borderRadius: '12px', mt: '10px', p: '4px 2px', rowGap: '4px' }}>

@@ -4,7 +4,7 @@
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 
-import { Grid, Grow, Stack, Typography } from '@mui/material';
+import { Grid, Grow, Stack, Typography, useTheme } from '@mui/material';
 import { DocumentCopy } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
@@ -33,17 +33,21 @@ interface AddressComponentProp {
 }
 
 function AddressComponent({ address, chainName, onCopy }: AddressComponentProp) {
+  const theme = useTheme();
   const { isHovered, ref } = useIsHovered();
+  const isDark = theme.palette.mode === 'dark';
+  const bgColor = isDark ? '#1B133C' : '#FFFFFF';
+  const borderColor = isDark ? '#BEAAD833' : '#DEE5F6';
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: '#1B133C', border: '1px solid', borderColor: '#BEAAD833', borderRadius: '12px', p: '3px' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ bgcolor: bgColor, border: '1px solid', borderColor, borderRadius: '12px', p: '3px' }}>
       <Grid alignItems='center' columnGap='8px' container item pl='10px' width='fit-content'>
         <Logo chainName={chainName} size={18} />
         <Typography color='text.secondary' variant='B-4'>
           {toShortAddress(address, 12)}
         </Typography>
       </Grid>
-      <Grid container item onClick={onCopy} ref={ref} sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
+      <Grid container item onClick={onCopy} ref={ref} sx={{ background: theme.palette.gradient.brand, borderRadius: '8px', cursor: 'pointer', p: '9px', width: 'fit-content' }}>
         <DocumentCopy color='#fff' size='17' variant={isHovered ? 'Bulk' : 'Bold'} />
       </Grid>
     </Grid>
@@ -52,6 +56,7 @@ function AddressComponent({ address, chainName, onCopy }: AddressComponentProp) 
 
 function Receive({ address, closePopup, onClose, setAddress }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const account = useSelectedAccount();
   const allChains = useGenesisHashOptions({ isEthereum: isEthereumAddress(address || ''), withRelay: false });
 
@@ -107,7 +112,7 @@ function Receive({ address, closePopup, onClose, setAddress }: Props): React.Rea
               onSelect={setSelectedChain}
               options={allChains}
               searchPlaceholder={t('🔍 Search networks')}
-            />)
+               />)
             : (<>
               <Stack direction='column' justifyItems='center' sx={{ display: 'block', width: '100%' }}>
                 <Address2
@@ -115,7 +120,7 @@ function Receive({ address, closePopup, onClose, setAddress }: Props): React.Rea
                   name={account?.name}
                   style={{ marginTop: '10px' }}
                 />
-                <Grid container item sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '17px', mb: '29px', mt: '25px', p: '4px', width: 'fit-content' }}>
+                <Grid container item sx={{ background: theme.palette.gradient.brand, borderRadius: '17px', mb: '29px', mt: '25px', p: '4px', width: 'fit-content' }}>
                   <QRCode
                     bgColor='#fff'
                     ecLevel='H'

@@ -6,7 +6,7 @@ import type { ISubmittableResult } from '@polkadot/types/types';
 import type { CanPayFee } from '../../../util/types';
 import type { FeeInfo, Inputs } from '../types';
 
-import { Box, ClickAwayListener, Stack, Typography } from '@mui/material';
+import { Box, ClickAwayListener, Stack, Typography, useTheme } from '@mui/material';
 import { deepEqual, type TAssetInfo } from '@paraspell/sdk-pjs';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -35,6 +35,7 @@ interface Props {
 
 export default function FeeRow({ address, genesisHash, inputs, setInputs, transaction }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { api, chainName, decimal, token } = useChainInfo(genesisHash);
@@ -242,7 +243,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs, transa
           />
         }
       </Stack>
-      <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', my: '10px', width: '766px' }} />
+      <Box sx={{ background: theme.palette.dividerGradient, height: '1px', my: '10px', width: '766px' }} />
       {inputs?.isCrossChain &&
         <>
           <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ height: '22px', pl: '10px', pr: showFeeSelector ? '7px' : '20px' }}>
@@ -271,7 +272,7 @@ export default function FeeRow({ address, genesisHash, inputs, setInputs, transa
               />
             </Stack>
           </Stack>
-          <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', my: '10px', width: '766px' }} />
+          <Box sx={{ background: theme.palette.dividerGradient, height: '1px', my: '10px', width: '766px' }} />
         </>
       }
       {inputs?.error &&

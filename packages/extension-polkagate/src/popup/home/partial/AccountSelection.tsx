@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Stack, useTheme } from '@mui/material';
+import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowDown2 } from 'iconsax-react';
 import React, { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -21,6 +21,7 @@ interface AccountsIconProps {
 }
 
 const AccountsIcon = ({ accountsLength, address, isInAccountLists, noSelection }: AccountsIconProps) => {
+  const theme = useTheme();
   const isDark = useIsDark();
 
   return (
@@ -40,9 +41,8 @@ const AccountsIcon = ({ accountsLength, address, isInAccountLists, noSelection }
             </Stack>
             <Grid
               alignContent='center' container item justifyContent='center' sx={{
-                background: isInAccountLists ? 'transparent' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+                background: isInAccountLists ? 'transparent' : theme.palette.gradient.brand,
                 borderRadius: '1024px',
-                color: isDark ? '#EAEBF1' : '#FFFFFF',
                 fontFamily: 'Inter',
                 fontSize: '12px',
                 fontWeight: 700,
@@ -52,7 +52,9 @@ const AccountsIcon = ({ accountsLength, address, isInAccountLists, noSelection }
                 width: '100%'
               }}
             >
-              {accountsLength ?? 0}
+              <Typography color={isInAccountLists ? isDark ? '#EAEBF1' : '#05091C' : '#FFFFFF'} fontFamily='Inter' fontSize='12px' fontWeight={700} lineHeight='11px'>
+                {accountsLength ?? 0}
+              </Typography>
             </Grid>
           </Grid>)}
     </>
@@ -69,6 +71,7 @@ function AccountSelection({ noSelection = false }: Props): React.ReactElement {
   const isBlueish = useIsBlueish();
   const accounts = useAccounts();
   const location = useLocation();
+  const locationState = location.state as { from?: string } | null;
   const navigate = useNavigate();
   const selectedAccount = useSelectedAccount();
 
@@ -77,29 +80,32 @@ function AccountSelection({ noSelection = false }: Props): React.ReactElement {
       return;
     }
 
-    const from = location?.state?.from as string || '/';
+    const from = locationState?.from || '/';
 
     if (location.pathname === '/accounts') {
       navigate(from) as void;
     } else {
       navigate('/accounts', { state: { from: location.pathname } }) as void;
     }
-  }, [location.pathname, location?.state?.from, navigate, noSelection]);
+  }, [location.pathname, locationState?.from, navigate, noSelection]);
 
   const isInAccountLists = location?.pathname === '/accounts';
+  const hoverBg = isDark ? '#674394' : '#EEF1FF';
+  const baseBg = isDark
+    ? isInAccountLists
+      ? '#FF4FB9'
+      : '#BFA1FF26'
+    : '#FFFFFF8C';
 
   return (
     <Container
       disableGutters
       onClick={onClick}
       sx={{
-        ':hover': noSelection ? {} : { background: '#674394' },
+        ':hover': noSelection ? {} : { background: hoverBg },
         alignItems: 'center',
-        background: isDark
-          ? isInAccountLists
-            ? '#FF4FB9'
-            : '#BFA1FF26'
-          : '#FFFFFF8C',
+        background: baseBg,
+        border: !isDark && !isInAccountLists ? '1px solid #E1E5F3' : 'none',
         borderRadius: '10px',
         columnGap: '5px',
         cursor: noSelection ? 'default' : 'pointer',
@@ -118,6 +124,7 @@ function AccountSelection({ noSelection = false }: Props): React.ReactElement {
         noSelection={noSelection}
       />
       <ScrollingTextBox
+        fadeColor={isDark ? undefined : '#FFFFFF'}
         text={selectedAccount?.name ?? ''}
         textStyle={{
           color: isInAccountLists ? '#05091C' : 'text.primary',

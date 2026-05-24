@@ -6,26 +6,27 @@
 import { Box, styled, type SxProps, type Theme, Typography } from '@mui/material';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useIsHovered } from '../hooks';
+import { useIsDark, useIsHovered } from '../hooks';
 
 interface ScrollingTextBoxProps {
   text: string;
   width: number;
+  fadeColor?: string;
   style?: SxProps<Theme>;
   textStyle?: SxProps<Theme>;
   scrollOnHover?: boolean;
 }
 
 const BoxContainer = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'shouldScroll' && prop !== 'maxWidth'
-})<{ shouldScroll: boolean; maxWidth: number }>(({ maxWidth, shouldScroll }) => ({
+  shouldForwardProp: (prop) => prop !== 'shouldScroll' && prop !== 'maxWidth' && prop !== 'fadeColor'
+})<{ fadeColor?: string; shouldScroll: boolean; maxWidth: number }>(({ fadeColor, maxWidth, shouldScroll }) => ({
   '&::after': {
-    background: shouldScroll ? 'linear-gradient(90deg, transparent 0%, #591467 100%)' : undefined,
+    background: shouldScroll ? `linear-gradient(90deg, transparent 0%, ${fadeColor ?? '#591467'} 100%)` : undefined,
     opacity: 0.3,
     right: 0
   },
   '&::before': {
-    background: shouldScroll ? 'linear-gradient(90deg, #20123E 0%, transparent 100%)' : undefined,
+    background: shouldScroll ? `linear-gradient(90deg, ${fadeColor ?? '#20123E'} 0%, transparent 100%)` : undefined,
     left: 0,
     opacity: 0.3
   },
@@ -44,10 +45,12 @@ const BoxContainer = styled(Box, {
   width: 'fit-content'
 }));
 
-function ScrollingTextBox({ scrollOnHover = false, style, text, textStyle, width }: ScrollingTextBoxProps): React.ReactElement {
+function ScrollingTextBox({ fadeColor, scrollOnHover = false, style, text, textStyle, width }: ScrollingTextBoxProps): React.ReactElement {
+  const isDark = useIsDark();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
   const textRef = useRef<HTMLDivElement>(null);
+  const defaultFadeColor = isDark ? undefined : '#FFFFFF';
 
   const [shouldScroll, setShouldScroll] = useState(false);
   const [textWidth, setTextWidth] = useState(0);
@@ -90,7 +93,7 @@ function ScrollingTextBox({ scrollOnHover = false, style, text, textStyle, width
   }), [animationDuration, hovered, scrollOnHover, shouldScroll, textWidth, uniqueKeyframeName, width]);
 
   return (
-    <BoxContainer maxWidth={width} ref={containerRef} shouldScroll={shouldScroll} sx={style}>
+    <BoxContainer fadeColor={fadeColor ?? defaultFadeColor} maxWidth={width} ref={containerRef} shouldScroll={shouldScroll} sx={style}>
       <Typography ref={textRef} sx={{ ...textboxStyle, ...textStyle }}>
         {text}
       </Typography>

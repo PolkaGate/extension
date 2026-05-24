@@ -36,15 +36,15 @@ interface CurrencyListProps extends CurrencyOptionProps {
   noLastDivider?: boolean;
 }
 
-const ListItem = styled(Grid)(() => ({
+const ListItem = styled(Grid)(({ theme }) => ({
   '&.selected': {
-    backgroundColor: '#6743944D',
+    backgroundColor: theme.palette.mode === 'dark' ? '#6743944D' : '#D8CDEA',
     height: '49px',
     padding: '10px',
     paddingLeft: '20px'
   },
   '&:hover': {
-    backgroundColor: '#6743944D'
+    backgroundColor: theme.palette.mode === 'dark' ? '#6743944D' : '#EAE4F5'
   },
   alignItems: 'center',
   borderRadius: '12px',

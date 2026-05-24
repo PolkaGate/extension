@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import { Box, Container, Grid, Link, Typography } from '@mui/material';
+import { Box, Container, Grid, Link, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { logoBlackBirdTransparent, logoTransparent } from '../../assets/logos';
@@ -10,6 +10,7 @@ import { useIsDark } from '../../hooks';
 import { EXTENSION_NAME } from '../../util/constants';
 
 function Header(): React.ReactElement {
+  const theme = useTheme();
   const isDark = useIsDark();
 
   return (
@@ -41,7 +42,7 @@ function Header(): React.ReactElement {
           }}
           target='_blank'
         >
-          <QuestionMarkIcon sx={{ color: isDark ? '#AA83DC' : '#745D8B', fontSize: '20px', stroke: isDark ? '#AA83DC' : '#745D8B', strokeWidth: '1px' }} />
+          <QuestionMarkIcon sx={{ color: theme.palette.accent.icon, fontSize: '20px', stroke: theme.palette.accent.icon, strokeWidth: '1px' }} />
         </Link>
       </Container>
     </>

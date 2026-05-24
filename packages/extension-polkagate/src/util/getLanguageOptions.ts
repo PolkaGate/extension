@@ -20,7 +20,7 @@ export function getLanguageOptions(): LanguageOptions[] {
       value: 'en'
     },
     {
-      text: 'español',
+      text: 'Español',
       value: 'es'
     },
     {

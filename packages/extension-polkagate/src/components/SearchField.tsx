@@ -15,16 +15,16 @@ const StyledTextField = styled(TextField, { shouldForwardProp: (prop) => prop !=
       }
     },
     '&:hover': {
-      backgroundColor: '#2D1E4A',
+      backgroundColor: theme.palette.mode === 'dark' ? theme.palette.surface.selected : theme.palette.surface.hover,
       transition: 'all 150ms ease-out'
     },
     '&:hover fieldset': {
-      border: '1px solid #BEAAD833',
+      border: `1px solid ${theme.palette.border.input}`,
       transition: 'all 150ms ease-out',
       zIndex: 0
     },
-    backgroundColor: '#1B133C',
-    border: '1px solid #BEAAD833',
+    backgroundColor: theme.palette.surface.popover,
+    border: `1px solid ${theme.palette.border.input}`,
     borderRadius: '12px',
     color: theme.palette.text.secondary,
     height: height ?? '43px',
@@ -58,9 +58,14 @@ function SearchField({ focused = false, onInputChange, placeholder, placeholderS
     <Container disableGutters sx={style}>
       <StyledTextField
         autoComplete='off'
+        autoCorrect='off'
         autoFocus={focused}
         fullWidth
         height={style?.height as string}
+        inputProps={{
+          autoCapitalize: 'none',
+          spellCheck: false
+        }}
         onChange={onChange}
         placeholder={placeholder}
         placeholderStyle={placeholderStyle}

@@ -8,7 +8,7 @@ import type { Call } from '@polkadot/types/interfaces';
 import type { PalletStakingRewardDestination } from '@polkadot/types/lookup';
 import type { BN } from '@polkadot/util';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { toTitleCase } from '../../../../../util';
@@ -29,12 +29,15 @@ interface DefaultProps {
 }
 
 function DefaultCase({ info }: DefaultProps): React.ReactElement<DefaultProps> {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   return (
     <Stack columnGap='10px' direction='row' justifyContent='start'>
       <Typography color='#AA83DC' fontSize='13px' textTransform='uppercase' variant='B-2'>
         {info?.section}
       </Typography>
-      <Typography color='#EAEBF1' fontSize='13px' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '150px' }} variant='B-3'>
+      <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} fontSize='13px' sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width: '150px' }} variant='B-3'>
         {toTitleCase(info?.method)}
       </Typography>
     </Stack>

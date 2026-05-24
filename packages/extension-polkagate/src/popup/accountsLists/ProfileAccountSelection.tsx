@@ -4,10 +4,11 @@
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { ExpandMore } from '@mui/icons-material';
-import { Box, Collapse, Stack, Typography } from '@mui/material';
+import { Box, Collapse, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useProfileInfo from '@polkadot/extension-polkagate/src/fullscreen/home/useProfileInfo';
+import useIsDark from '@polkadot/extension-polkagate/src/hooks/useIsDark';
 
 import { GlowCheckbox, Identity } from '../../components';
 
@@ -21,10 +22,14 @@ interface Props {
 }
 
 function ProfileAccountSelection({ accounts, defaultProfile = '', label, maybeNewName, selectedAddresses, setSelectedAddresses }: Props): React.ReactElement {
+  const theme = useTheme();
+  const isDark = useIsDark();
   const profileInfo = useProfileInfo(label);
 
   const [openTab, setOpen] = useState<string>(defaultProfile);
   const isOpen = openTab === label;
+  const iconColor = isDark ? '#AA83DC' : profileInfo.color ?? '#745D8B';
+  const titleColor = isOpen ? iconColor : isDark ? '#EAEBF1' : '#2D1E4A';
 
   const allSelected = useMemo(() => {
     if (accounts.length === 0) {
@@ -73,14 +78,14 @@ function ProfileAccountSelection({ accounts, defaultProfile = '', label, maybeNe
   }, [accounts, setSelectedAddresses]);
 
   return (
-    <Stack alignItems='center' direction='column' justifyContent='start' sx={{ bgcolor: '#060518', borderRadius: '14px', mb: '7px', width: '100%' }}>
+    <Stack alignItems='center' direction='column' justifyContent='start' sx={{ bgcolor: isDark ? '#060518' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', boxShadow: isDark ? 'none' : '0 8px 24px rgba(75, 85, 139, 0.08)', mb: '7px', width: '100%' }}>
       <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ p: '10px 13px 10px 15px', width: '100%' }}>
         <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='start' onClick={onClick} sx={{ cursor: 'pointer', width: '90%' }}>
-          <profileInfo.Icon color='#AA83DC' size='18' variant='Bulk' />
-          <Typography color={isOpen ? '#AA83DC' : '#EAEBF1'} sx={{ maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis', textWrap: 'noWrap' }} variant='B-2'>
+          <profileInfo.Icon color={iconColor} size='18' variant='Bulk' />
+          <Typography color={titleColor} sx={{ maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis', textWrap: 'noWrap' }} variant='B-2'>
             {maybeNewName ?? label}
           </Typography>
-          <ExpandMore sx={{ color: '#AA83DC', fontSize: '23px', transform: isOpen ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out' }} />
+          <ExpandMore sx={{ color: iconColor, fontSize: '23px', transform: isOpen ? 'rotate(180deg)' : undefined, transition: 'all 250ms ease-out' }} />
         </Stack>
         <GlowCheckbox
           changeState={handleAllCheck}
@@ -88,19 +93,19 @@ function ProfileAccountSelection({ accounts, defaultProfile = '', label, maybeNe
           style={{ justifyContent: 'end', width: 'fit-content' }}
         />
       </Stack>
-      <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={isOpen} sx={{ bgcolor: '#222540A6', borderRadius: '10px', m: '0 3px 3px', width: 'fill-available' }}>
+      <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={isOpen} sx={{ bgcolor: isDark ? '#222540A6' : '#F0ECF8', borderRadius: '10px', m: '0 3px 3px', width: 'fill-available' }}>
         <Stack alignItems='center' direction='column'>
           {accounts.map(({ address, genesisHash }, index) => (
             <Stack direction='column' key={index} sx={{ width: '100%' }}>
               {!!index &&
-                <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '337' }} />
+                <Box sx={{ background: isDark ? theme.palette.dividerGradient : 'linear-gradient(90deg, rgba(116, 93, 139, 0.04) 0%, rgba(116, 93, 139, 0.16) 50.06%, rgba(116, 93, 139, 0.04) 100%)', height: '1px', width: '337' }} />
               }
               <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ p: '11px 17px 10px 20px' }}>
                 <Identity
                   address={address}
                   genesisHash={genesisHash ?? '' }
                   identiconSize={18}
-                  style={{ color: '#EAEBF1', variant: 'B-1', width: '90%' }}
+                  style={{ color: isDark ? '#EAEBF1' : '#2D1E4A', variant: 'B-1', width: '90%' }}
                 />
                 <GlowCheckbox
                   // eslint-disable-next-line react/jsx-no-bind

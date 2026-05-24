@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, type SxProps, type Theme } from '@mui/material';
+import { Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import { Data } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +17,8 @@ interface Props {
 
 function HasProxyOnHubIndicator({ address, style = {} }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const navigate = useNavigate();
 
   const paseoProxies = useProxies(PASEO_ASSET_HUB_GENESIS_HASH, address);
@@ -74,12 +76,12 @@ function HasProxyOnHubIndicator({ address, style = {} }: Props): React.ReactElem
 
   const containerStyle: SxProps<Theme> = {
     '&:hover': {
-      bgcolor: '#674394'
+      bgcolor: isDark ? '#674394' : '#EEF1FF'
     },
     alignItems: 'center',
-    bgcolor: '#05091C',
+    bgcolor: isDark ? '#05091C' : '#FFFFFF',
     border: '1px solid',
-    borderColor: '#1B133C',
+    borderColor: isDark ? '#1B133C' : '#E3E8F7',
     borderRadius: '12px',
     cursor: 'pointer',
     height: '40px',
@@ -101,7 +103,7 @@ function HasProxyOnHubIndicator({ address, style = {} }: Props): React.ReactElem
           })}
         >
           <Grid container item onClick={onClick} sx={containerStyle}>
-            <Data color='#AA83DC' size='20' variant='Bulk' />
+            <Data color={theme.palette.accent.highlight} size='20' variant='Bulk' />
           </Grid>
         </MyTooltip>
       }

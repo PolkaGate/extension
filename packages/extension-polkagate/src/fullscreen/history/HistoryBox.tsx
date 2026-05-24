@@ -3,7 +3,7 @@
 
 import type { TransactionDetail } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Container, Grid, Stack, Typography } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { memo, useRef } from 'react';
 
 import { useTranslation } from '../../hooks';
@@ -20,6 +20,8 @@ interface Props {
 
 function HistoryBox({ historyItems, isFetchingMore = false, notReady = false }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const refContainer = useRef<HTMLDivElement>(null);
   const hasHistoryItems = Boolean(historyItems?.length);
   const isLoading = !notReady && (historyItems === undefined || (!hasHistoryItems && isFetchingMore));
@@ -29,19 +31,19 @@ function HistoryBox({ historyItems, isFetchingMore = false, notReady = false }: 
   return (
     <Grid container item>
       <Stack columnGap='30px' direction='row' sx={{ height: '40px', padding: '10px 15px', width: '100%' }}>
-        <Typography color='#BEAAD8' sx={{ textAlign: 'left', width: COLUMN_WIDTH.ACTION }} variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : theme.palette.text.secondary} sx={{ textAlign: 'left', width: COLUMN_WIDTH.ACTION }} variant='B-1'>
           {t('Type')}
         </Typography>
-        <Typography color='#BEAAD8' sx={{ textAlign: 'left', width: COLUMN_WIDTH.SUB_ACTION }} variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : theme.palette.text.secondary} sx={{ textAlign: 'left', width: COLUMN_WIDTH.SUB_ACTION }} variant='B-1'>
           {t('Object info')}
         </Typography>
-        <Typography color='#BEAAD8' sx={{ textAlign: 'right', width: COLUMN_WIDTH.AMOUNT }} variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : theme.palette.text.secondary} sx={{ textAlign: 'right', width: COLUMN_WIDTH.AMOUNT }} variant='B-1'>
           {t('Amount')}
         </Typography>
-        <Typography color='#BEAAD8' sx={{ paddingLeft: '15px', textAlign: 'left', width: COLUMN_WIDTH.DATE }} variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : theme.palette.text.secondary} sx={{ paddingLeft: '15px', textAlign: 'left', width: COLUMN_WIDTH.DATE }} variant='B-1'>
           {t('Date')}
         </Typography>
-        <Typography color='#BEAAD8' sx={{ textAlign: 'left', width: COLUMN_WIDTH.STATUS }} variant='B-1'>
+        <Typography color={isDark ? '#BEAAD8' : theme.palette.text.secondary} sx={{ textAlign: 'left', width: COLUMN_WIDTH.STATUS }} variant='B-1'>
           {t('Status')}
         </Typography>
       </Stack>

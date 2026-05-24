@@ -3,7 +3,7 @@
 
 import type { AccountWithChildren } from '@polkadot/extension-base/background/types';
 
-import { Divider, Stack } from '@mui/material';
+import { Divider, Stack, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { motion } from 'framer-motion';
 import React, { useCallback } from 'react';
@@ -22,13 +22,19 @@ interface Props {
 }
 
 function AccountRowSimple({ account, handleSelect, isFirstAccount, isFirstProfile, isLast, isSelected, maybeSelected, onDoubleClick }: Props): React.ReactElement {
+  const theme = useTheme();
   const { address, type } = account ?? {};
+  const isDark = theme.palette.mode === 'dark';
+  const isActive = maybeSelected === address || (isSelected && !maybeSelected);
 
   const _onClick = useCallback(() => {
     handleSelect(address);
   }, [address, handleSelect]);
 
   const _genesisHash = type === 'ethereum' ? undefined : POLKADOT_GENESIS;
+  const rowBg = isDark ? '#05091C' : (isActive ? '#F3F6FD' : '#FFFFFF');
+  const rowBorderColor = isDark ? 'transparent' : (isActive ? '#E0E6F7' : '#DDE3F4');
+  const textColor = isActive ? theme.palette.text.primary : theme.palette.text.secondary;
 
   return (
     <motion.div
@@ -36,7 +42,7 @@ function AccountRowSimple({ account, handleSelect, isFirstAccount, isFirstProfil
       initial={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.4 }}
     >
-      <Stack alignItems='center' direction='row' justifyContent='space-between' onDoubleClick={onDoubleClick} sx={{ bgcolor: '#05091C', borderRadius: isLast ? '0 0 14px 14px' : '0px', minHeight: '40px', mt: isFirstProfile && isFirstAccount ? 0 : '2px', p: '5px 8px 5px 15px', position: 'relative', width: '100%' }}>
+      <Stack alignItems='center' direction='row' justifyContent='space-between' onDoubleClick={onDoubleClick} sx={{ bgcolor: rowBg, border: '1px solid', borderColor: rowBorderColor, borderRadius: isLast ? '0 0 14px 14px' : '0px', minHeight: '40px', mt: isFirstProfile && isFirstAccount ? 0 : '2px', p: '5px 8px 5px 15px', position: 'relative', width: '100%' }}>
         {
           isSelected &&
           <Divider orientation='vertical' sx={{ background: '#FF4FB9', borderRadius: '0 9px 9px 0', height: '24px', left: '1px', position: 'absolute', width: '3px' }} />
@@ -49,7 +55,7 @@ function AccountRowSimple({ account, handleSelect, isFirstAccount, isFirstProfil
             isSelected={maybeSelected === address || (isSelected && !maybeSelected)}
             name={account.name}
             showShortAddress
-            style={{ color: (isSelected) ? '#EAEBF1' : '#BEAAD8', variant: 'B-2' }}
+            style={{ color: textColor, variant: 'B-2' }}
           />
         </Stack>
       </Stack>

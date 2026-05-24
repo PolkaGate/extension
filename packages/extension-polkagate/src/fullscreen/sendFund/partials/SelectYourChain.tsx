@@ -3,7 +3,7 @@
 
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 import { toTitleCase } from '@polkadot/extension-polkagate/src/util/string';
@@ -23,6 +23,8 @@ interface Props {
 
 export default function SelectYourChain({ chainName, chainOptions, setSelectedChain, style = {}, withTitle = true }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [openChainList, setOpenChainList] = useState<boolean>(false);
 
@@ -42,7 +44,7 @@ export default function SelectYourChain({ chainName, chainOptions, setSelectedCh
           <Stack alignItems='center' direction='column' justifyContent='start' ml='7px' width='100%'>
             {
               withTitle &&
-              <Typography color='#AA83DC' sx={{ textAlign: 'left', width: '100%' }} variant='B-4'>
+              <Typography color={isDark ? '#AA83DC' : theme.palette.text.secondary} sx={{ textAlign: 'left', width: '100%' }} variant='B-4'>
                 {t('Network')}
               </Typography>
             }

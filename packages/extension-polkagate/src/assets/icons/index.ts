@@ -8,6 +8,7 @@ export { default as CometStar } from './CometStar.svg';
 export { default as CreatePoolIcon } from './CreatePoolIcon.svg';
 export { default as cubes } from './cubes.svg';
 export { default as emptyList } from './emptyList.svg';
+export { default as emptyListLight } from './emptyListLight.svg';
 export { default as EmptyWarning } from './EmptyWarning.svg';
 export { default as Gear } from './Gear.svg';
 export { default as JoinPoolIcon } from './JoinPoolIcon.svg';

@@ -7,7 +7,7 @@ import { AlignBottom } from 'iconsax-react';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CurrencyContext, FadeOnScrollHorizontal } from '../../../components';
-import { usePrices, useTranslation } from '../../../hooks';
+import { useIsDark, usePrices, useTranslation } from '../../../hooks';
 import { VelvetBox } from '../../../style';
 import resolveLogoInfo from '../../../util/logo/resolveLogoInfo';
 import TokenChart from '../../components/LineChart';
@@ -19,6 +19,7 @@ const ASSET_IN_A_ROW = 4;
 
 function TrendingAssets(): React.ReactElement {
   const { t } = useTranslation();
+  const isDark = useIsDark();
   const pricesInCurrencies = usePrices();
   const { currency } = useContext(CurrencyContext);
 
@@ -62,10 +63,10 @@ function TrendingAssets(): React.ReactElement {
 
   return (
     <VelvetBox style={{ margin: '0 8px', minHeight: '150px', overflow: 'hidden' }}>
-      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '45px', mb: '4px', px: '10px', width: '100%' }}>
-        <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#97949B26', borderRadius: '9px', height: '24px', px: '5px' }}>
-          <AlignBottom color='#97949B' size='18' variant='Bulk' />
-          <Typography color='#97949B' variant='B-2'>
+      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', height: '45px', mb: '4px', px: '10px', width: '100%' }}>
+        <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: isDark ? '#97949B26' : '#EEF2FB', borderRadius: '9px', height: '24px', px: '5px' }}>
+          <AlignBottom color={isDark ? '#97949B' : '#8F97B8'} size='18' variant='Bulk' />
+          <Typography color={isDark ? '#97949B' : '#8F97B8'} variant='B-2'>
             {t('Trending assets')}
           </Typography>
         </Stack>
@@ -97,7 +98,11 @@ function TrendingAssets(): React.ReactElement {
               );
             })}
         </motion.div>
-        <FadeOnScrollHorizontal containerRef={refContainer} style={{ height: refContainer.current?.offsetHeight }} width='130px' />
+        <FadeOnScrollHorizontal
+          containerRef={refContainer}
+          style={{ height: refContainer.current?.offsetHeight }}
+          width='130px'
+        />
       </Stack>
       {chartPriceId && currency?.code &&
         <TokenChart

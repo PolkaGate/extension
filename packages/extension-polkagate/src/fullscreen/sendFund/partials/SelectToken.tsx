@@ -4,7 +4,7 @@
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 import type { Inputs } from '../types';
 
-import { ClickAwayListener, Stack, Typography } from '@mui/material';
+import { ClickAwayListener, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import useUpdateAccountSelectedAsset from '@polkadot/extension-polkagate/src/hooks/useUpdateAccountSelectedAsset';
@@ -28,6 +28,8 @@ interface Props {
 
 export default function SelectToken({ accountAssets, address, assetId, genesisHash, inputs, setInputs }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [openTokenList, setOpenTokenList] = useState<boolean>(false);
@@ -78,7 +80,7 @@ export default function SelectToken({ accountAssets, address, assetId, genesisHa
               <Logo assetSize='36px' genesisHash={genesisHash} logo={logoInfo?.logo} token={asset?.token} />
             }
             <Stack alignItems='center' direction='column' justifyContent='start' ml='7px' width='80%'>
-              <Typography color='#AA83DC' sx={{ textAlign: 'left', width: '100%' }} variant='B-4'>
+              <Typography color={isDark ? '#AA83DC' : theme.palette.text.secondary} sx={{ textAlign: 'left', width: '100%' }} variant='B-4'>
                 {t('Token')}
               </Typography>
               <Typography sx={{ textAlign: 'left', width: '100%' }} variant='B-2'>

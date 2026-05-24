@@ -3,7 +3,7 @@
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
-import { Box, Container, Stack } from '@mui/material';
+import { Box, Container, Stack, useTheme } from '@mui/material';
 import { AddCircle, Trash } from 'iconsax-react';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -13,19 +13,21 @@ import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { ActionButton, ActionContext, FadeOnScroll, GradientButton, MyTooltip } from '../../components';
 import { AccountProfileLabel } from '../../fullscreen/components';
-import { useAccounts, useCategorizedAccountsInProfiles, useSelectedAccount, useTranslation } from '../../hooks';
+import { useAccounts, useCategorizedAccountsInProfiles, useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import AccountRow from './AccountRowSimple';
 import { PROFILE_MODE } from './type';
 
 function BackDrop({ setMode }: { setMode: React.Dispatch<React.SetStateAction<PROFILE_MODE>> }): React.ReactElement {
+  const theme = useTheme();
+
   return (
     <Box
       // eslint-disable-next-line react/jsx-no-bind
       onClick={() => setMode(PROFILE_MODE.NONE)}
       sx={{
         backdropFilter: 'blur(5px)',
-        background: 'radial-gradient(50% 44.61% at 50% 50%, rgba(12, 3, 28, 0) 0%, rgba(12, 3, 28, 0.7) 100%)', // semi-transparent dark
+        background: theme.palette.gradient.radialOverlay,
         bottom: 0,
         height: 'calc(100% - 95px)',
         left: 0,
@@ -48,6 +50,7 @@ interface Props {
 
 function BodySection({ mode, onApply, searchKeyword, setMode, setShowDeleteConfirmation }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const isDark = useIsDark();
   const flatAccounts = useAccounts();
   const onAction = useContext(ActionContext);
   const refContainer = useRef<HTMLDivElement>(null);
@@ -56,6 +59,7 @@ function BodySection({ mode, onApply, searchKeyword, setMode, setShowDeleteConfi
 
   const isInSettingMode = mode === PROFILE_MODE.SETTING_MODE;
   const isProfileDropDownOpen = mode === PROFILE_MODE.DROP_DOWN;
+  const profileHeaderBg = isDark ? '#05091C' : '#F7F8FF';
 
   const [categorizedAccounts, setCategorizedAccounts] = useState<Record<string, AccountJson[]>>({});
 
@@ -120,7 +124,7 @@ function BodySection({ mode, onApply, searchKeyword, setMode, setShowDeleteConfi
                         return (
                           <React.Fragment key={account.address}>
                             {isFirstAccount &&
-                              <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px 14px 0 0', marginTop: isFirstProfile ? 0 : '4px', minHeight: '40px', paddingRight: '10px', width: '100%' }}>
+                              <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: profileHeaderBg, borderRadius: '14px 14px 0 0', marginTop: isFirstProfile ? 0 : '4px', minHeight: '40px', paddingRight: '10px', width: '100%' }}>
                                 <AccountProfileLabel
                                   isInSettingMode={isInSettingMode}
                                   label={label}
@@ -128,7 +132,7 @@ function BodySection({ mode, onApply, searchKeyword, setMode, setShowDeleteConfi
                                 {
                                   isInSettingMode && notLocalProfile &&
                                   <MyTooltip content={t('Delete profile')}>
-                                    <Box onClick={onDeleteProfile(label)} sx={{ alignItems: 'center', bgcolor: '#FF165C26', borderRadius: '128px', cursor: 'pointer', display: 'flex', height: '24px', justifyContent: 'center', width: '34px' }}>
+                                    <Box onClick={onDeleteProfile(label)} sx={{ alignItems: 'center', bgcolor: isDark ? '#FF165C26' : '#FFE2EE', borderRadius: '128px', cursor: 'pointer', display: 'flex', height: '24px', justifyContent: 'center', width: '34px' }}>
                                       <Trash color='#FF165C' size='16' variant='Bulk' />
                                     </Box>
                                   </MyTooltip>
@@ -157,7 +161,7 @@ function BodySection({ mode, onApply, searchKeyword, setMode, setShowDeleteConfi
               text={t('Account Not Found')}
             />
           </Stack>
-          <FadeOnScroll containerRef={refContainer} height='30px' ratio={0.3} />
+          <FadeOnScroll containerRef={refContainer} height='30px' minScrollDistance={15} ratio={0.3} />
         </VelvetBox>
         {
           isInSettingMode

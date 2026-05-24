@@ -5,7 +5,7 @@ import { Tooltip, useTheme } from '@mui/material';
 import Zoom from '@mui/material/Zoom';
 import React from 'react';
 
-import { useIsBlueish } from '../hooks';
+import { useIsBlueish, useIsDark } from '../hooks';
 
 interface Props {
   color?: string;
@@ -28,8 +28,13 @@ interface Props {
 
 const MyTooltip = ({ children, color, content, notShow = false, placement = 'bottom' }: Props) => {
   const theme = useTheme();
+  const isDark = useIsDark();
   const isBlueish = useIsBlueish();
-  const _color = color || (isBlueish ? '#3D476A' : '#674394');
+  const tooltipColor = color || (isDark
+    ? (isBlueish ? '#3D476A' : '#674394')
+    : '#FFFFFF');
+  const textColor = isDark ? '#FFFFFF' : theme.palette.text.primary;
+  const borderColor = isDark ? 'transparent' : '#DADFF1';
 
   return (
     <Tooltip
@@ -40,12 +45,15 @@ const MyTooltip = ({ children, color, content, notShow = false, placement = 'bot
           style: { margin: '5px', marginTop: '12px' },
           sx: {
             '& .MuiTooltip-arrow': {
-              color: _color,
+              color: tooltipColor,
               height: '9px'
             },
-            backgroundColor: _color,
+            backgroundColor: tooltipColor,
+            border: '1px solid',
+            borderColor,
+            boxShadow: isDark ? 'none' : '0px 8px 24px rgba(125, 129, 173, 0.18)',
             borderRadius: '8px',
-            color: '#fff',
+            color: textColor,
             ...theme.typography['B-4'],
             p: '8px'
           }

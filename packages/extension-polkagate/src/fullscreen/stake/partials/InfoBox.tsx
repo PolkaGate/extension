@@ -27,15 +27,17 @@ export const InfoBox = ({ Amount, InfoIcon, decimal, genesisHash, label, style, 
   const { token } = useChainInfo(genesisHash, true);
   const isExtension = useIsExtensionPopup();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const accentColor = isDark ? '#AA83DC' : theme.palette.text.highlight;
 
   const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
   return (
-    <Box sx={{ alignItems: 'center', bgcolor: '#05091C', borderRadius: '14px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', p: '17px 24px', pr: '15px', rowGap: isExtension ? '6px' : 0, width: '154px', ...style }}>
+    <Box sx={{ alignItems: 'center', bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', p: '17px 24px', pr: '15px', rowGap: isExtension ? '6px' : 0, width: '154px', ...style }}>
       <Grid alignItems='center' container gap='6px' item>
         {
           InfoIcon &&
-          <InfoIcon color='#AA83DC' size='24' variant='Bulk' />
+          <InfoIcon color={accentColor} size='24' variant='Bulk' />
         }
         {
           logoInfo &&
@@ -60,7 +62,7 @@ export const InfoBox = ({ Amount, InfoIcon, decimal, genesisHash, label, style, 
             ))
         }
       </Grid>
-      <Typography color='#AA83DC' textAlign='left' variant='B-4' width='100%'>
+      <Typography color={accentColor} textAlign='left' variant='B-4' width='100%'>
         {label}
       </Typography>
     </Box>

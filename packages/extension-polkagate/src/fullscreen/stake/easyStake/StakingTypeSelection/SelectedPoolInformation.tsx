@@ -24,14 +24,17 @@ interface SelectedPoolInformationProps {
 export const SelectedPoolInformation = ({ genesisHash, isExtension, onClick, open, poolDetail }: SelectedPoolInformationProps) => {
   const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const isDark = theme.palette.mode === 'dark';
 
-  const textColor = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
+  const textColor = useMemo(() => isExtension ? (isDark ? theme.palette.text.highlight : '#745D8B') : '#AA83DC', [isDark, isExtension, theme.palette.text.highlight]);
+  const rowBg = isDark ? '#1B133C' : '#F1ECFA';
+  const actionBg = isDark ? '#2D1E4A' : '#E4D9F2';
 
   return (
     <Collapse in={open}>
       {poolDetail
         ? (
-          <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: '#1B133C', borderRadius: '10px', cursor: 'pointer', display: 'flex', flexDirection: 'row', p: '2px', pl: '16px' }}>
+          <Container disableGutters onClick={onClick} sx={{ alignItems: 'center', bgcolor: rowBg, borderRadius: '10px', cursor: 'pointer', display: 'flex', flexDirection: 'row', p: '2px', pl: '16px' }}>
             <PoolIdenticon
               poolInfo={poolDetail}
               size={24}
@@ -52,7 +55,7 @@ export const SelectedPoolInformation = ({ genesisHash, isExtension, onClick, ope
                 token={token}
               />
             </Stack>
-            <Grid container item sx={{ bgcolor: '#2D1E4A', borderRadius: '6px', p: '20px 10px', width: 'fit-content' }}>
+            <Grid container item sx={{ bgcolor: actionBg, borderRadius: '6px', p: '20px 10px', width: 'fit-content' }}>
               <ArrowRight2 color={textColor} size='18' variant='Bold' />
             </Grid>
           </Container>)

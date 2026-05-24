@@ -41,7 +41,7 @@ export default function ManualLedgerImport({ accountIndex, address, addressOffse
     <Grid container item sx={{ mt: '15px', ...style }}>
       <Grid container item justifyContent='space-between'>
         <Grid item md={5.5} xs={12}>
-          <Typography color='#EAEBF1' variant='B-1'>
+          <Typography color='text.secondary' variant='B-1'>
             {t('Account index')}
           </Typography>
           <DropSelect
@@ -56,7 +56,7 @@ export default function ManualLedgerImport({ accountIndex, address, addressOffse
           />
         </Grid>
         <Grid item md={5.5} xs={12}>
-          <Typography color='#EAEBF1' variant='B-1'>
+          <Typography color='text.secondary' variant='B-1'>
             {t('Address offset')}
           </Typography>
           <DropSelect

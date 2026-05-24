@@ -5,7 +5,7 @@ import type { Teleport } from '@polkadot/extension-polkagate/src/hooks/useTelepo
 import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 import type { Inputs } from './types';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { NATIVE_TOKEN_ASSET_ID, NATIVE_TOKEN_ASSET_ID_ON_ASSETHUB } from '@polkadot/extension-polkagate/src/util/constants';
@@ -29,6 +29,8 @@ interface Props {
 
 export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs, teleportState }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { chainName } = useChainInfo(genesisHash, true);
 
   const [selectedChain, setSelectedChain] = useState<DropdownOption>({ text: inputs?.recipientChain?.text ?? chainName ?? '', value: inputs?.recipientChain?.value ?? genesisHash ?? '' });
@@ -89,7 +91,7 @@ export default function Step2Recipient({ assetId, genesisHash, inputs, setInputs
           inputs={inputs}
           setInputs={setInputs}
         />
-        <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '108px', p: '15px', width: '379px' }}>
+        <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? 'transparent' : '#DDE3F4', borderRadius: '14px', boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)', height: '108px', p: '15px', width: '379px' }}>
           <NumberedTitle
             number={2}
             textPartInColor={t('recipient')}

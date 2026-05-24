@@ -3,7 +3,7 @@
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
-import { Container, Stack } from '@mui/material';
+import { Container, Stack, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
@@ -29,6 +29,7 @@ interface ChooseAccountMenuProps {
 
 export default function AccountListModal({ genesisHash, handleClose, isSelectedAccountApplicable, onApply, open, setAddress, showAddressBook, showAll }: ChooseAccountMenuProps): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const selectedAccount = useSelectedAccount();
   const selectedAccountChain = useAccountSelectedChain(selectedAccount?.address);
   const refContainer = useRef<HTMLDivElement>(null);
@@ -44,6 +45,9 @@ export default function AccountListModal({ genesisHash, handleClose, isSelectedA
   const [searchKeyword, setSearchKeyword] = useState<string>();
 
   const formatted = useFormatted(maybeSelected, genesisHash);
+  const isDark = theme.palette.mode === 'dark';
+  const modalBg = isDark ? '#1B133C' : theme.palette.background.paper;
+  const profileHeaderBg = isDark ? '#05091C' : '#F7F8FF';
 
   const _handleClose = useCallback(() => {
     setMayBeSelected(undefined);
@@ -98,16 +102,18 @@ export default function AccountListModal({ genesisHash, handleClose, isSelectedA
     }, {} as Record<string, AccountJson[]>);
   }, [categorizedAccounts, searchKeyword]);
 
+  const hasFilteredAccounts = Object.keys(filteredCategorizedAccounts).length > 0;
+
   return (
     <DraggableModal
       closeOnAnyWhereClick
       onClose={_handleClose}
       open={open}
       showBackIconAsClose
-      style={{ backgroundColor: '#1B133C', minHeight: '600px', padding: ' 20px 10px 10px' }}
+      style={{ backgroundColor: modalBg, borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', minHeight: '600px', padding: ' 20px 10px 10px' }}
       title={t('Select account')}
     >
-      <Container disableGutters sx={{ display: 'block', height: '505px', mt: '10px', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
+      <Container disableGutters sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100% - 20px)', minHeight: '505px', mt: '10px', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
         <SearchField
           onInputChange={onSearch}
           placeholder={t('🔍 Search accounts')}
@@ -117,10 +123,27 @@ export default function AccountListModal({ genesisHash, handleClose, isSelectedA
           showAddressBook={showAddressBook}
           width='99%'
         />
-        <VelvetBox style={{ margin: '5px 0 15px' }}>
-          <Stack ref={refContainer} style={{ maxHeight: '345px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
+        <VelvetBox
+          noGlowBall={!isDark}
+          style={{
+            flex: 1,
+            height: hasFilteredAccounts ? undefined : 'calc(100% - 105px)',
+            margin: '5px 0 15px'
+          }}
+        >
+          <Stack
+            ref={refContainer}
+            style={{
+              height: hasFilteredAccounts ? undefined : '100%',
+              maxHeight: hasFilteredAccounts ? '345px' : undefined,
+              minHeight: hasFilteredAccounts ? '88px' : '100%',
+              overflow: 'hidden',
+              overflowY: 'auto',
+              position: 'relative'
+            }}
+          >
             {
-              Object.keys(filteredCategorizedAccounts).length > 0
+              hasFilteredAccounts
                 ? <>
                   {Object.entries(filteredCategorizedAccounts).map(([label, accounts], profileIndex) => {
                     return (
@@ -139,7 +162,7 @@ export default function AccountListModal({ genesisHash, handleClose, isSelectedA
                           return (
                             <React.Fragment key={account.address}>
                               {isFirstAccount &&
-                                <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: '#05091C', borderRadius: '14px 14px 0 0', marginTop: isFirstProfile ? 0 : '4px', minHeight: '40px', paddingRight: '10px', width: '100%' }}>
+                                <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ bgcolor: profileHeaderBg, borderRadius: '14px 14px 0 0', marginTop: isFirstProfile ? 0 : '4px', minHeight: '40px', paddingRight: '10px', width: '100%' }}>
                                   <AccountProfileLabel
                                     label={label}
                                   />
@@ -163,8 +186,11 @@ export default function AccountListModal({ genesisHash, handleClose, isSelectedA
                   })}
                 </>
                 : <NothingFound
+                  animationStyle={{
+                    filter: isDark ? undefined : 'saturate(0.7) brightness(1.15)'
+                  }}
                   show
-                  style={{ pt: '90px' }}
+                  style={{ height: '100%', pt: 0 }}
                   text={t('Account Not Found')}
                 />
             }
@@ -172,7 +198,7 @@ export default function AccountListModal({ genesisHash, handleClose, isSelectedA
           <FadeOnScroll containerRef={refContainer} height='15px' ratio={0.3} />
         </VelvetBox>
         {
-          !!Object.keys(filteredCategorizedAccounts).length &&
+          hasFilteredAccounts &&
           <GradientButton
             contentPlacement='center'
             disabled={!maybeSelected}

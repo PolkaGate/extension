@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Add } from '@mui/icons-material';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { Setting2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +16,8 @@ import { DraggableModal } from '../components/DraggableModal';
 
 function AccountsAdd(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const navigate = useNavigate();
   const { isHovered, ref } = useIsHovered();
 
@@ -30,14 +32,14 @@ function AccountsAdd(): React.ReactElement {
     <>
       <Stack alignItems='center' direction='row' justifyContent='Space-between' sx={{}}>
         <Stack alignItems='center' direction='row' justifyContent='flex-start' sx={{ ml: '10px' }}>
-          <Typography color='#EAEBF1' sx={{ userSelect: 'none' }} textTransform='uppercase' variant='H-2'>
+          <Typography color='text.primary' sx={{ userSelect: 'none' }} textTransform='uppercase' variant='H-2'>
             {t('Accounts')}
           </Typography>
           <Box
             onClick={onClick}
             ref={ref}
             sx={{
-              background: isHovered ? '#6E00B1' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+              background: isHovered ? '#6E00B1' : theme.palette.gradient.brand,
               borderRadius: '50%',
               cursor: 'pointer',
               display: 'inline-flex',
@@ -49,7 +51,7 @@ function AccountsAdd(): React.ReactElement {
             <Box
               sx={{
                 alignItems: 'center',
-                background: isHovered ? '#6E00B1' : 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+                background: isHovered ? '#6E00B1' : theme.palette.gradient.brand,
                 borderRadius: '50%',
                 color: '#FFFFFF',
                 display: 'flex',
@@ -63,7 +65,7 @@ function AccountsAdd(): React.ReactElement {
             </Box>
           </Box>
         </Stack>
-        <Setting2 color='#AA83DC' onClick={onActionClick} size='24' style={{ cursor: 'pointer' }} variant='Bulk' />
+        <Setting2 color={isDark ? '#AA83DC' : theme.palette.text.secondary} onClick={onActionClick} size='24' style={{ cursor: 'pointer' }} variant='Bulk' />
       </Stack>
       {openModal &&
         <DraggableModal

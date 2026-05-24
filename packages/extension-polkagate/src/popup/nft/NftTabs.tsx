@@ -1,8 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
-import { Container, Tab, Tabs, Typography } from '@mui/material';
+import { Container, Tab, Tabs, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useMemo } from 'react';
 
 import { useTranslation } from '../../hooks';
@@ -32,6 +31,7 @@ interface Props {
 
 function NftTabs({ setTab, tab }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const tabIndex = useMemo(() => !tab ? TAB.DETAILS : tab, [tab]);
 
   const handleTabChange = useCallback((_event: React.SyntheticEvent<Element, Event>, value: TAB) => {
@@ -47,7 +47,7 @@ function NftTabs({ setTab, tab }: Props): React.ReactElement {
             columnGap: '20px'
           },
           '& span.MuiTabs-indicator': {
-            background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+            background: theme.palette.gradient.brand,
             borderRadius: '999px',
             height: '2px'
           },

@@ -7,7 +7,7 @@ import React from 'react';
 import { DisplayAmount } from '@polkadot/extension-polkagate/src/partials';
 
 import { SignArea3 } from '../../../../../components';
-import { useChainInfo, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../../../hooks';
+import { useChainInfo, useIsDark, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../../../hooks';
 import { ContentItem, type ReviewProps } from '../../../../../partials/Review';
 import RestakeRewardToggler, { type RestakeRewardTogglerProps } from './RestakeRewardToggler';
 
@@ -23,15 +23,17 @@ export const RewardHeaderAmount = ({ amount, genesisHash, style = {}, title, tok
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
+  const isDark = useIsDark();
+  const accentColor = isExtension ? (isDark ? theme.palette.text.highlight : '#745E9F') : '#AA83DC';
 
   return (
     <Stack sx={{ alignItems: 'center', ...style }}>
-      <Typography color={isExtension ? theme.palette.text.highlight : '#AA83DC'} variant='B-2'>
+      <Typography color={accentColor} variant='B-2'>
         {title || t('Claim Rewards')}
       </Typography>
       <DisplayAmount
         amount={amount}
-        differentValueColor={isExtension ? theme.palette.text.highlight : '#AA83DC'}
+        differentValueColor={accentColor}
         genesisHash={genesisHash}
         isExtension={isExtension}
         token={token}
@@ -45,8 +47,10 @@ interface Props extends ReviewProps, RestakeRewardTogglerProps {
 }
 
 export default function Review({ amount, closeReview, genesisHash, proxyTypeFilter, restake, selectedProxy, setFlowStep, setRestake, setSelectedProxy, setShowProxySelection, setTxInfo, showProxySelection, transaction, transactionInformation }: Props): React.ReactElement {
+  const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const selectedAccount = useSelectedAccount();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Stack direction='column' sx={{ height: '515px', p: '15px', position: 'relative', py: 0, width: '100%', zIndex: 1 }}>
@@ -55,7 +59,24 @@ export default function Review({ amount, closeReview, genesisHash, proxyTypeFilt
         genesisHash={genesisHash}
         token={token}
       />
-      <Grid container item sx={{ bgcolor: '#05091C', borderRadius: '14px', flexDirection: 'column', gap: '7px', maxHeight: '190px', mt: '20px', overflow: 'hidden', overflowY: 'auto', padding: '15px', width: '100%' }}>
+      <Grid
+        container
+        item
+        sx={{
+          bgcolor: isDark ? '#05091C' : '#FFFFFF',
+          border: isDark ? 'none' : '1px solid #DDE3F4',
+          borderRadius: '14px',
+          boxShadow: isDark ? 'none' : '0 14px 28px rgba(133, 140, 176, 0.12)',
+          flexDirection: 'column',
+          gap: '7px',
+          maxHeight: '190px',
+          mt: '20px',
+          overflow: 'hidden',
+          overflowY: 'auto',
+          padding: '15px',
+          width: '100%'
+        }}
+      >
         {transactionInformation.map(({ Icon, content, description, itemKey, title, warningText, withLogo }, index) => (
           <ContentItem
             Icon={Icon}

@@ -24,10 +24,11 @@ import Tiles from '../Tiles';
 const Back = () => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <>
-      <People color={theme.palette.text.highlight} size='24' variant='Bulk' />
+      <People color={isDark ? theme.palette.text.highlight : '#8C78B2'} size='24' variant='Bulk' />
       <Typography sx={{ fontFamily: 'OdibeeSans', fontSize: '24px', fontWeight: '400', lineHeight: '26px', textTransform: 'uppercase' }}>
         {t('pool staking')}
       </Typography>

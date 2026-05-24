@@ -13,7 +13,7 @@ import React, { type CSSProperties, memo, useMemo } from 'react';
 
 import { formatBalance } from '@polkadot/util';
 
-import { useChainInfo, useIsDark, useIsHideNumbers } from '../hooks';
+import { useChainInfo, useIsHideNumbers } from '../hooks';
 import { amountToHuman, shouldUseSi, toBN } from '../util';
 import { Dots, MySkeleton } from '.';
 
@@ -78,7 +78,6 @@ interface DisplayBalanceProps {
  * `decimalPoint`/`formatAdaptive`.
  */
 function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dotStyle, genesisHash, skeletonStyle, style, token, tokenColor, useAdaptiveDecimalPoint, withCurrency = true, withSi = true }: DisplayBalanceProps) {
-  const isDark = useIsDark();
   const theme = useTheme();
   const { isHideNumbers } = useIsHideNumbers();
 
@@ -94,16 +93,14 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
 
   const maybeToken = withCurrency ? resolvedToken : '';
   const isLoading =
-    balance === undefined ||
-    balance === null ||
-    resolvedDecimal === undefined ||
-    resolvedDecimal === null ||
-    (withCurrency && (resolvedToken === undefined || resolvedToken === null));
+    balance == null ||
+    resolvedDecimal == null ||
+    (withCurrency && resolvedToken == null);
 
   if (isLoading) {
     return (
       <MySkeleton
-        bgcolor={isDark ? '#946CC826' : '#99A1C459'}
+        bgcolor={theme.palette.skeleton.muted}
         height={15}
         style={skeletonStyle}
         width={90}
@@ -135,8 +132,7 @@ function DisplayBalance({ api, balance, decimal, decimalColor, decimalPoint, dot
         {isHideNumbers
           ? (
             <Dots
-              // @ts-ignore
-              color={style?.color as string || tokenColor}
+              color={typeof style?.color === 'string' ? style.color : tokenColor}
               decimalColor={decimalColor}
               variant={dotStyle}
             />

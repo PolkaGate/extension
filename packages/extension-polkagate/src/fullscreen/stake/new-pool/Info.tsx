@@ -20,6 +20,7 @@ interface Props {
 
 export default function Info({ genesisHash, onClose, stakingInfo }: Props): React.ReactElement {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { t } = useTranslation();
   const { decimal } = useChainInfo(genesisHash, true);
 
@@ -46,19 +47,43 @@ export default function Info({ genesisHash, onClose, stakingInfo }: Props): Reac
             value={stat.value}
           />
         ))}
-        <Stack direction='column' sx={{ alignItems: 'flex-start', bgcolor: '#05091C', borderRadius: '14px', gap: '6px', p: '12px', width: '100%' }}>
-          <Typography color={theme.palette.primary.main} variant='B-4' width='fit-content'>
+        <Stack
+          direction='column'
+          sx={{
+            alignItems: 'flex-start',
+            bgcolor: isDark ? '#05091C' : '#FFFFFF',
+            border: isDark ? 'none' : '1px solid #DDE3F4',
+            borderRadius: '14px',
+            boxShadow: isDark ? 'none' : '0 8px 24px rgba(108, 76, 158, 0.08)',
+            gap: '6px',
+            p: '12px',
+            width: '100%'
+          }}
+        >
+          <Typography color={isDark ? theme.palette.primary.main : theme.palette.text.highlight} variant='B-4' width='fit-content'>
             {t('To leave a pool as a member')}:
           </Typography>
-          <Typography color={theme.palette.text.primary} pl='20px' variant='B-4'>
+          <Typography color='text.primary' pl='20px' variant='B-4'>
             {t('Unstake, wait for unstaking, then redeem')}.
           </Typography>
         </Stack>
-        <Stack direction='column' sx={{ alignItems: 'flex-start', bgcolor: '#05091C', borderRadius: '14px', gap: '6px', p: '12px', width: '100%' }}>
-          <Typography color={theme.palette.primary.main} variant='B-4' width='fit-content'>
+        <Stack
+          direction='column'
+          sx={{
+            alignItems: 'flex-start',
+            bgcolor: isDark ? '#05091C' : '#FFFFFF',
+            border: isDark ? 'none' : '1px solid #DDE3F4',
+            borderRadius: '14px',
+            boxShadow: isDark ? 'none' : '0 8px 24px rgba(108, 76, 158, 0.08)',
+            gap: '6px',
+            p: '12px',
+            width: '100%'
+          }}
+        >
+          <Typography color={isDark ? theme.palette.primary.main : theme.palette.text.highlight} variant='B-4' width='fit-content'>
             {t('To leave a pool as an owner')}:
           </Typography>
-          <Typography color={theme.palette.text.primary} pl='20px' variant='B-4'>
+          <Typography color='text.primary' pl='20px' variant='B-4'>
             {t('Destroy pool, remove all, then leave as member')}.
           </Typography>
         </Stack>

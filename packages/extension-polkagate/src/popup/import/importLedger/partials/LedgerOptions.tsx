@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Menu, More2, Refresh, Warning2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
@@ -17,6 +17,8 @@ interface Props {
 
 export default function LedgerOptions({ setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [hoveredMode, setHoveredMode] = useState<number>();
 
@@ -33,7 +35,7 @@ export default function LedgerOptions({ setMode }: Props): React.ReactElement {
         labelPartInColor={t('ledger device')}
         url='/account/have-wallet'
       />
-      <Typography color='#BEAAD8' py='20px' textAlign='left' variant='B-1' width='100%'>
+      <Typography color='text.secondary' py='20px' textAlign='left' variant='B-1' width='100%'>
         {t('Choose the type of Ledger connection. The Polkadot Generic app is new and recommended. However, if you already have assets on a Ledger device for chains other than Polkadot and its asset hub, you can use the Ledger Legacy apps. In this case, you will need to migrate your assets to the Polkadot Generic app using the Migration app, provided that your desired chain has upgraded its runtime and is compatible with the Polkadot Generic app.')}
       </Typography>
       <Grid columnGap='10px' container item rowGap='10px' sx={{ flexWrap: 'nowrap', mb: '20px', mt: '10px' }}>
@@ -62,7 +64,7 @@ export default function LedgerOptions({ setMode }: Props): React.ReactElement {
       {hoveredMode === MODE.GENERIC &&
         <Stack columnGap='10px' direction='row' sx={{ pt: '30px' }}>
           <More2 color='#FF4FB9' size='18' variant='TwoTone' />
-          <Typography color='#EAEBF1' textAlign='left' variant='B-2' width='100%'>
+          <Typography color='text.secondary' textAlign='left' variant='B-2' width='100%'>
             {t('It can be used with all supported Polkadot chains and parachains.')}
           </Typography>
         </Stack>
@@ -70,7 +72,7 @@ export default function LedgerOptions({ setMode }: Props): React.ReactElement {
       {hoveredMode === MODE.MIGRATION &&
         <Stack columnGap='10px' direction='row' sx={{ pt: '30px' }}>
           <Refresh color='#FF4FB9' size='18' variant='TwoTone' />
-          <Typography color='#EAEBF1' textAlign='left' variant='B-2' width='100%'>
+          <Typography color='text.secondary' textAlign='left' variant='B-2' width='100%'>
             {t('Migrate your accounts from the Legacy apps to the Polkadot Generic app.')}
           </Typography>
         </Stack>
@@ -78,14 +80,14 @@ export default function LedgerOptions({ setMode }: Props): React.ReactElement {
       {hoveredMode === MODE.LEGACY &&
         <Stack columnGap='10px' direction='row' sx={{ pt: '30px' }}>
           <Menu color='#FF4FB9' size='18' variant='TwoTone' />
-          <Typography color='#EAEBF1' textAlign='left' variant='B-2' width='100%'>
+          <Typography color='text.secondary' textAlign='left' variant='B-2' width='100%'>
             {t('Each chain and parachain may have a dedicated app on the Ledger device, but this is now deprecated as chains upgrade to align with the Polkadot generic app.')}
           </Typography>
         </Stack>
       }
       <Stack alignItems='center' columnGap='10px' direction='row' sx={{ bottom: '0', position: 'absolute', pt: '30px' }}>
-        <Warning2 color='#AA83DC' size='24' variant='Bold' />
-        <Typography color='#AA83DC' textAlign='left' variant='B-4'>
+        <Warning2 color={isDark ? '#AA83DC' : '#7A69A8'} size='24' variant='Bold' />
+        <Typography color={isDark ? '#AA83DC' : '#7A69A8'} textAlign='left' variant='B-4'>
           {t('To find out if your chain is upgraded, check: ')}
           <a
             href={METADATA_DASHBOARD}

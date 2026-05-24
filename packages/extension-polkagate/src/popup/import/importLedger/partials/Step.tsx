@@ -14,16 +14,17 @@ interface Props {
 
 export default function Step({ num, text, textPartInColor }: Props): React.ReactElement {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Stack direction='row' sx={{ mb: '10px' }}>
-      <Typography color='#EAEBF1' sx={{ bgcolor: '#674394', borderRadius: '50%', display: 'inline-block', height: '18px', width: '18px', mr: '5px' }} variant='B-1'>
+      <Typography color={isDark ? '#EAEBF1' : '#FFFFFF'} sx={{ bgcolor: isDark ? '#674394' : '#7A69A8', borderRadius: '50%', display: 'inline-block', height: '18px', width: '18px', mr: '5px' }} variant='B-1'>
         {num}
       </Typography>
-      <Typography color='#EAEBF1' sx={{ textAlign: 'left', width: 'fit-content' }} variant='B-1'>
+      <Typography color='text.secondary' sx={{ textAlign: 'left', width: 'fit-content' }} variant='B-1'>
         <TwoToneText
-          backgroundColor='#67439459'
-          color={theme.palette.primary.main}
+          backgroundColor={isDark ? '#67439459' : '#EEF2FB'}
+          color={isDark ? theme.palette.primary.main : '#5B4D82'}
           text={text}
           textPartInColor={textPartInColor}
         />

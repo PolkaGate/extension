@@ -1,14 +1,14 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { AddCircle, Setting2 } from 'iconsax-react';
 import React, { memo, useCallback } from 'react';
 
 import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { MyTooltip } from '../../components';
-import { useSelectedProfile, useTranslation } from '../../hooks';
+import { useIsDark, useSelectedProfile, useTranslation } from '../../hooks';
 import { PROFILE_MODE } from './type';
 
 interface Props {
@@ -19,6 +19,8 @@ interface Props {
 
 function ProfileActionButton({ isExtension, isInSettingMode, setMode }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = useIsDark();
   const selectedProfile = useSelectedProfile();
 
   const disabledSettings = selectedProfile === PROFILE_TAGS.LOCAL; // Do not let users to remove or edit the local profile
@@ -38,8 +40,8 @@ function ProfileActionButton({ isExtension, isInSettingMode, setMode }: Props): 
 
   return (
     <MyTooltip content={isInSettingMode ? t('Add profile') : t('Profile settings')}>
-      <Box alignItems='center' justifyContent='center' onClick={onActionClick} sx={{ '&:hover': { backgroundColor: '#674394' }, bgcolor: '#BFA1FF26', borderRadius: '12px', cursor: disabledSettings ? 'not-allowed' : 'pointer', display: 'flex', height: '32px', width: '32px', ...fsStyle }}>
-        <ActionIcon color={disabledSettings ? '#BFA1FF26' : '#AA83DC'} size='18px' variant={isInSettingMode ? 'Bold' : 'Bulk'} />
+      <Box alignItems='center' justifyContent='center' onClick={onActionClick} sx={{ '&:hover': { backgroundColor: isDark ? '#674394' : '#F4F6FF' }, bgcolor: isDark ? '#BFA1FF26' : '#FFFFFF8C', borderRadius: '12px', cursor: disabledSettings ? 'not-allowed' : 'pointer', display: 'flex', height: '32px', width: '32px', ...fsStyle }}>
+        <ActionIcon color={disabledSettings ? theme.palette.action.disabledBackground : isDark ? '#AA83DC' : theme.palette.primary.main} size='18px' variant={isInSettingMode ? 'Bold' : 'Bulk'} />
       </Box>
     </MyTooltip>
   );

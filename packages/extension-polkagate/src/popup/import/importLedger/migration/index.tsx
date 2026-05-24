@@ -103,7 +103,7 @@ export default function MigrationApp({ setMode }: Props): React.ReactElement {
       />
       <Steps />
       <Grid container item justifyContent='space-between' mb='25px' mt='10px'>
-        <Typography color='#EAEBF1' variant='B-1'>
+        <Typography color='text.secondary' variant='B-1'>
           {t('Select the chain')}
         </Typography>
         <DropSelect

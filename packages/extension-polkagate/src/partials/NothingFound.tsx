@@ -9,13 +9,14 @@ import { emptyState } from '../assets/animations';
 import { useIsBlueish, useTranslation } from '../hooks';
 
 interface Props {
+  animationStyle?: React.CSSProperties;
   text?: string;
   show: boolean;
   style?: SxProps<Theme>;
   size?: number;
 }
 
-function NothingFound({ show = false, size = 150, style = {}, text }: Props) {
+function NothingFound({ animationStyle = {}, show = false, size = 150, style = {}, text }: Props) {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
 
@@ -25,7 +26,7 @@ function NothingFound({ show = false, size = 150, style = {}, text }: Props) {
 
   return (
     <Stack direction='column' sx={{ alignItems: 'center', justifyContent: 'center', py: '20px', width: '100%', ...style }}>
-      <DotLottieReact autoplay loop src={emptyState as string} style={{ height: size, width: size }} />
+      <DotLottieReact autoplay loop src={emptyState as string} style={{ height: size, width: size, ...animationStyle }} />
       <Typography color={isBlueish ? 'text.highlight' : 'text.primary'} variant='B-2'>
         {text ?? t('Nothing Found')}
       </Typography>

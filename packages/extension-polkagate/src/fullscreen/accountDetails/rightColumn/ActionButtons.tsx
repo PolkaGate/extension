@@ -3,7 +3,7 @@
 
 import type { Icon } from 'iconsax-react';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown2, ArrowCircleRight2, BuyCrypto, Record, Triangle } from 'iconsax-react';
 import React, { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +27,13 @@ interface ActionBoxProps {
 
 function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactElement {
   const navigate = useNavigate();
- const { isHovered, ref } = useIsHovered();
+  const theme = useTheme();
+  const { isHovered, ref } = useIsHovered();
+  const isDark = theme.palette.mode === 'dark';
+  const bgColor = isDark ? '#05091C' : '#FFFFFF';
+  const hoverBgColor = isDark ? '#2D1E4A' : '#F3F6FD';
+  const borderColor = isDark ? 'transparent' : '#E4EAF8';
+  const iconColor = isDark ? '#AA83DC' : theme.palette.text.secondary;
 
   const _onClick = useCallback(() => {
     onClick
@@ -36,8 +42,8 @@ function ActionBox({ Icon, label, onClick, path }: ActionBoxProps): React.ReactE
   }, [navigate, onClick, path]);
 
   return (
-    <Stack direction='column' justifyContent='start' onClick={_onClick} ref={ref} rowGap='7px' sx={{ '&:hover': { bgcolor: '#2D1E4A', transform: 'translateY(-4px)' }, bgcolor: '#05091C', borderRadius: '14px', cursor: 'pointer', height: '100%', minWidth: '90px', px: '10px', transition: 'all 250ms ease-out', width: '100%' }}>
-      <Icon color='#AA83DC' size='24' style={{ marginTop: '20px' }} variant={isHovered ? 'Bold' : 'Bulk'}  />
+    <Stack direction='column' justifyContent='start' onClick={_onClick} ref={ref} rowGap='7px' sx={{ '&:hover': { bgcolor: hoverBgColor, transform: 'translateY(-4px)' }, bgcolor: bgColor, border: '1px solid', borderColor, borderRadius: '14px', cursor: 'pointer', height: '100%', minWidth: '90px', px: '10px', transition: 'all 250ms ease-out', width: '100%' }}>
+      <Icon color={iconColor} size='24' style={{ marginTop: '20px' }} variant={isHovered ? 'Bold' : 'Bulk'}  />
       <Typography sx={{ display: 'flex', fontWeight: 700, whiteSpace: 'nowrap', width: '100%' }} variant='B-2'>
         {label}
       </Typography>

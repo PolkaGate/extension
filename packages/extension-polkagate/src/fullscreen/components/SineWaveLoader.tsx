@@ -8,11 +8,14 @@ interface SineWaveLoaderProps {
   height?: number;
   color?: string; // base color
   highlightColor?: string; // shimmer color
+  axisColor?: string;
   lineWidth?: number;
 }
 
-const SineWaveLoader: React.FC<SineWaveLoaderProps> = ({ color = '#e0e0e0',
+const SineWaveLoader: React.FC<SineWaveLoaderProps> = ({ axisColor = '#999',
+  color = '#e0e0e0',
   height = 200,
+  highlightColor = 'rgba(192,192,192,0.8)',
   lineWidth = 1,
   width = 600 }) => {
   const pulse = useRef<{ value: number; currentWave: number }>({ currentWave: 0, value: 0 });
@@ -38,7 +41,7 @@ const SineWaveLoader: React.FC<SineWaveLoaderProps> = ({ color = '#e0e0e0',
 
       // --- Draw axes with arrows ---
       ctx.beginPath();
-      ctx.strokeStyle = '#999';
+      ctx.strokeStyle = axisColor;
       ctx.lineWidth = 1;
 
       const arrowSize = 6;
@@ -53,7 +56,7 @@ const SineWaveLoader: React.FC<SineWaveLoaderProps> = ({ color = '#e0e0e0',
       ctx.lineTo(40 - arrowSize, arrowSize);
       ctx.lineTo(40 + arrowSize, arrowSize);
       ctx.closePath();
-      ctx.fillStyle = '#999';
+      ctx.fillStyle = axisColor;
       ctx.fill();
 
       // X axis
@@ -67,7 +70,7 @@ const SineWaveLoader: React.FC<SineWaveLoaderProps> = ({ color = '#e0e0e0',
       ctx.lineTo(width - arrowSize, height - 20 - arrowSize);
       ctx.lineTo(width - arrowSize, height - 20 + arrowSize);
       ctx.closePath();
-      ctx.fillStyle = '#999';
+      ctx.fillStyle = axisColor;
       ctx.fill();
 
       // --- Draw sine wave progressively from left to right ---
@@ -79,7 +82,7 @@ const SineWaveLoader: React.FC<SineWaveLoaderProps> = ({ color = '#e0e0e0',
 
       // color is the base color and highlightColor is the shimmer color
       gradient.addColorStop(0, color);
-      gradient.addColorStop(0.5, `rgba(192,192,192,${alpha})`);
+      gradient.addColorStop(0.5, highlightColor.replace(/[\d.]+\)$/u, `${alpha})`));
       gradient.addColorStop(1, color);
 
       ctx.strokeStyle = gradient;
@@ -108,7 +111,7 @@ const SineWaveLoader: React.FC<SineWaveLoaderProps> = ({ color = '#e0e0e0',
     draw();
 
     return () => cancelAnimationFrame(animationId);
-  }, [width, height, lineWidth, color]);
+  }, [axisColor, color, height, highlightColor, lineWidth, width]);
 
   return <canvas height={height} ref={canvasRef} width={width} />;
 };

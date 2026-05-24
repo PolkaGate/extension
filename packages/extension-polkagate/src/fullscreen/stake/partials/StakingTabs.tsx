@@ -6,7 +6,7 @@ import type { SoloStakingInfo } from '../../../hooks/useSoloStakingInfo';
 import type { UseStakingRewards } from '../../../hooks/useStakingRewardsChart';
 import type { PositionInfo, MyPoolInfo } from '../../../util/types';
 
-import { Container, Stack, Typography } from '@mui/material';
+import { Container, Stack, Typography, useTheme } from '@mui/material';
 import { Discover, MagicStar, Wallet } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -33,11 +33,14 @@ interface StakingTabsHeaderProps {
 }
 
 const StakingTabsHeader = ({ disabled, items }: StakingTabsHeaderProps) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '32px' }}>
       {items.map(({ Icon, isSelected, onClick, title }, index) => {
-        const iconColor = isSelected ? '#AA83DC' : '#674394';
-        const textColor = isSelected ? '#EAEBF1' : '#674394';
+        const iconColor = isSelected ? (isDark ? '#AA83DC' : '#674394') : '#AA83DC';
+        const textColor = isSelected ? '#674394' : '#AA83DC';
         const isDisabled = index > 0 && disabled;
 
         return (

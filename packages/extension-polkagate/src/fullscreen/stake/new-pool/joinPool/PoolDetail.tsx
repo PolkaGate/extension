@@ -5,7 +5,7 @@
 
 import type { MyPoolInfo, PoolInfo } from '../../../../util/types';
 
-import { Container, Grid, Link, Stack, Typography } from '@mui/material';
+import { Container, Grid, Link, Stack, Typography, useTheme } from '@mui/material';
 import { BuyCrypto, CommandSquare, DiscountCircle, Discover, FlashCircle, People } from 'iconsax-react';
 import React, { Fragment, memo, useCallback, useMemo } from 'react';
 
@@ -197,31 +197,40 @@ interface RightColumnContentProps {
 }
 
 const RightColumnContent = ({ commission, genesisHash, onClose, onSelect, poolDetail }: RightColumnContentProps) => {
+  const theme = useTheme();
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const isLight = theme.palette.mode === 'light';
 
   return (
     <Stack direction='column' sx={{ gap: '12px', width: '200px' }}>
-      <Stack direction='column' sx={{ bgcolor: '#05091C', border: '4px solid #1B133C', borderRadius: '27px', gap: '18px', p: '28px 22px' }}>
+      <Stack direction='column' sx={{
+        bgcolor: isLight ? '#FFFFFF' : '#05091C',
+        border: isLight ? '1px solid #DDE3F4' : '4px solid #1B133C',
+        borderRadius: '27px',
+        boxShadow: isLight ? '0px 14px 28px rgba(148, 163, 184, 0.12)' : 'none',
+        gap: '18px',
+        p: '28px 22px'
+      }}>
         <StakingInfoStackWithIcon
-          Icon={<SnowFlake color='#AA83DC' size='19' />}
+          Icon={<SnowFlake color={isLight ? '#745E9F' : '#AA83DC'} size='19' />}
           amount={poolDetail?.bondedPool?.points}
           decimal={decimal}
           title={t('Staked')}
-          titleColor='#AA83DC'
+          titleColor={isLight ? '#745E9F' : '#AA83DC'}
           token={token}
         />
         <StakingInfoStackWithIcon
-          Icon={<DiscountCircle color='#AA83DC' size='24' variant='Bulk' />}
+          Icon={<DiscountCircle color={isLight ? '#745E9F' : '#AA83DC'} size='24' variant='Bulk' />}
           text={String(commission) + '%'}
           title={t('Commission')}
-          titleColor='#AA83DC'
+          titleColor={isLight ? '#745E9F' : '#AA83DC'}
         />
         <StakingInfoStackWithIcon
-          Icon={<People color='#AA83DC' size='24' variant='Bulk' />}
+          Icon={<People color={isLight ? '#745E9F' : '#AA83DC'} size='24' variant='Bulk' />}
           text={poolDetail?.bondedPool?.memberCounter.toString()}
           title={t('Members')}
-          titleColor='#AA83DC'
+          titleColor={isLight ? '#745E9F' : '#AA83DC'}
         />
       </Stack>
       {(onSelect || onClose) &&

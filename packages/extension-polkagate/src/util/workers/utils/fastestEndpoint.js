@@ -24,7 +24,7 @@ function disconnectProvider(provider) {
 function createApiForEndpointWithTimeout(provider, timeout = API_READY_TIMEOUT) {
   // eslint-disable-next-line promise/param-names
   const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => reject(new Error('API isReady timeout')), timeout);
+    setTimeout(() => reject(new Error(`API isReady timeout (${API_READY_TIMEOUT})ms`)), timeout);
   });
 
   return Promise.race([

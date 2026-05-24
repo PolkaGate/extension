@@ -4,7 +4,7 @@
 import type { SelectableProxied } from '../ProxiedAccount';
 
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { memo } from 'react';
 
 import { idKey } from '@polkadot/extension-polkagate/src/assets/animations';
@@ -39,7 +39,9 @@ function ProxiedModalContent({ areAllSelected,
     proxiedAddresses,
     selectedProxied }: ProxiedModalContentProps): React.ReactElement {
     const { t } = useTranslation();
+    const theme = useTheme();
     const { chainName } = useChainInfo(genesisHash, true);
+    const isDark = theme.palette.mode === 'dark';
     const isLoading = proxiedAddresses === undefined;
     const hasAccounts = (proxiedAddresses?.length ?? 0) > 0;
     const isPlural = (proxiedAddresses?.length ?? 0) > 1;
@@ -73,8 +75,10 @@ function ProxiedModalContent({ areAllSelected,
             <Stack
                 direction='column'
                 sx={{
-                    background: '#05091C',
+                    background: isDark ? '#05091C' : '#FFFFFF',
+                    border: isDark ? 'none' : '1px solid #E3E8F7',
                     borderRadius: '14px',
+                    boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.12)',
                     gap: '12px',
                     height: '250px',
                     m: '5px 0px 16px',
@@ -115,10 +119,16 @@ function ProxiedModalContent({ areAllSelected,
                         contentPlacement='center'
                         onClick={onSelectDeselectAll}
                         style={{
+                            '&:hover': isDark ? {
+                                background: '#3A255E'
+                            } : undefined,
+                            background: isDark ? '#2D1E4A' : '#FFFFFF',
+                            border: isDark ? undefined : '1px solid #E3E8F7',
                             borderRadius: '8px',
                             height: '32px',
                             marginBottom: '18px',
                             marginTop: '-10px',
+                            boxShadow: isDark ? 'none' : '0 6px 16px rgba(133, 140, 176, 0.10)',
                             width: 'fit-content'
                         }}
                         text={areAllSelected

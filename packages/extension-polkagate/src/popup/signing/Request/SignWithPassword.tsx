@@ -4,7 +4,7 @@
 import type { JSX } from 'react';
 import type { Balance } from '@polkadot/types/interfaces';
 
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -28,6 +28,8 @@ interface Props {
 
 export default function SignWithPassword({ address, error, fee, genesisHash, isSignable, onCancel, setError, signId, style }: Props): JSX.Element {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const navigate = useNavigate();
   const canPayFee = useCanPayFee(address, genesisHash, fee);
 
@@ -80,7 +82,7 @@ export default function SignWithPassword({ address, error, fee, genesisHash, isS
         {canPayFee === false &&
           <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: !isLocked ? '150px' : '125px', position: 'absolute' }}>
             <Warning2 color='#FFCE4F' size='24px' variant='Bold' />
-            <Typography color='#EAEBF1' variant='B-4'>
+            <Typography color={isDark ? '#EAEBF1' : '#745E9F'} variant='B-4'>
               {t('Insufficient balance to cover the transaction fee')}
             </Typography>
           </Grid>

@@ -9,7 +9,7 @@ import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 
 import { DecisionButtons, GradientButton, MyTextField, TwoToneText } from '../../components';
-import { useAccounts, useCategorizedAccountsInProfiles, useTranslation } from '../../hooks';
+import { useAccounts, useCategorizedAccountsInProfiles, useIsDark, useTranslation } from '../../hooks';
 import ProfileAccountSelection from './ProfileAccountSelection';
 import { PROFILE_MODE } from './type';
 import { addProfileTag } from './utils';
@@ -27,6 +27,7 @@ enum STEP {
 function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = useIsDark();
   const accounts = useAccounts();
   const { categorizedAccounts } = useCategorizedAccountsInProfiles();
 
@@ -90,7 +91,7 @@ function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
       <Grid container item>
         {step === STEP.ADD_NAME &&
           <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
-            <Typography color='#BEAAD8' variant='B-4'>
+            <Typography color={isDark ? '#BEAAD8' : '#674394'} variant='B-4'>
               {t('Give a name to the profile')}
             </Typography>
             <MyTextField
@@ -127,7 +128,7 @@ function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
                 textPartInColor={profileName ?? ''}
               />
             </Typography>
-            <Stack direction='column' sx={{ height: '350px', mt: '25px', overflowY: 'auto', width: '100%' }}>
+            <Stack direction='column' sx={{ boxSizing: 'border-box', height: '350px', mt: '25px', overflowY: 'auto', pb: '90px', width: '100%' }}>
               {Object.entries(categorizedAccounts)?.map(([label, accounts]) => {
                 return (
                   <>

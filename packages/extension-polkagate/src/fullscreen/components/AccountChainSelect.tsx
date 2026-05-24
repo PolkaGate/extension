@@ -25,6 +25,7 @@ interface AccountsIconProps {
 }
 
 const AccountsIcon = ({ accountsLength, address, noSelection }: AccountsIconProps) => {
+  const theme = useTheme();
   const isDark = useIsDark();
 
   return (
@@ -45,7 +46,7 @@ const AccountsIcon = ({ accountsLength, address, noSelection }: AccountsIconProp
             <Grid
               alignContent='center' container item justifyContent='center'
               sx={{
-                background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+                background: theme.palette.gradient.brand,
                 borderRadius: '999px',
                 color: isDark ? '#EAEBF1' : '#FFFFFF',
                 fontFamily: 'Inter',
@@ -85,7 +86,8 @@ function ChainSwitcher({ onClick }: { onClick: (toOpen: MODAL_TO_OPEN) => () => 
     <Box onClick={onClick(MODAL_TO_OPEN.CHAINS)}
       sx={{
         alignItems: 'center',
-        bgcolor: isDark ? '#2D1E4A80' : '#CCD2EA',
+        bgcolor: isDark ? '#2D1E4A80' : '#F2F5FD',
+        border: isDark ? 'none' : '1px solid #DDE3F4',
         borderRadius: '8px',
         cursor: 'pointer',
         display: 'flex',
@@ -136,6 +138,7 @@ function AccountSelect({ modalToOpen, noSelection = false, onClick }: { modalToO
           noSelection={noSelection}
         />
         <ScrollingTextBox
+          fadeColor={isDark ? undefined : '#FFFFFF'}
           text={selectedAccount?.name ?? ''}
           textStyle={{
             color: 'text.primary',
@@ -170,12 +173,14 @@ export default function AccountChainSelect({ noSelection = false }: Props): Reac
     <>
       <Container disableGutters
         sx={{
-          ':hover': noSelection ? {} : { background: '#674394' },
+          ':hover': noSelection ? {} : { background: isDark ? '#674394' : '#F3F6FD' },
           alignItems: 'center',
           background: isDark
             ? '#2D1E4A80'
-            : '#FFFFFF8C',
+            : '#FFFFFF',
+          border: isDark ? 'none' : '1px solid #DDE3F4',
           borderRadius: '10px',
+          boxShadow: isDark ? 'none' : '0px 8px 22px rgba(133, 140, 176, 0.12)',
           display: 'flex',
           justifyContent: 'space-between',
           pr: noSelection ? '8px' : '2px',

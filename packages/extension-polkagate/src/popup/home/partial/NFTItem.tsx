@@ -31,7 +31,7 @@ export function NFTItem({ index, info, onClick }: NftItemProps) {
   const bgcolor = isDark ? isHovered ? '#2D1E4A' : '#1B133C' : '#FFF';
   const bgcolor2 = isDark ? '#05091C' : '#EFEEF7';
   const itemIdColor = isDark ? '#EAEBF1' : '#291443';
-  const itemNameColor = isDark ? '#BEAAD8' : '#745D8B';
+  const itemNameColor = theme.palette.accent.text;
 
   const _onClick = useCallback(() => {
     if (onClick) {
@@ -126,7 +126,7 @@ export function NFTItem({ index, info, onClick }: NftItemProps) {
         : <NftPrice
           nft={info}
           style={{ justifyContent: 'center', p: '8px 0 4px' }}
-        />}
+          />}
     </Grid>
   );
 }

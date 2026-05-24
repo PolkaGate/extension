@@ -2,13 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-import { Grid } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
 type Direction = 'right' | 'left';
 
 function Move({ direction, max, setMove }: { direction: Direction, max?: number, setMove: React.Dispatch<React.SetStateAction<number>> }): React.ReactElement {
   const [chevronHovered, setChevronHovered] = useState<Direction>();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const onMouseEnterChevron = useCallback((type: Direction) => {
     setChevronHovered(type);
@@ -46,15 +48,15 @@ function Move({ direction, max, setMove }: { direction: Direction, max?: number,
       onMouseEnter={() => onMouseEnterChevron(direction)}
       onMouseLeave={onMouseLeaveChevron}
       sx={{
-        bgcolor: chevronHovered === direction ? '#674394' : '#05091C',
-        border: '3px solid #1B133C',
+        bgcolor: chevronHovered === direction ? '#674394' : (isDark ? '#05091C' : '#FFFFFF'),
+        border: `3px solid ${isDark ? '#1B133C' : '#EEF2FB'}`,
         borderRadius: '8px',
         cursor: 'pointer',
         height: '29px',
         transition: 'all 0.2s ease-in-out',
         width: '29px'
       }}>
-      <Component sx={{ color: chevronHovered === direction ? '#EAEBF1' : '#AA83DC', fontSize: '18px' }} />
+      <Component sx={{ color: chevronHovered === direction ? '#EAEBF1' : (isDark ? '#AA83DC' : theme.palette.text.secondary), fontSize: '18px' }} />
     </Grid>
   );
 }

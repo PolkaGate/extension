@@ -110,6 +110,7 @@ function ManageProxies(): React.ReactElement {
             api={api}
             decimal={decimal}
             depositedValue={depositedValue}
+            genesisHash={chain?.genesisHash ?? genesisHash}
             isDisabledAddProxyButton={proxyItems === undefined}
             newDepositValue={newDepositValue}
             proxyItems={proxyItems}

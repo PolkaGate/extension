@@ -85,11 +85,11 @@ function CryptoFiatBalance({ cryptoBalance, cryptoProps, decimal = 0, fiatBalanc
       {(!cryptoBalance || fiatBalance === undefined)
         ? <Grid alignItems={skeletonAlignment} container direction='column' item sx={{ rowGap: '6px', width: '100%' }}>
           <MySkeleton
-            bgcolor={isDark ? skeletonColor ?? '#946CC826' : '#99A1C440'}
+            bgcolor={skeletonColor ?? theme.palette.skeleton.subtle}
             width={70}
           />
           <MySkeleton
-            bgcolor={isDark ? skeletonColor ?? '#946CC826' : '#99A1C459'}
+            bgcolor={skeletonColor ?? theme.palette.skeleton.muted}
             width={50}
           />
         </Grid>

@@ -3,36 +3,40 @@
 
 import type { Attribute, ItemInformation } from '@polkadot/extension-polkagate/fullscreen/nft/utils/types';
 
-import { Divider, Grid, Link, Stack, Typography } from '@mui/material';
+import { Divider, Grid, Link, Stack, Typography, useTheme } from '@mui/material';
 import React, { type ReactElement, useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
 import { IPFS_GATEWAY } from '../../fullscreen/nft/utils/constants';
 import { fetchWithRetry, getContentUrl } from '../../fullscreen/nft/utils/util';
-import { useTranslation } from '../../hooks';
+import { useIsDark, useTranslation } from '../../hooks';
 import { toTitleCase } from '../../util';
 import { KODADOT_URL } from '../../util/constants';
 
 function Line(): ReactElement {
+  const theme = useTheme();
+
   return (
     <Divider
       orientation='horizontal' sx={{
-        background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '301px'
+        background: theme.palette.dividerGradientFade, height: '1px', width: '301px'
       }}
     />
   );
 }
 
 function ItemInfo({ label, link, markDown, showDivider = true, value }: { label: string, value?: string | ReactElement, showDivider?: boolean, link?: string, markDown?: string }): ReactElement {
+  const isDark = useIsDark();
+
   return (
     <Stack direction='column' justifyItems='center'>
       <Grid container direction='row' item justifyContent='space-between' justifyItems='space-between' sx={{ lineHeight: '35px' }}>
-        <Typography color='#BEAAD8' textAlign='left' variant='B-1'>
+        <Typography color='accent.text' textAlign='left' variant='B-1'>
           {label}
         </Typography>
         {React.isValidElement(value)
           ? value
-          : <Typography color='#EAEBF1' overflow='auto' textAlign='right' variant='B-1' width='50%'>
+          : <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} overflow='auto' textAlign='right' variant='B-1' width='50%'>
             {value}
           </Typography>
         }
@@ -41,7 +45,7 @@ function ItemInfo({ label, link, markDown, showDivider = true, value }: { label:
             <ReactMarkdown
               components={{
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                a: ({ node, ...props }) => <a style={{ color: '#AA83DC' }} {...props} />
+                a: ({ node, ...props }) => <a style={{ color: isDark ? '#AA83DC' : '#674394' }} {...props} />
               }}
               linkTarget='_blank'
             >
@@ -50,7 +54,7 @@ function ItemInfo({ label, link, markDown, showDivider = true, value }: { label:
           </Typography>
         }
         {link &&
-          <Typography color='#AA83DC' variant='B-1'>
+          <Typography color={isDark ? '#AA83DC' : '#674394'} variant='B-1'>
             <Link href={link} target='_blank' underline='hover'>
               Kodadot
             </Link>
@@ -66,12 +70,13 @@ function ItemInfo({ label, link, markDown, showDivider = true, value }: { label:
 
 export default function Traits({ nft }: { nft: ItemInformation | undefined }): React.ReactElement {
   const { t } = useTranslation();
+  const isDark = useIsDark();
 
   const [gifSource, setGifSource] = useState<string | null | undefined>(undefined);
   const [gifHash, setGifHash] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    const getUniqueGif = async () => {
+    const getUniqueGif = async() => {
       if (nft?.isNft || !nft?.mediaUri) {
         setGifSource(null);
 
@@ -127,7 +132,7 @@ export default function Traits({ nft }: { nft: ItemInformation | undefined }): R
   }, [chainNameSymbol, nft]);
 
   return (
-    <Grid container item sx={{ bgcolor: '#05091C', border: '4px solid #1B133C', borderRadius: '18px', m: '10px', maxHeight: '370px', overflowY: 'auto', p: '10px 15px' }}>
+    <Grid container item sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: isDark ? '4px solid #1B133C' : '1px solid #DDE3F4', borderRadius: '18px', boxShadow: isDark ? 'none' : '0 10px 22px rgba(133, 140, 176, 0.14)', m: '10px', maxHeight: '370px', overflowY: 'auto', p: '10px 15px' }}>
       {nft &&
         <Stack direction='column' width='100%'>
           {nft?.attributes?.map((attribute: Attribute) => {

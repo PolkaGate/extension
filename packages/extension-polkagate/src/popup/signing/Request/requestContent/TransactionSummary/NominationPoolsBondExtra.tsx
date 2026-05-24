@@ -7,7 +7,7 @@ import { Stack, Typography, useTheme } from '@mui/material';
 import { ArrowRight, MagicStar } from 'iconsax-react';
 import React from 'react';
 
-import { Logo, DisplayBalance } from '../../../../../components';
+import { DisplayBalance, Logo } from '../../../../../components';
 import { useChainInfo, useTranslation } from '../../../../../hooks';
 
 interface Props {
@@ -18,6 +18,7 @@ interface Props {
 function NominationPoolsBondExtra({ amount, genesisHash }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const { decimal, token } = useChainInfo(genesisHash, true);
   const maybeAmount = amount ? String(amount) : null;
@@ -32,12 +33,12 @@ function NominationPoolsBondExtra({ amount, genesisHash }: Props): React.ReactEl
             balance={maybeAmount}
             decimal={decimal}
             decimalPoint={2}
-            style={{ color: '#EAEBF1', ...theme.typography['B-2'] }}
+            style={{ color: isDark ? '#EAEBF1' : '#2D1E4A', ...theme.typography['B-2'] }}
             token={token}
           />
         }
         <Stack alignItems='center' columnGap='5px' direction='row'>
-          <Typography color='#BEAAD8' sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
+          <Typography color={theme.palette.accent.textStrong} sx={{ textWrapMode: 'noWrap' }} variant='B-4'>
             {maybeAmount
               ? t('Increase stake')
               : t('Re-stake rewards')

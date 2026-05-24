@@ -11,9 +11,19 @@ const StyledTextFieldSmall = styled(TextField, {
   shouldForwardProp: (prop) => prop !== 'errorMessage'
 })<{ errorMessage?: string }>(({ errorMessage, theme }) => ({
   '& .MuiOutlinedInput-notchedOutline': {
-    borderColor: errorMessage ? theme.palette.error.main : '#BEAAD833'
+    borderColor: errorMessage ? theme.palette.error.main : 'var(--pg-small-text-field-border)'
   },
   '& .MuiOutlinedInput-root': {
+    '&.Mui-disabled': {
+      '& fieldset': {
+        borderColor: theme.palette.text.disabled
+      },
+      '& svg path': {
+        fill: theme.palette.text.disabled
+      },
+      backgroundColor: theme.palette.mode === 'dark' ? theme.palette.surface.panel : theme.palette.surface.disabled,
+      color: theme.palette.text.disabled
+    },
     '&.Mui-focused': {
       '& div.MuiInputAdornment-root.MuiInputAdornment-positionEnd button': {
         backgroundColor: 'transparent',
@@ -31,26 +41,16 @@ const StyledTextFieldSmall = styled(TextField, {
       }
     },
     '&:hover': {
-      backgroundColor: '#2D1E4A',
+      backgroundColor: 'var(--pg-small-text-field-hover-bg)',
       transition: 'all 150ms ease-out'
     },
     '&:hover fieldset': {
-      borderColor: '#BEAAD833',
+      borderColor: 'var(--pg-small-text-field-border)',
       transition: 'all 150ms ease-out',
       zIndex: 0
     },
-    '&.Mui-disabled': {
-      backgroundColor: '#1B133C', // or a lighter/darker shade
-      color: theme.palette.text.disabled,
-      '& fieldset': {
-        borderColor: theme.palette.text.disabled // or any custom disabled border color
-      },
-      '& svg path': {
-        fill: theme.palette.text.disabled
-      }
-    },
-    backgroundColor: '#1B133C',
-    borderColor: '#BEAAD833',
+    backgroundColor: 'var(--pg-small-text-field-bg)',
+    borderColor: 'var(--pg-small-text-field-border)',
     borderRadius: '12px',
     color: errorMessage ? theme.palette.error.main : theme.palette.text.secondary,
     height: '44px',
@@ -61,26 +61,35 @@ const StyledTextFieldSmall = styled(TextField, {
   '& input': {
     autocomplete: 'off'
   },
-  '& input[type=number]': {
-    MozAppearance: 'textfield',
-    '&::-webkit-outer-spin-button': {
-      WebkitAppearance: 'none',
-      margin: 0
-    },
-    '&::-webkit-inner-spin-button': {
-      WebkitAppearance: 'none',
-      margin: 0
-    }
-  },
   '& input::placeholder': {
     color: errorMessage ? theme.palette.error.main : theme.palette.text.secondary,
     ...theme.typography['B-4'],
     textAlign: 'left'
   },
+  '& input[type=number]': {
+    '&::-webkit-inner-spin-button': {
+      WebkitAppearance: 'none',
+      margin: 0
+    },
+    '&::-webkit-outer-spin-button': {
+      WebkitAppearance: 'none',
+      margin: 0
+    },
+    MozAppearance: 'textfield'
+  },
+  '--pg-small-text-field-bg': theme.palette.mode === 'dark' ? theme.palette.surface.panel : theme.palette.surface.input,
+  '--pg-small-text-field-border': theme.palette.border.input,
+  '--pg-small-text-field-hover-bg': theme.palette.surface.hover,
   transition: 'all 150ms ease-out'
 }));
 
 const StyledTextFieldLarge = styled(TextField)<{ height?: string }>(({ height, theme }) => ({
+  '& .MuiInputBase-root.MuiInputBase-adornedStart': {
+    paddingLeft: 0
+  },
+  '& .MuiOutlinedInput-inputAdornedStart': {
+    paddingLeft: '0px !important'
+  },
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
       '& fieldset.MuiOutlinedInput-notchedOutline': {
@@ -113,23 +122,6 @@ const StyledTextFieldLarge = styled(TextField)<{ height?: string }>(({ height, t
     transition: 'all 150ms ease-out',
     width: '100%'
   },
-  '& .MuiInputBase-root.MuiInputBase-adornedStart': {
-    paddingLeft: 0
-  },
-  '& .MuiOutlinedInput-inputAdornedStart': {
-    paddingLeft: '0px !important'
-  },
-  '& input[type=number]': {
-    MozAppearance: 'textfield',
-    '&::-webkit-outer-spin-button': {
-      WebkitAppearance: 'none',
-      margin: 0
-    },
-    '&::-webkit-inner-spin-button': {
-      WebkitAppearance: 'none',
-      margin: 0
-    }
-  },
   '& input::placeholder': {
     alignItems: 'center',
     color: theme.palette.primary.main,
@@ -137,6 +129,17 @@ const StyledTextFieldLarge = styled(TextField)<{ height?: string }>(({ height, t
     fontSize: '30px',
     fontWeight: 400,
     textAlign: 'left'
+  },
+  '& input[type=number]': {
+    '&::-webkit-inner-spin-button': {
+      WebkitAppearance: 'none',
+      margin: 0
+    },
+    '&::-webkit-outer-spin-button': {
+      WebkitAppearance: 'none',
+      margin: 0
+    },
+    MozAppearance: 'textfield'
   },
   transition: 'all 150ms ease-out'
 }));
@@ -207,8 +210,9 @@ export default function MyTextField({ Icon, disabled, errorMessage, focused = fa
           startAdornment: (
             <InputAdornment position='start' sx={{ marginRight: Icon ? '5px' : 0 }}>
               {
-                Icon && <Icon
-                  color={focusing ? '#3988FF' : '#AA83DC'}
+                Icon &&
+                <Icon
+                  color={focusing ? '#3988FF' : (theme.palette.mode === 'dark' ? '#AA83DC' : '#8F97B8')}
                   size={iconSize}
                   variant={focusing ? 'Bold' : 'Bulk'}
                 />
@@ -233,7 +237,7 @@ export default function MyTextField({ Icon, disabled, errorMessage, focused = fa
         value={inputValue ?? ''}
       />
       {errorMessage &&
-        <Typography color='#FF4FB9' sx={{ display: 'flex', height: '6px' }} variant='B-1'>
+        <Typography color='error.main' sx={{ display: 'flex', height: '6px' }} variant='B-1'>
           {errorMessage}
         </Typography>
       }

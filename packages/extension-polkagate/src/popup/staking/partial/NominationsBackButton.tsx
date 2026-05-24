@@ -44,6 +44,7 @@ interface Props {
 export default function NominationsBackButton({ address, genesisHash, style }: Props) {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
 
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
@@ -55,7 +56,7 @@ export default function NominationsBackButton({ address, genesisHash, style }: P
   return (
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', px: '15px', width: '100%', ...style }}>
       <Container disableGutters onClick={onBack} ref={containerRef} sx={{ alignItems: 'center', cursor: 'pointer', display: 'flex', flexDirection: 'row', gap: '6px', ml: 0, width: 'max-content' }}>
-        <ArrowCircleLeft color='#809ACB' size='24' variant={hovered ? 'Bold' : 'Bulk'} />
+        <ArrowCircleLeft color={isLight ? '#2D1E4A' : '#809ACB'} size='24' variant={hovered ? 'Bold' : 'Bulk'} />
         <Typography sx={{ fontFamily: 'OdibeeSans', fontSize: '24px', fontWeight: '400', lineHeight: '26px', textTransform: 'uppercase' }}>
           {t('Nominations')}
         </Typography>

@@ -3,7 +3,7 @@
 
 import type { Proxy, TransactionDetail, TxInfo } from '@polkadot/extension-polkagate/util/types';
 
-import { Fade, Grid, Typography } from '@mui/material';
+import { Fade, Grid, Typography, useTheme } from '@mui/material';
 import { ArrowLeft } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -25,6 +25,8 @@ import useFeeCall from './useFeeCall';
 
 export default function SendFund(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { address, assetId, genesisHash } = useParams<{ address: string, genesisHash: string, assetId: string }>();
 
   const ref = useRef<HTMLDivElement | null>(null);
@@ -135,6 +137,25 @@ export default function SendFund(): React.ReactElement {
     } as TransactionDetail;
   }, [formatted, inputs?.amountAsBN, inputs?.decimal, inputs?.feeInfo, inputs?.recipientAddress, inputs?.recipientChain?.text, inputs?.token, t, txInfo]);
 
+  const backButtonStyle = useMemo(() => ({
+    ...(!isDark
+      ? {
+        '&.Mui-disabled': {
+          background: '#EEF2FB',
+          borderColor: '#DDE3F4',
+          boxShadow: 'none'
+        },
+        '&:hover': {
+          background: '#F3F6FD',
+          borderColor: '#DDE3F4'
+        },
+        background: '#FFFFFF',
+        border: '1px solid #DDE3F4',
+        color: '#745E9F'
+      }
+      : {})
+  }), [isDark]);
+
   return (
     <HomeLayout
       childrenStyle={{ paddingLeft: '25px', position: 'relative', zIndex: 1 }}
@@ -205,8 +226,10 @@ export default function SendFund(): React.ReactElement {
             secondaryButtonProps={{
               StartIcon: ArrowLeft,
               disabled: inputStep === INPUT_STEPS.SENDER,
+              disabledIconColor: isDark ? undefined : '#AEB7D3',
+              disabledTextColor: isDark ? undefined : '#9CA8C8',
               iconVariant: 'Linear',
-              style: { width: '15%' }
+              style: { ...backButtonStyle, width: '15%' }
             }}
             style={{ justifyContent: 'start', margin: '0', marginTop: '32px', transition: 'all 250ms ease-out', width: ref?.current?.offsetWidth ? `${ref.current.offsetWidth}px` : '80%' }}
           />)
@@ -222,6 +245,7 @@ export default function SendFund(): React.ReactElement {
                   secondaryButtonProps: {
                     StartIcon: ArrowLeft,
                     iconVariant: 'Linear',
+                    style: backButtonStyle,
                     text: t('Back')
                   }
                 }

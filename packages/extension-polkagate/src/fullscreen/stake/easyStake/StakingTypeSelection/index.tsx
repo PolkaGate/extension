@@ -29,8 +29,9 @@ export default function StakingTypeSelection({ initialPool, selectedPosition, se
   const stakingConsts = useStakingConsts(selectedPosition?.genesisHash);
   const { decimal, token } = useChainInfo(selectedPosition?.genesisHash, true);
   const isExtension = useIsExtensionPopup();
+  const isDark = theme.palette.mode === 'dark';
 
-  const textColor = useMemo(() => isExtension ? theme.palette.text.highlight : '#AA83DC', [isExtension, theme.palette.text.highlight]);
+  const textColor = useMemo(() => isExtension ? (isDark ? theme.palette.text.highlight : '#745D8B') : '#AA83DC', [isDark, isExtension, theme.palette.text.highlight]);
 
   const isRecommendedValidators = useMemo(() =>
     !selectedStakingType?.validators ||

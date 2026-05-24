@@ -1,11 +1,11 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, type SxProps, type Theme, Typography } from '@mui/material';
+import { Box, Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { ArrowCircleLeft } from 'iconsax-react';
 import React, { useMemo, useRef } from 'react';
 
-import { useIsBlueish, useIsHovered, useTranslation } from '../hooks';
+import { useIsBlueish, useIsExtensionPopup, useIsHovered, useTranslation } from '../hooks';
 
 export interface StepCounterType { currentStep: number; totalSteps: number }
 
@@ -39,6 +39,15 @@ function BackWithLabel({ content, onClick, stepCounter, style, text }: DynamicBa
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
   const isBlueish = useIsBlueish();
+  const isExtension = useIsExtensionPopup();
+  const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
+
+  const iconColor = isExtension && isLight
+    ? '#2D1E4A'
+    : isBlueish
+    ? isLight ? '#8C78B2' : '#809ACB'
+    : '#FF4FB9';
 
   const renderContent = useMemo(() => {
     if (content) {
@@ -61,7 +70,7 @@ function BackWithLabel({ content, onClick, stepCounter, style, text }: DynamicBa
       sx={{ cursor: 'pointer', justifyContent: 'space-between', px: '15px', py: '8px', width: '100%', ...style }}
     >
       <Grid container item sx={{ alignItems: 'center', columnGap: '6px', display: 'flex', flexDirection: 'row', width: 'fit-content' }}>
-        <ArrowCircleLeft color={isBlueish ? '#809ACB' : '#FF4FB9'} size='24' variant={hovered ? 'Bold' : 'Bulk'} />
+        <ArrowCircleLeft color={iconColor} size='24' variant={hovered ? 'Bold' : 'Bulk'} />
         {renderContent}
       </Grid>
       {stepCounter && <StepCounter stepCounter={stepCounter} />}

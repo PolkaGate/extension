@@ -6,7 +6,7 @@ import type { Chain } from '@polkadot/extension-chains/types';
 import type { SettingsStruct } from '@polkadot/ui-settings/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 
-import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { Copy } from 'iconsax-react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
@@ -91,6 +91,7 @@ const defaultRecoded = { account: null, formatted: null, prefix: 42, type: DEFAU
 
 function Address({ address, backgroundColor, check, genesisHash, handleCheck, margin = '20px auto', name, showCheckbox, showCopy = true, style, type: givenType, width = '92%' }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
 
     const accounts = useAccounts();
@@ -128,8 +129,12 @@ function Address({ address, backgroundColor, check, genesisHash, handleCheck, ma
     handleCheck && handleCheck(checked, address || '');
   }, [address, handleCheck]);
 
+  const rowBg = backgroundColor || (isDark ? '#1B133CB2' : theme.palette.surface.input);
+  const rowBorder = theme.palette.border.input;
+  const addressColor = theme.palette.text.secondary;
+
   return (
-    <Grid alignItems='center' container direction='row' justifyContent='space-between' sx={{ backgroundColor: backgroundColor || '#1B133CB2', border: '0.5px solid', borderColor: '#BEAAD833', borderRadius: '12px', height: '56px', m: { margin }, px: '8px', width: { width }, ...style }}>
+    <Grid alignItems='center' container direction='row' justifyContent='space-between' sx={{ backgroundColor: rowBg, border: '0.5px solid', borderColor: rowBorder, borderRadius: '12px', boxShadow: isDark ? 'none' : '0 8px 20px rgba(133, 140, 176, 0.10)', height: '56px', m: { margin }, px: '8px', width: { width }, ...style }}>
       {showCheckbox && handleCheck &&
         <Grid item width='5%'>
           <GlowCheckbox
@@ -156,7 +161,7 @@ function Address({ address, backgroundColor, check, genesisHash, handleCheck, ma
               address={_address}
               clipped
               style={{
-                color: '#BEAAD8',
+                color: addressColor,
                 justifyContent: 'space-between',
                 width: '100%'
               }}
@@ -182,7 +187,7 @@ function Address({ address, backgroundColor, check, genesisHash, handleCheck, ma
                   background: isDark ? '#674394' : '#EFF1F9',
                   transition: 'all 250ms ease-out'
                 },
-                background: isDark ? '#BFA1FF26' : '#FFFFFF',
+                background: isDark ? '#BFA1FF26' : theme.palette.surface.input,
                 borderRadius: '10px',
                 height: '36px',
                 minWidth: '0px',

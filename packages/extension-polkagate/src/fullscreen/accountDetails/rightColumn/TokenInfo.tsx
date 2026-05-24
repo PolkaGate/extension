@@ -3,7 +3,7 @@
 
 import type { FetchedBalance } from '../../../util/types';
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Coin, Lock1, People, Trade, UserOctagon } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +25,7 @@ interface Props {
 
 function TokenInfo({ address, genesisHash, token }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const navigate = useNavigate();
 
   const { UnlockTrackElement,
@@ -57,7 +58,7 @@ function TokenInfo({ address, genesisHash, token }: Props): React.ReactElement {
     };
   }, [genesisHash, token]);
 
-  const BOX_BG = '#05091C';
+  const BOX_BG = theme.palette.mode === 'dark' ? '#05091C' : '#FFFFFF';
   const ICON_SIZE = '20';
 
   return UnlockTrackElement || (

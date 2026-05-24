@@ -10,7 +10,7 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { Logo, BackWithLabel, DisplayBalance, FadeOnScroll, Identity, Motion, NoInfoYet, Progress } from '../../components';
+import { BackWithLabel, DisplayBalance, FadeOnScroll, Identity, Logo, Motion, NoInfoYet, Progress } from '../../components';
 import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewardsChart, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import resolveLogoInfo from '../../util/logo/resolveLogoInfo';
@@ -25,6 +25,7 @@ interface RewardChartHeaderProps {
 
 const RewardChartHeader = ({ dateInterval, genesisHash, onNextPeriod, onPreviousPeriod }: RewardChartHeaderProps) => {
   const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
   const { token } = useChainInfo(genesisHash, true);
   const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
@@ -32,16 +33,16 @@ const RewardChartHeader = ({ dateInterval, genesisHash, onNextPeriod, onPrevious
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', my: '6px', px: '10px', width: '100%' }}>
       <Grid alignItems='center' container item sx={{ alignItems: 'center', columnGap: '4px', width: 'fit-content' }}>
         <Logo assetSize='24px' baseTokenSize='0' genesisHash={genesisHash} logo={logoInfo?.logo} subLogo={undefined} />
-        <Typography color='text.primary' textTransform='uppercase' variant='B-3'>
+        <Typography color={isLight ? '#4D3A73' : 'text.primary'} textTransform='uppercase' variant='B-3'>
           {token}
         </Typography>
       </Grid>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', m: 0, width: 'fit-content' }}>
-        <ChevronLeft onClick={onPreviousPeriod} sx={{ color: theme.palette.text.primary, cursor: 'pointer', fontSize: '24px' }} />
-        <Typography color='text.highlight' variant='B-2'>
+        <ChevronLeft onClick={onPreviousPeriod} sx={{ color: isLight ? '#745E9F' : theme.palette.text.primary, cursor: 'pointer', fontSize: '24px' }} />
+        <Typography color={isLight ? '#745E9F' : 'text.highlight'} variant='B-2'>
           {dateInterval}
         </Typography>
-        <ChevronRight onClick={onNextPeriod} sx={{ color: theme.palette.text.primary, cursor: 'pointer', fontSize: '24px' }} />
+        <ChevronRight onClick={onNextPeriod} sx={{ color: isLight ? '#745E9F' : theme.palette.text.primary, cursor: 'pointer', fontSize: '24px' }} />
       </Container>
     </Container>
   );
@@ -57,6 +58,7 @@ interface RewardChartItemProps {
 
 const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward, type }: RewardChartItemProps) => {
   const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
   const { t } = useTranslation();
   const { decimal, token } = useChainInfo(genesisHash, true);
   const rewardTime = useMemo(() => new Date(reward.timeStamp * 1000).toLocaleTimeString('en-US', { hour: '2-digit', hour12: false, minute: '2-digit' }), [reward.timeStamp]);
@@ -66,12 +68,12 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward, type }: Re
   }, [onExpand, reward]);
 
   return (
-    <Collapse collapsedSize='44px' in={isExpanded} sx={{ bgcolor: '#060518', borderRadius: '14px', display: 'block', p: '4px' }}>
-      <Container disableGutters onClick={handleExpand} sx={{ alignItems: 'center', bgcolor: '#060518', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', pt: isExpanded ? '12px' : '8px', transition: 'all 150ms ease-out', width: '100%' }}>
-        <Typography color='text.primary' textAlign='left' variant='B-2' width='40%'>
+    <Collapse collapsedSize='44px' in={isExpanded} sx={{ bgcolor: isLight ? '#FFFFFF' : '#060518', border: isLight ? '1px solid #DDE3F4' : 'none', borderRadius: '14px', boxShadow: isLight ? '0px 10px 24px rgba(148, 163, 184, 0.12)' : 'none', display: 'block', p: '4px' }}>
+      <Container disableGutters onClick={handleExpand} sx={{ alignItems: 'center', bgcolor: isLight ? '#FFFFFF' : '#060518', borderRadius: '14px', cursor: 'pointer', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '12px', pt: isExpanded ? '12px' : '8px', transition: 'all 150ms ease-out', width: '100%' }}>
+        <Typography color={isLight ? '#4D3A73' : 'text.primary'} textAlign='left' variant='B-2' width='40%'>
           {new Date(reward.timeStamp * 1000).toDateString()}
         </Typography>
-        <Typography color='text.primary' textAlign='left' variant='B-2' width='15%'>
+        <Typography color={isLight ? '#4D3A73' : 'text.primary'} textAlign='left' variant='B-2' width='15%'>
           {type === 'pool'
             ? rewardTime
             : reward.era
@@ -82,23 +84,23 @@ const RewardChartItem = ({ genesisHash, isExpanded, onExpand, reward, type }: Re
           decimal={decimal}
           decimalPoint={2}
           style={{
-            color: theme.palette.text.primary,
+            color: isLight ? '#4D3A73' : theme.palette.text.primary,
             ...theme.typography['B-2'],
             textAlign: 'left',
             width: 'max-content'
           }}
           token={token}
-          tokenColor={theme.palette.text.highlight}
+          tokenColor={isLight ? '#745E9F' : theme.palette.text.highlight}
         />
-        <ArrowDown2 color={theme.palette.text.highlight} size='14' style={{ rotate: isExpanded ? '180deg' : 'none', transition: 'all 150ms ease-out' }} />
+        <ArrowDown2 color={isLight ? '#745E9F' : theme.palette.text.highlight} size='14' style={{ rotate: isExpanded ? '180deg' : 'none', transition: 'all 150ms ease-out' }} />
       </Container>
-      <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#222540A6', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', p: '8px 12px', position: 'relative', width: '100%' }}>
-        <Typography color='text.highlight' textAlign='left' variant='B-1' width='fit-content'>
+      <Container disableGutters sx={{ alignItems: 'center', bgcolor: isLight ? '#F8FAFF' : '#222540A6', border: isLight ? '1px solid #E3E8F7' : 'none', borderRadius: '10px', display: 'flex', flexDirection: 'row', gap: '8px', p: '8px 12px', position: 'relative', width: '100%' }}>
+        <Typography color={isLight ? '#745E9F' : 'text.highlight'} textAlign='left' variant='B-1' width='fit-content'>
           {t('Reward source')}
         </Typography>
         {reward.poolId
           ? (
-            <Typography color={theme.palette.text.primary} sx={{ pl: '15px' }} variant='H-5' width='fit-content'>
+            <Typography color={isLight ? '#4D3A73' : theme.palette.text.primary} sx={{ pl: '15px' }} variant='H-5' width='fit-content'>
               {t('Pool #{{poolId}}', { poolId: reward.poolId })}
             </Typography>)
           : (
@@ -130,24 +132,26 @@ interface RewardChartTableProps {
 
 const RewardChartTable = ({ descSortedRewards, expanded, genesisHash, onExpand, type }: RewardChartTableProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
   const isEmptyPeriod = descSortedRewards.length === 0;
 
   return (
     <Stack direction='column' sx={{ gap: '4px', pb: '60px', pt: '10px', width: '100%' }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', mb: '8px', px: '12px', width: '100%' }}>
-        <Typography color='text.highlight' textAlign='left' textTransform='uppercase' variant='S-1' width='45%'>
+        <Typography color={isLight ? '#745E9F' : 'text.highlight'} textAlign='left' textTransform='uppercase' variant='S-1' width='45%'>
           {t('Date')}
         </Typography>
-        <Typography color='text.highlight' textAlign='left' textTransform='uppercase' variant='S-1' width='20%'>
+        <Typography color={isLight ? '#745E9F' : 'text.highlight'} textAlign='left' textTransform='uppercase' variant='S-1' width='20%'>
           {type === 'pool' ? t('Time') : t('Era')}
         </Typography>
-        <Typography color='text.highlight' textAlign='left' textTransform='uppercase' variant='S-1' width='35%'>
+        <Typography color={isLight ? '#745E9F' : 'text.highlight'} textAlign='left' textTransform='uppercase' variant='S-1' width='35%'>
           {t('Reward')}
         </Typography>
       </Container>
       {isEmptyPeriod &&
-        <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#060518', borderRadius: '14px', display: 'flex', justifyContent: 'center', minHeight: '96px', px: '18px', textAlign: 'center', width: '100%' }}>
-          <Typography color='text.highlight' variant='B-2'>
+        <Container disableGutters sx={{ alignItems: 'center', bgcolor: isLight ? '#FFFFFF' : '#060518', border: isLight ? '1px solid #DDE3F4' : 'none', borderRadius: '14px', boxShadow: isLight ? '0px 10px 24px rgba(148, 163, 184, 0.12)' : 'none', display: 'flex', justifyContent: 'center', minHeight: '96px', px: '18px', textAlign: 'center', width: '100%' }}>
+          <Typography color={isLight ? '#745E9F' : 'text.highlight'} variant='B-2'>
             {t('No rewards claimed in this period')}
           </Typography>
         </Container>
@@ -174,6 +178,8 @@ export default function StakingReward() {
   useBackground('staking');
 
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
   const navigate = useNavigate();
   const { state } = useLocation() as { state: boolean }; // used for easy stake extension mode, if true it comes from easy stake
   const containerRef = useRef<HTMLDivElement>(null);
@@ -214,7 +220,7 @@ export default function StakingReward() {
             }
             {status === 'ready' && descSortedRewards &&
               <>
-                <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', p: '10px 5px', pb: '5px', width: '100%' }}>
+                <Stack direction='column' sx={{ bgcolor: isLight ? '#FFFFFF' : '#110F2A', border: isLight ? '1px solid #DDE3F4' : 'none', borderRadius: '14px', boxShadow: isLight ? '0px 10px 24px rgba(148, 163, 184, 0.12)' : 'none', p: '10px 5px', pb: '5px', width: '100%' }}>
                   <RewardChartHeader
                     dateInterval={dateInterval}
                     genesisHash={genesisHash}

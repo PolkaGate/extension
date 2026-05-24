@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography, useTheme } from '@mui/material';
 import React, { type CSSProperties, useCallback, useRef, useState } from 'react';
 
 import Sparkles from '../components/SVG/Sparkles';
@@ -15,12 +15,15 @@ interface Props {
 }
 
 function MyDivider(): React.ReactElement {
+  const theme = useTheme();
   const isExtension = useIsExtensionPopup();
 
   return (
     <Box
       sx={{
-        background: 'linear-gradient(180deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
+        background: theme.palette.mode === 'light'
+          ? 'linear-gradient(180deg, rgba(221, 227, 244, 0.1) 0%, rgba(221, 227, 244, 0.9) 50.06%, rgba(221, 227, 244, 0.1) 100%)'
+          : 'linear-gradient(180deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)',
         height: '14px',
         mx: isExtension ? '5px' : '15px',
         width: '1px'
@@ -31,6 +34,7 @@ function MyDivider(): React.ReactElement {
 
 function WhatsNew({ showLabel = true, style = { columnGap: '5px', paddingBottom: '24px', paddingTop: '24px' } }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
   const containerRef = useRef(null);
   const hovered = useIsHovered(containerRef);
@@ -41,6 +45,8 @@ function WhatsNew({ showLabel = true, style = { columnGap: '5px', paddingBottom:
 
   const textColor = isDark ? '#BEAAD880' : '#8F97B8';
   const sparklesColor = isDark ? '#FF4FB9' : '#3988FF';
+  const linkTextColor = isDark ? theme.palette.accent.text : theme.palette.accent.textStrong;
+  const linkHoverColor = isDark ? theme.palette.accent.highlight : theme.palette.text.highlight;
 
   return (
     <>
@@ -53,8 +59,8 @@ function WhatsNew({ showLabel = true, style = { columnGap: '5px', paddingBottom:
           variant='B-1'
         />
         <MyDivider />
-        <Sparkles color={hovered ? '#AA83DC' : sparklesColor} height={12} width={12} />
-        <Typography color={hovered ? '#AA83DC' : '#BEAAD8'} onClick={toggleOpenPopup} ref={containerRef} sx={{ cursor: 'pointer', textDecoration: hovered ? 'underline' : 'none' }} variant='B-1'>
+        <Sparkles color={hovered ? linkHoverColor : sparklesColor} height={12} width={12} />
+        <Typography color={hovered ? linkHoverColor : linkTextColor} onClick={toggleOpenPopup} ref={containerRef} sx={{ cursor: 'pointer', textDecoration: hovered ? 'underline' : 'none' }} variant='B-1'>
           {t('What’s new page')}
         </Typography>
       </Grid>

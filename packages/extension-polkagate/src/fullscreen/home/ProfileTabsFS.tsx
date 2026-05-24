@@ -3,7 +3,7 @@
 
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowCircleLeft, ArrowCircleRight } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -15,6 +15,8 @@ import useProfileInfo from './useProfileInfo';
 
 function Tab({ initialAccountList, label }: { initialAccountList: AccountJson[] | undefined, label: string }): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const profileAccounts = useProfileAccounts(initialAccountList, label);
   const selectedProfile = useSelectedProfile();
   const profileInfo = useProfileInfo(label);
@@ -35,24 +37,26 @@ function Tab({ initialAccountList, label }: { initialAccountList: AccountJson[] 
       onMouseEnter={toggleHover} onMouseLeave={toggleHover} sx={{ cursor: 'pointer', width: 'fit-content' }}
     >
       <Stack alignItems='center' columnGap='5px' direction='row' justifyContent='flex-start' sx={{ mt: '10px' }}>
-        <profileInfo.Icon color={isSelected || hovered ? '#FF4FB9' : '#AA83DC'} size='18' variant='Bulk' />
-        <Typography color={hovered ? '#FF4FB9' : '#EAEBF1'} sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }} variant='B-2'>
+        <profileInfo.Icon color={isSelected || hovered ? '#FF4FB9' : (isDark ? '#AA83DC' : theme.palette.text.secondary)} size='18' variant='Bulk' />
+        <Typography color={hovered ? '#FF4FB9' : (isDark ? '#EAEBF1' : theme.palette.text.primary)} sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }} variant='B-2'>
           {t(label)}
         </Typography>
-        <Box alignItems='center' sx={{ bgcolor: isSelected ? '#FF4FB926' : '#AA83DC26', borderRadius: '1024px', display: 'flex', height: '19px', px: '10px' }}>
-          <Typography color={isSelected ? '#FF4FB9' : '#AA83DC'} variant='B-1'>
+        <Box alignItems='center' sx={{ bgcolor: isSelected ? '#FF4FB926' : (isDark ? '#AA83DC26' : '#EEF2FB'), borderRadius: '1024px', display: 'flex', height: '19px', px: '10px' }}>
+          <Typography color={isSelected ? '#FF4FB9' : (isDark ? '#AA83DC' : theme.palette.text.secondary)} variant='B-1'>
             {profileAccounts?.length ?? 0}
           </Typography>
         </Box>
       </Stack>
       {isSelected &&
-        <Box sx={{ background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', height: '2px', mt: '10px', width: '100%' }} />
+        <Box sx={{ background: theme.palette.gradient.brand, height: '2px', mt: '10px', width: '100%' }} />
       }
     </Stack>
   );
 }
 
 function ProfileTabsFS({ initialAccountList, showAddressBook = false, width = '535px' }: { initialAccountList: AccountJson[] | undefined; showAddressBook?: boolean; width?: string; }): React.ReactElement {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { defaultProfiles, userDefinedProfiles } = useProfiles();
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedProfile = useSelectedProfile();
@@ -61,6 +65,23 @@ function ProfileTabsFS({ initialAccountList, showAddressBook = false, width = '5
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [hovered, setIsHovered] = useState('');
+  const leftFadeBackground = isDark
+    ? 'linear-gradient(90deg, rgba(42, 10, 64, 0.9) 13.79%, rgba(42, 10, 64, 0) 100%)'
+    : 'linear-gradient(90deg, rgba(239, 225, 255, 0.24) 0%, rgba(239, 225, 255, 0.08) 54%, rgba(239, 225, 255, 0) 100%)';
+  const rightFadeBackground = isDark
+    ? 'linear-gradient(270deg, rgba(42, 10, 64, 0.9) 13.79%, rgba(42, 10, 64, 0) 100%)'
+    : 'linear-gradient(270deg, rgba(239, 225, 255, 0.24) 0%, rgba(239, 225, 255, 0.08) 54%, rgba(239, 225, 255, 0) 100%)';
+  const arrowFadeSx = {
+    WebkitBackdropFilter: 'blur(1px)',
+    alignItems: 'center',
+    backdropFilter: 'blur(1px)',
+    display: 'flex',
+    height: '100%',
+    pointerEvents: 'none',
+    position: 'absolute',
+    width: '34px',
+    zIndex: 1
+  } as const;
 
   useEffect(() => {
     selectedProfileRef.current = selectedProfile;
@@ -136,13 +157,13 @@ function ProfileTabsFS({ initialAccountList, showAddressBook = false, width = '5
     <Stack alignItems='center' direction='row' sx={{ position: 'relative', width }}>
       {
         showLeftArrow &&
-        <Box justifyContent='start' sx={{ background: 'linear-gradient(90deg, #2A0A40 13.79%, rgba(42, 10, 64, 0) 100%)', display: 'flex', left: '0px', position: 'absolute', width: '40px' }}>
+        <Box justifyContent='start' sx={{ ...arrowFadeSx, background: leftFadeBackground, left: '0px' }}>
           <ArrowCircleLeft
-            color={hovered === 'left' ? '#FF4FB9' : '#AA83DC'}
+            color={hovered === 'left' ? '#FF4FB9' : (isDark ? '#AA83DC' : theme.palette.text.secondary)}
             onClick={onClickLeftArrow}
             onMouseEnter={handleHover('left')}
             onMouseLeave={handleHover('')}
-            size='24' style={{ cursor: 'pointer' }} variant='Bold'
+            size='24' style={{ cursor: 'pointer', pointerEvents: 'auto' }} variant='Bold'
           />
         </Box>
       }
@@ -156,14 +177,14 @@ function ProfileTabsFS({ initialAccountList, showAddressBook = false, width = '5
         ))}
       </Stack>
       {showRightArrow &&
-        <Box justifyContent='end' sx={{ background: 'linear-gradient(270deg, #2A0A40 13.79%, rgba(42, 10, 64, 0) 100%)', display: 'flex', position: 'absolute', right: '-7px', width: '40px' }}>
+        <Box justifyContent='end' sx={{ ...arrowFadeSx, background: rightFadeBackground, right: '-7px' }}>
           <ArrowCircleRight
-            color={hovered === 'right' ? '#FF4FB9' : '#AA83DC'}
+            color={hovered === 'right' ? '#FF4FB9' : (isDark ? '#AA83DC' : theme.palette.text.secondary)}
             onClick={onClickRightArrow}
             onMouseEnter={handleHover('right')}
             onMouseLeave={handleHover('')}
             size='24'
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: 'pointer', pointerEvents: 'auto' }}
             variant='Bold'
           />
         </Box>

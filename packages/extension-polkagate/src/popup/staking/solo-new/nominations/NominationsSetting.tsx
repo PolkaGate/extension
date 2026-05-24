@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Container, Grid, Stack, Typography } from '@mui/material';
+import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Refresh } from 'iconsax-react';
 import React, { useCallback, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -50,27 +50,37 @@ export const EmptyNomination = ({ setRefresh }: EmptyNominationProps) => {
   );
 };
 
-const DoubleSkeleton = ({ width1, width2 }: { width1: string, width2: string }) => (
-  <Stack direction='column' rowGap='4px' sx={{ my: '5px', width: 'fit-content' }}>
-    <MySkeleton bgcolor='#809acb24' style={{ borderRadius: '20px', width: width1 }} />
-    <MySkeleton bgcolor='#809ACB40' style={{ borderRadius: '20px', width: width2 }} />
-  </Stack>
-);
+const DoubleSkeleton = ({ width1, width2 }: { width1: string, width2: string }) => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
-const UndefinedItem = () => (
-  <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', mb: '8px', p: '8px', width: '100%' }}>
-    <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}>
-      <MySkeleton bgcolor='#809ACB40' style={{ borderRadius: '20px', width: '125px' }} />
-      <MySkeleton bgcolor='#809acb24' height={22} style={{ width: '22px' }} variant='rounded' />
-    </Container>
-    <GradientDivider style={{ my: '4px' }} />
-    <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-      <DoubleSkeleton width1='70px' width2='40px' />
-      <DoubleSkeleton width1='25px' width2='70px' />
-      <DoubleSkeleton width1='25px' width2='60px' />
-    </Container>
-  </Stack>
-);
+  return (
+    <Stack direction='column' rowGap='4px' sx={{ my: '5px', width: 'fit-content' }}>
+      <MySkeleton bgcolor={isDark ? '#809acb24' : '#E8EDF9'} style={{ borderRadius: '20px', width: width1 }} />
+      <MySkeleton bgcolor={isDark ? '#809ACB40' : '#DCE4F7'} style={{ borderRadius: '20px', width: width2 }} />
+    </Stack>
+  );
+};
+
+const UndefinedItem = () => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
+  return (
+    <Stack direction='column' sx={{ bgcolor: isDark ? '#110F2A' : '#FFFFFF', border: isDark ? 'none' : '1px solid #E3E8F7', borderRadius: '14px', boxShadow: isDark ? 'none' : '0 10px 20px rgba(133, 140, 176, 0.10)', mb: '8px', p: '8px', width: '100%' }}>
+      <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', p: '4px' }}>
+        <MySkeleton bgcolor={isDark ? '#809ACB40' : '#DCE4F7'} style={{ borderRadius: '20px', width: '125px' }} />
+        <MySkeleton bgcolor={isDark ? '#809acb24' : '#E8EDF9'} height={22} style={{ width: '22px' }} variant='rounded' />
+      </Container>
+      <GradientDivider style={{ my: '4px', opacity: isDark ? undefined : 0.18 }} />
+      <Container disableGutters sx={{ alignItems: 'flex-end', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <DoubleSkeleton width1='70px' width2='40px' />
+        <DoubleSkeleton width1='25px' width2='70px' />
+        <DoubleSkeleton width1='25px' width2='60px' />
+      </Container>
+    </Stack>
+  );
+};
 
 export default function NominationsSetting(): React.ReactElement {
   useBackground('staking');

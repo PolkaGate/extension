@@ -23,6 +23,7 @@ function GetPriceId({ chainName, isCheckingPriceId, price, priceId, setCheckingP
   }): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { currency } = useContext(CurrencyContext);
 
   const onPriceIdChange = useCallback((input: string) => {
@@ -47,16 +48,19 @@ function GetPriceId({ chainName, isCheckingPriceId, price, priceId, setCheckingP
   }, [priceId, setCheckingPriceId, currency?.code, setPrice]);
 
   const [Icon, color, bgcolor] = useMemo(() => {
+    const neutralBg = isDark ? '#2D1E4A' : '#EEF2FB';
+    const neutralColor = isDark ? theme.palette.primary.main : '#8FA1BE';
+
     return isCheckingPriceId
-      ? [RefreshCircle, theme.palette.primary.main, '#2D1E4A']
+      ? [RefreshCircle, neutralColor, neutralBg]
       : price === undefined && !priceId
-        ? [Tag2, theme.palette.primary.main, '#2D1E4A']
+        ? [Tag2, neutralColor, neutralBg]
         : price === undefined && priceId
-          ? [Tag2, theme.palette.primary.main, '#2D1E4A']
+          ? [Tag2, neutralColor, neutralBg]
           : price === null
             ? [CloseCircle, '#FF165C', '#B319554D']
             : [TickCircle, theme.palette.success.main, '#68A87A4D'];
-  }, [isCheckingPriceId, price, priceId, theme.palette.primary.main, theme.palette.success.main]);
+  }, [isCheckingPriceId, isDark, price, priceId, theme.palette.primary.main, theme.palette.success.main]);
 
   return (
     <Stack alignItems='center' columnGap='10px' direction='row' sx={{ width: '100%' }}>

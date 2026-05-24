@@ -4,7 +4,7 @@
 import type { Balance } from '@polkadot/types/interfaces';
 import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 
-import { Container, Grid } from '@mui/material';
+import { Container, Grid, useTheme } from '@mui/material';
 import { Add, Award, Coin, LockSlash, MedalStar, Moneys, Profile2User, Strongbox2, Timer, Timer1, Trade } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
@@ -34,13 +34,32 @@ interface TileBoxProps {
 
 const TileBoxes = memo(function MemoTileBoxes({ availableBalanceToStake, genesisHash, popupOpener, redeemable, rewards, toBeReleased, tokenPrice, type, unlockingAmount }: TileBoxProps) {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { decimal, token } = useChainInfo(genesisHash, true);
+  const isDark = theme.palette.mode === 'dark';
 
   const isPoolStaking = useMemo(() => type === 'pool', [type]);
 
   return (
-    <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '18px', display: 'flex', flexDirection: 'row', gap: '5px', overflow: 'hidden', p: '4px', position: 'relative' }} xs>
-      <GlowBall />
+    <Grid
+      container
+      item
+      sx={{
+        bgcolor: isDark ? '#1B133C' : '#F8FAFF',
+        border: isDark ? 'none' : '1px solid #E3E8F7',
+        borderRadius: '18px',
+        boxShadow: isDark ? 'none' : '0 12px 24px rgba(133, 140, 176, 0.12)',
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'nowrap',
+        gap: '5px',
+        overflow: 'hidden',
+        p: '4px',
+        position: 'relative'
+      }}
+      xs
+    >
+      {isDark && <GlowBall />}
       <StakingInfoTile
         Icon={Award}
         buttonsArray={

@@ -21,11 +21,12 @@ export default function FeeValue({ decimal, feeValue, token }: Props): React.Rea
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
+  const isLight = theme.palette.mode === 'light';
 
   return (
     <Stack direction='column' sx={{ rowGap: '8px', width: '100%' }}>
       <Container disableGutters sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-        <Typography color={isExtension ? 'text.highlight' : '#AA83DC'} variant='B-1'>
+        <Typography color={isLight ? '#6F5A96' : isExtension ? 'text.highlight' : '#AA83DC'} variant='B-1'>
           {t('Fee')}
         </Typography>
         <DisplayBalance

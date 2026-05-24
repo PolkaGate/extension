@@ -104,6 +104,8 @@ interface Props {
 
 export default function ChooseAccount({ genesisHash, isBlueish, setSpecificAccount, specificAccount }: Props): React.ReactElement {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const accentColor = isBlueish ? theme.palette.text.highlight : theme.palette.primary.main;
 
   const [openMenu, setOpenMenu] = useState<boolean>(false);
 
@@ -111,17 +113,17 @@ export default function ChooseAccount({ genesisHash, isBlueish, setSpecificAccou
 
   return (
     <>
-      <Container disableGutters sx={{ alignItems: 'center', bgcolor: '#110F2A', borderRadius: '14px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px' }}>
+      <Container disableGutters sx={{ alignItems: 'center', bgcolor: isDark ? '#110F2A' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.10)', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '10px' }}>
         <Identity
           address={specificAccount}
-          addressStyle={{ color: isBlueish ? '#809ACB' : 'primary.main', fontSize: '12px', fontWeight: 500, variant: 'B-4' }}
+          addressStyle={{ color: isDark ? isBlueish ? '#809ACB' : 'primary.main' : 'text.secondary', fontSize: '12px', fontWeight: 500, variant: 'B-4' }}
           genesisHash={genesisHash ?? ''}
           identiconSize={36}
           socialStyles={{ mt: 0 }}
-          style={{ variant: 'B-2' }}
+          style={{ color: isDark ? undefined : theme.palette.text.primary, variant: 'B-2' }}
           withShortAddress
         />
-        <ArrowCircleDown color={isBlueish ? theme.palette.text.highlight : theme.palette.primary.main} onClick={handleToggleMenu} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
+        <ArrowCircleDown color={accentColor} onClick={handleToggleMenu} size='32' style={{ cursor: 'pointer' }} variant='Bulk' />
       </Container>
       <AccountListToChoose
         genesisHash={genesisHash}

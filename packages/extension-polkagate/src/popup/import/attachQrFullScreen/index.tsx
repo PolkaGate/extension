@@ -3,7 +3,7 @@
 
 import type { HexString } from '@polkadot/util/types';
 
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { Camera, User, Warning2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
@@ -30,6 +30,7 @@ export interface ScanType {
 export default function AttachQrFullScreen(): React.ReactElement {
   useFullscreen();
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const [account, setAccount] = useState<ScanType | null>(null);
   const [name, setName] = useState<string | null>(null);
@@ -112,7 +113,7 @@ export default function AttachQrFullScreen(): React.ReactElement {
                 onError={_onError}
                 onScan={_setAccount}
                 style={{
-                  background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)', borderRadius: '14px', height: 'fit-content', minHeight: '200Px', padding: '3px', width: '272px'
+                  background: theme.palette.gradient.brand, borderRadius: '14px', height: 'fit-content', minHeight: '200Px', padding: '3px', width: '272px'
                 }}
               />
               {invalidQR && <QRWarning />}
@@ -129,7 +130,7 @@ export default function AttachQrFullScreen(): React.ReactElement {
             <ActionButton
               contentPlacement='center'
               onClick={onCancel}
-              style={{ height: '44px', marginTop: '20px', width: '40%' }}
+              style={{ height: '44px', marginTop: '20px', width: '272px' }}
               text={t('Cancel')}
             />
           </>

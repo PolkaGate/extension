@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Stack } from '@mui/material';
+import { Stack, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { useRef } from 'react';
 
@@ -14,6 +14,8 @@ import ProfileTabsFS from './ProfileTabsFS';
 
 function AccountList(): React.ReactElement {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { categorizedAccounts, initialAccountList } = useCategorizedAccountsInProfiles();
 
   let totalAccountsBefore = 0; // ← track accounts of previous profiles
@@ -21,7 +23,7 @@ function AccountList(): React.ReactElement {
   return (
     <Stack alignItems='flex-start' direction='column' justifyContent='flex-start'>
       <ProfileTabsFS initialAccountList={initialAccountList} />
-      <VelvetBox style={{ marginTop: '5px' }}>
+      <VelvetBox style={{ marginTop: '5px', position: 'relative' }}>
         <Stack ref={scrollContainerRef} style={{ maxHeight: 'calc(100vh - 190px)', minHeight: '100px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
           {Object.entries(categorizedAccounts)?.map(([label, accounts], profileIndex) => {
             const renderedAccounts = accounts?.map((account, accIndex) => {
@@ -44,7 +46,9 @@ function AccountList(): React.ReactElement {
                     direction='column'
                     justifyContent='center'
                     sx={{
-                      bgcolor: '#05091C',
+                      bgcolor: isDark ? '#05091C' : '#FFFFFF',
+                      border: isDark ? 'none' : '1px solid #DDE3F4',
+                      borderTop: !isDark && !isFirstAccount ? 0 : undefined,
                       borderRadius: justOneAccount
                         ? '14px'
                         : isFirstAccount
@@ -52,7 +56,7 @@ function AccountList(): React.ReactElement {
                           : isLast
                             ? '0 0 14px 14px'
                             : 0,
-                      mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? '4px' : '2px',
+                      mt: isFirstProfile && isFirstAccount ? 0 : isFirstAccount ? '4px' : isDark ? '2px' : 0,
                       pt: '5px',
                       px: '1px',
                       width: '100%'
@@ -77,8 +81,8 @@ function AccountList(): React.ReactElement {
             );
           })}
         </Stack>
+        <FadeOnScroll containerRef={scrollContainerRef} height='50px' minScrollDistance={25} ratio={0.3} style={{ borderRadius: '0 0 14px 14px' }} />
       </VelvetBox>
-      <FadeOnScroll containerRef={scrollContainerRef} height='50px' ratio={0.3} />
     </Stack>
   );
 }

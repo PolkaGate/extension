@@ -93,6 +93,7 @@ export interface UseStakingRewards {
  */
 export default function useStakingRewardsChart(address: string | undefined, genesisHash: string | undefined, type: 'solo' | 'pool', isFullScreen?: boolean): UseStakingRewards {
   const theme = useTheme();
+  const isLightExtension = !isFullScreen && theme.palette.mode === 'light';
   const { chainName, decimal, token } = useChainInfo(genesisHash, true);
 
   // Determine how many days to show based on display mode
@@ -436,7 +437,9 @@ export default function useStakingRewardsChart(address: string | undefined, gene
             return index === hoveredIndex ? createGradient(ctx, element, true) : createGradient(ctx, element, false);
           }
 
-          return index === hoveredIndex ? '#809ACB' : '#596AFF80';
+          return index === hoveredIndex
+            ? isLightExtension ? '#5E8FF6' : '#809ACB'
+            : isLightExtension ? '#AFC8FF80' : '#596AFF80';
         });
       } else {
         // No bar is being hovered - reset all bars to normal color
@@ -454,7 +457,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
             return createGradient(ctx, element, false);
           }
 
-          return '#596AFF';
+          return isLightExtension ? '#4C84F6' : '#596AFF';
         });
       }
 
@@ -486,7 +489,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
         labels: amounts, // Reward amounts
         position: 'top',
         ticks: {
-          color: isFullScreen ? '#AA83DC' : theme.palette.text.highlight,
+          color: isFullScreen ? '#AA83DC' : isLightExtension ? '#745E9F' : theme.palette.text.highlight,
           font: { family: 'Inter', size: 12, weight: 'bold' }
         }
       },
@@ -500,7 +503,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
           color: isFullScreen ? '#2D1E4A59' : 'transparent'
         },
         ticks: {
-          color: isFullScreen ? '#AA83DC' : theme.palette.text.highlight,
+          color: isFullScreen ? '#AA83DC' : isLightExtension ? '#745E9F' : theme.palette.text.highlight,
           font: { family: 'Inter', size: 12, weight: 'bold' }
         }
       },
@@ -519,7 +522,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
         }
       }
     }
-  }), [amounts, descSortedRewards, isFullScreen, theme.palette.text.highlight]) as unknown as PluginChartOptions<'bar'>;
+  }), [amounts, descSortedRewards, isFullScreen, isLightExtension, theme.palette.text.highlight]) as unknown as PluginChartOptions<'bar'>;
 
   /**
    * Memoized chart data configuration
@@ -536,7 +539,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
           const element = meta.data[context.dataIndex] as unknown as GradientObject;
 
           if (!element || !isFullScreen) {
-            return '#596AFF'; // Fallback color for extension mode
+            return isLightExtension ? '#4C84F6' : '#596AFF'; // Fallback color for extension mode
           }
 
           return createGradient(ctx, element, false);
@@ -553,7 +556,7 @@ export default function useStakingRewardsChart(address: string | undefined, gene
           const element = meta.data[context.dataIndex] as unknown as GradientObject;
 
           if (!element || !isFullScreen) {
-            return '#809ACB'; // Fallback color
+            return isLightExtension ? '#5E8FF6' : '#809ACB'; // Fallback color
           }
 
           return createGradient(ctx, element, true);

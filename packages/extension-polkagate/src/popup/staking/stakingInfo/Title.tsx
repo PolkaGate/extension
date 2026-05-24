@@ -3,7 +3,7 @@
 
 import type { PositionInfo } from '../../../util/types';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { mapHubToRelay } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
@@ -16,6 +16,8 @@ interface Props {
 
 function Title({ selectedPosition }: Props): React.ReactElement {
   const genesisHash = mapHubToRelay(selectedPosition?.genesisHash);
+  const theme = useTheme();
+  const successColor = theme.palette.mode === 'dark' ? '#82FFA5' : theme.palette.success.main;
 
   return (
     <div style={{ zIndex: 1 }}>
@@ -23,7 +25,7 @@ function Title({ selectedPosition }: Props): React.ReactElement {
         <Typography color='text.primary' textTransform='uppercase' variant='H-3'>
           {'Earn up to'}
         </Typography>
-        <Typography color='#82FFA5' sx={{ px: '2px' }} textTransform='uppercase' variant='H-3'>
+        <Typography color={successColor} sx={{ px: '2px' }} textTransform='uppercase' variant='H-3'>
           {`${selectedPosition?.rate || 0}%`}
         </Typography>
         <Typography color='text.primary' textTransform='uppercase' variant='H-3'>

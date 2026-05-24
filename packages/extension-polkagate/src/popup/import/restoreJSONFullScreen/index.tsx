@@ -34,6 +34,7 @@ export interface JsonGetAccountInfo extends ResponseJsonGetAccountInfo {
 export default function RestoreJson(): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isLight = theme.palette.mode === 'light';
   const navigate = useNavigate();
   const { setExtensionLock } = useExtensionLockContext();
   const maybeExistingAccounts = useAccounts();
@@ -242,13 +243,13 @@ export default function RestoreJson(): React.ReactElement {
       />
       <Stack direction='column' sx={{ position: 'relative', width: '500px' }}>
         {stepOne &&
-          <Typography color='#BEAAD8' sx={{ my: '15px', textAlign: 'left', width: '369px' }} variant='B-1'>
+          <Typography color={isLight ? '#8A74AF' : '#BEAAD8'} sx={{ my: '15px', textAlign: 'left', width: '369px' }} variant='B-1'>
             {t('Upload a JSON file containing the account(s) you previously exported from this extension or other compatible extensions/wallets.')}
           </Typography>
         }
         {!stepOne && accountsInfo.length &&
           <>
-            <Typography color='#BEAAD8' sx={{ my: '15px', textAlign: 'left' }} variant='B-1' width='100%'>
+            <Typography color={isLight ? '#8A74AF' : '#BEAAD8'} sx={{ my: '15px', textAlign: 'left' }} variant='B-1' width='100%'>
               {accountsInfo?.length === 1
                 ? t('Import the account into the extension')
                 : t('Select accounts to import into the extension')

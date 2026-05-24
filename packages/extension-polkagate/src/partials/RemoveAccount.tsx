@@ -1,6 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { SavedAssets } from '../hooks/useAssetsBalances';
 import type { ExtensionPopupCloser } from '../util/handleExtensionPopup';
 
 import { Box, Grid, Stack, Typography } from '@mui/material';
@@ -11,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 import { info } from '../assets/gif';
 import { AccountsAssetsContext, Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } from '../components';
 import { useAccount, useAccountsOrder, useAlerts, useIsExtensionPopup, useProfileAccounts, useSelectedAccount, useSelectedProfile, useTranslation } from '../hooks';
-import type { SavedAssets } from '../hooks/useAssetsBalances';
 import { forgetAccount, validateAccount } from '../messaging';
 import WarningBox from '../popup/settings/partials/WarningBox';
 import { cleanupAuthorizedAccount, cleanupNotificationAccount, getStorage, setStorage } from '../util';
@@ -45,7 +45,7 @@ function TopPageElement({ isExtension }: { isExtension: boolean }) {
         src={info as string}
         sx={{ height: '100px', width: '100px', zIndex: 2 }}
       />
-      <Typography color='#BEAAD8' sx={{ m: '20px 0 15px' }} variant='B-4'>
+      <Typography color='text.secondary' sx={{ m: '20px 0 15px' }} variant='B-4'>
         {description}
       </Typography>
     </>
@@ -109,7 +109,7 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
   const canRemoveAccount =
     (isExternal && acknowledged) || (!isExternal && !!password);
 
-  const onRemove = useCallback(async() => {
+  const onRemove = useCallback(async () => {
     try {
       if (!_address || !canRemoveAccount) {
         return;
@@ -161,7 +161,7 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
       setIsBusy(false);
       console.error('Error while removing the account:', error);
     }
-  }, [_address, canRemoveAccount, profileAccounts?.length, isExternal, password, notifier, isExtension, handleClose]);
+  }, [_address, canRemoveAccount, profileAccounts?.length, isExternal, password, notifier, isExtension, handleClose, accountsAssets, setAccountsAssets]);
 
   const onPassChange = useCallback((pass: string | null): void => {
     setPasswordError(false);
@@ -170,6 +170,7 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
 
   return (
     <SharePopup
+      modalProps={{ showBackIconAsClose: true }}
       modalStyle={{ minHeight: '450px' }}
       onClose={handleClose}
       open={open}

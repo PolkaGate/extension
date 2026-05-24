@@ -45,7 +45,7 @@ function FullscreenModeButton({ url }: Props) {
 
   const gradientBackgroundStyle = {
     '&::after': {
-      background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+      background: theme.palette.gradient.brand,
       borderRadius: '10px',
       content: '""',
       inset: 0,
@@ -54,7 +54,8 @@ function FullscreenModeButton({ url }: Props) {
       transition: 'all 250ms ease-out',
       zIndex: 1
     },
-    background: isDark ? '#BFA1FF26' : '#FFFFFF8C',
+    background: isDark ? '#BFA1FF26' : '#FFFFFF',
+    border: !isDark ? '1px solid #E1E5F3' : 'none',
     borderRadius: '10px',
     height: '30px',
     inset: 0,

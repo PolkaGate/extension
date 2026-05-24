@@ -4,7 +4,7 @@
 import type { ExtrinsicPayload } from '@polkadot/types/interfaces';
 import type { HexString } from '@polkadot/util/types';
 
-import { Box, Container, Grid, Typography } from '@mui/material';
+import { Box, Container, Grid, Typography, useTheme } from '@mui/material';
 import { Mobile } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -26,6 +26,8 @@ export interface Props {
 
 function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const [isScanning, setIsScanning] = useState(false);
 
   const payloadU8a = useMemo(() => {
@@ -53,7 +55,7 @@ function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props
 
   return (
     <Container disableGutters sx={{ mb: '10px', position: 'relative', width: '100%', zIndex: 1 }}>
-      <Typography color='#BEAAD8' display='flex' justifySelf='center' my='5px' variant='B-4'>
+      <Typography color={theme.palette.accent.textStrong} display='flex' justifySelf='center' my='5px' textAlign='center' variant='B-4'>
         {!isScanning
           ? <> {t('First scan the QR code with your mobile wallet. Then scan the generated QR code by your mobile wallet on the next screen')}</>
           : <> {t('Scan your mobile wallet generated QR code')}</>
@@ -61,18 +63,18 @@ function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props
       </Typography>
       {isScanning &&
         <Grid alignItems='center' container direction='row' item justifyContent='center'>
-          <Typography color='#EAEBF1' variant='B-2'>
+          <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} variant='B-2'>
             {t('Hold the QR code in front of the')}
           </Typography>
-          <Mobile color='#AA83DC' size={16} style={{ marginLeft: '4px' }} variant='Bold' />
-          <Typography color='#AA83DC' variant='B-2'>
+          <Mobile color={theme.palette.accent.highlight} size={16} style={{ marginLeft: '4px' }} variant='Bold' />
+          <Typography color={theme.palette.accent.highlight} variant='B-2'>
             {t('device’s camera')}
           </Typography>
         </Grid>
       }
       <Box
         sx={{
-          background: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',
+          background: theme.palette.gradient.brand,
           borderRadius: '14px',
           justifySelf: 'center',
           my: '25px',
@@ -81,7 +83,7 @@ function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props
           width: 'auto'
         }}
       >
-        <Grid container item sx={{ bgcolor: '#1B133C', borderRadius: '10px', height: '100%', padding: '1px', width: '100%' }}>
+        <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', borderRadius: '10px', height: '100%', padding: '1px', width: '100%' }}>
           <div className='qrContainer'>
             {isScanning
               ? <QrScanSignature onScan={onSignature} style={{ height: '265px' }} />
@@ -102,7 +104,7 @@ function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props
           onClick={onClick}
           style={{ height: '44px', width: '100%' }}
           text={t('Back')}
-        />
+          />
         : onCancel
           ? <DecisionButtons
             direction='vertical'
@@ -110,11 +112,11 @@ function Qr({ address, cmd, genesisHash, onCancel, onSignature, payload }: Props
             onSecondaryClick={onCancel}
             primaryBtnText={t('Next')}
             secondaryBtnText={t('Cancel')}
-          />
+            />
           : <GradientButton
             onClick={onClick}
             text={t('Next')}
-          />
+            />
       }
     </Container>
   );

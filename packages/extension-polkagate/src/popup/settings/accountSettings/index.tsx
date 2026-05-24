@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Stack, Typography } from '@mui/material';
+import { Container, Stack, Typography, useTheme } from '@mui/material';
 import { Data, Edit2, ExportCurve, ImportCurve, LogoutCurve, More2, Notification, ShieldSecurity } from 'iconsax-react';
 import React, { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -27,6 +27,10 @@ function AccountSettings(): React.ReactElement {
   const { address } = useParams<{ address: string }>();
   const selectedChain = useAccountSelectedChain(address);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
+  const theme = useTheme();
+  const footerActionColor = theme.palette.accent.text;
+  const footerActionHoverColor = '#AA83DC';
+  const footerActionIconColor = theme.palette.accent.icon;
 
   useEffect(() => {
     if (!address) {
@@ -111,16 +115,16 @@ function AccountSettings(): React.ReactElement {
         />
         <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ cursor: 'pointer', m: '19px 0 0 7px' }}>
           <Stack alignItems='center' columnGap='5px' direction='row' onClick={extensionPopupOpener(ExtensionPopups.REMOVE)}>
-            <LogoutCurve color='#AA83DC' size={18} variant='Bulk' />
-            <Typography sx={{ '&:hover': { color: '#AA83DC' }, color: '#BEAAD8', transition: 'all 250ms ease-out' }} variant='B-1'>
+            <LogoutCurve color={footerActionIconColor} size={18} variant='Bulk' />
+            <Typography sx={{ '&:hover': { color: footerActionHoverColor }, color: footerActionColor, transition: 'all 250ms ease-out' }} variant='B-1'>
               {t('Remove account')}
             </Typography>
           </Stack>
           <Stack alignItems='center' columnGap='5px' direction='row' onClick={onMore}>
-            <Typography sx={{ '&:hover': { color: '#AA83DC' }, color: '#BEAAD8', transition: 'all 250ms ease-out' }} variant='B-1'>
+            <Typography sx={{ '&:hover': { color: footerActionHoverColor }, color: footerActionColor, transition: 'all 250ms ease-out' }} variant='B-1'>
               {t('More')}
             </Typography>
-            <More2 color='#AA83DC' size={18} variant='Linear' />
+            <More2 color={footerActionIconColor} size={18} variant='Linear' />
           </Stack>
         </Stack>
       </Motion>

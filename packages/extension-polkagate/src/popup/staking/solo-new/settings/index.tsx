@@ -6,7 +6,7 @@
 import type { BN } from '@polkadot/util';
 import type { RewardDestinationType } from '../../../../util/types';
 
-import { Container, Grid, Stack, Typography } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Warning2 } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -28,6 +28,8 @@ interface OptionBoxProps {
 
 const OptionBox = ({ disabled, rewardDestinationType, setRewardDestinationType }: OptionBoxProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     if (disabled) {
@@ -40,8 +42,8 @@ const OptionBox = ({ disabled, rewardDestinationType, setRewardDestinationType }
   }, [disabled, setRewardDestinationType]);
 
   return (
-    <Stack direction='column' sx={{ bgcolor: '#110F2A', borderRadius: '14px', padding: '12px', rowGap: '18px', width: '100%' }}>
-      <Typography color='text.primary' variant='B-1' width='fit-content'>
+    <Stack direction='column' sx={{ bgcolor: isDark ? '#110F2A' : '#FFFFFF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', boxShadow: isDark ? 'none' : '0 10px 24px rgba(133, 140, 176, 0.10)', padding: '12px', rowGap: '18px', width: '100%' }}>
+      <Typography color='text.secondary' variant='B-1' width='fit-content'>
         {t('Reward destination')}
       </Typography>
       <PRadio

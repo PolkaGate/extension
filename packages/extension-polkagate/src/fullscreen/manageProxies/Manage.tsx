@@ -5,7 +5,7 @@ import type { ApiPromise } from '@polkadot/api';
 import type { BN } from '@polkadot/util';
 import type { ProxyItem } from '../../util/types';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import { AddCircle, Firstline } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo } from 'react';
 
@@ -22,6 +22,7 @@ interface Props {
   api: ApiPromise | undefined | null;
   decimal: number | undefined;
   depositedValue: BN | null | undefined;
+  genesisHash: string | undefined;
   isDisabledAddProxyButton: boolean;
   newDepositValue: BN | undefined;
   proxyItems: ProxyItem[] | null | undefined;
@@ -31,8 +32,12 @@ interface Props {
   token: string | undefined;
 }
 
-export default function Manage({ api, decimal, depositedValue, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
+export default function Manage({ api, decimal, depositedValue, genesisHash, isDisabledAddProxyButton, newDepositValue, proxyItems, setNewDepositedValue, setProxyItems, setStep, token }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const depositLabelColor = isDark ? '#AA83DC' : '#9B6BE8';
+  const depositValueColor = isDark ? '#EAEBF1' : theme.palette.text.primary;
 
   const proxyDepositBase = api ? api.consts['proxy']['proxyDepositBase'] as unknown as BN : BN_ZERO;
   const proxyDepositFactor = api ? api.consts['proxy']['proxyDepositFactor'] as unknown as BN : BN_ZERO;
@@ -114,10 +119,10 @@ export default function Manage({ api, decimal, depositedValue, isDisabledAddProx
     <Stack direction='column' sx={{ height: '584px', position: 'relative', width: '800px', zIndex: 1 }}>
       <Stack alignItems='center' columnGap={3} direction='row' sx={{ justifyContent: 'start', mb: '20px', width: '100%' }}>
         <GradientButton
-          StartIcon={AddCircle}
           contentPlacement='center'
           disabled={isDisabledAddProxyButton}
           onClick={toAddProxy}
+          startIconNode={<AddCircle color='#FFFFFF' size={20} style={{ marginRight: '2px', zIndex: 10 }} variant='Bulk' />}
           style={{
             borderRadius: '18px',
             height: '40px',
@@ -127,15 +132,15 @@ export default function Manage({ api, decimal, depositedValue, isDisabledAddProx
           text={t('Add proxy')}
         />
         <Stack alignItems='center' columnGap={1} direction='row'>
-          <Typography color='#AA83DC' variant='B-1'>
+          <Typography color={depositLabelColor} variant='B-1'>
             {t('Deposit')}
           </Typography>
-          <Logo size={18} token={token} />
+          <Logo genesisHash={genesisHash} size={18} token={token} />
           <DisplayBalance
             balance={proxyItems === undefined ? undefined : depositedValue ?? newDepositValue ?? BN_ZERO}
             decimal={decimal}
-            skeletonStyle={{ backgroundColor: '#946CC840' }}
-            style={{ color: '#EAEBF1' }}
+            skeletonStyle={{ backgroundColor: theme.palette.skeleton.default }}
+            style={{ color: depositValueColor }}
             token={token}
           />
           {newDepositValue && depositedValue &&

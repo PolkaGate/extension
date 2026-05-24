@@ -4,7 +4,7 @@
 import type { Lock } from '@polkadot/extension-polkagate/fullscreen/governance/types';
 import type { BN } from '@polkadot/util';
 
-import { Grid, Stack } from '@mui/material';
+import { Grid, Stack, useTheme } from '@mui/material';
 import React, { useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -31,10 +31,15 @@ export default function LeftColumn(): React.ReactElement {
   const account = useAccount(address);
   const profile = useAccountProfile(account);
   const refContainer = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const cardBg = isDark ? '#05091C' : '#FFFFFF';
+  const borderColor = isDark ? '#1B133C' : '#DDE3F4';
+  const toggleBg = account?.isHidden ? 'transparent' : cardBg;
 
   return (
     <VelvetBox style={{ height: 'fit-content', marginLeft: '15px', minHeight: '150px', width: ' 505px' }}>
-      <Stack sx={{ bgcolor: '#05091C', borderRadius: '14px', height: '172px', m: '40px auto 5px', position: 'relative', width: '497px' }}>
+      <Stack sx={{ bgcolor: cardBg, border: '1px solid', borderColor, borderRadius: '14px', height: '172px', m: '40px auto 5px', position: 'relative', width: '497px' }}>
         <PolkaGateIdenticon
           address={address ?? ''}
           size={64}
@@ -50,7 +55,7 @@ export default function LeftColumn(): React.ReactElement {
           <Stack columnGap='8px' direction='row'>
             <AccountVisibilityToggler
               size={20}
-              style={{ backgroundColor: account?.isHidden ? 'transparent' : '#05091C', borderColor: '#1B133C', borderRadius: '12px', height: '40px', margin: 0, width: '40px' }}
+              style={{ backgroundColor: toggleBg, borderColor, borderRadius: '12px', height: '40px', margin: 0, width: '40px' }}
             />
             <Recoverability />
             {!isEthereumAddress(address) &&

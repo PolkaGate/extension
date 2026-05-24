@@ -5,7 +5,11 @@ import CheckIcon from '@mui/icons-material/Check';
 import { Box, Checkbox } from '@mui/material';
 import React from 'react';
 
+import { useIsDark } from '../../../hooks';
+
 export default function CustomCheckbox({ checked, onChange }: { checked: boolean; onChange: () => void }) {
+  const isDark = useIsDark();
+
   return (
     <Checkbox
       checked={checked}
@@ -28,7 +32,8 @@ export default function CustomCheckbox({ checked, onChange }: { checked: boolean
       icon={
         <Box
           sx={{
-            backgroundColor: '#222442',
+            backgroundColor: isDark ? '#222442' : '#F8FAFF',
+            border: isDark ? 'none' : '2px solid #B58DDF',
             borderRadius: '8px',
             height: 24,
             width: 24

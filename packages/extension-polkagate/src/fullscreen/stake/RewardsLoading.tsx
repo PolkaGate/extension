@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Grid, Stack, Typography } from '@mui/material';
+import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React from 'react';
 
 import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
@@ -9,16 +9,18 @@ import { useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import { MySkeleton } from '../../components';
 
 const ChartHeader = () => {
+  const theme = useTheme();
+
   return (
-    <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '20px', justifyContent: 'space-between', mb: '20px' }}>
+    <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '20px', justifyContent: 'space-between', m: 'auto', width: '98%' }}>
       <MySkeleton
-        bgcolor='#BEAAD840'
+        bgcolor={theme.palette.skeleton.accent}
         height={43.5}
         style={{ borderRadius: '11px' }}
         width={190}
       />
       <MySkeleton
-        bgcolor='#BEAAD840'
+        bgcolor={theme.palette.skeleton.accent}
         height={43.5}
         style={{ borderRadius: '11px' }}
         width={71.27}
@@ -29,10 +31,12 @@ const ChartHeader = () => {
 
 interface RewardsLoadingProps {
   type: 'solo' | 'pool';
+  isDark?: boolean;
 }
 
 const RewardTable = ({ type }: RewardsLoadingProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Stack direction='column' sx={{ gap: '10px', width: '100%' }}>
@@ -51,7 +55,7 @@ const RewardTable = ({ type }: RewardsLoadingProps) => {
         Array.from({ length: 5 }).map((_, index) => {
           return (
             <MySkeleton
-              bgcolor='#946CC840'
+              bgcolor={theme.palette.skeleton.default}
               height={48}
               key={index}
               style={{ borderRadius: '11px' }}
@@ -66,7 +70,7 @@ const RewardTable = ({ type }: RewardsLoadingProps) => {
 
 function Chart() {
   return (
-    <Stack alignItems='end' columnGap='10px' direction='row'>
+    <Stack alignItems='end' columnGap='10px' direction='row' margin='auto'>
       {
         Array.from({ length: 15 }).map((_, index) => {
           const height = Math.random() * 240;
@@ -84,10 +88,10 @@ function Chart() {
   );
 }
 
-function RewardsLoading({ type }: RewardsLoadingProps) {
+function RewardsLoading({ isDark, type }: RewardsLoadingProps) {
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '18px', p: '18px', pr: 0 }}>
-      <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: '#1B133C', borderRadius: '18px', width: '533px' }}>
+      <Stack direction='column' justifyContent='space-between' sx={{ bgcolor: isDark ? '#1B133C' : '#F8FAFF', borderRadius: '18px', width: '533px' }}>
         <ChartHeader />
         <Chart />
       </Stack>

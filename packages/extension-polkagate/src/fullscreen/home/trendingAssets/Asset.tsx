@@ -3,7 +3,7 @@
 
 import type { PriceValue } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useState } from 'react';
 
 import DailyChange from '@polkadot/extension-polkagate/src/popup/home/partial/DailyChange';
@@ -13,6 +13,8 @@ import { CurrencyContext, Logo } from '../../../components';
 
 const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue, onClick: React.Dispatch<React.SetStateAction<string | undefined>> }>(({ asset, onClick }, ref) => {
   const { currency } = useContext(CurrencyContext);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const [hoveredIndex, setHoveredIndex] = useState<boolean>(false);
 
@@ -38,7 +40,8 @@ const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue, onClick: Rea
       onMouseLeave={onMouseLeave}
       ref={ref}
       sx={{
-        bgcolor: hoveredIndex ? '#2D1E4A' : '#05091C',
+        bgcolor: hoveredIndex ? (isDark ? '#2D1E4A' : '#F3F6FD') : (isDark ? '#05091C' : '#FFFFFF'),
+        border: isDark ? 'none' : '1px solid #DDE3F4',
         borderRadius: '14px',
         cursor: 'pointer',
         minWidth: '122px',
@@ -50,11 +53,11 @@ const Asset = React.forwardRef<HTMLDivElement, { asset: PriceValue, onClick: Rea
       }}
     >
       <Logo assetSize='36px' baseTokenSize='14px' genesisHash={asset.genesisHash} logo={logoInfo?.logo} style={{ width: 'fit-content' }} token={asset?.symbol} />
-      <Typography color='#EAEBF1' sx={{ mt: '10px', textAlign: 'left', textWrap: 'nowrap' }} variant='B-2'>
+      <Typography color='text.primary' sx={{ mt: '10px', textAlign: 'left', textWrap: 'nowrap' }} variant='B-2'>
         {asset.symbol} / {currency?.code}
       </Typography>
       <Stack direction='row'>
-        <Typography color='#EAEBF1' sx={{ textAlign: 'left' }} variant='B-2'>
+        <Typography color='text.primary' sx={{ textAlign: 'left' }} variant='B-2'>
           {currency?.sign}{asset.value.toFixed(2)}
         </Typography>
         <DailyChange

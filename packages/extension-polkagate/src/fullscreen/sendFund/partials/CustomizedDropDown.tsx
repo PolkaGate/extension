@@ -3,7 +3,7 @@
 
 import type { FetchedBalance } from '@polkadot/extension-polkagate/src/util/types';
 
-import { Grid, Popover, Stack, styled, Typography } from '@mui/material';
+import { Grid, Popover, Stack, styled, Typography, useTheme } from '@mui/material';
 import React, { type CSSProperties, useCallback, useMemo, useRef } from 'react';
 
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
@@ -12,11 +12,12 @@ import { Logo } from '../../../components';
 import { useIsHovered } from '../../../hooks';
 
 const DropContentContainer = styled(Grid,
-  { shouldForwardProp: (prop) => prop !== 'preferredWidth' && prop !== 'isSmall' })(({ isSmall, preferredWidth }: { isSmall?: boolean, preferredWidth: number | undefined }) => ({
-    background: '#05091C',
+  { shouldForwardProp: (prop) => prop !== 'preferredWidth' && prop !== 'isSmall' })(({ isSmall, preferredWidth, theme }: { isSmall?: boolean, preferredWidth: number | undefined, theme?: any }) => ({
+    background: theme.palette.mode === 'dark' ? '#05091C' : '#FFFFFF',
     border: '4px solid',
-    borderColor: '#1B133C',
+    borderColor: theme.palette.mode === 'dark' ? '#1B133C' : '#EEF1FF',
     borderRadius: '12px',
+    boxShadow: theme.palette.mode === 'dark' ? 'none' : '0 12px 32px rgba(133, 140, 176, 0.18)',
     columnGap: '5px',
     flexWrap: 'nowrap',
     margin: 'auto',
@@ -39,6 +40,8 @@ interface RowProps {
 }
 
 function Row({ assetId, genesisHash, isSmall, setSelectedAsset, token }: RowProps): React.ReactElement {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const refContainer = useRef(null);
   const hovered = useIsHovered(refContainer);
 
@@ -51,10 +54,10 @@ function Row({ assetId, genesisHash, isSmall, setSelectedAsset, token }: RowProp
   return (
     <Stack
       alignItems='center' columnGap='5px' direction='row' justifyContent='space-between' onClick={onClick} ref={refContainer}
-      sx={{ backgroundColor: hovered ? '#6743944D' : 'transparent', borderRadius: '8px', cursor: 'pointer', height: '40px', px: '5px', width: '100%' }}
+      sx={{ backgroundColor: hovered ? (isDark ? '#6743944D' : '#F3F6FD') : 'transparent', borderRadius: '8px', cursor: 'pointer', height: '40px', px: '5px', width: '100%' }}
     >
       <Logo assetSize={isSmall ? '18px' : '28px'} genesisHash={genesisHash} logo={logoInfo?.logo} token={token} />
-      <Typography color={hovered ? '#FF4FB9' : '#EAEBF1'} sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }} variant={isSmall ? 'B-1' : 'B-2'}>
+      <Typography color={hovered ? '#FF4FB9' : isDark ? '#EAEBF1' : theme.palette.text.primary} sx={{ textWrap: 'nowrap', transition: 'all 250ms ease-out' }} variant={isSmall ? 'B-1' : 'B-2'}>
         {token}
       </Typography>
     </Stack>
@@ -88,7 +91,8 @@ export default function CustomizedDropDown({ assets, containerRef, contentDropWi
         paper: {
           sx: {
             background: 'none',
-            backgroundImage: 'none'
+            backgroundImage: 'none',
+            boxShadow: 'none'
           }
         }
       }}

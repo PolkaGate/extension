@@ -4,7 +4,7 @@
 import type { Variant } from '@mui/material/styles/createTypography';
 import type { DropdownOption } from '@polkadot/extension-polkagate/util/types';
 
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, useTheme } from '@mui/material';
 import { Firstline } from 'iconsax-react';
 import React from 'react';
 
@@ -23,6 +23,8 @@ interface Props {
 
 function PaginationRow({ itemsPerPage, options, page, setItemsPerPagePage, setPage, totalItems }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const _itemsPerPage = Number(itemsPerPage);
   const paginationCount = Math.ceil(totalItems / _itemsPerPage);
@@ -33,7 +35,7 @@ function PaginationRow({ itemsPerPage, options, page, setItemsPerPagePage, setPa
         totalItems > 0 &&
         <Stack columnGap='5px' direction='row'>
           <Firstline color='#674394' size='18px' variant='Bold' />
-          <Typography color='#AA83DC' variant='B-4'>
+          <Typography color={isDark ? '#AA83DC' : theme.palette.text.secondary} variant='B-4'>
             {t('{{start}} - {{end}} of {{totalItems}} items', { replace: { end: Math.min(page * _itemsPerPage, totalItems), start: (page - 1) * _itemsPerPage + 1, totalItems } })}
           </Typography>
         </Stack>
@@ -49,7 +51,7 @@ function PaginationRow({ itemsPerPage, options, page, setItemsPerPagePage, setPa
       {
         totalItems >= _itemsPerPage &&
         <Stack alignItems='center' columnGap='5px' direction='row'>
-          <Typography color='#AA83DC' sx={{ whiteSpace: 'nowrap' }} variant='B-4'>
+          <Typography color={isDark ? '#AA83DC' : theme.palette.text.secondary} sx={{ whiteSpace: 'nowrap' }} variant='B-4'>
             {t('Show')}:
           </Typography>
           <DropSelect
@@ -67,7 +69,7 @@ function PaginationRow({ itemsPerPage, options, page, setItemsPerPagePage, setPa
             simpleArrow
             style={{
               border: 'none',
-              color: '#EAEBF1',
+              color: isDark ? '#EAEBF1' : theme.palette.text.primary,
               columnGap: 0,
               margin: 0,
               minWidth: 'fit-content',

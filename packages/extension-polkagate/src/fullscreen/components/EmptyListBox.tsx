@@ -1,10 +1,10 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography, useTheme } from '@mui/material';
 import React, { memo } from 'react';
 
-import { emptyList } from '../../assets/icons/index';
+import { emptyList, emptyListLight } from '../../assets/icons/index';
 import { Motion } from '../../components';
 import { useTranslation } from '../../hooks';
 
@@ -15,13 +15,15 @@ interface Props {
 
 function EmptyListBox({ style = {}, text }: Props) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Motion>
       <Grid alignItems='center' container direction='column' justifyContent='center' sx={{ ...style }}>
         <Box
           component='img'
-          src={emptyList as string}
+          src={(isDark ? emptyList : emptyListLight) as string}
           sx={{ height: 'auto', m: '30px auto 15px', width: '125px' }}
         />
         <Typography color='text.secondary' mb='30px' variant='B-2'>

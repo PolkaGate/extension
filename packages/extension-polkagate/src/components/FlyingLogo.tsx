@@ -9,6 +9,7 @@ import { logoMotionDark, logoMotionLight } from '../assets/logos';
 
 export default function FlyingLogo(): React.ReactElement {
   const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   return (
     <Grid
@@ -16,8 +17,22 @@ export default function FlyingLogo(): React.ReactElement {
       container
       justifyContent='center'
       sx={{
-        backgroundColor: theme.palette.mode === 'dark' ? '#05091C' : '#fff', // covers any inherited background
-        backgroundImage: `url(${baseEffect})`,
+        '&::before': isDark
+          ? {}
+          : {
+            background: 'radial-gradient(ellipse at center, rgba(255, 79, 185, 0.34) 0%, rgba(236, 180, 255, 0.26) 34%, rgba(213, 219, 240, 0) 72%)',
+            content: '""',
+            filter: 'blur(14px)',
+            height: '58%',
+            left: '50%',
+            pointerEvents: 'none',
+            position: 'absolute',
+            top: '25%',
+            transform: 'translateX(-50%)',
+            width: '56%'
+          },
+        backgroundColor: isDark ? '#05091C' : '#D5DBF0',
+        backgroundImage: isDark ? `url(${baseEffect})` : 'none',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
@@ -35,6 +50,7 @@ export default function FlyingLogo(): React.ReactElement {
         sx={{
           height: 'fit-content',
           maxWidth: '1100px',
+          position: 'relative',
           width: '100%'
         }}
       />

@@ -7,7 +7,7 @@ import type { AccountId32 } from '@polkadot/types/interfaces';
 // @ts-expect-error lookup type import
 import type { SpStakingExposurePage } from '@polkadot/types/lookup';
 
-import { Collapse, Stack } from '@mui/material';
+import { Collapse, Stack, useTheme } from '@mui/material';
 import { Menu, Star1, Timer } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -31,6 +31,8 @@ interface Props {
 
 export default function Nominations({ genesisHash, poolInfo }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const refContainer = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { address } = useParams<{ address: string; genesisHash: string }>();
@@ -122,14 +124,14 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
                 />
                 <Validators
                   address={stashAddress}
-                  bgcolor='#2D1E4A'
+                  bgcolor={isDark ? '#2D1E4A' : '#FFFFFF'}
                   genesisHash={genesisHash}
                   isActive={true}
                   validators={active}
                   withCurve
                 />
                 <Validators
-                  bgcolor='#2D1E4A66'
+                  bgcolor={isDark ? '#2D1E4A66' : '#FFFFFF'}
                   genesisHash={genesisHash}
                   isActive={false}
                   validators={elected}
@@ -152,7 +154,7 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
                   height={44 * nonElected.length}
                 />
                 <Validators
-                  bgcolor='transparent'
+                  bgcolor={isDark ? 'transparent' : '#FFFFFF'}
                   genesisHash={genesisHash}
                   validators={nonElected}
                   withCurve

@@ -3,25 +3,27 @@
 
 import type { ItemInformation } from '@polkadot/extension-polkagate/fullscreen/nft/utils/types';
 
-import { Avatar, Divider, Grid, Stack, type SxProps, Typography } from '@mui/material';
+import { Avatar, Divider, Grid, Stack, type SxProps, Typography, useTheme } from '@mui/material';
 import React, { type ReactElement } from 'react';
 
 import { Logo } from '../../components';
 import AudioPlayer from '../../fullscreen/nft/components/AudioPlayer';
-import { useTranslation } from '../../hooks';
+import { useIsDark, useTranslation } from '../../hooks';
 import { GlowBox } from '../../style';
 import { toTitleCase } from '../../util';
 import NftPrice from './NftPrice';
 
 function ItemInfo({ label, style = {}, value }: { label: string, value: string | ReactElement, style?: SxProps }): ReactElement {
+  const isDark = useIsDark();
+
   return (
     <Stack direction='column' sx={{ ...style }}>
-      <Typography color='#AA83DC' textAlign='left' variant='B-4'>
+      <Typography color='accent.icon' textAlign='left' variant='B-4'>
         {label}
       </Typography>
       {React.isValidElement(value)
         ? value
-        : <Typography color='#EAEBF1' textAlign='left' variant='B-1'>
+        : <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} textAlign='left' variant='B-1'>
           {value}
         </Typography>
       }
@@ -31,6 +33,8 @@ function ItemInfo({ label, style = {}, value }: { label: string, value: string |
 
 export default function Details({ nft }: { nft: ItemInformation | undefined }): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = useIsDark();
 
   const isAudioOnly = !nft?.image && nft?.animation_url && nft?.animationContentType?.startsWith('audio');
   const isImageWithAudio = nft?.image && nft?.imageContentType?.startsWith('image') && nft?.animation_url && nft?.animationContentType?.startsWith('audio');
@@ -39,7 +43,7 @@ export default function Details({ nft }: { nft: ItemInformation | undefined }): 
     <GlowBox showTopBorder={false} style={{ mt: '10px', px: '5px' }}>
       {nft &&
         <Grid container item rowGap='10px' sx={{ p: '15px 5px' }}>
-          <Typography color='#EAEBF1' sx={{ textAlign: 'left', width: '100%' }} variant='B-3'>
+          <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} sx={{ textAlign: 'left', width: '100%' }} variant='B-3'>
             {toTitleCase(nft.name)}
           </Typography>
           <Stack columnGap='10px' direction='row'>
@@ -66,7 +70,7 @@ export default function Details({ nft }: { nft: ItemInformation | undefined }): 
               />
               <Divider
                 orientation='horizontal' sx={{
-                  background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', my: '15px', width: '182px', height: '1px'
+                  background: theme.palette.dividerGradientFade, height: '1px', my: '15px', width: '182px'
                 }}
               />
               <ItemInfo
@@ -96,7 +100,7 @@ export default function Details({ nft }: { nft: ItemInformation | undefined }): 
               label={t('Network')}
               value={<Stack alignItems='center' columnGap='3px' direction='row'>
                 <Logo genesisHash={nft?.genesisHash} size={14} />
-                <Typography color='#EAEBF1' variant='B-2'>
+                <Typography color={isDark ? '#EAEBF1' : '#2D1E4A'} variant='B-2'>
                   {nft?.chainName}
                 </Typography>
               </Stack>
