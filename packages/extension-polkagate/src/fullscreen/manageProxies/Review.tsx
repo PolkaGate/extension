@@ -46,7 +46,7 @@ function Review({ address, call, depositToPay, fee, genesisHash, onClose, proxyI
   const panelBorder = isDark ? 'transparent' : '#E3E8F7';
   const panelShadow = isDark ? 'none' : '0 10px 24px rgba(106, 116, 156, 0.12)';
   const dividerBg = isDark
-    ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)'
+    ? theme.palette.dividerGradient
     : 'linear-gradient(90deg, rgba(227, 232, 247, 0) 0%, rgba(199, 208, 234, 0.85) 50.06%, rgba(227, 232, 247, 0) 100%)';
 
   const { changingItems, reviewText } = useMemo(() => {

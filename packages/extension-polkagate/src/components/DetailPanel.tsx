@@ -74,9 +74,7 @@ function LeftColumn({ LeftItem, RightItem, TitleLogo, children, dividerStyle, no
       {
         !noDivider &&
         <Box sx={{
-          background: isDark
-            ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)'
-            : `linear-gradient(90deg, rgba(221, 227, 244, 0) 0%, ${theme.palette.border.strong} 50.06%, rgba(221, 227, 244, 0) 100%)`,
+          background: theme.palette.dividerGradientFade,
           height: '1px',
           justifySelf: 'center',
           m: '5px 0 15px',

@@ -27,10 +27,12 @@ interface ItemProps {
 }
 
 function Item({ chainEndpoints, isEnabled, isLast, onSelect, text, value }: ItemProps): React.ReactElement {
+  const theme = useTheme();
+
   return (
     <Grid
       alignItems='center' container item justifyContent='space-between' key={value} sx={{
-        backgroundImage: isLast ? '' : 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
+        backgroundImage: isLast ? '' : theme.palette.dividerGradient,
         backgroundPosition: 'bottom',
         backgroundRepeat: 'no-repeat',
         backgroundSize: '100% 2px',

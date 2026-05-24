@@ -3,7 +3,7 @@
 
 import type { Attribute, ItemInformation } from '@polkadot/extension-polkagate/fullscreen/nft/utils/types';
 
-import { Divider, Grid, Link, Stack, Typography } from '@mui/material';
+import { Divider, Grid, Link, Stack, Typography, useTheme } from '@mui/material';
 import React, { type ReactElement, useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
@@ -14,12 +14,12 @@ import { toTitleCase } from '../../util';
 import { KODADOT_URL } from '../../util/constants';
 
 function Line(): ReactElement {
-  const isDark = useIsDark();
+  const theme = useTheme();
 
   return (
     <Divider
       orientation='horizontal' sx={{
-        background: isDark ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' : 'linear-gradient(90deg, rgba(221, 227, 244, 0) 0%, #DDE3F4 50.06%, rgba(221, 227, 244, 0) 100%)', height: '1px', width: '301px'
+        background: theme.palette.dividerGradientFade, height: '1px', width: '301px'
       }}
     />
   );

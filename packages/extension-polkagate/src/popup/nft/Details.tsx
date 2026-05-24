@@ -3,7 +3,7 @@
 
 import type { ItemInformation } from '@polkadot/extension-polkagate/fullscreen/nft/utils/types';
 
-import { Avatar, Divider, Grid, Stack, type SxProps, Typography } from '@mui/material';
+import { Avatar, Divider, Grid, Stack, type SxProps, Typography, useTheme } from '@mui/material';
 import React, { type ReactElement } from 'react';
 
 import { Logo } from '../../components';
@@ -33,6 +33,7 @@ function ItemInfo({ label, style = {}, value }: { label: string, value: string |
 
 export default function Details({ nft }: { nft: ItemInformation | undefined }): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const isDark = useIsDark();
 
   const isAudioOnly = !nft?.image && nft?.animation_url && nft?.animationContentType?.startsWith('audio');
@@ -69,7 +70,7 @@ export default function Details({ nft }: { nft: ItemInformation | undefined }): 
               />
               <Divider
                 orientation='horizontal' sx={{
-                  background: isDark ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' : 'linear-gradient(90deg, rgba(221, 227, 244, 0) 0%, #DDE3F4 50.06%, rgba(221, 227, 244, 0) 100%)', height: '1px', my: '15px', width: '182px'
+                  background: theme.palette.dividerGradientFade, height: '1px', my: '15px', width: '182px'
                 }}
               />
               <ItemInfo

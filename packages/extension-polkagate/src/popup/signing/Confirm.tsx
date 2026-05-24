@@ -28,7 +28,7 @@ function FeeRow({ fee, genesisHash }: { fee: Balance | undefined, genesisHash: s
   const { price } = useTokenPrice(genesisHash);
 
   return (
-    <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, p: '10px', position: 'relative' }}>
+    <Grid alignItems='center' container item justifyContent='space-between' sx={{ '&::after': { background: theme.palette.dividerGradient, bottom: 0, content: '""', height: '1px', left: 0, position: 'absolute', width: '100%' }, p: '10px', position: 'relative' }}>
       <Typography color='#AA83DC' variant='B-1'>
         {t('Estimated Fee')}
       </Typography>

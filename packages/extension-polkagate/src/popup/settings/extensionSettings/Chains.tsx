@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChevronRight } from '@mui/icons-material';
-import { Grid, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,6 +16,7 @@ import { windowOpen } from '../../../messaging';
 
 export default function Chains(): React.ReactElement {
   const { t } = useTranslation();
+  const theme = useTheme();
   const navigate = useNavigate();
   const { chainsToList, onSearch, selectedChains, setChainSelection } = useChainSelectionSettings();
 
@@ -43,7 +44,7 @@ export default function Chains(): React.ReactElement {
           return (
             <Grid
               alignItems='center' container item justifyContent='space-between' key={value} sx={{
-                backgroundImage: chainsToList.length - 1 === index ? '' : 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
+                backgroundImage: chainsToList.length - 1 === index ? '' : theme.palette.dividerGradient,
                 backgroundPosition: 'bottom',
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: '100% 2px',

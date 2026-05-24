@@ -134,7 +134,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
             <React.Fragment key={index}>
               {
                 !!index && isExtension &&
-                <Box sx={{ background: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)', height: '1px', width: '345px' }} />
+                <Box sx={{ background: theme.palette.dividerGradient, height: '1px', width: '345px' }} />
               }
               <Stack alignItems='center' direction='row' justifyContent='space-between' key={index} sx={{ bgcolor: isExtension ? 'transparent' : (isDark ? '#05091C' : '#FFFFFF'), border: isExtension || isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '14px', mb: '2px', p: isExtension ? '10px 0' : '12px 10px', width: '100%' }}>
                 <Stack alignItems='center' columnGap='5px' direction='row'>

@@ -102,7 +102,7 @@ const LeftColumnContent = ({ genesisHash, nominators, onClose }: LeftColumnConte
   return (
     <Stack direction='column' sx={{ gap: '6px', p: '50px 18px 0', width: '100%', zIndex: 1 }}>
       <Box
-        sx={{ background: isDark ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' : 'linear-gradient(90deg, rgba(221, 227, 244, 0) 0%, #DDE3F4 50.06%, rgba(221, 227, 244, 0) 100%)', height: '1px', justifySelf: 'center', m: '5px 0 15px', width: '100%' }}
+        sx={{ background: theme.palette.dividerGradientFade, height: '1px', justifySelf: 'center', m: '5px 0 15px', width: '100%' }}
       />
       <Stack direction='column' sx={{ gap: '4px', height: '350px', maxHeight: '350px', overflow: 'auto', pb: '18px', width: '100%' }}>
         {nominators.length > 0 &&

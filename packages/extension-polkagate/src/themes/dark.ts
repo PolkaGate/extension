@@ -44,6 +44,7 @@ export const darkTheme: ExtendedThemeOptions = {
     warning: { main: '#FF4FB9', light: '#FFCE4F' },
     divider: 'rgba(255, 255, 255, 0.1)',
     dividerGradient: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
+    dividerGradientFade: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
     dividerGradientStrong: 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)',
     gradient: {
       brand: 'linear-gradient(262.56deg, #6E00B1 0%, #DC45A0 45%, #6E00B1 100%)',

@@ -4,7 +4,7 @@
 import type { AccountJson } from '@polkadot/extension-base/background/types';
 
 import { ExpandMore } from '@mui/icons-material';
-import { Box, Collapse, Stack, Typography } from '@mui/material';
+import { Box, Collapse, Stack, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import useProfileInfo from '@polkadot/extension-polkagate/src/fullscreen/home/useProfileInfo';
@@ -22,6 +22,7 @@ interface Props {
 }
 
 function ProfileAccountSelection({ accounts, defaultProfile = '', label, maybeNewName, selectedAddresses, setSelectedAddresses }: Props): React.ReactElement {
+  const theme = useTheme();
   const isDark = useIsDark();
   const profileInfo = useProfileInfo(label);
 
@@ -97,7 +98,7 @@ function ProfileAccountSelection({ accounts, defaultProfile = '', label, maybeNe
           {accounts.map(({ address, genesisHash }, index) => (
             <Stack direction='column' key={index} sx={{ width: '100%' }}>
               {!!index &&
-                <Box sx={{ background: isDark ? 'linear-gradient(90deg, rgba(210, 185, 241, 0.03) 0%, rgba(210, 185, 241, 0.15) 50.06%, rgba(210, 185, 241, 0.03) 100%)' : 'linear-gradient(90deg, rgba(116, 93, 139, 0.04) 0%, rgba(116, 93, 139, 0.16) 50.06%, rgba(116, 93, 139, 0.04) 100%)', height: '1px', width: '337' }} />
+                <Box sx={{ background: isDark ? theme.palette.dividerGradient : 'linear-gradient(90deg, rgba(116, 93, 139, 0.04) 0%, rgba(116, 93, 139, 0.16) 50.06%, rgba(116, 93, 139, 0.04) 100%)', height: '1px', width: '337' }} />
               }
               <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ p: '11px 17px 10px 20px' }}>
                 <Identity

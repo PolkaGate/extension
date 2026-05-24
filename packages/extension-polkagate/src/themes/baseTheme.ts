@@ -55,6 +55,7 @@ declare module '@mui/material/styles' {
     backgroundFL: TypeText;
     border: Partial<TypeBackground>;
     dividerGradient: string;
+    dividerGradientFade: string;
     dividerGradientStrong: string;
     gradient: TypeText;
     icon: Partial<TypeText>;
@@ -73,6 +74,7 @@ declare module '@mui/material/styles' {
     backgroundFL?: Partial<TypeText>;
     border?: Partial<TypeBackground>;
     dividerGradient?: string;
+    dividerGradientFade?: string;
     dividerGradientStrong?: string;
     icon?: Partial<TypeText>;
     gradient?: Partial<TypeText>;
