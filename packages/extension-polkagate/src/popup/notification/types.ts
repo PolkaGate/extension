@@ -148,7 +148,7 @@ export interface NotificationsType {
 
 export type NotificationActionType =
   | { type: 'INITIALIZE'; }
-  | { type: 'MARK_AS_READ'; }
+  | { type: 'MARK_AS_READ'; payload: { itemKeys: string[]; latestLoggedIn: number; } }
   | { type: 'LOAD_FROM_STORAGE'; payload: NotificationsType }
   | { type: 'SET_MESSAGES'; payload: NotificationMessageType[] };
 
