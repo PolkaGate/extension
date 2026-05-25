@@ -1,8 +1,6 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-// @ts-nocheck
-
 import type { ApiPromise } from '@polkadot/api';
 import type { BN } from '@polkadot/util';
 
@@ -16,6 +14,21 @@ export interface ActiveRecoveryFor {
   createdBlock: number;
   deposit: BN;
   vouchedFriends: string[];
+}
+
+type ActiveRecoveryEntry = [
+  { args: { toString: () => string }[] },
+  { unwrap: () => ActiveRecoveryInfo }
+];
+
+interface ActiveRecoveryInfo {
+  created: BN;
+  deposit: BN;
+  friends: { toHuman: () => unknown };
+}
+
+interface ActiveRecoveriesQuery {
+  entries?: () => Promise<ActiveRecoveryEntry[]>;
 }
 
 export default function useActiveRecoveries(api: ApiPromise | undefined | null, searchFor?: string): ActiveRecoveryFor[] | null | undefined {
@@ -38,7 +51,16 @@ export default function useActiveRecoveries(api: ApiPromise | undefined | null, 
 
     setFetching(true);
 
-    api.query['recovery']?.['activeRecoveries'].entries().then((actives) => {
+    const activeRecoveriesQuery = api.query['recovery']?.['activeRecoveries'] as ActiveRecoveriesQuery | undefined;
+
+    if (!activeRecoveriesQuery?.entries) {
+      setActiveRecoveries(null);
+      setFetching(null);
+
+      return;
+    }
+
+    activeRecoveriesQuery.entries().then((actives) => {
       const myActiveRecovery: ActiveRecoveryFor[] = [];
 
       if (actives.length === 0) {
@@ -50,7 +72,7 @@ export default function useActiveRecoveries(api: ApiPromise | undefined | null, 
       actives.forEach((activeRecovery) => {
         const lostAddress = activeRecovery[0].args[0].toString();
         const rescuerAddress = activeRecovery[0].args[1].toString();
-        const activeRecoveryInfo = activeRecovery[1].unwrap() as { created: BN, deposit: BN, friends: BN };
+        const activeRecoveryInfo = activeRecovery[1].unwrap();
         const createdBlockBN = activeRecoveryInfo.created;
         const depositedValue = activeRecoveryInfo.deposit;
 
