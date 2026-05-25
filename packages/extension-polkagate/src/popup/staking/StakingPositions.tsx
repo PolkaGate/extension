@@ -3,7 +3,7 @@
 
 import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
 import { AddCircle, HierarchySquare3, I3Dcube } from 'iconsax-react';
-import React, { Fragment, useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { type BN } from '@polkadot/util';
@@ -60,7 +60,9 @@ export const StakingBadge = ({ hasPoolStaking, isFullscreen, style }: StakingBad
   );
 };
 
-interface Props {
+type PositionType = 'solo' | 'pool';
+
+interface PositionRowProps {
   balance: BN;
   decimal: number;
   genesisHash: string;
@@ -68,10 +70,19 @@ interface Props {
   isLast: boolean;
   token: string;
   price: number;
-  type: 'solo' | 'pool';
+  type: PositionType;
 }
 
-function PositionRow({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: Props): React.ReactElement {
+interface PositionRowItem {
+  balance: BN;
+  decimal: number;
+  genesisHash: string;
+  priceId?: string;
+  token: string;
+  type: PositionType;
+}
+
+function PositionRow({ balance, decimal, genesisHash, isFirst, isLast, price, token, type }: PositionRowProps): React.ReactElement {
   const navigate = useNavigate();
   const isDark = useIsDark();
   const hasPoolStaking = type === 'pool';
@@ -106,10 +117,11 @@ function PositionRow({ balance, decimal, genesisHash, isFirst, isLast, price, to
 }
 
 export default function StakingPositions(): React.ReactElement {
-  useBackground('default');
+  useBackground('default') as void;
 
   const { t } = useTranslation();
   const account = useSelectedAccount();
+  const isDark = useIsDark();
   const pricesInCurrency = usePrices();
   const accountAssets = useAccountAssets(account?.address);
   const navigate = useNavigate();
@@ -134,6 +146,20 @@ export default function StakingPositions(): React.ReactElement {
       }
     });
   }, [positions, searchKeyWord]);
+
+  const positionRows = useMemo(() => filteredToken?.flatMap<PositionRowItem>(({ decimal, genesisHash, pooledBalance, priceId, soloTotal, token }) => {
+    const rows: PositionRowItem[] = [];
+
+    if (pooledBalance && !pooledBalance.isZero()) {
+      rows.push({ balance: pooledBalance, decimal, genesisHash, priceId, token, type: 'pool' });
+    }
+
+    if (soloTotal && !soloTotal.isZero()) {
+      rows.push({ balance: soloTotal, decimal, genesisHash, priceId, token, type: 'solo' });
+    }
+
+    return rows;
+  }), [filteredToken]);
 
   const onSearch = useCallback((keyword: string) => {
     if (!keyword) {
@@ -167,49 +193,30 @@ export default function StakingPositions(): React.ReactElement {
             style={{ padding: '4%' }}
           />
           <VelvetBox style={{ margin: '0 4%', maxHeight: '305px', minHeight: '63px', overflowY: 'auto', width: '92%' }}>
-            <Grid container item sx={{ bgcolor: '#FFFFFF', borderRadius: '15px', width: '100%' }}>
-              {filteredToken?.map(({ decimal, genesisHash, pooledBalance, priceId, soloTotal, token }, index) => {
+            <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', borderRadius: '15px', width: '100%' }}>
+              {positionRows?.map(({ balance, decimal, genesisHash, priceId, token, type }, index) => {
                 const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;
 
                 return (
-                  <Fragment key={`${index}_fragment`}>
-                    {
-                      pooledBalance && !pooledBalance?.isZero() &&
-                      <PositionRow
-                        balance={pooledBalance}
-                        decimal={decimal}
-                        genesisHash={genesisHash}
-                        isFirst={index === 0}
-                        isLast={index === filteredToken.length - 1}
-                        key={`${index}_pool`}
-                        price={price}
-                        token={token}
-                        type='pool'
-                      />
-                    }
-                    {
-                      soloTotal && !soloTotal?.isZero() &&
-                      <PositionRow
-                        balance={soloTotal}
-                        decimal={decimal}
-                        genesisHash={genesisHash}
-                        isFirst={index === 0}
-                        isLast={index === filteredToken.length - 1}
-                        key={`${index}_solo`}
-                        price={price}
-                        token={token}
-                        type='solo'
-                      />
-                    }
-                  </Fragment>
+                  <PositionRow
+                    balance={balance}
+                    decimal={decimal}
+                    genesisHash={genesisHash}
+                    isFirst={index === 0}
+                    isLast={index === positionRows.length - 1}
+                    key={`${genesisHash}_${token}_${type}`}
+                    price={price}
+                    token={token}
+                    type={type}
+                  />
                 );
               })}
               <NothingFound
-                show={filteredToken?.length === 0}
+                show={positionRows?.length === 0}
                 style={{ pb: '50px' }}
                 text={t('Token Not Found')}
               />
-              <FadeOnScroll containerRef={refContainer}  />
+              <FadeOnScroll containerRef={refContainer} />
             </Grid>
           </VelvetBox>
           <Stack direction='row' justifyContent='center'>
