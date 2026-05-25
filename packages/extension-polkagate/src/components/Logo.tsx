@@ -397,7 +397,7 @@ function Logo({ assetSize,
             borderRadius,
             color: fallbackTextColor,
             fontSize: typeof effectiveSize === 'number'
-              ? effectiveSize * (showSquare ? 0.44 : 0.5)
+              ? effectiveSize * 0.78 * (showSquare ? 0.8 : 0.5)
               : undefined,
             height: '78%',
             width: '78%'
