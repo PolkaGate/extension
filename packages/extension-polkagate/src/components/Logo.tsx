@@ -3,7 +3,7 @@
 
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Avatar, Box } from '@mui/material';
+import { Avatar, Box, useTheme } from '@mui/material';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { logoWhiteTransparent } from '../assets/logos';
@@ -178,8 +178,7 @@ function RenderLogoGraphic({ borderRadius, filter, imgRef, size, source, style }
   );
 }
 
-function Logo({
-  assetSize,
+function Logo({ assetSize,
   baseTokenSize,
   chainName,
   fallbackBackgroundColor,
@@ -197,9 +196,9 @@ function Logo({
   subLogo,
   subLogoPosition,
   token,
-  variant = 'single'
-}: Props): React.ReactElement {
+  variant = 'single' }: Props): React.ReactElement {
   const isDark = useIsDark();
+  const theme = useTheme();
   const imgRef = useRef<HTMLImageElement>(null);
   const options = useContext(GenesisHashOptionsContext);
   const maybeUserAddedChainColor = useUserAddedChainColor(genesisHash);
@@ -233,14 +232,13 @@ function Logo({
   const effectiveSecondaryLogoSize = baseTokenSize ?? secondaryLogoSize;
   const effectiveFallbackBackgroundColor = fallbackBackgroundColor ?? maybeUserAddedChainColor;
   const effectiveFallbackText = fallbackText ?? resolvedChainName;
+  const fallbackBackgroundColorToShow = effectiveFallbackBackgroundColor ?? (isDark ? '#8A91A3' : '#6F8796');
+  const fallbackTextColor = theme.palette.getContrastText(fallbackBackgroundColorToShow);
   const resolvedPrimaryLogo = showSquare ? resolvedLogoInfo?.logoSquare ?? resolvedLogoInfo?.logo : resolvedLogoInfo?.logo;
   const effectiveLogo = shouldUseNativeTokenLogo
     ? nativeTokenLogo
     : logo ?? resolvedPrimaryLogo;
   const borderRadius = showSquare ? 0 : logoRoundness;
-  const fallbackSize = typeof effectiveSize === 'number'
-    ? effectiveSize - (showSquare ? 6 : 3.5)
-    : `calc(${effectiveSize} - ${showSquare ? '6px' : '3.5px'})`;
   const secondaryGraphicSize = typeof effectiveSecondaryLogoSize === 'number'
     ? effectiveSecondaryLogoSize
     : `calc(${effectiveSecondaryLogoSize} - 0px)`;
@@ -383,21 +381,32 @@ function Logo({
 
   if (effectiveFallbackText) {
     return (
-      <Avatar
+      <Box
         sx={{
-          bgcolor: effectiveFallbackBackgroundColor,
-          borderRadius,
-          fontSize: typeof effectiveSize === 'number'
-            ? effectiveSize * (showSquare ? 0.48 : 0.6)
-            : undefined,
-          height: fallbackSize,
-          width: fallbackSize,
+          alignItems: 'center',
+          display: 'flex',
+          height: effectiveSize,
+          justifyContent: 'center',
+          width: effectiveSize,
           ...style
         }}
-        variant='square'
       >
-        {effectiveFallbackText.charAt(0).toUpperCase()}
-      </Avatar>
+        <Avatar
+          sx={{
+            bgcolor: fallbackBackgroundColorToShow,
+            borderRadius,
+            color: fallbackTextColor,
+            fontSize: typeof effectiveSize === 'number'
+              ? effectiveSize * 0.78 * (showSquare ? 0.8 : 0.5)
+              : undefined,
+            height: '78%',
+            width: '78%'
+          }}
+          variant='square'
+        >
+          {effectiveFallbackText.charAt(0).toUpperCase()}
+        </Avatar>
+      </Box>
     );
   }
 
