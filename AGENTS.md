@@ -63,3 +63,15 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+
+## Validation Command Safety
+
+Before running lint, format, or test scripts, inspect the package script first.
+
+- Never run repo-wide auto-fix commands unless the user explicitly asks.
+- Do not run commands containing `--fix`, `--write`, `format`, `lint-staged`, `prettier --write`, or equivalent mutating formatters without explicit approval.
+- Prefer file-scoped validation commands that do not modify files, for example:
+  - `yarn polkadot-exec-eslint path/to/file.tsx`
+  - `git diff --check -- path/to/file.tsx`
+- Before and after validation, check `git status --short`. If unexpected files changed, stop and report it immediately.

@@ -6,10 +6,10 @@ import type { DropdownOption } from '../util/types';
 
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 
-import { AUTO_MARK_AS_READ_DELAY, initialNotificationState } from '../popup/notification/constant';
+import { initialNotificationState } from '../popup/notification/constant';
 import { getPayoutsInformation, getReceivedFundsInformation, getReferendasInformation } from '../popup/notification/helpers';
 import useNotificationSettings from '../popup/notification/hook/useNotificationSettings';
-import { filterMessages, generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, groupNotificationsByDay, markMessagesAsRead } from '../popup/notification/util';
+import { filterMessages, generateReceivedFundNotifications, generateReferendaNotifications, generateStakingRewardNotifications, groupNotificationsByDay, markMessagesAsRead, mergeNotificationsForStorage } from '../popup/notification/util';
 import { getStorage, getSubscanChainName, sanitizeChainName, setStorage } from '../util';
 import { STORAGE_KEY } from '../util/constants';
 import { SUBSCAN_CHAINS } from '../util/subscanChains';
@@ -31,8 +31,7 @@ const notificationReducer = (
       };
 
     case 'MARK_AS_READ':
-      // Mark all messages as read and update the latestLoggedIn time
-      return { ...state, latestLoggedIn, notificationMessages: markMessagesAsRead(state.notificationMessages ?? []) };
+      return { ...state, latestLoggedIn: action.payload.latestLoggedIn, notificationMessages: markMessagesAsRead(state.notificationMessages ?? [], action.payload.itemKeys) };
 
     case 'LOAD_FROM_STORAGE':
       return action.payload;
@@ -94,6 +93,7 @@ export default function useNotifications(justLoadData = true) {
   const initializedRef = useRef<boolean>(false); // Flag to avoid duplicate initialization
   const isSavingRef = useRef<boolean>(false); // Flag to avoid duplicate save in the storage
   const saveQueue = useRef<Promise<void>>(Promise.resolve()); // Saving to the local storage queue
+  const notificationsRef = useRef<NotificationsType>(initialNotificationState);
 
   // Memoized list of selected chain options
   const chains = useMemo(() => {
@@ -117,6 +117,10 @@ export default function useNotifications(justLoadData = true) {
 
   const [notifications, dispatchNotifications] = useReducer(notificationReducer, initialNotificationState);
 
+  useEffect(() => {
+    notificationsRef.current = notifications;
+  }, [notifications]);
+
   const fallbackTimestamp = useMemo(() => (Math.floor(Date.now() / 1000)), []); // timestamp in seconds
   const latestLoggedIn = useMemo(() => notifications?.latestLoggedIn ?? fallbackTimestamp, [fallbackTimestamp, notifications?.latestLoggedIn]);
   // Whether notifications are turned off
@@ -124,7 +128,7 @@ export default function useNotifications(justLoadData = true) {
 
   useEffect(() => {
     // Don't save if notifications haven't been initialized yet
-    if (notifications.isFirstTime === undefined) {
+    if (justLoadData || notifications.isFirstTime === undefined) {
       return;
     }
 
@@ -134,15 +138,17 @@ export default function useNotifications(justLoadData = true) {
     }
 
     // Queue saves to ensure they happen sequentially
-    saveQueue.current = saveQueue.current.then(async () => {
+    saveQueue.current = saveQueue.current.then(async() => {
       if (isSavingRef.current) {
         return;
       }
 
       isSavingRef.current = true;
-      const dataToSave = { ...notifications };
 
       try {
+        const storedNotifications = await getStorage(STORAGE_KEY.NOTIFICATIONS) as NotificationsType | undefined;
+        const dataToSave = mergeNotificationsForStorage(notifications, storedNotifications);
+
         await setStorage(STORAGE_KEY.NOTIFICATIONS, dataToSave);
         console.log('✅ Notifications saved to storage');
       } catch (error) {
@@ -151,20 +157,51 @@ export default function useNotifications(justLoadData = true) {
         isSavingRef.current = false;
       }
     });
-  }, [notifications, notificationIsOff]);
+  }, [justLoadData, notifications, notificationIsOff]);
 
-  // Mark all notifications as read
-  const markAsRead = useCallback(() => {
-    const timer = setTimeout(() => {
-      // ✅ This runs only after the component has been mounted for 5 seconds
-      dispatchNotifications({ type: 'MARK_AS_READ' });
-    }, AUTO_MARK_AS_READ_DELAY);
+  // Mark the notifications loaded in the open notification panel as read.
+  const markAsRead = useCallback(async() => {
+    const currentNotifications = notificationsRef.current;
+    const currentMessages = currentNotifications.notificationMessages ?? [];
+    const unreadMessageKeys = new Set(
+      currentMessages
+        .filter(({ read }) => !read)
+        .map(({ message }) => message.itemKey)
+    );
 
-    return () => clearTimeout(timer); // return cleanup function if needed
+    if (unreadMessageKeys.size === 0) {
+      return;
+    }
+
+    const latestLoggedIn = Math.floor(Date.now() / 1000);
+
+    dispatchNotifications({
+      payload: {
+        itemKeys: Array.from(unreadMessageKeys),
+        latestLoggedIn
+      },
+      type: 'MARK_AS_READ'
+    });
+
+    try {
+      const storedNotifications = await getStorage(STORAGE_KEY.NOTIFICATIONS) as NotificationsType | undefined;
+      const storedMessages = storedNotifications?.notificationMessages ?? currentMessages;
+      const notificationMessages = markMessagesAsRead(storedMessages, unreadMessageKeys);
+
+      const notificationsToSave = mergeNotificationsForStorage({
+        ...(storedNotifications ?? currentNotifications),
+        latestLoggedIn,
+        notificationMessages
+      }, storedNotifications);
+
+      await setStorage(STORAGE_KEY.NOTIFICATIONS, notificationsToSave);
+    } catch (error) {
+      console.error('Failed to mark notifications as read:', error);
+    }
   }, []);
 
   // Fetch received funds notifications
-  const receivedFundsInfo = useCallback(async () => {
+  const receivedFundsInfo = useCallback(async() => {
     if (chains && fetchState.receivedFunds === Status.NONE && accounts && isReceivedFundsEnable) {
       setFetchState({ receivedFunds: Status.FETCHING });
       const notificationMessages: NotificationMessageType[] = [];
@@ -182,7 +219,7 @@ export default function useNotifications(justLoadData = true) {
   }, [accounts, chains, fetchState.receivedFunds, isReceivedFundsEnable, latestLoggedIn]);
 
   // Fetch staking rewards notifications
-  const payoutsInfo = useCallback(async () => {
+  const payoutsInfo = useCallback(async() => {
     if (fetchState.stakingRewards === Status.NONE && accounts && stakingRewardChains && stakingRewardChains.length !== 0) {
       setFetchState({ stakingRewards: Status.FETCHING });
       const notificationMessages: NotificationMessageType[] = [];
@@ -200,7 +237,7 @@ export default function useNotifications(justLoadData = true) {
   }, [accounts, fetchState.stakingRewards, latestLoggedIn, stakingRewardChains]);
 
   // Fetch referenda notifications
-  const referendasInfo = useCallback(async () => {
+  const referendasInfo = useCallback(async() => {
     if (fetchState.referenda === Status.NONE && accounts && governanceChains && governanceChains.length !== 0) {
       setFetchState({ referenda: Status.FETCHING });
 
@@ -224,7 +261,7 @@ export default function useNotifications(justLoadData = true) {
       return;
     }
 
-    const loadSavedNotifications = async () => {
+    const loadSavedNotifications = async() => {
       initializedRef.current = true;
 
       try {
@@ -249,7 +286,7 @@ export default function useNotifications(justLoadData = true) {
       return;
     }
 
-    const fetchSequentially = async () => {
+    const fetchSequentially = async() => {
       try {
         if (isReceivedFundsEnable) {
           await receivedFundsInfo();

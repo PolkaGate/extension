@@ -15,7 +15,7 @@ import NotificationGroup from './partials/NotificationGroup';
 import { ColdStartNotification, NoNotificationYet, NotificationLoading, OffNotificationMessage } from './partials/Partial';
 
 function Notification() {
-  useBackground('default');
+  useBackground('default') as void;
 
   const refContainer = useRef(null);
   const { markAsRead, notificationItems, status } = useNotifications();
@@ -24,10 +24,17 @@ function Notification() {
 
   const { isFirstTime, isNotificationOff, loading, noNotificationYet } = status;
 
-  useEffect(() => markAsRead(), [markAsRead]);
+  useEffect(() => {
+    return () => {
+      markAsRead().catch(console.error);
+    };
+  }, [markAsRead]);
 
   const openSettings = useCallback(() => navigate('/notification/settings') as void, [navigate]);
-  const backHome = useCallback(() => navigate('/') as void, [navigate]);
+  const backHome = useCallback(() => {
+    markAsRead().catch(console.error);
+    navigate('/') as void;
+  }, [markAsRead, navigate]);
 
   return (
     <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>

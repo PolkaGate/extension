@@ -6,7 +6,7 @@
 import type { TFunction } from '@polkagate/apps-config/types';
 import type { CurrencyItemType } from '@polkadot/extension-polkagate/src/fullscreen/home/partials/type';
 import type { Prices, UserAddedEndpoint } from '@polkadot/extension-polkagate/src/util/types';
-import type { NotificationMessage, NotificationMessageInformation, NotificationMessageType, NotificationType, ReceivedFundInformation, ReferendaInformation, ReferendaProp, ReferendaStatus, StakingRewardInformation } from './types';
+import type { NotificationMessage, NotificationMessageInformation, NotificationMessageType, NotificationsType, NotificationType, ReceivedFundInformation, ReferendaInformation, ReferendaProp, ReferendaStatus, StakingRewardInformation } from './types';
 
 import { createAssets } from '@polkagate/apps-config/assets';
 
@@ -127,15 +127,25 @@ export const generateReceivedFundNotifications = (
 };
 
 /**
- * Marks messages as read
+ * Marks messages as read.
  */
-export const markMessagesAsRead = (messages: NotificationMessageInformation[]) => {
-  return messages.map((message) => (
-    {
+export const markMessagesAsRead = (messages: NotificationMessageInformation[] = [], itemKeys?: Set<string> | string[]) => {
+  const keySet = itemKeys instanceof Set
+    ? itemKeys
+    : itemKeys
+      ? new Set(itemKeys)
+      : undefined;
+
+  return messages.map((message) => {
+    if (message.read || (keySet && !keySet.has(message.message.itemKey))) {
+      return message;
+    }
+
+    return {
       ...message,
       read: true
-    }
-  ));
+    };
+  });
 };
 
 // Utility to get date string like "15 Dec 2025"
@@ -505,4 +515,29 @@ export const filterMessages = (pervMessages: NotificationMessageInformation[] | 
     .map((item) => ({ message: item, read: false }));
 
   return pervMessages.concat(filteredMessages);
+};
+
+export const mergeNotificationsForStorage = (notifications: NotificationsType, storedNotifications: NotificationsType | undefined): NotificationsType => {
+  const messageMap = new Map<string, NotificationMessageInformation>();
+  const latestLoggedIn = Math.max(notifications.latestLoggedIn ?? 0, storedNotifications?.latestLoggedIn ?? 0) || undefined;
+
+  storedNotifications?.notificationMessages?.forEach((item) => {
+    messageMap.set(item.message.itemKey, item);
+  });
+
+  notifications.notificationMessages?.forEach((item) => {
+    const storedItem = messageMap.get(item.message.itemKey);
+
+    messageMap.set(item.message.itemKey, {
+      ...item,
+      read: item.read || storedItem?.read === true
+    });
+  });
+
+  return {
+    ...notifications,
+    isFirstTime: notifications.isFirstTime ?? storedNotifications?.isFirstTime,
+    latestLoggedIn,
+    notificationMessages: Array.from(messageMap.values())
+  };
 };
