@@ -295,7 +295,6 @@
   "Watch-only": "Только просмотр",
   "Derived from {{parentName}}": "Производный от {{parentName}}",
   "change log": "журнал изменений",
-  "Wow, it’s great!": "Вау, это здорово!",
   "Tokens": "Токены",
   "You don't have any NFTs yet": "У вас пока нет NFT",
   "See all": "Посмотреть все",
@@ -967,5 +966,6 @@
   "Add Custom RPC": "Добавить пользовательский RPC",
   "Custom RPC": "Пользовательский RPC",
   "Saved": "Сохранено",
-  "Checking": "Проверка"
+  "Checking": "Проверка",
+  "Got it": "Понятно"
 }

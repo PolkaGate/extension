@@ -295,7 +295,6 @@
   "Watch-only": "仅观察",
   "Derived from {{parentName}}": "源自 {{parentName}}",
   "change log": "更新日志",
-  "Wow, it’s great!": "哇，真棒！",
   "Tokens": "代币",
   "You don't have any NFTs yet": "您还没有任何 NFT",
   "See all": "查看全部",
@@ -967,5 +966,6 @@
   "Add Custom RPC": "添加自定义 RPC",
   "Custom RPC": "自定义 RPC",
   "Saved": "已保存",
-  "Checking": "正在检查"
+  "Checking": "正在检查",
+  "Got it": "知道了"
 }

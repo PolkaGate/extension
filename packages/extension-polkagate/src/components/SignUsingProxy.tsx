@@ -144,10 +144,10 @@ const ProxiesItem = ({ genesisHash, onSelect, proxy, proxyTypeFilter, selectedPr
               {proxy.proxy.proxyType}
             </Typography>
             <Typography
-              color='#82FFA5'
+              color={isDark ? '#82FFA5' : 'success.main'}
               sx={{
-                bgcolor: isDark ? '#82FFA526' : '#E9FFF0',
-                border: isDark ? 'none' : '1px solid #C5F1D3',
+                bgcolor: isDark ? '#82FFA526' : 'success.light',
+                border: isDark ? 'none' : `1px solid ${theme.palette.success.light}`,
                 borderRadius: '7px',
                 p: '1px 3px'
               }}

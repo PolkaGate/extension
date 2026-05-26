@@ -98,7 +98,10 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
   const activeBadgeColor = isDark ? '#82FFA5' : '#14B874';
   const inactiveBadgeBg = isDark ? '#8E8E8E26' : '#F1F3F9';
   const inactiveBadgeColor = isDark ? '#8E8E8E' : '#98A0B8';
-  const warningColor = HIGH_COMMISSION_WARNING_COLOR;
+  const warningColor = isDark ? HIGH_COMMISSION_WARNING_COLOR : '#B45309';
+  const warningBg = isDark ? `${warningColor}1A` : '#FFF0E4';
+  const warningBorder = isDark ? 'none' : '1px solid #FFD7A8';
+  const warningBoxShadow = isDark ? `inset 0 0 12px 2px ${warningColor}33, 0 0 10px 0 ${warningColor}22` : 'none';
 
   return (
     <>
@@ -171,9 +174,10 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
           startIconColor={isHighCommission ? warningColor : undefined}
           style={isHighCommission
             ? {
-              bgcolor: `${warningColor}1A`,
+              bgcolor: warningBg,
+              border: warningBorder,
               borderRadius: '999px',
-              boxShadow: `inset 0 0 12px 2px ${warningColor}33, 0 0 10px 0 ${warningColor}22`,
+              boxShadow: warningBoxShadow,
               justifyContent: 'center',
               px: '8px',
               py: '2px'

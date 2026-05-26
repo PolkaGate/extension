@@ -401,7 +401,7 @@ export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props)
                     marginTop: '10px',
                     width: '345px'
                   }}
-                  text={t('Wow, it’s great!')}
+                  text={t('Got it')}
                 />
               </Grid>
             </>
