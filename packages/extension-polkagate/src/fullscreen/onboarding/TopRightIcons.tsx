@@ -84,7 +84,7 @@ function TopRightIcons(): React.ReactElement {
           sx={{ alignItems: 'center', borderRadius: '10px', cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}
         >
           <ShieldTick
-            color={hovered === ExtensionPopups.PRIVACY ? '#EAEBF1' : isDark ? '#82FFA5' : '#5EBE82'}
+            color={hovered === ExtensionPopups.PRIVACY ? '#EAEBF1' : theme.palette.success.main}
             size='24'
             style={{ transition: 'all 250ms ease-out', zIndex: 10 }}
             variant={hovered === ExtensionPopups.PRIVACY ? 'Bold' : 'Bulk'}

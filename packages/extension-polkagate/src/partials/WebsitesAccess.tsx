@@ -149,7 +149,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
                       <Typography color={isDark ? '#AA83DC' : '#7A69A8'} sx={{ mr: '3px' }} variant='B-4'>
                         {info.authorizedAccounts.length}
                       </Typography>
-                      <Profile color={isIncluded ? '#82FFA5' : (isDark ? '#AA83DC' : '#7A69A8')} size='14' variant='Bulk' />
+                      <Profile color={isIncluded ? theme.palette.success.main : (isDark ? '#AA83DC' : '#7A69A8')} size='14' variant='Bulk' />
                     </Box>
                   </MyTooltip>
                   <MyTooltip content={t('Remove access')}>

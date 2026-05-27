@@ -49,14 +49,15 @@ export const EligibilityItem = ({ done, text }: EligibilityItemProps) => {
   const theme = useTheme();
 
   const adjustedColor = isExtension ? theme.palette.text.highlight : theme.palette.primary.main;
+  const successColor = theme.palette.success.main;
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', columnGap: '6px', display: 'flex', justifyContent: isExtension ? 'normal' : 'center' }}>
       {!done
         ? <Grid sx={{ bgcolor: isExtension ? '#3E4065' : '#2D1E4A', borderRadius: '999px', height: '18px', width: '18px' }} />
-        : <TickCircle color='#82FFA5' size='18' variant='Bold' />
+        : <TickCircle color={successColor} size='18' variant='Bold' />
       }
-      <Typography color={!done ? adjustedColor : '#82FFA5'} variant='B-2'>
+      <Typography color={!done ? adjustedColor : successColor} variant='B-2'>
         {text}
       </Typography>
     </Container>

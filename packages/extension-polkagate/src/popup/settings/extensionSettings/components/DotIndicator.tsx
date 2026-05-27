@@ -1,18 +1,10 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useMemo } from 'react';
 
 const COLORS = {
-  GREEN: '#82FFA5',
-  GREEN_BG: '#82FFA526',
-  GREEN_OFF: '#6B9B7880',
-  YELLOW: '#FFCE4F',
-  YELLOW_BG: '#FFCE4F26',
-  YELLOW_OFF: '#FFCE4F80',
-  // eslint-disable-next-line sort-keys
   RED: '#FF4FB9',
   RED_BG: '#FF4FB926',
   RED_OFF: '#FF4FB980',
@@ -25,20 +17,20 @@ const COLORS = {
 const TOTAL_DOTS = 4;
 
 type LatencyColorCode = 'GREEN' | 'YELLOW' | 'RED' | 'DEFAULT';
-type LatencyColorKey = keyof typeof COLORS;
+type LatencyColorKey = LatencyColorCode | `${LatencyColorCode}_BG` | `${LatencyColorCode}_OFF`;
 
 function DotIndicator({ delay }: { delay: number | null | undefined }): React.ReactElement {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
   const colors: Record<LatencyColorKey, string> = useMemo(() => ({
     ...COLORS,
-    GREEN: isDark ? COLORS.GREEN : '#14B874',
-    GREEN_BG: isDark ? COLORS.GREEN_BG : '#DDF8EA',
-    GREEN_OFF: isDark ? COLORS.GREEN_OFF : '#9BDCB7',
-    YELLOW: isDark ? COLORS.YELLOW : '#FF8A35',
-    YELLOW_BG: isDark ? COLORS.YELLOW_BG : '#FFF0E4',
-    YELLOW_OFF: isDark ? COLORS.YELLOW_OFF : '#FFC78E'
-  }), [isDark]);
+    GREEN: theme.palette.success.main,
+    GREEN_BG: isDark ? '#82FFA526' : theme.palette.success.light,
+    GREEN_OFF: isDark ? '#6B9B7880' : '#9BDCB7',
+    YELLOW: isDark ? theme.palette.warning.light : '#FF8A35',
+    YELLOW_BG: isDark ? '#FFCE4F26' : '#FFF0E4',
+    YELLOW_OFF: isDark ? '#FFCE4F80' : '#FFC78E'
+  }), [isDark, theme.palette.success.light, theme.palette.success.main, theme.palette.warning.light]);
 
   const [colorCode, dotsInColor]: [colorCode: LatencyColorCode, dotsInColor: number] = useMemo(() => {
     if (!delay) {
@@ -55,16 +47,18 @@ function DotIndicator({ delay }: { delay: number | null | undefined }): React.Re
 
     return ['RED', 1];
   }, [delay]);
+  const bgColorKey = `${colorCode}_BG` as const;
+  const offColorKey = `${colorCode}_OFF` as const;
 
   return (
-    <Grid alignItems='center' container item sx={{ bgcolor: colors[`${colorCode}_BG` as LatencyColorKey], borderRadius: '8px', height: '18px', width: 'fit-content' }}>
+    <Grid alignItems='center' container item sx={{ bgcolor: colors[bgColorKey], borderRadius: '8px', height: '18px', width: 'fit-content' }}>
       <Typography color={colors[colorCode]} fontFamily='Inter' fontSize='20px' letterSpacing='-3.5px' sx={{ lineHeight: '18px', pl: '5px' }}>
         {'•'.repeat(dotsInColor)}
       </Typography>
-      <Typography color={colors[`${colorCode}_OFF` as LatencyColorKey]} fontFamily='Inter' fontSize='20px' letterSpacing='-3.5px' sx={{ lineHeight: '18px', pr: '5px' }}>
+      <Typography color={colors[offColorKey]} fontFamily='Inter' fontSize='20px' letterSpacing='-3.5px' sx={{ lineHeight: '18px', pr: '5px' }}>
         {'•'.repeat(TOTAL_DOTS - dotsInColor)}
       </Typography>
-      <Typography color={colors[colorCode]} fontFamily='Inter' fontSize='11px' fontWeight={600} sx={{ bgcolor: colors[`${colorCode}_BG` as LatencyColorKey], borderRadius: '7px', height: '16px', px: '5px' }}>
+      <Typography color={colors[colorCode]} fontFamily='Inter' fontSize='11px' fontWeight={600} sx={{ bgcolor: colors[bgColorKey], borderRadius: '7px', height: '16px', px: '5px' }}>
         {delay ?? 0}ms
       </Typography>
     </Grid>

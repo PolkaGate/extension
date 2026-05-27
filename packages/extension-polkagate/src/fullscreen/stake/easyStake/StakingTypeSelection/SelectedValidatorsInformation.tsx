@@ -24,7 +24,7 @@ export const SelectedValidatorsInformation = ({ isExtension, isRecommended, onCl
   const textColor = useMemo(() => isExtension ? (isDark ? theme.palette.text.highlight : '#745D8B') : '#AA83DC', [isDark, isExtension, theme.palette.text.highlight]);
   const rowBg = isDark ? '#1B133C' : '#F1ECFA';
   const actionBg = isDark ? '#2D1E4A' : '#E4D9F2';
-  const recommendedColor = isDark ? '#82FFA5' : theme.palette.success.main;
+  const recommendedColor = 'success.main';
 
   return (
     <Collapse in={open}>

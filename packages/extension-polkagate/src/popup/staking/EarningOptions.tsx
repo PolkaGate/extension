@@ -26,7 +26,7 @@ export default function EarningOptions(): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
   const isDark = useIsDark();
-  const successColor = isDark ? '#82FFA5' : theme.palette.success.main;
+  const successColor = 'success.main';
   const successBgColor = isDark ? '#82FFA533' : '#DDF8EA';
   const successBorderColor = isDark ? 'none' : '1px solid #BCECCF';
   const account = useSelectedAccount();

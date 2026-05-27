@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import CachedIcon from '@mui/icons-material/Cached';
-import { Container, IconButton, Typography } from '@mui/material';
+import { Container, IconButton, Typography, useTheme } from '@mui/material';
 import { Data } from 'iconsax-react';
 import React from 'react';
 
@@ -27,6 +27,7 @@ const SelectedProxy = ({ genesisHash, signerInformation, style = {}, textMaxWidt
   const signerId = useMyAccountIdentity(signerAddress, genesisHash);
   const signerName = useAccountName(signerAddress);
   const isBlueish = useIsBlueish();
+  const theme = useTheme();
 
   return (
     <Container disableGutters sx={{ alignItems: 'center', bgcolor: isBlueish ? '#809ACB26' : '#4E2B7259', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', p: '2px', width: 'fit-content', ...style }}>
@@ -35,7 +36,7 @@ const SelectedProxy = ({ genesisHash, signerInformation, style = {}, textMaxWidt
           address={signerAddress}
           size={18}
         />
-        <Data color='#82FFA5' size='18' variant='Bold' />
+        <Data color={theme.palette.success.main} size='18' variant='Bold' />
         <Typography color='text.primary' sx={{ maxWidth: textMaxWidth ?? '85px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-2'>
           {signerId?.display ?? signerName}
         </Typography>

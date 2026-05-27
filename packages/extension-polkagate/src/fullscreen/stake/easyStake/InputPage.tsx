@@ -32,7 +32,7 @@ const StakingTypeOptionBox = ({ onClick, open, selectedStakingType, stakingConst
   const isDark = theme.palette.mode === 'dark';
 
   const textColor = useMemo(() => isExtension ? (isDark ? theme.palette.text.highlight : '#745D8B') : '#AA83DC', [isDark, isExtension, theme.palette.text.highlight]);
-  const successColor = isDark ? '#82FFA5' : theme.palette.success.main;
+  const successColor = 'success.main';
   const successBgColor = isDark ? '#82FFA526' : '#DDF8EA';
   const cardBg = isDark ? (isExtension ? '#110F2A' : '#05091C') : '#FFFFFF';
   const cardBorderColor = isDark ? 'transparent' : '#E3E8F7';
@@ -102,7 +102,7 @@ const EstimatedRate = ({ rate, show }: { show: boolean, rate: number | undefined
 
   const textColor = useMemo(() => isExtension ? (isDark ? 'text.highlight' : '#745D8B') : 'primary.main', [isDark, isExtension]);
   const yearColor = useMemo(() => isExtension ? (isDark ? '#809acb8c' : '#745D8B') : '#674394', [isDark, isExtension]);
-  const successColor = isDark ? '#82FFA5' : theme.palette.success.main;
+  const successColor = 'success.main';
 
   return (
     <Stack direction='row' sx={{ display: show ? 'flex' : 'none', justifyContent: 'space-between', m: '17px 0 3px', px: '5px', width: '100%' }}>
