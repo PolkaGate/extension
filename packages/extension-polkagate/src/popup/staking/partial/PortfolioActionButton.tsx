@@ -48,6 +48,14 @@ export default function PortfolioActionButton({ Icon, disabled = false, isFullSc
       : defaultTextColor ?? (isFullScreen ? theme.palette.text.primary : theme.palette.text.highlight),
   [defaultTextColor, disabled, disabledColor, isFullScreen, theme.palette.text.highlight, theme.palette.text.primary]);
 
+  const iconColor = useMemo(() =>
+    disabled
+      ? disabledColor
+      : isDark && isFullScreen
+        ? '#AA83DC'
+        : 'inherit'
+  , [disabled, disabledColor, isDark, isFullScreen]);
+
   return (
     <Grid
       alignItems='center'
@@ -55,7 +63,13 @@ export default function PortfolioActionButton({ Icon, disabled = false, isFullSc
       item
       onClick={disabled ? noop : onClick}
       sx={{
+        '& .portfolio-action-icon': {
+          color: iconColor
+        },
         ':hover': {
+          '& .portfolio-action-icon': {
+            color: isLightPopup ? '#745E9F' : '#FFFFFF'
+          },
           '& .portfolio-action-text': {
             color: isLightPopup ? '#745E9F' : '#FFFFFF'
           },
