@@ -52,7 +52,6 @@ export default function ProxyAccountInfo({ handleDelete, proxyItem, showCheck = 
     : isDark ? '#05091C' : '#FFFFFF';
   const cardBorder = selected ? '2px solid transparent' : `1px solid ${isDark ? '#2D1E4A' : '#E3E8F7'}`;
   const primaryTextColor = isDark ? '#EAEBF1' : theme.palette.text.primary;
-  const delayColor = isDark ? '#82FFA5' : '#14B874';
   const delayBg = isDark ? '#82FFA526' : '#DDF8EA';
 
   useEffect(() => {
@@ -94,7 +93,7 @@ export default function ProxyAccountInfo({ handleDelete, proxyItem, showCheck = 
             noIdenticon
             style={{ color: primaryTextColor, maxWidth: '170px', overflow: 'hidden', textOverflow: 'ellipsis', variant: 'B-1' }}
           />
-          <Typography color={delayColor} sx={{ bgcolor: delayBg, borderRadius: '7px', px: '4px' }} variant='B-5'>
+          <Typography color='success.main' sx={{ bgcolor: delayBg, borderRadius: '7px', px: '4px' }} variant='B-5'>
             {proxyItem.proxy.delay * 6} sec
           </Typography>
         </Stack>

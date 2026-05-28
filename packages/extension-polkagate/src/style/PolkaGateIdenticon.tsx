@@ -3,8 +3,8 @@
 
 import type { IconTheme as BaseIconTheme } from '@polkadot/react-identicon/types';
 
-import React, { useCallback, useContext } from 'react';
 import { useTheme } from '@mui/material';
+import React, { useCallback, useContext } from 'react';
 import styled from 'styled-components';
 
 import Icon from '@polkadot/react-identicon';
@@ -56,7 +56,7 @@ function PolkaGateIdenticon({ address, className, iconTheme, onCopy, prefix, siz
   }, [address, baseAddress]);
 
   return (
-    <span className={className} onClick={onClick} style={{ '--pg-identicon-bg': theme.palette.mode === 'dark' ? '#2c2643' : '#E9ECF8', cursor: withNotify ? 'copy' : 'default', height: `${size}px`, width: `${size}px`, ...style } as React.CSSProperties}>
+    <span className={className} onClick={onClick} style={{ '--pg-identicon-bg': theme.palette.mode === 'dark' ? '#2c2643' : '#E9ECF8', alignItems: 'center', cursor: withNotify ? 'copy' : 'default', display: 'inline-flex', flexShrink: 0, height: `${size}px`, justifyContent: 'center', lineHeight: 0, verticalAlign: 'middle', width: `${size}px`, ...style } as React.CSSProperties}>
       {!_theme || _theme === 'polkasoul'
         ? (
           <PolkaSoul

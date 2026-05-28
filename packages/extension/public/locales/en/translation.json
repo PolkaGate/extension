@@ -295,7 +295,6 @@
   "Watch-only": "",
   "Derived from {{parentName}}": "",
   "change log": "",
-  "Wow, it’s great!": "",
   "Tokens": "",
   "You don't have any NFTs yet": "",
   "See all": "",
@@ -967,5 +966,6 @@
   "Add Custom RPC": "",
   "Custom RPC": "",
   "Saved": "",
-  "Checking": ""
+  "Checking": "",
+  "Got it": ""
 }

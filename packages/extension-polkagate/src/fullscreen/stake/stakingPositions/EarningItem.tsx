@@ -60,7 +60,7 @@ const Available = ({ balance, decimal, token }: StakedProps) => {
 const YieldBadge = ({ rate }: { rate: number | undefined }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
-  const successColor = isDark ? '#82FFA5' : theme.palette.success.main;
+  const successColor = theme.palette.success.main;
   const successMutedColor = isDark ? '#82FFA580' : '#5EBE82';
   const successBgColor = isDark ? '#82FFA526' : '#DDF8EA';
 

@@ -138,7 +138,7 @@ const PoolIdentityDetail = ({ genesisHash, poolDetail, poolStatus }: PoolIdentit
             </Typography>
           </Typography>
         </Grid>
-        <Typography color='#82FFA5' sx={{ fontFamily: 'JetBrainsMono', fontSize: '14px', fontWeight: 700 }}>
+        <Typography color='success.main' sx={{ fontFamily: 'JetBrainsMono', fontSize: '14px', fontWeight: 700 }}>
           {toShortAddress(stashId)}
         </Typography>
       </Container>

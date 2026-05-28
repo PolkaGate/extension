@@ -142,7 +142,7 @@ const ValidatorIdentityDetail = ({ genesisHash, validatorDetail }: ValidatorIden
               {validatorDetail.identity.display}
             </Typography>}
         </Grid>
-        <Typography color={isDark ? '#82FFA5' : theme.palette.success.main} sx={{ fontFamily: 'JetBrainsMono', fontSize: '14px', fontWeight: 700 }}>
+        <Typography color='success.main' sx={{ fontFamily: 'JetBrainsMono', fontSize: '14px', fontWeight: 700 }}>
           {toShortAddress(accountId)}
         </Typography>
       </Container>

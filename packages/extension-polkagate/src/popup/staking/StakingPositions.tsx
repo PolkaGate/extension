@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid, Stack, type SxProps, type Theme, Typography } from '@mui/material';
+import { Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
 import { AddCircle, HierarchySquare3, I3Dcube } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -39,8 +39,9 @@ interface StakingBadgeProps {
 export const StakingBadge = ({ hasPoolStaking, isFullscreen, style }: StakingBadgeProps) => {
   const { t } = useTranslation();
   const isDark = useIsDark();
+  const theme = useTheme();
 
-  const poolColor = isDark ? '#82FFA5' : '#14B874';
+  const poolColor = theme.palette.success.main;
   const soloColor = isFullscreen ? '#8C78B2' : '#8C78B2';
   const textColor = hasPoolStaking ? poolColor : soloColor;
 

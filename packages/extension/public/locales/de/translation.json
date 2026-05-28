@@ -295,7 +295,6 @@
   "Watch-only": "Watch-Only",
   "Derived from {{parentName}}": "Abgeleitet von {{parentName}}",
   "change log": "Änderungsprotokoll",
-  "Wow, it’s great!": "Wow, das ist großartig!",
   "Tokens": "Tokens",
   "You don't have any NFTs yet": "Sie haben noch keine NFTs",
   "See all": "Alle anzeigen",
@@ -967,5 +966,6 @@
   "Add Custom RPC": "Benutzerdefinierten RPC hinzufügen",
   "Custom RPC": "Benutzerdefinierter RPC",
   "Saved": "Gespeichert",
-  "Checking": "Wird geprüft"
+  "Checking": "Wird geprüft",
+  "Got it": "Verstanden"
 }

@@ -6,6 +6,7 @@ import type { SpStakingExposurePage } from '@polkadot/types/lookup';
 import type { ValidatorInformation } from '../../../../hooks/useValidatorsInformation';
 
 import { Container, IconButton, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { ArrowRight2, BuyCrypto, ChartSquare, Danger, type Icon, PercentageSquare, Profile2User } from 'iconsax-react';
 import React, { memo, useCallback, useMemo } from 'react';
 
@@ -16,7 +17,7 @@ import { useChainInfo, useTranslation, useValidatorApy } from '../../../../hooks
 import { type StakingInfoStackProps, ValidatorIdentity } from '../../../../popup/staking/partial/NominatorsTable';
 import { ValidatorIdSocials } from '../../../../popup/staking/partial/ValidatorDetail';
 import { toBN } from '../../../../util';
-import { HIGH_COMMISSION_THRESHOLD, HIGH_COMMISSION_WARNING_COLOR } from '../../../../util/constants';
+import { HIGH_COMMISSION_THRESHOLD } from '../../../../util/constants';
 import ValidatorInformationFS from '../../partials/ValidatorInformationFS';
 
 interface InfoProps extends StakingInfoStackProps {
@@ -95,10 +96,13 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
   const notElected = isActive === undefined && !onSelect;
   const baseBgcolor = bgcolor ?? (isSelected ? '#FF4FB926' : isAlreadySelected ? (isDark ? '#AA83DC1A' : '#EEF1FF') : isDark ? '#05091C' : '#FFFFFF');
   const activeBadgeBg = isDark ? '#82FFA526' : '#DDF8EA';
-  const activeBadgeColor = isDark ? '#82FFA5' : '#14B874';
+  const activeBadgeColor = 'success.main';
   const inactiveBadgeBg = isDark ? '#8E8E8E26' : '#F1F3F9';
   const inactiveBadgeColor = isDark ? '#8E8E8E' : '#98A0B8';
-  const warningColor = HIGH_COMMISSION_WARNING_COLOR;
+  const warningColor = isDark ? theme.palette.warning.light : theme.palette.warning.main;
+  const warningBg = isDark ? alpha(warningColor, 0.1) : '#FFF0E4';
+  const warningBorder = isDark ? 'none' : '1px solid #FFD7A8';
+  const warningBoxShadow = isDark ? `inset 0 0 12px 2px ${alpha(warningColor, 0.2)}, 0 0 10px 0 ${alpha(warningColor, 0.13)}` : 'none';
 
   return (
     <>
@@ -171,9 +175,10 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
           startIconColor={isHighCommission ? warningColor : undefined}
           style={isHighCommission
             ? {
-              bgcolor: `${warningColor}1A`,
+              bgcolor: warningBg,
+              border: warningBorder,
               borderRadius: '999px',
-              boxShadow: `inset 0 0 12px 2px ${warningColor}33, 0 0 10px 0 ${warningColor}22`,
+              boxShadow: warningBoxShadow,
               justifyContent: 'center',
               px: '8px',
               py: '2px'
