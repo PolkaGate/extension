@@ -23,6 +23,7 @@ export const ColumnAmounts = memo(function ColumnAmounts({ balanceColor, color, 
   const theme = useTheme();
 
   const contentPlacement = placement === 'left' ? 'flex-start' : 'flex-end';
+  const defaultBalanceColor = theme.palette.mode === 'dark' ? '#BEAAD8' : '#291443';
 
   return (
     <Grid alignItems={contentPlacement} container direction='column' item width='fit-content'>
@@ -44,7 +45,7 @@ export const ColumnAmounts = memo(function ColumnAmounts({ balanceColor, color, 
         decimal={decimal}
         decimalPoint={2}
         style={{
-          color: balanceColor || color || '#BEAAD8',
+          color: balanceColor || color || defaultBalanceColor,
           width: 'max-content'
         }}
         token={token}
