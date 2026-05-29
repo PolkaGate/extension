@@ -21,7 +21,7 @@ import Logo from '@polkadot/extension-polkagate/src/components/Logo';
 import HistoryIcon from '@polkadot/extension-polkagate/src/fullscreen/history/HistoryIcon';
 import useTransactionHistory from '@polkadot/extension-polkagate/src/popup/history/useTransactionHistory';
 import { VelvetBox } from '@polkadot/extension-polkagate/src/style';
-import { formatTimestamp, toCamelCase, toShortAddress } from '@polkadot/extension-polkagate/src/util';
+import { formatTimestamp, historyIconBgColor, toCamelCase, toShortAddress } from '@polkadot/extension-polkagate/src/util';
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import { useAccount, useChainInfo, usePrices, useTokenPriceBySymbol, useTranslation, useValidatorsInformation } from '../../hooks';
@@ -150,6 +150,20 @@ const nodeColor = (node: InteractionNode, isDark: boolean) =>
 const nodeRadius = (node: InteractionNode) => node.isCenter ? 11 : Math.min(11, 5 + Math.sqrt(node.txCount || 1) * 1.8);
 
 const validatorDisplayName = (node: InteractionNode) => node.validatorName || 'Validator';
+
+const recentIconBackground = (action: string, isDark: boolean) => {
+  if (isDark) {
+    return historyIconBgColor(action);
+  }
+
+  const normalizedAction = action.toLowerCase();
+
+  return ['receive', 'reward'].includes(normalizedAction)
+    ? '#E9FFF1'
+    : ['send', 'proxy', 'utility'].includes(normalizedAction)
+      ? '#FFFFFF'
+      : '#F5F4FF';
+};
 
 const linkColor3D = (direction: InteractionLink['direction'], isDark: boolean) => {
   if (!isDark) {
@@ -568,7 +582,9 @@ function DetailPanel({ selected }: { selected: SelectedItem }) {
               key={`${history.txHash ?? history.extrinsicIndex ?? history.date}-${history.action}-${history.amount}`}
               sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '10px', columnGap: '9px', minHeight: '58px', px: '10px', py: '8px', width: '100%' }}
             >
-              <HistoryIcon action={history.subAction ?? history.action} />
+              <Grid alignItems='center' container item justifyContent='center' sx={{ background: recentIconBackground(history.subAction ?? history.action, isDark), border: '2px solid', borderColor: isDark ? '#2D1E4A' : '#EEF1FF', borderRadius: '999px', flexShrink: 0, height: '36px', width: '36px' }}>
+                <HistoryIcon action={history.subAction ?? history.action} isFullscreen={false} />
+              </Grid>
               <Stack direction='column' rowGap='3px' sx={{ minWidth: 0, width: '100%' }}>
                 <Stack alignItems='baseline' direction='row' justifyContent='space-between' sx={{ columnGap: '10px', minWidth: 0 }}>
                   <Typography color='text.primary' noWrap variant='B-2'>
