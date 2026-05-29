@@ -35,7 +35,7 @@ function Breadcrumbs(): React.ReactElement {
   const navigate = useNavigate();
 
   const showHome = useMemo(() => {
-    const excludedPaths = ['/historyfs', '/proxyManagement', '/send', '/nft'];
+    const excludedPaths = ['/account-interactions', '/historyfs', '/proxyManagement', '/send', '/nft'];
 
     return !excludedPaths.some((path) => pathname.includes(path));
   }, [pathname]);
@@ -46,6 +46,7 @@ function Breadcrumbs(): React.ReactElement {
     return [
       { check: (path: string) => ['restore', 'attach', 'import'].some((keyword) => path.includes(keyword)), icon: ImportCurve, label: t('Import account'), redirect: '/account/have-wallet' },
       { check: (path: string) => path.includes('/historyfs'), icon: Money3, label: t('Account'), redirect },
+      { check: (path: string) => path.includes('/account-interactions'), icon: Money3, label: t('Account'), redirect },
       { check: (path: string) => path.includes('/proxyManagement'), icon: Money3, label: t('Account'), redirect },
       { check: (path: string) => path.includes('/send'), icon: Money3, label: t('Account'), redirect },
       { check: (path: string) => path.includes('/nft'), icon: Money3, label: t('Account'), redirect },
