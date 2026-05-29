@@ -1,0 +1,732 @@
+// Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
+import type { ForceGraphMethods, LinkObject, NodeObject } from 'react-force-graph-2d';
+import type { AdvancedDropdownOption } from '../../util/types';
+import type { DirectionFilter, InteractionFilters, InteractionLink, InteractionNode, StatusFilter, TokenTotal } from './buildInteractionGraph';
+
+import { Box, Button, Grid, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import { createAssets } from '@polkagate/apps-config/assets';
+import { ArrowLeft2, CloseCircle, Maximize4, Refresh2 } from 'iconsax-react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import ForceGraph2D from 'react-force-graph-2d';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import { CopyAddressButton, DropSelect, FormatPrice } from '@polkadot/extension-polkagate/src/components';
+import Logo from '@polkadot/extension-polkagate/src/components/Logo';
+import HistoryIcon from '@polkadot/extension-polkagate/src/fullscreen/history/HistoryIcon';
+import useTransactionHistory from '@polkadot/extension-polkagate/src/popup/history/useTransactionHistory';
+import { VelvetBox } from '@polkadot/extension-polkagate/src/style';
+import { formatTimestamp, toCamelCase, toShortAddress } from '@polkadot/extension-polkagate/src/util';
+import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
+
+import { useAccount, useChainInfo, usePrices, useTokenPriceBySymbol, useTranslation, useValidatorsInformation } from '../../hooks';
+import { EmptyListBox } from '../components';
+import HomeLayout from '../components/layout';
+import { buildInteractionGraph, getInteractionTypes, normalizeAddress } from './buildInteractionGraph';
+
+type GraphNode = NodeObject<InteractionNode>;
+type GraphLink = LinkObject<InteractionNode, InteractionLink>;
+type GraphRef = ForceGraphMethods<GraphNode, GraphLink>;
+interface LinkForce {
+  distance?: (distance: (link: InteractionLink) => number) => unknown;
+}
+interface ChargeForce {
+  strength?: (strength: number) => unknown;
+}
+interface CollisionForce {
+  radius?: (radius: (node: InteractionNode) => number) => unknown;
+}
+type SelectedItem =
+  | { type: 'node'; item: InteractionNode }
+  | { type: 'link'; item: InteractionLink }
+  | undefined;
+type InteractionFilterValue = `direction:${DirectionFilter}` | `type:${string}`;
+
+const ALL_TYPES = 'all';
+const DIRECTION_OPTIONS: DirectionFilter[] = ['all', 'sent', 'received', 'mixed'];
+const STATUS_OPTIONS: StatusFilter[] = ['all', 'completed', 'failed'];
+const assetsChains = createAssets();
+
+const formatOption = (option: string) => option
+  .split(/[-_\s]+/)
+  .filter(Boolean)
+  .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+  .join(' ');
+
+function useElementSize<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [size, setSize] = useState({ height: 0, width: 0 });
+
+  useEffect(() => {
+    const element = ref.current;
+
+    if (!element) {
+      return;
+    }
+
+    const updateSize = () => {
+      setSize({
+        height: Math.max(540, element.clientHeight),
+        width: Math.max(420, element.clientWidth)
+      });
+    };
+
+    updateSize();
+
+    const observer = new ResizeObserver(updateSize);
+
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
+
+  return { ref, size };
+}
+
+function TopFilterSelect<T extends string>({ label, onChange, options, value, width }: { label: string; onChange: (value: T) => void; options: AdvancedDropdownOption[]; value: T; width: number }) {
+  const _onChange = useCallback((newValue: number | string) => onChange(newValue as T), [onChange]);
+
+  return (
+    <Stack alignItems='center' direction='row' gap='8px'>
+      <Typography color='text.secondary' sx={{ textTransform: 'uppercase' }} variant='S-1'>
+        {label}
+      </Typography>
+      <DropSelect
+        onChange={_onChange}
+        options={options}
+        scrollTextOnOverflow
+        simpleArrow
+        style={{ height: '38px', padding: '7px 10px', width: `${width}px` }}
+        value={value}
+      />
+    </Stack>
+  );
+}
+
+const linkColor = (direction: InteractionLink['direction'], isDark: boolean) => {
+  switch (direction) {
+    case 'sent':
+      return '#FF4FB9';
+    case 'received':
+      return '#2ED3B7';
+    default:
+      return isDark ? '#AA83DC' : '#674394';
+  }
+};
+
+const nodeColor = (node: InteractionNode, isDark: boolean) =>
+  node.isCenter
+    ? '#FF4FB9'
+    : node.sentCount > 0 && node.receivedCount > 0
+      ? isDark ? '#AA83DC' : '#674394'
+      : node.sentCount > 0
+        ? '#FF4FB9'
+        : '#2ED3B7';
+
+const nodeRadius = (node: InteractionNode) => node.isCenter ? 11 : Math.min(11, 5 + Math.sqrt(node.txCount || 1) * 1.8);
+
+const validatorDisplayName = (node: InteractionNode) => node.validatorName || 'Validator';
+
+function drawNode(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number, isDark: boolean, selectedNodeId?: string) {
+  const radius = nodeRadius(node);
+  const label = node.label || toShortAddress(node.address);
+  const fontSize = node.isCenter ? 13 : 11;
+  const isSelected = selectedNodeId === node.id;
+
+  ctx.beginPath();
+  ctx.arc(node.x ?? 0, node.y ?? 0, radius, 0, 2 * Math.PI, false);
+  ctx.fillStyle = nodeColor(node, isDark);
+  ctx.shadowColor = nodeColor(node, isDark);
+  ctx.shadowBlur = isSelected ? 24 : node.isCenter ? 18 : 8;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.lineWidth = isSelected ? 4 : node.isCenter ? 2.5 : 1.5;
+  ctx.strokeStyle = isSelected ? '#FFD166' : isDark ? '#EAEBF1' : '#FFFFFF';
+  ctx.stroke();
+
+  if (isSelected) {
+    ctx.beginPath();
+    ctx.arc(node.x ?? 0, node.y ?? 0, radius + 6, 0, 2 * Math.PI, false);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#FFD166';
+    ctx.stroke();
+  }
+
+  if (node.isValidator) {
+    const badgeText = 'VAL';
+    const badgeFontSize = 8 / globalScale;
+    const badgeHeight = 13 / globalScale;
+    const badgePadding = 4 / globalScale;
+    const badgeX = (node.x ?? 0) + radius - (3 / globalScale);
+    const badgeY = (node.y ?? 0) - radius - (badgeHeight / 2);
+
+    ctx.font = `700 ${badgeFontSize}px Inter`;
+
+    const badgeWidth = ctx.measureText(badgeText).width + (badgePadding * 2);
+
+    ctx.beginPath();
+    ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, badgeHeight / 2);
+    ctx.fillStyle = '#FFD166';
+    ctx.fill();
+    ctx.fillStyle = '#291443';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(badgeText, badgeX + (badgeWidth / 2), badgeY + (badgeHeight / 2));
+  }
+
+  const labelVisible = globalScale > 0.75 || node.isCenter;
+
+  if (!labelVisible) {
+    return;
+  }
+
+  ctx.font = `${fontSize / globalScale}px Inter`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.fillStyle = isDark ? '#EAEBF1' : '#291443';
+  ctx.fillText(label, node.x ?? 0, (node.y ?? 0) + radius + 4);
+
+  if (node.isValidator) {
+    ctx.font = `${9 / globalScale}px Inter`;
+    ctx.fillStyle = '#FFD166';
+    ctx.fillText(validatorDisplayName(node), node.x ?? 0, (node.y ?? 0) + radius + (18 / globalScale));
+  }
+}
+
+function TokenTotalRow({ amount, genesisHash, token }: TokenTotal) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const { chainName, token: nativeToken } = useChainInfo(genesisHash, true);
+  const pricesInCurrencies = usePrices();
+  const isNativeToken = Boolean(token && nativeToken && token.toLowerCase() === nativeToken.toLowerCase());
+  const maybeKnownAsset = useMemo(() => assetsChains[toCamelCase(chainName || '')]?.find(({ symbol }) => symbol.toLowerCase() === token.toLowerCase()), [chainName, token]);
+  const logoInfo = useMemo(() => {
+    if (isNativeToken || maybeKnownAsset) {
+      return resolveLogoInfo(genesisHash, token);
+    }
+
+    return undefined;
+  }, [genesisHash, isNativeToken, maybeKnownAsset, token]);
+  const nativePrice = useTokenPriceBySymbol(isNativeToken ? token : undefined, genesisHash);
+  const assetPrice = maybeKnownAsset?.priceId ? pricesInCurrencies?.prices?.[maybeKnownAsset.priceId]?.value : undefined;
+  const price = isNativeToken ? nativePrice.price : assetPrice;
+  const fiatValue = useMemo(() => price === undefined ? undefined : amount * price, [amount, price]);
+
+  return (
+    <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ columnGap: '10px', width: '100%' }}>
+      <Logo
+        assetSize='24px'
+        baseTokenSize='0'
+        fallbackText={token}
+        genesisHash={genesisHash}
+        logo={logoInfo?.logo}
+        subLogo={undefined}
+        token={isNativeToken || maybeKnownAsset ? token : undefined}
+      />
+      <Stack alignItems='flex-end' direction='column' rowGap='3px' sx={{ minWidth: 0 }}>
+        <Typography color='text.primary' noWrap sx={{ textAlign: 'right' }} variant='B-2'>
+          {amount.toLocaleString(undefined, { maximumFractionDigits: 4 })} {token}
+        </Typography>
+        {fiatValue !== undefined && fiatValue > 0 &&
+          <FormatPrice
+            commify
+            decimalColor={isDark ? '#BEAAD8' : theme.palette.text.secondary}
+            fontFamily='Inter'
+            fontSize='12px'
+            fontWeight={500}
+            height={14}
+            num={fiatValue}
+            textAlign='right'
+            textColor={isDark ? '#BEAAD8' : theme.palette.text.secondary}
+            width='fit-content'
+          />
+        }
+      </Stack>
+    </Stack>
+  );
+}
+
+function DetailPanel({ selected }: { selected: SelectedItem }) {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
+  if (!selected) {
+    return (
+      <Stack justifyContent='center' sx={{ height: '100%', px: '18px' }}>
+        <Typography color='text.secondary' textAlign='center' variant='B-2'>
+          {t('Select a node or connection to inspect interactions.')}
+        </Typography>
+      </Stack>
+    );
+  }
+
+  if (selected.type === 'node') {
+    const { item } = selected;
+
+    return (
+      <Stack direction='column' sx={{ p: '18px' }}>
+        <Typography color='text.primary' sx={{ mb: '10px' }} variant='H-3'>
+          {item.name || (item.isCenter ? t('Selected account') : t('Unknown'))}
+        </Typography>
+        <Stack alignItems='center' direction='row' justifyContent='center' sx={{ columnGap: '6px', maxWidth: '100%', mb: '16px' }}>
+          <Typography color='text.secondary' noWrap title={item.address} variant='B-4'>
+            {toShortAddress(item.address, 8)}
+          </Typography>
+          <CopyAddressButton address={item.address} padding={0} size={17} />
+        </Stack>
+        <Stack direction='row' flexWrap='wrap' gap='8px' justifyContent='center'>
+          <Metric label={t('Transactions')} value={item.txCount} />
+          <Metric label={t('Sent')} value={item.sentCount} />
+          <Metric label={t('Received')} value={item.receivedCount} />
+          {item.failedCount > 0 &&
+            <Metric label={t('Failed')} value={item.failedCount} />
+          }
+        </Stack>
+        {item.isValidator &&
+          <Typography color='warning.main' sx={{ mt: '10px', textAlign: 'center' }} variant='B-4'>
+            {t('Validator')}
+          </Typography>
+        }
+      </Stack>
+    );
+  }
+
+  const { item } = selected;
+  const latest = item.transactions
+    .slice()
+    .sort((a, b) => b.date - a.date)
+    .slice(0, 5);
+
+  return (
+    <Stack direction='column' rowGap='14px' sx={{ height: '100%', overflow: 'hidden', p: '18px' }}>
+      <Typography color='text.primary' variant='H-3'>
+        {formatOption(item.direction)} {t('connection')}
+      </Typography>
+      <Stack direction='row' flexWrap='wrap' gap='8px' justifyContent='center'>
+        <Metric label={t('Transactions')} value={item.txCount} />
+        <Metric label={t('Sent')} value={item.sentCount} />
+        <Metric label={t('Received')} value={item.receivedCount} />
+        {item.failedCount > 0 &&
+          <Metric label={t('Failed')} value={item.failedCount} />
+        }
+      </Stack>
+      <Stack alignItems='start' direction='column' rowGap='7px' sx={{ width: '100%' }}>
+        <Typography color='text.secondary' sx={{ textTransform: 'uppercase' }} variant='S-1'>
+          {t('Totals')}
+        </Typography>
+        <Stack direction='column' rowGap='7px' sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', border: '1px solid', borderColor: isDark ? '#2D1E4A' : '#DDE3F4', borderRadius: '12px', p: '10px 12px', width: '100%' }}>
+          {item.tokens.map((tokenTotal) => (
+            <TokenTotalRow key={`${tokenTotal.genesisHash ?? 'native'}:${tokenTotal.token}`} {...tokenTotal} />
+          ))}
+        </Stack>
+      </Stack>
+      <Stack alignItems='start' direction='column' rowGap='7px' sx={{ overflow: 'hidden', width: '100%' }}>
+        <Typography color='text.secondary' sx={{ pl: '2px', textTransform: 'uppercase' }} variant='S-1'>
+          {t('Recent')}
+        </Typography>
+        <Stack direction='column' rowGap='6px' sx={{ overflowY: 'auto', pr: '4px', width: '100%' }}>
+          {latest.map((history) => (
+            <Stack
+              alignItems='center'
+              direction='row'
+              key={`${history.txHash ?? history.extrinsicIndex ?? history.date}-${history.action}-${history.amount}`}
+              sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '10px', columnGap: '9px', minHeight: '58px', px: '10px', py: '8px', width: '100%' }}
+            >
+              <HistoryIcon action={history.subAction ?? history.action} />
+              <Stack direction='column' rowGap='3px' sx={{ minWidth: 0, width: '100%' }}>
+                <Stack alignItems='baseline' direction='row' justifyContent='space-between' sx={{ columnGap: '10px', minWidth: 0 }}>
+                  <Typography color='text.primary' noWrap variant='B-2'>
+                    {formatOption(history.subAction ?? history.action)}
+                  </Typography>
+                  <Typography color='text.primary' noWrap sx={{ textAlign: 'right' }} variant='B-2'>
+                    {history.amount ?? '0'} {history.token ?? ''}
+                  </Typography>
+                </Stack>
+                <Typography color='text.secondary' noWrap sx={{ textAlign: 'left' }} variant='B-5'>
+                  {formatTimestamp(history.date)}
+                </Typography>
+              </Stack>
+            </Stack>
+          ))}
+        </Stack>
+      </Stack>
+    </Stack>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: number }) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
+  return (
+    <Stack sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', border: '1px solid', borderColor: isDark ? '#2D1E4A' : '#DDE3F4', borderRadius: '10px', minWidth: '92px', p: '8px' }}>
+      <Typography color='text.secondary' variant='B-5'>
+        {label}
+      </Typography>
+      <Typography color='text.primary' variant='B-1'>
+        {value}
+      </Typography>
+    </Stack>
+  );
+}
+
+function GraphLoading({ isDark }: { isDark: boolean }) {
+  const nodeBg = isDark ? '#AA83DC33' : '#DDE3F4';
+  const lineBg = isDark ? '#AA83DC40' : '#C9D2EE';
+  const centerBg = isDark ? '#FF4FB966' : '#FF4FB933';
+
+  const lineStyle = {
+    bgcolor: lineBg,
+    borderRadius: '999px',
+    height: '2px',
+    opacity: 0.55,
+    position: 'absolute',
+    transformOrigin: 'left center'
+  };
+  const nodeStyle = {
+    bgcolor: nodeBg,
+    border: '2px solid',
+    borderColor: isDark ? '#BEAAD833' : '#FFFFFF',
+    borderRadius: '999px',
+    boxShadow: isDark ? '0 0 18px rgba(170, 131, 220, 0.16)' : '0 8px 24px rgba(120, 130, 180, 0.18)',
+    height: '38px',
+    opacity: 0.85,
+    position: 'absolute',
+    width: '38px'
+  };
+
+  return (
+    <Box sx={{ height: '100%', overflow: 'hidden', position: 'relative', width: '100%' }}>
+      <Box sx={{ ...lineStyle, left: '40%', top: '50%', transform: 'rotate(-37deg)', width: '220px' }} />
+      <Box sx={{ ...lineStyle, left: '39%', top: '50%', transform: 'rotate(34deg)', width: '185px' }} />
+      <Box sx={{ ...lineStyle, left: '39%', top: '50%', transform: 'rotate(146deg)', width: '210px' }} />
+      <Box sx={{ ...lineStyle, left: '39%', top: '50%', transform: 'rotate(-142deg)', width: '160px' }} />
+      <Box sx={{ ...nodeStyle, left: '22%', top: '29%' }} />
+      <Box sx={{ ...nodeStyle, left: '60%', top: '29%' }} />
+      <Box sx={{ ...nodeStyle, left: '58%', top: '66%' }} />
+      <Box sx={{ ...nodeStyle, left: '21%', top: '66%' }} />
+      <Box sx={{ ...nodeStyle, bgcolor: centerBg, borderColor: isDark ? '#EAEBF1' : '#FFFFFF', height: '60px', left: '38%', top: '46%', width: '60px' }} />
+    </Box>
+  );
+}
+
+function AccountInteractions(): React.ReactElement {
+  const { t } = useTranslation();
+  const { address, genesisHash } = useParams<{ address: string; genesisHash: string }>();
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const graphRef = useRef<GraphRef | undefined>(undefined);
+  const { ref: graphContainerRef, size } = useElementSize<HTMLDivElement>();
+  const account = useAccount(address);
+  const validatorsInfo = useValidatorsInformation(genesisHash);
+
+  const [filters, setFilters] = useState<InteractionFilters>({
+    direction: 'all',
+    status: 'all',
+    type: ALL_TYPES
+  });
+  const [selected, setSelected] = useState<SelectedItem>();
+  const [fittedGraphKey, setFittedGraphKey] = useState<string>();
+
+  useEffect(() => {
+    setSelected(undefined);
+  }, [address, genesisHash]);
+
+  const { allHistories, fetchMoreIfAvailable, hasMore, isFetchingMore, isLoading } = useTransactionHistory(
+    address,
+    genesisHash,
+    { governance: true, staking: true, transfers: true },
+    { enableInfiniteScroll: false }
+  );
+
+  const typeOptions = useMemo(() => getInteractionTypes(allHistories), [allHistories]);
+  const interactionValue = useMemo<InteractionFilterValue>(() =>
+    filters.direction !== 'all'
+      ? `direction:${filters.direction}`
+      : filters.type === ALL_TYPES
+        ? 'direction:all'
+        : `type:${filters.type}`
+  , [filters.direction, filters.type]);
+  const interactionOptions = useMemo<AdvancedDropdownOption[]>(() => [
+    { text: t('All interactions'), value: 'direction:all' },
+    ...DIRECTION_OPTIONS
+      .filter((direction) => direction !== 'all')
+      .map((direction) => ({
+        text: formatOption(direction),
+        value: `direction:${direction}`
+      })),
+    ...typeOptions
+      .filter((type) => type !== ALL_TYPES)
+      .map((type) => ({
+        text: formatOption(type),
+        value: `type:${type}`
+      }))
+  ], [t, typeOptions]);
+  const statusOptions = useMemo<AdvancedDropdownOption[]>(() => STATUS_OPTIONS.map((status) => ({
+    text: formatOption(status),
+    value: status
+  })), []);
+  const graph = useMemo(() => buildInteractionGraph(allHistories, address, filters), [address, allHistories, filters]);
+  const validatorsById = useMemo(() => {
+    const validators = [
+      ...(validatorsInfo?.validatorsInformation.elected ?? []),
+      ...(validatorsInfo?.validatorsInformation.waiting ?? [])
+    ];
+
+    return validators.reduce<Map<string, string | undefined>>((map, validator) => {
+      const id = normalizeAddress(validator.accountId?.toString());
+
+      if (id) {
+        map.set(id, validator.identity?.displayParent ?? validator.identity?.display ?? undefined);
+      }
+
+      return map;
+    }, new Map());
+  }, [validatorsInfo?.validatorsInformation.elected, validatorsInfo?.validatorsInformation.waiting]);
+  const singleLinkDistance = useMemo(() => Math.min(170, Math.max(120, size.width * 0.18)), [size.width]);
+  const graphData = useMemo(() => ({
+    links: graph.links,
+    nodes: graph.nodes.map((node) => {
+      const validatorName = validatorsById.get(node.id);
+      const validatorFields = validatorsById.has(node.id)
+        ? { isValidator: true, validatorName }
+        : {};
+
+      if (!node.isCenter && graph.links.length === 1) {
+        return { ...node, ...validatorFields, fx: singleLinkDistance, fy: 0, x: singleLinkDistance, y: 0 };
+      }
+
+      return node.isCenter
+        ? { ...node, ...validatorFields, fx: 0, fy: 0, label: account?.name || node.label, name: account?.name, x: 0, y: 0 }
+        : { ...node, ...validatorFields };
+    })
+  }), [account?.name, graph, singleLinkDistance, validatorsById]);
+  const graphLayoutKey = useMemo(() => [
+    address ?? '',
+    genesisHash ?? '',
+    filters.direction,
+    filters.status,
+    filters.type,
+    graph.nodes.map(({ id }) => id).join('|'),
+    graph.links.map(({ id }) => id).join('|'),
+    size.width,
+    size.height
+  ].join(':'), [address, filters.direction, filters.status, filters.type, genesisHash, graph.links, graph.nodes, size.height, size.width]);
+  const isGraphFitted = fittedGraphKey === graphLayoutKey;
+
+  useEffect(() => {
+    const chargeForce = graphRef.current?.d3Force('charge') as ChargeForce | undefined;
+    const collisionForce = graphRef.current?.d3Force('collide') as CollisionForce | undefined;
+    const linkForce = graphRef.current?.d3Force('link') as LinkForce | undefined;
+    const baseDistance = graph.links.length <= 1 ? singleLinkDistance : 110;
+
+    chargeForce?.strength?.(-220);
+    collisionForce?.radius?.((node) => nodeRadius(node) + 24);
+    linkForce?.distance?.((link) => baseDistance + Math.min(120, link.txCount * 7));
+    graphRef.current?.d3ReheatSimulation();
+  }, [graph.links.length, graphData, singleLinkDistance]);
+
+  useEffect(() => {
+    if (isLoading || graph.links.length === 0 || size.height === 0 || size.width === 0) {
+      return;
+    }
+
+    const fitGraph = () => {
+      graphRef.current?.zoomToFit(0, graph.links.length === 1 ? 90 : 60);
+    };
+
+    const revealGraph = () => {
+      fitGraph();
+      setFittedGraphKey(graphLayoutKey);
+    };
+
+    const animationFrame = requestAnimationFrame(fitGraph);
+    const timeout = setTimeout(revealGraph, 250);
+
+    return () => {
+      cancelAnimationFrame(animationFrame);
+      clearTimeout(timeout);
+    };
+  }, [graph.links.length, graphLayoutKey, isLoading, size.height, size.width]);
+
+  const onBack = useCallback(() => {
+    Promise.resolve(navigate(-1)).catch(console.error);
+  }, [navigate]);
+  const resetLayout = useCallback(() => {
+    graphRef.current?.d3ReheatSimulation();
+  }, []);
+  const zoomToFit = useCallback(() => {
+    graphRef.current?.zoomToFit(450, 60);
+  }, []);
+  const loadMore = useCallback(() => {
+    fetchMoreIfAvailable().catch(console.error);
+  }, [fetchMoreIfAvailable]);
+  const clearSelected = useCallback(() => {
+    setSelected(undefined);
+  }, []);
+
+  const updateInteraction = useCallback((value: InteractionFilterValue) => {
+    const [kind, selectedValue] = value.split(':');
+
+    setFilters((prev) => kind === 'direction'
+      ? { ...prev, direction: selectedValue as DirectionFilter, type: ALL_TYPES }
+      : { ...prev, direction: 'all', type: selectedValue });
+  }, []);
+  const updateStatus = useCallback((status: StatusFilter) => setFilters((prev) => ({ ...prev, status })), []);
+
+  const onNodeClick = useCallback((node: GraphNode) => {
+    setSelected({ item: node, type: 'node' });
+  }, []);
+  const onLinkClick = useCallback((link: GraphLink) => {
+    setSelected({ item: link as InteractionLink, type: 'link' });
+  }, []);
+  const onNodeDragEnd = useCallback((node: GraphNode) => {
+    if (node.isCenter) {
+      node.fx = 0;
+      node.fy = 0;
+
+      return;
+    }
+
+    if (graph.links.length === 1) {
+      node.fx = node.x;
+      node.fy = node.y;
+
+      return;
+    }
+
+    delete node.fx;
+    delete node.fy;
+    graphRef.current?.d3ReheatSimulation();
+  }, [graph.links.length]);
+  const selectedNodeId = selected?.type === 'node' ? selected.item.id : undefined;
+  const selectedLinkId = selected?.type === 'link' ? selected.item.id : undefined;
+  const getLinkColor = useCallback((link: GraphLink) => link.id === selectedLinkId ? '#FFD166' : linkColor(link.direction, isDark), [isDark, selectedLinkId]);
+  const getLinkArrowLength = useCallback((link: GraphLink) => link.direction === 'mixed' ? 0 : 4, []);
+  const getLinkParticles = useCallback((link: GraphLink) => link.direction === 'mixed' ? 0 : link.id === selectedLinkId ? Math.max(3, Math.min(6, Math.ceil(link.txCount / 2))) : Math.min(3, Math.ceil(link.txCount / 4)), [selectedLinkId]);
+  const getLinkLabel = useCallback((link: GraphLink) => `${formatOption(link.direction)} - ${link.txCount} ${t('transactions')}`, [t]);
+  const getLinkWidth = useCallback((link: GraphLink) => link.id === selectedLinkId ? Math.min(10, 3 + Math.sqrt(link.txCount)) : Math.min(8, 1 + Math.sqrt(link.txCount)), [selectedLinkId]);
+  const getNodeLabel = useCallback((node: GraphNode) => `${node.label} - ${node.txCount} ${t('transactions')}`, [t]);
+  const renderNode = useCallback((node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => drawNode(node, ctx, globalScale, isDark, selectedNodeId), [isDark, selectedNodeId]);
+  const showPointerCursor = useCallback((item: GraphNode | GraphLink | undefined) => Boolean(item), []);
+  const graphEmpty = !isLoading && graph.links.length === 0;
+  const graphSizeReady = size.height > 0 && size.width > 0;
+
+  return (
+    <HomeLayout childrenStyle={{ width: '100%' }}>
+      <Stack direction='column' sx={{ boxSizing: 'border-box', height: 'calc(100vh - 96px)', minHeight: '650px', px: '22px', rowGap: '10px', width: '100%' }}>
+        <Stack alignItems='center' direction='row' justifyContent='space-between'>
+          <Stack alignItems='center' direction='row' gap='12px'>
+            <IconButton onClick={onBack} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px' }}>
+              <ArrowLeft2 color={isDark ? '#AA83DC' : '#674394'} size='20' />
+            </IconButton>
+            <Stack>
+              <Typography color='text.primary' sx={{ textTransform: 'uppercase' }} variant='H-2'>
+                {t('Interaction Explorer')}
+              </Typography>
+            </Stack>
+          </Stack>
+          <Stack direction='row' gap='8px'>
+            {hasMore && !isFetchingMore &&
+              <Button
+                onClick={loadMore}
+                sx={{
+                  bgcolor: isDark ? '#1B133C' : '#674394',
+                  borderRadius: '12px',
+                  color: '#FFFFFF',
+                  textTransform: 'none'
+                }}
+                variant='contained'
+              >
+                {t('Load more')}
+              </Button>
+            }
+          </Stack>
+        </Stack>
+        <VelvetBox childrenStyle={{ height: '100%' }} style={{ flex: 1, height: 'calc(100% - 48px)', minHeight: 0, width: '100%' }}>
+          <Grid container item sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', border: '1px solid', borderColor: isDark ? '#1B133C' : '#DDE3F4', borderRadius: '14px', height: '100%', overflow: 'hidden' }}>
+            <Grid item sx={{ borderBottom: '1px solid', borderColor: isDark ? '#1B133C' : '#DDE3F4', height: '58px', px: '14px', width: '100%' }}>
+              <Stack alignItems='center' direction='row' gap='14px' justifyContent='space-between' sx={{ height: '100%' }}>
+                <Stack alignItems='center' direction='row' gap='14px'>
+                  <TopFilterSelect label={t('Interaction')} onChange={updateInteraction} options={interactionOptions} value={interactionValue} width={220} />
+                  <TopFilterSelect label={t('Status')} onChange={updateStatus} options={statusOptions} value={filters.status} width={150} />
+                </Stack>
+                {(isLoading || isFetchingMore) &&
+                  <Typography color='text.secondary' variant='B-5'>
+                    {t('Loading')}
+                  </Typography>
+                }
+                {!isLoading && !isFetchingMore && graph.links.length > 0 &&
+                  <Typography color='text.secondary' variant='B-5'>
+                    {t('{{nodes}} addresses, {{links}} connections', { replace: { links: graph.links.length, nodes: Math.max(0, graph.nodes.length - 1) } })}
+                  </Typography>
+                }
+              </Stack>
+            </Grid>
+            <Grid item ref={graphContainerRef} sx={{ height: 'calc(100% - 58px)', position: 'relative', width: 'calc(100% - 330px)' }}>
+              <Stack direction='row' gap='8px' sx={{ position: 'absolute', right: '12px', top: '12px', zIndex: 2 }}>
+                <IconButton onClick={resetLayout} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px' }}>
+                  <Refresh2 color={isDark ? '#AA83DC' : '#674394'} size='20' />
+                </IconButton>
+                <IconButton onClick={zoomToFit} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px' }}>
+                  <Maximize4 color={isDark ? '#AA83DC' : '#674394'} size='20' />
+                </IconButton>
+              </Stack>
+              {(isLoading || (!graphSizeReady && !graphEmpty)) &&
+                <GraphLoading isDark={isDark} />
+              }
+              {graphEmpty &&
+                <EmptyListBox
+                  style={{ height: '100%', paddingLeft: '30px', paddingRight: '30px' }}
+                  text={genesisHash ? t('No transaction relationships are available for this account on the selected chain.') : t('Select a chain to view interactions.')}
+                />
+              }
+              {!isLoading && !graphEmpty && graphSizeReady &&
+                <Box sx={{ height: '100%', opacity: isGraphFitted ? 1 : 0, width: '100%' }}>
+                  <ForceGraph2D<InteractionNode, InteractionLink>
+                    autoPauseRedraw={false}
+                    backgroundColor={isDark ? '#05091C' : '#FFFFFF'}
+                    cooldownTicks={120}
+                    enableNodeDrag
+                    graphData={graphData}
+                    height={size.height}
+                    linkColor={getLinkColor}
+                    linkDirectionalArrowLength={getLinkArrowLength}
+                    linkDirectionalArrowRelPos={0.86}
+                    linkDirectionalParticleSpeed={0.004}
+                    linkDirectionalParticles={getLinkParticles}
+                    linkLabel={getLinkLabel}
+                    linkWidth={getLinkWidth}
+                    nodeCanvasObject={renderNode}
+                    nodeLabel={getNodeLabel}
+                    onBackgroundClick={clearSelected}
+                    onLinkClick={onLinkClick}
+                    onNodeClick={onNodeClick}
+                    onNodeDragEnd={onNodeDragEnd}
+                    ref={graphRef}
+                    showPointerCursor={showPointerCursor}
+                    width={size.width}
+                  />
+                </Box>
+              }
+            </Grid>
+            <Grid item sx={{ height: 'calc(100% - 58px)', position: 'relative', width: '330px' }}>
+              <Box sx={{ background: isDark ? 'linear-gradient(0deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)' : 'linear-gradient(0deg, rgba(221, 227, 244, 0.2) 0%, rgba(221, 227, 244, 1) 50.06%, rgba(221, 227, 244, 0.2) 100%)', height: '100%', left: 0, position: 'absolute', top: 0, width: '1px' }} />
+              {selected &&
+                <IconButton onClick={clearSelected} sx={{ position: 'absolute', right: '8px', top: '8px', zIndex: 2 }}>
+                  <CloseCircle color={isDark ? '#AA83DC' : '#674394'} size='20' />
+                </IconButton>
+              }
+              <DetailPanel selected={selected} />
+            </Grid>
+          </Grid>
+        </VelvetBox>
+      </Stack>
+    </HomeLayout>
+  );
+}
+
+export default memo(AccountInteractions);

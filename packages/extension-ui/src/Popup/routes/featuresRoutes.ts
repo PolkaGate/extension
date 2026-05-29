@@ -3,6 +3,7 @@
 
 import type { RouteConfig } from './RouteDefinitions';
 
+import AccountInteractions from '@polkadot/extension-polkagate/src/fullscreen/accountInteractions';
 import HistoryFs from '@polkadot/extension-polkagate/src/fullscreen/history';
 import ManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
 import NFTAlbum from '@polkadot/extension-polkagate/src/fullscreen/nft';
@@ -19,6 +20,11 @@ export const FEATURE_ROUTES: RouteConfig[] = [
     Component: ManageProxies,
     path: '/proxyManagement/:address/:genesisHash/',
     trigger: 'proxy-management'
+  },
+  {
+    Component: AccountInteractions,
+    path: '/account-interactions/:address/:genesisHash',
+    trigger: 'account-interactions'
   },
   {
     Component: History,

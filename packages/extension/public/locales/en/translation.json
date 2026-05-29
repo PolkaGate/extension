@@ -967,5 +967,20 @@
   "Custom RPC": "",
   "Saved": "",
   "Checking": "",
-  "Got it": ""
+  "Got it": "",
+  "Select a node or connection to inspect interactions.": "",
+  "Selected account": "",
+  "Transactions": "",
+  "Sent": "",
+  "Received": "",
+  "connection": "",
+  "Totals": "",
+  "Recent": "",
+  "transactions": "",
+  "Interaction Explorer": "",
+  "Load more": "",
+  "Direction": "",
+  "No transaction relationships are available for this account on the selected chain.": "",
+  "Select a chain to view interactions.": "",
+  "{{nodes}} addresses, {{links}} connections": ""
 }
