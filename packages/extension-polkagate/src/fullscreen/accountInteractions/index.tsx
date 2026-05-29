@@ -402,21 +402,21 @@ function AccountInteractions(): React.ReactElement {
                           display: 'none'
                         },
                         '& .MuiSlider-rail': {
-                          bgcolor: isDark ? '#2D1E4A' : '#DDE3F4',
+                          bgcolor: isDark ? '#2D1E4A' : '#E8E3F2',
                           opacity: 1
                         },
                         '& .MuiSlider-thumb': {
-                          bgcolor: isDark ? '#AA83DC' : '#674394',
+                          bgcolor: isDark ? '#AA83DC' : '#FFFFFF',
                           border: '2px solid',
-                          borderColor: isDark ? '#EAEBF1' : '#FFFFFF',
-                          boxShadow: isDark ? '0 0 0 5px rgba(170, 131, 220, 0.16)' : '0 4px 12px rgba(103, 67, 148, 0.22)',
+                          borderColor: isDark ? '#EAEBF1' : '#7B56A8',
+                          boxShadow: isDark ? '0 0 0 5px rgba(170, 131, 220, 0.16)' : '0 3px 10px rgba(123, 86, 168, 0.18)',
                           height: 14,
                           width: 14
                         },
                         '& .MuiSlider-track': {
-                          bgcolor: isDark ? '#AA83DC' : '#674394'
+                          bgcolor: isDark ? '#AA83DC' : 'rgba(123, 86, 168, 0.72)'
                         },
-                        color: isDark ? '#AA83DC' : '#674394',
+                        color: isDark ? '#AA83DC' : '#7B56A8',
                         height: 4,
                         m: 0,
                         p: '5px 0'
