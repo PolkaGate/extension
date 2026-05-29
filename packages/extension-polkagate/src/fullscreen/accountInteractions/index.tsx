@@ -6,7 +6,7 @@ import type { ForceGraphMethods as ForceGraph3DMethods, LinkObject, NodeObject }
 import type { AdvancedDropdownOption } from '../../util/types';
 import type { DirectionFilter, InteractionFilters, InteractionLink, InteractionNode, StatusFilter, TokenTotal } from './buildInteractionGraph';
 
-import { Box, Button, Grid, IconButton, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Button, Grid, IconButton, Slider, Stack, Typography, useTheme } from '@mui/material';
 import { createAssets } from '@polkagate/apps-config/assets';
 import { ArrowLeft2, CloseCircle, Maximize4, Refresh2 } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -67,6 +67,7 @@ const DIRECTION_OPTIONS: DirectionFilter[] = ['all', 'sent', 'received', 'mixed'
 const DETAIL_PANEL_COLLAPSED_WIDTH = 52;
 const DETAIL_PANEL_WIDTH = 330;
 const GRAPH_MODES: GraphMode[] = ['2d', '3d'];
+const MIN_HISTORY_RANGE_ITEMS = 2;
 const STATUS_OPTIONS: StatusFilter[] = ['all', 'completed', 'failed'];
 const assetsChains = createAssets();
 
@@ -484,7 +485,7 @@ function DetailPanel({ selected }: { selected: SelectedItem }) {
     const { item } = selected;
 
     return (
-      <Stack direction='column' sx={{ p: '18px' }}>
+      <Stack direction='column' sx={{ p: '18px', pb: '48px' }}>
         <Typography color='text.primary' sx={{ mb: '10px' }} variant='H-3'>
           {item.name || (item.isCenter ? t('Selected account') : t('Unknown'))}
         </Typography>
@@ -518,7 +519,7 @@ function DetailPanel({ selected }: { selected: SelectedItem }) {
     .slice(0, 5);
 
   return (
-    <Stack direction='column' rowGap='14px' sx={{ height: '100%', overflow: 'hidden', p: '18px' }}>
+    <Stack direction='column' rowGap='14px' sx={{ height: '100%', overflow: 'hidden', p: '18px', pb: '48px' }}>
       <Typography color='text.primary' variant='H-3'>
         {node?.name || (node ? t('Unknown') : formatOption(t('connection')))}
       </Typography>
@@ -667,9 +668,13 @@ function AccountInteractions(): React.ReactElement {
   const [fittedGraphKey, setFittedGraphKey] = useState<string>();
   const [graphMode, setGraphMode] = useState<GraphMode>('2d');
   const [is3DFlowReady, setIs3DFlowReady] = useState(false);
+  const [historyRange, setHistoryRange] = useState<[number, number]>();
+  const [isHistoryRangeTouched, setIsHistoryRangeTouched] = useState(false);
   const [manualPositions, setManualPositions] = useState<Record<string, NodePosition>>({});
 
   useEffect(() => {
+    setHistoryRange(undefined);
+    setIsHistoryRangeTouched(false);
     setSelected(undefined);
     setManualPositions({});
   }, [address, genesisHash]);
@@ -680,8 +685,54 @@ function AccountInteractions(): React.ReactElement {
     { governance: true, staking: true, transfers: true },
     { enableInfiniteScroll: false }
   );
+  const fetchedHistories = useMemo(() => allHistories ?? [], [allHistories]);
 
-  const typeOptions = useMemo(() => getInteractionTypes(allHistories), [allHistories]);
+  const historyDateMarks = useMemo(() => Array.from(new Set(
+    fetchedHistories
+      .map(({ date }) => date)
+      .filter((date): date is number => Number.isFinite(date))
+  ))
+    .sort((a, b) => a - b)
+    .map((value) => ({ value }))
+  , [fetchedHistories]);
+  const historyRangeMin = historyDateMarks[0]?.value;
+  const historyRangeMax = historyDateMarks[historyDateMarks.length - 1]?.value;
+  const canUseHistoryRange = historyDateMarks.length >= MIN_HISTORY_RANGE_ITEMS && historyRangeMin !== undefined && historyRangeMax !== undefined && historyRangeMin < historyRangeMax;
+
+  useEffect(() => {
+    if (!canUseHistoryRange || historyRangeMin === undefined || historyRangeMax === undefined) {
+      setHistoryRange(undefined);
+      setIsHistoryRangeTouched(false);
+
+      return;
+    }
+
+    setHistoryRange((prev) => {
+      const next: [number, number] = !prev || !isHistoryRangeTouched
+        ? [historyRangeMin, historyRangeMax]
+        : [
+          Math.max(historyRangeMin, Math.min(prev[0], historyRangeMax)),
+          Math.min(historyRangeMax, Math.max(prev[1], historyRangeMin))
+        ];
+
+      if (next[0] > next[1]) {
+        return [historyRangeMin, historyRangeMax];
+      }
+
+      return prev?.[0] === next[0] && prev?.[1] === next[1] ? prev : next;
+    });
+  }, [canUseHistoryRange, historyRangeMax, historyRangeMin, isHistoryRangeTouched]);
+
+  const rangeFilteredHistories = useMemo(() => {
+    if (!canUseHistoryRange || !historyRange) {
+      return fetchedHistories;
+    }
+
+    const [start, end] = historyRange;
+
+    return fetchedHistories.filter(({ date }) => date >= start && date <= end);
+  }, [canUseHistoryRange, fetchedHistories, historyRange]);
+  const typeOptions = useMemo(() => getInteractionTypes(fetchedHistories), [fetchedHistories]);
   const interactionValue = useMemo<InteractionFilterValue>(() =>
     filters.direction !== 'all'
       ? `direction:${filters.direction}`
@@ -708,7 +759,23 @@ function AccountInteractions(): React.ReactElement {
     text: formatOption(status),
     value: status
   })), []);
-  const graph = useMemo(() => buildInteractionGraph(allHistories, address, filters), [address, allHistories, filters]);
+  const graph = useMemo(() => buildInteractionGraph(rangeFilteredHistories, address, filters), [address, filters, rangeFilteredHistories]);
+  const graphStatsText = useMemo(() => t('{{nodes}} addresses, {{links}} connections', {
+    replace: { links: graph.links.length, nodes: Math.max(0, graph.nodes.length - 1) }
+  }), [graph.links.length, graph.nodes.length, t]);
+  const historyRangeLabel = useMemo(() => {
+    if (!historyRange) {
+      return '';
+    }
+
+    const [start, end] = historyRange;
+    const startDate = formatTimestamp(start, ['month', 'day', 'year']);
+    const endDate = formatTimestamp(end, ['month', 'day', 'year']);
+
+    return startDate === endDate
+      ? `${startDate}, ${formatTimestamp(start, ['hours', 'minutes', 'ampm'])} - ${formatTimestamp(end, ['hours', 'minutes', 'ampm'])}`
+      : `${startDate} - ${endDate}`;
+  }, [historyRange]);
   const validatorsById = useMemo(() => {
     const validators = [
       ...(validatorsInfo?.validatorsInformation.elected ?? []),
@@ -886,6 +953,18 @@ function AccountInteractions(): React.ReactElement {
       setGraphMode(mode);
     }
   }, []);
+  const updateHistoryRange = useCallback((_: Event, value: number | number[]) => {
+    if (!Array.isArray(value) || value.length < 2) {
+      return;
+    }
+
+    const next: [number, number] = [value[0], value[1]];
+
+    setIsHistoryRangeTouched(true);
+    setHistoryRange((prev) => prev?.[0] === next[0] && prev?.[1] === next[1] ? prev : next);
+    setSelected(undefined);
+    setManualPositions({});
+  }, []);
   const updateStatus = useCallback((status: StatusFilter) => setFilters((prev) => ({ ...prev, status })), []);
 
   const onNodeClick = useCallback((node: GraphNode) => {
@@ -991,10 +1070,46 @@ function AccountInteractions(): React.ReactElement {
                     <BeatLoader color={isDark ? '#BEAAD8' : '#674394'} loading margin={2} size={7} />
                   </Stack>
                 }
-                {!isLoading && !isFetchingMore && graph.links.length > 0 &&
-                  <Typography color='text.secondary' variant='B-5'>
-                    {t('{{nodes}} addresses, {{links}} connections', { replace: { links: graph.links.length, nodes: Math.max(0, graph.nodes.length - 1) } })}
-                  </Typography>
+                {!isLoading && !isFetchingMore && canUseHistoryRange && historyRange && historyRangeMin !== undefined && historyRangeMax !== undefined &&
+                  <Stack direction='column' rowGap='2px' sx={{ flexShrink: 0, width: 'clamp(240px, 28vw, 360px)' }}>
+                    <Typography color='text.secondary' noWrap sx={{ textAlign: 'right' }} variant='B-5'>
+                      {historyRangeLabel}
+                    </Typography>
+                    <Slider
+                      disableSwap
+                      marks={historyDateMarks}
+                      max={historyRangeMax}
+                      min={historyRangeMin}
+                      onChange={updateHistoryRange}
+                      size='small'
+                      step={null}
+                      sx={{
+                        '& .MuiSlider-mark': {
+                          display: 'none'
+                        },
+                        '& .MuiSlider-rail': {
+                          bgcolor: isDark ? '#2D1E4A' : '#DDE3F4',
+                          opacity: 1
+                        },
+                        '& .MuiSlider-thumb': {
+                          bgcolor: isDark ? '#AA83DC' : '#674394',
+                          border: '2px solid',
+                          borderColor: isDark ? '#EAEBF1' : '#FFFFFF',
+                          boxShadow: isDark ? '0 0 0 5px rgba(170, 131, 220, 0.16)' : '0 4px 12px rgba(103, 67, 148, 0.22)',
+                          height: 14,
+                          width: 14
+                        },
+                        '& .MuiSlider-track': {
+                          bgcolor: isDark ? '#AA83DC' : '#674394'
+                        },
+                        color: isDark ? '#AA83DC' : '#674394',
+                        height: 4,
+                        m: 0,
+                        p: '5px 0'
+                      }}
+                      value={historyRange}
+                    />
+                  </Stack>
                 }
               </Stack>
             </Grid>
@@ -1117,6 +1232,13 @@ function AccountInteractions(): React.ReactElement {
               }
               {!isDetailPanelCollapsed &&
                 <DetailPanel selected={selected} />
+              }
+              {!isDetailPanelCollapsed && !isLoading && !isFetchingMore && graph.links.length > 0 &&
+                <Stack alignItems='center' justifyContent='center' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', bottom: 0, height: '36px', left: '1px', position: 'absolute', right: 0, zIndex: 1 }}>
+                  <Typography color='text.secondary' noWrap variant='B-5'>
+                    {graphStatsText}
+                  </Typography>
+                </Stack>
               }
             </Grid>
           </Grid>
