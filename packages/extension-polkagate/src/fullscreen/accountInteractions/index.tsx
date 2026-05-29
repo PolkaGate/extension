@@ -42,6 +42,10 @@ type SelectedItem =
   | { type: 'link'; item: InteractionLink }
   | undefined;
 type InteractionFilterValue = `direction:${DirectionFilter}` | `type:${string}`;
+interface NodePosition {
+  x: number;
+  y: number;
+}
 
 const ALL_TYPES = 'all';
 const DIRECTION_OPTIONS: DirectionFilter[] = ['all', 'sent', 'received', 'mixed'];
@@ -430,9 +434,11 @@ function AccountInteractions(): React.ReactElement {
   });
   const [selected, setSelected] = useState<SelectedItem>();
   const [fittedGraphKey, setFittedGraphKey] = useState<string>();
+  const [manualPositions, setManualPositions] = useState<Record<string, NodePosition>>({});
 
   useEffect(() => {
     setSelected(undefined);
+    setManualPositions({});
   }, [address, genesisHash]);
 
   const { allHistories, fetchMoreIfAvailable, hasMore, isFetchingMore, isLoading } = useTransactionHistory(
@@ -494,16 +500,24 @@ function AccountInteractions(): React.ReactElement {
       const validatorFields = validatorsById.has(node.id)
         ? { isValidator: true, validatorName }
         : {};
+      const nodeWithMetadata = node.isCenter
+        ? { ...node, ...validatorFields, label: account?.name || node.label, name: account?.name }
+        : { ...node, ...validatorFields };
+      const manualPosition = manualPositions[node.id];
+
+      if (manualPosition) {
+        return { ...nodeWithMetadata, fx: manualPosition.x, fy: manualPosition.y, x: manualPosition.x, y: manualPosition.y };
+      }
 
       if (!node.isCenter && graph.links.length === 1) {
-        return { ...node, ...validatorFields, fx: singleLinkDistance, fy: 0, x: singleLinkDistance, y: 0 };
+        return { ...nodeWithMetadata, fx: singleLinkDistance, fy: 0, x: singleLinkDistance, y: 0 };
       }
 
       return node.isCenter
-        ? { ...node, ...validatorFields, fx: 0, fy: 0, label: account?.name || node.label, name: account?.name, x: 0, y: 0 }
-        : { ...node, ...validatorFields };
+        ? { ...nodeWithMetadata, fx: 0, fy: 0, x: 0, y: 0 }
+        : nodeWithMetadata;
     })
-  }), [account?.name, graph, singleLinkDistance, validatorsById]);
+  }), [account?.name, graph, manualPositions, singleLinkDistance, validatorsById]);
   const graphLayoutKey = useMemo(() => [
     address ?? '',
     genesisHash ?? '',
@@ -556,25 +570,9 @@ function AccountInteractions(): React.ReactElement {
     Promise.resolve(navigate(-1)).catch(console.error);
   }, [navigate]);
   const resetLayout = useCallback(() => {
-    graphData.nodes.forEach((node) => {
-      const graphNode = node as GraphNode;
-
-      if (graphNode.isCenter) {
-        graphNode.fx = 0;
-        graphNode.fy = 0;
-        graphNode.x = 0;
-        graphNode.y = 0;
-
-        return;
-      }
-
-      delete graphNode.fx;
-      delete graphNode.fy;
-      delete graphNode.x;
-      delete graphNode.y;
-    });
+    setManualPositions({});
     graphRef.current?.d3ReheatSimulation();
-  }, [graphData.nodes]);
+  }, []);
   const zoomToFit = useCallback(() => {
     graphRef.current?.zoomToFit(450, 60);
   }, []);
@@ -601,16 +599,27 @@ function AccountInteractions(): React.ReactElement {
     setSelected({ item: link as InteractionLink, type: 'link' });
   }, []);
   const onNodeDragEnd = useCallback((node: GraphNode) => {
-    if (node.isCenter) {
-      node.fx = 0;
-      node.fy = 0;
-
-      return;
-    }
-
     node.fx = node.x;
     node.fy = node.y;
-  }, []);
+
+    setManualPositions((prev) => {
+      const next = { ...prev };
+
+      graphData.nodes.forEach((graphNode) => {
+        const positionedNode = graphNode as GraphNode;
+
+        if (positionedNode.x !== undefined && positionedNode.y !== undefined) {
+          next[positionedNode.id] = { x: positionedNode.x, y: positionedNode.y };
+        }
+      });
+
+      if (node.x !== undefined && node.y !== undefined) {
+        next[node.id] = { x: node.x, y: node.y };
+      }
+
+      return next;
+    });
+  }, [graphData.nodes]);
   const selectedNodeId = selected?.type === 'node' ? selected.item.id : undefined;
   const selectedLinkId = selected?.type === 'link' ? selected.item.id : undefined;
   const getLinkColor = useCallback((link: GraphLink) => link.id === selectedLinkId ? '#FFD166' : linkColor(link.direction, isDark), [isDark, selectedLinkId]);
