@@ -1,666 +1,34 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ForceGraphMethods as ForceGraph2DMethods } from 'react-force-graph-2d';
-import type { ForceGraphMethods as ForceGraph3DMethods, LinkObject, NodeObject } from 'react-force-graph-3d';
 import type { AdvancedDropdownOption } from '../../util/types';
-import type { DirectionFilter, InteractionFilters, InteractionLink, InteractionNode, StatusFilter, TokenTotal } from './buildInteractionGraph';
+import type { DirectionFilter, InteractionFilters, InteractionLink, InteractionNode, StatusFilter } from './buildInteractionGraph';
+import type { ChargeForce, CollisionForce, Graph2DRef, Graph3DRef, GraphLink, GraphMode, GraphNode, InteractionFilterValue, LinkForce, NodePosition, SelectedItem } from './types';
 
 import { Box, Button, Grid, IconButton, Slider, Stack, Typography, useTheme } from '@mui/material';
-import { createAssets } from '@polkagate/apps-config/assets';
 import { ArrowLeft2, CloseCircle, Maximize4, Refresh2 } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import ForceGraph3D from 'react-force-graph-3d';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BeatLoader } from 'react-spinners';
-import * as THREE from 'three';
 
-import { CopyAddressButton, DropSelect, FormatPrice } from '@polkadot/extension-polkagate/src/components';
-import Logo from '@polkadot/extension-polkagate/src/components/Logo';
-import HistoryIcon from '@polkadot/extension-polkagate/src/fullscreen/history/HistoryIcon';
 import useTransactionHistory from '@polkadot/extension-polkagate/src/popup/history/useTransactionHistory';
 import { VelvetBox } from '@polkadot/extension-polkagate/src/style';
-import { formatTimestamp, historyIconBgColor, toCamelCase, toShortAddress } from '@polkadot/extension-polkagate/src/util';
-import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
-import { useAccount, useChainInfo, usePrices, useTokenPriceBySymbol, useTranslation, useValidatorsInformation } from '../../hooks';
+import { useAccount, useTranslation, useValidatorsInformation } from '../../hooks';
 import { EmptyListBox } from '../components';
 import HomeLayout from '../components/layout';
+import DetailPanel from './components/DetailPanel';
+import GraphLoading from './components/GraphLoading';
+import TopFilterSelect from './components/TopFilterSelect';
+import { drawNode } from './graph/render2d';
+import { create3DNode, fit3DGraph, set3DGraphLights } from './graph/render3d';
+import useElementSize from './hooks/useElementSize';
+import useHistoryRange from './hooks/useHistoryRange';
 import { buildInteractionGraph, getInteractionTypes, normalizeAddress } from './buildInteractionGraph';
-
-type GraphNode = NodeObject<InteractionNode>;
-type GraphLink = LinkObject<InteractionNode, InteractionLink>;
-type Graph2DRef = ForceGraph2DMethods<GraphNode, GraphLink>;
-type Graph3DRef = ForceGraph3DMethods<GraphNode, GraphLink>;
-type GraphMode = '2d' | '3d';
-interface ChargeForce {
-  strength?: (strength: number) => unknown;
-}
-interface CollisionForce {
-  radius?: (radius: (node: InteractionNode) => number) => unknown;
-}
-interface LinkForce {
-  distance?: (distance: (link: InteractionLink) => number) => unknown;
-}
-type SelectedItem =
-  | { type: 'node'; item: GraphNode }
-  | { type: 'link'; item: GraphLink; node?: GraphNode }
-  | undefined;
-type InteractionFilterValue = `direction:${DirectionFilter}` | `type:${string}`;
-interface NodePosition {
-  x: number;
-  y: number;
-  z?: number;
-}
-interface GraphSize {
-  height: number;
-  width: number;
-}
-
-const ALL_TYPES = 'all';
-const CAMERA_3D_DIRECTION = new THREE.Vector3(0.2, -0.64, 0.74).normalize();
-const CAMERA_3D_DENSE_FIT_FACTOR = 0.68;
-const CAMERA_3D_MIN_DISTANCE = 82;
-const CAMERA_3D_SPARSE_FIT_FACTOR = 0.86;
-const DIRECTION_OPTIONS: DirectionFilter[] = ['all', 'sent', 'received', 'mixed'];
-const DETAIL_PANEL_COLLAPSED_WIDTH = 52;
-const DETAIL_PANEL_WIDTH = 330;
-const GRAPH_MODES: GraphMode[] = ['2d', '3d'];
-const MIN_HISTORY_RANGE_ITEMS = 2;
-const STATUS_OPTIONS: StatusFilter[] = ['all', 'completed', 'failed'];
-const assetsChains = createAssets();
-
-const formatOption = (option: string) => option
-  .split(/[-_\s]+/)
-  .filter(Boolean)
-  .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-  .join(' ');
-
-function useElementSize<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-  const [size, setSize] = useState({ height: 0, width: 0 });
-
-  useEffect(() => {
-    const element = ref.current;
-
-    if (!element) {
-      return;
-    }
-
-    const updateSize = () => {
-      setSize({
-        height: Math.max(540, element.clientHeight),
-        width: Math.max(420, element.clientWidth)
-      });
-    };
-
-    updateSize();
-
-    const observer = new ResizeObserver(updateSize);
-
-    observer.observe(element);
-
-    return () => observer.disconnect();
-  }, []);
-
-  return { ref, size };
-}
-
-function TopFilterSelect<T extends string>({ label, onChange, options, value, width }: { label: string; onChange: (value: T) => void; options: AdvancedDropdownOption[]; value: T; width: number }) {
-  const _onChange = useCallback((newValue: number | string) => onChange(newValue as T), [onChange]);
-
-  return (
-    <Stack alignItems='center' direction='row' gap='8px'>
-      <Typography color='text.secondary' sx={{ textTransform: 'uppercase' }} variant='S-1'>
-        {label}
-      </Typography>
-      <DropSelect
-        onChange={_onChange}
-        options={options}
-        scrollTextOnOverflow
-        simpleArrow
-        style={{ height: '38px', padding: '7px 10px', width: `${width}px` }}
-        value={value}
-      />
-    </Stack>
-  );
-}
-
-const linkColor = (direction: InteractionLink['direction'], isDark: boolean) => {
-  switch (direction) {
-    case 'sent':
-      return '#FF4FB9';
-    case 'received':
-      return '#2ED3B7';
-    default:
-      return isDark ? '#AA83DC' : '#674394';
-  }
-};
-
-const nodeColor = (node: InteractionNode, isDark: boolean) =>
-  node.isCenter
-    ? '#FF4FB9'
-    : node.sentCount > 0 && node.receivedCount > 0
-      ? isDark ? '#AA83DC' : '#674394'
-      : node.sentCount > 0
-        ? '#FF4FB9'
-        : '#2ED3B7';
-
-const nodeRadius = (node: InteractionNode) => node.isCenter ? 11 : Math.min(11, 5 + Math.sqrt(node.txCount || 1) * 1.8);
-
-const validatorDisplayName = (node: InteractionNode) => node.validatorName || 'Validator';
-
-const recentIconBackground = (action: string, isDark: boolean) => {
-  if (isDark) {
-    return historyIconBgColor(action);
-  }
-
-  const normalizedAction = action.toLowerCase();
-
-  return ['receive', 'reward'].includes(normalizedAction)
-    ? '#E9FFF1'
-    : ['send', 'proxy', 'utility'].includes(normalizedAction)
-      ? '#FFFFFF'
-      : '#F5F4FF';
-};
-
-const linkColor3D = (direction: InteractionLink['direction'], isDark: boolean) => {
-  if (!isDark) {
-    return linkColor(direction, isDark);
-  }
-
-  switch (direction) {
-    case 'sent':
-      return '#FF5AC3';
-    case 'received':
-      return '#35E6CE';
-    default:
-      return '#B88CFF';
-  }
-};
-
-const get3DFitFactor = (nodeCount: number) => {
-  if (nodeCount <= 7) {
-    return CAMERA_3D_SPARSE_FIT_FACTOR;
-  }
-
-  if (nodeCount >= 16) {
-    return CAMERA_3D_DENSE_FIT_FACTOR;
-  }
-
-  return THREE.MathUtils.lerp(CAMERA_3D_SPARSE_FIT_FACTOR, CAMERA_3D_DENSE_FIT_FACTOR, (nodeCount - 7) / 9);
-};
-
-function fit3DGraph(graphInstance: Graph3DRef | undefined, size: GraphSize, nodeCount: number, transitionDuration = 0) {
-  if (!graphInstance) {
-    return;
-  }
-
-  const bbox = graphInstance.getGraphBbox();
-
-  if (!bbox) {
-    return;
-  }
-
-  const bboxValues = [...bbox.x, ...bbox.y, ...bbox.z];
-
-  if (bboxValues.some((value) => !Number.isFinite(value))) {
-    return;
-  }
-
-  const centerVector = new THREE.Vector3(
-    (bbox.x[0] + bbox.x[1]) / 2,
-    (bbox.y[0] + bbox.y[1]) / 2,
-    (bbox.z[0] + bbox.z[1]) / 2
-  );
-  const camera = graphInstance.camera();
-  const fov = camera instanceof THREE.PerspectiveCamera ? camera.fov : 50;
-  const verticalFov = THREE.MathUtils.degToRad(fov);
-  const aspect = Math.max(0.1, size.width / Math.max(size.height, 1));
-  const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * aspect);
-  const forward = CAMERA_3D_DIRECTION.clone().negate();
-  const worldUp = new THREE.Vector3(0, 1, 0);
-  const right = new THREE.Vector3().crossVectors(forward, worldUp);
-
-  if (right.lengthSq() < 0.0001) {
-    right.set(1, 0, 0);
-  } else {
-    right.normalize();
-  }
-
-  const up = new THREE.Vector3().crossVectors(right, forward).normalize();
-  const visualPadding = 26;
-  const requiredDistance = Math.max(
-    CAMERA_3D_MIN_DISTANCE,
-    ...bbox.x.flatMap((x) => bbox.y.flatMap((y) => bbox.z.map((z) => {
-      const relative = new THREE.Vector3(x, y, z).sub(centerVector);
-      const verticalDistance = (Math.abs(relative.dot(up)) + visualPadding) / Math.tan(verticalFov / 2);
-      const horizontalDistance = (Math.abs(relative.dot(right)) + visualPadding) / Math.tan(horizontalFov / 2);
-
-      return Math.max(verticalDistance, horizontalDistance) - relative.dot(forward);
-    })))
-  );
-  const distance = requiredDistance * get3DFitFactor(nodeCount);
-  const position = CAMERA_3D_DIRECTION.clone().multiplyScalar(distance).add(centerVector);
-  const center = { x: centerVector.x, y: centerVector.y, z: centerVector.z };
-
-  graphInstance.cameraPosition({ x: position.x, y: position.y, z: position.z }, center, transitionDuration);
-}
-
-function drawNode(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number, isDark: boolean, selectedNodeId?: string) {
-  const radius = nodeRadius(node);
-  const label = node.label || toShortAddress(node.address);
-  const fontSize = node.isCenter ? 13 : 11;
-  const isSelected = selectedNodeId === node.id;
-
-  ctx.beginPath();
-  ctx.arc(node.x ?? 0, node.y ?? 0, radius, 0, 2 * Math.PI, false);
-  ctx.fillStyle = nodeColor(node, isDark);
-  ctx.shadowColor = nodeColor(node, isDark);
-  ctx.shadowBlur = isSelected ? 24 : node.isCenter ? 18 : 8;
-  ctx.fill();
-  ctx.shadowBlur = 0;
-  ctx.lineWidth = isSelected ? 4 : node.isCenter ? 2.5 : 1.5;
-  ctx.strokeStyle = isSelected ? '#FFD166' : isDark ? '#EAEBF1' : '#BFA7E3';
-  ctx.stroke();
-
-  if (isSelected) {
-    ctx.beginPath();
-    ctx.arc(node.x ?? 0, node.y ?? 0, radius + 6, 0, 2 * Math.PI, false);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = isDark ? '#FFD166' : '#FF4FB9';
-    ctx.stroke();
-  }
-
-  if (node.isValidator) {
-    const badgeText = 'VAL';
-    const badgeFontSize = 8 / globalScale;
-    const badgeHeight = 13 / globalScale;
-    const badgePadding = 4 / globalScale;
-    const badgeX = (node.x ?? 0) + radius - (3 / globalScale);
-    const badgeY = (node.y ?? 0) - radius - (badgeHeight / 2);
-
-    ctx.font = `700 ${badgeFontSize}px Inter`;
-
-    const badgeWidth = ctx.measureText(badgeText).width + (badgePadding * 2);
-
-    ctx.beginPath();
-    ctx.roundRect(badgeX, badgeY, badgeWidth, badgeHeight, badgeHeight / 2);
-    ctx.fillStyle = '#FFD166';
-    ctx.fill();
-    ctx.fillStyle = '#291443';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(badgeText, badgeX + (badgeWidth / 2), badgeY + (badgeHeight / 2));
-  }
-
-  const labelVisible = globalScale > 0.75 || node.isCenter;
-
-  if (!labelVisible) {
-    return;
-  }
-
-  ctx.font = `${fontSize / globalScale}px Inter`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  ctx.fillStyle = isDark ? '#EAEBF1' : '#291443';
-  ctx.fillText(label, node.x ?? 0, (node.y ?? 0) + radius + 4);
-
-  if (node.isValidator) {
-    ctx.font = `${9 / globalScale}px Inter`;
-    ctx.fillStyle = '#FFD166';
-    ctx.fillText(validatorDisplayName(node), node.x ?? 0, (node.y ?? 0) + radius + (18 / globalScale));
-  }
-}
-
-function create3DLabel(label: string, isDark: boolean, isSelected: boolean) {
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-  const fontSize = 34;
-  const paddingX = 20;
-  const paddingY = 12;
-
-  if (!context) {
-    return undefined;
-  }
-
-  context.font = `600 ${fontSize}px Inter, sans-serif`;
-
-  const measuredWidth = context.measureText(label).width;
-
-  canvas.width = Math.ceil(measuredWidth + (paddingX * 2));
-  canvas.height = fontSize + (paddingY * 2);
-
-  context.font = `600 ${fontSize}px Inter, sans-serif`;
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
-  context.lineJoin = 'round';
-  context.strokeStyle = isDark ? '#05091C' : '#FFFFFF';
-  context.lineWidth = 7;
-  context.strokeText(label, canvas.width / 2, canvas.height / 2);
-  context.fillStyle = isSelected ? isDark ? '#FFD166' : '#674394' : isDark ? '#EAEBF1' : '#291443';
-  context.fillText(label, canvas.width / 2, canvas.height / 2);
-
-  const texture = new THREE.CanvasTexture(canvas);
-
-  texture.colorSpace = THREE.SRGBColorSpace;
-
-  const material = new THREE.SpriteMaterial({
-    depthTest: false,
-    depthWrite: false,
-    map: texture,
-    transparent: true
-  });
-  const sprite = new THREE.Sprite(material);
-  const scale = 0.115;
-
-  sprite.scale.set(canvas.width * scale, canvas.height * scale, 1);
-
-  return sprite;
-}
-
-function create3DNode(node: GraphNode, isDark: boolean, selectedNodeId?: string) {
-  const group = new THREE.Group();
-  const radius = nodeRadius(node) * 0.94;
-  const isSelected = selectedNodeId === node.id;
-  const color = nodeColor(node, isDark);
-  const ringColor = isSelected ? isDark ? '#FFD166' : '#FF4FB9' : isDark ? '#EAEBF1' : '#BFA7E3';
-  const halo = new THREE.Mesh(
-    new THREE.SphereGeometry(radius * (isSelected ? 1.6 : 1.42), 32, 32),
-    new THREE.MeshBasicMaterial({
-      color: isSelected ? ringColor : color,
-      depthWrite: false,
-      opacity: isSelected ? 0.24 : isDark ? 0.13 : 0.18,
-      transparent: true
-    })
-  );
-  const sphere = new THREE.Mesh(
-    new THREE.SphereGeometry(radius, 36, 36),
-    new THREE.MeshPhysicalMaterial({
-      clearcoat: 0.55,
-      clearcoatRoughness: 0.22,
-      color,
-      emissive: color,
-      emissiveIntensity: isDark ? 0.14 : 0.08,
-      metalness: 0.04,
-      roughness: 0.3
-    })
-  );
-  const rim = new THREE.Mesh(
-    new THREE.TorusGeometry(radius * 1.05, isSelected ? 0.42 : 0.28, 12, 64),
-    new THREE.MeshBasicMaterial({ color: ringColor })
-  );
-  const highlight = new THREE.Mesh(
-    new THREE.SphereGeometry(radius * 0.23, 16, 16),
-    new THREE.MeshBasicMaterial({
-      color: '#FFFFFF',
-      depthWrite: false,
-      opacity: isDark ? 0.26 : 0.34,
-      transparent: true
-    })
-  );
-  const label = create3DLabel(node.label || toShortAddress(node.address), isDark, isSelected);
-
-  rim.rotation.x = Math.PI / 2;
-  highlight.position.set(-radius * 0.32, radius * 0.36, radius * 0.72);
-  group.add(halo);
-  group.add(sphere);
-  group.add(rim);
-  group.add(highlight);
-
-  if (label) {
-    label.position.set(0, -(radius + 10), 0);
-    group.add(label);
-  }
-
-  if (node.isValidator) {
-    const validatorLabel = create3DLabel('VAL', isDark, true);
-
-    if (validatorLabel) {
-      validatorLabel.scale.multiplyScalar(0.55);
-      validatorLabel.position.set(radius + 6, radius + 4, 0);
-      group.add(validatorLabel);
-    }
-  }
-
-  return group;
-}
-
-function TokenTotalRow({ amount, genesisHash, token }: TokenTotal) {
-  const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
-  const { chainName, token: nativeToken } = useChainInfo(genesisHash, true);
-  const pricesInCurrencies = usePrices();
-  const isNativeToken = Boolean(token && nativeToken && token.toLowerCase() === nativeToken.toLowerCase());
-  const maybeKnownAsset = useMemo(() => assetsChains[toCamelCase(chainName || '')]?.find(({ symbol }) => symbol.toLowerCase() === token.toLowerCase()), [chainName, token]);
-  const logoInfo = useMemo(() => {
-    if (isNativeToken || maybeKnownAsset) {
-      return resolveLogoInfo(genesisHash, token);
-    }
-
-    return undefined;
-  }, [genesisHash, isNativeToken, maybeKnownAsset, token]);
-  const nativePrice = useTokenPriceBySymbol(isNativeToken ? token : undefined, genesisHash);
-  const assetPrice = maybeKnownAsset?.priceId ? pricesInCurrencies?.prices?.[maybeKnownAsset.priceId]?.value : undefined;
-  const price = isNativeToken ? nativePrice.price : assetPrice;
-  const fiatValue = useMemo(() => price === undefined ? undefined : amount * price, [amount, price]);
-
-  return (
-    <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ columnGap: '10px', width: '100%' }}>
-      <Logo
-        assetSize='24px'
-        baseTokenSize='0'
-        fallbackText={token}
-        genesisHash={genesisHash}
-        logo={logoInfo?.logo}
-        subLogo={undefined}
-        token={isNativeToken || maybeKnownAsset ? token : undefined}
-      />
-      <Stack alignItems='flex-end' direction='column' rowGap='3px' sx={{ minWidth: 0 }}>
-        <Typography color='text.primary' noWrap sx={{ textAlign: 'right' }} variant='B-2'>
-          {amount.toLocaleString(undefined, { maximumFractionDigits: 4 })} {token}
-        </Typography>
-        {fiatValue !== undefined && fiatValue > 0 &&
-          <FormatPrice
-            commify
-            decimalColor={isDark ? '#BEAAD8' : theme.palette.text.secondary}
-            fontFamily='Inter'
-            fontSize='12px'
-            fontWeight={500}
-            height={14}
-            num={fiatValue}
-            textAlign='right'
-            textColor={isDark ? '#BEAAD8' : theme.palette.text.secondary}
-            width='fit-content'
-          />
-        }
-      </Stack>
-    </Stack>
-  );
-}
-
-function DetailPanel({ selected }: { selected: SelectedItem }) {
-  const { t } = useTranslation();
-  const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
-
-  if (!selected) {
-    return (
-      <Stack justifyContent='center' sx={{ height: '100%', px: '18px' }}>
-        <Typography color='text.secondary' textAlign='center' variant='B-2'>
-          {t('Select a node or connection to inspect interactions.')}
-        </Typography>
-      </Stack>
-    );
-  }
-
-  if (selected.type === 'node') {
-    const { item } = selected;
-
-    return (
-      <Stack direction='column' sx={{ p: '18px', pb: '48px' }}>
-        <Typography color='text.primary' sx={{ mb: '10px' }} variant='H-3'>
-          {item.name || (item.isCenter ? t('Selected account') : t('Unknown'))}
-        </Typography>
-        <Stack alignItems='center' direction='row' justifyContent='center' sx={{ columnGap: '6px', maxWidth: '100%', mb: '16px' }}>
-          <Typography color='text.secondary' noWrap title={item.address} variant='B-4'>
-            {toShortAddress(item.address, 8)}
-          </Typography>
-          <CopyAddressButton address={item.address} padding={0} size={17} />
-        </Stack>
-        <Stack direction='row' flexWrap='wrap' gap='8px' justifyContent='center'>
-          <Metric label={t('Transactions')} value={item.txCount} />
-          <Metric label={t('Sent')} value={item.sentCount} />
-          <Metric label={t('Received')} value={item.receivedCount} />
-          {item.failedCount > 0 &&
-            <Metric label={t('Failed')} value={item.failedCount} />
-          }
-        </Stack>
-        {item.isValidator &&
-          <Typography color='warning.main' sx={{ mt: '10px', textAlign: 'center' }} variant='B-4'>
-            {t('Validator')}
-          </Typography>
-        }
-      </Stack>
-    );
-  }
-
-  const { item, node } = selected;
-  const latest = item.transactions
-    .slice()
-    .sort((a, b) => b.date - a.date)
-    .slice(0, 5);
-
-  return (
-    <Stack direction='column' rowGap='14px' sx={{ height: '100%', overflow: 'hidden', p: '18px', pb: '48px' }}>
-      <Typography color='text.primary' variant='H-3'>
-        {node?.name || (node ? t('Unknown') : formatOption(t('connection')))}
-      </Typography>
-      {node &&
-        <>
-          <Stack alignItems='center' direction='row' justifyContent='center' sx={{ columnGap: '6px', maxWidth: '100%' }}>
-            <Typography color='text.secondary' noWrap title={node.address} variant='B-4'>
-              {toShortAddress(node.address, 8)}
-            </Typography>
-            <CopyAddressButton address={node.address} padding={0} size={17} />
-          </Stack>
-          {node.isValidator &&
-            <Typography color='warning.main' sx={{ mt: '-8px', textAlign: 'center' }} variant='B-5'>
-              {t('Validator')}
-            </Typography>
-          }
-        </>
-      }
-      <Stack direction='row' flexWrap='wrap' gap='8px' justifyContent='center'>
-        <Metric label={t('Transactions')} value={item.txCount} />
-        <Metric label={t('Sent')} value={item.sentCount} />
-        <Metric label={t('Received')} value={item.receivedCount} />
-        {item.failedCount > 0 &&
-          <Metric label={t('Failed')} value={item.failedCount} />
-        }
-      </Stack>
-      <Stack alignItems='start' direction='column' rowGap='7px' sx={{ width: '100%' }}>
-        <Typography color='text.secondary' sx={{ textTransform: 'uppercase' }} variant='S-1'>
-          {t('Totals')}
-        </Typography>
-        <Stack direction='column' rowGap='7px' sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', border: '1px solid', borderColor: isDark ? '#2D1E4A' : '#DDE3F4', borderRadius: '12px', p: '10px 12px', width: '100%' }}>
-          {item.tokens.map((tokenTotal) => (
-            <TokenTotalRow key={`${tokenTotal.genesisHash ?? 'native'}:${tokenTotal.token}`} {...tokenTotal} />
-          ))}
-        </Stack>
-      </Stack>
-      <Stack alignItems='start' direction='column' rowGap='7px' sx={{ overflow: 'hidden', width: '100%' }}>
-        <Typography color='text.secondary' sx={{ pl: '2px', textTransform: 'uppercase' }} variant='S-1'>
-          {t('Recent')}
-        </Typography>
-        <Stack direction='column' rowGap='6px' sx={{ overflowY: 'auto', pr: '4px', width: '100%' }}>
-          {latest.map((history) => (
-            <Stack
-              alignItems='center'
-              direction='row'
-              key={`${history.txHash ?? history.extrinsicIndex ?? history.date}-${history.action}-${history.amount}`}
-              sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '10px', columnGap: '9px', minHeight: '58px', px: '10px', py: '8px', width: '100%' }}
-            >
-              <Grid alignItems='center' container item justifyContent='center' sx={{ background: recentIconBackground(history.subAction ?? history.action, isDark), border: '2px solid', borderColor: isDark ? '#2D1E4A' : '#EEF1FF', borderRadius: '999px', flexShrink: 0, height: '36px', width: '36px' }}>
-                <HistoryIcon action={history.subAction ?? history.action} isFullscreen={false} />
-              </Grid>
-              <Stack direction='column' rowGap='3px' sx={{ minWidth: 0, width: '100%' }}>
-                <Stack alignItems='baseline' direction='row' justifyContent='space-between' sx={{ columnGap: '10px', minWidth: 0 }}>
-                  <Typography color='text.primary' noWrap variant='B-2'>
-                    {formatOption(history.subAction ?? history.action)}
-                  </Typography>
-                  <Typography color='text.primary' noWrap sx={{ textAlign: 'right' }} variant='B-2'>
-                    {history.amount ?? '0'} {history.token ?? ''}
-                  </Typography>
-                </Stack>
-                <Typography color='text.secondary' noWrap sx={{ textAlign: 'left' }} variant='B-5'>
-                  {formatTimestamp(history.date)}
-                </Typography>
-              </Stack>
-            </Stack>
-          ))}
-        </Stack>
-      </Stack>
-    </Stack>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: number }) {
-  const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
-
-  return (
-    <Stack sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', border: '1px solid', borderColor: isDark ? '#2D1E4A' : '#DDE3F4', borderRadius: '10px', minWidth: '92px', p: '8px' }}>
-      <Typography color='text.secondary' variant='B-5'>
-        {label}
-      </Typography>
-      <Typography color='text.primary' variant='B-1'>
-        {value}
-      </Typography>
-    </Stack>
-  );
-}
-
-function GraphLoading({ isDark }: { isDark: boolean }) {
-  const nodeBg = isDark ? '#AA83DC33' : '#DDE3F4';
-  const lineBg = isDark ? '#AA83DC40' : '#C9D2EE';
-  const centerBg = isDark ? '#FF4FB966' : '#FF4FB933';
-
-  const lineStyle = {
-    bgcolor: lineBg,
-    borderRadius: '999px',
-    height: '2px',
-    opacity: 0.55,
-    position: 'absolute',
-    transformOrigin: 'left center'
-  };
-  const nodeStyle = {
-    bgcolor: nodeBg,
-    border: '2px solid',
-    borderColor: isDark ? '#BEAAD833' : '#FFFFFF',
-    borderRadius: '999px',
-    boxShadow: isDark ? '0 0 18px rgba(170, 131, 220, 0.16)' : '0 8px 24px rgba(120, 130, 180, 0.18)',
-    height: '38px',
-    opacity: 0.85,
-    position: 'absolute',
-    width: '38px'
-  };
-
-  return (
-    <Box sx={{ height: '100%', overflow: 'hidden', position: 'relative', width: '100%' }}>
-      <Box sx={{ ...lineStyle, left: '40%', top: '50%', transform: 'rotate(-37deg)', width: '220px' }} />
-      <Box sx={{ ...lineStyle, left: '39%', top: '50%', transform: 'rotate(34deg)', width: '185px' }} />
-      <Box sx={{ ...lineStyle, left: '39%', top: '50%', transform: 'rotate(146deg)', width: '210px' }} />
-      <Box sx={{ ...lineStyle, left: '39%', top: '50%', transform: 'rotate(-142deg)', width: '160px' }} />
-      <Box sx={{ ...nodeStyle, left: '22%', top: '29%' }} />
-      <Box sx={{ ...nodeStyle, left: '60%', top: '29%' }} />
-      <Box sx={{ ...nodeStyle, left: '58%', top: '66%' }} />
-      <Box sx={{ ...nodeStyle, left: '21%', top: '66%' }} />
-      <Box sx={{ ...nodeStyle, bgcolor: centerBg, borderColor: isDark ? '#EAEBF1' : '#FFFFFF', height: '60px', left: '38%', top: '46%', width: '60px' }} />
-    </Box>
-  );
-}
+import { ALL_TYPES, DETAIL_PANEL_COLLAPSED_WIDTH, DETAIL_PANEL_WIDTH, DIRECTION_OPTIONS, GRAPH_MODES, STATUS_OPTIONS } from './constants';
+import { formatOption, linkColor, linkColor3D, nodeColor, nodeRadius } from './utils';
 
 function AccountInteractions(): React.ReactElement {
   const { t } = useTranslation();
@@ -684,16 +52,7 @@ function AccountInteractions(): React.ReactElement {
   const [fittedGraphKey, setFittedGraphKey] = useState<string>();
   const [graphMode, setGraphMode] = useState<GraphMode>('2d');
   const [is3DFlowReady, setIs3DFlowReady] = useState(false);
-  const [historyRange, setHistoryRange] = useState<[number, number]>();
-  const [isHistoryRangeTouched, setIsHistoryRangeTouched] = useState(false);
   const [manualPositions, setManualPositions] = useState<Record<string, NodePosition>>({});
-
-  useEffect(() => {
-    setHistoryRange(undefined);
-    setIsHistoryRangeTouched(false);
-    setSelected(undefined);
-    setManualPositions({});
-  }, [address, genesisHash]);
 
   const { allHistories, fetchMoreIfAvailable, hasMore, isFetchingMore, isLoading } = useTransactionHistory(
     address,
@@ -701,53 +60,14 @@ function AccountInteractions(): React.ReactElement {
     { governance: true, staking: true, transfers: true },
     { enableInfiniteScroll: false }
   );
-  const fetchedHistories = useMemo(() => allHistories ?? [], [allHistories]);
-
-  const historyDateMarks = useMemo(() => Array.from(new Set(
-    fetchedHistories
-      .map(({ date }) => date)
-      .filter((date): date is number => Number.isFinite(date))
-  ))
-    .sort((a, b) => a - b)
-    .map((value) => ({ value }))
-  , [fetchedHistories]);
-  const historyRangeMin = historyDateMarks[0]?.value;
-  const historyRangeMax = historyDateMarks[historyDateMarks.length - 1]?.value;
-  const canUseHistoryRange = historyDateMarks.length >= MIN_HISTORY_RANGE_ITEMS && historyRangeMin !== undefined && historyRangeMax !== undefined && historyRangeMin < historyRangeMax;
+  const { canUseHistoryRange, fetchedHistories, historyDateMarks, historyRange, historyRangeLabel, historyRangeMax, historyRangeMin, rangeFilteredHistories, resetHistoryRange, updateHistoryRange } = useHistoryRange(allHistories);
 
   useEffect(() => {
-    if (!canUseHistoryRange || historyRangeMin === undefined || historyRangeMax === undefined) {
-      setHistoryRange(undefined);
-      setIsHistoryRangeTouched(false);
+    resetHistoryRange();
+    setSelected(undefined);
+    setManualPositions({});
+  }, [address, genesisHash, resetHistoryRange]);
 
-      return;
-    }
-
-    setHistoryRange((prev) => {
-      const next: [number, number] = !prev || !isHistoryRangeTouched
-        ? [historyRangeMin, historyRangeMax]
-        : [
-          Math.max(historyRangeMin, Math.min(prev[0], historyRangeMax)),
-          Math.min(historyRangeMax, Math.max(prev[1], historyRangeMin))
-        ];
-
-      if (next[0] > next[1]) {
-        return [historyRangeMin, historyRangeMax];
-      }
-
-      return prev?.[0] === next[0] && prev?.[1] === next[1] ? prev : next;
-    });
-  }, [canUseHistoryRange, historyRangeMax, historyRangeMin, isHistoryRangeTouched]);
-
-  const rangeFilteredHistories = useMemo(() => {
-    if (!canUseHistoryRange || !historyRange) {
-      return fetchedHistories;
-    }
-
-    const [start, end] = historyRange;
-
-    return fetchedHistories.filter(({ date }) => date >= start && date <= end);
-  }, [canUseHistoryRange, fetchedHistories, historyRange]);
   const typeOptions = useMemo(() => getInteractionTypes(fetchedHistories), [fetchedHistories]);
   const interactionValue = useMemo<InteractionFilterValue>(() =>
     filters.direction !== 'all'
@@ -779,19 +99,6 @@ function AccountInteractions(): React.ReactElement {
   const graphStatsText = useMemo(() => t('{{nodes}} addresses, {{links}} connections', {
     replace: { links: graph.links.length, nodes: Math.max(0, graph.nodes.length - 1) }
   }), [graph.links.length, graph.nodes.length, t]);
-  const historyRangeLabel = useMemo(() => {
-    if (!historyRange) {
-      return '';
-    }
-
-    const [start, end] = historyRange;
-    const startDate = formatTimestamp(start, ['month', 'day', 'year']);
-    const endDate = formatTimestamp(end, ['month', 'day', 'year']);
-
-    return startDate === endDate
-      ? `${startDate}, ${formatTimestamp(start, ['hours', 'minutes', 'ampm'])} - ${formatTimestamp(end, ['hours', 'minutes', 'ampm'])}`
-      : `${startDate} - ${endDate}`;
-  }, [historyRange]);
   const validatorsById = useMemo(() => {
     const validators = [
       ...(validatorsInfo?.validatorsInformation.elected ?? []),
@@ -919,17 +226,11 @@ function AccountInteractions(): React.ReactElement {
   }, [graphLayoutKey, graphMode, is3DFlowReady]);
 
   useEffect(() => {
-    if (graphMode !== '3d' || !graph3DRef.current) {
+    if (graphMode !== '3d') {
       return;
     }
 
-    const ambientLight = new THREE.AmbientLight('#FFFFFF', isDark ? 1.35 : 1.65);
-    const keyLight = new THREE.DirectionalLight('#FFFFFF', isDark ? 1.05 : 0.95);
-    const accentLight = new THREE.PointLight('#AA83DC', isDark ? 1.4 : 0.75, 700);
-
-    keyLight.position.set(-180, -120, 260);
-    accentLight.position.set(160, 120, 220);
-    graph3DRef.current.lights([ambientLight, keyLight, accentLight]);
+    set3DGraphLights(graph3DRef.current, isDark);
   }, [graphMode, isDark, is3DFlowReady]);
 
   const onBack = useCallback(() => {
@@ -969,18 +270,15 @@ function AccountInteractions(): React.ReactElement {
       setGraphMode(mode);
     }
   }, []);
-  const updateHistoryRange = useCallback((_: Event, value: number | number[]) => {
+  const onHistoryRangeChange = useCallback((_: Event, value: number | number[]) => {
     if (!Array.isArray(value) || value.length < 2) {
       return;
     }
 
-    const next: [number, number] = [value[0], value[1]];
-
-    setIsHistoryRangeTouched(true);
-    setHistoryRange((prev) => prev?.[0] === next[0] && prev?.[1] === next[1] ? prev : next);
+    updateHistoryRange(value);
     setSelected(undefined);
     setManualPositions({});
-  }, []);
+  }, [updateHistoryRange]);
   const updateStatus = useCallback((status: StatusFilter) => setFilters((prev) => ({ ...prev, status })), []);
 
   const onNodeClick = useCallback((node: GraphNode) => {
@@ -1096,7 +394,7 @@ function AccountInteractions(): React.ReactElement {
                       marks={historyDateMarks}
                       max={historyRangeMax}
                       min={historyRangeMin}
-                      onChange={updateHistoryRange}
+                      onChange={onHistoryRangeChange}
                       size='small'
                       step={null}
                       sx={{
