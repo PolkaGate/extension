@@ -146,10 +146,9 @@ function DetailPanel({ selected }: { selected: SelectedItem }) {
   }
 
   const { item, node } = selected;
-  const latest = item.transactions
+  const sortedTransactions = item.transactions
     .slice()
-    .sort((a, b) => b.date - a.date)
-    .slice(0, 5);
+    .sort((a, b) => b.date - a.date);
 
   return (
     <Stack direction='column' rowGap='14px' sx={{ height: '100%', overflow: 'hidden', p: '18px', pb: '48px' }}>
@@ -191,10 +190,10 @@ function DetailPanel({ selected }: { selected: SelectedItem }) {
       </Stack>
       <Stack alignItems='start' direction='column' rowGap='7px' sx={{ overflow: 'hidden', width: '100%' }}>
         <Typography color='text.secondary' sx={{ pl: '2px', textTransform: 'uppercase' }} variant='S-1'>
-          {t('Recent')}
+          {t('Transactions')}
         </Typography>
         <Stack direction='column' rowGap='6px' sx={{ overflowY: 'auto', pr: '4px', width: '100%' }}>
-          {latest.map((history) => (
+          {sortedTransactions.map((history) => (
             <Stack
               alignItems='center'
               direction='row'
