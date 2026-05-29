@@ -1,7 +1,8 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { ForceGraphMethods, LinkObject, NodeObject } from 'react-force-graph-2d';
+import type { ForceGraphMethods as ForceGraph2DMethods } from 'react-force-graph-2d';
+import type { ForceGraphMethods as ForceGraph3DMethods, LinkObject, NodeObject } from 'react-force-graph-3d';
 import type { AdvancedDropdownOption } from '../../util/types';
 import type { DirectionFilter, InteractionFilters, InteractionLink, InteractionNode, StatusFilter, TokenTotal } from './buildInteractionGraph';
 
@@ -10,7 +11,10 @@ import { createAssets } from '@polkagate/apps-config/assets';
 import { ArrowLeft2, CloseCircle, Maximize4, Refresh2 } from 'iconsax-react';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
+import ForceGraph3D from 'react-force-graph-3d';
 import { useNavigate, useParams } from 'react-router-dom';
+import { BeatLoader } from 'react-spinners';
+import * as THREE from 'three';
 
 import { CopyAddressButton, DropSelect, FormatPrice } from '@polkadot/extension-polkagate/src/components';
 import Logo from '@polkadot/extension-polkagate/src/components/Logo';
@@ -27,28 +31,42 @@ import { buildInteractionGraph, getInteractionTypes, normalizeAddress } from './
 
 type GraphNode = NodeObject<InteractionNode>;
 type GraphLink = LinkObject<InteractionNode, InteractionLink>;
-type GraphRef = ForceGraphMethods<GraphNode, GraphLink>;
-interface LinkForce {
-  distance?: (distance: (link: InteractionLink) => number) => unknown;
-}
+type Graph2DRef = ForceGraph2DMethods<GraphNode, GraphLink>;
+type Graph3DRef = ForceGraph3DMethods<GraphNode, GraphLink>;
+type GraphMode = '2d' | '3d';
 interface ChargeForce {
   strength?: (strength: number) => unknown;
 }
 interface CollisionForce {
   radius?: (radius: (node: InteractionNode) => number) => unknown;
 }
+interface LinkForce {
+  distance?: (distance: (link: InteractionLink) => number) => unknown;
+}
 type SelectedItem =
-  | { type: 'node'; item: InteractionNode }
-  | { type: 'link'; item: InteractionLink }
+  | { type: 'node'; item: GraphNode }
+  | { type: 'link'; item: GraphLink; node?: GraphNode }
   | undefined;
 type InteractionFilterValue = `direction:${DirectionFilter}` | `type:${string}`;
 interface NodePosition {
   x: number;
   y: number;
+  z?: number;
+}
+interface GraphSize {
+  height: number;
+  width: number;
 }
 
 const ALL_TYPES = 'all';
+const CAMERA_3D_DIRECTION = new THREE.Vector3(0.2, -0.64, 0.74).normalize();
+const CAMERA_3D_DENSE_FIT_FACTOR = 0.68;
+const CAMERA_3D_MIN_DISTANCE = 82;
+const CAMERA_3D_SPARSE_FIT_FACTOR = 0.86;
 const DIRECTION_OPTIONS: DirectionFilter[] = ['all', 'sent', 'received', 'mixed'];
+const DETAIL_PANEL_COLLAPSED_WIDTH = 52;
+const DETAIL_PANEL_WIDTH = 330;
+const GRAPH_MODES: GraphMode[] = ['2d', '3d'];
 const STATUS_OPTIONS: StatusFilter[] = ['all', 'completed', 'failed'];
 const assetsChains = createAssets();
 
@@ -132,6 +150,89 @@ const nodeRadius = (node: InteractionNode) => node.isCenter ? 11 : Math.min(11, 
 
 const validatorDisplayName = (node: InteractionNode) => node.validatorName || 'Validator';
 
+const linkColor3D = (direction: InteractionLink['direction'], isDark: boolean) => {
+  if (!isDark) {
+    return linkColor(direction, isDark);
+  }
+
+  switch (direction) {
+    case 'sent':
+      return '#FF5AC3';
+    case 'received':
+      return '#35E6CE';
+    default:
+      return '#B88CFF';
+  }
+};
+
+const get3DFitFactor = (nodeCount: number) => {
+  if (nodeCount <= 7) {
+    return CAMERA_3D_SPARSE_FIT_FACTOR;
+  }
+
+  if (nodeCount >= 16) {
+    return CAMERA_3D_DENSE_FIT_FACTOR;
+  }
+
+  return THREE.MathUtils.lerp(CAMERA_3D_SPARSE_FIT_FACTOR, CAMERA_3D_DENSE_FIT_FACTOR, (nodeCount - 7) / 9);
+};
+
+function fit3DGraph(graphInstance: Graph3DRef | undefined, size: GraphSize, nodeCount: number, transitionDuration = 0) {
+  if (!graphInstance) {
+    return;
+  }
+
+  const bbox = graphInstance.getGraphBbox();
+
+  if (!bbox) {
+    return;
+  }
+
+  const bboxValues = [...bbox.x, ...bbox.y, ...bbox.z];
+
+  if (bboxValues.some((value) => !Number.isFinite(value))) {
+    return;
+  }
+
+  const centerVector = new THREE.Vector3(
+    (bbox.x[0] + bbox.x[1]) / 2,
+    (bbox.y[0] + bbox.y[1]) / 2,
+    (bbox.z[0] + bbox.z[1]) / 2
+  );
+  const camera = graphInstance.camera();
+  const fov = camera instanceof THREE.PerspectiveCamera ? camera.fov : 50;
+  const verticalFov = THREE.MathUtils.degToRad(fov);
+  const aspect = Math.max(0.1, size.width / Math.max(size.height, 1));
+  const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * aspect);
+  const forward = CAMERA_3D_DIRECTION.clone().negate();
+  const worldUp = new THREE.Vector3(0, 1, 0);
+  const right = new THREE.Vector3().crossVectors(forward, worldUp);
+
+  if (right.lengthSq() < 0.0001) {
+    right.set(1, 0, 0);
+  } else {
+    right.normalize();
+  }
+
+  const up = new THREE.Vector3().crossVectors(right, forward).normalize();
+  const visualPadding = 26;
+  const requiredDistance = Math.max(
+    CAMERA_3D_MIN_DISTANCE,
+    ...bbox.x.flatMap((x) => bbox.y.flatMap((y) => bbox.z.map((z) => {
+      const relative = new THREE.Vector3(x, y, z).sub(centerVector);
+      const verticalDistance = (Math.abs(relative.dot(up)) + visualPadding) / Math.tan(verticalFov / 2);
+      const horizontalDistance = (Math.abs(relative.dot(right)) + visualPadding) / Math.tan(horizontalFov / 2);
+
+      return Math.max(verticalDistance, horizontalDistance) - relative.dot(forward);
+    })))
+  );
+  const distance = requiredDistance * get3DFitFactor(nodeCount);
+  const position = CAMERA_3D_DIRECTION.clone().multiplyScalar(distance).add(centerVector);
+  const center = { x: centerVector.x, y: centerVector.y, z: centerVector.z };
+
+  graphInstance.cameraPosition({ x: position.x, y: position.y, z: position.z }, center, transitionDuration);
+}
+
 function drawNode(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number, isDark: boolean, selectedNodeId?: string) {
   const radius = nodeRadius(node);
   const label = node.label || toShortAddress(node.address);
@@ -146,14 +247,14 @@ function drawNode(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: n
   ctx.fill();
   ctx.shadowBlur = 0;
   ctx.lineWidth = isSelected ? 4 : node.isCenter ? 2.5 : 1.5;
-  ctx.strokeStyle = isSelected ? '#FFD166' : isDark ? '#EAEBF1' : '#FFFFFF';
+  ctx.strokeStyle = isSelected ? '#FFD166' : isDark ? '#EAEBF1' : '#BFA7E3';
   ctx.stroke();
 
   if (isSelected) {
     ctx.beginPath();
     ctx.arc(node.x ?? 0, node.y ?? 0, radius + 6, 0, 2 * Math.PI, false);
     ctx.lineWidth = 2;
-    ctx.strokeStyle = '#FFD166';
+    ctx.strokeStyle = isDark ? '#FFD166' : '#FF4FB9';
     ctx.stroke();
   }
 
@@ -196,6 +297,119 @@ function drawNode(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: n
     ctx.fillStyle = '#FFD166';
     ctx.fillText(validatorDisplayName(node), node.x ?? 0, (node.y ?? 0) + radius + (18 / globalScale));
   }
+}
+
+function create3DLabel(label: string, isDark: boolean, isSelected: boolean) {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  const fontSize = 34;
+  const paddingX = 20;
+  const paddingY = 12;
+
+  if (!context) {
+    return undefined;
+  }
+
+  context.font = `600 ${fontSize}px Inter, sans-serif`;
+
+  const measuredWidth = context.measureText(label).width;
+
+  canvas.width = Math.ceil(measuredWidth + (paddingX * 2));
+  canvas.height = fontSize + (paddingY * 2);
+
+  context.font = `600 ${fontSize}px Inter, sans-serif`;
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.lineJoin = 'round';
+  context.strokeStyle = isDark ? '#05091C' : '#FFFFFF';
+  context.lineWidth = 7;
+  context.strokeText(label, canvas.width / 2, canvas.height / 2);
+  context.fillStyle = isSelected ? isDark ? '#FFD166' : '#674394' : isDark ? '#EAEBF1' : '#291443';
+  context.fillText(label, canvas.width / 2, canvas.height / 2);
+
+  const texture = new THREE.CanvasTexture(canvas);
+
+  texture.colorSpace = THREE.SRGBColorSpace;
+
+  const material = new THREE.SpriteMaterial({
+    depthTest: false,
+    depthWrite: false,
+    map: texture,
+    transparent: true
+  });
+  const sprite = new THREE.Sprite(material);
+  const scale = 0.115;
+
+  sprite.scale.set(canvas.width * scale, canvas.height * scale, 1);
+
+  return sprite;
+}
+
+function create3DNode(node: GraphNode, isDark: boolean, selectedNodeId?: string) {
+  const group = new THREE.Group();
+  const radius = nodeRadius(node) * 0.94;
+  const isSelected = selectedNodeId === node.id;
+  const color = nodeColor(node, isDark);
+  const ringColor = isSelected ? isDark ? '#FFD166' : '#FF4FB9' : isDark ? '#EAEBF1' : '#BFA7E3';
+  const halo = new THREE.Mesh(
+    new THREE.SphereGeometry(radius * (isSelected ? 1.6 : 1.42), 32, 32),
+    new THREE.MeshBasicMaterial({
+      color: isSelected ? ringColor : color,
+      depthWrite: false,
+      opacity: isSelected ? 0.24 : isDark ? 0.13 : 0.18,
+      transparent: true
+    })
+  );
+  const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(radius, 36, 36),
+    new THREE.MeshPhysicalMaterial({
+      clearcoat: 0.55,
+      clearcoatRoughness: 0.22,
+      color,
+      emissive: color,
+      emissiveIntensity: isDark ? 0.14 : 0.08,
+      metalness: 0.04,
+      roughness: 0.3
+    })
+  );
+  const rim = new THREE.Mesh(
+    new THREE.TorusGeometry(radius * 1.05, isSelected ? 0.42 : 0.28, 12, 64),
+    new THREE.MeshBasicMaterial({ color: ringColor })
+  );
+  const highlight = new THREE.Mesh(
+    new THREE.SphereGeometry(radius * 0.23, 16, 16),
+    new THREE.MeshBasicMaterial({
+      color: '#FFFFFF',
+      depthWrite: false,
+      opacity: isDark ? 0.26 : 0.34,
+      transparent: true
+    })
+  );
+  const label = create3DLabel(node.label || toShortAddress(node.address), isDark, isSelected);
+
+  rim.rotation.x = Math.PI / 2;
+  highlight.position.set(-radius * 0.32, radius * 0.36, radius * 0.72);
+  group.add(halo);
+  group.add(sphere);
+  group.add(rim);
+  group.add(highlight);
+
+  if (label) {
+    label.position.set(0, -(radius + 10), 0);
+    group.add(label);
+  }
+
+  if (node.isValidator) {
+    const validatorLabel = create3DLabel('VAL', isDark, true);
+
+    if (validatorLabel) {
+      validatorLabel.scale.multiplyScalar(0.55);
+      validatorLabel.position.set(radius + 6, radius + 4, 0);
+      group.add(validatorLabel);
+    }
+  }
+
+  return group;
 }
 
 function TokenTotalRow({ amount, genesisHash, token }: TokenTotal) {
@@ -297,7 +511,7 @@ function DetailPanel({ selected }: { selected: SelectedItem }) {
     );
   }
 
-  const { item } = selected;
+  const { item, node } = selected;
   const latest = item.transactions
     .slice()
     .sort((a, b) => b.date - a.date)
@@ -306,8 +520,23 @@ function DetailPanel({ selected }: { selected: SelectedItem }) {
   return (
     <Stack direction='column' rowGap='14px' sx={{ height: '100%', overflow: 'hidden', p: '18px' }}>
       <Typography color='text.primary' variant='H-3'>
-        {formatOption(item.direction)} {t('connection')}
+        {node?.name || (node ? t('Unknown') : formatOption(t('connection')))}
       </Typography>
+      {node &&
+        <>
+          <Stack alignItems='center' direction='row' justifyContent='center' sx={{ columnGap: '6px', maxWidth: '100%' }}>
+            <Typography color='text.secondary' noWrap title={node.address} variant='B-4'>
+              {toShortAddress(node.address, 8)}
+            </Typography>
+            <CopyAddressButton address={node.address} padding={0} size={17} />
+          </Stack>
+          {node.isValidator &&
+            <Typography color='warning.main' sx={{ mt: '-8px', textAlign: 'center' }} variant='B-5'>
+              {t('Validator')}
+            </Typography>
+          }
+        </>
+      }
       <Stack direction='row' flexWrap='wrap' gap='8px' justifyContent='center'>
         <Metric label={t('Transactions')} value={item.txCount} />
         <Metric label={t('Sent')} value={item.sentCount} />
@@ -422,7 +651,8 @@ function AccountInteractions(): React.ReactElement {
   const navigate = useNavigate();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
-  const graphRef = useRef<GraphRef | undefined>(undefined);
+  const graph2DRef = useRef<Graph2DRef | undefined>(undefined);
+  const graph3DRef = useRef<Graph3DRef | undefined>(undefined);
   const { ref: graphContainerRef, size } = useElementSize<HTMLDivElement>();
   const account = useAccount(address);
   const validatorsInfo = useValidatorsInformation(genesisHash);
@@ -433,7 +663,10 @@ function AccountInteractions(): React.ReactElement {
     type: ALL_TYPES
   });
   const [selected, setSelected] = useState<SelectedItem>();
+  const [isDetailPanelCollapsed, setIsDetailPanelCollapsed] = useState(false);
   const [fittedGraphKey, setFittedGraphKey] = useState<string>();
+  const [graphMode, setGraphMode] = useState<GraphMode>('2d');
+  const [is3DFlowReady, setIs3DFlowReady] = useState(false);
   const [manualPositions, setManualPositions] = useState<Record<string, NodePosition>>({});
 
   useEffect(() => {
@@ -506,15 +739,15 @@ function AccountInteractions(): React.ReactElement {
       const manualPosition = manualPositions[node.id];
 
       if (manualPosition) {
-        return { ...nodeWithMetadata, fx: manualPosition.x, fy: manualPosition.y, x: manualPosition.x, y: manualPosition.y };
+        return { ...nodeWithMetadata, fx: manualPosition.x, fy: manualPosition.y, fz: manualPosition.z ?? 0, x: manualPosition.x, y: manualPosition.y, z: manualPosition.z ?? 0 };
       }
 
       if (!node.isCenter && graph.links.length === 1) {
-        return { ...nodeWithMetadata, fx: singleLinkDistance, fy: 0, x: singleLinkDistance, y: 0 };
+        return { ...nodeWithMetadata, fx: singleLinkDistance, fy: 0, fz: 0, x: singleLinkDistance, y: 0, z: 0 };
       }
 
       return node.isCenter
-        ? { ...nodeWithMetadata, fx: 0, fy: 0, x: 0, y: 0 }
+        ? { ...nodeWithMetadata, fx: 0, fy: 0, fz: 0, x: 0, y: 0, z: 0 }
         : nodeWithMetadata;
     })
   }), [account?.name, graph, manualPositions, singleLinkDistance, validatorsById]);
@@ -524,63 +757,119 @@ function AccountInteractions(): React.ReactElement {
     filters.direction,
     filters.status,
     filters.type,
+    graphMode,
     graph.nodes.map(({ id }) => id).join('|'),
     graph.links.map(({ id }) => id).join('|'),
     size.width,
     size.height
-  ].join(':'), [address, filters.direction, filters.status, filters.type, genesisHash, graph.links, graph.nodes, size.height, size.width]);
+  ].join(':'), [address, filters.direction, filters.status, filters.type, genesisHash, graph.links, graph.nodes, graphMode, size.height, size.width]);
   const isGraphFitted = fittedGraphKey === graphLayoutKey;
+  const graphNodeCount = graph.nodes.length;
+  const getActiveGraph = useCallback(() => graphMode === '3d' ? graph3DRef.current : graph2DRef.current, [graphMode]);
+  const fitActiveGraph = useCallback((transitionDuration = 0) => {
+    if (graphMode === '3d') {
+      fit3DGraph(graph3DRef.current, size, graphNodeCount, transitionDuration);
+
+      return;
+    }
+
+    graph2DRef.current?.zoomToFit(transitionDuration, graph.links.length === 1 ? 90 : 60);
+  }, [graph.links.length, graphMode, graphNodeCount, size]);
 
   useEffect(() => {
-    const chargeForce = graphRef.current?.d3Force('charge') as ChargeForce | undefined;
-    const collisionForce = graphRef.current?.d3Force('collide') as CollisionForce | undefined;
-    const linkForce = graphRef.current?.d3Force('link') as LinkForce | undefined;
+    const graphInstance = getActiveGraph();
+    const chargeForce = graphInstance?.d3Force('charge') as ChargeForce | undefined;
+    const collisionForce = graphInstance?.d3Force('collide') as CollisionForce | undefined;
+    const linkForce = graphInstance?.d3Force('link') as LinkForce | undefined;
     const baseDistance = graph.links.length <= 1 ? singleLinkDistance : 110;
 
     chargeForce?.strength?.(-220);
     collisionForce?.radius?.((node) => nodeRadius(node) + 24);
     linkForce?.distance?.((link) => baseDistance + Math.min(120, link.txCount * 7));
-    graphRef.current?.d3ReheatSimulation();
-  }, [graph.links.length, graphData, singleLinkDistance]);
+
+    if (graphMode === '2d') {
+      graphInstance?.d3ReheatSimulation();
+    }
+  }, [getActiveGraph, graph.links.length, graphData, graphMode, singleLinkDistance]);
 
   useEffect(() => {
-    if (isLoading || graph.links.length === 0 || size.height === 0 || size.width === 0) {
+    if (isLoading || graph.links.length === 0 || size.height === 0 || size.width === 0 || (graphMode === '3d' && !is3DFlowReady)) {
       return;
     }
 
-    const fitGraph = () => {
-      graphRef.current?.zoomToFit(0, graph.links.length === 1 ? 90 : 60);
-    };
-
     const revealGraph = () => {
-      fitGraph();
+      fitActiveGraph();
       setFittedGraphKey(graphLayoutKey);
     };
 
-    const animationFrame = requestAnimationFrame(fitGraph);
+    const animationFrame = requestAnimationFrame(() => fitActiveGraph());
     const timeout = setTimeout(revealGraph, 250);
 
     return () => {
       cancelAnimationFrame(animationFrame);
       clearTimeout(timeout);
     };
-  }, [graph.links.length, graphLayoutKey, isLoading, size.height, size.width]);
+  }, [fitActiveGraph, graph.links.length, graphLayoutKey, graphMode, is3DFlowReady, isLoading, size.height, size.width]);
+
+  useEffect(() => {
+    if (graphMode !== '3d' || isLoading || graph.links.length === 0 || size.height === 0 || size.width === 0) {
+      setIs3DFlowReady(false);
+
+      return;
+    }
+
+    setIs3DFlowReady(false);
+
+    const timeout = setTimeout(() => setIs3DFlowReady(true), 220);
+
+    return () => clearTimeout(timeout);
+  }, [graph.links.length, graphLayoutKey, graphMode, isLoading, size.height, size.width]);
+
+  useEffect(() => {
+    if (graphMode !== '3d' || !is3DFlowReady) {
+      return;
+    }
+
+    const timeout = setTimeout(() => graph3DRef.current?.d3ReheatSimulation(), 40);
+
+    return () => clearTimeout(timeout);
+  }, [graphLayoutKey, graphMode, is3DFlowReady]);
+
+  useEffect(() => {
+    if (graphMode !== '3d' || !graph3DRef.current) {
+      return;
+    }
+
+    const ambientLight = new THREE.AmbientLight('#FFFFFF', isDark ? 1.35 : 1.65);
+    const keyLight = new THREE.DirectionalLight('#FFFFFF', isDark ? 1.05 : 0.95);
+    const accentLight = new THREE.PointLight('#AA83DC', isDark ? 1.4 : 0.75, 700);
+
+    keyLight.position.set(-180, -120, 260);
+    accentLight.position.set(160, 120, 220);
+    graph3DRef.current.lights([ambientLight, keyLight, accentLight]);
+  }, [graphMode, isDark, is3DFlowReady]);
 
   const onBack = useCallback(() => {
     Promise.resolve(navigate(-1)).catch(console.error);
   }, [navigate]);
   const resetLayout = useCallback(() => {
     setManualPositions({});
-    graphRef.current?.d3ReheatSimulation();
-  }, []);
+
+    if (graphMode === '2d' || is3DFlowReady) {
+      getActiveGraph()?.d3ReheatSimulation();
+    }
+  }, [getActiveGraph, graphMode, is3DFlowReady]);
   const zoomToFit = useCallback(() => {
-    graphRef.current?.zoomToFit(450, 60);
-  }, []);
+    fitActiveGraph(450);
+  }, [fitActiveGraph]);
   const loadMore = useCallback(() => {
     fetchMoreIfAvailable().catch(console.error);
   }, [fetchMoreIfAvailable]);
   const clearSelected = useCallback(() => {
     setSelected(undefined);
+  }, []);
+  const toggleDetailPanel = useCallback(() => {
+    setIsDetailPanelCollapsed((isCollapsed) => !isCollapsed);
   }, []);
 
   const updateInteraction = useCallback((value: InteractionFilterValue) => {
@@ -590,17 +879,35 @@ function AccountInteractions(): React.ReactElement {
       ? { ...prev, direction: selectedValue as DirectionFilter, type: ALL_TYPES }
       : { ...prev, direction: 'all', type: selectedValue });
   }, []);
+  const updateGraphMode = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+    const mode = event.currentTarget.dataset['mode'] as GraphMode | undefined;
+
+    if (mode) {
+      setGraphMode(mode);
+    }
+  }, []);
   const updateStatus = useCallback((status: StatusFilter) => setFilters((prev) => ({ ...prev, status })), []);
 
   const onNodeClick = useCallback((node: GraphNode) => {
-    setSelected({ item: node, type: 'node' });
-  }, []);
+    if (node.isCenter) {
+      setSelected({ item: node, type: 'node' });
+
+      return;
+    }
+
+    const link = graph.links.find(({ counterparty }) => counterparty === node.id) as GraphLink | undefined;
+
+    setSelected(link ? { item: link, node, type: 'link' } : { item: node, type: 'node' });
+  }, [graph.links]);
   const onLinkClick = useCallback((link: GraphLink) => {
-    setSelected({ item: link as InteractionLink, type: 'link' });
-  }, []);
+    const node = graphData.nodes.find(({ id }) => id === link.counterparty) as GraphNode | undefined;
+
+    setSelected({ item: link, node, type: 'link' });
+  }, [graphData.nodes]);
   const onNodeDragEnd = useCallback((node: GraphNode) => {
     node.fx = node.x;
     node.fy = node.y;
+    node.fz = node.z ?? 0;
 
     setManualPositions((prev) => {
       const next = { ...prev };
@@ -609,19 +916,25 @@ function AccountInteractions(): React.ReactElement {
         const positionedNode = graphNode as GraphNode;
 
         if (positionedNode.x !== undefined && positionedNode.y !== undefined) {
-          next[positionedNode.id] = { x: positionedNode.x, y: positionedNode.y };
+          next[positionedNode.id] = { x: positionedNode.x, y: positionedNode.y, z: positionedNode.z };
         }
       });
 
       if (node.x !== undefined && node.y !== undefined) {
-        next[node.id] = { x: node.x, y: node.y };
+        next[node.id] = { x: node.x, y: node.y, z: node.z };
       }
 
       return next;
     });
   }, [graphData.nodes]);
-  const selectedNodeId = selected?.type === 'node' ? selected.item.id : undefined;
+  const selectedNodeId = selected?.type === 'node' ? selected.item.id : selected?.node?.id ?? selected?.item.counterparty;
   const selectedLinkId = selected?.type === 'link' ? selected.item.id : undefined;
+  const get3DNodeColor = useCallback((node: GraphNode) => node.id === selectedNodeId ? isDark ? '#FFD166' : '#674394' : nodeColor(node, isDark), [isDark, selectedNodeId]);
+  const get3DNodeObject = useCallback((node: GraphNode) => create3DNode(node, isDark, selectedNodeId), [isDark, selectedNodeId]);
+  const get3DNodeValue = useCallback((node: GraphNode) => node.isCenter ? 18 : Math.max(6, node.txCount * 2), []);
+  const get3DLinkParticles = useCallback((link: GraphLink) => link.direction === 'mixed' ? 0 : link.id === selectedLinkId ? 3 : Math.min(2, Math.ceil(link.txCount / 6)), [selectedLinkId]);
+  const get3DLinkWidth = useCallback((link: GraphLink) => link.id === selectedLinkId ? Math.min(5.2, 1.9 + Math.sqrt(link.txCount)) : Math.min(4.4, 0.9 + Math.sqrt(link.txCount) * 0.85), [selectedLinkId]);
+  const get3DLinkColor = useCallback((link: GraphLink) => link.id === selectedLinkId ? '#FFD166' : linkColor3D(link.direction, isDark), [isDark, selectedLinkId]);
   const getLinkColor = useCallback((link: GraphLink) => link.id === selectedLinkId ? '#FFD166' : linkColor(link.direction, isDark), [isDark, selectedLinkId]);
   const getLinkArrowLength = useCallback((link: GraphLink) => link.direction === 'mixed' ? 0 : 4, []);
   const getLinkParticles = useCallback((link: GraphLink) => link.direction === 'mixed' ? 0 : link.id === selectedLinkId ? Math.max(3, Math.min(6, Math.ceil(link.txCount / 2))) : Math.min(3, Math.ceil(link.txCount / 4)), [selectedLinkId]);
@@ -632,6 +945,7 @@ function AccountInteractions(): React.ReactElement {
   const showPointerCursor = useCallback((item: GraphNode | GraphLink | undefined) => Boolean(item), []);
   const graphEmpty = !isLoading && graph.links.length === 0;
   const graphSizeReady = size.height > 0 && size.width > 0;
+  const detailPanelWidth = isDetailPanelCollapsed ? DETAIL_PANEL_COLLAPSED_WIDTH : DETAIL_PANEL_WIDTH;
 
   return (
     <HomeLayout childrenStyle={{ width: '100%' }}>
@@ -673,9 +987,9 @@ function AccountInteractions(): React.ReactElement {
                   <TopFilterSelect label={t('Status')} onChange={updateStatus} options={statusOptions} value={filters.status} width={150} />
                 </Stack>
                 {(isLoading || isFetchingMore) &&
-                  <Typography color='text.secondary' variant='B-5'>
-                    {t('Loading')}
-                  </Typography>
+                  <Stack alignItems='center' justifyContent='center' sx={{ height: '24px', minWidth: '58px' }}>
+                    <BeatLoader color={isDark ? '#BEAAD8' : '#674394'} loading margin={2} size={7} />
+                  </Stack>
                 }
                 {!isLoading && !isFetchingMore && graph.links.length > 0 &&
                   <Typography color='text.secondary' variant='B-5'>
@@ -684,8 +998,28 @@ function AccountInteractions(): React.ReactElement {
                 }
               </Stack>
             </Grid>
-            <Grid item ref={graphContainerRef} sx={{ height: 'calc(100% - 58px)', position: 'relative', width: 'calc(100% - 330px)' }}>
+            <Grid item ref={graphContainerRef} sx={{ height: 'calc(100% - 58px)', position: 'relative', transition: 'width 180ms ease', width: `calc(100% - ${detailPanelWidth}px)` }}>
               <Stack direction='row' gap='8px' sx={{ position: 'absolute', right: '12px', top: '12px', zIndex: 2 }}>
+                <Stack direction='row' sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px', p: '3px' }}>
+                  {GRAPH_MODES.map((mode) => (
+                    <Button
+                      data-mode={mode}
+                      key={mode}
+                      onClick={updateGraphMode}
+                      sx={{
+                        bgcolor: graphMode === mode ? isDark ? '#674394' : '#FFFFFF' : 'transparent',
+                        borderRadius: '9px',
+                        color: graphMode === mode ? isDark ? '#FFFFFF' : '#674394' : isDark ? '#AA83DC' : '#674394',
+                        minWidth: '42px',
+                        px: '9px',
+                        py: '4px',
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      {mode}
+                    </Button>
+                  ))}
+                </Stack>
                 <IconButton onClick={resetLayout} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px' }}>
                   <Refresh2 color={isDark ? '#AA83DC' : '#674394'} size='20' />
                 </IconButton>
@@ -704,41 +1038,86 @@ function AccountInteractions(): React.ReactElement {
               }
               {!isLoading && !graphEmpty && graphSizeReady &&
                 <Box sx={{ height: '100%', opacity: isGraphFitted ? 1 : 0, width: '100%' }}>
-                  <ForceGraph2D<InteractionNode, InteractionLink>
-                    autoPauseRedraw={false}
-                    backgroundColor={isDark ? '#05091C' : '#FFFFFF'}
-                    cooldownTicks={120}
-                    enableNodeDrag
-                    graphData={graphData}
-                    height={size.height}
-                    linkColor={getLinkColor}
-                    linkDirectionalArrowLength={getLinkArrowLength}
-                    linkDirectionalArrowRelPos={0.86}
-                    linkDirectionalParticleSpeed={0.004}
-                    linkDirectionalParticles={getLinkParticles}
-                    linkLabel={getLinkLabel}
-                    linkWidth={getLinkWidth}
-                    nodeCanvasObject={renderNode}
-                    nodeLabel={getNodeLabel}
-                    onBackgroundClick={clearSelected}
-                    onLinkClick={onLinkClick}
-                    onNodeClick={onNodeClick}
-                    onNodeDragEnd={onNodeDragEnd}
-                    ref={graphRef}
-                    showPointerCursor={showPointerCursor}
-                    width={size.width}
-                  />
+                  {graphMode === '2d'
+                    ? (
+                      <ForceGraph2D<InteractionNode, InteractionLink>
+                        autoPauseRedraw={false}
+                        backgroundColor={isDark ? '#05091C' : '#FFFFFF'}
+                        cooldownTicks={120}
+                        enableNodeDrag
+                        graphData={graphData}
+                        height={size.height}
+                        linkColor={getLinkColor}
+                        linkDirectionalArrowLength={getLinkArrowLength}
+                        linkDirectionalArrowRelPos={0.86}
+                        linkDirectionalParticleSpeed={0.004}
+                        linkDirectionalParticles={getLinkParticles}
+                        linkLabel={getLinkLabel}
+                        linkWidth={getLinkWidth}
+                        nodeCanvasObject={renderNode}
+                        nodeLabel={getNodeLabel}
+                        onBackgroundClick={clearSelected}
+                        onLinkClick={onLinkClick}
+                        onNodeClick={onNodeClick}
+                        onNodeDragEnd={onNodeDragEnd}
+                        ref={graph2DRef}
+                        showPointerCursor={showPointerCursor}
+                        width={size.width}
+                      />
+                    )
+                    : (
+                      <ForceGraph3D<InteractionNode, InteractionLink>
+                        backgroundColor={isDark ? '#05091C' : '#FFFFFF'}
+                        controlType='orbit'
+                        cooldownTicks={is3DFlowReady ? 120 : 0}
+                        d3VelocityDecay={0.38}
+                        enableNodeDrag
+                        graphData={graphData}
+                        height={size.height}
+                        linkColor={get3DLinkColor}
+                        linkDirectionalArrowLength={getLinkArrowLength}
+                        linkDirectionalArrowRelPos={0.86}
+                        linkDirectionalParticleSpeed={0.004}
+                        linkDirectionalParticleWidth={2.8}
+                        linkDirectionalParticles={get3DLinkParticles}
+                        linkLabel={getLinkLabel}
+                        linkOpacity={0.88}
+                        linkWidth={get3DLinkWidth}
+                        nodeColor={get3DNodeColor}
+                        nodeLabel={getNodeLabel}
+                        nodeOpacity={0.96}
+                        nodeRelSize={4}
+                        nodeResolution={28}
+                        nodeThreeObject={get3DNodeObject}
+                        nodeVal={get3DNodeValue}
+                        onBackgroundClick={clearSelected}
+                        onLinkClick={onLinkClick}
+                        onNodeClick={onNodeClick}
+                        onNodeDragEnd={onNodeDragEnd}
+                        ref={graph3DRef}
+                        showNavInfo={false}
+                        showPointerCursor={showPointerCursor}
+                        warmupTicks={80}
+                        width={size.width}
+                      />
+                    )
+                  }
                 </Box>
               }
             </Grid>
-            <Grid item sx={{ height: 'calc(100% - 58px)', position: 'relative', width: '330px' }}>
+            <Grid item sx={{ height: 'calc(100% - 58px)', overflow: 'hidden', position: 'relative', transition: 'width 180ms ease', width: `${detailPanelWidth}px` }}>
               <Box sx={{ background: isDark ? 'linear-gradient(0deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)' : 'linear-gradient(0deg, rgba(221, 227, 244, 0.2) 0%, rgba(221, 227, 244, 1) 50.06%, rgba(221, 227, 244, 0.2) 100%)', height: '100%', left: 0, position: 'absolute', top: 0, width: '1px' }} />
-              {selected &&
+              <IconButton onClick={toggleDetailPanel} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px', left: '8px', position: 'absolute', top: '8px', transform: isDetailPanelCollapsed ? 'none' : 'rotate(180deg)', zIndex: 2 }}>
+                <ArrowLeft2 color={isDark ? '#AA83DC' : '#674394'} size='18' />
+              </IconButton>
+              {!isDetailPanelCollapsed && selected &&
                 <IconButton onClick={clearSelected} sx={{ position: 'absolute', right: '8px', top: '8px', zIndex: 2 }}>
                   <CloseCircle color={isDark ? '#AA83DC' : '#674394'} size='20' />
                 </IconButton>
               }
-              <DetailPanel selected={selected} />
+              {!isDetailPanelCollapsed &&
+                <DetailPanel selected={selected} />
+              }
             </Grid>
           </Grid>
         </VelvetBox>

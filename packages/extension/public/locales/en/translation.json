@@ -979,8 +979,9 @@
   "transactions": "",
   "Interaction Explorer": "",
   "Load more": "",
-  "Direction": "",
   "No transaction relationships are available for this account on the selected chain.": "",
   "Select a chain to view interactions.": "",
-  "{{nodes}} addresses, {{links}} connections": ""
+  "{{nodes}} addresses, {{links}} connections": "",
+  "All interactions": "",
+  "Interaction": ""
 }
