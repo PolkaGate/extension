@@ -25,9 +25,20 @@ function TokenTotalRow({ amount, genesisHash, token }: TokenTotal) {
   const { chainName, token: nativeToken } = useChainInfo(genesisHash, true);
   const pricesInCurrencies = usePrices();
   const isNativeToken = Boolean(token && nativeToken && token.toLowerCase() === nativeToken.toLowerCase());
-  const maybeKnownAsset = useMemo(() => assetsChains[toCamelCase(chainName || '')]?.find(({ symbol }) => symbol.toLowerCase() === token.toLowerCase()), [chainName, token]);
+  const maybeKnownAsset = useMemo(() => {
+    const chainKey = toCamelCase(chainName || '');
+    const candidateChainKeys = [...new Set([chainKey, chainKey && `${chainKey}AssetHub`].filter(Boolean))];
+
+    return candidateChainKeys
+      .flatMap((candidateChainKey) => assetsChains[candidateChainKey] || [])
+      .find(({ symbol }) => symbol.toLowerCase() === token.toLowerCase());
+  }, [chainName, token]);
   const logoInfo = useMemo(() => {
-    if (isNativeToken || maybeKnownAsset) {
+    if (maybeKnownAsset) {
+      return maybeKnownAsset.ui;
+    }
+
+    if (isNativeToken) {
       return resolveLogoInfo(genesisHash, token);
     }
 
@@ -44,10 +55,10 @@ function TokenTotalRow({ amount, genesisHash, token }: TokenTotal) {
         assetSize='24px'
         baseTokenSize='0'
         fallbackText={token}
-        genesisHash={genesisHash}
+        genesisHash={isNativeToken ? genesisHash : undefined}
         logo={logoInfo?.logo}
         subLogo={undefined}
-        token={isNativeToken || maybeKnownAsset ? token : undefined}
+        token={token}
       />
       <Stack alignItems='flex-end' direction='column' rowGap='3px' sx={{ minWidth: 0 }}>
         <Typography color='text.primary' noWrap sx={{ textAlign: 'right' }} variant='B-2'>
