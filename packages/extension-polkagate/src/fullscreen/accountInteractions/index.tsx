@@ -556,8 +556,25 @@ function AccountInteractions(): React.ReactElement {
     Promise.resolve(navigate(-1)).catch(console.error);
   }, [navigate]);
   const resetLayout = useCallback(() => {
+    graphData.nodes.forEach((node) => {
+      const graphNode = node as GraphNode;
+
+      if (graphNode.isCenter) {
+        graphNode.fx = 0;
+        graphNode.fy = 0;
+        graphNode.x = 0;
+        graphNode.y = 0;
+
+        return;
+      }
+
+      delete graphNode.fx;
+      delete graphNode.fy;
+      delete graphNode.x;
+      delete graphNode.y;
+    });
     graphRef.current?.d3ReheatSimulation();
-  }, []);
+  }, [graphData.nodes]);
   const zoomToFit = useCallback(() => {
     graphRef.current?.zoomToFit(450, 60);
   }, []);
@@ -591,17 +608,9 @@ function AccountInteractions(): React.ReactElement {
       return;
     }
 
-    if (graph.links.length === 1) {
-      node.fx = node.x;
-      node.fy = node.y;
-
-      return;
-    }
-
-    delete node.fx;
-    delete node.fy;
-    graphRef.current?.d3ReheatSimulation();
-  }, [graph.links.length]);
+    node.fx = node.x;
+    node.fy = node.y;
+  }, []);
   const selectedNodeId = selected?.type === 'node' ? selected.item.id : undefined;
   const selectedLinkId = selected?.type === 'link' ? selected.item.id : undefined;
   const getLinkColor = useCallback((link: GraphLink) => link.id === selectedLinkId ? '#FFD166' : linkColor(link.direction, isDark), [isDark, selectedLinkId]);
