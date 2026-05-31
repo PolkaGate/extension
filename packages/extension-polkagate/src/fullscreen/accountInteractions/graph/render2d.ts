@@ -7,7 +7,7 @@ import { toShortAddress } from '@polkadot/extension-polkagate/src/util';
 
 import { nodeColor, nodeRadius, validatorDisplayName } from '../utils';
 
-export function drawNode(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number, isDark: boolean, selectedNodeId?: string) {
+export function drawNode(node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number, isDark: boolean, validatorFallback: string, selectedNodeId?: string) {
   const radius = nodeRadius(node);
   const label = node.label || toShortAddress(node.address);
   const fontSize = node.isCenter ? 13 : 11;
@@ -69,6 +69,6 @@ export function drawNode(node: GraphNode, ctx: CanvasRenderingContext2D, globalS
   if (node.isValidator) {
     ctx.font = `${9 / globalScale}px Inter`;
     ctx.fillStyle = '#FFD166';
-    ctx.fillText(validatorDisplayName(node), node.x ?? 0, (node.y ?? 0) + radius + (18 / globalScale));
+    ctx.fillText(validatorDisplayName(node, validatorFallback), node.x ?? 0, (node.y ?? 0) + radius + (18 / globalScale));
   }
 }

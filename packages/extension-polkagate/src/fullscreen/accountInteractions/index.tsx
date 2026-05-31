@@ -340,7 +340,7 @@ function AccountInteractions(): React.ReactElement {
   const getLinkLabel = useCallback((link: GraphLink) => `${formatOption(link.direction)} - ${link.txCount} ${t('transactions')}`, [t]);
   const getLinkWidth = useCallback((link: GraphLink) => link.id === selectedLinkId ? Math.min(10, 3 + Math.sqrt(link.txCount)) : Math.min(8, 1 + Math.sqrt(link.txCount)), [selectedLinkId]);
   const getNodeLabel = useCallback((node: GraphNode) => `${node.label} - ${node.txCount} ${t('transactions')}`, [t]);
-  const renderNode = useCallback((node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => drawNode(node, ctx, globalScale, isDark, selectedNodeId), [isDark, selectedNodeId]);
+  const renderNode = useCallback((node: GraphNode, ctx: CanvasRenderingContext2D, globalScale: number) => drawNode(node, ctx, globalScale, isDark, t('Validator'), selectedNodeId), [isDark, selectedNodeId, t]);
   const showPointerCursor = useCallback((item: GraphNode | GraphLink | undefined) => Boolean(item), []);
   const graphEmpty = !isLoading && graph.links.length === 0;
   const graphSizeReady = size.height > 0 && size.width > 0;

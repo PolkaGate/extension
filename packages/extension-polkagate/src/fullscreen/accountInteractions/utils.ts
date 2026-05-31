@@ -33,7 +33,7 @@ export const nodeColor = (node: InteractionNode, isDark: boolean) =>
 
 export const nodeRadius = (node: InteractionNode) => node.isCenter ? 11 : Math.min(11, 5 + Math.sqrt(node.txCount || 1) * 1.8);
 
-export const validatorDisplayName = (node: InteractionNode) => node.validatorName || 'Validator';
+export const validatorDisplayName = (node: InteractionNode, fallback: string) => node.validatorName || fallback;
 
 export const recentIconBackground = (action: string, isDark: boolean) => {
   if (isDark) {
