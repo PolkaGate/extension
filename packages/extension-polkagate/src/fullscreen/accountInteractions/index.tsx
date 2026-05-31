@@ -262,6 +262,8 @@ function AccountInteractions(): React.ReactElement {
     setFilters((prev) => kind === 'direction'
       ? { ...prev, direction: selectedValue as DirectionFilter, type: ALL_TYPES }
       : { ...prev, direction: 'all', type: selectedValue });
+    setSelected(undefined);
+    setManualPositions({});
   }, []);
   const updateGraphMode = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     const mode = event.currentTarget.dataset['mode'] as GraphMode | undefined;
@@ -279,7 +281,11 @@ function AccountInteractions(): React.ReactElement {
     setSelected(undefined);
     setManualPositions({});
   }, [updateHistoryRange]);
-  const updateStatus = useCallback((status: StatusFilter) => setFilters((prev) => ({ ...prev, status })), []);
+  const updateStatus = useCallback((status: StatusFilter) => {
+    setFilters((prev) => ({ ...prev, status }));
+    setSelected(undefined);
+    setManualPositions({});
+  }, []);
 
   const onNodeClick = useCallback((node: GraphNode) => {
     if (node.isCenter) {
