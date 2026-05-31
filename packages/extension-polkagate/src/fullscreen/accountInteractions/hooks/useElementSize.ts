@@ -16,8 +16,8 @@ export default function useElementSize<T extends HTMLElement>() {
 
     const updateSize = () => {
       setSize({
-        height: Math.max(540, element.clientHeight),
-        width: Math.max(420, element.clientWidth)
+        height: element.clientHeight,
+        width: element.clientWidth
       });
     };
 
