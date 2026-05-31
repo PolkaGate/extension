@@ -53,12 +53,14 @@ function AccountDropDown({ address, disabled, iconSize = '25px', isExternal, nam
         text: t('Manage Proxies'),
         value: `/proxyManagement/${address}/${genesisHash}`
       },
-      {
-        Icon: HierarchySquare3,
-        isFullscreen: true,
-        text: t('Interaction Explorer'),
-        value: `/account-interactions/${address}/${genesisHash}`
-      }
+      ...(genesisHash
+        ? [{
+          Icon: HierarchySquare3,
+          isFullscreen: true,
+          text: t('Interaction Explorer'),
+          value: `/account-interactions/${address}/${genesisHash}`
+        }]
+        : [])
     ];
   }, [address, genesisHash, t]);
 

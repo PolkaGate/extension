@@ -183,7 +183,7 @@ function DetailPanel({ links, selected }: { links: InteractionLink[]; selected: 
   return (
     <Stack direction='column' rowGap='14px' sx={{ height: '100%', overflow: 'hidden', p: '18px', pb: '48px' }}>
       <Typography color='text.primary' variant='H-3'>
-        {node?.name || (node?.isCenter ? t('Selected account') : node ? t('Unknown') : formatOption(t('connection')))}
+        {node?.name || (node?.isCenter ? t('Selected account') : node ? t('Unknown') : t('connection'))}
       </Typography>
       {node &&
         <>
