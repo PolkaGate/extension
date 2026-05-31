@@ -3,7 +3,8 @@
 
 import type { TransactionDetail } from '../../util/types';
 
-import { hexToU8a, isHex } from '@polkadot/util';
+import { sciToDecimal } from '@polkadot/extension-polkagate/src/util';
+import { BN, BN_TEN, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
 const toShortAddress = (address: string, count = 6): string => `${address.slice(0, count)}...${address.slice(-1 * count)}`;
@@ -52,7 +53,7 @@ export interface InteractionNode {
 }
 
 export interface TokenTotal {
-  amount: number;
+  amount: string;
   genesisHash?: string;
   token: string;
 }
@@ -79,6 +80,12 @@ export interface InteractionGraph {
 }
 
 const ALL_TYPES = 'all';
+const DECIMAL_AMOUNT_REGEX = /^(?:\d+\.?\d*|\.\d+)$/;
+
+interface DecimalAmount {
+  scale: number;
+  value: BN;
+}
 
 const emptyGraph = (selectedAddress: string): InteractionGraph => ({
   links: [],
@@ -104,14 +111,59 @@ export const normalizeAddress = (address: string | null | undefined): string | u
     : encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address, true), 42);
 };
 
-const parseAmount = (amount: string | undefined): number => {
-  if (!amount) {
-    return 0;
+const normalizeAmount = (amount: string | undefined): string => {
+  const rawAmount = amount?.replace(/,/g, '').trim();
+
+  if (!rawAmount) {
+    return '0';
   }
 
-  const parsed = Number(amount.replace(/,/g, ''));
+  const decimalAmount = sciToDecimal(rawAmount);
 
-  return Number.isFinite(parsed) ? parsed : 0;
+  if (!DECIMAL_AMOUNT_REGEX.test(decimalAmount)) {
+    return '0';
+  }
+
+  const [whole = '0', fraction = ''] = decimalAmount.split('.');
+  const normalizedWhole = whole.replace(/^0+(?=\d)/, '') || '0';
+  const normalizedFraction = fraction.replace(/0+$/, '');
+  const normalizedAmount = normalizedFraction
+    ? `${normalizedWhole}.${normalizedFraction}`
+    : normalizedWhole;
+
+  return normalizedAmount;
+};
+
+const parseDecimalAmount = (amount: string | undefined): DecimalAmount => {
+  const normalizedAmount = normalizeAmount(amount);
+  const [whole = '0', fraction = ''] = normalizedAmount.split('.');
+  const value = new BN(`${whole}${fraction}`.replace(/^0+/, '') || '0');
+
+  return {
+    scale: fraction.length,
+    value
+  };
+};
+
+const tenPow = (scale: number): BN => scale === 0 ? new BN(1) : BN_TEN.pow(new BN(scale));
+
+const formatScaledAmount = (amount: BN, scale: number): string => {
+  const paddedAmount = amount.toString().padStart(scale + 1, '0');
+  const whole = scale === 0 ? paddedAmount : paddedAmount.slice(0, -scale);
+  const fraction = scale === 0 ? '' : paddedAmount.slice(-scale).replace(/0+$/, '');
+  const normalizedWhole = whole.replace(/^0+(?=\d)/, '') || '0';
+
+  return fraction ? `${normalizedWhole}.${fraction}` : normalizedWhole;
+};
+
+const addAmounts = (left: string | undefined, right: string | undefined): string => {
+  const leftAmount = parseDecimalAmount(left);
+  const rightAmount = parseDecimalAmount(right);
+  const scale = Math.max(leftAmount.scale, rightAmount.scale);
+  const leftValue = leftAmount.value.mul(tenPow(scale - leftAmount.scale));
+  const rightValue = rightAmount.value.mul(tenPow(scale - rightAmount.scale));
+
+  return formatScaledAmount(leftValue.add(rightValue), scale);
 };
 
 const directionFromCounts = (sentCount: number, receivedCount: number): InteractionDirection =>
@@ -211,7 +263,7 @@ export const buildInteractionGraph = (
 
     const existingLink = links.get(counterpartyId);
     const token = history.token ?? '';
-    const amount = parseAmount(history.amount);
+    const amount = normalizeAmount(history.amount);
     const tokens = [...(existingLink?.tokens ?? [])];
     const tokenIndex = tokens.findIndex(({ token: existingToken }) => existingToken === token);
 
@@ -220,7 +272,7 @@ export const buildInteractionGraph = (
     } else {
       tokens[tokenIndex] = {
         ...tokens[tokenIndex],
-        amount: tokens[tokenIndex].amount + amount
+        amount: addAmounts(tokens[tokenIndex].amount, amount)
       };
     }
 

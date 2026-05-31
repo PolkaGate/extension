@@ -11,7 +11,7 @@ import React, { memo, useMemo } from 'react';
 import { CopyAddressButton, FormatPrice } from '@polkadot/extension-polkagate/src/components';
 import Logo from '@polkadot/extension-polkagate/src/components/Logo';
 import HistoryIcon from '@polkadot/extension-polkagate/src/fullscreen/history/HistoryIcon';
-import { formatTimestamp, toCamelCase, toShortAddress } from '@polkadot/extension-polkagate/src/util';
+import { formatDecimal, formatTimestamp, toCamelCase, toShortAddress } from '@polkadot/extension-polkagate/src/util';
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import { useChainInfo, usePrices, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
@@ -47,7 +47,8 @@ function TokenTotalRow({ amount, genesisHash, token }: TokenTotal) {
   const nativePrice = useTokenPriceBySymbol(isNativeToken ? token : undefined, genesisHash);
   const assetPrice = maybeKnownAsset?.priceId ? pricesInCurrencies?.prices?.[maybeKnownAsset.priceId]?.value : undefined;
   const price = isNativeToken ? nativePrice.price : assetPrice;
-  const fiatValue = useMemo(() => price === undefined ? undefined : amount * price, [amount, price]);
+  const numericAmount = useMemo(() => Number(amount), [amount]);
+  const fiatValue = useMemo(() => price === undefined || !Number.isFinite(numericAmount) ? undefined : numericAmount * price, [numericAmount, price]);
 
   return (
     <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ columnGap: '10px', width: '100%' }}>
@@ -62,7 +63,7 @@ function TokenTotalRow({ amount, genesisHash, token }: TokenTotal) {
       />
       <Stack alignItems='flex-end' direction='column' rowGap='3px' sx={{ minWidth: 0 }}>
         <Typography color='text.primary' noWrap sx={{ textAlign: 'right' }} variant='B-2'>
-          {amount.toLocaleString(undefined, { maximumFractionDigits: 4 })} {token}
+          {formatDecimal(amount, 4, true)} {token}
         </Typography>
         {fiatValue !== undefined && fiatValue > 0 &&
           <FormatPrice

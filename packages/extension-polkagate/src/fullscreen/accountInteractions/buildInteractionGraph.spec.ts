@@ -36,7 +36,7 @@ describe('buildInteractionGraph', () => {
       target: bobId,
       txCount: 1
     });
-    expect(graph.links[0].tokens).toEqual([{ amount: 2.5, genesisHash: undefined, token: 'DOT' }]);
+    expect(graph.links[0].tokens).toEqual([{ amount: '2.5', genesisHash: undefined, token: 'DOT' }]);
   });
 
   it('builds a receive-only edge', () => {
@@ -71,7 +71,7 @@ describe('buildInteractionGraph', () => {
       sentCount: 1,
       txCount: 2
     });
-    expect(graph.links[0].tokens).toEqual([{ amount: 5, genesisHash: undefined, token: 'DOT' }]);
+    expect(graph.links[0].tokens).toEqual([{ amount: '5', genesisHash: undefined, token: 'DOT' }]);
   });
 
   it('keeps token totals separate', () => {
@@ -81,8 +81,19 @@ describe('buildInteractionGraph', () => {
     ], SELECTED);
 
     expect(graph.links[0].tokens).toEqual([
-      { amount: 2, genesisHash: undefined, token: 'DOT' },
-      { amount: 4, genesisHash: undefined, token: 'USDT' }
+      { amount: '2', genesisHash: undefined, token: 'DOT' },
+      { amount: '4', genesisHash: undefined, token: 'USDT' }
+    ]);
+  });
+
+  it('aggregates high precision token totals without number rounding', () => {
+    const graph = buildInteractionGraph([
+      tx({ amount: '9,007,199,254,740,993.123456789123456789' }),
+      tx({ amount: '0.000000000000000002' })
+    ], SELECTED);
+
+    expect(graph.links[0].tokens).toEqual([
+      { amount: '9007199254740993.123456789123456791', genesisHash: undefined, token: 'DOT' }
     ]);
   });
 
