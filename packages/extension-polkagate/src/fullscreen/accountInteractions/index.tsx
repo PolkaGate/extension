@@ -351,7 +351,7 @@ function AccountInteractions(): React.ReactElement {
       <Stack direction='column' sx={{ boxSizing: 'border-box', height: 'calc(100vh - 96px)', minHeight: '650px', px: '22px', rowGap: '10px', width: '100%' }}>
         <Stack alignItems='center' direction='row' justifyContent='space-between'>
           <Stack alignItems='center' direction='row' gap='12px'>
-            <IconButton onClick={onBack} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px' }}>
+            <IconButton aria-label={t('Back')} onClick={onBack} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px' }}>
               <ArrowLeft2 color={isDark ? '#AA83DC' : '#674394'} size='20' />
             </IconButton>
             <Stack>
@@ -463,10 +463,10 @@ function AccountInteractions(): React.ReactElement {
                     </Button>
                   ))}
                 </Stack>
-                <IconButton onClick={resetLayout} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px' }}>
+                <IconButton aria-label={t('Reset layout')} onClick={resetLayout} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px' }}>
                   <Refresh2 color={isDark ? '#AA83DC' : '#674394'} size='20' />
                 </IconButton>
-                <IconButton onClick={zoomToFit} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px' }}>
+                <IconButton aria-label={t('Zoom to fit')} onClick={zoomToFit} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px' }}>
                   <Maximize4 color={isDark ? '#AA83DC' : '#674394'} size='20' />
                 </IconButton>
               </Stack>
@@ -550,11 +550,11 @@ function AccountInteractions(): React.ReactElement {
             </Grid>
             <Grid item sx={{ height: 'calc(100% - 58px)', overflow: 'hidden', position: 'relative', transition: 'width 180ms ease', width: `${detailPanelWidth}px` }}>
               <Box sx={{ background: isDark ? 'linear-gradient(0deg, rgba(210, 185, 241, 0.07) 0%, rgba(210, 185, 241, 0.35) 50.06%, rgba(210, 185, 241, 0.07) 100%)' : 'linear-gradient(0deg, rgba(221, 227, 244, 0.2) 0%, rgba(221, 227, 244, 1) 50.06%, rgba(221, 227, 244, 0.2) 100%)', height: '100%', left: 0, position: 'absolute', top: 0, width: '1px' }} />
-              <IconButton onClick={toggleDetailPanel} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px', left: '8px', position: 'absolute', top: '8px', transform: isDetailPanelCollapsed ? 'none' : 'rotate(180deg)', zIndex: 2 }}>
+              <IconButton aria-label={isDetailPanelCollapsed ? t('Show details') : t('Collapse details')} onClick={toggleDetailPanel} sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '12px', left: '8px', position: 'absolute', top: '8px', transform: isDetailPanelCollapsed ? 'none' : 'rotate(180deg)', zIndex: 2 }}>
                 <ArrowLeft2 color={isDark ? '#AA83DC' : '#674394'} size='18' />
               </IconButton>
               {!isDetailPanelCollapsed && selected &&
-                <IconButton onClick={clearSelected} sx={{ position: 'absolute', right: '8px', top: '8px', zIndex: 2 }}>
+                <IconButton aria-label={t('Clear selection')} onClick={clearSelected} sx={{ position: 'absolute', right: '8px', top: '8px', zIndex: 2 }}>
                   <CloseCircle color={isDark ? '#AA83DC' : '#674394'} size='20' />
                 </IconButton>
               }
