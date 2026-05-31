@@ -982,5 +982,10 @@
   "Select a chain to view interactions.": "",
   "{{nodes}} addresses, {{links}} connections": "",
   "All interactions": "",
-  "Interaction": ""
+  "Interaction": "",
+  "Reset layout": "",
+  "Zoom to fit": "",
+  "Show details": "",
+  "Collapse details": "",
+  "Clear selection": ""
 }
