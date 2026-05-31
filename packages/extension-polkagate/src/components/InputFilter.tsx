@@ -3,9 +3,7 @@
 
 import type { Theme } from '@mui/material';
 
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback } from 'react';
 
 import Label from './Label';
 import { Input } from './TextInputs';
@@ -19,19 +17,11 @@ interface Props {
   placeholder: string;
   theme: Theme;
   value?: string;
-  withReset?: boolean;
 }
 
-export default function InputFilter({ autoFocus = true, disabled, fontSize = '18px', label, onChange, placeholder, theme, value, withReset = false }: Props) {
-  const inputRef = useRef<HTMLInputElement>(null);
-
+export default function InputFilter({ autoFocus = true, disabled, fontSize = '18px', label, onChange, placeholder, theme, value }: Props) {
   const onChangeFilter = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
-  }, [onChange]);
-
-  const onResetFilter = useCallback(() => {
-    onChange('');
-    inputRef.current && inputRef.current.select();
   }, [onChange]);
 
   return (
@@ -46,7 +36,6 @@ export default function InputFilter({ autoFocus = true, disabled, fontSize = '18
           disabled={disabled}
           onChange={onChangeFilter}
           placeholder={placeholder}
-          ref={inputRef}
           spellCheck={false}
           style={{
             fontSize,
@@ -59,20 +48,6 @@ export default function InputFilter({ autoFocus = true, disabled, fontSize = '18
           value={value}
         />
       </Label>
-      {
-        withReset && !!value && (
-          <FontAwesomeIcon
-            icon={faTimes}
-            onClick={onResetFilter}
-            style={{
-              bottom: '8px',
-              cursor: 'pointer',
-              position: 'absolute',
-              right: '15px'
-            }}
-          />
-        )
-      }
     </div>
   );
 }

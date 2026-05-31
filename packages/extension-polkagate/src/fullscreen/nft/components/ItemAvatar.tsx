@@ -3,9 +3,8 @@
 
 import type { ItemAvatarProp } from '../utils/types';
 
-import { faGem } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Grid, useTheme } from '@mui/material';
+import { Diamonds } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
 import { Progress } from '@polkadot/extension-polkagate/src/components/index';
@@ -74,10 +73,10 @@ export default function ItemAvatar({ image, size = 'small' }: ItemAvatarProp): R
         </WithLoading>
       }
       {image === null &&
-        <FontAwesomeIcon
+        <Diamonds
           color={theme.palette.text.primary}
-          fontSize='70px'
-          icon={faGem}
+          size='70'
+          variant='Bulk'
         />
       }
     </Grid>

@@ -1,15 +1,14 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { fas } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Avatar, Box, useTheme } from '@mui/material';
+import { People } from 'iconsax-react';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { logoWhiteTransparent } from '../assets/logos';
 import { useUserAddedChainColor } from '../fullscreen/addNewChain/utils';
 import { useIsDark } from '../hooks';
-import { convertToCamelCase, sanitizeChainName } from '../util';
+import { sanitizeChainName } from '../util';
 import { CHAINS_WITH_BLACK_LOGO, TOKENS_WITH_BLACK_LOGO } from '../util/constants';
 import { getNativeTokenLogo } from '../util/logo/native';
 import resolveLogoInfo, { resolveTokenLogoInfo } from '../util/logo/resolveLogoInfo';
@@ -58,6 +57,16 @@ function getLogoFallbackText(source: string | undefined): string {
     .trim()
     .charAt(0)
     .toUpperCase();
+}
+
+function getConfiguredIcon(source: string): React.ReactElement | undefined {
+  switch (source) {
+    case 'fa;people-group':
+      return <People size='100%' variant='Bulk' />;
+
+    default:
+      return undefined;
+  }
 }
 
 function normalizeToWordSet(str: string): Set<string> {
@@ -133,7 +142,7 @@ function RenderLogoGraphic({ borderRadius, filter, imgRef, size, source, style }
     );
   }
 
-  const iconDef = fas[convertToCamelCase(source)];
+  const configuredIcon = getConfiguredIcon(source);
 
   return (
     <Box
@@ -141,6 +150,7 @@ function RenderLogoGraphic({ borderRadius, filter, imgRef, size, source, style }
         alignItems: 'center',
         border: '0.5px solid',
         borderRadius,
+        color: 'text.primary',
         display: 'flex',
         filter,
         height: size,
@@ -150,18 +160,7 @@ function RenderLogoGraphic({ borderRadius, filter, imgRef, size, source, style }
         ...style
       }}
     >
-      {iconDef
-        ? (
-          <FontAwesomeIcon
-            fontSize='15px'
-            icon={iconDef}
-            style={{
-              height: size,
-              width: size
-            }}
-          />
-        )
-        : (
+      {configuredIcon || (
           <Avatar
             sx={{
               bgcolor: 'transparent',
@@ -173,7 +172,7 @@ function RenderLogoGraphic({ borderRadius, filter, imgRef, size, source, style }
           >
             {getLogoFallbackText(source)}
           </Avatar>
-        )}
+      )}
     </Box>
   );
 }
