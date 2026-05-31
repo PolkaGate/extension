@@ -263,12 +263,16 @@ export const buildInteractionGraph = (
 
     const existingLink = links.get(counterpartyId);
     const token = history.token ?? '';
+    const genesisHash = history.chain?.genesisHash;
     const amount = normalizeAmount(history.amount);
     const tokens = [...(existingLink?.tokens ?? [])];
-    const tokenIndex = tokens.findIndex(({ token: existingToken }) => existingToken === token);
+    const tokenIndex = tokens.findIndex(
+      ({ genesisHash: existingGenesisHash, token: existingToken }) =>
+        existingToken === token && existingGenesisHash === genesisHash
+    );
 
     if (tokenIndex === -1) {
-      tokens.push({ amount, genesisHash: history.chain?.genesisHash, token });
+      tokens.push({ amount, genesisHash, token });
     } else {
       tokens[tokenIndex] = {
         ...tokens[tokenIndex],
