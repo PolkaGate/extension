@@ -359,9 +359,17 @@ function AccountInteractions(): React.ReactElement {
               <Button
                 onClick={loadMore}
                 sx={{
-                  bgcolor: isDark ? '#1B133C' : '#674394',
+                  '&:hover': {
+                    bgcolor: isDark ? '#2D1E4A' : '#745E9F',
+                    boxShadow: isDark ? 'none' : '0 7px 18px rgba(133, 140, 176, 0.16)',
+                    color: '#FFFFFF'
+                  },
+                  bgcolor: isDark ? '#1B133C' : '#FFFFFF',
+                  border: '1px solid',
+                  borderColor: isDark ? 'transparent' : '#DDE3F4',
                   borderRadius: '12px',
-                  color: '#FFFFFF',
+                  boxShadow: isDark ? 'none' : '0 6px 16px rgba(133, 140, 176, 0.12)',
+                  color: isDark ? '#FFFFFF' : '#41356F',
                   textTransform: 'none'
                 }}
                 variant='contained'
