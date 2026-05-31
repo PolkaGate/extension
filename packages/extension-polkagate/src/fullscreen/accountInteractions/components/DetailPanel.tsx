@@ -1,8 +1,9 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { TokenTotal } from '../buildInteractionGraph';
-import type { SelectedItem } from '../types';
+import type { TransactionDetail } from '../../../util/types';
+import type { InteractionLink, TokenTotal } from '../buildInteractionGraph';
+import type { GraphNode, SelectedItem } from '../types';
 
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { createAssets } from '@polkagate/apps-config/assets';
@@ -15,6 +16,7 @@ import { formatDecimal, formatTimestamp, toCamelCase, toShortAddress } from '@po
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import { useChainInfo, usePrices, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
+import { addAmounts } from '../buildInteractionGraph';
 import { formatOption, recentIconBackground } from '../utils';
 
 const assetsChains = createAssets();
@@ -100,7 +102,45 @@ function Metric({ label, value }: { label: string; value: number }) {
   );
 }
 
-function DetailPanel({ selected }: { selected: SelectedItem }) {
+const getEndpointId = (endpoint: unknown): string | undefined => {
+  if (typeof endpoint === 'string') {
+    return endpoint;
+  }
+
+  if (endpoint && typeof endpoint === 'object' && 'id' in endpoint) {
+    const { id } = endpoint as { id?: unknown };
+
+    return typeof id === 'string' ? id : undefined;
+  }
+
+  return undefined;
+};
+
+const getNodeLinks = (node: GraphNode, links: InteractionLink[]): InteractionLink[] =>
+  links.filter((link) => link.counterparty === node.id || getEndpointId(link.source) === node.id || getEndpointId(link.target) === node.id);
+
+const aggregateTokenTotals = (links: InteractionLink[]): TokenTotal[] =>
+  links.reduce<TokenTotal[]>((tokens, link) => {
+    link.tokens.forEach(({ amount, genesisHash, token }) => {
+      const tokenIndex = tokens.findIndex(
+        ({ genesisHash: existingGenesisHash, token: existingToken }) =>
+          existingToken === token && existingGenesisHash === genesisHash
+      );
+
+      if (tokenIndex === -1) {
+        tokens.push({ amount, genesisHash, token });
+      } else {
+        tokens[tokenIndex] = {
+          ...tokens[tokenIndex],
+          amount: addAmounts(tokens[tokenIndex].amount, amount)
+        };
+      }
+    });
+
+    return tokens;
+  }, []);
+
+function DetailPanel({ links, selected }: { links: InteractionLink[]; selected: SelectedItem }) {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
@@ -115,46 +155,35 @@ function DetailPanel({ selected }: { selected: SelectedItem }) {
     );
   }
 
-  if (selected.type === 'node') {
-    const { item } = selected;
+  let node: GraphNode | undefined;
+  let metrics: Pick<InteractionLink, 'failedCount' | 'receivedCount' | 'sentCount' | 'txCount'>;
+  let tokenTotals: TokenTotal[];
+  let transactions: TransactionDetail[];
 
-    return (
-      <Stack direction='column' sx={{ p: '18px', pb: '48px' }}>
-        <Typography color='text.primary' sx={{ mb: '10px' }} variant='H-3'>
-          {item.name || (item.isCenter ? t('Selected account') : t('Unknown'))}
-        </Typography>
-        <Stack alignItems='center' direction='row' justifyContent='center' sx={{ columnGap: '6px', maxWidth: '100%', mb: '16px' }}>
-          <Typography color='text.secondary' noWrap title={item.address} variant='B-4'>
-            {toShortAddress(item.address, 8)}
-          </Typography>
-          <CopyAddressButton address={item.address} padding={0} size={17} />
-        </Stack>
-        <Stack direction='row' flexWrap='wrap' gap='8px' justifyContent='center'>
-          <Metric label={t('Transactions')} value={item.txCount} />
-          <Metric label={t('Sent')} value={item.sentCount} />
-          <Metric label={t('Received')} value={item.receivedCount} />
-          {item.failedCount > 0 &&
-            <Metric label={t('Failed')} value={item.failedCount} />
-          }
-        </Stack>
-        {item.isValidator &&
-          <Typography color='warning.main' sx={{ mt: '10px', textAlign: 'center' }} variant='B-4'>
-            {t('Validator')}
-          </Typography>
-        }
-      </Stack>
-    );
+  if (selected.type === 'node') {
+    const nodeLinks = getNodeLinks(selected.item, links);
+
+    node = selected.item;
+    metrics = selected.item;
+    tokenTotals = aggregateTokenTotals(nodeLinks);
+    transactions = nodeLinks.flatMap(({ transactions }) => transactions);
+  } else {
+    const link = selected.item as InteractionLink;
+
+    node = selected.node;
+    metrics = link;
+    tokenTotals = link.tokens;
+    transactions = link.transactions;
   }
 
-  const { item, node } = selected;
-  const sortedTransactions = item.transactions
+  const sortedTransactions = transactions
     .slice()
     .sort((a, b) => b.date - a.date);
 
   return (
     <Stack direction='column' rowGap='14px' sx={{ height: '100%', overflow: 'hidden', p: '18px', pb: '48px' }}>
       <Typography color='text.primary' variant='H-3'>
-        {node?.name || (node ? t('Unknown') : formatOption(t('connection')))}
+        {node?.name || (node?.isCenter ? t('Selected account') : node ? t('Unknown') : formatOption(t('connection')))}
       </Typography>
       {node &&
         <>
@@ -172,11 +201,11 @@ function DetailPanel({ selected }: { selected: SelectedItem }) {
         </>
       }
       <Stack direction='row' flexWrap='wrap' gap='8px' justifyContent='center'>
-        <Metric label={t('Transactions')} value={item.txCount} />
-        <Metric label={t('Sent')} value={item.sentCount} />
-        <Metric label={t('Received')} value={item.receivedCount} />
-        {item.failedCount > 0 &&
-          <Metric label={t('Failed')} value={item.failedCount} />
+        <Metric label={t('Transactions')} value={metrics.txCount} />
+        <Metric label={t('Sent')} value={metrics.sentCount} />
+        <Metric label={t('Received')} value={metrics.receivedCount} />
+        {metrics.failedCount > 0 &&
+          <Metric label={t('Failed')} value={metrics.failedCount} />
         }
       </Stack>
       <Stack alignItems='start' direction='column' rowGap='7px' sx={{ width: '100%' }}>
@@ -184,7 +213,7 @@ function DetailPanel({ selected }: { selected: SelectedItem }) {
           {t('Totals')}
         </Typography>
         <Stack direction='column' rowGap='7px' sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', border: '1px solid', borderColor: isDark ? '#2D1E4A' : '#DDE3F4', borderRadius: '12px', p: '10px 12px', width: '100%' }}>
-          {item.tokens.map((tokenTotal) => (
+          {tokenTotals.map((tokenTotal) => (
             <TokenTotalRow key={`${tokenTotal.genesisHash ?? 'native'}:${tokenTotal.token}`} {...tokenTotal} />
           ))}
         </Stack>

@@ -553,7 +553,7 @@ function AccountInteractions(): React.ReactElement {
                 </IconButton>
               }
               {!isDetailPanelCollapsed &&
-                <DetailPanel selected={selected} />
+                <DetailPanel links={graph.links} selected={selected} />
               }
               {!isDetailPanelCollapsed && !isLoading && !isFetchingMore && graph.links.length > 0 &&
                 <Stack alignItems='center' justifyContent='center' sx={{ bgcolor: isDark ? '#05091C' : '#FFFFFF', bottom: 0, height: '36px', left: '1px', position: 'absolute', right: 0, zIndex: 1 }}>

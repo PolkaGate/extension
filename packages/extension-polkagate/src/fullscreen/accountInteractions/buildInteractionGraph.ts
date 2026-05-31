@@ -156,7 +156,7 @@ const formatScaledAmount = (amount: BN, scale: number): string => {
   return fraction ? `${normalizedWhole}.${fraction}` : normalizedWhole;
 };
 
-const addAmounts = (left: string | undefined, right: string | undefined): string => {
+export const addAmounts = (left: string | undefined, right: string | undefined): string => {
   const leftAmount = parseDecimalAmount(left);
   const rightAmount = parseDecimalAmount(right);
   const scale = Math.max(leftAmount.scale, rightAmount.scale);
