@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.10.0](https://github.com/polkagate/extension/compare/v2.9.0...v2.10.0) (2026-06-01)
+
+
+### Features
+
+* add account interaction graph explorer ([#2177](https://github.com/polkagate/extension/issues/2177)) ([3727369](https://github.com/polkagate/extension/commit/3727369bcd73324dc98cc42407de148553171e88))
+
 # [2.9.0](https://github.com/polkagate/extension/compare/v2.8.0...v2.9.0) (2026-05-24)
 
 
