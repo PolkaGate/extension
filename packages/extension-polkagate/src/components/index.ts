@@ -102,4 +102,4 @@ export { default as TwoButtons } from './TwoButtons';
 export { default as TwoToneText } from './TwoToneText';
 export { default as VariantButton } from './VariantButton';
 export { default as Waiting } from './Waiting';
-export { default as Warning } from './Warning';
+export { default as WarningNotice } from './WarningNotice';

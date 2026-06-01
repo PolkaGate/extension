@@ -19,8 +19,9 @@ const HistoryIcon = ({ action, isFullscreen = true }: Props) => {
 
   const DEFAULT_ICON = <Polkadot color='#AA83DC' size={isFullscreen ? 20 : 26} />;
 
-  const actionIcons: Record<ActionType, React.JSX.Element> = {
+  const actionIcons: Record<string, React.JSX.Element> = {
     abstain: <LikeDislike color='#AA83DC' size={isFullscreen ? 20 : 26} variant='Bold' />,
+    'add proxy': <Data color='#AA83DC' size={isFullscreen ? 14 : 20} />,
     aye: <Like1 color={successColor} size={isFullscreen ? 15 : 22} variant='Bold' />,
     balances: <ArrowSwapHorizontal color='#AA83DC' size={isFullscreen ? 20 : 26} />,
     delegate: <Sagittarius color='#AA83DC' size={isFullscreen ? 20 : 26} variant='Bulk' />,
@@ -29,6 +30,7 @@ const HistoryIcon = ({ action, isFullscreen = true }: Props) => {
     'pool staking': <Strongbox2 color='#AA83DC' size={isFullscreen ? 16 : 26} />,
     proxy: <Data color='#AA83DC' size={isFullscreen ? 14 : 20} />,
     receive: <ArrowCircleDown2 color={successColor} size={isFullscreen ? 16 : 22} variant='Linear' />,
+    'remove proxy': <Data color='#AA83DC' size={isFullscreen ? 14 : 20} />,
     reward: <Money color={successColor} size={isFullscreen ? 16 : 22} />,
     send: <ArrowCircleRight2 color='#AA83DC' size={isFullscreen ? 16 : 22} />,
     'solo staking': <Strongbox color='#AA83DC' size={isFullscreen ? 16 : 26} />,

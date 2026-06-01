@@ -63,7 +63,6 @@ export default function useReservedDetails(formatted: string | undefined, genesi
       api.query?.['identity']?.['identityOf'](formatted).then(async (id) => {
         setValue('identity', undefined);
         const basicDeposit = api.consts['identity']['basicDeposit'] as unknown as BN;
-        // const subAccountDeposit = api.consts['identity']['subAccountDeposit'] as unknown as BN;
 
         const subs = await api.query['identity']['subsOf'](formatted) as unknown as BN[];
 

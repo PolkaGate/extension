@@ -967,5 +967,11 @@
   "Custom RPC": "कस्टम RPC",
   "Saved": "सहेजा गया",
   "Checking": "जाँच हो रही है",
-  "Got it": "ठीक है"
+  "Got it": "ठीक है",
+  "Interaction": "इंटरैक्शन",
+  "Reset layout": "लेआउट रीसेट करें",
+  "Zoom to fit": "फ़िट करने के लिए ज़ूम करें",
+  "Show details": "विवरण दिखाएँ",
+  "Collapse details": "विवरण समेटें",
+  "Clear selection": "चयन साफ़ करें"
 }

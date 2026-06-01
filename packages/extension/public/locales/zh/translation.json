@@ -967,5 +967,11 @@
   "Custom RPC": "自定义 RPC",
   "Saved": "已保存",
   "Checking": "正在检查",
-  "Got it": "知道了"
+  "Got it": "知道了",
+  "Interaction": "交互",
+  "Reset layout": "重置布局",
+  "Zoom to fit": "缩放以适应",
+  "Show details": "显示详情",
+  "Collapse details": "折叠详情",
+  "Clear selection": "清除选择"
 }

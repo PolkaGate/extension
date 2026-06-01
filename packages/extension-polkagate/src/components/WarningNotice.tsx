@@ -3,8 +3,7 @@
 
 import type { Theme } from '@mui/material';
 
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Warning2 } from 'iconsax-react';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -23,19 +22,20 @@ interface Props {
   marginRight?: number;
 }
 
-function Warning({ children, className = '', isBelowInput, isDanger }: Props): React.ReactElement<Props> {
+function WarningNotice({ children, className = '', isBelowInput, isDanger }: Props): React.ReactElement<Props> {
   return (
     <div className={`${className} ${isDanger ? 'danger' : ''} ${isBelowInput ? 'belowInput' : ''}`}>
-      <FontAwesomeIcon
+      <Warning2
         className='warningImage'
-        icon={faExclamationTriangle}
+        size={isBelowInput ? 17 : 19}
+        variant='Bold'
       />
       <div className='warning-message'>{children}</div>
     </div>
   );
 }
 
-export default React.memo(styled(Warning)<Props>(({ bgColor, fontSize = '14px', fontWeight = 300, iconDanger, isBelowInput, isDanger, marginRight, marginTop = 30, paddingLeft, theme }: Props) => `
+export default React.memo(styled(WarningNotice)<Props>(({ bgColor, fontSize = '14px', fontWeight = 300, iconDanger, isDanger, marginRight, marginTop = 30, paddingLeft, theme }: Props) => `
   display: flex;
   flex-direction: row;
   padding-left: ${paddingLeft || 18}px;
@@ -64,6 +64,6 @@ export default React.memo(styled(Warning)<Props>(({ bgColor, fontSize = '14px', 
   .warningImage {
     margin: 5px 10px 5px 0;
     color: ${isDanger || iconDanger ? theme.palette.warning.main : theme.palette.text.primary};
-    font-size: ${isBelowInput ? '17px' : '19px'}
+    flex-shrink: 0;
   }
 `));

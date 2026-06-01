@@ -967,5 +967,11 @@
   "Custom RPC": "RPC personalizado",
   "Saved": "Salvo",
   "Checking": "Verificando",
-  "Got it": "Entendi"
+  "Got it": "Entendi",
+  "Interaction": "Interação",
+  "Reset layout": "Redefinir layout",
+  "Zoom to fit": "Ajustar zoom",
+  "Show details": "Mostrar detalhes",
+  "Collapse details": "Recolher detalhes",
+  "Clear selection": "Limpar seleção"
 }

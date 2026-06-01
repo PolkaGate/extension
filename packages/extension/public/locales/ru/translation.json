@@ -967,5 +967,11 @@
   "Custom RPC": "Пользовательский RPC",
   "Saved": "Сохранено",
   "Checking": "Проверка",
-  "Got it": "Понятно"
+  "Got it": "Понятно",
+  "Interaction": "Взаимодействие",
+  "Reset layout": "Сбросить расположение",
+  "Zoom to fit": "Масштабировать по размеру",
+  "Show details": "Показать детали",
+  "Collapse details": "Свернуть детали",
+  "Clear selection": "Очистить выбор"
 }

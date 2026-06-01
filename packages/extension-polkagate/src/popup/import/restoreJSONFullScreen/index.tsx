@@ -18,7 +18,7 @@ import { AUTO_LOCK_PERIOD_DEFAULT, PROFILE_TAGS, STORAGE_KEY } from '@polkadot/e
 import { stringToU8a, u8aToString } from '@polkadot/util';
 import { ethereumEncode, jsonDecrypt, jsonEncrypt } from '@polkadot/util-crypto';
 
-import { ActionButton, Address, DecisionButtons, InputFile, PasswordInput, Warning } from '../../../components';
+import { ActionButton, Address, DecisionButtons, InputFile, PasswordInput, WarningNotice } from '../../../components';
 import { useAccounts, useAlerts, useTranslation } from '../../../hooks';
 import { batchRestore, jsonGetAccountInfo, jsonRestore, unlockAllAccounts, updateMeta } from '../../../messaging';
 import { DEFAULT_TYPE } from '../../../util/defaultType';
@@ -311,12 +311,12 @@ export default function RestoreJson(): React.ReactElement {
           style={{ m: '15px 0', width: '369px' }}
         />
         {isFileError &&
-          <Warning
+          <WarningNotice
             isDanger
             theme={theme}
           >
             {t('Invalid Json file')}
-          </Warning>
+          </WarningNotice>
         }
         {requirePassword && !stepOne &&
           <PasswordInput

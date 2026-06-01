@@ -14,7 +14,7 @@ export interface Options {
   isFullscreen?: boolean;
   pathname?: string;
   text?: string;
-  value?: string | number | (() => void);
+  value?: string | number | (() => void | Promise<void>);
 }
 
 interface Props {
@@ -30,13 +30,15 @@ function DropMenuRow({ option, setOpen }: Props) {
 
   const { Icon, isFullscreen, pathname, text, value } = option;
 
-  const onClick = useCallback(async () => {
+  const onClick = useCallback(async() => {
     setOpen(false);
 
     typeof value === 'function'
-      ? value()
+      ? await value()
       : await handleNav(value as string, { state: { pathname } }, isFullscreen);
   }, [handleNav, isFullscreen, pathname, setOpen, value]);
+  const onMouseEnter = useCallback(() => setHovered(true), []);
+  const onMouseLeave = useCallback(() => setHovered(false), []);
 
   return (
     <Grid
@@ -44,8 +46,8 @@ function DropMenuRow({ option, setOpen }: Props) {
       item
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       sx={{
         '&:hover': { background: isDark ? '#6743944D' : '#EEF1FF' },
         alignItems: 'center',

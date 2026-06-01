@@ -5,6 +5,7 @@ const ALLOWED_PATH = ['/', '/account/import-ledger', '/account/restore-json', '/
 // Added for PolkaGate
 const START_WITH_PATH = [
   '/account/',
+  '/account-interactions/',
   '/accountfs/',
   '/derivefs/',
   '/fullscreen-stake/',
@@ -41,16 +42,4 @@ const PASSWORD_EXPIRY_MS = PASSWORD_EXPIRY_MIN * 60 * 1000;
 
 const PHISHING_PAGE_REDIRECT = '/phishing-page-detected';
 
-export {
-  ALLOWED_PATH,
-  EXTENSION_PREFIX,
-  MESSAGE_ORIGIN_CONTENT,
-  MESSAGE_ORIGIN_PAGE,
-  PASSWORD_EXPIRY_MIN,
-  PASSWORD_EXPIRY_MS,
-  PHISHING_PAGE_REDIRECT,
-  PORT_CONTENT,
-  PORT_EXTENSION,
-  ROOT_PATH, // Added for PolkaGate
-  START_WITH_PATH// Added for PolkaGate
-};
+export { ALLOWED_PATH, EXTENSION_PREFIX, MESSAGE_ORIGIN_CONTENT, MESSAGE_ORIGIN_PAGE, PASSWORD_EXPIRY_MIN, PASSWORD_EXPIRY_MS, PHISHING_PAGE_REDIRECT, PORT_CONTENT, PORT_EXTENSION, ROOT_PATH, START_WITH_PATH };

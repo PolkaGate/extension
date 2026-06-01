@@ -4,8 +4,6 @@
 import type { BN } from '@polkadot/util';
 import type { UnlockType } from '../useTokenInfoDetails';
 
-import { faAddressCard } from '@fortawesome/free-regular-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CallMerge as CallMergeIcon } from '@mui/icons-material';
 import { Container, Grid, IconButton, Stack, styled, Typography, useTheme } from '@mui/material';
 import { Bezier, Data, type Icon, Image, LikeDislike, Paperclip2, People, ProfileCircle, Record, Sagittarius, Shield, Unlock, UsdCoin } from 'iconsax-react';
@@ -52,9 +50,6 @@ const reasonIcon = (reason: string): React.ReactNode => {
 
     case 'index':
       return <CallMergeIcon sx={{ color: '#AA83DC', fontSize: '20px' }} />;
-
-    case 'manage identity': // @Amir, please double check
-      return <FontAwesomeIcon color='#AA83DC' fontSize={19} icon={faAddressCard} />;
 
     case 'multisig':
       return <Bezier color='#AA83DC' size='26' />;

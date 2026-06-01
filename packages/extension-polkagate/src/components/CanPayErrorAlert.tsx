@@ -6,7 +6,7 @@ import React from 'react';
 
 import { useTranslation } from '../hooks';
 import { CanPayStatements } from '../hooks/useCanPayFeeAndDeposit';
-import { Warning } from '.';
+import { WarningNotice } from '.';
 
 interface Props {
   canPayStatements: CanPayStatements;
@@ -19,7 +19,7 @@ export default function CanPayErrorAlert({ canPayStatements, extraText }: Props)
 
   return (
     <Grid alignItems='center' container height='35px'>
-      <Warning
+      <WarningNotice
         fontWeight={400}
         isDanger
         marginTop={0}
@@ -29,7 +29,7 @@ export default function CanPayErrorAlert({ canPayStatements, extraText }: Props)
         {canPayStatements === CanPayStatements.PROXY_CAN_PAY_FEE && t('Selected proxy account lacks funds for the fee. {{extraText}}', { replace: { extraText: extraText || '' } })}
         {canPayStatements === CanPayStatements.CAN_NOT_PAY && t('Insufficient balance to complete the transaction. {{extraText}}', { replace: { extraText: extraText || '' } })}
         {canPayStatements === CanPayStatements.CAN_NOT_PAY_DEPOSIT && t('Insufficient balance for transaction deposit. {{extraText}}', { replace: { extraText: extraText || '' } })}
-      </Warning>
+      </WarningNotice>
     </Grid>
   );
 }
