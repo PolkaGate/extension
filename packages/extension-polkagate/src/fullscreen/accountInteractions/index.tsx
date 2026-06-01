@@ -28,7 +28,7 @@ import { create3DNode, fit3DGraph, set3DGraphLights } from './graph/render3d';
 import useElementSize from './hooks/useElementSize';
 import useHistoryRange from './hooks/useHistoryRange';
 import { buildInteractionGraph, getInteractionTypes, normalizeAddress } from './buildInteractionGraph';
-import { ALL_TYPES, DETAIL_PANEL_COLLAPSED_WIDTH, DETAIL_PANEL_WIDTH, DIRECTION_OPTIONS, GRAPH_MODES, STATUS_OPTIONS } from './constants';
+import { ALL_TYPES, DETAIL_PANEL_COLLAPSED_WIDTH, DETAIL_PANEL_WIDTH, DIRECTION_OPTIONS, GRAPH_MODES, MAX_GRAPH_2D_ZOOM, STATUS_OPTIONS } from './constants';
 import { formatOption, linkColor, linkColor3D, nodeColor, nodeRadius } from './utils';
 
 function AccountInteractions(): React.ReactElement {
@@ -164,6 +164,24 @@ function AccountInteractions(): React.ReactElement {
   const isGraphFitted = fittedGraphKey === graphLayoutKey;
   const graphNodeCount = graph.nodes.length;
   const getActiveGraph = useCallback(() => graphMode === '3d' ? graph3DRef.current : graph2DRef.current, [graphMode]);
+  const clamp2DZoom = useCallback((delay = 0) => {
+    const clamp = () => {
+      const graphInstance = graph2DRef.current;
+      const zoom = graphInstance?.zoom();
+
+      if (typeof zoom === 'number' && zoom > MAX_GRAPH_2D_ZOOM) {
+        graphInstance?.zoom(MAX_GRAPH_2D_ZOOM);
+      }
+    };
+
+    if (delay > 0) {
+      setTimeout(clamp, delay);
+
+      return;
+    }
+
+    clamp();
+  }, []);
   const fitActiveGraph = useCallback((transitionDuration = 0) => {
     if (graphMode === '3d') {
       fit3DGraph(graph3DRef.current, size, graphNodeCount, transitionDuration);
@@ -172,7 +190,12 @@ function AccountInteractions(): React.ReactElement {
     }
 
     graph2DRef.current?.zoomToFit(transitionDuration, graph.links.length === 1 ? 90 : 60);
-  }, [graph.links.length, graphMode, graphNodeCount, size]);
+    clamp2DZoom();
+
+    if (transitionDuration > 0) {
+      clamp2DZoom(transitionDuration + 20);
+    }
+  }, [clamp2DZoom, graph.links.length, graphMode, graphNodeCount, size]);
 
   useEffect(() => {
     const graphInstance = getActiveGraph();
@@ -208,6 +231,44 @@ function AccountInteractions(): React.ReactElement {
       clearTimeout(timeout);
     };
   }, [fitActiveGraph, graph.links.length, graphLayoutKey, graphMode, is3DFlowReady, isLoading, size.height, size.width]);
+
+  useEffect(() => {
+    if (isLoading || graph.links.length === 0 || size.height === 0 || size.width === 0) {
+      return;
+    }
+
+    let animationFrame: number | undefined;
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+
+    const refitGraph = () => {
+      if (document.visibilityState !== 'visible') {
+        return;
+      }
+
+      if (graphMode === '2d') {
+        graph2DRef.current?.d3ReheatSimulation();
+      }
+
+      animationFrame = requestAnimationFrame(() => fitActiveGraph());
+      timeout = setTimeout(() => fitActiveGraph(), 250);
+    };
+
+    document.addEventListener('visibilitychange', refitGraph);
+    window.addEventListener('focus', refitGraph);
+
+    return () => {
+      document.removeEventListener('visibilitychange', refitGraph);
+      window.removeEventListener('focus', refitGraph);
+
+      if (animationFrame !== undefined) {
+        cancelAnimationFrame(animationFrame);
+      }
+
+      if (timeout !== undefined) {
+        clearTimeout(timeout);
+      }
+    };
+  }, [fitActiveGraph, graph.links.length, graphMode, isLoading, size.height, size.width]);
 
   useEffect(() => {
     if (graphMode !== '3d' || isLoading || graph.links.length === 0 || size.height === 0 || size.width === 0) {
