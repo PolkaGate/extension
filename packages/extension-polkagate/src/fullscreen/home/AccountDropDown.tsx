@@ -9,10 +9,12 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import DropMenuContent from '@polkadot/extension-polkagate/src/components/DropMenuContent';
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 import RemoveAccount from '@polkadot/extension-polkagate/src/partials/RemoveAccount';
+import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { ExtensionPopups } from '@polkadot/extension-polkagate/src/util/constants';
 import { useExtensionPopups } from '@polkadot/extension-polkagate/src/util/handleExtensionPopup';
 
-import { useIsExtensionPopup, useTranslation } from '../../hooks';
+import { useHandleNavigation, useIsExtensionPopup, useTranslation } from '../../hooks';
+import { STORAGE_KEY } from '../../util/constants';
 import Receive from '../accountDetails/rightColumn/Receive';
 import ExportAccount from '../settings/partials/ExportAccount';
 import RenameAccount from './RenameAccount';
@@ -31,6 +33,7 @@ function AccountDropDown({ address, disabled, iconSize = '25px', isExternal, nam
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
+  const handleNav = useHandleNavigation();
   const genesisHash = useAccountSelectedChain(address);
   const { extensionPopup, extensionPopupCloser, extensionPopupOpener } = useExtensionPopups();
 
@@ -39,6 +42,15 @@ function AccountDropDown({ address, disabled, iconSize = '25px', isExternal, nam
 
   const onMouseEnter = useCallback(() => setHovered(true), []);
   const onMouseLeave = useCallback(() => setHovered(false), []);
+
+  const goToAccountRoute = useCallback(async(path: string) => {
+    if (!address) {
+      return;
+    }
+
+    await setStorage(STORAGE_KEY.SELECTED_ACCOUNT, address);
+    await handleNav(path, undefined, true);
+  }, [address, handleNav]);
 
   const baseOption = useMemo(() => {
     return [
@@ -49,20 +61,18 @@ function AccountDropDown({ address, disabled, iconSize = '25px', isExternal, nam
       // },
       {
         Icon: Data,
-        isFullscreen: true,
         text: t('Manage Proxies'),
-        value: `/proxyManagement/${address}/${genesisHash}`
+        value: () => goToAccountRoute(`/proxyManagement/${address}/${genesisHash}`)
       },
       ...(genesisHash
         ? [{
           Icon: HierarchySquare3,
-          isFullscreen: true,
           text: t('Interaction Explorer'),
-          value: `/account-interactions/${address}/${genesisHash}`
+          value: () => goToAccountRoute(`/account-interactions/${address}/${genesisHash}`)
         }]
         : [])
     ];
-  }, [address, genesisHash, t]);
+  }, [address, genesisHash, goToAccountRoute, t]);
 
   const fullscreenExtraOptions = useMemo(() => {
     return [
