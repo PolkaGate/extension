@@ -34,6 +34,7 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
 
   // Sort only on the first render, store result in a ref
   const sortedAccountsRef = useRef<AccountJson[] | null>(null);
+  const initializedDappIdRef = useRef<string | undefined>();
 
   const accountsToShow = useMemo(() => {
     const filtered = [...accounts].filter(({ isExternal, isHardware, isHidden, isQR }) =>
@@ -70,8 +71,13 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
   const isAllSelected = connectableAddresses.length > 0 && connectableAddresses.every((address) => selectedAccounts.includes(address));
 
   useEffect(() => {
-    dappInfo && setSelectedAccounts(allAccounts);
-  }, [allAccounts, dappInfo]);
+    if (!dappInfo || initializedDappIdRef.current === dappInfo.id || accounts.length === 0) {
+      return;
+    }
+
+    initializedDappIdRef.current = dappInfo.id;
+    setSelectedAccounts(allAccounts);
+  }, [accounts.length, allAccounts, dappInfo]);
 
   const handleSelect = useCallback((address: string) => () => {
     const isAlreadySelected = selectedAccounts.includes(address);
