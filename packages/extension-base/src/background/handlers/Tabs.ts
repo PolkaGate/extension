@@ -63,8 +63,9 @@ export default class Tabs {
     }
 
     const visibleAddresses = new Set(transformedAccounts.map(({ address }) => address));
+    const authorizedAddresses = new Set(auth.authorizedAccounts);
     const hasNewAccount = transformedAccounts.some(({ addedTime, whenCreated }) => (addedTime && addedTime > auth.authorizedTime) || (whenCreated && whenCreated > auth.authorizedTime));
-    const hasNewlyVisibleAccount = auth.invisibleAccounts?.some((address) => visibleAddresses.has(address)) ?? false;
+    const hasNewlyVisibleAccount = auth.invisibleAccounts?.some((address) => visibleAddresses.has(address) && !authorizedAddresses.has(address)) ?? false;
 
     return hasNewAccount || hasNewlyVisibleAccount;
   }
