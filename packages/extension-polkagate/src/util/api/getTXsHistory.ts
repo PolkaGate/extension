@@ -84,6 +84,10 @@ interface ProxyParams extends Array<BaseParam<unknown>> {
   2: BaseParam<CallsParam>; // TX
 }
 
+interface ProxyManagementParams extends Array<BaseParam<unknown>> {
+  0: BaseParam<AccountId>; // delegate
+}
+
 interface NominateParams extends Array<BaseParam<unknown>> {
   0: BaseParam<AccountId[]>; // Nominators AccountId
 }
@@ -127,7 +131,9 @@ interface ParamTypesMapping {
   unlock: UnlockParams;
 
   // Proxy
+  add_proxy: ProxyManagementParams;
   proxy: ProxyParams;
+  remove_proxy: ProxyManagementParams;
 
   // Staking / NominationPools
   rebond: UnbondParams;
@@ -150,6 +156,7 @@ interface ParamTypesMapping {
 }
 
 const SUPPORTED_MODULES = ['balances', 'nominationpools', 'utility', 'proxy', 'staking', 'convictionvoting'];
+
 function nullifier(requested: string) {
   return {
     code: 0,
@@ -251,6 +258,8 @@ function getAdditionalInfo(functionName: keyof ParamTypesMapping, txDetail: { da
     const transfer = txDetail.data?.transfer;
     const id = (params?.[1]?.value as AccountId)?.Id as string | undefined;
     const formattedAddress = id ? encodeAddress(hexToU8a(id), prefix) : undefined;
+    const delegateId = (params?.[0]?.value as AccountId)?.Id as string | undefined;
+    const delegateAddress = delegateId ? encodeAddress(hexToU8a(delegateId), prefix) : undefined;
 
     switch (functionName) {
       case 'delegate':
@@ -288,6 +297,12 @@ function getAdditionalInfo(functionName: keyof ParamTypesMapping, txDetail: { da
         return {
           class: params?.[0]?.value,
           refId: params?.[1]?.value as number | undefined
+        };
+
+      case 'add_proxy':
+      case 'remove_proxy':
+        return {
+          to: delegateAddress
         };
 
       case 'batch':
@@ -353,7 +368,7 @@ function getAdditionalInfo(functionName: keyof ParamTypesMapping, txDetail: { da
         {
           const nominatorsRaw = params?.[0]?.value;
           const nominatorsArr = Array.isArray(nominatorsRaw) ? nominatorsRaw : [];
-          const nominators = nominatorsArr.map(({ Id }) => encodeAddress(hexToU8a(Id), prefix));
+          const nominators = nominatorsArr.map(({ Id }: AccountId) => encodeAddress(hexToU8a(Id), prefix));
 
           return { nominators };
         }

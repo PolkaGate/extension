@@ -9,14 +9,14 @@ import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { createAssets } from '@polkagate/apps-config/assets';
 import React, { memo, useMemo } from 'react';
 
-import { CopyAddressButton, FormatPrice } from '@polkadot/extension-polkagate/src/components';
+import { CopyAddressButton, DisplayBalance, FormatPrice } from '@polkadot/extension-polkagate/src/components';
 import Logo from '@polkadot/extension-polkagate/src/components/Logo';
 import HistoryIcon from '@polkadot/extension-polkagate/src/fullscreen/history/HistoryIcon';
-import { formatDecimal, formatTimestamp, toCamelCase, toShortAddress } from '@polkadot/extension-polkagate/src/util';
+import { amountToMachine, formatDecimal, formatTimestamp, resolveActionType, toCamelCase, toShortAddress } from '@polkadot/extension-polkagate/src/util';
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 
 import { useChainInfo, usePrices, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
-import { addAmounts } from '../buildInteractionGraph';
+import { addAmounts, normalizeAddress } from '../buildInteractionGraph';
 import { formatOption, recentIconBackground } from '../utils';
 
 const assetsChains = createAssets();
@@ -179,13 +179,14 @@ function DetailPanel({ links, selected }: { links: InteractionLink[]; selected: 
   const sortedTransactions = transactions
     .slice()
     .sort((a, b) => b.date - a.date);
+  const displayAddress = node && !node.isSynthetic ? normalizeAddress(node.address) : undefined;
 
   return (
     <Stack direction='column' rowGap='14px' sx={{ height: '100%', overflow: 'hidden', p: '18px', pb: '48px' }}>
       <Typography color='text.primary' variant='H-3'>
         {node?.name || (node?.isCenter ? t('Selected account') : node ? t('Unknown') : t('connection'))}
       </Typography>
-      {node &&
+      {node && displayAddress &&
         <>
           <Stack alignItems='center' direction='row' justifyContent='center' sx={{ columnGap: '6px', maxWidth: '100%' }}>
             <Typography color='text.secondary' noWrap title={node.address} variant='B-4'>
@@ -223,31 +224,47 @@ function DetailPanel({ links, selected }: { links: InteractionLink[]; selected: 
           {t('Transactions')}
         </Typography>
         <Stack direction='column' rowGap='6px' sx={{ overflowY: 'auto', pr: '4px', width: '100%' }}>
-          {sortedTransactions.map((history) => (
-            <Stack
-              alignItems='center'
-              direction='row'
-              key={`${history.txHash ?? history.extrinsicIndex ?? history.date}-${history.action}-${history.amount}`}
-              sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '10px', columnGap: '9px', minHeight: '58px', px: '10px', py: '8px', width: '100%' }}
-            >
-              <Grid alignItems='center' container item justifyContent='center' sx={{ background: recentIconBackground(history.subAction ?? history.action, isDark), border: '2px solid', borderColor: isDark ? '#2D1E4A' : '#EEF1FF', borderRadius: '999px', flexShrink: 0, height: '36px', width: '36px' }}>
-                <HistoryIcon action={history.subAction ?? history.action} isFullscreen={false} />
-              </Grid>
-              <Stack direction='column' rowGap='3px' sx={{ minWidth: 0, width: '100%' }}>
-                <Stack alignItems='baseline' direction='row' justifyContent='space-between' sx={{ columnGap: '10px', minWidth: 0 }}>
-                  <Typography color='text.primary' noWrap variant='B-2'>
-                    {formatOption(history.subAction ?? history.action)}
-                  </Typography>
-                  <Typography color='text.primary' noWrap sx={{ textAlign: 'right' }} variant='B-2'>
-                    {history.amount ?? '0'} {history.token ?? ''}
+          {sortedTransactions.map((history) => {
+            const displayAction = history.subAction ?? history.action ?? 'interaction';
+            const action = resolveActionType({ ...history, action: history.action ?? displayAction } as TransactionDetail) || displayAction;
+            const balance = history.decimal === undefined ? undefined : amountToMachine(history.amount, history.decimal);
+
+            return (
+              <Stack
+                alignItems='center'
+                direction='row'
+                key={`${history.txHash ?? history.extrinsicIndex ?? history.date}-${history.action}-${history.amount}`}
+                sx={{ bgcolor: isDark ? '#1B133C' : '#F3F5FD', borderRadius: '10px', columnGap: '9px', minHeight: '58px', px: '10px', py: '8px', width: '100%' }}
+              >
+                <Grid alignItems='center' container item justifyContent='center' sx={{ background: recentIconBackground(action, isDark), border: '2px solid', borderColor: isDark ? '#2D1E4A' : '#EEF1FF', borderRadius: '999px', flexShrink: 0, height: '36px', width: '36px' }}>
+                  <HistoryIcon action={action} isFullscreen={false} />
+                </Grid>
+                <Stack direction='column' rowGap='3px' sx={{ minWidth: 0, width: '100%' }}>
+                  <Stack alignItems='baseline' direction='row' justifyContent='space-between' sx={{ columnGap: '10px', minWidth: 0 }}>
+                    <Typography color='text.primary' noWrap variant='B-2'>
+                      {formatOption(displayAction)}
+                    </Typography>
+                    <DisplayBalance
+                      balance={balance}
+                      decimal={history.decimal}
+                      decimalPoint={2}
+                      style={{
+                        color: theme.palette.text.primary,
+                        textAlign: 'right',
+                        width: 'max-content',
+                        ...theme.typography['B-2']
+                      }}
+                      token={history.token}
+                      withCurrency={Boolean(history.token)}
+                    />
+                  </Stack>
+                  <Typography color='text.secondary' noWrap sx={{ textAlign: 'left' }} variant='B-5'>
+                    {formatTimestamp(history.date)}
                   </Typography>
                 </Stack>
-                <Typography color='text.secondary' noWrap sx={{ textAlign: 'left' }} variant='B-5'>
-                  {formatTimestamp(history.date)}
-                </Typography>
               </Stack>
-            </Stack>
-          ))}
+            );
+          })}
         </Stack>
       </Stack>
     </Stack>

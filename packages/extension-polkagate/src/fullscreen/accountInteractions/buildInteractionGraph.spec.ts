@@ -54,6 +54,21 @@ describe('buildInteractionGraph', () => {
     });
   });
 
+  it('strips reward suffix from pool node names', () => {
+    const graph = buildInteractionGraph([
+      tx({
+        from: { address: BOB, name: 'Pool#3(Reward)' },
+        subAction: 'reward',
+        to: { address: SELECTED, name: 'Selected' }
+      })
+    ], SELECTED);
+
+    expect(graph.nodes.find(({ id }) => id === normalizeAddress(BOB))).toMatchObject({
+      label: 'Pool#3',
+      name: 'Pool#3'
+    });
+  });
+
   it('merges the same counterparty into a mixed edge', () => {
     const graph = buildInteractionGraph([
       tx({ amount: '2' }),
@@ -104,6 +119,101 @@ describe('buildInteractionGraph', () => {
 
     expect(graph.nodes.find(({ id }) => id === normalizeAddress(BOB))?.failedCount).toBe(1);
     expect(graph.links[0].failedCount).toBe(1);
+  });
+
+  it('builds a proxy-management edge from Subscan history', () => {
+    const graph = buildInteractionGraph([
+      tx({
+        action: 'proxy',
+        subAction: 'add proxy',
+        to: { address: BOB, name: 'Bob' }
+      })
+    ], SELECTED);
+
+    expect(graph.links).toHaveLength(1);
+    expect(graph.links[0]).toMatchObject({
+      actionTypes: ['add proxy'],
+      counterparty: normalizeAddress(BOB),
+      direction: 'sent',
+      sentCount: 1
+    });
+  });
+
+  it('builds a saved Subscan history edge using forAccount when from is missing', () => {
+    const graph = buildInteractionGraph([
+      tx({
+        action: 'proxy',
+        forAccount: SELECTED,
+        from: { address: '', name: '' },
+        subAction: 'remove proxy',
+        to: { address: BOB, name: 'Bob' }
+      })
+    ], SELECTED);
+
+    expect(graph.links).toHaveLength(1);
+    expect(graph.links[0]).toMatchObject({
+      actionTypes: ['remove proxy'],
+      counterparty: normalizeAddress(BOB),
+      direction: 'sent'
+    });
+  });
+
+  it('builds a pool edge from pool id metadata', () => {
+    const graph = buildInteractionGraph([
+      tx({
+        action: 'pool staking',
+        poolId: '3',
+        subAction: 'join',
+        to: undefined
+      })
+    ], SELECTED);
+
+    expect(graph.nodes.find(({ id }) => id === 'pool:3')).toMatchObject({
+      address: 'pool:3',
+      isSynthetic: true,
+      label: 'Pool#3',
+      name: 'Pool#3'
+    });
+    expect(graph.links).toHaveLength(1);
+    expect(graph.links[0]).toMatchObject({
+      actionTypes: ['join'],
+      counterparty: 'pool:3',
+      direction: 'sent',
+      sentCount: 1
+    });
+  });
+
+  it('reuses a known pool node for pool staking rows without pool id metadata', () => {
+    const graph = buildInteractionGraph([
+      tx({
+        action: 'pool staking',
+        amount: '7',
+        from: { address: BOB, name: 'Pool#3(Reward)' },
+        subAction: 'reward',
+        to: { address: SELECTED, name: 'Selected' }
+      }),
+      tx({
+        action: 'pool staking',
+        amount: '2',
+        subAction: 'bond extra',
+        to: undefined
+      })
+    ], SELECTED);
+
+    expect(graph.nodes.find(({ id }) => id === normalizeAddress(BOB))).toMatchObject({
+      label: 'Pool#3',
+      name: 'Pool#3',
+      txCount: 2
+    });
+    expect(graph.links).toHaveLength(1);
+    expect(graph.links[0]).toMatchObject({
+      actionTypes: ['reward', 'bond extra'],
+      counterparty: normalizeAddress(BOB),
+      direction: 'mixed',
+      receivedCount: 1,
+      sentCount: 1,
+      txCount: 2
+    });
   });
 
   it('skips missing counterparties and malformed addresses', () => {

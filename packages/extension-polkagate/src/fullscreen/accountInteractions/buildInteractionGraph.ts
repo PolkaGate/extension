@@ -3,11 +3,14 @@
 
 import type { TransactionDetail } from '../../util/types';
 
-import { sciToDecimal } from '@polkadot/extension-polkagate/src/util';
 import { BN, BN_TEN, hexToU8a, isHex } from '@polkadot/util';
 import { decodeAddress, encodeAddress, isEthereumAddress } from '@polkadot/util-crypto';
 
+import { sciToDecimal } from '../../util/amount';
+
 const toShortAddress = (address: string, count = 6): string => `${address.slice(0, count)}...${address.slice(-1 * count)}`;
+
+const normalizePoolName = (name: string | undefined): string | undefined => name?.replace(/^(Pool#\d+)\(.+\)$/u, '$1');
 
 const isValidInteractionAddress = (address: string | undefined): boolean => {
   try {
@@ -48,6 +51,7 @@ export interface InteractionNode {
   failedCount: number;
   isValidator?: boolean;
   isCenter?: boolean;
+  isSynthetic?: boolean;
   latestDate?: number;
   validatorName?: string;
 }
@@ -81,6 +85,8 @@ export interface InteractionGraph {
 
 const ALL_TYPES = 'all';
 const DECIMAL_AMOUNT_REGEX = /^(?:\d+\.?\d*|\.\d+)$/;
+const POOL_NAME_REGEX = /^Pool#\d+/u;
+const POOL_STAKING_SUB_ACTIONS = new Set(['bond', 'bond extra', 'bond_extra', 'join', 'nominate', 'reward', 'unbond', 'withdraw unbonded', 'withdraw_unbonded']);
 
 interface DecimalAmount {
   scale: number;
@@ -173,29 +179,100 @@ const directionFromCounts = (sentCount: number, receivedCount: number): Interact
       ? 'sent'
       : 'received';
 
-const getCounterparty = (history: TransactionDetail, selectedId: string): { address: string; direction: Exclude<InteractionDirection, 'mixed'>; name?: string } | undefined => {
+const getPoolCounterparty = (poolId: string | undefined): { address: string; id: string; isSynthetic: true; label: string; name: string } | undefined => {
+  if (!poolId) {
+    return undefined;
+  }
+
+  const label = `Pool#${poolId}`;
+
+  return {
+    address: `pool:${poolId}`,
+    id: `pool:${poolId}`,
+    isSynthetic: true,
+    label,
+    name: label
+  };
+};
+
+interface Counterparty {
+  address: string;
+  direction: Exclude<InteractionDirection, 'mixed'>;
+  id?: string;
+  isSynthetic?: boolean;
+  label?: string;
+  name?: string;
+}
+
+const getHistoryType = (history: TransactionDetail): string => history.subAction ?? history.action ?? history.description ?? 'interaction';
+
+const isPoolStakingHistory = (history: TransactionDetail): boolean => {
+  const action = history.action?.toLowerCase();
+  const subAction = history.subAction?.toLowerCase();
+
+  return action === 'pool staking' || Boolean(subAction && POOL_STAKING_SUB_ACTIONS.has(subAction));
+};
+
+const getKnownPoolCounterparty = (histories: TransactionDetail[] | null | undefined, selectedId: string): Omit<Counterparty, 'direction'> | undefined => {
+  const pools = new Map<string, Omit<Counterparty, 'direction'>>();
+
+  histories?.forEach((history) => {
+    const poolCounterparty = getPoolCounterparty(history.poolId);
+
+    if (poolCounterparty) {
+      pools.set(poolCounterparty.label, poolCounterparty);
+    }
+
+    const fromId = normalizeAddress(history.from?.address);
+    const toId = normalizeAddress(history.to?.address);
+    const poolName = normalizePoolName(fromId === selectedId ? history.to?.name : toId === selectedId ? history.from?.name : undefined);
+    const poolAddress = fromId === selectedId ? history.to?.address : toId === selectedId ? history.from?.address : undefined;
+
+    if (poolName && POOL_NAME_REGEX.test(poolName) && poolAddress) {
+      pools.set(poolName, {
+        address: poolAddress,
+        label: poolName,
+        name: poolName
+      });
+    }
+  });
+
+  return pools.size === 1 ? Array.from(pools.values())[0] : undefined;
+};
+
+const getCounterparty = (history: TransactionDetail, selectedId: string, fallbackPoolCounterparty: Omit<Counterparty, 'direction'> | undefined): Counterparty | undefined => {
   const fromAddress = history.from?.address;
-  const toAddress = history.to?.address;
+  const toAddress = history.to?.address ?? history.delegatee;
   const fromId = normalizeAddress(fromAddress);
   const toId = normalizeAddress(toAddress);
-
-  if (fromId === selectedId && toId && toAddress) {
-    return {
-      address: toAddress,
-      direction: 'sent',
-      name: history.to?.name
-    };
-  }
+  const isSelectedSender = fromId === selectedId || normalizeAddress(history.forAccount) === selectedId;
 
   if (toId === selectedId && fromId && fromAddress) {
     return {
       address: fromAddress,
       direction: 'received',
-      name: history.from?.name
+      name: normalizePoolName(history.from?.name)
     };
   }
 
-  return undefined;
+  if (isSelectedSender && toId && toAddress) {
+    return {
+      address: toAddress,
+      direction: 'sent',
+      name: normalizePoolName(history.to?.name)
+    };
+  }
+
+  const poolCounterparty = isSelectedSender ? getPoolCounterparty(history.poolId) : undefined;
+  const fallbackPool = isSelectedSender && isPoolStakingHistory(history) ? fallbackPoolCounterparty : undefined;
+  const syntheticOrFallbackPool = poolCounterparty ?? fallbackPool;
+
+  return syntheticOrFallbackPool
+    ? {
+      ...syntheticOrFallbackPool,
+      direction: 'sent'
+    }
+    : undefined;
 };
 
 export const buildInteractionGraph = (
@@ -227,17 +304,21 @@ export const buildInteractionGraph = (
     txCount: 0
   });
 
+  const fallbackPoolCounterparty = getKnownPoolCounterparty(histories, selectedId);
+
   histories?.forEach((history) => {
+    const actionType = getHistoryType(history);
+
     if (
       (filters.status === 'completed' && !history.success) ||
       (filters.status === 'failed' && history.success) ||
-      (filters.type !== ALL_TYPES && filters.type !== (history.subAction ?? history.action))
+      (filters.type !== ALL_TYPES && filters.type !== actionType)
     ) {
       return;
     }
 
-    const counterparty = getCounterparty(history, selectedId);
-    const counterpartyId = normalizeAddress(counterparty?.address);
+    const counterparty = getCounterparty(history, selectedId, fallbackPoolCounterparty);
+    const counterpartyId = counterparty?.id ?? normalizeAddress(counterparty?.address);
 
     if (!counterparty || !counterpartyId || counterpartyId === selectedId) {
       return;
@@ -253,7 +334,8 @@ export const buildInteractionGraph = (
       address: counterparty.address,
       failedCount: (existingNode?.failedCount ?? 0) + failedDelta,
       id: counterpartyId,
-      label: counterparty.name || toShortAddress(counterparty.address),
+      isSynthetic: counterparty.isSynthetic,
+      label: counterparty.label || counterparty.name || toShortAddress(counterparty.address),
       latestDate,
       name: counterparty.name,
       receivedCount: (existingNode?.receivedCount ?? 0) + receivedDelta,
@@ -280,7 +362,6 @@ export const buildInteractionGraph = (
       };
     }
 
-    const actionType = history.subAction ?? history.action;
     const sentCount = (existingLink?.sentCount ?? 0) + sentDelta;
     const receivedCount = (existingLink?.receivedCount ?? 0) + receivedDelta;
     const direction = directionFromCounts(sentCount, receivedCount);
@@ -330,10 +411,10 @@ export const buildInteractionGraph = (
   };
 };
 
-export const getInteractionTypes = (histories: TransactionDetail[] | null | undefined): string[] => {
+export const getInteractionTypes = (links: InteractionLink[] | null | undefined): string[] => {
   const types = new Set<string>();
 
-  histories?.forEach((history) => types.add(history.subAction ?? history.action));
+  links?.forEach(({ actionTypes }) => actionTypes.forEach((type) => types.add(type)));
 
   return [ALL_TYPES, ...Array.from(types).sort()];
 };

@@ -17,7 +17,7 @@ import useTransactionHistory from '@polkadot/extension-polkagate/src/popup/histo
 import { VelvetBox } from '@polkadot/extension-polkagate/src/style';
 
 import { MyTooltip } from '../../components';
-import { useAccount, useTranslation, useValidatorsInformation } from '../../hooks';
+import { useAccount, useChainInfo, useTranslation, useValidatorsInformation } from '../../hooks';
 import { EmptyListBox } from '../components';
 import HomeLayout from '../components/layout';
 import DetailPanel from './components/DetailPanel';
@@ -42,6 +42,7 @@ function AccountInteractions(): React.ReactElement {
   const { ref: graphContainerRef, size } = useElementSize<HTMLDivElement>();
   const account = useAccount(address);
   const validatorsInfo = useValidatorsInformation(genesisHash);
+  const { decimal } = useChainInfo(genesisHash);
 
   const [filters, setFilters] = useState<InteractionFilters>({
     direction: 'all',
@@ -61,7 +62,8 @@ function AccountInteractions(): React.ReactElement {
     { governance: true, staking: true, transfers: true },
     { enableInfiniteScroll: false }
   );
-  const { canUseHistoryRange, fetchedHistories, historyDateMarks, historyRange, historyRangeLabel, historyRangeMax, historyRangeMin, rangeFilteredHistories, resetHistoryRange, updateHistoryRange } = useHistoryRange(allHistories);
+  const historiesWithDecimal = useMemo(() => allHistories?.map((item) => ({ ...item, decimal: item.decimal ?? decimal })), [allHistories, decimal]);
+  const { canUseHistoryRange, historyDateMarks, historyRange, historyRangeLabel, historyRangeMax, historyRangeMin, rangeFilteredHistories, resetHistoryRange, updateHistoryRange } = useHistoryRange(historiesWithDecimal);
 
   useEffect(() => {
     resetHistoryRange();
@@ -69,7 +71,12 @@ function AccountInteractions(): React.ReactElement {
     setManualPositions({});
   }, [address, genesisHash, resetHistoryRange]);
 
-  const typeOptions = useMemo(() => getInteractionTypes(fetchedHistories), [fetchedHistories]);
+  const typeOptionsGraph = useMemo(() => buildInteractionGraph(rangeFilteredHistories, address, {
+    direction: 'all',
+    status: filters.status,
+    type: ALL_TYPES
+  }), [address, filters.status, rangeFilteredHistories]);
+  const typeOptions = useMemo(() => getInteractionTypes(typeOptionsGraph.links), [typeOptionsGraph.links]);
   const interactionValue = useMemo<InteractionFilterValue>(() =>
     filters.direction !== 'all'
       ? `direction:${filters.direction}`
