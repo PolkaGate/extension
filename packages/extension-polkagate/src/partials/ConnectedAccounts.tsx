@@ -34,7 +34,7 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
 
   // Sort only on the first render, store result in a ref
   const sortedAccountsRef = useRef<AccountJson[] | null>(null);
-  const initializedDappIdRef = useRef<string | undefined>();
+  const initializedDappIdRef = useRef<string | undefined>(undefined);
 
   const accountsToShow = useMemo(() => {
     const filtered = [...accounts].filter(({ isExternal, isHardware, isHidden, isQR }) =>
