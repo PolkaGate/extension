@@ -90,6 +90,10 @@ function getInvisibleAccountAddresses(): string[] {
     .map(({ json: { address } }) => address);
 }
 
+function getAuthorizedInvisibleAccountAddresses(authorizedAccounts: string[]): string[] {
+  return getInvisibleAccountAddresses().filter((address) => authorizedAccounts.includes(address));
+}
+
 const NORMAL_WINDOW_OPTS: chrome.windows.CreateData = {
   focused: true,
   type: 'normal',
@@ -280,7 +284,7 @@ export default class State {
         authorizedTime,
         count: 0,
         id: idStr,
-        invisibleAccounts: getInvisibleAccountAddresses(),
+        invisibleAccounts: getAuthorizedInvisibleAccountAddresses(authorizedAccounts),
         origin,
         url
       };
@@ -397,7 +401,7 @@ export default class State {
   public async updateAuthorizedAccounts({ authorizedAccounts, url }: UpdateAuthorizedAccounts): Promise<void> {
     this.#authUrls[url].authorizedAccounts = authorizedAccounts;
     this.#authUrls[url].authorizedTime = Date.now(); // updates the authorizedTime when the authorizedAccounts list updates
-    this.#authUrls[url].invisibleAccounts = getInvisibleAccountAddresses();
+    this.#authUrls[url].invisibleAccounts = getAuthorizedInvisibleAccountAddresses(authorizedAccounts);
     await this.saveCurrentAuthList();
   }
 
