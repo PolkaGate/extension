@@ -72,18 +72,21 @@ export default function ManagePassword({ onBack }: { onBack?: () => void }): Rea
 
     if (biometricAuth) {
       try {
-        await setStorage(STORAGE_KEY.LAST_PASS_CHANGE, Date.now());
         const success = await accountsChangePasswordAllWithBiometric(newPass, biometricAuth);
+
+        if (success) {
+          await setStorage(STORAGE_KEY.LAST_PASS_CHANGE, Date.now());
+        }
 
         setPasswordError(success !== true);
         setShowSnackbar(true);
-        setSnackbarText(success ? t('Password has been changed!') : t('Current password is wrong!'));
+        setSnackbarText(success ? t('Password has been changed!') : t('Password change failed'));
         setMissionSucceeded(success === true);
       } catch (error) {
         console.error(error);
         setPasswordError(true);
         setShowSnackbar(true);
-        setSnackbarText(t('Current password is wrong!'));
+        setSnackbarText(t('Biometric authentication failed'));
         setMissionSucceeded(false);
       } finally {
         setBusy(false);
