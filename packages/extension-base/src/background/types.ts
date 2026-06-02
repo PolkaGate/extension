@@ -23,7 +23,6 @@ export interface AuthUrlInfo {
   url: string;
   authorizedAccounts: string[];
   authorizedTime: number;
-  invisibleAccounts?: string[];
 }
 
 type KeysWithDefinedValues<T> = {
