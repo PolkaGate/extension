@@ -190,6 +190,7 @@ export default function ImportRawSeed(): React.ReactElement {
                 onPassChange={setPassword}
                 style={{ marginBottom: '25px', marginTop: '35px' }}
                 title={t('Password to secure this account')}
+                value={password ?? ''}
                  />
               )
             }

@@ -89,6 +89,7 @@ export function SetNameAndPassword({ accountType, seed }: { accountType: Keypair
           onPassChange={setPassword}
           style={{ marginBottom: '25px', marginTop: '35px' }}
           title={t('Password to secure this account')}
+          value={password ?? ''}
            />
         )
       }
