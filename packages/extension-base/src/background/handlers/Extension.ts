@@ -488,19 +488,21 @@ export default class Extension {
     let decryptedPassword = '';
 
     try {
-      const biometric = await this.getBiometricEnrollment();
+      try {
+        const biometric = await this.getBiometricEnrollment();
 
-      if (!biometric || biometric.credentialId !== credentialId) {
+        if (!biometric || biometric.credentialId !== credentialId) {
+          return false;
+        }
+
+        decryptedPassword = await this.decryptPasswordWithBiometricKey(biometric, prfOutput);
+      } catch (error) {
+        console.error('biometric password failed:', error);
+
         return false;
       }
 
-      decryptedPassword = await this.decryptPasswordWithBiometricKey(biometric, prfOutput);
-
       return await action(decryptedPassword);
-    } catch (error) {
-      console.error('biometric action failed:', error);
-
-      return false;
     } finally {
       decryptedPassword = '';
     }
