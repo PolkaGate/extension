@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { Icon } from 'iconsax-react';
+import type { Icon, IconProps } from 'iconsax-react';
 
 import { Grid, Typography, useTheme } from '@mui/material';
 import React, { useCallback, useState } from 'react';
@@ -10,6 +10,7 @@ import { useHandleNavigation } from '../hooks';
 
 export interface Options {
   Icon?: Icon;
+  iconVariant?: IconProps['variant'];
   isLine?: boolean;
   isFullscreen?: boolean;
   pathname?: string;
@@ -28,7 +29,7 @@ function DropMenuRow({ option, setOpen }: Props) {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
 
-  const { Icon, isFullscreen, pathname, text, value } = option;
+  const { Icon, iconVariant, isFullscreen, pathname, text, value } = option;
 
   const onClick = useCallback(async() => {
     setOpen(false);
@@ -61,7 +62,7 @@ function DropMenuRow({ option, setOpen }: Props) {
     >
       <Grid alignItems='center' container item sx={{ columnGap: '7px', flexWrap: 'nowrap' }} xs>
         {Icon &&
-          <Icon size='18' style={{ color: hovered ? '#FF4FB9' : (isDark ? '#AA83DC' : theme.palette.primary.main) }} variant='Bulk' />
+          <Icon size='18' style={{ color: hovered ? '#FF4FB9' : (isDark ? '#AA83DC' : theme.palette.primary.main) }} variant={iconVariant ?? 'Bulk'} />
         }
         <Typography color='text.primary' sx={{ textWrap: 'nowrap' }} variant='B-2'>
           {text}

@@ -11,7 +11,6 @@ import { BehaviorSubject } from 'rxjs';
 import { getId } from '@polkadot/extension-base/utils/getId';
 import { addMetadata, knownMetadata } from '@polkadot/extension-chains';
 import { knownGenesis } from '@polkadot/networks/defaults';
-import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
 import settings from '@polkadot/ui-settings';
 import { assert } from '@polkadot/util';
 
@@ -46,7 +45,6 @@ export interface AuthUrlInfo {
   url: string;
   authorizedAccounts: string[];
   authorizedTime: number;
-  invisibleAccounts?: string[];
 }
 
 interface MetaRequest extends Resolver<boolean> {
@@ -82,17 +80,6 @@ const POPUP_WINDOW_OPTS: chrome.windows.CreateData = {
   url: NOTIFICATION_URL,
   width: 357
 };
-
-function getInvisibleAccountAddresses(): string[] {
-  return Object
-    .values(accountsObservable.subject.getValue())
-    .filter(({ json: { meta: { isHidden } } }) => isHidden)
-    .map(({ json: { address } }) => address);
-}
-
-function getAuthorizedInvisibleAccountAddresses(authorizedAccounts: string[]): string[] {
-  return getInvisibleAccountAddresses().filter((address) => authorizedAccounts.includes(address));
-}
 
 const NORMAL_WINDOW_OPTS: chrome.windows.CreateData = {
   focused: true,
@@ -284,7 +271,6 @@ export default class State {
         authorizedTime,
         count: 0,
         id: idStr,
-        invisibleAccounts: getAuthorizedInvisibleAccountAddresses(authorizedAccounts),
         origin,
         url
       };
@@ -401,7 +387,6 @@ export default class State {
   public async updateAuthorizedAccounts({ authorizedAccounts, url }: UpdateAuthorizedAccounts): Promise<void> {
     this.#authUrls[url].authorizedAccounts = authorizedAccounts;
     this.#authUrls[url].authorizedTime = Date.now(); // updates the authorizedTime when the authorizedAccounts list updates
-    this.#authUrls[url].invisibleAccounts = getAuthorizedInvisibleAccountAddresses(authorizedAccounts);
     await this.saveCurrentAuthList();
   }
 
