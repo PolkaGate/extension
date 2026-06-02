@@ -95,7 +95,7 @@ export function SetNameAndPassword({ accountType, seed }: { accountType: Keypair
       <DecisionButtons
         cancelButton
         direction='horizontal'
-        disabled={!password && !isBiometricValidated}
+        disabled={!name || (!password && !isBiometricValidated)}
         isBusy={isBusy}
         onPrimaryClick={onCreate}
         onSecondaryClick={onCancel}
