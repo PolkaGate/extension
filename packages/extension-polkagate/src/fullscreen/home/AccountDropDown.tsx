@@ -67,7 +67,7 @@ function AccountDropDown({ address, disabled, iconSize = '25px', isExternal, nam
       ...(genesisHash
         ? [{
           Icon: Routing2,
-          iconVariant: 'Bold',
+          iconVariant: 'Bold' as const,
           text: t('Interaction Explorer'),
           value: () => goToAccountRoute(`/account-interactions/${address}/${genesisHash}`)
         }]
