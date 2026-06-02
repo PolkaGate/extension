@@ -80,8 +80,11 @@ Before running lint, format, or test scripts, inspect the package script first.
 
 After completing code changes, always include a recommended commit title in the final response.
 
-Format:
-`Recommended commit title: <type>: <short summary>`
+Format the recommendation with the label outside the fenced code block, and only the commit title inside the block:
+Recommended commit title:
+```text
+<type>: <short summary>
+```
 
 Use concise conventional-style titles when possible, for example:
 - `fix: make biometric password action keyboard reachable`
