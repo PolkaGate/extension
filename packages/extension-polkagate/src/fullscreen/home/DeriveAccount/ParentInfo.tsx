@@ -64,7 +64,8 @@ function ParentInfo({ genesisHash, isParentBiometricValidated, newParentAddress,
     setMaybeChidAccount(undefined);
     setParentBiometricAuth(undefined);
     setParentBiometricValidated(false);
-  }, [newParentAddress, setMaybeChidAccount, setParentBiometricValidated]);
+    setParentPassword(undefined);
+  }, [newParentAddress, setMaybeChidAccount, setParentBiometricValidated, setParentPassword]);
 
   useEffect(() => {
     // forbid the use of password since Keyring ignores it
