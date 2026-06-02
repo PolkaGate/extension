@@ -65,6 +65,7 @@ function ParentInfo({ genesisHash, isParentBiometricValidated, newParentAddress,
     setParentBiometricAuth(undefined);
     setParentBiometricValidated(false);
     setParentPassword(undefined);
+    setPathError('');
   }, [newParentAddress, setMaybeChidAccount, setParentBiometricValidated, setParentPassword]);
 
   useEffect(() => {
