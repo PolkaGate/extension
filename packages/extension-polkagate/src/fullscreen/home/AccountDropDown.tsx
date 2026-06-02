@@ -3,7 +3,7 @@
 
 import { MoreVert } from '@mui/icons-material';
 import { ClickAwayListener, Grid, type SxProps, type Theme, useTheme } from '@mui/material';
-import { ArrowCircleDown2, Data, DocumentDownload, Edit2, HierarchySquare3, LogoutCurve, Setting3 } from 'iconsax-react';
+import { ArrowCircleDown2, Data, DocumentDownload, Edit2, LogoutCurve, Routing2, Setting3 } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import DropMenuContent from '@polkadot/extension-polkagate/src/components/DropMenuContent';
@@ -66,7 +66,8 @@ function AccountDropDown({ address, disabled, iconSize = '25px', isExternal, nam
       },
       ...(genesisHash
         ? [{
-          Icon: HierarchySquare3,
+          Icon: Routing2,
+          iconVariant: 'Bold',
           text: t('Interaction Explorer'),
           value: () => goToAccountRoute(`/account-interactions/${address}/${genesisHash}`)
         }]
