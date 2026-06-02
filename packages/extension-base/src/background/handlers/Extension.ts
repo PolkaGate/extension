@@ -8,9 +8,9 @@ import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type { KeyringAddress } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
-import type { BiometricEnrollmentData, RequestBiometricEnable, RequestBiometricUnlock, ResponseBiometricStatus } from '../../utils/biometric';
+import type { BiometricEnrollmentData, RequestBiometricAuthentication, RequestBiometricEnable, RequestBiometricUnlock, ResponseBiometricStatus } from '../../utils/biometric';
 // added for plus to import RequestUpdateMeta
-import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountsSetUnlockExpiry, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestCreateAgent, RequestDeriveCreate, RequestDeriveValidate, RequestExplainTx, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningEthereumRawSignature, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
+import type { AccountJson, AllowedPath, ApplyAddedTime, AuthorizeRequest, AuthUrls, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountBiometricBatchExport, RequestAccountBiometricChangePasswordAll, RequestAccountBiometricCreateSuri, RequestAccountBiometricExport, RequestAccountChangePassword, RequestAccountChangePasswordAll, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountsSetUnlockExpiry, RequestAccountTie, RequestAccountValidate, RequestAuthorizeApprove, RequestBatchRestore, RequestCreateAgent, RequestDeriveBiometricCreate, RequestDeriveBiometricValidate, RequestDeriveCreate, RequestDeriveValidate, RequestExplainTx, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningEthereumRawSignature, RequestSigningIsLocked, RequestSigningSignature, RequestTypes, RequestUnlockAllAccounts, RequestUpdateAuthorizedAccounts, RequestUpdateMeta, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types';
 import type State from './State';
 
 import { ALLOWED_PATH, START_WITH_PATH } from '@polkadot/extension-base/defaults';
@@ -321,7 +321,10 @@ export default class Extension {
 
   private accountsForget({ address }: RequestAccountForget): boolean {
     keyring.forgetAccount(address);
-    this.clearBiometricEnrollment().catch(console.error);
+
+    if (this.localAccounts().length === 0) {
+      this.clearBiometricEnrollment().catch(console.error);
+    }
 
     return true;
   }
@@ -479,6 +482,60 @@ export default class Extension {
     } finally {
       decryptedPassword = '';
     }
+  }
+
+  private async withBiometricPassword<T>({ credentialId, prfOutput }: RequestBiometricAuthentication, action: (password: string) => T | Promise<T>): Promise<T | false> {
+    let decryptedPassword = '';
+
+    try {
+      const biometric = await this.getBiometricEnrollment();
+
+      if (!biometric || biometric.credentialId !== credentialId) {
+        return false;
+      }
+
+      decryptedPassword = await this.decryptPasswordWithBiometricKey(biometric, prfOutput);
+
+      return await action(decryptedPassword);
+    } catch (error) {
+      console.error('biometric action failed:', error);
+
+      return false;
+    } finally {
+      decryptedPassword = '';
+    }
+  }
+
+  private async accountsBiometricExport({ address, credentialId, prfOutput }: RequestAccountBiometricExport): Promise<ResponseAccountExport | false> {
+    return this.withBiometricPassword({ credentialId, prfOutput }, (password) => this.accountsExport({ address, password }));
+  }
+
+  private async accountsBiometricBatchExport({ addresses, credentialId, prfOutput }: RequestAccountBiometricBatchExport): Promise<ResponseAccountsExport | false> {
+    return this.withBiometricPassword({ credentialId, prfOutput }, (password) => this.accountsBatchExport({ addresses, password }));
+  }
+
+  private async accountsBiometricChangePasswordAll({ credentialId, newPass, prfOutput }: RequestAccountBiometricChangePasswordAll): Promise<boolean> {
+    const result = await this.withBiometricPassword({ credentialId, prfOutput }, (oldPass) => this.accountsChangePasswordAll({ newPass, oldPass }));
+
+    return result === true;
+  }
+
+  private async accountsBiometricCreateSuri({ credentialId, genesisHash, name, prfOutput, suri, type }: RequestAccountBiometricCreateSuri): Promise<boolean> {
+    const result = await this.withBiometricPassword({ credentialId, prfOutput }, (password) => this.accountsCreateSuri({ genesisHash, name, password, suri, type }));
+
+    return result === true;
+  }
+
+  private async derivationBiometricValidate({ credentialId, parentAddress, prfOutput, suri }: RequestDeriveBiometricValidate): Promise<ResponseDeriveValidate | false> {
+    return this.withBiometricPassword({ credentialId, prfOutput }, (parentPassword) => this.derivationValidate({ parentAddress, parentPassword, suri }));
+  }
+
+  private async derivationBiometricCreate({ credentialId, genesisHash, name, parentAddress, prfOutput, suri }: RequestDeriveBiometricCreate): Promise<boolean> {
+    const result = await this.withBiometricPassword({ credentialId, prfOutput }, (parentPassword) =>
+      this.derivationCreate({ genesisHash, name, parentAddress, parentPassword, password: parentPassword, suri })
+    );
+
+    return result === true;
   }
 
   private async biometricDisable(): Promise<boolean> {
@@ -1062,6 +1119,9 @@ export default class Extension {
       case 'pri(accounts.create.suri)':
         return this.accountsCreateSuri(request as RequestAccountCreateSuri);
 
+      case 'pri(accounts.biometric.create.suri)':
+        return this.accountsBiometricCreateSuri(request as RequestAccountBiometricCreateSuri);
+
       // ----------------added for polkagate---------------------
       case 'pri(accounts.updateMeta)':
         return this.accountsUpdateMeta(request as RequestUpdateMeta);
@@ -1095,6 +1155,15 @@ export default class Extension {
 
       case 'pri(accounts.biometric.enable)':
         return this.biometricEnable(request as RequestBiometricEnable);
+
+      case 'pri(accounts.biometric.export)':
+        return this.accountsBiometricExport(request as RequestAccountBiometricExport);
+
+      case 'pri(accounts.biometric.batchExport)':
+        return this.accountsBiometricBatchExport(request as RequestAccountBiometricBatchExport);
+
+      case 'pri(accounts.biometric.changePasswordAll)':
+        return this.accountsBiometricChangePasswordAll(request as RequestAccountBiometricChangePasswordAll);
 
       case 'pri(accounts.biometric.status)':
         return this.biometricStatus();
@@ -1156,6 +1225,12 @@ export default class Extension {
 
       case 'pri(derivation.create)':
         return this.derivationCreate(request as RequestDeriveCreate);
+
+      case 'pri(derivation.biometric.create)':
+        return this.derivationBiometricCreate(request as RequestDeriveBiometricCreate);
+
+      case 'pri(derivation.biometric.validate)':
+        return this.derivationBiometricValidate(request as RequestDeriveBiometricValidate);
 
       case 'pri(derivation.validate)':
         return this.derivationValidate(request as RequestDeriveValidate);

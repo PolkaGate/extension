@@ -30,6 +30,7 @@ function DeriveAccount({ closePopup }: Props): React.ReactElement {
   const selectedGenesis = useAccountSelectedChain(selectedAccount?.address);
 
   const [maybeChidAccount, setMaybeChidAccount] = useState<PathState>();
+  const [isParentBiometricValidated, setParentBiometricValidated] = useState(false);
   const [parentPassword, setParentPassword] = useState<string>();
   const [step, setStep] = useState(DERIVATION_STEPS.PARENT);
   const [newParentAddress, setNewParentAddress] = useState<string | undefined>();
@@ -64,24 +65,27 @@ function DeriveAccount({ closePopup }: Props): React.ReactElement {
         {step === DERIVATION_STEPS.PARENT
           ? <ParentInfo
             genesisHash={selectedGenesis}
+            isParentBiometricValidated={isParentBiometricValidated}
             newParentAddress={newParentAddress}
             onClose={onClose}
             parentAccount={parentAccount}
             parentPassword={parentPassword}
             setMaybeChidAccount={setMaybeChidAccount}
             setNewParentAddress={setNewParentAddress}
+            setParentBiometricValidated={setParentBiometricValidated}
             setParentPassword={setParentPassword}
             setStep={setStep}
-          />
+            />
           : <ChildInfo
             genesisHash={selectedGenesis}
+            isParentBiometricValidated={isParentBiometricValidated}
             maybeChidAccount={maybeChidAccount}
             onClose={closePopup}
             parentAddress={parentAccount?.address}
             parentPassword={parentPassword}
             setMaybeChidAccount={setMaybeChidAccount}
             setStep={setStep}
-          />
+            />
         }
       </>
     </DraggableModal>

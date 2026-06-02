@@ -36,8 +36,12 @@ export default function ImportSeed(): React.ReactElement {
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
 
   const { error,
+    isBiometricAvailable,
+    isBiometricBusy,
+    isBiometricValidated,
     isBusy,
     name,
+    onBiometricPassword,
     onConfirm,
     onValidateSeed,
     password,
@@ -178,21 +182,26 @@ export default function ImportSeed(): React.ReactElement {
                 style={{ marginBottom: '20px' }}
                 title1={t('Password')}
                 title2={t('Repeat the password')}
-              />
+                 />
               )
               : (<PasswordInput
+                biometricDisabled={isBusy || isBiometricBusy}
                 hasError={!!error}
+                isBiometricBusy={isBiometricBusy}
+                isBiometricVerified={isBiometricValidated}
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                onBiometricClick={isBiometricAvailable ? onBiometricPassword : undefined}
                 onEnterPress={onCreate}
                 onPassChange={setPassword}
                 style={{ marginBottom: '25px', marginTop: '35px' }}
                 title={t('Password to secure this account')}
-              />
+                 />
               )
             }
             <DecisionButtons
               cancelButton
               direction='horizontal'
-              disabled={!password || !name || !account}
+              disabled={(!password && !isBiometricValidated) || !name || !account}
               isBusy={isBusy}
               onPrimaryClick={onCreate}
               onSecondaryClick={onCancel}

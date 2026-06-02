@@ -38,23 +38,27 @@ export default function ImportRawSeed(): React.ReactElement {
     }).catch(() => null);
   }, []);
 
-  const validateSeed = useCallback(async(seed: string, type?: KeypairType): Promise<AccountInfo> => {
+  const validateSeed = useCallback((seed: string, type?: KeypairType): Promise<AccountInfo> => {
     if (!(seed.startsWith('0x') && seed.length === 66)) {
       throw new Error('The raw seed is invalid. It should be 66 characters long and start with 0x');
     }
 
     const { pair } = keyring.addUri(seed, undefined, {}, type || DEFAULT_TYPE);
 
-    return {
+    return Promise.resolve({
       address: pair.address,
       genesis: POLKADOT_GENESIS,
       suri: seed
-    };
+    });
   }, []);
 
   const { error,
+    isBiometricAvailable,
+    isBiometricBusy,
+    isBiometricValidated,
     isBusy,
     name,
+    onBiometricPassword,
     onConfirm,
     onValidateSeed,
     password,
@@ -173,21 +177,26 @@ export default function ImportRawSeed(): React.ReactElement {
                 style={{ marginBottom: '20px' }}
                 title1={t('Password')}
                 title2={t('Repeat the password')}
-              />
+                 />
               )
               : (<PasswordInput
+                biometricDisabled={isBusy || isBiometricBusy}
                 hasError={!!error}
+                isBiometricBusy={isBiometricBusy}
+                isBiometricVerified={isBiometricValidated}
+                // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                onBiometricClick={isBiometricAvailable ? onBiometricPassword : undefined}
                 onEnterPress={onImport}
                 onPassChange={setPassword}
                 style={{ marginBottom: '25px', marginTop: '35px' }}
                 title={t('Password to secure this account')}
-              />
+                 />
               )
             }
             <DecisionButtons
               cancelButton
               direction='horizontal'
-              disabled={!password || !name || !address || !account}
+              disabled={(!password && !isBiometricValidated) || !name || !address || !account}
               isBusy={isBusy}
               onPrimaryClick={onImport}
               onSecondaryClick={onCancel}

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import type { AccountJson, AllowedPath, AuthorizeRequest, MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, MetadataRequest, RequestTypes, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSigningIsLocked, ResponseTypes, SeedLengths, SigningRequest, SubscriptionMessageTypes } from '@polkadot/extension-base/background/types';
-import type { RequestBiometricEnable, RequestBiometricUnlock, ResponseBiometricStatus } from '@polkadot/extension-base/utils/biometric';
 import type { Message } from '@polkadot/extension-base/types';
 import type { AiTxAnyJson } from '@polkadot/extension-base/utils/AiUtils/aiTypes';
+import type { RequestBiometricAuthentication, RequestBiometricEnable, RequestBiometricUnlock, ResponseBiometricStatus } from '@polkadot/extension-base/utils/biometric';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { MetadataDef } from '@polkadot/extension-inject/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
@@ -103,6 +103,10 @@ export async function accountsChangePasswordAll(oldPass: string, newPass: string
   return sendMessage('pri(accounts.changePasswordAll)', { newPass, oldPass });
 }
 
+export async function accountsChangePasswordAllWithBiometric(newPass: string, auth: RequestBiometricAuthentication): Promise<boolean> {
+  return sendMessage('pri(accounts.biometric.changePasswordAll)', { ...auth, newPass });
+}
+
 export async function getBiometricUnlockStatus(): Promise<ResponseBiometricStatus> {
   return sendMessage('pri(accounts.biometric.status)');
 }
@@ -156,8 +160,16 @@ export async function exportAccount(address: string, password: string): Promise<
   return sendMessage('pri(accounts.export)', { address, password });
 }
 
+export async function exportAccountWithBiometric(address: string, auth: RequestBiometricAuthentication): Promise<{ exportedJson: KeyringPair$Json } | false> {
+  return sendMessage('pri(accounts.biometric.export)', { ...auth, address });
+}
+
 export async function exportAccounts(addresses: string[], password: string): Promise<{ exportedJson: KeyringPairs$Json }> {
   return sendMessage('pri(accounts.batchExport)', { addresses, password });
+}
+
+export async function exportAccountsWithBiometric(addresses: string[], auth: RequestBiometricAuthentication): Promise<{ exportedJson: KeyringPairs$Json } | false> {
+  return sendMessage('pri(accounts.biometric.batchExport)', { ...auth, addresses });
 }
 
 export async function validateAccount(address: string, password: string): Promise<boolean> {
@@ -206,6 +218,10 @@ export async function createAccountHardware(address: string, hardwareType: strin
 
 export async function createAccountSuri(name: string, password: string, suri: string, type?: KeypairType, genesisHash?: HexString): Promise<boolean> {
   return sendMessage('pri(accounts.create.suri)', { genesisHash, name, password, suri, type });
+}
+
+export async function createAccountSuriWithBiometric(name: string, suri: string, auth: RequestBiometricAuthentication, type?: KeypairType, genesisHash?: HexString): Promise<boolean> {
+  return sendMessage('pri(accounts.biometric.create.suri)', { ...auth, genesisHash, name, suri, type });
 }
 
 export async function createSeed(length?: SeedLengths, seed?: string, type?: KeypairType): Promise<{ address: string; seed: string }> {
@@ -293,8 +309,16 @@ export async function validateDerivationPath(parentAddress: string, suri: string
   return sendMessage('pri(derivation.validate)', { parentAddress, parentPassword, suri });
 }
 
+export async function validateDerivationPathWithBiometric(parentAddress: string, suri: string, auth: RequestBiometricAuthentication): Promise<ResponseDeriveValidate | false> {
+  return sendMessage('pri(derivation.biometric.validate)', { ...auth, parentAddress, suri });
+}
+
 export async function deriveAccount(parentAddress: string, suri: string, parentPassword: string, name: string, password: string, genesisHash: HexString | null): Promise<boolean> {
   return sendMessage('pri(derivation.create)', { genesisHash, name, parentAddress, parentPassword, password, suri });
+}
+
+export async function deriveAccountWithBiometric(parentAddress: string, suri: string, name: string, genesisHash: HexString | null, auth: RequestBiometricAuthentication): Promise<boolean> {
+  return sendMessage('pri(derivation.biometric.create)', { ...auth, genesisHash, name, parentAddress, suri });
 }
 
 export async function windowOpen(path: AllowedPath): Promise<boolean> {

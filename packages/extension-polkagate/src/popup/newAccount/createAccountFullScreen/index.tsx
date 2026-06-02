@@ -26,8 +26,12 @@ export function SetNameAndPassword({ accountType, seed }: { accountType: Keypair
 
   const { error,
     hasNoLocalAccounts,
+    isBiometricAvailable,
+    isBiometricBusy,
+    isBiometricValidated,
     isBusy,
     name,
+    onBiometricPassword,
     onConfirm,
     password,
     setName,
@@ -44,7 +48,7 @@ export function SetNameAndPassword({ accountType, seed }: { accountType: Keypair
     navigate('/') as void;
   }, [navigate]);
 
-  const onCreate = useCallback(async () => {
+  const onCreate = useCallback(async() => {
     try {
       await onConfirm({ isImport: false, seed });
     } catch (e) {
@@ -72,21 +76,26 @@ export function SetNameAndPassword({ accountType, seed }: { accountType: Keypair
           style={{ marginBottom: '20px' }}
           title1={t('Password')}
           title2={t('Repeat the password')}
-        />
+           />
         )
         : (<PasswordInput
+          biometricDisabled={isBusy || isBiometricBusy}
           hasError={!!error}
+          isBiometricBusy={isBiometricBusy}
+          isBiometricVerified={isBiometricValidated}
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          onBiometricClick={isBiometricAvailable ? onBiometricPassword : undefined}
           onEnterPress={onCreate}
           onPassChange={setPassword}
           style={{ marginBottom: '25px', marginTop: '35px' }}
           title={t('Password to secure this account')}
-        />
+           />
         )
       }
       <DecisionButtons
         cancelButton
         direction='horizontal'
-        disabled={!password}
+        disabled={!password && !isBiometricValidated}
         isBusy={isBusy}
         onPrimaryClick={onCreate}
         onSecondaryClick={onCancel}

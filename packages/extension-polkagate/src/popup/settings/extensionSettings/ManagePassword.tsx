@@ -1,12 +1,15 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { RequestBiometricAuthentication } from '@polkadot/extension-base/utils/biometric';
+
 import { Grid, Stack } from '@mui/material';
 import React, { useCallback, useState } from 'react';
 
+import useBiometricAction from '@polkadot/extension-polkagate/src/hooks/useBiometricAction';
 import useIsExtensionPopup from '@polkadot/extension-polkagate/src/hooks/useIsExtensionPopup';
 import useIsPasswordCorrect from '@polkadot/extension-polkagate/src/hooks/useIsPasswordCorrect';
-import { accountsChangePasswordAll, lockExtension } from '@polkadot/extension-polkagate/src/messaging';
+import { accountsChangePasswordAll, accountsChangePasswordAllWithBiometric, lockExtension } from '@polkadot/extension-polkagate/src/messaging';
 import { getStorage, setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 import { blake2AsHex } from '@polkadot/util-crypto';
@@ -31,6 +34,7 @@ export default function ManagePassword({ onBack }: { onBack?: () => void }): Rea
 
   const [oldPass, setCurrentPassword] = useState<string>('');
   const [newPass, setNewPassword] = useState<string>();
+  const [biometricAuth, setBiometricAuth] = useState<RequestBiometricAuthentication>();
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarText, setSnackbarText] = useState('');
   const [passwordError, setPasswordError] = useState<boolean>(false);
@@ -38,6 +42,7 @@ export default function ManagePassword({ onBack }: { onBack?: () => void }): Rea
   const [missionSucceeded, setMissionSucceeded] = useState<boolean>(false);
 
   const { validatePasswordAsync } = useIsPasswordCorrect();
+  const { isBiometricAvailable, isBiometricBusy, runBiometricAction } = useBiometricAction();
 
   const onSnackbarClose = useCallback(() => {
     setShowSnackbar(false);
@@ -53,16 +58,39 @@ export default function ManagePassword({ onBack }: { onBack?: () => void }): Rea
   }, [missionSucceeded, passwordError]);
 
   const onCurrentPasswordChange = useCallback((pass: string | null): void => {
+    setBiometricAuth(undefined);
     setPasswordError(false);
     setCurrentPassword(pass || '');
   }, []);
 
   const onSetPassword = useCallback(async() => {
-    if (!oldPass || !newPass) {
+    if ((!oldPass && !biometricAuth) || !newPass) {
       return;
     }
 
     setBusy(true);
+
+    if (biometricAuth) {
+      try {
+        await setStorage(STORAGE_KEY.LAST_PASS_CHANGE, Date.now());
+        const success = await accountsChangePasswordAllWithBiometric(newPass, biometricAuth);
+
+        setPasswordError(success !== true);
+        setShowSnackbar(true);
+        setSnackbarText(success ? t('Password has been changed!') : t('Current password is wrong!'));
+        setMissionSucceeded(success === true);
+      } catch (error) {
+        console.error(error);
+        setPasswordError(true);
+        setShowSnackbar(true);
+        setSnackbarText(t('Current password is wrong!'));
+        setMissionSucceeded(false);
+      } finally {
+        setBusy(false);
+      }
+
+      return;
+    }
 
     const isPasswordCorrect = await validatePasswordAsync(oldPass);
 
@@ -89,7 +117,30 @@ export default function ManagePassword({ onBack }: { onBack?: () => void }): Rea
       setBusy(false);
       setMissionSucceeded(false);
     }
-  }, [newPass, oldPass, t, validatePasswordAsync]);
+  }, [biometricAuth, newPass, oldPass, t, validatePasswordAsync]);
+
+  const onBiometricPassword = useCallback(async(): Promise<void> => {
+    setBusy(true);
+
+    try {
+      const auth = await runBiometricAction((auth) => Promise.resolve(auth));
+
+      if (!auth) {
+        setPasswordError(true);
+
+        return;
+      }
+
+      setBiometricAuth(auth);
+      setCurrentPassword('');
+      setPasswordError(false);
+    } catch (error) {
+      console.error(error);
+      setPasswordError(true);
+    } finally {
+      setBusy(false);
+    }
+  }, [runBiometricAction]);
 
   return (
     <Motion>
@@ -100,11 +151,17 @@ export default function ManagePassword({ onBack }: { onBack?: () => void }): Rea
         />
         <Stack columnGap='15px' direction='column' sx={{ bgcolor: isExtension ? 'background.paper' : 'transparent', borderRadius: '14px', m: isExtension ? '5px 15px' : '25px 5px 0', position: 'relative', zIndex: 1 }}>
           <PasswordInput
+            biometricDisabled={isBusy || isBiometricBusy}
             focused
             hasError={passwordError}
+            isBiometricBusy={isBiometricBusy}
+            isBiometricVerified={Boolean(biometricAuth)}
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            onBiometricClick={isBiometricAvailable ? onBiometricPassword : undefined}
             onPassChange={onCurrentPasswordChange}
             style={{ marginBottom: '18px' }}
             title={t('Current Password')}
+            value={oldPass}
           />
           <MatchPasswordField
             onSetPassword={onSetPassword}
@@ -113,7 +170,7 @@ export default function ManagePassword({ onBack }: { onBack?: () => void }): Rea
             title2={t('Confirm Password')}
           />
           <GradientButton
-            disabled={!oldPass || !newPass}
+            disabled={(!oldPass && !biometricAuth) || !newPass}
             isBusy={isBusy}
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onClick={onSetPassword}

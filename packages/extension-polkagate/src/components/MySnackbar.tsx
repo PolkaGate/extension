@@ -87,7 +87,7 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
           borderRadius: '12px',
           boxShadow: 3,
           color: textColor,
-          columnGap: '5px',
+          columnGap: '8px',
           display: 'flex',
           justifyContent: 'center',
           minHeight: '52px',
@@ -106,14 +106,13 @@ const MySnackbar = ({ anchorOriginHorizontal = 'center', direction = 'up', isErr
             : <Box
               component='img'
               src={check as string}
-              sx={{ height: '28px', left: '20px', position: 'absolute', width: '28px' }}
+              sx={{ flexShrink: 0, height: '28px', width: '28px' }}
               />
         }
         <Typography
           color={textColor}
           sx={{
             overflowWrap: 'anywhere',
-            pr: isError ? 0 : '22px',
             whiteSpace: 'normal',
             wordBreak: 'break-word'
           }}

@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { info } from '../assets/gif';
 import { AccountsAssetsContext, Address2, DecisionButtons, GlowCheckbox, MySnackbar, PasswordInput } from '../components';
-import { useAccount, useAccountsOrder, useAlerts, useIsExtensionPopup, useProfileAccounts, useSelectedAccount, useSelectedProfile, useTranslation } from '../hooks';
+import { useAccount, useAccountsOrder, useAlerts, useBiometricAction, useIsExtensionPopup, useProfileAccounts, useSelectedAccount, useSelectedProfile, useTranslation } from '../hooks';
 import { forgetAccount, validateAccount } from '../messaging';
 import WarningBox from '../popup/settings/partials/WarningBox';
 import { cleanupAuthorizedAccount, cleanupNotificationAccount, getStorage, setStorage } from '../util';
@@ -74,8 +74,10 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [acknowledged, setAcknowledge] = useState<boolean>(false);
   const [password, setPassword] = useState<string>();
+  const [isBiometricValidated, setBiometricValidated] = useState(false);
   const [isPasswordWrong, setPasswordError] = useState<boolean>();
   const [isBusy, setIsBusy] = useState<boolean>();
+  const { isBiometricAvailable, isBiometricBusy, runBiometricAction } = useBiometricAction();
 
   const toggleAcknowledge = useCallback((state: boolean) => {
     setAcknowledge(state);
@@ -94,6 +96,7 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
   const handleClose = useCallback(() => {
     setAcknowledge(false);
     setPassword(undefined);
+    setBiometricValidated(false);
     setPasswordError(false);
 
     if (window.location.href.includes('accountfs')) { // removing an account from its home
@@ -107,11 +110,11 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
   }, [isExtension, navigate, notifier, onClose]);
 
   const canRemoveAccount =
-    (isExternal && acknowledged) || (!isExternal && !!password);
+    (isExternal && acknowledged) || (!isExternal && (!!password || isBiometricValidated));
 
-  const onRemove = useCallback(async () => {
+  const removeAccount = useCallback(async(isPasswordConfirmed = false) => {
     try {
-      if (!_address || !canRemoveAccount) {
+      if (!_address || (!canRemoveAccount && !isPasswordConfirmed)) {
         return;
       }
 
@@ -120,7 +123,7 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
 
       await new Promise(requestAnimationFrame);
 
-      if (!isExternal && password) {
+      if (!isExternal && !isPasswordConfirmed && !isBiometricValidated && password) {
         const isUnlockable = await validateAccount(_address, password);
 
         if (!isUnlockable) {
@@ -161,12 +164,34 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
       setIsBusy(false);
       console.error('Error while removing the account:', error);
     }
-  }, [_address, canRemoveAccount, profileAccounts?.length, isExternal, password, notifier, isExtension, handleClose, accountsAssets, setAccountsAssets]);
+  }, [_address, canRemoveAccount, profileAccounts?.length, isExternal, isBiometricValidated, password, notifier, isExtension, handleClose, accountsAssets, setAccountsAssets]);
+
+  const onRemove = useCallback(() => {
+    removeAccount(isBiometricValidated).catch(console.error);
+  }, [isBiometricValidated, removeAccount]);
 
   const onPassChange = useCallback((pass: string | null): void => {
+    setBiometricValidated(false);
     setPasswordError(false);
     setPassword(pass || '');
   }, []);
+
+  const onBiometricValidate = useCallback(async(): Promise<void> => {
+    if (!_address) {
+      return;
+    }
+
+    const isValid = await runBiometricAction(() => Promise.resolve(true));
+
+    if (isValid !== true) {
+      setPasswordError(true);
+
+      return;
+    }
+
+    setBiometricValidated(true);
+    setPasswordError(false);
+  }, [_address, runBiometricAction]);
 
   return (
     <SharePopup
@@ -203,8 +228,13 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
                 />)
               : (
                 <PasswordInput
+                  biometricDisabled={isBiometricBusy || isBusy}
                   focused
                   hasError={isPasswordWrong}
+                  isBiometricBusy={isBiometricBusy}
+                  isBiometricVerified={isBiometricValidated}
+                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                  onBiometricClick={isBiometricAvailable ? onBiometricValidate : undefined}
                   onEnterPress={onRemove}
                   onPassChange={onPassChange}
                   style={{ filter: showSnackbar ? 'blur(5px)' : 'none', marginTop: isExtension ? '45px' : '25px' }}
