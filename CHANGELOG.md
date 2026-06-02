@@ -1,5 +1,17 @@
 # Change Log
 
+# [2.11.0](https://github.com/polkagate/extension/compare/v2.10.0...v2.11.0) (2026-06-02)
+
+
+### Bug Fixes
+
+* fix proxied account visibility in dapp injection ([#2181](https://github.com/polkagate/extension/issues/2181)) ([17e265e](https://github.com/polkagate/extension/commit/17e265efafe98f28d911cc438c09ef986450bd4f)), closes [#2178](https://github.com/polkagate/extension/issues/2178) [#2180](https://github.com/polkagate/extension/issues/2180)
+
+
+### Features
+
+* handle invisible accounts in dapp authorization ([#2179](https://github.com/polkagate/extension/issues/2179)) ([c323bb7](https://github.com/polkagate/extension/commit/c323bb7075842967d3103ce77a0a2f2c2cb21897)), closes [#2178](https://github.com/polkagate/extension/issues/2178)
+
 # [2.10.0](https://github.com/polkagate/extension/compare/v2.9.0...v2.10.0) (2026-06-01)
 
 
