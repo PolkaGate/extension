@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Grid, Stack, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import { AddCircle, HierarchySquare3, I3Dcube } from 'iconsax-react';
+import { AddCircle, ChemicalGlass, I3Dcube } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,7 +22,7 @@ export const TestnetBadge = ({ style }: { style?: SxProps<Theme>; }) => {
 
   return (
     <Stack alignItems='center' columnGap='5px' direction='row' sx={{ bgcolor: '#3988FF26', borderRadius: '9px', mt: '5px', p: '3px 5px', ...style }}>
-      <HierarchySquare3 color='#3988FF' size='14' variant='Bulk' />
+      <ChemicalGlass color='#3988FF' size='14' variant='Bulk' />
       <Typography color='#3988FF' fontSize='13px' sx={{ lineHeight: '10px' }} variant='B-2'>
         {t('Test Network')}
       </Typography>
