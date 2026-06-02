@@ -75,3 +75,15 @@ Before running lint, format, or test scripts, inspect the package script first.
   - `yarn polkadot-exec-eslint path/to/file.tsx`
   - `git diff --check -- path/to/file.tsx`
 - Before and after validation, check `git status --short`. If unexpected files changed, stop and report it immediately.
+
+## Git / Commit Suggestions
+
+After completing code changes, always include a recommended commit title in the final response.
+
+Format:
+`Recommended commit title: <type>: <short summary>`
+
+Use concise conventional-style titles when possible, for example:
+- `fix: make biometric password action keyboard reachable`
+- `test: cover cleared password input behavior`
+- `refactor: simplify password input state handling`

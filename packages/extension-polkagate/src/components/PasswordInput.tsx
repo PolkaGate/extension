@@ -179,7 +179,6 @@ function PasswordInput({ Icon, biometricDisabled = false, errorMessage, focused 
                     edge='end'
                     onClick={handleBiometricClick}
                     sx={biometricButtonStyle}
-                    tabIndex={-1}
                   >
                     <FingerScan color={biometricIconColor} size='20' variant={(isBiometricBusy || isBiometricVerified) ? 'Bold' : 'Bulk'} />
                   </IconButton>
