@@ -215,10 +215,10 @@ function ProxiedAccount({ closePopup, mode = 'check' }: Props): React.ReactEleme
                     ...promises
                 ])
                 .then(() => {
-                    setIsBusy(false);
                     onClose();
                 })
-                .catch(console.error);
+                .catch(console.error)
+                .finally(() => setIsBusy(false));
         }
     }, [closePopup, isImportMode, onClose, selectedAddress, selectedGenesis, selectedProxied]);
 
