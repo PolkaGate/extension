@@ -1,6 +1,9 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { KeyringPair$Json } from '@polkadot/keyring/types';
+import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
+
 import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import saveAs from 'file-saver';
 import { Import } from 'iconsax-react';
@@ -15,6 +18,8 @@ import { useAccounts, useBiometricAction, useIsExtensionPopup, useSelectedAccoun
 import { exportAccount, exportAccounts, exportAccountsWithBiometric, exportAccountWithBiometric } from '../../../messaging';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
+
+type ExportResult = false | { exportedJson: KeyringPair$Json | KeyringPairs$Json };
 
 /**
  * AccountSettings component allows users to export their accounts as encrypted JSON files.
@@ -83,9 +88,9 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
     }
 
     try {
-      const result = await runBiometricAction((auth) => isExportAll
-        ? exportAccountsWithBiometric(accounts.map((acc) => acc.address), auth)
-        : exportAccountWithBiometric(address, auth)
+      const result = await runBiometricAction(async(auth): Promise<ExportResult> => isExportAll
+        ? await exportAccountsWithBiometric(accounts.map((acc) => acc.address), auth)
+        : await exportAccountWithBiometric(address, auth)
       );
 
       if (!result) {

@@ -36,9 +36,9 @@ export function useAccountImportOrCreate<T extends AccountInfo = AccountInfo>({ 
     setError(undefined);
   }, [biometricAuth, password]);
 
-  const onPasswordChange = useCallback((password: string): void => {
+  const onPasswordChange = useCallback((password?: string | null): void => {
     setBiometricAuth(undefined);
-    setPassword(password);
+    setPassword(password || undefined);
   }, []);
 
   const onValidateSeed = useCallback(async(input: string, type?: KeypairType) => {
