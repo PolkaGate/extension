@@ -181,7 +181,15 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
       return;
     }
 
-    const isValid = await runBiometricAction(() => Promise.resolve(true));
+    let isValid: boolean | undefined;
+
+    try {
+      isValid = await runBiometricAction(() => Promise.resolve(true));
+    } catch {
+      setPasswordError(true);
+
+      return;
+    }
 
     if (isValid !== true) {
       setPasswordError(true);
