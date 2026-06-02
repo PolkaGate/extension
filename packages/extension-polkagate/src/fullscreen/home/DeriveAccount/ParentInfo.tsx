@@ -93,6 +93,8 @@ function ParentInfo({ genesisHash, isParentBiometricValidated, newParentAddress,
         const _account = await validateDerivationPathWithBiometric(parentAddress, suriPath, parentBiometricAuth);
 
         if (!_account) {
+          setParentBiometricAuth(undefined);
+          setParentBiometricValidated(false);
           setIsProperParentPassword(false);
 
           return;
