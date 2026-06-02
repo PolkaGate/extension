@@ -58,7 +58,11 @@ export default class Tabs {
     const transformedAccounts = transformAccounts(accountsObservable.subject.getValue(), true);
     const auth = this.#state.authUrls[this.#state.stripUrl(url)];
 
-    return !auth?.authorizedTime || transformedAccounts.some(({ addedTime, whenCreated }) => (addedTime && addedTime > auth.authorizedTime) || (whenCreated && whenCreated > auth.authorizedTime));
+    if (!auth?.authorizedTime) {
+      return true;
+    }
+
+    return transformedAccounts.some(({ addedTime, whenCreated }) => (addedTime && addedTime > auth.authorizedTime) || (whenCreated && whenCreated > auth.authorizedTime));
   }
 
   private authorize(url: string, request: RequestAuthorizeTab): Promise<AuthResponse> {

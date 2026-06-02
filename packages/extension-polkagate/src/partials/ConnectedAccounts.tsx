@@ -4,15 +4,15 @@
 import type { AccountJson, AuthUrlInfo } from '@polkadot/extension-base/background/types';
 
 import { Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
-import { User } from 'iconsax-react';
+import { EyeSlash, User } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { DecisionButtons, GradientDivider, GradientSwitch } from '../components';
+import { DecisionButtons, GradientDivider, GradientSwitch, MyTooltip } from '../components';
 import { sortAccounts } from '../components/sortAccounts';
 import { useAccounts, useTranslation } from '../hooks';
-import { approveAuthRequest, ignoreAuthRequest, updateAuthorization } from '../messaging';
+import { approveAuthRequest, ignoreAuthRequest, showAccount, updateAuthorization } from '../messaging';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 
 interface Props {
@@ -32,18 +32,9 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
 
-  const allAddresses = useMemo(() => accounts.map(({ address }) => address), [accounts]);
-
-  const allAccounts = dappInfo?.authorizedAccounts ?? allAddresses;
-  const noChanges = (!dappInfo && !selectedAccounts.length) ?? selectedAccounts.length === allAccounts.length;
-  const isAllSelected = accounts.every(({ address }) => selectedAccounts.includes(address));
-
-  useEffect(() => {
-    dappInfo && setSelectedAccounts(allAccounts);
-  }, [allAccounts, dappInfo]);
-
   // Sort only on the first render, store result in a ref
   const sortedAccountsRef = useRef<AccountJson[] | null>(null);
+  const initializedDappIdRef = useRef<string | undefined>(undefined);
 
   const accountsToShow = useMemo(() => {
     const filtered = [...accounts].filter(({ isExternal, isHardware, isHidden, isQR }) =>
@@ -64,6 +55,30 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
     return filtered;
   }, [accounts, selectedAccounts]);
 
+  const connectableAddresses = useMemo(() => accounts.filter(({ isHidden }) => !isHidden).map(({ address }) => address), [accounts]);
+
+  const allAccounts = useMemo(
+    () => dappInfo?.authorizedAccounts.filter((address) => connectableAddresses.includes(address)) ?? connectableAddresses,
+    [connectableAddresses, dappInfo?.authorizedAccounts]
+  );
+
+  const noChanges = useMemo(
+    () => !dappInfo
+      ? !selectedAccounts.length
+      : selectedAccounts.length === allAccounts.length && selectedAccounts.every((address) => allAccounts.includes(address)),
+    [allAccounts, dappInfo, selectedAccounts]
+  );
+  const isAllSelected = connectableAddresses.length > 0 && connectableAddresses.every((address) => selectedAccounts.includes(address));
+
+  useEffect(() => {
+    if (!dappInfo || initializedDappIdRef.current === dappInfo.id || accounts.length === 0) {
+      return;
+    }
+
+    initializedDappIdRef.current = dappInfo.id;
+    setSelectedAccounts(allAccounts);
+  }, [accounts.length, allAccounts, dappInfo]);
+
   const handleSelect = useCallback((address: string) => () => {
     const isAlreadySelected = selectedAccounts.includes(address);
 
@@ -75,8 +90,14 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
   }, [selectedAccounts]);
 
   const selectAllAccounts = useCallback(() => {
-    setSelectedAccounts(isAllSelected ? [] : accountsToShow.map(({ address }) => address));
-  }, [accountsToShow, isAllSelected]);
+    setSelectedAccounts(isAllSelected ? [] : connectableAddresses);
+  }, [connectableAddresses, isAllSelected]);
+
+  const makeAccountVisible = useCallback((address: string) => (event: React.MouseEvent): void => {
+    event.stopPropagation();
+
+    showAccount(address, true).catch(console.error);
+  }, []);
 
   const handleButtons = useCallback((handle: 'update' | 'ignore' | 'approve' | 'disconnect') => () => {
     // If there are no authorized accounts, it means the dApp is rejected.
@@ -140,7 +161,7 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
             </Grid>
           </Grid>
           <Container disableGutters sx={{ background: theme.palette.surface.panel, border: isDark ? 'none' : `1px solid ${theme.palette.border.subtle}`, borderRadius: '10px', height: 'fit-content', maxHeight: hasBanner ? '185px' : '223px', overflowY: 'auto', p: isDark ? '8px 12px' : 'none', width: '100%' }}>
-            {accountsToShow.map(({ address, name }, index) => {
+            {accountsToShow.map(({ address, isHidden, name }, index) => {
               const noDivider = accountsToShow.length === index + 1;
 
               return (
@@ -160,7 +181,7 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
                         py: isDark ? 0 : '6px'
                       }}
                     >
-                      <Grid alignItems='center' container item sx={{ columnGap: '8px', width: 'fit-content' }}>
+                      <Grid alignItems='center' container item sx={{ columnGap: '8px', flexWrap: 'nowrap', minWidth: 0, width: 'fit-content' }}>
                         <PolkaGateIdenticon
                           address={address}
                           size={24}
@@ -168,9 +189,17 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
                         <Typography color='text.primary' sx={{ maxWidth: '150px', overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-4'>
                           {name}
                         </Typography>
+                        {isHidden &&
+                          <MyTooltip content={t('This account is invisible to websites')}>
+                            <Grid alignItems='center' container item justifyContent='center' onClick={makeAccountVisible(address)} sx={{ bgcolor: isDark ? '#6743944D' : '#F1F4FF', border: '1px solid', borderColor: isDark ? '#AA83DC26' : '#D7DDF0', borderRadius: '999px', cursor: 'pointer', height: '22px', width: '22px' }}>
+                              <EyeSlash color={theme.palette.accent.icon} size='13' variant='Bold' />
+                            </Grid>
+                          </MyTooltip>
+                        }
                       </Grid>
                       <GradientSwitch
-                        checked={selectedAccounts.includes(address)}
+                        checked={!isHidden && selectedAccounts.includes(address)}
+                        disabled={isHidden}
                         onChange={handleSelect(address)}
                       />
                     </Grid>
