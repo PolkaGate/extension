@@ -1,5 +1,17 @@
 # Change Log
 
+# [2.12.0](https://github.com/polkagate/extension/compare/v2.11.0...v2.12.0) (2026-06-04)
+
+
+### Bug Fixes
+
+* align Subscan requests with free plan limits ([#2183](https://github.com/polkagate/extension/issues/2183)) ([eab20df](https://github.com/polkagate/extension/commit/eab20df5d5b0707dcc79d9338faf11ed89ac0644))
+
+
+### Features
+
+* add biometric auth for password-gated flows ([#2182](https://github.com/polkagate/extension/issues/2182)) ([4848935](https://github.com/polkagate/extension/commit/4848935aa69dd693ecbadaed31fb82eb6621a84f)), closes [#2164](https://github.com/polkagate/extension/issues/2164)
+
 # [2.11.0](https://github.com/polkagate/extension/compare/v2.10.0...v2.11.0) (2026-06-02)
 
 
