@@ -50,7 +50,7 @@ function ChildInfo({ genesisHash, isParentBiometricValidated, maybeChidAccount, 
       return;
     }
 
-    setError('');
+    setError(undefined);
     setIsBusy(true);
 
     try {
@@ -62,7 +62,7 @@ function ChildInfo({ genesisHash, isParentBiometricValidated, maybeChidAccount, 
         throw new Error(t('Unable to derive account'));
       }
 
-      setError('');
+      setError(undefined);
       setShowSnackbar(true);
     } catch (error) {
       setError(error instanceof Error ? error.message : String(error));
