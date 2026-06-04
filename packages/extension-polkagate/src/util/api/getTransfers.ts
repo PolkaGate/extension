@@ -7,6 +7,7 @@ import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explore
 import { keyMaker } from '@polkadot/extension-polkagate/src/popup/history/hookUtils/utils';
 
 import getChainName from '../getChainName';
+import { SUBSCAN_FREE_PAGE_SIZE } from '../subscanLimits';
 import { fetchFromSubscan } from '..';
 
 function nullifier(requested: string) {
@@ -51,7 +52,7 @@ export async function getTxTransfers(address: string, genesisHash: string, pageN
     address,
     direction: 'received',
     page: pageNum,
-    row: pageSize
+    row: Math.min(pageSize, SUBSCAN_FREE_PAGE_SIZE)
   });
 
   if (!transferRequest.data.transfers) {

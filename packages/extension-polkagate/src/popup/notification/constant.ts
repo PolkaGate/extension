@@ -4,12 +4,13 @@
 import type { NotificationsType } from './types';
 
 import { KUSAMA_GENESIS_HASH, PASEO_GENESIS_HASH, POLKADOT_GENESIS_HASH, WESTEND_GENESIS_HASH } from '../../util/constants';
+import { SUBSCAN_FREE_PAGE_SIZE } from '../../util/subscanLimits';
 
 export const NOTIFICATION_GOVERNANCE_CHAINS = ['kusama', 'polkadot'];
 
 export const RECEIVED_FUNDS_THRESHOLD = 15;
 export const RECEIVED_REWARDS_THRESHOLD = 10;
-export const REFERENDA_COUNT_TO_TRACK_DOT = 50;
+export const REFERENDA_COUNT_TO_TRACK_DOT = SUBSCAN_FREE_PAGE_SIZE;
 export const REFERENDA_COUNT_TO_TRACK_KSM = 10;
 
 export const NOT_READ_BGCOLOR = '#ECF6FE';

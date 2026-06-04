@@ -5,6 +5,7 @@ import type { TransferRequest } from '../types';
 
 import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
 
+import { SUBSCAN_FREE_PAGE_SIZE } from '../subscanLimits';
 import { fetchFromSubscan } from '..';
 
 export function getNominationPoolsClaimedRewards(chainName: string, address: string, pageSize: number): Promise<TransferRequest> {
@@ -25,6 +26,6 @@ export function getNominationPoolsClaimedRewards(chainName: string, address: str
   return fetchFromSubscan(link,
     {
       address,
-      row: pageSize
+      row: Math.min(pageSize, SUBSCAN_FREE_PAGE_SIZE)
     });
 }
