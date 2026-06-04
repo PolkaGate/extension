@@ -12,7 +12,7 @@ import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
 import type { HexString } from '@polkadot/util/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
 import type { AiTxAnyJson } from '../utils/AiUtils/aiTypes';
-import type { RequestBiometricEnable, RequestBiometricUnlock, ResponseBiometricStatus } from '../utils/biometric';
+import type { RequestBiometricAuthentication, RequestBiometricEnable, RequestBiometricUnlock, ResponseBiometricStatus } from '../utils/biometric';
 import type { AuthResponse } from './handlers/State';
 
 export type AuthUrls = Record<string, AuthUrlInfo>;
@@ -102,6 +102,7 @@ export interface RequestSignatures {
   'pri(accounts.create.external)': [RequestAccountCreateExternal, boolean];
   'pri(accounts.create.hardware)': [RequestAccountCreateHardware, boolean];
   'pri(accounts.create.suri)': [RequestAccountCreateSuri, boolean];
+  'pri(accounts.biometric.create.suri)': [RequestAccountBiometricCreateSuri, boolean];
   'pri(accounts.edit)': [RequestAccountEdit, boolean];
 
   // added for polkagate
@@ -127,6 +128,9 @@ export interface RequestSignatures {
   'pri(accounts.changePasswordAll)': [RequestAccountChangePasswordAll, boolean];
   'pri(accounts.biometric.disable)': [null, boolean];
   'pri(accounts.biometric.enable)': [RequestBiometricEnable, boolean];
+  'pri(accounts.biometric.export)': [RequestAccountBiometricExport, ResponseAccountExport | false];
+  'pri(accounts.biometric.batchExport)': [RequestAccountBiometricBatchExport, ResponseAccountsExport | false];
+  'pri(accounts.biometric.changePasswordAll)': [RequestAccountBiometricChangePasswordAll, boolean];
   'pri(accounts.biometric.status)': [null, ResponseBiometricStatus];
   'pri(accounts.biometric.unlock)': [RequestBiometricUnlock, boolean];
   'pri(signing.getSignature)': [RequestSigningSignature, HexString | null];
@@ -137,6 +141,8 @@ export interface RequestSignatures {
   'pri(authorize.requests)': [RequestAuthorizeSubscribe, boolean, AuthorizeRequest[]];
   'pri(authorize.remove)': [string, ResponseAuthorizeList];
   'pri(derivation.create)': [RequestDeriveCreate, boolean];
+  'pri(derivation.biometric.create)': [RequestDeriveBiometricCreate, boolean];
+  'pri(derivation.biometric.validate)': [RequestDeriveBiometricValidate, ResponseDeriveValidate | false];
   'pri(derivation.validate)': [RequestDeriveValidate, ResponseDeriveValidate];
   'pri(json.restore)': [RequestJsonRestore, void];
   'pri(json.batchRestore)': [RequestBatchRestore, void];
@@ -230,6 +236,13 @@ export interface RequestAccountCreateSuri {
   type?: KeypairType;
 }
 
+export interface RequestAccountBiometricCreateSuri extends RequestBiometricAuthentication {
+  name: string;
+  genesisHash?: HexString | null;
+  suri: string;
+  type?: KeypairType;
+}
+
 export interface RequestAccountCreateHardware {
   accountIndex: number;
   address: string;
@@ -256,6 +269,10 @@ export interface RequestAccountChangePassword {
 
 export interface RequestAccountChangePasswordAll {
   oldPass: string;
+  newPass: string;
+}
+
+export interface RequestAccountBiometricChangePasswordAll extends RequestBiometricAuthentication {
   newPass: string;
 }
 
@@ -297,10 +314,22 @@ export interface RequestDeriveCreate {
   password: string;
 }
 
+export interface RequestDeriveBiometricCreate extends RequestBiometricAuthentication {
+  name: string;
+  genesisHash?: HexString | null;
+  suri: string;
+  parentAddress: string;
+}
+
 export interface RequestDeriveValidate {
   suri: string;
   parentAddress: string;
   parentPassword: string;
+}
+
+export interface RequestDeriveBiometricValidate extends RequestBiometricAuthentication {
+  suri: string;
+  parentAddress: string;
 }
 
 export interface RequestAccountExport {
@@ -308,9 +337,17 @@ export interface RequestAccountExport {
   password: string;
 }
 
+export interface RequestAccountBiometricExport extends RequestBiometricAuthentication {
+  address: string;
+}
+
 export interface RequestAccountBatchExport {
   addresses: string[];
   password: string;
+}
+
+export interface RequestAccountBiometricBatchExport extends RequestBiometricAuthentication {
+  addresses: string[];
 }
 
 export interface RequestAccountList {

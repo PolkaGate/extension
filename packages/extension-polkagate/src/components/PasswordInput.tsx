@@ -4,8 +4,8 @@
 import type { Icon } from 'iconsax-react';
 
 import { Grid, IconButton, InputAdornment, styled, TextField, Typography, useTheme } from '@mui/material';
-import { Check, Eye, EyeSlash } from 'iconsax-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import { Check, Eye, EyeSlash, FingerScan } from 'iconsax-react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useIsBlueish, useIsDark, useTranslation } from '../hooks';
 
@@ -18,7 +18,6 @@ const StyledTextField = styled(TextField, {
   '& .MuiOutlinedInput-root': {
     '&.Mui-focused': {
       '& div.MuiInputAdornment-root.MuiInputAdornment-positionEnd button': {
-        backgroundColor: 'transparent',
         transition: 'all 150ms ease-out'
       },
       '& div.MuiInputAdornment-root.MuiInputAdornment-positionStart button svg path': {
@@ -62,8 +61,12 @@ interface Props {
   errorMessage?: string;
   title?: string;
   Icon?: Icon;
+  biometricDisabled?: boolean;
+  isBiometricVerified?: boolean;
   onPassChange: (pass: string) => void;
+  onBiometricClick?: () => unknown;
   onEnterPress?: () => unknown;
+  isBiometricBusy?: boolean;
   style?: React.CSSProperties;
   focused?: boolean;
   hasError?: boolean;
@@ -71,21 +74,31 @@ interface Props {
   placeholder?: string;
 }
 
-function PasswordInput({ Icon, errorMessage, focused = false, hasError = false, onEnterPress, onPassChange, placeholder, style, title, value }: Props): React.ReactElement {
+function PasswordInput({ Icon, biometricDisabled = false, errorMessage, focused = false, hasError = false, isBiometricBusy = false, isBiometricVerified = false, onBiometricClick, onEnterPress, onPassChange, placeholder, style, title, value }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
   const isBlueish = useIsBlueish();
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [hasPasswordValue, setHasPasswordValue] = useState<boolean>(Boolean(value));
   const [focusing, setFocused] = useState<boolean>(focused);
 
   const toggle = useCallback(() => setFocused((isFocused) => !isFocused), []);
   const onChange = useCallback(({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
-    onPassChange(value ?? null);
+    setHasPasswordValue(Boolean(value));
+
+    if (!value) {
+      setShowPassword(false);
+    }
+
+    onPassChange(value);
   }, [onPassChange]);
 
   const handleClickShowPassword = useCallback(() => setShowPassword((show) => !show), []);
+  const handleBiometricClick = useCallback(() => {
+    onBiometricClick?.();
+  }, [onBiometricClick]);
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && onEnterPress) {
@@ -96,8 +109,42 @@ function PasswordInput({ Icon, errorMessage, focused = false, hasError = false, 
   const commonColor = useMemo(() => isDark
     ? isBlueish ? theme.palette.text.highlight : theme.palette.primary.main
     : theme.palette.text.secondary, [isBlueish, isDark, theme.palette.primary.main, theme.palette.text.highlight, theme.palette.text.secondary]);
+  const iconButtonStyle = useMemo(() => ({
+    '&.Mui-disabled': {
+      opacity: 0.45
+    },
+    bgcolor: isDark && isBlueish ? '#222442' : theme.palette.surface.input,
+    borderRadius: '8px',
+    height: '30px',
+    p: 0,
+    transition: 'background-color 150ms ease-out',
+    width: '30px'
+  }), [isBlueish, isDark, theme.palette.surface.input]);
+  const biometricButtonStyle = useMemo(() => ({
+    ...iconButtonStyle,
+    ...(isBiometricVerified
+      ? {
+        '&:hover': {
+          bgcolor: isDark ? '#809ACB33' : '#E3E9FF'
+        },
+        bgcolor: isDark ? '#809ACB26' : '#EEF1FF'
+      }
+      : {})
+  }), [iconButtonStyle, isBiometricVerified, isDark]);
+  const biometricIconColor = isBiometricVerified ? theme.palette.text.highlight : commonColor;
+  const hasEndAdornment = hasPasswordValue || Boolean(onBiometricClick);
 
   const InputIcon = Icon ?? Check;
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setHasPasswordValue(Boolean(value));
+
+      if (!value) {
+        setShowPassword(false);
+      }
+    }
+  }, [value]);
 
   return (
     <Grid container item sx={style}>
@@ -108,22 +155,37 @@ function PasswordInput({ Icon, errorMessage, focused = false, hasError = false, 
       }
       <StyledTextField
         InputProps={{
-          endAdornment: (
-            <InputAdornment position='end' sx={{ mr: '2px' }}>
-              <IconButton
-                aria-label='toggle password visibility'
-                edge='end'
-                onClick={handleClickShowPassword}
-                sx={{ bgcolor: isDark && isBlueish ? '#222442' : theme.palette.surface.input, borderRadius: '8px' }}
-                tabIndex={-1}
-              >
-                {showPassword
-                  ? <EyeSlash color={commonColor} size='20' variant='Bulk' />
-                  : <Eye color={commonColor} size='20' variant='Bulk' />
+          endAdornment: hasEndAdornment
+            ? (
+              <InputAdornment position='end' sx={{ columnGap: '3px', mr: '2px' }}>
+                {hasPasswordValue &&
+                  <IconButton
+                    aria-label='toggle password visibility'
+                    edge={onBiometricClick ? undefined : 'end'}
+                    onClick={handleClickShowPassword}
+                    sx={iconButtonStyle}
+                    tabIndex={-1}
+                  >
+                    {showPassword
+                      ? <EyeSlash color={commonColor} size='20' variant='Bulk' />
+                      : <Eye color={commonColor} size='20' variant='Bulk' />
+                    }
+                  </IconButton>
                 }
-              </IconButton>
-            </InputAdornment>
-          ),
+                {onBiometricClick &&
+                  <IconButton
+                    aria-label={isBiometricVerified ? 'biometrics verified' : 'use biometrics'}
+                    disabled={biometricDisabled || isBiometricBusy}
+                    edge='end'
+                    onClick={handleBiometricClick}
+                    sx={biometricButtonStyle}
+                  >
+                    <FingerScan color={biometricIconColor} size='20' variant={(isBiometricBusy || isBiometricVerified) ? 'Bold' : 'Bulk'} />
+                  </IconButton>
+                }
+              </InputAdornment>
+            )
+            : undefined,
           startAdornment: (
             <InputAdornment position='start'>
               <InputIcon

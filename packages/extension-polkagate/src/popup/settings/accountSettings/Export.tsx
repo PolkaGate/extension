@@ -1,6 +1,9 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { KeyringPair$Json } from '@polkadot/keyring/types';
+import type { KeyringPairs$Json } from '@polkadot/ui-keyring/types';
+
 import { Box, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import saveAs from 'file-saver';
 import { Import } from 'iconsax-react';
@@ -11,10 +14,12 @@ import { noop } from '@polkadot/util';
 import { user } from '../../../assets/gif/index';
 import { ActionButton, ActionContext, Address2, BackWithLabel, GradientBox2, GradientButton, Motion, MySnackbar, PasswordInput } from '../../../components';
 import MySwitch from '../../../components/MySwitch';
-import { useAccounts, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../hooks';
-import { exportAccount, exportAccounts } from '../../../messaging';
+import { useAccounts, useBiometricAction, useIsExtensionPopup, useSelectedAccount, useTranslation } from '../../../hooks';
+import { exportAccount, exportAccounts, exportAccountsWithBiometric, exportAccountWithBiometric } from '../../../messaging';
 import { UserDashboardHeader } from '../../../partials';
 import HomeMenu from '../../../partials/HomeMenu';
+
+type ExportResult = false | { exportedJson: KeyringPair$Json | KeyringPairs$Json };
 
 /**
  * AccountSettings component allows users to export their accounts as encrypted JSON files.
@@ -40,6 +45,7 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
   const [password, setPassword] = useState<string>();
   const [incorrectPassword, setPasswordIncorrect] = useState<boolean>();
   const [isExportAll, setExportAll] = useState<boolean>(!!isExternal);
+  const { isBiometricAvailable, isBiometricBusy, runBiometricAction } = useBiometricAction();
 
   const onExportAll = useCallback((_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     !isExternal && setExportAll(checked);
@@ -55,7 +61,7 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
     !isExtension && onBack?.();
   }, [isExtension, onBack]);
 
-  const onExport = useCallback(async (): Promise<void> => {
+  const onExport = useCallback(async(): Promise<void> => {
     if (!address || !password) {
       return;
     }
@@ -75,6 +81,34 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
       setPasswordIncorrect(true);
     }
   }, [address, accounts, isExportAll, password, setShowSnackbar, setPasswordIncorrect]);
+
+  const onBiometricExport = useCallback(async(): Promise<void> => {
+    if (!address) {
+      return;
+    }
+
+    try {
+      const result = await runBiometricAction(async(auth): Promise<ExportResult> => isExportAll
+        ? await exportAccountsWithBiometric(accounts.map((acc) => acc.address), auth)
+        : await exportAccountWithBiometric(address, auth)
+      );
+
+      if (!result) {
+        setPasswordIncorrect(true);
+
+        return;
+      }
+
+      const blob = new Blob([JSON.stringify(result.exportedJson)], { type: 'application/json; charset=utf-8' });
+
+      setShowSnackbar(true);
+
+      saveAs(blob, isExportAll ? `batch_exported_account_${Date.now()}.json` : `${address}.json`);
+    } catch (error) {
+      console.error(error);
+      setPasswordIncorrect(true);
+    }
+  }, [address, accounts, isExportAll, runBiometricAction]);
 
   const content = (
     <>
@@ -108,8 +142,12 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
             />}
         </Grid>
         <PasswordInput
+          biometricDisabled={isBiometricBusy}
           focused
           hasError={!!incorrectPassword}
+          isBiometricBusy={isBiometricBusy}
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          onBiometricClick={isBiometricAvailable ? onBiometricExport : undefined}
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onEnterPress={onExport}
           onPassChange={onCurrentPasswordChange}
@@ -166,7 +204,7 @@ export function ExportAccountsBody({ address, isExternal, name, onBack }: { addr
             overflow: 'none'
           }}
           withGradientTopBorder={false}
-        >
+          >
           {content}
         </GradientBox2>
         : content

@@ -34,3 +34,8 @@ export interface RequestBiometricUnlock {
   lazy?: boolean;
   prfOutput: string;
 }
+
+export interface RequestBiometricAuthentication {
+  credentialId: string;
+  prfOutput: string;
+}

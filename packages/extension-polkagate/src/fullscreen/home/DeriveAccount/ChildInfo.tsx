@@ -9,10 +9,10 @@ import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { User } from 'iconsax-react';
 import React, { useCallback, useState } from 'react';
 
-import { deriveAccount } from '@polkadot/extension-polkagate/src/messaging';
+import { deriveAccount, deriveAccountWithBiometric } from '@polkadot/extension-polkagate/src/messaging';
 
 import { DecisionButtons, Identity, MySnackbar, MyTextField } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useBiometricAction, useTranslation } from '../../../hooks';
 import { DERIVATION_STEPS } from './types';
 
 interface AddressState {
@@ -27,14 +27,16 @@ interface Props {
   genesisHash: string | undefined | null;
   maybeChidAccount: PathState | undefined;
   parentAddress?: string;
+  isParentBiometricValidated: boolean;
   parentPassword: string | undefined;
   setMaybeChidAccount: React.Dispatch<React.SetStateAction<PathState | undefined>>;
   onClose: ExtensionPopupCloser;
   setStep: React.Dispatch<React.SetStateAction<DERIVATION_STEPS>>;
 }
 
-function ChildInfo({ genesisHash, maybeChidAccount, onClose, parentAddress, parentPassword, setMaybeChidAccount, setStep }: Props): React.ReactElement {
+function ChildInfo({ genesisHash, isParentBiometricValidated, maybeChidAccount, onClose, parentAddress, parentPassword, setMaybeChidAccount, setStep }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const { isBiometricBusy, runBiometricAction } = useBiometricAction();
 
   const parentGenesis = (genesisHash ?? POLKADOT_GENESIS) as HexString;
 
@@ -43,22 +45,32 @@ function ChildInfo({ genesisHash, maybeChidAccount, onClose, parentAddress, pare
   const [isBusy, setIsBusy] = useState(false);
   const [childName, setChildName] = useState<string | null>(null);
 
-  const onCreate = useCallback(() => {
-    if (!maybeChidAccount || !childName || !parentAddress || !parentPassword) {
+  const onCreate = useCallback(async() => {
+    if (!maybeChidAccount || !childName || !parentAddress || (!parentPassword && !isParentBiometricValidated)) {
       return;
     }
 
+    setError('');
     setIsBusy(true);
-    deriveAccount(parentAddress, maybeChidAccount.suri, parentPassword, childName, parentPassword, parentGenesis)
-      .then(() => {
-        setShowSnackbar(true);
-        setIsBusy(false);
-      })
-      .catch((error: Error): void => {
-        setIsBusy(false);
-        setError(error.message);
-      });
-  }, [childName, maybeChidAccount, parentAddress, parentGenesis, parentPassword]);
+
+    try {
+      const success = parentPassword
+        ? await deriveAccount(parentAddress, maybeChidAccount.suri, parentPassword, childName, parentPassword, parentGenesis)
+        : await runBiometricAction((auth) => deriveAccountWithBiometric(parentAddress, maybeChidAccount.suri, childName, parentGenesis, auth));
+
+      if (!success) {
+        throw new Error(t('Unable to derive account'));
+      }
+
+      setError('');
+      setShowSnackbar(true);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : String(error));
+      setShowSnackbar(true);
+    } finally {
+      setIsBusy(false);
+    }
+  }, [childName, isParentBiometricValidated, maybeChidAccount, parentAddress, parentGenesis, parentPassword, runBiometricAction, t]);
 
   const onNameChange = useCallback((enteredName: string) => {
     // Remove leading white spaces
@@ -110,8 +122,8 @@ function ChildInfo({ genesisHash, maybeChidAccount, onClose, parentAddress, pare
         <DecisionButtons
           cancelButton
           direction='vertical'
-          disabled={!childName}
-          isBusy={isBusy}
+          disabled={!childName || (!parentPassword && !isParentBiometricValidated)}
+          isBusy={isBusy || isBiometricBusy}
           onPrimaryClick={onCreate}
           onSecondaryClick={onBackClick}
           primaryBtnText={t('Apply')}

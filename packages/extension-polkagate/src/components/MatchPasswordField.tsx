@@ -13,7 +13,7 @@ interface Props {
   onSetPassword?: () => unknown;
   statusSetter?: React.Dispatch<React.SetStateAction<PASSWORD_STATUS | undefined>>;
   hashPassword?: boolean;
-  setConfirmedPassword: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setConfirmedPassword: (password: string | undefined) => void;
   style?: React.CSSProperties;
   focused?: boolean;
   spacing?: string;

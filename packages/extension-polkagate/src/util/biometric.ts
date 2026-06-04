@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { BiometricEnrollmentData, RequestBiometricEnable, RequestBiometricUnlock } from '@polkadot/extension-base/utils/biometric';
+import type { BiometricEnrollmentData, RequestBiometricAuthentication, RequestBiometricEnable, RequestBiometricUnlock } from '@polkadot/extension-base/utils/biometric';
 
 import { BIOMETRIC_PENDING_CREDENTIAL_ID_STORAGE_KEY, BIOMETRIC_STORAGE_KEY, BIOMETRIC_USER_ID_STORAGE_KEY } from '@polkadot/extension-base/utils/biometric';
 
@@ -246,6 +246,15 @@ export async function unlockWithBiometric(cacheTime: number, credentialId: strin
     cacheTime,
     credentialId,
     lazy: true,
+    prfOutput
+  };
+}
+
+export async function authenticateWithBiometric(credentialId: string, prfSalt: string): Promise<RequestBiometricAuthentication> {
+  const prfOutput = await getPrfOutputFromAssertion(credentialId, prfSalt);
+
+  return {
+    credentialId,
     prfOutput
   };
 }

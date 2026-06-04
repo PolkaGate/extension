@@ -24,6 +24,7 @@ export { default as useBackground } from './useBackground';
 export { default as useBalances } from './useBalances';
 export { default as useBalancesOnAssethub } from './useBalancesOnAssethub';
 export { default as useBalancesOnMultiAssetChain } from './useBalancesOnMultiAssetChain';
+export { default as useBiometricAction } from './useBiometricAction';
 export { default as useCanPayFee } from './useCanPayFee';
 export { default as useCanPayFeeAndDeposit } from './useCanPayFeeAndDeposit';
 export { default as useCategorizedAccountsInProfiles } from './useCategorizedAccountsInProfiles';
