@@ -36,6 +36,13 @@ export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, chil
   const [isDragging, setIsDragging] = useState(false);
   const initialX = (window.innerWidth - width) / 2;
   const initialY = (window.innerHeight - maxHeight) / 2;
+  const modalGlowBackground = isDarkMode
+    ? `url(${modalEffect})`
+    : [
+      'radial-gradient(circle at 50% -22px, rgba(255, 79, 185, 0.24) 0%, rgba(255, 79, 185, 0.14) 22%, rgba(255, 79, 185, 0) 58%)',
+      'radial-gradient(circle at 22% -18px, rgba(110, 0, 177, 0.12) 0%, rgba(110, 0, 177, 0) 48%)',
+      'radial-gradient(circle at 78% -18px, rgba(110, 0, 177, 0.1) 0%, rgba(110, 0, 177, 0) 48%)'
+    ].join(', ');
 
   const [modalPosition, setModalPosition] = useState({ x: initialX, y: initialY });
   const [dragStartPosition, setDragStartPosition] = useState({ x: 0, y: 0 });
@@ -116,10 +123,10 @@ export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, chil
         onMouseUp={handleMouseUp}
         sx={{
           ..._style,
-          backgroundImage: `url(${modalEffect})`,
+          backgroundImage: modalGlowBackground,
           backgroundPosition: 'top center',
           backgroundRepeat: 'no-repeat',
-          backgroundSize: '100% auto'
+          backgroundSize: isDarkMode ? '100% auto' : '100% 170px'
         } as SxProps<Theme>}
       >
         <Grid alignItems='center' container item>
