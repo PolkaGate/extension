@@ -1,7 +1,9 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-const MAX_REQUESTS_PER_SECOND = 3;
+import { SUBSCAN_FREE_REQUESTS_PER_SECOND } from '../util/subscanLimits';
+
+const MAX_REQUESTS_PER_SECOND = SUBSCAN_FREE_REQUESTS_PER_SECOND;
 
 interface QueueTask<T> {
   fn: () => Promise<T>;
@@ -58,5 +60,4 @@ class SubscanRequestQueue {
   }
 }
 
-// Subscan free tier: 5 req/sec
 export const subscanQueue = new SubscanRequestQueue(MAX_REQUESTS_PER_SECOND);

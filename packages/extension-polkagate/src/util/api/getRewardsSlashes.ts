@@ -5,6 +5,7 @@ import type { TransferRequest } from '../types';
 
 import { getLink } from '@polkadot/extension-polkagate/src/popup/history/explorer';
 
+import { SUBSCAN_FREE_PAGE_SIZE } from '../subscanLimits';
 import { fetchFromSubscan } from '..';
 
 export default function getRewardsSlashes(chainName: string, address: string, filter: 'unclaimed' | 'claimed'): Promise<TransferRequest> {
@@ -27,6 +28,6 @@ export default function getRewardsSlashes(chainName: string, address: string, fi
     category: 'Reward',
     claimed_filter: filter,
     is_stash: true,
-    row: 100
+    row: SUBSCAN_FREE_PAGE_SIZE
   });
 }
