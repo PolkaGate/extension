@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import semver from 'semver';
 
@@ -20,6 +20,8 @@ import ChangeLog from './ChangeLog';
 export default function Home(): React.ReactElement {
   useBackground('default') as void;
 
+  const theme = useTheme();
+  const fadeBackgroundColor = theme.palette.background.default;
   const manifest = useManifest();
   const { hierarchy } = useContext(AccountContext);
   const refContainer = useRef<HTMLDivElement>(null);
@@ -66,7 +68,14 @@ export default function Home(): React.ReactElement {
             <AssetsBox />
             <WhatsNew style={{ columnGap: '5px', paddingBottom: '75px', paddingTop: '24px' }} />
             <FadeOnScroll
+              backgroundColor={fadeBackgroundColor}
               containerRef={refContainer}
+              height='96px'
+              style={{
+                WebkitBackdropFilter: 'none',
+                backdropFilter: 'none',
+                background: `linear-gradient(0deg, ${fadeBackgroundColor} 0%, ${fadeBackgroundColor}F2 68%, ${fadeBackgroundColor}80 88%, ${fadeBackgroundColor}00 100%)`
+              }}
             />
           </Grid>
           <HomeMenu />

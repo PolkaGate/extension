@@ -988,5 +988,7 @@
   "Show details": "",
   "Collapse details": "",
   "Clear selection": "",
-  "Unable to derive account": ""
+  "Unable to derive account": "",
+  "Password change failed": "",
+  "Biometric authentication failed": ""
 }

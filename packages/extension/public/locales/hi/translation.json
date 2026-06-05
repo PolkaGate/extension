@@ -988,5 +988,7 @@
   "Show details": "विवरण दिखाएँ",
   "Collapse details": "विवरण समेटें",
   "Clear selection": "चयन साफ़ करें",
-  "Unable to derive account": "खाता व्युत्पन्न नहीं किया जा सका"
+  "Unable to derive account": "खाता व्युत्पन्न नहीं किया जा सका",
+  "Password change failed": "पासवर्ड बदलने में विफल",
+  "Biometric authentication failed": "बायोमेट्रिक प्रमाणीकरण विफल"
 }

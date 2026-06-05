@@ -988,5 +988,7 @@
   "Show details": "Details anzeigen",
   "Collapse details": "Details einklappen",
   "Clear selection": "Auswahl löschen",
-  "Unable to derive account": "Konto kann nicht abgeleitet werden"
+  "Unable to derive account": "Konto kann nicht abgeleitet werden",
+  "Password change failed": "Passwortänderung fehlgeschlagen",
+  "Biometric authentication failed": "Biometrische Authentifizierung fehlgeschlagen"
 }

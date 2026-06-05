@@ -988,5 +988,7 @@
   "Show details": "Afficher les détails",
   "Collapse details": "Réduire les détails",
   "Clear selection": "Effacer la sélection",
-  "Unable to derive account": "Impossible de dériver le compte"
+  "Unable to derive account": "Impossible de dériver le compte",
+  "Password change failed": "Échec du changement de mot de passe",
+  "Biometric authentication failed": "Échec de l'authentification biométrique"
 }

@@ -988,5 +988,7 @@
   "Show details": "Показать детали",
   "Collapse details": "Свернуть детали",
   "Clear selection": "Очистить выбор",
-  "Unable to derive account": "Не удалось создать производный аккаунт"
+  "Unable to derive account": "Не удалось создать производный аккаунт",
+  "Password change failed": "Не удалось изменить пароль",
+  "Biometric authentication failed": "Не удалось выполнить биометрическую аутентификацию"
 }

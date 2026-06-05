@@ -988,5 +988,7 @@
   "Show details": "Mostrar detalles",
   "Collapse details": "Contraer detalles",
   "Clear selection": "Borrar selección",
-  "Unable to derive account": "No se puede derivar la cuenta"
+  "Unable to derive account": "No se puede derivar la cuenta",
+  "Password change failed": "Error al cambiar la contraseña",
+  "Biometric authentication failed": "Error en la autenticación biométrica"
 }
