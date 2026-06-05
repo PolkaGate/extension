@@ -25,7 +25,7 @@ const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => (
   background: mode === 'light' ? '#FFFFFF' : 'transparent',
   borderRadius: '16px',
   boxShadow: mode === 'light'
-    ? '0px 0px 24px 8px #9A9EFF59 inset'
+    ? '0px 8px 18px rgba(143, 151, 184, 0.22), 0px 0px 24px 8px #9A9EFF59 inset'
     : '0px 0px 24px 8px #4E2B7280 inset',
   inset: 0,
   position: 'absolute',
@@ -49,12 +49,13 @@ interface MenuItemProps {
   ButtonIcon: Icon;
   tooltip: string;
   isSelected: boolean;
+  iconVariant?: 'Bulk' | 'Linear' | 'Outline' | 'Broken' | 'Bold' | 'TwoTone' | undefined;
   onClick: () => void;
   withBorder?: boolean;
   setLeftPosition: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
+function MenuItem({ ButtonIcon, iconVariant = 'Bulk', isSelected = false, onClick, setLeftPosition, tooltip, withBorder = true }: MenuItemProps) {
   const theme = useTheme();
   const refContainer = useRef<HTMLDivElement>(null);
   const hovered = useIsHovered(refContainer);
@@ -68,7 +69,7 @@ function MenuItem({ ButtonIcon, isSelected = false, onClick, setLeftPosition, to
   return (
     <>
       <Grid container item onClick={onClick} ref={refContainer} sx={{ cursor: 'pointer', p: '3px', position: 'relative', width: 'fit-content' }}>
-        <ButtonIcon color={hovered || isSelected ? theme.palette.menuIcon.hover : theme.palette.menuIcon.active} size='24' variant='Bulk' />
+        <ButtonIcon color={hovered || isSelected ? theme.palette.menuIcon.hover : theme.palette.menuIcon.active} size='24' variant={iconVariant} />
         <SelectedItemBackground hovered={hovered || isSelected} />
       </Grid>
       {withBorder &&
@@ -153,12 +154,12 @@ function HomeMenu(): React.ReactElement {
       <Container disableGutters sx={{ bottom: '15px', mx: '15px', position: 'fixed', width: 'calc(100% - 30px)', zIndex: 1 }}>
         {leftPosition && <GradientDivider style={selectionLineStyle} />}
         <Grid alignItems='center' sx={{ display: 'flex', justifyContent: 'space-between', p: '12px 17px', position: 'relative' }}>
-          <MenuItem ButtonIcon={ArrowCircleRight2} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
-          <MenuItem ButtonIcon={ArrowCircleDown2} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />
+          <MenuItem ButtonIcon={ArrowCircleRight2} iconVariant={theme.palette.mode === 'light' ? 'Bold' : undefined} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} setLeftPosition={setLeftPosition} tooltip={t('Send')} />
+          <MenuItem ButtonIcon={ArrowCircleDown2} iconVariant={theme.palette.mode === 'light' ? 'Bold' : undefined} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} setLeftPosition={setLeftPosition} tooltip={t('Receive')} />
           <MenuItem ButtonIcon={BuyCrypto} isSelected={currentMenu === 'stakingIndex'} onClick={handleMenuClick('stakingIndex')} setLeftPosition={setLeftPosition} tooltip={t('Staking')} />
           <MenuItem ButtonIcon={Record} isSelected={currentMenu === 'governance'} onClick={handleMenuClick('governance')} setLeftPosition={setLeftPosition} tooltip={t('Governance')} />
-          <MenuItem ButtonIcon={Setting} isSelected={currentMenu === 'settings'} onClick={handleMenuClick('settings')} setLeftPosition={setLeftPosition} tooltip={t('Settings')} />
-          <MenuItem ButtonIcon={Clock} isSelected={currentMenu === 'history'} onClick={handleMenuClick('history')} setLeftPosition={setLeftPosition} tooltip={t('History')} withBorder={false} />
+          <MenuItem ButtonIcon={Setting} iconVariant={theme.palette.mode === 'light' ? 'Bold' : undefined} isSelected={currentMenu === 'settings'} onClick={handleMenuClick('settings')} setLeftPosition={setLeftPosition} tooltip={t('Settings')} />
+          <MenuItem ButtonIcon={Clock} iconVariant={theme.palette.mode === 'light' ? 'Bold' : undefined} isSelected={currentMenu === 'history'} onClick={handleMenuClick('history')} setLeftPosition={setLeftPosition} tooltip={t('History')} withBorder={false} />
           <MenuBackground mode={theme.palette.mode} />
         </Grid>
       </Container>
