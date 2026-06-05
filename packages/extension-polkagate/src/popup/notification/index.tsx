@@ -1,7 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Container, Grid } from '@mui/material';
+import { Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,6 +17,8 @@ import { ColdStartNotification, NoNotificationYet, NotificationLoading, OffNotif
 function Notification() {
   useBackground('default') as void;
 
+  const theme = useTheme();
+  const fadeBackgroundColor = theme.palette.background.default;
   const refContainer = useRef(null);
   const { markAsRead, notificationItems, status } = useNotifications();
   const { t } = useTranslation();
@@ -70,7 +72,16 @@ function Notification() {
           </VelvetBox>
           <WhatsNew style={{ columnGap: '5px', paddingBottom: '50px', paddingTop: '24px' }} />
         </Container>
-        <FadeOnScroll containerRef={refContainer} />
+        <FadeOnScroll
+          backgroundColor={fadeBackgroundColor}
+          containerRef={refContainer}
+          height='96px'
+          style={{
+            WebkitBackdropFilter: 'none',
+            backdropFilter: 'none',
+            background: `linear-gradient(0deg, ${fadeBackgroundColor} 0%, ${fadeBackgroundColor}F2 68%, ${fadeBackgroundColor}80 88%, ${fadeBackgroundColor}00 100%)`
+          }}
+        />
       </Motion>
       <HomeMenu />
     </Grid>

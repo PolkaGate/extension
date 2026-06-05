@@ -35,9 +35,10 @@ const BackButton = ({ logoInfo, token }: { token: FetchedBalance | undefined; lo
 );
 
 function Tokens(): React.ReactElement {
-  useBackground('default');
+  useBackground('default') as void;
 
   const theme = useTheme();
+  const fadeBackgroundColor = theme.palette.background.default;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const refContainer = useRef<HTMLDivElement>(null);
@@ -160,7 +161,16 @@ function Tokens(): React.ReactElement {
             genesisHash={genesisHash}
             token={token?.token}
           />
-          <FadeOnScroll containerRef={refContainer} />
+          <FadeOnScroll
+            backgroundColor={fadeBackgroundColor}
+            containerRef={refContainer}
+            height='96px'
+            style={{
+              WebkitBackdropFilter: 'none',
+              backdropFilter: 'none',
+              background: `linear-gradient(0deg, ${fadeBackgroundColor} 0%, ${fadeBackgroundColor}F2 68%, ${fadeBackgroundColor}80 88%, ${fadeBackgroundColor}00 100%)`
+            }}
+          />
         </Container>
       </Grid>
       <HomeMenu />

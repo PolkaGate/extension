@@ -4,7 +4,7 @@
 import type { TransactionDetail } from '../../../util/types';
 import type { FilterOptions } from '../hookUtils/types';
 
-import { Container, Grid } from '@mui/material';
+import { Container, Grid, useTheme } from '@mui/material';
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react';
 
 import ChainDropDown from '@polkadot/extension-polkagate/src/components/ChainDropDown';
@@ -19,6 +19,8 @@ import HistoryBox from './HistoryBox';
 import HistoryTabs, { TAB } from './HistoryTabs';
 
 function History(): React.ReactElement {
+  const theme = useTheme();
+  const fadeBackgroundColor = theme.palette.background.default;
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
   const selectedAccount = useSelectedAccount();
@@ -101,7 +103,14 @@ function History(): React.ReactElement {
           />
         </Grid>
         <FadeOnScroll
+          backgroundColor={fadeBackgroundColor}
           containerRef={scrollContainerRef}
+          height='96px'
+          style={{
+            WebkitBackdropFilter: 'none',
+            backdropFilter: 'none',
+            background: `linear-gradient(0deg, ${fadeBackgroundColor} 0%, ${fadeBackgroundColor}F2 68%, ${fadeBackgroundColor}80 88%, ${fadeBackgroundColor}00 100%)`
+          }}
         />
       </Motion>
       <HomeMenu />
