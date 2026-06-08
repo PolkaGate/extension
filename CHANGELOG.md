@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.12.1](https://github.com/polkagate/extension/compare/v2.12.0...v2.12.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* soften price chart modal glow ([0a255d4](https://github.com/polkagate/extension/commit/0a255d4f48386e6c12e5fd9a8712e2151e9054a8))
+
 # [2.12.0](https://github.com/polkagate/extension/compare/v2.11.0...v2.12.0) (2026-06-04)
 
 
