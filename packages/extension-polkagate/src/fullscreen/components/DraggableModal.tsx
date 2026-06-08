@@ -13,6 +13,7 @@ export interface DraggableModalProps {
   closeOnAnyWhereClick?: boolean;
   dividerStyle?: React.CSSProperties;
   draggable?: boolean;
+  lightGlowVariant?: 'default' | 'subtle';
   maxHeight?: number;
   minHeight?: number | string;
   noCloseButton?: boolean;
@@ -28,7 +29,7 @@ export interface DraggableModalProps {
   width?: number;
 }
 
-export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, children, closeOnAnyWhereClick = false, dividerStyle, draggable = false, maxHeight = 740, minHeight = 615, noCloseButton, noDivider, onClose, open, rightItemStyle, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
+export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, children, closeOnAnyWhereClick = false, dividerStyle, draggable = false, lightGlowVariant = 'default', maxHeight = 740, minHeight = 615, noCloseButton, noDivider, onClose, open, rightItemStyle, showBackIconAsClose, style = {}, title, width = 415 }: DraggableModalProps): React.ReactElement<DraggableModalProps> {
   const theme = useTheme();
 
   const isDarkMode = useMemo(() => theme.palette.mode === 'dark', [theme.palette.mode]);
@@ -36,13 +37,20 @@ export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, chil
   const [isDragging, setIsDragging] = useState(false);
   const initialX = (window.innerWidth - width) / 2;
   const initialY = (window.innerHeight - maxHeight) / 2;
-  const modalGlowBackground = isDarkMode
-    ? `url(${modalEffect})`
+  const lightGlowBackground = lightGlowVariant === 'subtle'
+    ? [
+      'radial-gradient(circle at 50% -26px, rgba(255, 79, 185, 0.12) 0%, rgba(255, 79, 185, 0.06) 24%, rgba(255, 79, 185, 0) 54%)',
+      'radial-gradient(circle at 24% -22px, rgba(110, 0, 177, 0.05) 0%, rgba(110, 0, 177, 0) 44%)',
+      'radial-gradient(circle at 76% -22px, rgba(110, 0, 177, 0.05) 0%, rgba(110, 0, 177, 0) 44%)'
+    ].join(', ')
     : [
       'radial-gradient(circle at 50% -22px, rgba(255, 79, 185, 0.24) 0%, rgba(255, 79, 185, 0.14) 22%, rgba(255, 79, 185, 0) 58%)',
       'radial-gradient(circle at 22% -18px, rgba(110, 0, 177, 0.12) 0%, rgba(110, 0, 177, 0) 48%)',
       'radial-gradient(circle at 78% -18px, rgba(110, 0, 177, 0.1) 0%, rgba(110, 0, 177, 0) 48%)'
     ].join(', ');
+  const modalGlowBackground = isDarkMode
+    ? `url(${modalEffect})`
+    : lightGlowBackground;
 
   const [modalPosition, setModalPosition] = useState({ x: initialX, y: initialY });
   const [dragStartPosition, setDragStartPosition] = useState({ x: 0, y: 0 });
@@ -126,7 +134,7 @@ export function DraggableModal({ RightItem, TitleLogo, blurBackdrop = true, chil
           backgroundImage: modalGlowBackground,
           backgroundPosition: 'top center',
           backgroundRepeat: 'no-repeat',
-          backgroundSize: isDarkMode ? '100% auto' : '100% 170px'
+          backgroundSize: isDarkMode ? '100% auto' : lightGlowVariant === 'subtle' ? '100% 110px' : '100% 170px'
         } as SxProps<Theme>}
       >
         <Grid alignItems='center' container item>

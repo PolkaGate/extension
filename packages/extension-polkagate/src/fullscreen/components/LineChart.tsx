@@ -352,6 +352,7 @@ const TokenChart: React.FC<TokenChartProps> = ({ coinId, intervalSec = 60, logo,
   return (
     <DraggableModal
       closeOnAnyWhereClick
+      lightGlowVariant='subtle'
       onClose={_onClose}
       open={true}
       showBackIconAsClose
