@@ -77,6 +77,7 @@ function GovernanceModal({ chainName, setOpen }: Props): React.ReactElement {
       open
       popupProps={{
         TitleIcon: Record,
+        compactInSidePanel: true,
         iconSize: 24,
         iconVariant: 'Bulk',
         pt: 185
