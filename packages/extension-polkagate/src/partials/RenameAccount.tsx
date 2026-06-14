@@ -48,6 +48,7 @@ function RenameAccount({ onClose, open }: Props): React.ReactElement {
   return (
     <ExtensionPopup
       TitleIcon={Edit2}
+      compactInSidePanel
       handleClose={handleClose}
       openMenu={open}
       pt={20}

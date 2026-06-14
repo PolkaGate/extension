@@ -11,7 +11,7 @@ import ChainDropDown from '@polkadot/extension-polkagate/src/components/ChainDro
 import useAccountSelectedChain from '@polkadot/extension-polkagate/src/hooks/useAccountSelectedChain';
 
 import { ActionContext, BackWithLabel, FadeOnScroll, Motion } from '../../../components';
-import { useChainInfo, useSelectedAccount, useTranslation } from '../../../hooks';
+import { useChainInfo, useIsSidePanel, useSelectedAccount, useTranslation } from '../../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../../partials';
 import { normalizeHistoryGenesis } from '../../../util/migrateHubUtils';
 import useTransactionHistory from '../useTransactionHistory';
@@ -26,6 +26,7 @@ function History(): React.ReactElement {
   const selectedAccount = useSelectedAccount();
   const savedSelectedChain = useAccountSelectedChain(selectedAccount?.address);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const isSidePanel = useIsSidePanel();
 
   const [tab, setTab] = useState<TAB>(TAB.ALL);
   const { decimal } = useChainInfo(savedSelectedChain as string, true);
@@ -75,13 +76,13 @@ function History(): React.ReactElement {
   const onBack = useCallback(() => onAction('/'), [onAction]);
 
   return (
-    <Container disableGutters sx={{ position: 'relative' }}>
+    <Container disableGutters sx={{ display: isSidePanel ? 'flex' : undefined, flexDirection: isSidePanel ? 'column' : undefined, height: isSidePanel ? '100vh' : undefined, overflow: isSidePanel ? 'hidden' : undefined, pb: isSidePanel ? '86px' : undefined, position: 'relative' }}>
       <UserDashboardHeader />
       <BackWithLabel
         onClick={onBack}
         text={t('Transaction History')}
       />
-      <Motion variant='slide'>
+      <Motion style={isSidePanel ? { display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0, overflow: 'hidden' } : undefined} variant='slide'>
         <HistoryTabs
           selectedChain={savedSelectedChain as string}
           setTab={setTab}
@@ -94,7 +95,7 @@ function History(): React.ReactElement {
             withSelectAChainText={false}
           />
         }
-        <Grid container item ref={scrollContainerRef} sx={{ height: 'fit-content', maxHeight: '400px', mt: '10px', overflowY: 'auto', pb: '60px' }}>
+        <Grid container item ref={scrollContainerRef} sx={{ flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : 'fit-content', maxHeight: isSidePanel ? 'none' : '400px', minHeight: isSidePanel ? 0 : undefined, mt: '10px', overflowY: 'auto', pb: '60px' }}>
           <HistoryBox
             historyItems={historyItemsToShow}
             isFetchingMore={isFetchingMore}

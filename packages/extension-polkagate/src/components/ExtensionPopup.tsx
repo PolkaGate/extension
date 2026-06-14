@@ -8,7 +8,7 @@ import { Box, Container, Dialog, Grid, type SxProps, type Theme, Typography, typ
 import { ArrowCircleLeft, ArrowCircleRight, type Icon } from 'iconsax-react';
 import React from 'react';
 
-import { useIsBlueish, useTranslation } from '../hooks';
+import { useIsBlueish, useIsSidePanel, useTranslation } from '../hooks';
 import { GradientBorder, GradientDivider, RedGradient } from '../style';
 import BlueGradient from '../style/BlueGradient';
 import CustomCloseSquare from './SVG/CustomCloseSquare';
@@ -18,6 +18,7 @@ export interface ExtensionPopupProps {
   TitleIcon?: Icon;
   children: React.ReactNode;
   contentContainerStyle?: SxProps<Theme>;
+  compactInSidePanel?: boolean;
   handleClose?: () => void;
   iconSize?: number;
   iconColor?: string;
@@ -60,10 +61,12 @@ const Gradient = React.memo(function MemoGradient({ pt, withoutBackground }: { p
   );
 });
 
-function ExtensionPopup({ RightItem, TitleIcon, children, contentContainerStyle, darkBackground = false, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, onNext, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
+function ExtensionPopup({ RightItem, TitleIcon, children, compactInSidePanel = false, contentContainerStyle, darkBackground = false, handleClose, iconColor = '#AA83DC', iconSize = 18, iconVariant, maxHeight = '440px', onBack, onNext, openMenu, pt, px, style, title, titleAlignment, titleDirection = 'row', titleStyle = {}, titleVariant = 'H-3', withGradientBorder = false, withoutBackground, withoutTopBorder = false }: ExtensionPopupProps): React.ReactElement<ExtensionPopupProps> {
   const { t } = useTranslation();
   const isBlueish = useIsBlueish();
+  const isSidePanel = useIsSidePanel();
   const theme = useTheme();
+  const useCompactSheet = compactInSidePanel && isSidePanel;
   const modalBg = darkBackground
     ? theme.palette.surface.panelAlt
     : theme.palette.surface.panel;
@@ -93,11 +96,11 @@ function ExtensionPopup({ RightItem, TitleIcon, children, contentContainerStyle,
       fullScreen
       open={openMenu}
     >
-      <Container disableGutters sx={{ height: '100%', width: '100%', ...style }}>
+      <Container disableGutters sx={{ display: useCompactSheet ? 'flex' : undefined, flexDirection: useCompactSheet ? 'column' : undefined, height: '100%', justifyContent: useCompactSheet ? 'flex-end' : undefined, width: '100%', ...style }}>
         <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: `${pt ?? 18}px` }}>
           <CustomCloseSquare color={isBlueish ? '#809ACB' : '#AA83DC'} onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
         </Grid>
-        <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: modalBg, border: '2px solid', borderColor, borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: `calc(100% - ${60 + (pt ?? 18)}px)`, overflow: 'hidden', overflowY: 'auto', position: 'relative', px: `${px ?? 10}px`, width: '100%', ...contentContainerStyle }}>
+        <Grid alignItems='center' container id='container' item justifyContent='center' sx={{ bgcolor: modalBg, border: '2px solid', borderColor, borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: useCompactSheet ? 'auto' : `calc(100% - ${60 + (pt ?? 18)}px)`, maxHeight: useCompactSheet ? `calc(100% - ${60 + (pt ?? 18)}px)` : undefined, overflow: 'hidden', overflowY: 'auto', position: 'relative', px: `${px ?? 10}px`, width: '100%', ...contentContainerStyle }}>
           {withGradientBorder && <GradientBorder />}
           {!!onBack &&
             <Grid alignItems='center' container item onClick={onBack} sx={{ cursor: 'pointer', left: '15px', position: 'absolute', pt: '15px', width: 'fit-content', zIndex: 2 }}>

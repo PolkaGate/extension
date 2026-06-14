@@ -6,12 +6,12 @@ import type { TextValuePair } from '../NotificationSettings';
 
 import { Stack } from '@mui/material';
 import { UserOctagon } from 'iconsax-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { sanitizeChainName } from '@polkadot/extension-polkagate/src/util';
 
-import { ExtensionPopup, GradientButton, GradientDivider } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { ExtensionPopup, FadeOnScroll, GradientButton, GradientDivider } from '../../../components';
+import { useIsSidePanel, useTranslation } from '../../../hooks';
 import ChainToggle from './ChainToggle';
 
 interface Props {
@@ -31,6 +31,8 @@ interface Props {
  */
 function SelectChain({ onChains, onClose, open, options, previousState, title }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const isSidePanel = useIsSidePanel();
+  const refContainer = useRef<HTMLDivElement>(null);
 
   const [selectedChains, setSelectedChains] = useState<string[]>(previousState ?? []);
 
@@ -67,9 +69,9 @@ function SelectChain({ onChains, onClose, open, options, previousState, title }:
       title={title}
       withoutTopBorder
     >
-      <Stack direction='column' sx={{ gap: '12px', position: 'relative', zIndex: 1 }}>
+      <Stack direction='column' sx={{ gap: '12px', height: isSidePanel ? 'calc(100vh - 250px)' : undefined, minHeight: isSidePanel ? 0 : undefined, position: 'relative', zIndex: 1 }}>
         <GradientDivider />
-        <Stack direction='column' sx={{ gap: '12px', height: '350px', maxHeight: '350px', overflowY: 'auto', px: '6px' }}>
+        <Stack direction='column' ref={refContainer} sx={{ flex: isSidePanel ? '1 1 auto' : undefined, gap: '12px', height: isSidePanel ? 'auto' : '350px', maxHeight: isSidePanel ? 'none' : '350px', minHeight: isSidePanel ? 0 : undefined, overflowY: 'auto', pb: isSidePanel ? '70px' : undefined, px: '6px' }}>
           {options.map(({ text, value }) => {
             const isSelected = selectedChains.includes(value);
 
@@ -84,6 +86,7 @@ function SelectChain({ onChains, onClose, open, options, previousState, title }:
             );
           })}
         </Stack>
+        <FadeOnScroll containerRef={refContainer} height='80px' ratio={0.55} />
         <GradientButton
           onClick={onChains(selectedChains)}
           style={{ marginTop: '10px' }}

@@ -12,7 +12,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import uiSetting from '@polkadot/ui-settings';
 
 import { FadeOnScroll, GradientButton } from '../components';
-import { useSelectedLanguage, useTranslation } from '../hooks';
+import { useIsSidePanel, useSelectedLanguage, useTranslation } from '../hooks';
 import { GradientDivider } from '../style';
 import { getLanguageOptions, type LanguageOptions } from '../util/getLanguageOptions';
 import { SharePopup } from '.';
@@ -50,6 +50,7 @@ const LanguageSelect = React.memo(
   function F({ handleLanguageSelect, onDoubleClick, options, selectedLanguage }: LanguageOptionProps): React.ReactElement {
     const theme = useTheme();
     const isDark = theme.palette.mode === 'dark';
+    const isSidePanel = useIsSidePanel();
     const refContainer = useRef<HTMLDivElement>(null);
     const flag = useCallback((value: string) => {
       const option = options.find((item) => item?.flag?.toUpperCase() === value.toUpperCase() || String(item.value).toUpperCase() === value.toUpperCase());
@@ -61,7 +62,7 @@ const LanguageSelect = React.memo(
 
     return (
       <>
-        <Grid container item justifyContent='center' ref={refContainer} sx={{ maxHeight: '370px', overflowY: 'auto' }}>
+        <Grid container item justifyContent='center' ref={refContainer} sx={{ maxHeight: isSidePanel ? 'calc(100vh - 300px)' : '370px', overflowY: 'auto', pb: isSidePanel ? '70px' : undefined }}>
           {options.map(({ text, value }, index) => (
             <React.Fragment key={index}>
               <ListItem className={selectedLanguage === value ? 'selected' : ''} container item key={value} onClick={handleLanguageSelect(value as string)} onDoubleClick={onDoubleClick}>

@@ -8,12 +8,14 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { DecisionButtons, FadeOnScroll, Motion, Progress } from '../../../components';
 import { EasyStakeSide } from '../../../fullscreen/stake/util/utils';
-import { useStakingConsts, useTranslation, useValidatorsInformation } from '../../../hooks';
+import { useIsSidePanel, useStakingConsts, useTranslation, useValidatorsInformation, useViewportHeight } from '../../../hooks';
 import Search from '../components/Search';
 import NominatorsTable from '../partial/NominatorsTable';
 
 export default function SelectValidator({ genesisHash, selectedStakingType, setSelectedStakingType, setSide, suggestedValidators }: SelectValidatorProps) {
   const { t } = useTranslation();
+  const isSidePanel = useIsSidePanel();
+  const viewportHeight = useViewportHeight();
   const stakingConsts = useStakingConsts(genesisHash);
   const validatorsInfo = useValidatorsInformation(genesisHash);
 
@@ -123,8 +125,8 @@ export default function SelectValidator({ genesisHash, selectedStakingType, setS
   }, [newSelectedValidators, setSelectedStakingType, setSide, suggestedValidators]);
 
   return (
-    <Motion style={{ height: 'calc(100vh - 50px)' }} variant='slide'>
-      <Stack direction='column' sx={{ maxHeight: '530px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
+    <Motion style={{ display: isSidePanel ? 'flex' : undefined, flexDirection: isSidePanel ? 'column' : undefined, height: 'calc(100vh - 50px)', minHeight: isSidePanel ? 0 : undefined, overflow: isSidePanel ? 'hidden' : undefined }} variant='slide'>
+      <Stack direction='column' sx={{ flex: isSidePanel ? '1 1 auto' : undefined, maxHeight: isSidePanel ? 'none' : '530px', minHeight: isSidePanel ? 0 : undefined, mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
         <Search onSearch={onSearch} style={{ mb: '15px', width: '100%' }} />
         {isLoading &&
           <Progress
@@ -135,7 +137,7 @@ export default function SelectValidator({ genesisHash, selectedStakingType, setS
         {isLoaded &&
           <NominatorsTable
             genesisHash={genesisHash ?? ''}
-            height={480}
+            height={isSidePanel ? Math.max(viewportHeight - 165, 300) : 480}
             onSelect={onSelect}
             selected={newSelectedValidators}
             validatorsInformation={validatorsToShow ?? []}

@@ -9,7 +9,7 @@ import React, { memo, useCallback, useRef } from 'react';
 import { FadeOnScroll } from '@polkadot/extension-polkagate/src/components/index';
 
 import { emptyList, emptyListLight } from '../../../assets/icons/index';
-import { useIsExtensionPopup, useTranslation } from '../../../hooks';
+import { useIsExtensionPopup, useIsSidePanel, useTranslation } from '../../../hooks';
 import VelvetBox from '../../../style/VelvetBox';
 import AssetLoading from '../../home/partial/AssetLoading';
 import HistoryItem from './HistoryItem';
@@ -45,6 +45,7 @@ function HistoryBox({ historyItems, isFetchingMore = false, notReady = false, st
   const refContainer = useRef<HTMLDivElement>(null);
 
   const isExtension = useIsExtensionPopup();
+  const isSidePanel = useIsSidePanel();
 
   const short = window.location.hash.includes('token');
 
@@ -83,15 +84,19 @@ function HistoryBox({ historyItems, isFetchingMore = false, notReady = false, st
     return inputDate;
   }, []);
 
-  const hasHistoryItems = Boolean(historyItems && Object.keys(historyItems).length);
+  const historyEntries = historyItems ? Object.entries(historyItems) : [];
+  const hasHistoryItems = Boolean(historyEntries.length);
   const isLoading = !notReady && (historyItems === undefined || (!hasHistoryItems && isFetchingMore));
   const showEmptyState = !notReady && !hasHistoryItems && historyItems !== undefined && !isFetchingMore && !isLoading;
   const showFetchingMore = hasHistoryItems && !isLoading && isFetchingMore;
+  const loadingItemsCount = short
+    ? isSidePanel ? 4 : 2
+    : 5;
 
   return (
     <VelvetBox style={style}>
       <Stack direction='column' id='scrollArea' ref={refContainer} sx={{ height: isExtension ? 'inherit' : 'calc(100vh - 633px)', overflowY: 'auto', rowGap: isLoading ? 0 : '4px' }}>
-        {hasHistoryItems && Object.entries(historyItems as Record<string, TransactionDetail[]>).map(([date, items], index) => (
+        {hasHistoryItems && historyEntries.map(([date, items], index) => (
           <HistoryItem
             historyDate={formatDate(date)}
             historyItems={items}
@@ -108,7 +113,7 @@ function HistoryBox({ historyItems, isFetchingMore = false, notReady = false, st
           <AssetLoading itemsCount={1} noDrawer />
         }
         {isLoading &&
-          <AssetLoading itemsCount={short ? 2 : 5} noDrawer />
+          <AssetLoading itemsCount={loadingItemsCount} noDrawer />
         }
         {notReady &&
           <Typography color='text.primary' my='40px' variant='B-2'>

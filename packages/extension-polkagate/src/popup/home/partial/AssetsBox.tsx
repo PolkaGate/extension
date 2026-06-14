@@ -9,7 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { calcPrice } from '@polkadot/extension-polkagate/src/util';
 
 import { AssetNull } from '../../../components';
-import { useAccountAssets, useIsExtensionPopup, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
+import { useAccountAssets, useIsExtensionPopup, useIsSidePanel, usePrices, useSelectedAccount, useSelectedChains } from '../../../hooks';
 import { VelvetBox } from '../../../style';
 import AssetLoading from './AssetLoading';
 import AssetTabs from './AssetTabs';
@@ -38,6 +38,7 @@ function AssetsBox({ loadingItemsCount }: { loadingItemsCount?: number }): React
   const selectedChains = useSelectedChains();
   const pricesInCurrency = usePrices();
   const isExtension = useIsExtensionPopup();
+  const isSidePanel = useIsSidePanel();
   const { address, genesisHash, paramAssetId } = useParams<{ address: string, genesisHash: string, paramAssetId: string }>();
   const navigate = useNavigate();
 
@@ -136,11 +137,11 @@ function AssetsBox({ loadingItemsCount }: { loadingItemsCount?: number }): React
 
   return (
     <>
-      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ width: isExtension ? '90%' : '96%' }}>
+      <Stack alignItems='center' direction='row' justifyContent='space-between' sx={{ flexShrink: isSidePanel ? 0 : undefined, width: isExtension ? '90%' : '96%' }}>
         <AssetTabs setTab={setTab} tab={tab} />
         <ManageNetworks />
       </Stack>
-      <VelvetBox style={{ margin: isExtension ? '0 15px' : 0, minHeight: '70px', padding: isExtension ? '4px' : 0 }}>
+      <VelvetBox style={{ flex: isSidePanel ? '1 1 auto' : undefined, margin: isExtension ? '0 15px' : 0, minHeight: isSidePanel ? 0 : '70px', overflowY: isSidePanel ? 'auto' : undefined, padding: isExtension ? '4px' : 0 }}>
         {renderContent(loadingItemsCount)}
       </VelvetBox>
     </>

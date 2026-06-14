@@ -3,12 +3,12 @@
 
 import { Container, Stack, Typography, useTheme } from '@mui/material';
 import { ArrowCircleDown, UserOctagon } from 'iconsax-react';
-import React, { Fragment, useCallback, useState } from 'react';
+import React, { Fragment, useCallback, useRef, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { GradientDivider, Identity, VariantButton } from '../../../../components';
-import { useAccounts, useChainInfo, useTranslation } from '../../../../hooks';
+import { FadeOnScroll, GradientDivider, Identity, VariantButton } from '../../../../components';
+import { useAccounts, useChainInfo, useIsSidePanel, useTranslation } from '../../../../hooks';
 import { SharePopup } from '../../../../partials';
 import { getFormattedAddress } from '../../../../util';
 import PRadio from '../../components/Radio';
@@ -25,7 +25,9 @@ interface ChooseAccountMenuProps {
 const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, setSpecificAccount, specificAccount }: ChooseAccountMenuProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const isSidePanel = useIsSidePanel();
   const substrateAccounts = useAccounts(({ type }) => type !== 'ethereum');
+  const refContainer = useRef<HTMLDivElement>(null);
   const { chain } = useChainInfo(genesisHash, true);
 
   const handleSelect = useCallback((selectedAccount: string) => () => {
@@ -42,16 +44,16 @@ const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, se
         darkBackground: true,
         iconColor: theme.palette.text.highlight,
         iconSize: 26,
-        maxHeight: '460px',
+        maxHeight: isSidePanel ? 'calc(100vh - 220px)' : '460px',
         withoutTopBorder: true
       }}
       title={t('Accounts')}
     >
-      <Stack direction='column' sx={{ height: '460px', position: 'relative', rowGap: '24px', width: '100%' }}>
+      <Stack direction='column' sx={{ height: isSidePanel ? 'calc(100vh - 280px)' : '460px', minHeight: isSidePanel ? 0 : undefined, position: 'relative', rowGap: '24px', width: '100%' }}>
         <Typography color={isBlueish ? 'text.highlight' : 'primary.main'} letterSpacing='1px' textTransform='uppercase' variant='S-1' width='fit-content'>
           {t('My Accounts')}
         </Typography>
-        <Stack direction='column' sx={{ maxHeight: '390px', mb: '65px', overflowY: 'auto', rowGap: '12px' }}>
+        <Stack direction='column' ref={refContainer} sx={{ flex: isSidePanel ? '1 1 auto' : undefined, maxHeight: isSidePanel ? 'none' : '390px', mb: '65px', minHeight: isSidePanel ? 0 : undefined, overflowY: 'auto', rowGap: '12px' }}>
           {substrateAccounts.map(({ address }, index) => {
             const formatted = getFormattedAddress(address, chain, chain?.ss58Format ?? 0);
             const checked = formatted === specificAccount;
@@ -84,6 +86,7 @@ const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, se
             );
           })}
         </Stack>
+        <FadeOnScroll containerRef={refContainer} height='80px' ratio={0.55} style={{ bottom: '64px' }} />
         <VariantButton
           isBlueish={isBlueish}
           onClick={handleClose}

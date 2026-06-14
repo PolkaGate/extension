@@ -3,13 +3,13 @@
 
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Folder } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 
-import { DecisionButtons, GradientButton, MyTextField, TwoToneText } from '../../components';
-import { useAccounts, useCategorizedAccountsInProfiles, useIsDark, useTranslation } from '../../hooks';
+import { DecisionButtons, FadeOnScroll, GradientButton, MyTextField, TwoToneText } from '../../components';
+import { useAccounts, useCategorizedAccountsInProfiles, useIsDark, useIsSidePanel, useTranslation } from '../../hooks';
 import ProfileAccountSelection from './ProfileAccountSelection';
 import { PROFILE_MODE } from './type';
 import { addProfileTag } from './utils';
@@ -28,7 +28,9 @@ function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
+  const isSidePanel = useIsSidePanel();
   const accounts = useAccounts();
+  const refContainer = useRef<HTMLDivElement>(null);
   const { categorizedAccounts } = useCategorizedAccountsInProfiles();
 
   const [isBusy, setIsBusy] = useState<boolean>(false);
@@ -45,14 +47,14 @@ function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
     setStep(STEP.CHOOSE_ACCOUNTS);
   }, []);
 
-  const onAdd = useCallback(async () => {
+  const onAdd = useCallback(async() => {
     if (!profileName) { // won't happen
       return;
     }
 
     setIsBusy(true);
 
-    await Promise.all(accounts?.map(async (account) => {
+    await Promise.all(accounts?.map(async(account) => {
       let newProfileString;
       let metaData;
 
@@ -82,7 +84,7 @@ function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
         TitleIcon: Folder,
         iconSize: 24,
         iconVariant: 'Bulk',
-        maxHeight: '100%',
+        maxHeight: isSidePanel ? 'calc(100vh - 220px)' : '100%',
         pt: 20,
         withoutTopBorder: true
       }}
@@ -90,7 +92,7 @@ function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
     >
       <Grid container item>
         {step === STEP.ADD_NAME &&
-          <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
+          <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: isSidePanel ? 'calc(100vh - 280px)' : '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
             <Typography color={isDark ? '#BEAAD8' : '#674394'} variant='B-4'>
               {t('Give a name to the profile')}
             </Typography>
@@ -120,7 +122,7 @@ function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
           </Grid>
         }
         {step === STEP.CHOOSE_ACCOUNTS &&
-          <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
+          <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? 'calc(100vh - 280px)' : '450px', minHeight: isSidePanel ? 0 : undefined, pb: '20px', position: 'relative', zIndex: 1 }}>
             <Typography color='#BEAAD8' variant='B-4'>
               <TwoToneText
                 color={theme.palette.text.primary}
@@ -128,7 +130,7 @@ function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
                 textPartInColor={profileName ?? ''}
               />
             </Typography>
-            <Stack direction='column' sx={{ boxSizing: 'border-box', height: '350px', mt: '25px', overflowY: 'auto', pb: '90px', width: '100%' }}>
+            <Stack direction='column' ref={refContainer} sx={{ boxSizing: 'border-box', flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : '350px', minHeight: isSidePanel ? 0 : undefined, mt: '25px', overflowY: 'auto', pb: '90px', width: '100%' }}>
               {Object.entries(categorizedAccounts)?.map(([label, accounts]) => {
                 return (
                   <>
@@ -146,6 +148,7 @@ function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
                 );
               })}
             </Stack>
+            <FadeOnScroll containerRef={refContainer} height='80px' ratio={0.55} style={{ bottom: '64px' }} />
             <DecisionButtons
               cancelButton
               direction='horizontal'
@@ -153,7 +156,7 @@ function NewProfile({ defaultMode, setPopup }: Props): React.ReactElement {
               isBusy={isBusy}
               onPrimaryClick={onAdd}
               onSecondaryClick={handleClose}
-              primaryBtnText={t('Add {{num}} address{{es}}', { replace: { num: selectedAddresses.size, es: selectedAddresses.size > 1 ? 'es' : '' } })}
+              primaryBtnText={t('Add {{num}} address{{es}}', { replace: { es: selectedAddresses.size > 1 ? 'es' : '', num: selectedAddresses.size } })}
               secondaryBtnText={t('Skip')}
               style={{ bottom: 0, position: 'absolute' }}
             />

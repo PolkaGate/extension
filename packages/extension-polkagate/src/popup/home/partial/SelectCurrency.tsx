@@ -15,7 +15,7 @@ import { setStorage } from '@polkadot/extension-polkagate/src/util';
 import { STORAGE_KEY } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { CurrencyContext, GlowCheck, GradientButton, GradientDivider, SearchField } from '../../../components';
-import { useTranslation } from '../../../hooks';
+import { useIsSidePanel, useTranslation } from '../../../hooks';
 import SharePopup from '../../../partials/SharePopup';
 import { CRYPTO_AS_CURRENCY, CURRENCY_LIST } from '../../../util/currencyList';
 
@@ -135,6 +135,7 @@ const CurrencyList = memo(function CL({ currencyList, handleCurrencySelect, noLa
 
 const CurrencyOptions = memo(function CO({ handleCurrencySelect, onDoubleClick, selectedCurrency }: CurrencyOptionProps): React.ReactElement {
   const { t } = useTranslation();
+  const isSidePanel = useIsSidePanel();
 
   const [searchedCurrencies, setSearchedCurrencies] = useState<CurrencyItemType[]>();
 
@@ -169,7 +170,7 @@ const CurrencyOptions = memo(function CO({ handleCurrencySelect, onDoubleClick, 
           placeholder={t('🔍 Search currency')}
         />
       </Grid>
-      <Grid container item justifyContent='center' sx={{ display: 'block', height: '315px', maxHeight: '315px', mb: '60px', overflowY: 'auto', pt: '5px' }}>
+      <Grid container item justifyContent='center' sx={{ display: 'block', height: isSidePanel ? 'calc(100vh - 295px)' : '315px', maxHeight: isSidePanel ? 'none' : '315px', mb: '60px', overflowY: 'auto', pt: '5px' }}>
         <NothingFound
           show={searchedCurrencies?.length === 0}
           style={{ pt: '50px' }}
@@ -241,6 +242,7 @@ function Content({ setOpenMenu }: { setOpenMenu: React.Dispatch<React.SetStateAc
 
 function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
   const { t } = useTranslation();
+  const isSidePanel = useIsSidePanel();
 
   const handleClose = useCallback(() => setOpenMenu(false), [setOpenMenu]);
 
@@ -252,6 +254,7 @@ function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
       popupProps={{
         TitleIcon: Hashtag,
         iconVariant: 'Linear',
+        maxHeight: isSidePanel ? 'calc(100vh - 185px)': undefined,
         pt: 60,
         style: {
           'div#container div#boxContainer': {

@@ -9,9 +9,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { noop } from '@polkadot/util';
 
-import { DecisionButtons, GradientDivider, GradientSwitch, MyTooltip } from '../components';
+import { DecisionButtons, FadeOnScroll, GradientDivider, GradientSwitch, MyTooltip } from '../components';
 import { sortAccounts } from '../components/sortAccounts';
-import { useAccounts, useTranslation } from '../hooks';
+import { useAccounts, useIsSidePanel, useTranslation } from '../hooks';
 import { approveAuthRequest, ignoreAuthRequest, showAccount, updateAuthorization } from '../messaging';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 
@@ -28,11 +28,13 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
   const { t } = useTranslation();
   const accounts = useAccounts();
   const theme = useTheme();
+  const isSidePanel = useIsSidePanel();
   const isDark = theme.palette.mode === 'dark';
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
 
   // Sort only on the first render, store result in a ref
+  const listRef = useRef<HTMLDivElement>(null);
   const sortedAccountsRef = useRef<AccountJson[] | null>(null);
   const initializedDappIdRef = useRef<string | undefined>(undefined);
 
@@ -129,9 +131,9 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
   }, [selectedAccounts, dappInfo?.id, requestId, setRefresh, closePopup]);
 
   return (
-    <Grid container item justifyContent='center' sx={{ position: 'relative', zIndex: 1, ...style }}>
-      <Grid container item sx={{ height: 'fit-content', pb: '10px' }}>
-        <Container disableGutters sx={{ alignItems: 'center', bgcolor: theme.palette.surface.input, border: isDark ? 'none' : '1px solid', borderColor: isDark ? 'transparent' : theme.palette.border.strong, borderRadius: '14px', display: 'flex', flexDirection: 'column', height: 'fit-content', justifyContent: 'flex-start', p: '4px' }}>
+    <Grid container item justifyContent='center' sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? 'calc(100vh - 500px)' : undefined, minHeight: isSidePanel ? 0 : undefined, position: 'relative', zIndex: 1, ...style }}>
+      <Grid container item sx={{ flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : 'fit-content', minHeight: isSidePanel ? 0 : undefined, pb: '10px' }}>
+        <Container disableGutters sx={{ alignItems: 'center', bgcolor: theme.palette.surface.input, border: isDark ? 'none' : '1px solid', borderColor: isDark ? 'transparent' : theme.palette.border.strong, borderRadius: '14px', display: 'flex', flexDirection: 'column', height: isSidePanel ? '100%' : 'fit-content', justifyContent: 'flex-start', minHeight: 0, p: '4px', position: 'relative' }}>
           <Grid
             alignItems='center'
             container
@@ -160,7 +162,7 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
               />
             </Grid>
           </Grid>
-          <Container disableGutters sx={{ background: theme.palette.surface.panel, border: isDark ? 'none' : `1px solid ${theme.palette.border.subtle}`, borderRadius: '10px', height: 'fit-content', maxHeight: hasBanner ? '185px' : '223px', overflowY: 'auto', p: isDark ? '8px 12px' : 'none', width: '100%' }}>
+          <Container disableGutters ref={listRef} sx={{ background: theme.palette.surface.panel, border: isDark ? 'none' : `1px solid ${theme.palette.border.subtle}`, borderRadius: '10px', flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : 'fit-content', maxHeight: isSidePanel ? 'none' : hasBanner ? '185px' : '223px', minHeight: 0, overflowY: 'auto', p: isDark ? '8px 12px' : 'none', pb: isSidePanel ? '70px' : undefined, position: 'relative', width: '100%' }}>
             {accountsToShow.map(({ address, isHidden, name }, index) => {
               const noDivider = accountsToShow.length === index + 1;
 
@@ -209,6 +211,13 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
               );
             })}
           </Container>
+          <FadeOnScroll
+            backgroundColor={theme.palette.surface.panel}
+            containerRef={listRef}
+            height='80px'
+            ratio={0.6}
+            style={{ borderRadius: '0 0 10px 10px', bottom: '4px', left: '4px', right: '4px', width: 'calc(100% - 8px)' }}
+          />
         </Container>
       </Grid>
       <DecisionButtons

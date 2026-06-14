@@ -10,7 +10,8 @@
     "storage",
     "unlimitedStorage",
     "tabs",
-    "offscreen"
+    "offscreen",
+    "sidePanel"
   ],
   "background": {
     "service_worker": "background.js",
@@ -19,6 +20,9 @@
   "action": {
     "default_title": "PolkaGate",
     "default_popup": "index.html"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
   },
   "content_scripts": [
     {

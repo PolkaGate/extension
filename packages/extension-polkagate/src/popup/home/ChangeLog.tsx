@@ -11,7 +11,7 @@ import { celebration } from '../../assets/gif';
 import { CometStar, Gear } from '../../assets/icons';
 import { logoPink, logoTransparent } from '../../assets/logos';
 import { GradientButton, GradientDivider, Progress } from '../../components';
-import { useIsDark, useManifest } from '../../hooks';
+import { useIsDark, useManifest, useUiMode } from '../../hooks';
 import useTranslation from '../../hooks/useTranslation';
 import { RedGradient } from '../../style';
 import { EXTENSION_NAME } from '../../util/constants';
@@ -237,6 +237,7 @@ interface Props {
 export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const isDark = useIsDark();
+  const { isSidePanel } = useUiMode();
 
   const manifest = useManifest();
 
@@ -356,7 +357,7 @@ export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props)
       onClose={handleClose}
       open={openPopup}
       popupProps={{
-        maxHeight: '514px',
+        maxHeight: isSidePanel ? 'calc(100vh - 90px)' : '514px',
         px: 0,
         withoutTopBorder: true
       }}
@@ -381,11 +382,11 @@ export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props)
         </Grid>
         <RedGradient style={{ top: '-130px' }} />
         <GradientDivider />
-        <Box sx={{ maxHeight: '440px', overflowY: 'auto', position: 'relative', width: '100%' }}>
+        <Box sx={{ maxHeight: isSidePanel ? 'calc(100vh - 100px)' : '440px', overflowY: 'auto', position: 'relative', width: '100%' }}>
           {!isLoading &&
             <>
               <Grid container item sx={{ pb: '5px', position: 'relative', zIndex: 1 }}>
-                <Stack sx={{ height: '380px', overflow: 'hidden', overflowY: 'auto', pt: '20px', rowGap: '20px', width: '100%' }}>
+                <Stack sx={{ height: isSidePanel ? 'calc(100vh - 232px)' : '380px', overflow: 'hidden', overflowY: 'auto', pt: '20px', rowGap: '20px', width: '100%' }}>
                   {newVersionsToShow?.map((change, index) => (
                     <NewVersionItem
                       item={change}

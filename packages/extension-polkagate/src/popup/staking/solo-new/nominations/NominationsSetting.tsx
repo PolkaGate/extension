@@ -10,7 +10,7 @@ import useNominatedValidatorsStatus from '@polkadot/extension-polkagate/src/full
 
 import { EmptyWarning } from '../../../../assets/icons/index';
 import { FadeOnScroll, GradientDivider, Motion, MySkeleton, NeonButton } from '../../../../components';
-import { useBackground, useSelectedAccount, useSoloStakingInfo, useTranslation } from '../../../../hooks';
+import { useBackground, useIsSidePanel, useSelectedAccount, useSoloStakingInfo, useTranslation, useViewportHeight } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import NominationsBackButton from '../../partial/NominationsBackButton';
 import NominatorsTable from '../../partial/NominatorsTable';
@@ -83,11 +83,14 @@ const UndefinedItem = () => {
 };
 
 export default function NominationsSetting(): React.ReactElement {
-  useBackground('staking');
+  useBackground('staking') as void;
 
   const address = useSelectedAccount()?.address;
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const refContainer = useRef(null);
+  const isSidePanel = useIsSidePanel();
+  const viewportHeight = useViewportHeight();
+  const tableHeight = Math.max(viewportHeight - 165, 300);
 
   const [refresh, setRefresh] = useState<boolean>(false);
 
@@ -100,15 +103,15 @@ export default function NominationsSetting(): React.ReactElement {
     nonElected } = useNominatedValidatorsStatus(stakingInfo);
 
   return (
-    <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+    <Grid alignContent='flex-start' container sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? '100vh' : undefined, overflow: isSidePanel ? 'hidden' : undefined, pb: isSidePanel ? '86px' : undefined, position: 'relative' }}>
       <UserDashboardHeader fullscreenURL={'/fullscreen-stake/solo/' + address + '/' + genesisHash} homeType='default' />
-      <Motion variant='slide'>
+      <Motion style={isSidePanel ? { display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0, overflow: 'hidden' } : undefined} variant='slide'>
         <NominationsBackButton
           address={address}
           genesisHash={genesisHash}
           style={{ mt: '8px' }}
         />
-        <Stack direction='column' ref={refContainer} sx={{ maxHeight: '500px', mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
+        <Stack direction='column' ref={refContainer} sx={{ flex: isSidePanel ? '1 1 auto' : undefined, maxHeight: isSidePanel ? 'none' : '500px', minHeight: isSidePanel ? 0 : undefined, mt: '12px', overflowY: 'auto', px: '15px', width: '100%' }}>
           {isNominated !== false && isLoading &&
             Array.from({ length: 4 }).map((_, index) => (
               <UndefinedItem key={index} />
@@ -117,6 +120,7 @@ export default function NominationsSetting(): React.ReactElement {
           {isNominated && isLoaded &&
             <NominatorsTable
               genesisHash={genesisHash ?? ''}
+              height={isSidePanel ? tableHeight : undefined}
               selected={active.map(({ accountId }) => accountId.toString())}
               validatorsInformation={[...active, ...elected, ...nonElected]}
             />}

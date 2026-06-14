@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 
 import { FadeOnScroll, Progress } from '../../../../components';
 import { sortingFunctions } from '../../../../fullscreen/stake/util/utils';
-import { useTranslation } from '../../../../hooks';
+import { useIsSidePanel, useTranslation } from '../../../../hooks';
 import { PREFERRED_POOL_NAME } from '../../../../util/constants';
 import { type PoolFilterState, SORTED_BY } from '../../partial/PoolFilter';
 import PoolsTable from '../../partial/PoolsTable';
@@ -35,6 +35,7 @@ interface Props {
 
 export default function ChoosePool({ filter, onNext, pools, searchedQuery, selectedPool, setSelectedPool }: Props) {
   const { t } = useTranslation();
+  const isSidePanel = useIsSidePanel();
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const refContainer = useRef(null);
 
@@ -101,7 +102,7 @@ export default function ChoosePool({ filter, onNext, pools, searchedQuery, selec
         numberOfFetchedPools={numberOfFetchedPools}
         totalNumberOfPools={totalNumberOfPools}
       />
-      <Stack direction='column' ref={refContainer} sx={{ height: 'fit-content', maxHeight: '500px', overflowY: 'auto', px: '15px', width: '100%' }}>
+      <Stack direction='column' ref={refContainer} sx={{ flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : 'fit-content', maxHeight: isSidePanel ? 'none' : '500px', minHeight: isSidePanel ? 0 : undefined, overflowY: 'auto', px: '15px', width: '100%' }}>
         {incrementalPools === undefined &&
           <Progress
             title={t('Loading pools')}

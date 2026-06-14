@@ -12,8 +12,8 @@ import { useNavigate } from 'react-router-dom';
 import { extractRelayChainName } from '@polkadot/extension-polkagate/src/util/migrateHubUtils';
 import { BN_ZERO } from '@polkadot/util';
 
-import { BackWithLabel, Logo, DisplayBalance, FadeOnScroll, Motion, SearchField } from '../../components';
-import { useAccountAssets, useBackground, useIsDark, useIsTestnetEnabled, useSelectedAccount, useTranslation } from '../../hooks';
+import { BackWithLabel, DisplayBalance, FadeOnScroll, Logo, Motion, SearchField } from '../../components';
+import { useAccountAssets, useBackground, useIsDark, useIsSidePanel, useIsTestnetEnabled, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, NothingFound, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 import { fetchStaking } from '../../util/fetchStaking';
@@ -21,11 +21,12 @@ import StakingInfo from './stakingInfo';
 import { getEarningOptions } from './utils';
 
 export default function EarningOptions(): React.ReactElement {
-  useBackground('default');
+  useBackground('default') as void;
 
   const theme = useTheme();
   const { t } = useTranslation();
   const isDark = useIsDark();
+  const isSidePanel = useIsSidePanel();
   const successColor = 'success.main';
   const successBgColor = isDark ? '#82FFA533' : '#DDF8EA';
   const successBorderColor = isDark ? 'none' : '1px solid #BCECCF';
@@ -70,20 +71,20 @@ export default function EarningOptions(): React.ReactElement {
 
   return (
     <>
-      <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+      <Grid alignContent='flex-start' container sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? '100vh' : undefined, overflow: isSidePanel ? 'hidden' : undefined, pb: isSidePanel ? '86px' : undefined, position: 'relative' }}>
         <UserDashboardHeader homeType='default' />
         <BackWithLabel
           onClick={onBack}
           style={{ pb: 0 }}
           text={t('Staking Options')}
         />
-        <Motion variant='slide'>
+        <Motion style={isSidePanel ? { display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0, overflow: 'hidden' } : undefined} variant='slide'>
           <SearchField
             onInputChange={onSearch}
             placeholder={t('🔍 Search Token')}
             style={{ padding: '4%' }}
           />
-          <VelvetBox style={{ margin: '0 4%', minHeight: '63px', width: '92%' }}>
+          <VelvetBox style={{ flex: isSidePanel ? '1 1 auto' : undefined, margin: '0 4%', minHeight: isSidePanel ? 0 : '63px', overflowY: isSidePanel ? 'auto' : undefined, width: '92%' }}>
             <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #E3E8F7', borderRadius: '15px', boxShadow: isDark ? 'none' : '0 12px 24px rgba(133, 140, 176, 0.12)', width: '100%' }}>
               {earningItems?.map((token, index) => {
                 const { availableBalance, chainName, decimal, freeBalance, tokenSymbol } = token;

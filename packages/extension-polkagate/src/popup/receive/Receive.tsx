@@ -6,7 +6,7 @@ import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/ha
 
 import { Container, Dialog, Grid, styled, Typography, useTheme } from '@mui/material';
 import { ArrowCircleLeft, DocumentCopy, ScanBarcode } from 'iconsax-react';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
 
 import useIsHovered from '@polkadot/extension-polkagate/src/hooks/useIsHovered2';
@@ -14,10 +14,10 @@ import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
-import { Logo, NeonButton, SearchField, Transition } from '../../components';
+import { FadeOnScroll, Logo, NeonButton, SearchField, Transition } from '../../components';
 import MySnackbar from '../../components/MySnackbar';
 import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
-import { useFormatted, useGenesisHashOptions, useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
+import { useFormatted, useGenesisHashOptions, useIsDark, useIsSidePanel, useSelectedAccount, useTranslation } from '../../hooks';
 import { GradientDivider, RedGradient } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util';
 import BackButton from '../accountsLists/BackButton';
@@ -87,7 +87,9 @@ interface SelectChainProp {
 function SelectNetwork({ isEthereum, setSelectedChain }: SelectChainProp) {
   const { t } = useTranslation();
   const isDark = useIsDark();
+  const isSidePanel = useIsSidePanel();
   const networks = useGenesisHashOptions({ isEthereum, withRelay: false });
+  const refContainer = useRef<HTMLDivElement>(null);
 
   const [keyword, setKeyword] = useState<string>();
 
@@ -122,7 +124,7 @@ function SelectNetwork({ isEthereum, setSelectedChain }: SelectChainProp) {
           placeholder={t('🔍 Search networks')}
         />
       </Grid>
-      <Grid container item sx={{ display: 'block', maxHeight: '395px', minHeight: '395px', my: '10px', overflowY: 'auto' }}>
+      <Grid container item ref={refContainer} sx={{ display: 'block', maxHeight: isSidePanel ? 'calc(100vh - 211px)' : '395px', minHeight: isSidePanel ? 0 : '395px', my: '10px', overflowY: 'auto', pb: isSidePanel ? '70px' : undefined }}>
         {
           chainsToShow.map((chain, index) => {
             const chainName = chain.text;
@@ -150,6 +152,7 @@ function SelectNetwork({ isEthereum, setSelectedChain }: SelectChainProp) {
           text={t('Network Not Found')}
         />
       </Grid>
+      <FadeOnScroll containerRef={refContainer} height='80px' ratio={0.55} />
     </Grid>
   );
 }
