@@ -307,7 +307,7 @@ export default function ChangeLog({ newVersion, openMenu, setShowAlert }: Props)
   }, [changelog, getVersion, localNews, manifest?.version, newVersion]);
 
   useEffect(() => {
-    const fetchChangelog = async () => {
+    const fetchChangelog = async() => {
       setIsLoading(true);
 
       try {

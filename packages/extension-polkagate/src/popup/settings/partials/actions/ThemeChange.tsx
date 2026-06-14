@@ -1,14 +1,14 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Grid,type SxProps, type Theme, useTheme } from '@mui/material';
+import { Grid, type SxProps, type Theme, useTheme } from '@mui/material';
 import { Moon, Sun1 } from 'iconsax-react';
 import React, { useCallback, useContext } from 'react';
 
 import { ColorContext } from '../../../../components';
 import useIsDark from '../../../../hooks/useIsDark';
 
-export default function ThemeChange({ style }:{style: SxProps<Theme>}): React.ReactElement {
+export default function ThemeChange({ style }: { style: SxProps<Theme> }): React.ReactElement {
   const theme = useTheme();
   const isDark = useIsDark();
   const colorMode = useContext(ColorContext);

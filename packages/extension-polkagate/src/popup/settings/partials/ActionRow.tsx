@@ -27,11 +27,11 @@ export default function ActionRow(): React.ReactElement {
   };
 
   return (
-    <Grid columnGap={isExtension ? 0 : '7px'} container item justifyContent={isExtension ? 'space-between' : 'end'} >
+    <Grid columnGap={isExtension ? 0 : '7px'} container item justifyContent={isExtension ? 'space-between' : 'end'}>
       <Lock isExtension={isExtension} style={style} />
       {
         isExtension &&
-        <ThemeChange style={style}/>
+        <ThemeChange style={style} />
       }
       <Reload isExtension={isExtension} style={style} />
     </Grid>

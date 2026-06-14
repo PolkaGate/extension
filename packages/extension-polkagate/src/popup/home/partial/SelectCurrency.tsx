@@ -254,7 +254,7 @@ function SelectCurrency({ openMenu, setOpenMenu }: Props): React.ReactElement {
       popupProps={{
         TitleIcon: Hashtag,
         iconVariant: 'Linear',
-        maxHeight: isSidePanel ? 'calc(100vh - 185px)': undefined,
+        maxHeight: isSidePanel ? 'calc(100vh - 185px)' : undefined,
         pt: 60,
         style: {
           'div#container div#boxContainer': {
