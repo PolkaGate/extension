@@ -991,5 +991,6 @@
   "Unable to derive account": "",
   "Password change failed": "",
   "Biometric authentication failed": "",
-  "Open side panel": ""
+  "Open side panel": "",
+  "Enable biometrics from the popup or fullscreen settings.": ""
 }

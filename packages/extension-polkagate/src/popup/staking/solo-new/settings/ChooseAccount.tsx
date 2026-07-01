@@ -41,6 +41,7 @@ const AccountListToChoose = ({ genesisHash, handleClose, isBlueish, openMenu, se
       open={openMenu}
       popupProps={{
         TitleIcon: UserOctagon,
+        compactInSidePanel: true,
         darkBackground: true,
         iconColor: theme.palette.text.highlight,
         iconSize: 26,
