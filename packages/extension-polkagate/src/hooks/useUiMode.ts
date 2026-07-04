@@ -20,9 +20,9 @@ export default function useUiMode(): {
     };
   }
 
- return {
-      isExtension,
-      isFullscreen: true,
-      isSidePanel
-    };
+  return {
+    isExtension,
+    isFullscreen: true,
+    isSidePanel
+  };
 }

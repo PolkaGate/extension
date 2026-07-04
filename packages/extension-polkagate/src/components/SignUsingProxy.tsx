@@ -240,6 +240,7 @@ export default function SignUsingProxy({ genesisHash, handleClose, openMenu, pro
       open={openMenu}
       popupProps={{
         TitleIcon: Data,
+        compactInSidePanel: true,
         iconColor: theme.palette.text.highlight,
         iconSize: 25,
         maxHeight: '450px',

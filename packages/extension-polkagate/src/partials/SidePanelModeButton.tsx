@@ -6,7 +6,7 @@ import { SidebarRight } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef } from 'react';
 
 import { MyTooltip } from '../components';
-import { useIsBlueish, useIsDark, useIsHovered, useTranslation } from '../hooks';
+import { useIsBlueish, useIsDark, useIsHovered, useIsSidePanel, useTranslation } from '../hooks';
 
 interface ChromeWithSidePanel {
   sidePanel?: {
@@ -27,7 +27,7 @@ function SidePanelModeButton() {
   const hovered = useIsHovered(buttonContainer);
   const isBlueish = useIsBlueish();
   const canOpenSidePanel = useMemo(() => Boolean(getChrome()?.sidePanel?.open), []);
-  const isSidePanelDocument = useMemo(() => window.location.pathname.endsWith('/sidepanel.html'), []);
+  const isSidePanel = useIsSidePanel();
 
   const onClick = useCallback(() => {
     const chromeApi = getChrome();
@@ -42,7 +42,7 @@ function SidePanelModeButton() {
       .catch(console.error);
   }, []);
 
-  if (!canOpenSidePanel || isSidePanelDocument) {
+  if (!canOpenSidePanel || isSidePanel) {
     return null;
   }
 

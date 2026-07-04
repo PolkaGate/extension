@@ -13,7 +13,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { info, money } from '../../../assets/gif';
 import { DisplayBalance, GradientButton } from '../../../components';
-import { useIsExtensionPopup, usePoolConst, useStakingConsts, useTranslation } from '../../../hooks';
+import { useIsExtensionPopup, usePoolConst, useStakingConsts, useTranslation, useUiMode } from '../../../hooks';
 import { SharePopup } from '../../../partials';
 import { RedGradient } from '../../../style';
 import { amountToHuman } from '../../../util';
@@ -49,7 +49,7 @@ function AvailableBalance({ availableBalance, decimal, isExtension, token }: { a
 
 function StakingInfo({ onClose, onNext, selectedPosition, setSelectedPosition }: Props): React.ReactElement {
   const { t } = useTranslation();
-  const isExtension = useIsExtensionPopup();
+  const {isExtension , isSidePanel} = useUiMode();
   const navigate = useNavigate();
   const poolConsts = usePoolConst(selectedPosition?.genesisHash);
   const stakingConsts = useStakingConsts(selectedPosition?.genesisHash);
@@ -68,6 +68,7 @@ function StakingInfo({ onClose, onNext, selectedPosition, setSelectedPosition }:
       onClose={handleClose}
       open
       popupProps={{
+        compactInSidePanel: isSidePanel,
         maxHeight: '505px',
         openMenu: !!selectedPosition,
         px: 0,

@@ -12,7 +12,7 @@ import { noop } from '@polkadot/util';
 import { sendingLottie } from '../assets/animations';
 import { Motion, TwoToneText } from '../components';
 import { DraggableModal } from '../fullscreen/components/DraggableModal';
-import { useIsExtensionPopup, useTranslation } from '../hooks';
+import { useTranslation, useUiMode } from '../hooks';
 import { PROCESSING_TITLE } from '../util/constants';
 
 interface Props {
@@ -21,7 +21,7 @@ interface Props {
 
 function Content({ isModal }: Props) {
   const { t } = useTranslation();
-  const isExtension = useIsExtensionPopup();
+  const {isExtension, isSidePanel} = useUiMode();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
 
@@ -82,7 +82,7 @@ function Content({ isModal }: Props) {
           boxShadow: isExtension && !isDark ? '0 10px 24px rgba(133, 140, 176, 0.12)' : 'none',
           gap: '12px',
           justifyContent: 'center',
-          m: '0 15px 15px',
+          m: isSidePanel ? '15px' : '0 15px 15px',
           p: '0 32px 32px'
         }}
       >
