@@ -72,7 +72,7 @@ function ConnectedDappContents({ authorizeRequestHandler, setOpenMenu }: Connect
       } else {
         const [tab] = await getActiveTabs();
 
-        authDappUrl = tab.url;
+        authDappUrl = tab?.url;
       }
 
       if (!authDappUrl) {
@@ -177,7 +177,7 @@ export default function ConnectedDapp({ authorizeRequestHandler }: { authorizeRe
       } else {
         const [tab] = await getActiveTabs();
 
-        authDappUrl = tab.url;
+        authDappUrl = tab?.url;
       }
 
       if (!authDappUrl) {

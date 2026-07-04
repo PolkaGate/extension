@@ -13,7 +13,7 @@ import { BN_ZERO } from '@polkadot/util';
 
 import { info, money } from '../../../assets/gif';
 import { DisplayBalance, GradientButton } from '../../../components';
-import { useIsExtensionPopup, usePoolConst, useStakingConsts, useTranslation, useUiMode } from '../../../hooks';
+import { usePoolConst, useStakingConsts, useTranslation, useUiMode } from '../../../hooks';
 import { SharePopup } from '../../../partials';
 import { RedGradient } from '../../../style';
 import { amountToHuman } from '../../../util';
