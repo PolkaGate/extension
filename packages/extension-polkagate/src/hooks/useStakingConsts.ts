@@ -32,6 +32,7 @@ export default function useStakingConsts(genesisHash: string | undefined): Staki
       const existentialDepositString = apiAt.consts['balances']['existentialDeposit'].toString();
       const existentialDeposit = new BN(existentialDepositString);
       const bondingDuration = apiAt.consts['staking']['bondingDuration'].toPrimitive() as number;
+      const nominatorFastUnbondDuration = apiAt.consts['staking']['nominatorFastUnbondDuration'].toPrimitive() as number;
       const sessionsPerEra = apiAt.consts['staking']['sessionsPerEra'].toPrimitive() as number;
 
       const { epochDuration, expectedBlockTime, maxNominations } = stakingConsts;
@@ -54,8 +55,9 @@ export default function useStakingConsts(genesisHash: string | undefined): Staki
         maxNominations,
         maxNominatorRewardedPerValidator,
         minNominatorBond: new BN(minNominatorBond.toString()),
+        nominatorUnbondingDuration: nominatorFastUnbondDuration * sessionsPerEra * epochDurationInHours / 24, // unbondingDuration in days
         token,
-        unbondingDuration: bondingDuration * sessionsPerEra * epochDurationInHours / 24 // unbondingDuration in days
+        unbondingDuration: bondingDuration * sessionsPerEra * epochDurationInHours / 24
       };
 
       window.localStorage.setItem(`${chainName}_stakingConsts`, JSON.stringify(consts));

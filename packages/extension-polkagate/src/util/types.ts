@@ -61,6 +61,7 @@ export interface StakingConsts {
   minNominatorBond: BN;
   token: string;
   unbondingDuration: number; // days
+  nominatorUnbondingDuration: number; // days
 }
 
 export interface NominatorInfo {

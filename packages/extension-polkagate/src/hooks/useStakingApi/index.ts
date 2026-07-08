@@ -6,7 +6,6 @@ export { useBondExtraSolo } from './useBondExtraSolo';
 export { useClaimRewardPool } from './useClaimRewardPool';
 export { useCreatePool } from './useCreatePool';
 export { useEasyStake } from './useEasyStake';
-export { useFastUnstaking } from './useFastUnstaking';
 export { useJoinPool } from './useJoinPool';
 export { usePoolDetail } from './usePoolDetail';
 export { useRestakeSolo } from './useRestakeSolo';

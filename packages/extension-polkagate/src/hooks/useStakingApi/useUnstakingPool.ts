@@ -44,7 +44,7 @@ export const useUnstakingPool = (
 
   const redeemDate = useMemo(() => {
     if (stakingInfo.stakingConsts) {
-      const date = Date.now() + stakingInfo.stakingConsts?.unbondingDuration * 24 * 60 * 60 * 1000;
+      const date = Date.now() + stakingInfo.stakingConsts?.nominatorUnbondingDuration * 24 * 60 * 60 * 1000;
 
       return new Date(date).toLocaleDateString(undefined, DATE_OPTIONS);
     }
