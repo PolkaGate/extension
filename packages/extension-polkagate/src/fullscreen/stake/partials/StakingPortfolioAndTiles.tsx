@@ -5,7 +5,7 @@ import type { Balance } from '@polkadot/types/interfaces';
 import type { DateAmount } from '../../../hooks/useSoloStakingInfo';
 
 import { Container, Grid, useTheme } from '@mui/material';
-import { Add, Award, Coin, LockSlash, MedalStar, Moneys, Profile2User, Strongbox2, Timer, Timer1, Trade } from 'iconsax-react';
+import { Add, Award, Coin, LockSlash, MedalStar, Moneys, Profile2User, Strongbox2, Timer, Trade } from 'iconsax-react';
 import React, { memo, useMemo } from 'react';
 
 import Ice from '@polkadot/extension-polkagate/src/components/SVG/Ice';
@@ -161,7 +161,6 @@ interface Props {
 
 export default function StakingPortfolioAndTiles({ availableBalanceToStake, disabled, genesisHash, popupOpener, redeemable, rewards, staked, toBeReleased, tokenPrice, type, unlockingAmount }: Props) {
   const { t } = useTranslation();
-  const { api } = useChainInfo(genesisHash);
 
   return (
     <Container disableGutters sx={{ display: 'flex', flexDirection: 'row', gap: '8px', padding: '18px' }}>
@@ -178,14 +177,7 @@ export default function StakingPortfolioAndTiles({ availableBalanceToStake, disa
             Icon: Coin,
             onClick: popupOpener(StakingPopUps.UNSTAKE),
             text: t('Unstake')
-          },
-          ...(type === 'solo' && api?.tx['fastUnstake']?.['registerFastUnstake']
-            ? [{
-              Icon: Timer1,
-              onClick: popupOpener(StakingPopUps.FAST_UNSTAKE),
-              text: t('Fast Unstake')
-            }]
-            : [])
+          }
         ]}
         disabled={disabled}
         genesisHash={genesisHash as unknown as string}

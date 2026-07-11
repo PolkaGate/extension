@@ -224,7 +224,6 @@
   "Reward destination": "奖励去向",
   "Transfer to a specific account": "转入指定账户",
   "Specific account": "指定账户",
-  "Fast Unstake": "快速解除质押",
   "Configure Reward Destination": "配置奖励去向",
   "Min {{token}} to receive rewards": "获得奖励的最少 {{token}}",
   "Max nominators of a validator, who may receive rewards": "可获得奖励的验证人提名者最大数",

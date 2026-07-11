@@ -224,7 +224,6 @@
   "Reward destination": "इनाम गंतव्य",
   "Transfer to a specific account": "किसी विशेष खाते में स्थानांतरित करें",
   "Specific account": "विशेष खाता",
-  "Fast Unstake": "त्वरित अनस्टेक",
   "Configure Reward Destination": "इनाम गंतव्य कॉन्फ़िगर करें",
   "Min {{token}} to receive rewards": "इनाम पाने के लिए न्यूनतम {{token}}",
   "Max nominators of a validator, who may receive rewards": "किसी वैलिडेटर के अधिकतम नामांकक, जो इनाम प्राप्त कर सकते हैं",

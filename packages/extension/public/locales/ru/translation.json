@@ -224,7 +224,6 @@
   "Reward destination": "Адрес получения награды",
   "Transfer to a specific account": "Перевести на определённый аккаунт",
   "Specific account": "Определённый аккаунт",
-  "Fast Unstake": "Быстро",
   "Configure Reward Destination": "Настроить адрес для наград",
   "Min {{token}} to receive rewards": "Минимум {{token}} для получения наград",
   "Max nominators of a validator, who may receive rewards": "Максимум номинаторов у валидатора, которые могут получать награды",

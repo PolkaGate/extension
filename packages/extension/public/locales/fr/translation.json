@@ -224,7 +224,6 @@
   "Reward destination": "Destination des récompenses",
   "Transfer to a specific account": "Transférer à un compte spécifique",
   "Specific account": "Compte spécifique",
-  "Fast Unstake": "Retrait rapide",
   "Configure Reward Destination": "Configurer la destination des récompenses",
   "Min {{token}} to receive rewards": "Min {{token}} pour recevoir des récompenses",
   "Max nominators of a validator, who may receive rewards": "Nombre maximal de nominators d'un validateur pouvant recevoir des récompenses",

@@ -104,14 +104,7 @@ export default function Solo(): React.ReactElement {
               Icon: Coin,
               onClick: onUnstake,
               text: t('Unstake')
-            },
-            ...(api?.tx['fastUnstake']?.['registerFastUnstake']
-              ? [{
-                Icon: Timer1,
-                onClick: onFastUnstake,
-                text: t('Fast Unstake')
-              }]
-              : [])]}
+            }]}
             genesisHash={genesisHash as unknown as string}
             staked={staked as unknown as BN}
             style={{ mt: '20px' }}

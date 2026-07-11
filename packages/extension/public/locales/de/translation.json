@@ -224,7 +224,6 @@
   "Reward destination": "Belohnungsziel",
   "Transfer to a specific account": "An ein bestimmtes Konto übertragen",
   "Specific account": "Bestimmtes Konto",
-  "Fast Unstake": "Schnelles Unstaken",
   "Configure Reward Destination": "Belohnungsziel konfigurieren",
   "Min {{token}} to receive rewards": "Mindestens {{token}} zum Erhalten von Belohnungen",
   "Max nominators of a validator, who may receive rewards": "Maximale Anzahl von Nominatoren eines Validators, die Belohnungen erhalten können",
