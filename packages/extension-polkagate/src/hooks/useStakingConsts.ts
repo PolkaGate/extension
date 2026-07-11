@@ -32,7 +32,7 @@ export default function useStakingConsts(genesisHash: string | undefined): Staki
       const existentialDepositString = apiAt.consts['balances']['existentialDeposit'].toString();
       const existentialDeposit = new BN(existentialDepositString);
       const bondingDuration = apiAt.consts['staking']['bondingDuration'].toPrimitive() as number;
-      const nominatorFastUnbondDuration = apiAt.consts['staking']['nominatorFastUnbondDuration'].toPrimitive() as number;
+      const nominatorFastUnbondDuration = (apiAt.consts['staking']['nominatorFastUnbondDuration']?.toPrimitive() as number | undefined) ?? bondingDuration;
       const sessionsPerEra = apiAt.consts['staking']['sessionsPerEra'].toPrimitive() as number;
 
       const { epochDuration, expectedBlockTime, maxNominations } = stakingConsts;
@@ -77,6 +77,12 @@ export default function useStakingConsts(genesisHash: string | undefined): Staki
 
     if (localSavedStakingConsts) {
       const parsedConsts = JSON.parse(localSavedStakingConsts) as StakingConsts;
+
+      // Discard cache entries that predate the nominatorUnbondingDuration field
+      // so the fetch path runs and produces a complete object.
+      if (parsedConsts.nominatorUnbondingDuration == null) {
+        return;
+      }
 
       parsedConsts.existentialDeposit = new BN(parsedConsts.existentialDeposit);
       parsedConsts.minNominatorBond = new BN(parsedConsts.minNominatorBond);
