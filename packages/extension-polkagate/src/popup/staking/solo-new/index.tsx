@@ -4,7 +4,7 @@
 import type { BN } from '@polkadot/util';
 
 import { Grid, Typography, useTheme } from '@mui/material';
-import { Coin, Timer1, UserOctagon } from 'iconsax-react';
+import { Coin, UserOctagon } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -42,7 +42,7 @@ export default function Solo(): React.ReactElement {
   const { genesisHash } = useParams<{ genesisHash: string }>();
 
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
-  const { api, decimal, token } = useChainInfo(genesisHash);
+  const { decimal, token } = useChainInfo(genesisHash);
 
   useHighCommissionNominationAlert({
     genesisHash,
@@ -70,7 +70,6 @@ export default function Solo(): React.ReactElement {
   const onExpand = useCallback(() => setUnstakingMenu(true), []);
   const handleCloseMenu = useCallback(() => setUnstakingMenu(false), []);
   const onRestake = useCallback(() => navigate('/solo/' + genesisHash + '/restake') as void, [genesisHash, navigate]);
-  const onFastUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/fastUnstake') as void, [genesisHash, navigate]);
   const onUnstake = useCallback(() => navigate('/solo/' + genesisHash + '/unstake') as void, [genesisHash, navigate]);
   const onBack = useCallback(() => navigate('/stakingIndex') as void, [navigate]);
   const onClaimReward = useCallback(() => navigate('/solo/' + genesisHash + '/pendingReward') as void, [navigate, genesisHash]);
@@ -104,14 +103,7 @@ export default function Solo(): React.ReactElement {
               Icon: Coin,
               onClick: onUnstake,
               text: t('Unstake')
-            },
-            ...(api?.tx['fastUnstake']?.['registerFastUnstake']
-              ? [{
-                Icon: Timer1,
-                onClick: onFastUnstake,
-                text: t('Fast Unstake')
-              }]
-              : [])]}
+            }]}
             genesisHash={genesisHash as unknown as string}
             staked={staked as unknown as BN}
             style={{ mt: '20px' }}

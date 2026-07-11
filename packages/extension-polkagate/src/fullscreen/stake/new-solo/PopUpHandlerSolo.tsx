@@ -11,7 +11,6 @@ import EasyStake from '../easyStake';
 import ToBeReleased from '../ToBeReleased';
 import { type PopupCloser, type PopupOpener, StakingPopUps } from '../util/utils';
 import BondExtra from './bondExtra';
-import FastUnstake from './fastUnstaking';
 import Info from './Info';
 import PendingRewards from './pendingReward';
 import Restake from './restake';
@@ -100,15 +99,6 @@ function PopUpHandlerSolo({ address, genesisHash, popupCloser, popupOpener, sele
       case StakingPopUps.BOND_EXTRA:
         return (
           <BondExtra
-            address={address}
-            genesisHash={genesisHash}
-            onClose={popupCloser}
-          />
-        );
-
-      case StakingPopUps.FAST_UNSTAKE:
-        return (
-          <FastUnstake
             address={address}
             genesisHash={genesisHash}
             onClose={popupCloser}

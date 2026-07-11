@@ -816,18 +816,6 @@ export default {
     function: 'vote(votes: `Vec<AccountId32>`, value: `Compact<u128>`)',
     description: 'Vote for a set of candidates for the upcoming round of election. This can be called to set the initial votes, or update already existing votes. - not be empty. - be less than the number of possible candidates. Note that all current members and runners-up are also automatically candidates for the next round.'
   },
-  'fastUnstake.control': {
-    function: 'control(eras_to_check: `u32`)',
-    description: 'Control the operation of this pallet.'
-  },
-  'fastUnstake.deregister': {
-    function: 'deregister()',
-    description: 'Deregister oneself from the fast-unstake.'
-  },
-  'fastUnstake.registerFastUnstake': {
-    function: 'registerFastUnstake()',
-    description: 'Register oneself for fast-unstake.'
-  },
   'glutton.bloat': {
     function: 'bloat(garbage: `Vec<[u8;1024]>`)',
     description: 'Increase the block size by including the specified garbage bytes.'
