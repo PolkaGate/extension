@@ -13,18 +13,14 @@ export default function useIsValidator(address: string | undefined, genesisHash:
   const [isValidator, setIsValidator] = useState<boolean>();
 
   useEffect(() => {
-    if (!api || !address) {
+    if (!api || !formatted) {
       return;
     }
 
-    api.query['staking']['validators'].keys().then((intentions) => {
-      const isValidator = intentions
-        .map(({ args }: { args: any[] }) => args[0].toString())
-        .includes(formatted);
-
-      setIsValidator(isValidator);
+    api.query['staking']['validators'](formatted).then((prefs: { isStorageFallback?: boolean }) => {
+      setIsValidator(!prefs.isStorageFallback);
     }).catch(console.error);
-  }, [address, api, formatted]);
+  }, [api, formatted]);
 
   return isValidator;
 }
