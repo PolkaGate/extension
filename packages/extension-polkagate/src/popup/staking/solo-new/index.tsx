@@ -42,7 +42,7 @@ export default function Solo(): React.ReactElement {
   const { genesisHash } = useParams<{ genesisHash: string }>();
 
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
-  const { api, decimal, token } = useChainInfo(genesisHash);
+  const { decimal, token } = useChainInfo(genesisHash);
 
   useHighCommissionNominationAlert({
     genesisHash,
