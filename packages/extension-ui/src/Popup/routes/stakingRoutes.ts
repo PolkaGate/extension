@@ -21,7 +21,6 @@ import PoolUnstake from '@polkadot/extension-polkagate/src/popup/staking/pool-ne
 import StakingReward from '@polkadot/extension-polkagate/src/popup/staking/Reward';
 import Solo from '@polkadot/extension-polkagate/src/popup/staking/solo-new';
 import BondExtra from '@polkadot/extension-polkagate/src/popup/staking/solo-new/bondExtra';
-import FastUnstake from '@polkadot/extension-polkagate/src/popup/staking/solo-new/fast-unstake/FastUnstake';
 import SoloInfo from '@polkadot/extension-polkagate/src/popup/staking/solo-new/Info';
 import SoloNominations from '@polkadot/extension-polkagate/src/popup/staking/solo-new/nominations/NominationsSetting';
 import PendingReward from '@polkadot/extension-polkagate/src/popup/staking/solo-new/pendingReward';
@@ -91,11 +90,6 @@ export const STAKING_ROUTES: RouteConfig[] = [
     Component: PendingReward,
     path: '/solo/:genesisHash/pendingReward',
     trigger: 'solo-stake-pending-rewards'
-  },
-  {
-    Component: FastUnstake,
-    path: '/solo/:genesisHash/fastUnstake',
-    trigger: 'solo-fast-unstake'
   },
   {
     Component: SoloNominations,

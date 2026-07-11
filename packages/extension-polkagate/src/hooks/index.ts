@@ -48,7 +48,6 @@ export { default as useIdentity } from './useIdentity';
 export { default as useIsAutoEndpoint } from './useIsAutoEndpoint';
 export { default as useIsBlueish } from './useIsBlueish';
 export { default as useIsDark } from './useIsDark';
-export { default as useIsExposed } from './useIsExposed';
 export { default as useIsExtensionPopup } from './useIsExtensionPopup';
 export { default as useIsFlying } from './useIsFlying';
 export { default as useIsHideNumbers } from './useIsHideNumbers';

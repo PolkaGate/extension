@@ -28,16 +28,16 @@ export default function useStakingInfoSolo(stakingInfo: SoloStakingInfo, genesis
   const minimumActiveStake = useMinToReceiveRewardsInSolo(genesisHash);
 
   return useMemo(() => {
-    const { existentialDeposit, maxNominations, maxNominatorRewardedPerValidator, minNominatorBond, unbondingDuration } = stakingInfo.stakingConsts || {};
+    const { existentialDeposit, maxNominations, maxNominatorRewardedPerValidator, minNominatorBond, nominatorUnbondingDuration, unbondingDuration } = stakingInfo.stakingConsts || {};
+    const { isValidator } = stakingInfo;
 
     return [
       { InfoIcon: Discover, label: t('Max Validators you can select'), value: maxNominations },
       { label: t('Min {{token}} to be staker', { replace: { token: token ?? '' } }), value: minNominatorBond, withLogo: true },
       { label: t('Min {{token}} to receive rewards', { replace: { token: token ?? '' } }), value: minimumActiveStake && minNominatorBond && bnMax(minNominatorBond, minimumActiveStake), withLogo: true },
       { InfoIcon: MagicStar, label: t('Max nominators of a validator, who may receive rewards'), value: maxNominatorRewardedPerValidator },
-      { InfoIcon: Calendar, label: t('Days it takes to receive your funds back after unstaking'), value: unbondingDuration },
+      { InfoIcon: Calendar, label: t('Days it takes to receive your funds back after unstaking'), value: isValidator ? unbondingDuration : nominatorUnbondingDuration },
       { label: t('Min {{token}} that must remain in your account (ED)', { replace: { token: token ?? '' } }), value: existentialDeposit, withLogo: true }
     ];
-  }
-    , [minimumActiveStake, stakingInfo.stakingConsts, t, token]);
+  }, [minimumActiveStake, stakingInfo, t, token]);
 }

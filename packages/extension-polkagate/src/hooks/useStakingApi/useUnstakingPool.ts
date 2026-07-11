@@ -43,13 +43,15 @@ export const useUnstakingPool = (
   const poolMemberCounter = useMemo(() => Number(stakingInfo.pool?.bondedPool?.memberCounter), [stakingInfo.pool?.bondedPool?.memberCounter]);
 
   const redeemDate = useMemo(() => {
-    if (stakingInfo.stakingConsts) {
-      const date = Date.now() + stakingInfo.stakingConsts?.unbondingDuration * 24 * 60 * 60 * 1000;
+    const duration = stakingInfo.stakingConsts?.nominatorUnbondingDuration;
 
-      return new Date(date).toLocaleDateString(undefined, DATE_OPTIONS);
+    if (!duration || !Number.isFinite(duration)) {
+      return undefined;
     }
 
-    return undefined;
+    const date = Date.now() + duration * 24 * 60 * 60 * 1000;
+
+    return new Date(date).toLocaleDateString(undefined, DATE_OPTIONS);
   }, [stakingInfo.stakingConsts]);
 
   const tx = useMemo(() => {

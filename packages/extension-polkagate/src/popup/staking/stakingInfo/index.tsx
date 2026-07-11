@@ -116,8 +116,8 @@ function StakingInfo({ onClose, onNext, selectedPosition, setSelectedPosition }:
             />}
           <InfoRow
             Icon={Clock}
-            text={t('Unstake anytime, and redeem your funds after {{duration}} days. No rewards will be earned during that period', { replace: { duration: stakingConsts?.unbondingDuration } })}
-            textPartInColor={t('after {{unbonding}} days.', { replace: { unbonding: stakingConsts?.unbondingDuration } })}
+            text={t('Unstake anytime, and redeem your funds after {{duration}} days. No rewards will be earned during that period', { replace: { duration: stakingConsts?.nominatorUnbondingDuration } })}
+            textPartInColor={t('after {{unbonding}} days.', { replace: { unbonding: stakingConsts?.nominatorUnbondingDuration } })}
           />
           <InfoRow
             Icon={Medal}
