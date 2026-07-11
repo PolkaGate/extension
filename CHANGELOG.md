@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.13.0](https://github.com/polkagate/extension/compare/v2.12.1...v2.13.0) (2026-07-11)
+
+
+### Features
+
+* reduce Polkadot unstaking period to 2 days ([#2186](https://github.com/polkagate/extension/issues/2186)) ([f0786dc](https://github.com/polkagate/extension/commit/f0786dce95d8317d5009ef794132948b301f1472))
+
 ## [2.12.1](https://github.com/polkagate/extension/compare/v2.12.0...v2.12.1) (2026-06-08)
 
 
