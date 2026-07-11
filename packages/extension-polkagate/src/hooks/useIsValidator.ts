@@ -17,9 +17,15 @@ export default function useIsValidator(address: string | undefined, genesisHash:
       return;
     }
 
+    let active = true;
+
     api.query['staking']['validators'](formatted).then((prefs: { isStorageFallback?: boolean }) => {
-      setIsValidator(!prefs.isStorageFallback);
+      if (active) {
+        setIsValidator(!prefs.isStorageFallback);
+      }
     }).catch(console.error);
+
+    return () => { active = false; };
   }, [api, formatted]);
 
   return isValidator;
