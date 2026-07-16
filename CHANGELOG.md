@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.14.0](https://github.com/polkagate/extension/compare/v2.13.0...v2.14.0) (2026-07-16)
+
+
+### Features
+
+* add side panel view for the extension ([#2185](https://github.com/polkagate/extension/issues/2185)) ([1b32f33](https://github.com/polkagate/extension/commit/1b32f339e137405a6d1c5145cdff95cd8a41bbeb))
+
 # [2.13.0](https://github.com/polkagate/extension/compare/v2.12.1...v2.13.0) (2026-07-11)
 
 
