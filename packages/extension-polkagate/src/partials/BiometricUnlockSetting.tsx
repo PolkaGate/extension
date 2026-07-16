@@ -3,19 +3,19 @@
 
 import type { ResponseBiometricStatus } from '@polkadot/extension-base/utils/biometric';
 
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Stack, Typography, useTheme } from '@mui/material';
 import { InfoCircle } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
+import { fingerprint } from '../assets/animations';
 import { DecisionButtons, MySnackbar, MySwitch, MyTooltip, PasswordInput } from '../components';
 import { useTranslation } from '../components/translate';
-import { useIsExtensionPopup } from '../hooks';
+import { useIsExtensionPopup, useIsSidePanel } from '../hooks';
 import useIsPasswordCorrect from '../hooks/useIsPasswordCorrect';
 import { disableBiometricUnlock, enableBiometricUnlock, getBiometricUnlockStatus } from '../messaging';
 import { clearPendingBiometricCredentialId, enrollBiometric } from '../util/biometric';
 import SharePopup from './SharePopup';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { fingerprint } from '../assets/animations';
 
 interface Props {
   titleMargin?: string;
@@ -27,6 +27,7 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
   const { t } = useTranslation();
   const theme = useTheme();
   const isExtension = useIsExtensionPopup();
+  const isSidePanel = useIsSidePanel();
   const { validatePasswordAsync } = useIsPasswordCorrect();
 
   const [status, setStatus] = useState<ResponseBiometricStatus>(EMPTY_STATUS);
@@ -37,6 +38,7 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
   const [snackbarText, setSnackbarText] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [isError, setIsError] = useState(false);
+  const isEnableBlockedInSidePanel = isSidePanel && !status.enabled;
 
   const showFeedback = useCallback((text: string, error = false) => {
     setSnackbarText(text);
@@ -44,7 +46,7 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
     setShowSnackbar(true);
   }, []);
 
-  const refreshStatus = useCallback(async () => {
+  const refreshStatus = useCallback(async() => {
     try {
       const biometricStatus = await getBiometricUnlockStatus();
 
@@ -74,7 +76,7 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
     setShowPasswordForm(false);
   }, []);
 
-  const onToggle = useCallback(async (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+  const onToggle = useCallback(async(_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
     if (!checked) {
       if (status.enabled) {
         setBusy(true);
@@ -102,10 +104,20 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
       return;
     }
 
-    setShowPasswordForm(true);
-  }, [resetEnrollmentForm, showFeedback, status.enabled, t]);
+    if (isEnableBlockedInSidePanel) {
+      showFeedback(t('Enable biometrics from the popup or fullscreen settings.'), true);
 
-  const onEnable = useCallback(async () => {
+      return;
+    }
+
+    setShowPasswordForm(true);
+  }, [isEnableBlockedInSidePanel, resetEnrollmentForm, showFeedback, status.enabled, t]);
+
+  const handleToggle = useCallback((event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    onToggle(event, checked).catch(console.error);
+  }, [onToggle]);
+
+  const onEnable = useCallback(async() => {
     if (!password) {
       return;
     }
@@ -163,13 +175,21 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
             <InfoCircle color={theme.palette.primary.main} size='16' variant='Bold' />
           </MyTooltip>
         </Stack>
-        <MySwitch
-          checked={status.enabled || showPasswordForm}
-          columnGap='8px'
-          disabled={isBusy}
-          label={t('Unlock with biometrics')}
-          onChange={onToggle}
-        />
+        <MyTooltip
+          content={t('Enable biometrics from the popup or fullscreen settings.')}
+          notShow={!isEnableBlockedInSidePanel}
+          placement='top'
+        >
+          <Stack component='span' sx={{ display: 'inline-flex', width: 'fit-content' }}>
+            <MySwitch
+              checked={status.enabled || showPasswordForm}
+              columnGap='8px'
+              disabled={isBusy || isEnableBlockedInSidePanel}
+              label={t('Unlock with biometrics')}
+              onChange={handleToggle}
+            />
+          </Stack>
+        </MyTooltip>
       </Stack>
       <SharePopup
         modalProps={{
@@ -181,13 +201,14 @@ export default function BiometricUnlockSetting({ titleMargin = '40px 0 15px' }: 
         onClose={resetEnrollmentForm}
         open={showPasswordForm}
         popupProps={{
-          maxHeight: isExtension ? '100%' : '360px',
+          compactInSidePanel: isSidePanel,
+          maxHeight: isSidePanel ? 'calc(100vh - 190px)' : isExtension ? '100%' : '360px',
           pt: 90,
           withGradientBorder: true
         }}
         title={t('Enable Biometric Unlock')}
       >
-        <Stack direction='column' sx={{ p: '0 5px 10px', rowGap: '16px', width: '100%' }}>
+        <Stack direction='column' sx={{ p: isSidePanel ? '0 5px 12px' : '0 5px 10px', rowGap: '16px', width: '100%' }}>
           <DotLottieReact
             autoplay
             loop={false}

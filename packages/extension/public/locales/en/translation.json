@@ -980,5 +980,7 @@
   "Clear selection": "",
   "Unable to derive account": "",
   "Password change failed": "",
-  "Biometric authentication failed": ""
+  "Biometric authentication failed": "",
+  "Open side panel": "",
+  "Enable biometrics from the popup or fullscreen settings.": ""
 }

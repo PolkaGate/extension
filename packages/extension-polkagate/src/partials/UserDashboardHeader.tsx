@@ -10,6 +10,7 @@ import { HomeButton, SelectedProxy } from '../components';
 import Notifications from '../fullscreen/components/layout/Notifications';
 import AccountSelection from '../popup/home/partial/AccountSelection';
 import FullscreenModeButton from './FullscreenModeButton';
+import SidePanelModeButton from './SidePanelModeButton';
 import { ConnectedDapp } from '.';
 
 interface Props {
@@ -44,6 +45,7 @@ function UserDashboardHeader({ fullscreenURL, genesisHash, homeType, noSelection
       </Grid>
       <Stack direction='row' sx={{ alignItems: 'center', gap: '4px', width: 'fit-content' }}>
         <Notifications />
+        <SidePanelModeButton />
         <FullscreenModeButton url={fullscreenURL} />
       </Stack>
     </Container>

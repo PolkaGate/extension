@@ -283,7 +283,7 @@ export default function StakingInfoTile({ Icon, buttonsArray = [], cryptoAmount,
               decimal={decimal}
               fiatBalance={fiatAmount}
               fiatProps={{ decimalColor: adjustedIconColor, textColor: isDisabled ? disabledColor : theme.palette.text.primary }}
-              skeletonAlignment='flex-start'
+              skeletonAlignment={isRow ? 'flex-start' : 'flex-end'}
               skeletonColor='none'
               style={{
                 alignItems: isRow ? 'start' : 'end',

@@ -6,8 +6,8 @@ import type { ExpandedRewards } from '../../type';
 import { Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import React, { Fragment, useCallback, useMemo, useRef } from 'react';
 
-import { Logo, DisplayBalance, FadeOnScroll, GlowCheckbox, GradientDivider, Identity, MySkeleton, NoInfoYet } from '../../../../components';
-import { useChainInfo, useIsExtensionPopup, useTranslation } from '../../../../hooks';
+import { DisplayBalance, FadeOnScroll, GlowCheckbox, GradientDivider, Identity, Logo, MySkeleton, NoInfoYet } from '../../../../components';
+import { useChainInfo, useIsExtensionPopup, useTranslation, useUiMode } from '../../../../hooks';
 import resolveLogoInfo from '../../../../util/logo/resolveLogoInfo';
 import { timeDiffSummary } from './timeDiffSummary';
 
@@ -40,10 +40,10 @@ export const TableHeader = ({ checked, disabled, onSelectAll }: TableHeaderProp)
     <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', ml: isExtension ? 0 : '7px', width: '100%' }}>
       <Grid alignItems='center' container item sx={{ gap: '6px' }} xs={COLUMNS_WIDTH.AMOUNT}>
         <GlowCheckbox
+          borderStyle={isExtension || isDark ? {} : { background: '#F3F6FD', borderColor: '#B58DDF', borderWidth: '2px' }}
           changeState={handleAllSelect}
           checked={checked}
           disabled={disabled}
-          borderStyle={isExtension || isDark ? {} : { background: '#F3F6FD', borderColor: '#B58DDF', borderWidth: '2px' }}
           iconStyle={{ height: '24px', width: '24px' }}
           isBlueish={isExtension}
           style={{ m: 0, width: 'fit-content' }} // here
@@ -97,14 +97,14 @@ export const RewardsTable = ({ eraToDate, expandedRewards, genesisHash, onSelect
   const isDark = theme.palette.mode === 'dark';
   const containerRef = useRef(null);
   const { decimal, token } = useChainInfo(genesisHash, true);
-  const isExtension = useIsExtensionPopup();
+  const { isExtension, isSidePanel } = useUiMode();
 
   const logoInfo = useMemo(() => resolveLogoInfo(genesisHash, token), [genesisHash, token]);
 
   const isIncluded = useCallback((info: ExpandedRewards): boolean => !!selectedToPayout.find((s) => s === info), [selectedToPayout]);
 
   const handleSelect = useCallback((info: ExpandedRewards, checked: boolean) => () => onSelect(info, checked), [onSelect]);
-  const TABLE_HEIGHT = isExtension ? 290 : 260;
+  const TABLE_HEIGHT = isExtension || isSidePanel ? 'calc(100vh - 310px)' : 260;
 
   return (
     <Grid container item sx={{ position: 'relative' }}>

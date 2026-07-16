@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { Stack, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { GradientButton, GradientDivider } from '../../../components';
-import { useAccounts, useIsExtensionPopup, useTranslation } from '../../../hooks';
+import { FadeOnScroll, GradientButton, GradientDivider } from '../../../components';
+import { useAccounts, useIsExtensionPopup, useIsSidePanel, useTranslation } from '../../../hooks';
 import { MAX_ACCOUNT_COUNT_NOTIFICATION } from '../constant';
 import AccountToggle from './AccountToggle';
 
@@ -17,7 +17,9 @@ interface Props {
 function SelectNotificationAccountsBody({ onAccounts, previousSelectedAccounts }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
+  const isSidePanel = useIsSidePanel();
   const accounts = useAccounts();
+  const refContainer = useRef<HTMLDivElement>(null);
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>(previousSelectedAccounts ?? []);
 
@@ -51,14 +53,14 @@ function SelectNotificationAccountsBody({ onAccounts, previousSelectedAccounts }
   }, [setSelectedAccounts]);
 
   return (
-    <Stack direction='column' sx={{ gap: '12px', position: 'relative', px: isExtension ? 0 : '5px', zIndex: 1 }}>
+    <Stack direction='column' sx={{ gap: '12px', height: isSidePanel ? 'calc(100vh - 250px)' : undefined, minHeight: isSidePanel ? 0 : undefined, position: 'relative', px: isExtension ? 0 : '5px', zIndex: 1 }}>
       <Typography color='text.secondary' variant='B-4'>
         {t('Select up to {{count}} accounts for activity notifications', {
           replace: { count: MAX_ACCOUNT_COUNT_NOTIFICATION }
         })}
       </Typography>
       <GradientDivider />
-      <Stack direction='column' sx={{ gap: isExtension ? '10px' : '12px', height: isExtension ? '330px' : '385px', maxHeight: isExtension ? '330px' : '385px', overflowY: 'auto', px: '6px' }}>
+      <Stack direction='column' ref={refContainer} sx={{ flex: isSidePanel ? '1 1 auto' : undefined, gap: isExtension ? '10px' : '12px', height: isSidePanel ? 'auto' : isExtension ? '330px' : '385px', maxHeight: isSidePanel ? 'none' : isExtension ? '330px' : '385px', minHeight: isSidePanel ? 0 : undefined, overflowY: 'auto', pb: isSidePanel ? '70px' : undefined, px: '6px' }}>
         {accounts.map(({ address }) => {
           const isSelected = selectedAccounts.includes(address);
 
@@ -72,6 +74,7 @@ function SelectNotificationAccountsBody({ onAccounts, previousSelectedAccounts }
           );
         })}
       </Stack>
+      <FadeOnScroll containerRef={refContainer} height='80px' ratio={0.55} />
       <GradientButton
         disabled={selectedAccounts.length === 0}
         onClick={onAccounts(selectedAccounts)}

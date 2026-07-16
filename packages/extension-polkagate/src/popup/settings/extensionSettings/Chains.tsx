@@ -12,6 +12,7 @@ import { ActionButton, Logo, Motion, SearchField } from '../../../components';
 import MySwitch from '../../../components/MySwitch';
 import { useTranslation } from '../../../components/translate';
 import useChainSelectionSettings from '../../../hooks/useChainSelectionSettings';
+import useIsSidePanel from '../../../hooks/useIsSidePanel';
 import { windowOpen } from '../../../messaging';
 
 export default function Chains(): React.ReactElement {
@@ -19,6 +20,7 @@ export default function Chains(): React.ReactElement {
   const theme = useTheme();
   const navigate = useNavigate();
   const { chainsToList, onSearch, selectedChains, setChainSelection } = useChainSelectionSettings();
+  const isSidePanel = useIsSidePanel();
 
   const chainEndpoints = useCallback((genesisHash: string) => {
     return () => navigate(`/endpoints/${genesisHash}`) as void;
@@ -29,8 +31,8 @@ export default function Chains(): React.ReactElement {
   }, []);
 
   return (
-    <Motion>
-      <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '14px', display: 'block', p: '10px' }}>
+    <Motion style={isSidePanel ? { display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: '100%' } : undefined}>
+      <Grid alignItems='flex-start' container item justifyContent='flex-start' sx={{ bgcolor: 'background.paper', borderRadius: '14px', display: 'block', flex: isSidePanel ? '1 1 auto' : undefined, p: '10px' }}>
         <Grid container item>
           <SearchField
             onInputChange={onSearch}

@@ -13,7 +13,7 @@ import { PROFILE_TAGS } from '@polkadot/extension-polkagate/src/util/constants';
 
 import { ActionButton, ActionContext, FadeOnScroll, GradientButton, MyTooltip } from '../../components';
 import { AccountProfileLabel } from '../../fullscreen/components';
-import { useAccounts, useCategorizedAccountsInProfiles, useIsDark, useSelectedAccount, useTranslation } from '../../hooks';
+import { useAccounts, useCategorizedAccountsInProfiles, useIsDark, useIsSidePanel, useSelectedAccount, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import AccountRow from './AccountRowSimple';
 import { PROFILE_MODE } from './type';
@@ -51,6 +51,7 @@ interface Props {
 function BodySection({ mode, onApply, searchKeyword, setMode, setShowDeleteConfirmation }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
+  const isSidePanel = useIsSidePanel();
   const flatAccounts = useAccounts();
   const onAction = useContext(ActionContext);
   const refContainer = useRef<HTMLDivElement>(null);
@@ -107,9 +108,9 @@ function BodySection({ mode, onApply, searchKeyword, setMode, setShowDeleteConfi
       {isProfileDropDownOpen &&
         <BackDrop setMode={setMode} />
       }
-      <Container disableGutters sx={{ display: 'block', height: 'fit-content', maxHeight: 'calc(100% - 50px)', minHeight: '453px', pb: '50px', position: 'relative', width: 'initial', zIndex: 1 }}>
+      <Container disableGutters sx={{ display: 'block', flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : 'fit-content', maxHeight: isSidePanel ? 'none' : 'calc(100% - 50px)', minHeight: isSidePanel ? 0 : '453px', pb: '50px', position: 'relative', zIndex: 1 }}>
         <VelvetBox style={{ margin: '5px 0 15px' }}>
-          <Stack ref={refContainer} style={{ maxHeight: '380px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
+          <Stack ref={refContainer} style={{ maxHeight: isSidePanel ? 'calc(100vh - 240px)' : '380px', minHeight: '88px', overflow: 'hidden', overflowY: 'auto', position: 'relative' }}>
             {Object.keys(filteredCategorizedAccounts).length > 0 && (
               <>
                 {Object.entries(filteredCategorizedAccounts).map(([label, accounts], profileIndex) => {

@@ -11,7 +11,7 @@ import { Bar } from 'react-chartjs-2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { BackWithLabel, DisplayBalance, FadeOnScroll, Identity, Logo, Motion, NoInfoYet, Progress } from '../../components';
-import { useBackground, useChainInfo, usePoolStakingInfo, useStakingRewardsChart, useTranslation } from '../../hooks';
+import { useBackground, useChainInfo, useIsSidePanel, usePoolStakingInfo, useStakingRewardsChart, useTranslation } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import resolveLogoInfo from '../../util/logo/resolveLogoInfo';
 import StakingMenu from './partial/StakingMenu';
@@ -175,11 +175,12 @@ const RewardChartTable = ({ descSortedRewards, expanded, genesisHash, onExpand, 
 };
 
 export default function StakingReward() {
-  useBackground('staking');
+  useBackground('staking') as void;
 
   const { t } = useTranslation();
   const theme = useTheme();
   const isLight = theme.palette.mode === 'light';
+  const isSidePanel = useIsSidePanel();
   const navigate = useNavigate();
   const { state } = useLocation() as { state: boolean }; // used for easy stake extension mode, if true it comes from easy stake
   const containerRef = useRef<HTMLDivElement>(null);
@@ -203,15 +204,15 @@ export default function StakingReward() {
 
   return (
     <>
-      <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+      <Grid alignContent='flex-start' container sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? '100vh' : undefined, overflow: isSidePanel ? 'hidden' : undefined, pb: isSidePanel ? '86px' : undefined, position: 'relative' }}>
         <UserDashboardHeader homeType='default' />
-        <Motion variant='slide'>
+        <Motion style={isSidePanel ? { display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0, overflow: 'hidden' } : undefined} variant='slide'>
           <BackWithLabel
             onClick={onBack}
             style={{ pb: 0 }}
             text={t('Received Rewards')}
           />
-          <Stack direction='column' ref={containerRef} sx={{ height: 'fit-content', maxHeight: '515px', overflow: 'hidden', overflowY: 'auto', p: '15px', width: '100%' }}>
+          <Stack direction='column' ref={containerRef} sx={{ flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : 'fit-content', maxHeight: isSidePanel ? 'none' : '515px', minHeight: isSidePanel ? 0 : undefined, overflow: 'hidden', overflowY: 'auto', p: '15px', width: '100%' }}>
             {status === 'loading' &&
               <Progress
                 style={{ marginTop: '90px' }}

@@ -472,15 +472,12 @@ export default function PoolDetail({ comprehensive, genesisHash, handleClose, op
       fullScreen
       open={Boolean(openMenu)}
     >
-      {!poolDetail &&
-        <Progress
-          size={40}
+      {!poolDetail
+        ? <Progress
           style={{ marginTop: '90px' }}
           title={t('Loading pool information')}
-        />
-      }
-      {poolDetail &&
-        <Container disableGutters sx={{ height: '100%', width: '100%' }}>
+          />
+        : <Container disableGutters sx={{ height: '100%', width: '100%' }}>
           <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
             <CustomCloseSquare color={isLight ? '#8C78B2' : '#809ACB'} onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
           </Grid>
@@ -596,7 +593,8 @@ export default function PoolDetail({ comprehensive, genesisHash, handleClose, op
               </Stack>
             </Stack>
           </Grid>
-        </Container>}
+        </Container>
+      }
     </Dialog>
   );
 }

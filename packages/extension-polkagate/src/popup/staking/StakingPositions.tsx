@@ -10,7 +10,7 @@ import { type BN } from '@polkadot/util';
 
 import { ActionButton, BackWithLabel, FadeOnScroll, Logo, Motion, SearchField } from '../../components';
 import SnowFlake from '../../components/SVG/SnowFlake';
-import { useAccountAssets, useBackground, useChainInfo, useIsDark, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
+import { useAccountAssets, useBackground, useChainInfo, useIsDark, useIsSidePanel, usePrices, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, NothingFound, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 import { amountToHuman } from '../../util';
@@ -127,6 +127,7 @@ export default function StakingPositions(): React.ReactElement {
   const accountAssets = useAccountAssets(account?.address);
   const navigate = useNavigate();
   const refContainer = useRef<HTMLDivElement>(null);
+  const isSidePanel = useIsSidePanel();
 
   const [searchKeyWord, setSearchKeyWord] = useState<string>();
 
@@ -179,7 +180,7 @@ export default function StakingPositions(): React.ReactElement {
       <Grid
         alignContent='flex-start'
         container
-        sx={{ position: 'relative' }}
+        sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? '100vh' : undefined, overflow: isSidePanel ? 'hidden' : undefined, pb: isSidePanel ? '86px' : undefined, position: 'relative' }}
       >
         <UserDashboardHeader homeType='default' />
         <BackWithLabel
@@ -187,13 +188,13 @@ export default function StakingPositions(): React.ReactElement {
           style={{ pb: 0 }}
           text={t('Your Staking Positions')}
         />
-        <Motion variant='slide'>
+        <Motion style={isSidePanel ? { display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0, overflow: 'hidden' } : undefined} variant='slide'>
           <SearchField
             onInputChange={onSearch}
             placeholder={t('🔍 Search Token')}
             style={{ padding: '4%' }}
           />
-          <VelvetBox style={{ margin: '0 4%', maxHeight: '305px', minHeight: '63px', overflowY: 'auto', width: '92%' }}>
+          <VelvetBox style={{ flex: isSidePanel ? '1 1 auto' : undefined, margin: '0 4%', maxHeight: isSidePanel ? 'none' : '305px', minHeight: isSidePanel ? 0 : '63px', overflowY: 'auto', width: '92%' }}>
             <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', borderRadius: '15px', width: '100%' }}>
               {positionRows?.map(({ balance, decimal, genesisHash, priceId, token, type }, index) => {
                 const price = pricesInCurrency?.prices[priceId ?? '']?.value ?? 0;

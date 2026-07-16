@@ -207,7 +207,7 @@ function RemoveAccount({ address, onClose, open }: Props): React.ReactElement {
       modalStyle={{ minHeight: '450px' }}
       onClose={handleClose}
       open={open}
-      popupProps={{ TitleIcon: LogoutCurve, iconSize: 24, pt: 20 }}
+      popupProps={{ TitleIcon: LogoutCurve, compactInSidePanel: true, iconSize: 24, pt: 20 }}
       title={t('Remove Account')}
     >
       <>

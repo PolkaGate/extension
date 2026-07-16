@@ -4,14 +4,15 @@
 import type { AccountJson, AuthUrlInfo } from '@polkadot/extension-base/background/types';
 
 import { Container, Grid, type SxProps, type Theme, Typography, useTheme } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { EyeSlash, User } from 'iconsax-react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { noop } from '@polkadot/util';
 
-import { DecisionButtons, GradientDivider, GradientSwitch, MyTooltip } from '../components';
+import { DecisionButtons, FadeOnScroll, GradientDivider, GradientSwitch, MyTooltip } from '../components';
 import { sortAccounts } from '../components/sortAccounts';
-import { useAccounts, useTranslation } from '../hooks';
+import { useAccounts, useIsSidePanel, useTranslation } from '../hooks';
 import { approveAuthRequest, ignoreAuthRequest, showAccount, updateAuthorization } from '../messaging';
 import PolkaGateIdenticon from '../style/PolkaGateIdenticon';
 
@@ -28,11 +29,15 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
   const { t } = useTranslation();
   const accounts = useAccounts();
   const theme = useTheme();
+  const isSidePanel = useIsSidePanel();
   const isDark = theme.palette.mode === 'dark';
+  const listBackground = theme.palette.surface.panel;
+  const listFadeBackground = `linear-gradient(0deg, ${alpha(listBackground, 0.92)} 0%, ${alpha(listBackground, 0.52)} 42%, ${alpha(listBackground, 0)} 100%)`;
 
   const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
 
   // Sort only on the first render, store result in a ref
+  const listRef = useRef<HTMLDivElement>(null);
   const sortedAccountsRef = useRef<AccountJson[] | null>(null);
   const initializedDappIdRef = useRef<string | undefined>(undefined);
 
@@ -129,9 +134,9 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
   }, [selectedAccounts, dappInfo?.id, requestId, setRefresh, closePopup]);
 
   return (
-    <Grid container item justifyContent='center' sx={{ position: 'relative', zIndex: 1, ...style }}>
-      <Grid container item sx={{ height: 'fit-content', pb: '10px' }}>
-        <Container disableGutters sx={{ alignItems: 'center', bgcolor: theme.palette.surface.input, border: isDark ? 'none' : '1px solid', borderColor: isDark ? 'transparent' : theme.palette.border.strong, borderRadius: '14px', display: 'flex', flexDirection: 'column', height: 'fit-content', justifyContent: 'flex-start', p: '4px' }}>
+    <Grid container item justifyContent='center' sx={{ flex: isSidePanel ? '1 1 auto' : undefined, flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? 'auto' : undefined, minHeight: isSidePanel ? 0 : undefined, position: 'relative', zIndex: 1, ...style }}>
+      <Grid container item sx={{ flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : 'fit-content', minHeight: isSidePanel ? 0 : undefined, pb: '10px' }}>
+        <Container disableGutters sx={{ alignItems: 'center', bgcolor: theme.palette.surface.input, border: isDark ? 'none' : '1px solid', borderColor: isDark ? 'transparent' : theme.palette.border.strong, borderRadius: '14px', display: 'flex', flexDirection: 'column', height: isSidePanel ? '100%' : 'fit-content', justifyContent: 'flex-start', minHeight: 0, p: '4px', position: 'relative' }}>
           <Grid
             alignItems='center'
             container
@@ -160,54 +165,62 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
               />
             </Grid>
           </Grid>
-          <Container disableGutters sx={{ background: theme.palette.surface.panel, border: isDark ? 'none' : `1px solid ${theme.palette.border.subtle}`, borderRadius: '10px', height: 'fit-content', maxHeight: hasBanner ? '185px' : '223px', overflowY: 'auto', p: isDark ? '8px 12px' : 'none', width: '100%' }}>
-            {accountsToShow.map(({ address, isHidden, name }, index) => {
-              const noDivider = accountsToShow.length === index + 1;
+          <Container disableGutters sx={{ flex: isSidePanel ? '1 1 auto' : undefined, minHeight: isSidePanel ? 0 : undefined, position: 'relative', width: '100%' }}>
+            <Container disableGutters ref={listRef} sx={{ background: listBackground, border: isDark ? 'none' : `1px solid ${theme.palette.border.subtle}`, borderRadius: '10px', flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? '100%' : 'fit-content', maxHeight: isSidePanel ? 'none' : hasBanner ? '185px' : '223px', minHeight: 0, overflowY: 'auto', p: isDark ? '8px 12px' : 'none', pb: isSidePanel ? '8px' : undefined, position: 'relative', width: '100%' }}>
+              {accountsToShow.map(({ address, isHidden, name }, index) => {
+                const noDivider = accountsToShow.length === index + 1;
 
-              return (
-                <React.Fragment key={index}>
-                  <Grid alignItems='center' container item justifyContent='space-between' key={index} py={isDark ? '8px' : '2px'}>
-                    <Grid
-                      alignItems='center'
-                      container
-                      item
-                      justifyContent='space-between'
-                      sx={{
-                        background: isDark ? 'transparent' : theme.palette.surface.input,
-                        border: isDark ? 'none' : `1px solid ${theme.palette.border.subtle}`,
-                        borderRadius: '12px',
-                        boxShadow: isDark ? 'none' : theme.palette.shadow.card,
-                        px: isDark ? 0 : '10px',
-                        py: isDark ? 0 : '6px'
-                      }}
-                    >
-                      <Grid alignItems='center' container item sx={{ columnGap: '8px', flexWrap: 'nowrap', minWidth: 0, width: 'fit-content' }}>
-                        <PolkaGateIdenticon
-                          address={address}
-                          size={24}
+                return (
+                  <React.Fragment key={index}>
+                    <Grid alignItems='center' container item justifyContent='space-between' key={index} py={isDark ? '8px' : '2px'}>
+                      <Grid
+                        alignItems='center'
+                        container
+                        item
+                        justifyContent='space-between'
+                        sx={{
+                          background: isDark ? 'transparent' : theme.palette.surface.input,
+                          border: isDark ? 'none' : `1px solid ${theme.palette.border.subtle}`,
+                          borderRadius: '12px',
+                          boxShadow: isDark ? 'none' : theme.palette.shadow.card,
+                          px: isDark ? 0 : '10px',
+                          py: isDark ? 0 : '6px'
+                        }}
+                      >
+                        <Grid alignItems='center' container item sx={{ columnGap: '8px', flexWrap: 'nowrap', minWidth: 0, width: 'fit-content' }}>
+                          <PolkaGateIdenticon
+                            address={address}
+                            size={24}
+                          />
+                          <Typography color='text.primary' sx={{ maxWidth: '150px', overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-4'>
+                            {name}
+                          </Typography>
+                          {isHidden &&
+                            <MyTooltip content={t('This account is invisible to websites')}>
+                              <Grid alignItems='center' container item justifyContent='center' onClick={makeAccountVisible(address)} sx={{ bgcolor: isDark ? '#6743944D' : '#F1F4FF', border: '1px solid', borderColor: isDark ? '#AA83DC26' : '#D7DDF0', borderRadius: '999px', cursor: 'pointer', height: '22px', width: '22px' }}>
+                                <EyeSlash color={theme.palette.accent.icon} size='13' variant='Bold' />
+                              </Grid>
+                            </MyTooltip>
+                          }
+                        </Grid>
+                        <GradientSwitch
+                          checked={!isHidden && selectedAccounts.includes(address)}
+                          disabled={isHidden}
+                          onChange={handleSelect(address)}
                         />
-                        <Typography color='text.primary' sx={{ maxWidth: '150px', overflowX: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} variant='B-4'>
-                          {name}
-                        </Typography>
-                        {isHidden &&
-                          <MyTooltip content={t('This account is invisible to websites')}>
-                            <Grid alignItems='center' container item justifyContent='center' onClick={makeAccountVisible(address)} sx={{ bgcolor: isDark ? '#6743944D' : '#F1F4FF', border: '1px solid', borderColor: isDark ? '#AA83DC26' : '#D7DDF0', borderRadius: '999px', cursor: 'pointer', height: '22px', width: '22px' }}>
-                              <EyeSlash color={theme.palette.accent.icon} size='13' variant='Bold' />
-                            </Grid>
-                          </MyTooltip>
-                        }
                       </Grid>
-                      <GradientSwitch
-                        checked={!isHidden && selectedAccounts.includes(address)}
-                        disabled={isHidden}
-                        onChange={handleSelect(address)}
-                      />
                     </Grid>
-                  </Grid>
-                  {!noDivider && <GradientDivider />}
-                </React.Fragment>
-              );
-            })}
+                    {!noDivider && <GradientDivider />}
+                  </React.Fragment>
+                );
+              })}
+            </Container>
+            <FadeOnScroll
+              containerRef={listRef}
+              height={isSidePanel ? '44px' : '42px'}
+              ratio={0.5}
+              style={{ WebkitBackdropFilter: 'blur(3px)', backdropFilter: 'blur(3px)', background: listFadeBackground, borderRadius: '0 0 10px 10px', bottom: 0, left: isSidePanel ? 0 : '4px', right: isSidePanel ? 0 : '4px', width: isSidePanel ? '100%' : 'calc(100% - 8px)' }}
+            />
           </Container>
         </Container>
       </Grid>
@@ -220,6 +233,7 @@ export default function ConnectedAccounts({ closePopup, dappInfo, hasBanner, req
         onSecondaryClick={handleButtons(requestId ? 'ignore' : 'disconnect')}
         primaryBtnText={t('Apply')}
         secondaryBtnText={requestId ? t('Ignore') : t('Disconnect all')}
+        style={{ flexShrink: isSidePanel ? 0 : undefined, paddingBottom: isSidePanel ? '10px' : undefined }}
       />
     </Grid>
   );

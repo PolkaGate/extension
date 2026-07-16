@@ -107,7 +107,13 @@ function FilterHistory({ dispatchFilter, filter, openMenu, setOpenMenu }: Filter
     <SharePopup
       onClose={closePopup}
       open={openMenu}
-      popupProps={{ TitleIcon: Setting4, iconSize: 24, pt: 20 }}
+      popupProps={{
+        TitleIcon: Setting4,
+        compactInSidePanel: true,
+        iconSize: 24,
+        pt: 20
+
+      }}
       title={t('Filters')}
     >
       <>

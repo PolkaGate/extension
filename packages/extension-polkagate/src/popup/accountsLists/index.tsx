@@ -4,7 +4,7 @@
 import { Grid } from '@mui/material';
 import React, { memo, useCallback, useState } from 'react';
 
-import { useIsExtensionPopup, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useIsExtensionPopup, useIsSidePanel, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 
 import { Motion, SearchField } from '../../components';
 import { UserDashboardHeader } from '../../partials';
@@ -16,6 +16,7 @@ import { PROFILE_MODE } from './type';
 
 export function AccountsListManagement({ defaultMode = PROFILE_MODE.NONE, onDone }: { defaultMode?: PROFILE_MODE, onDone?: () => void }): React.ReactElement {
   const isExtension = useIsExtensionPopup();
+  const isSidePanel = useIsSidePanel();
   const { t } = useTranslation();
 
   const [searchKeyword, setSearchKeyword] = useState<string>();
@@ -31,8 +32,8 @@ export function AccountsListManagement({ defaultMode = PROFILE_MODE.NONE, onDone
   }, [onDone]);
 
   return (
-    <Grid alignContent='flex-start' container item sx={{ height: 'fit-content', position: 'relative' }}>
-      <Motion style={{ height: 'calc(100% - 50px)', margin: '0 10px', padding: '0 5px' }} variant='slide'>
+    <Grid alignContent='flex-start' container item sx={{ flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : 'fit-content', minHeight: isSidePanel ? 0 : undefined, position: 'relative' }}>
+      <Motion style={{ display: isSidePanel ? 'flex' : undefined, flex: isSidePanel ? '1 1 auto' : undefined, flexDirection: isSidePanel ? 'column' : undefined, height: isSidePanel ? 'auto' : 'calc(100% - 50px)', margin: '0 10px', minHeight: isSidePanel ? 0 : undefined, padding: '0 5px' }} variant='slide'>
         <HeaderSection
           mode={mode}
           setMode={setMode}
@@ -72,8 +73,10 @@ export function AccountsListManagement({ defaultMode = PROFILE_MODE.NONE, onDone
 }
 
 function AccountsLists(): React.ReactElement {
+  const isSidePanel = useIsSidePanel();
+
   return (
-    <Grid alignContent='flex-start' container sx={{ height: '100%', position: 'relative' }}>
+    <Grid alignContent='flex-start' container sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: '100%', overflow: isSidePanel ? 'hidden' : undefined, position: 'relative' }}>
       <UserDashboardHeader homeType='default' />
       <AccountsListManagement />
     </Grid>

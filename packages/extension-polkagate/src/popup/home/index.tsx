@@ -8,7 +8,7 @@ import semver from 'semver';
 import useIsForgotten from '@polkadot/extension-polkagate/src/hooks/useIsForgotten';
 
 import { AccountContext, FadeOnScroll, Motion } from '../../components';
-import { useBackground, useManifest } from '../../hooks';
+import { useBackground, useIsSidePanel, useManifest } from '../../hooks';
 import { UserDashboardHeader, WhatsNew } from '../../partials';
 import HomeMenu from '../../partials/HomeMenu';
 import Reset from '../passwordManagement/Reset';
@@ -25,6 +25,7 @@ export default function Home(): React.ReactElement {
   const manifest = useManifest();
   const { hierarchy } = useContext(AccountContext);
   const refContainer = useRef<HTMLDivElement>(null);
+  const isSidePanel = useIsSidePanel();
 
   const [show, setShowAlert] = useState<boolean>(false);
   const isForgotten = useIsForgotten();
@@ -61,23 +62,30 @@ export default function Home(): React.ReactElement {
         ? isForgotten?.status
           ? <Reset />
           : <Welcome />
-        : <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+        : <Grid alignContent='flex-start' container sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? '100vh' : undefined, overflow: isSidePanel ? 'hidden' : undefined, pb: isSidePanel ? '86px' : undefined, position: 'relative' }}>
           <UserDashboardHeader />
           <Portfolio />
-          <Grid container item ref={refContainer} sx={{ maxHeight: '420px', overflowY: 'auto' }}>
+          <Grid container item ref={refContainer} sx={{ display: isSidePanel ? 'flex' : undefined, flex: isSidePanel ? '1 1 auto' : undefined, flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, maxHeight: isSidePanel ? 'none' : '420px', minHeight: isSidePanel ? 0 : undefined, overflowY: isSidePanel ? 'hidden' : 'auto' }}>
             <AssetsBox />
-            <WhatsNew style={{ columnGap: '5px', paddingBottom: '75px', paddingTop: '24px' }} />
-            <FadeOnScroll
-              backgroundColor={fadeBackgroundColor}
-              containerRef={refContainer}
-              height='96px'
-              style={{
-                WebkitBackdropFilter: 'none',
-                backdropFilter: 'none',
-                background: `linear-gradient(0deg, ${fadeBackgroundColor} 0%, ${fadeBackgroundColor}F2 68%, ${fadeBackgroundColor}80 88%, ${fadeBackgroundColor}00 100%)`
-              }}
-            />
+            {!isSidePanel &&
+              <>
+                <WhatsNew style={{ columnGap: '5px', paddingBottom: '75px', paddingTop: '24px' }} />
+                <FadeOnScroll
+                  backgroundColor={fadeBackgroundColor}
+                  containerRef={refContainer}
+                  height='96px'
+                  style={{
+                    WebkitBackdropFilter: 'none',
+                    backdropFilter: 'none',
+                    background: `linear-gradient(0deg, ${fadeBackgroundColor} 0%, ${fadeBackgroundColor}F2 68%, ${fadeBackgroundColor}80 88%, ${fadeBackgroundColor}00 100%)`
+                  }}
+                />
+              </>
+            }
           </Grid>
+          {isSidePanel &&
+            <WhatsNew style={{ columnGap: '5px', paddingBottom: '12px', paddingTop: '18px' }} />
+          }
           <HomeMenu />
         </Grid>
       }

@@ -3,13 +3,13 @@
 
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { Folder } from 'iconsax-react';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import { updateMeta } from '@polkadot/extension-polkagate/src/messaging';
 import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 
-import { DecisionButtons, GradientButton, MyTextField, TwoToneText } from '../../components';
-import { useAccountsOrder, useCategorizedAccountsInProfiles, useIsDark, useProfileAccounts, useTranslation } from '../../hooks';
+import { DecisionButtons, FadeOnScroll, GradientButton, MyTextField, TwoToneText } from '../../components';
+import { useAccountsOrder, useCategorizedAccountsInProfiles, useIsDark, useIsSidePanel, useProfileAccounts, useTranslation } from '../../hooks';
 import ProfileAccountSelection from './ProfileAccountSelection';
 import { addProfileTag, removeProfileTag } from './utils';
 
@@ -27,7 +27,9 @@ function EditProfile({ profileLabel, setPopup }: Props): React.ReactElement {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = useIsDark();
+  const isSidePanel = useIsSidePanel();
   const allAccounts = useAccountsOrder();
+  const refContainer = useRef<HTMLDivElement>(null);
   const profileAccounts = useProfileAccounts(allAccounts, profileLabel);
   const { categorizedAccounts } = useCategorizedAccountsInProfiles();
 
@@ -42,12 +44,12 @@ function EditProfile({ profileLabel, setPopup }: Props): React.ReactElement {
     setStep(STEP.CHOOSE_ACCOUNTS);
   }, []);
 
-  const onEdit = useCallback(async () => {
+  const onEdit = useCallback(async() => {
     setIsBusy(true);
 
     const cleanedProfiles = new Map<string, string>();
 
-    await Promise.all(profileAccounts?.map(async (account) => {
+    await Promise.all(profileAccounts?.map(async(account) => {
       if (maybeNewName || account.profile?.includes(profileLabel)) {
         const maybeNewProfile = removeProfileTag(account.profile, profileLabel);
 
@@ -60,7 +62,7 @@ function EditProfile({ profileLabel, setPopup }: Props): React.ReactElement {
       }
     }) || []).catch(console.error);
 
-    await Promise.all(allAccounts?.map(async (account) => {
+    await Promise.all(allAccounts?.map(async(account) => {
       let maybeNewProfile;
       let metaData;
 
@@ -94,14 +96,14 @@ function EditProfile({ profileLabel, setPopup }: Props): React.ReactElement {
         TitleIcon: Folder,
         iconSize: 24,
         iconVariant: 'Bulk',
-        maxHeight: '100%',
+        maxHeight: isSidePanel ? 'calc(100vh - 220px)' : '100%',
         withoutTopBorder: true
       }}
       title={t('Edit profile')}
     >
       <>
         {step === STEP.EDIT_NAME &&
-          <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
+          <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: isSidePanel ? 'calc(100vh - 280px)' : '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
             <Typography color={isDark ? '#BEAAD8' : '#674394'} variant='B-4'>
               {t('You can give the profile a new name')}
             </Typography>
@@ -130,7 +132,7 @@ function EditProfile({ profileLabel, setPopup }: Props): React.ReactElement {
           </Grid>
         }
         {step === STEP.CHOOSE_ACCOUNTS &&
-          <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ height: '450px', pb: '20px', position: 'relative', zIndex: 1 }}>
+          <Grid alignItems='center' container direction='column' item justifyContent='start' sx={{ flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? 'calc(100vh - 280px)' : '450px', minHeight: isSidePanel ? 0 : undefined, pb: '20px', position: 'relative', zIndex: 1 }}>
             <Typography color='#BEAAD8' variant='B-4'>
               <TwoToneText
                 color={theme.palette.text.primary}
@@ -138,7 +140,7 @@ function EditProfile({ profileLabel, setPopup }: Props): React.ReactElement {
                 textPartInColor={maybeNewName ?? profileLabel ?? ''}
               />
             </Typography>
-            <Stack direction='column' sx={{ boxSizing: 'border-box', height: '350px', mt: '25px', overflowY: 'auto', pb: '90px', width: '100%' }}>
+            <Stack direction='column' ref={refContainer} sx={{ boxSizing: 'border-box', flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : '350px', minHeight: isSidePanel ? 0 : undefined, mt: '25px', overflowY: 'auto', pb: '90px', width: '100%' }}>
               {Object.entries(categorizedAccounts)?.map(([label, accounts]) => {
                 return (
                   <>
@@ -158,6 +160,7 @@ function EditProfile({ profileLabel, setPopup }: Props): React.ReactElement {
                 );
               })}
             </Stack>
+            <FadeOnScroll containerRef={refContainer} height='80px' ratio={0.55} style={{ bottom: '64px' }} />
             <DecisionButtons
               cancelButton
               direction='horizontal'

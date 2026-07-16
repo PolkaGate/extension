@@ -8,7 +8,7 @@ import React, { useCallback, useMemo, useReducer, useRef, useState } from 'react
 
 import { DecisionButtons, FadeOnScroll, Motion, Progress } from '../../../components';
 import { EasyStakeSide, type SelectedEasyStakingType, sortingFunctions } from '../../../fullscreen/stake/util/utils';
-import { usePools, useTranslation } from '../../../hooks';
+import { useIsSidePanel, usePools, useTranslation } from '../../../hooks';
 import { PREFERRED_POOL_NAME } from '../../../util/constants';
 import JoinPoolBackButton from '../partial/JoinPoolBackButton';
 import { INITIAL_POOL_FILTER_STATE, poolFilterReducer, SORTED_BY } from '../partial/PoolFilter';
@@ -24,6 +24,7 @@ interface Props {
 
 export default function SelectPool({ genesisHash, selectedStakingType, setSelectedStakingType, setSide }: Props) {
   const { t } = useTranslation();
+  const isSidePanel = useIsSidePanel();
   const refContainer = useRef(null);
 
   const { incrementalPools, numberOfFetchedPools, totalNumberOfPools } = usePools(genesisHash);
@@ -99,7 +100,7 @@ export default function SelectPool({ genesisHash, selectedStakingType, setSelect
   }, [selectedPool, setSelectedStakingType, setSide]);
 
   return (
-    <Motion style={{ height: 'calc(100vh - 50px)' }} variant='slide'>
+    <Motion style={{ display: isSidePanel ? 'flex' : undefined, flexDirection: isSidePanel ? 'column' : undefined, height: 'calc(100vh - 50px)', minHeight: isSidePanel ? 0 : undefined, overflow: isSidePanel ? 'hidden' : undefined }} variant='slide'>
       <FetchPoolProgress
         numberOfFetchedPools={numberOfFetchedPools}
         totalNumberOfPools={totalNumberOfPools}
@@ -114,7 +115,7 @@ export default function SelectPool({ genesisHash, selectedStakingType, setSelect
         stepCounter={{ currentStep: 1, totalSteps: 2 }}
         style={{ mb: '15px' }}
       />
-      <Stack direction='column' ref={refContainer} sx={{ height: 'fit-content', maxHeight: '500px', overflowY: 'auto', px: '15px', width: '100%' }}>
+      <Stack direction='column' ref={refContainer} sx={{ flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : 'fit-content', maxHeight: isSidePanel ? 'none' : '500px', minHeight: isSidePanel ? 0 : undefined, overflowY: 'auto', px: '15px', width: '100%' }}>
         {incrementalPools === undefined &&
           <Progress
             title={t('Loading pools')}

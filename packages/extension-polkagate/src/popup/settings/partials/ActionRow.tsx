@@ -21,17 +21,17 @@ export default function ActionRow(): React.ReactElement {
     borderRadius: isExtension ? '16px' : '10px',
     cursor: 'pointer',
     height: isExtension ? '39px' : '36px',
-    mt: '2px',
+    mt: '4px',
     transition: 'background-color 0.3s ease',
     width: isExtension ? '110px' : '36px'
   };
 
   return (
-    <Grid columnGap={isExtension ? 0 : '7px'} container item justifyContent={isExtension ? 'space-between' : 'end'} >
+    <Grid columnGap={isExtension ? 0 : '7px'} container item justifyContent={isExtension ? 'space-between' : 'end'}>
       <Lock isExtension={isExtension} style={style} />
       {
         isExtension &&
-        <ThemeChange />
+        <ThemeChange style={style} />
       }
       <Reload isExtension={isExtension} style={style} />
     </Grid>

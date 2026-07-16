@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom';
 
 import NftManager from '../../class/nftManager';
 import { ActionContext, BackWithLabel, Motion } from '../../components';
-import { useSelectedAccount } from '../../hooks';
+import { useIsSidePanel, useSelectedAccount } from '../../hooks';
 import { UserDashboardHeader } from '../../partials';
 import HomeMenu from '../../partials/HomeMenu';
 import About from './About';
@@ -30,6 +30,7 @@ export default function Nft(): React.ReactElement {
   const refContainer = useRef<HTMLDivElement>(null);
   const { address, index } = useParams<{ address: string; index: string }>();
   const selectedAccount = useSelectedAccount();
+  const isSidePanel = useIsSidePanel();
 
   const [nfts, setNfts] = useState<ItemInformation[] | null | undefined>(undefined);
   const [tab, setTab] = useState<TAB>();
@@ -70,13 +71,13 @@ export default function Nft(): React.ReactElement {
 
   return (
     <Motion>
-      <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+      <Grid alignContent='flex-start' container sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? '100vh' : undefined, overflow: isSidePanel ? 'hidden' : undefined, pb: isSidePanel ? '86px' : undefined, position: 'relative' }}>
         <UserDashboardHeader />
         <BackWithLabel
           onClick={backHome}
           style={{ pb: 0, zIndex: 0 }}
         />
-        <Grid container item ref={refContainer} sx={{ maxHeight: '420px', overflow: 'visible', position: 'relative' }}>
+        <Grid container item ref={refContainer} sx={{ flex: isSidePanel ? '1 1 auto' : undefined, maxHeight: isSidePanel ? 'none' : '420px', minHeight: isSidePanel ? 0 : undefined, overflow: isSidePanel ? 'auto' : 'visible', position: 'relative' }}>
           <NftTabs setTab={setTab} tab={tab} />
           {nft?.image && tab !== undefined && tab !== TAB.DETAILS &&
             <Box sx={{

@@ -5,12 +5,12 @@ import { Box, Container, Grid, LinearProgress, Stack, Typography, useTheme } fro
 import React, { useCallback, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { RewardsTable,TableHeader } from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/pendingReward/RewardsTable';
+import { RewardsTable, TableHeader } from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/pendingReward/RewardsTable';
 import usePendingRewardsProgress from '@polkadot/extension-polkagate/src/fullscreen/stake/new-solo/pendingReward/usePendingRewardsProgress';
 
 import { Badge } from '../../../../assets/gif';
 import { BackWithLabel, DecisionButtons, DisplayBalance, GradientDivider, Motion } from '../../../../components';
-import { useBackground, useChainInfo, usePendingRewardsSolo, useSelectedAccount, useTransactionFlow, useTranslation } from '../../../../hooks';
+import { useBackground, useChainInfo, usePendingRewardsSolo, useSelectedAccount, useTransactionFlow, useTranslation, useUiMode } from '../../../../hooks';
 import { UserDashboardHeader } from '../../../../partials';
 import { PROXY_TYPE } from '../../../../util/constants';
 
@@ -23,7 +23,7 @@ export default function PendingReward() {
   const { genesisHash } = useParams<{ genesisHash: string }>();
   const address = useSelectedAccount()?.address;
   const progress = usePendingRewardsProgress();
-
+  const { isSidePanel } = useUiMode();
   const { api, decimal, token } = useChainInfo(genesisHash);
 
   const { eraToDate,
@@ -64,7 +64,7 @@ export default function PendingReward() {
             style={{ pb: 0 }}
             text={t('Pending Rewards')}
           />
-          <Stack direction='column' sx={{ gap: '8px', height: 'fit-content', maxHeight: '515px', overflow: 'hidden', overflowY: 'auto', p: '15px', width: '100%' }}>
+          <Stack direction='column' sx={{ gap: '8px', height: 'fit-content', maxHeight: isSidePanel ? 'none' : '515px', overflow: 'hidden', overflowY: 'auto', p: '15px', width: '100%' }}>
             <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', pr: '10px' }}>
               <Box
                 component='img'

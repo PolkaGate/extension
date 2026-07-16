@@ -3,17 +3,16 @@
 
 import type { TransactionDetail } from '../../../util/types';
 
-import { Avatar, Collapse, Container, Dialog, Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Avatar, Collapse, Container, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { POLKADOT_GENESIS } from '@polkagate/apps-config';
 import { CloseCircle, TickCircle } from 'iconsax-react';
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 
-import { DraggableModal } from '@polkadot/extension-polkagate/src/fullscreen/components/DraggableModal';
+import { SharePopup } from '@polkadot/extension-polkagate/src/partials';
 import { BN_ZERO } from '@polkadot/util';
 
-import { CopyAddressButton, DisplayBalance, FadeOnScroll, FormatPrice, GradientButton, Identity, Transition } from '../../../components';
-import CustomCloseSquare from '../../../components/SVG/CustomCloseSquare';
-import { useChainInfo, useIsExtensionPopup, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
+import { CopyAddressButton, DisplayBalance, FadeOnScroll, FormatPrice, GradientButton, Identity } from '../../../components';
+import { useChainInfo, useIsExtensionPopup, useIsSidePanel, useTokenPriceBySymbol, useTranslation } from '../../../hooks';
 import { GlowBox, GradientDivider, VelvetBox } from '../../../style';
 import { amountToMachine, calcPrice, formatTimestamp, getVoteType, isReward, toShortAddress, toTitleCase } from '../../../util';
 import { CHAINS_WITH_BLACK_LOGO } from '../../../util/constants';
@@ -209,18 +208,19 @@ function DetailCard({ historyItem }: Props) {
                   <Typography color={color} sx={{ bgcolor: isHash ? (isDark ? '#C6AECC26' : '#EEF2FB') : 'none', borderRadius: '9px', p: '2px 3px' }} variant='B-1' width='fit-content'>
                     {isBlock && '#'}
                     {isAddress
-                      ? <Identity
-                        address={value.toString()}
-                        addressStyle={{ backgroundColor: isDark ? '#C6AECC26' : '#EEF2FB', borderRadius: '9px', marginTop: '-3%', padding: '2px 3px' }}
-                        charsCount={4}
-                        direction='row'
-                        genesisHash={historyItem.chain?.genesisHash || POLKADOT_GENESIS}
-                        identiconSize={18}
-                        nameStyle={{ py: '2px' }}
-                        showSocial={false}
-                        style={{ color: 'text.primary', variant: 'B-1' }}
-                        withShortAddress={true}
-                      />
+                      ? (
+                        <Identity
+                          address={value.toString()}
+                          addressStyle={{ backgroundColor: isDark ? '#C6AECC26' : '#EEF2FB', borderRadius: '9px', marginTop: '-3%', padding: '2px 3px' }}
+                          charsCount={4}
+                          direction='row'
+                          genesisHash={historyItem.chain?.genesisHash || POLKADOT_GENESIS}
+                          identiconSize={18}
+                          nameStyle={{ py: '2px' }}
+                          showSocial={false}
+                          style={{ color: 'text.primary', variant: 'B-1' }}
+                          withShortAddress={true}
+                        />)
                       : isHash
                         ? toShortAddress(value.toString(), 6)
                         : isDate
@@ -228,15 +228,16 @@ function DetailCard({ historyItem }: Props) {
                           : isVoteType
                             ? getVoteType(value as number)
                             : isFee
-                              ? <DisplayBalance
-                                balance={value as string}
-                                decimal={decimal}
-                                style={{
-                                  color: '#AA83DC',
-                                  width: 'max-content'
-                                }}
-                                token={token}
-                              />
+                              ? (
+                                <DisplayBalance
+                                  balance={value as string}
+                                  decimal={decimal}
+                                  style={{
+                                    color: '#AA83DC',
+                                    width: 'max-content'
+                                  }}
+                                  token={token}
+                                />)
                               : value
                     }
                   </Typography>
@@ -258,6 +259,7 @@ function Content({ historyItem, style = {} }: { historyItem: TransactionDetail |
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
+  const isSidePanel = useIsSidePanel();
   const containerRef = useRef<HTMLDivElement>(null);
   const { chainName } = useChainInfo(historyItem?.chain?.genesisHash, true);
 
@@ -266,11 +268,11 @@ function Content({ historyItem, style = {} }: { historyItem: TransactionDetail |
   const openExplorer = useCallback(() => link && window.open(link, '_blank'), [link]);
 
   return (
-    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: isDark ? '#120D27' : theme.palette.background.paper, border: '2px solid', borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1, ...style }}>
+    <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: isDark ? '#120D27' : theme.palette.background.paper, border: '2px solid', borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 60px)', overflow: 'hidden', overflowY: 'auto', p: '10px', position: 'relative', zIndex: 1, ...style }}>
       {historyItem &&
         <>
           <DetailHeader historyItem={historyItem} />
-          <Grid container item ref={containerRef} sx={{ height: 'fit-content', maxHeight: '330px', overflowY: 'auto', pb: '65px' }}>
+          <Grid container item ref={containerRef} sx={{ height: 'fit-content', maxHeight: isSidePanel ? 'calc(100vh - 330px)' : '330px', overflowY: 'auto', pb: '65px' }}>
             <DetailCard historyItem={historyItem} />
             <FadeOnScroll containerRef={containerRef} ratio={0.3} style={{ borderRadius: '8px', bottom: '15px', justifySelf: 'center', width: '93%' }} />
           </Grid>
@@ -304,55 +306,30 @@ function HistoryDetail({ historyItem, setOpenMenu }: HistoryDetailProps): React.
   const handleClose = useCallback(() => setOpenMenu(undefined), [setOpenMenu]);
 
   return (
-    <>
-      {
-        isExtension
-          ? <Dialog
-            PaperProps={{
-              sx: {
-                backgroundImage: 'unset',
-                bgcolor: 'transparent',
-                boxShadow: 'unset'
-              }
-            }}
-            TransitionComponent={Transition}
-            componentsProps={{
-              backdrop: {
-                sx: {
-                  backdropFilter: 'blur(10px)',
-                  background: theme.palette.gradient.radialOverlay,
-                  bgcolor: 'transparent'
-                }
-              }
-            }}
-            fullScreen
-            open={!!historyItem}
-          >
-            <Container disableGutters sx={{ height: '100%', width: '100%' }}>
-              <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-                <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
-              </Grid>
-              <Content
-                historyItem={historyItem}
-              />
-            </Container>
-          </Dialog>
-          : <DraggableModal
-            closeOnAnyWhereClick
-            noDivider
-            onClose={handleClose}
-            open={!!historyItem}
-            showBackIconAsClose
-            style={{ backgroundColor: theme.palette.mode === 'dark' ? '#1B133C' : theme.palette.background.paper, borderColor: theme.palette.mode === 'dark' ? '#FFFFFF0D' : '#DDE3F4', minHeight: '400px', padding: ' 20px 10px 10px' }}
-            title={historyItem?.subAction ?? historyItem?.action}
-          >
-            <Content
-              historyItem={historyItem}
-              style={{ background: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.background.paper, border: 0 }}
-            />
-          </DraggableModal>
-      }
-    </>
+    <SharePopup
+      modalProps={{
+        closeOnAnyWhereClick: true,
+        dividerStyle: { margin: '5px 0 5px' },
+        noDivider: true,
+        showBackIconAsClose: true
+      }}
+      modalStyle={{ backgroundColor: theme.palette.mode === 'dark' ? '#1B133C' : theme.palette.background.paper, borderColor: theme.palette.mode === 'dark' ? '#FFFFFF0D' : '#DDE3F4', minHeight: '400px', padding: ' 20px 10px 10px' }}
+      onClose={handleClose}
+      open={!!historyItem}
+      popupProps={{
+        compactInSidePanel: true,
+        maxHeight: '515px',
+        pt: 20,
+        px: 0,
+        withoutTopBorder: true
+      }}
+      title={isExtension ? undefined : historyItem?.subAction ?? historyItem?.action}
+    >
+      <Content
+        historyItem={historyItem}
+        style={isExtension ? {} : { background: theme.palette.mode === 'dark' ? 'transparent' : theme.palette.background.paper, border: 0 }}
+      />
+    </SharePopup>
   );
 }
 

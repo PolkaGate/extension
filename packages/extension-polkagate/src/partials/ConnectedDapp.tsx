@@ -8,7 +8,7 @@ import { Container, Grid, Typography, useTheme } from '@mui/material';
 import { ArrowSwapHorizontal, MonitorMobbile } from 'iconsax-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useFavIcon, useTranslation } from '../hooks';
+import { useFavIcon, useIsSidePanel, useTranslation } from '../hooks';
 import { getAuthList, ignoreAuthRequest } from '../messaging';
 import TransactionIndex from '../popup/signing/TransactionIndex';
 import { extractBaseUrl } from '../util';
@@ -21,6 +21,28 @@ interface Tab {
   favIconUrl?: string;
 }
 
+interface ChromeWithTabs {
+  tabs?: {
+    query: (queryInfo: { active: boolean, currentWindow: boolean }, callback: (tabs: Tab[]) => void) => void;
+  };
+}
+
+const getChrome = () => (globalThis as typeof globalThis & { chrome?: ChromeWithTabs }).chrome;
+
+function getActiveTabs(): Promise<Tab[]> {
+  return new Promise((resolve) => {
+    const chromeApi = getChrome();
+
+    if (!chromeApi?.tabs?.query) {
+      resolve([]);
+
+      return;
+    }
+
+    chromeApi.tabs.query({ active: true, currentWindow: true }, resolve);
+  });
+}
+
 interface ConnectedDappContentsProps {
   setOpenMenu?: React.Dispatch<React.SetStateAction<boolean>>;
   authorizeRequestHandler?: AuthorizeRequestHandlerProp;
@@ -28,6 +50,7 @@ interface ConnectedDappContentsProps {
 
 function ConnectedDappContents({ authorizeRequestHandler, setOpenMenu }: ConnectedDappContentsProps): React.ReactElement {
   const { t } = useTranslation();
+  const isSidePanel = useIsSidePanel();
 
   const [checking, setChecking] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean | undefined>(undefined);
@@ -36,7 +59,7 @@ function ConnectedDappContents({ authorizeRequestHandler, setOpenMenu }: Connect
 
   const favIconUrl = useFavIcon(dapp?.url ?? authorizeRequestHandler?.request?.url);
 
-  const checkTab = useCallback(async () => {
+  const checkTab = useCallback(async() => {
     setChecking(true);
 
     try {
@@ -47,11 +70,9 @@ function ConnectedDappContents({ authorizeRequestHandler, setOpenMenu }: Connect
       if (authorizeRequestHandler?.request?.url) {
         authDappUrl = authorizeRequestHandler?.request?.url;
       } else {
-        const [tab] = await new Promise<Tab[]>((resolve) =>
-          chrome.tabs.query({ active: true, currentWindow: true }, resolve)
-        );
+        const [tab] = await getActiveTabs();
 
-        authDappUrl = tab.url;
+        authDappUrl = tab?.url;
       }
 
       if (!authDappUrl) {
@@ -98,7 +119,7 @@ function ConnectedDappContents({ authorizeRequestHandler, setOpenMenu }: Connect
   }
 
   return (
-    <Grid container item justifyContent='center' sx={{ overflow: 'hidden', position: 'relative', pt: '5px', zIndex: 1 }}>
+    <Grid container item justifyContent='center' sx={{ display: isSidePanel ? 'flex' : undefined, flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? 'calc(100vh - 255px)' : undefined, minHeight: isSidePanel ? 0 : undefined, overflow: 'hidden', position: 'relative', pt: '5px', zIndex: 1 }}>
       {authorizeRequestHandler?.hasBanner &&
         <TransactionIndex
           index={authorizeRequestHandler?.currentIndex}
@@ -128,6 +149,7 @@ function ConnectedDappContents({ authorizeRequestHandler, setOpenMenu }: Connect
 export default function ConnectedDapp({ authorizeRequestHandler }: { authorizeRequestHandler?: AuthorizeRequestHandlerProp }): React.ReactElement {
   const theme = useTheme();
   const { t } = useTranslation();
+  const isSidePanel = useIsSidePanel();
   const isLight = theme.palette.mode === 'light';
   const indicatorBgColor = isLight ? '#DDE3F4CC' : '#82FFA533';
   const indicatorBorderColor = isLight ? '#DDE3F4' : '#BFA1FF26';
@@ -142,7 +164,7 @@ export default function ConnectedDapp({ authorizeRequestHandler }: { authorizeRe
 
   const favIconUrl = useFavIcon(dapp?.url ?? authorizeRequestHandler?.request?.url);
 
-  const checkTab = useCallback(async () => {
+  const checkTab = useCallback(async() => {
     setChecking(true);
 
     try {
@@ -153,11 +175,9 @@ export default function ConnectedDapp({ authorizeRequestHandler }: { authorizeRe
       if (authorizeRequestHandler?.request?.url) {
         authDappUrl = authorizeRequestHandler?.request?.url;
       } else {
-        const [tab] = await new Promise<Tab[]>((resolve) =>
-          chrome.tabs.query({ active: true, currentWindow: true }, resolve)
-        );
+        const [tab] = await getActiveTabs();
 
-        authDappUrl = tab.url;
+        authDappUrl = tab?.url;
       }
 
       if (!authDappUrl) {
@@ -231,6 +251,8 @@ export default function ConnectedDapp({ authorizeRequestHandler }: { authorizeRe
         open={openMenu}
         popupProps={{
           TitleIcon: MonitorMobbile,
+          compactInSidePanel: isSidePanel,
+          maxHeight: isSidePanel ? 'calc(100vh - 170px)' : undefined,
           withoutTopBorder: true
         }}
         title={t('Connected Accounts')}

@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { BackWithLabel, FadeOnScroll, Motion } from '@polkadot/extension-polkagate/src/components';
-import { useBackground, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
+import { useBackground, useIsSidePanel, useTranslation } from '@polkadot/extension-polkagate/src/hooks';
 import useNotifications from '@polkadot/extension-polkagate/src/hooks/useNotifications';
 import { HomeMenu, UserDashboardHeader, WhatsNew } from '@polkadot/extension-polkagate/src/partials';
 import { VelvetBox } from '@polkadot/extension-polkagate/src/style';
@@ -20,6 +20,7 @@ function Notification() {
   const theme = useTheme();
   const fadeBackgroundColor = theme.palette.background.default;
   const refContainer = useRef(null);
+  const isSidePanel = useIsSidePanel();
   const { markAsRead, notificationItems, status } = useNotifications();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -39,15 +40,15 @@ function Notification() {
   }, [markAsRead, navigate]);
 
   return (
-    <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+    <Grid alignContent='flex-start' container sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? '100vh' : undefined, overflow: isSidePanel ? 'hidden' : undefined, pb: isSidePanel ? '86px' : undefined, position: 'relative' }}>
       <UserDashboardHeader homeType='default' />
       <BackWithLabel
         onClick={backHome}
         style={{ pb: 0 }}
         text={t('Notifications')}
       />
-      <Motion variant='slide'>
-        <Container disableGutters ref={refContainer} sx={{ maxHeight: '480px', overflowY: 'auto', padding: '15px', width: '100%' }}>
+      <Motion style={isSidePanel ? { display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0, overflow: 'hidden' } : undefined} variant='slide'>
+        <Container disableGutters ref={refContainer} sx={{ flex: isSidePanel ? '1 1 auto' : undefined, maxHeight: isSidePanel ? 'none' : '480px', minHeight: isSidePanel ? 0 : undefined, overflowY: 'auto', padding: '15px', width: '100%' }}>
           <VelvetBox childrenStyle={{ display: 'grid', gap: '4px' }}>
             {!isNotificationOff && notificationItems && Object.entries(notificationItems).map(([dateKey, items]) => (
               <NotificationGroup

@@ -12,7 +12,7 @@ import { calcChange, calcPrice } from '@polkadot/extension-polkagate/src/util';
 import { BN_ZERO } from '@polkadot/util';
 
 import { BackWithLabel, DisplayBalance, FadeOnScroll, FormatPrice, Logo, Motion } from '../../components';
-import { useAccountAssets, useBackground, useSelectedAccount, useTranslation } from '../../hooks';
+import { useAccountAssets, useBackground, useIsSidePanel, useSelectedAccount, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { GlowBox } from '../../style';
 import { toTitleCase } from '../../util';
@@ -43,6 +43,7 @@ function Tokens(): React.ReactElement {
   const navigate = useNavigate();
   const refContainer = useRef<HTMLDivElement>(null);
   const address = useSelectedAccount()?.address;
+  const isSidePanel = useIsSidePanel();
 
   const { genesisHash, paramAssetId } = useParams<{ genesisHash: string; paramAssetId: string }>();
   const accountAssets = useAccountAssets(address);
@@ -78,14 +79,14 @@ function Tokens(): React.ReactElement {
 
   return UnlockTrackElement || (
     <Motion variant='flip'>
-      <Grid alignContent='flex-start' container sx={{ position: 'relative' }}>
+      <Grid alignContent='flex-start' container sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? '100vh' : undefined, overflow: isSidePanel ? 'hidden' : undefined, pb: isSidePanel ? '86px' : undefined, position: 'relative' }}>
         <UserDashboardHeader homeType='default' />
         <BackWithLabel
           content={<BackButton logoInfo={logoInfo} token={token} />}
           onClick={backHome}
           style={{ height: '40px', pb: 0 }}
         />
-        <Container disableGutters ref={refContainer} sx={{ display: 'block', height: 'fit-content', maxHeight: '504px', overflowY: 'auto', pb: '60px', pt: '15px' }}>
+        <Container disableGutters ref={refContainer} sx={{ display: 'block', flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : 'fit-content', maxHeight: isSidePanel ? 'none' : '504px', minHeight: isSidePanel ? 0 : undefined, overflowY: 'auto', pb: '60px', pt: '15px' }}>
           <GlowBox openBottom style={{ justifyContent: 'center', justifyItems: 'center', rowGap: '5px' }}>
             <Grid container item sx={{ backdropFilter: 'blur(4px)', border: '8px solid', borderColor: logoBorderColor, borderRadius: '999px', mt: '-12px', width: 'fit-content' }}>
               <Logo assetSize='48px' baseTokenSize='24px' genesisHash={token?.genesisHash} logo={logoInfo?.logo} subLogo={logoInfo?.subLogo} subLogoPosition='-6px -8px auto auto' />

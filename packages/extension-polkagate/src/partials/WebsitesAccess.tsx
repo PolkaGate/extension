@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { emptyList, emptyListLight } from '../assets/icons/index';
 import { ActionButton, DecisionButtons, FadeOnScroll, MySnackbar, MyTooltip, SearchField } from '../components';
-import { useIsExtensionPopup, useSelectedAccount, useTranslation } from '../hooks';
+import { useIsExtensionPopup, useIsSidePanel, useSelectedAccount, useTranslation } from '../hooks';
 import { getAuthList, removeAuthorization } from '../messaging';
 import { EditDappAccess, NothingFound, SharePopup } from '.';
 
@@ -50,6 +50,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
   const selectedAccount = useSelectedAccount();
   const refContainer = useRef(null);
   const isExtension = useIsExtensionPopup();
+  const isSidePanel = useIsSidePanel();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
 
@@ -108,7 +109,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
   const dAppsToShow = (filteredAuthorizedDapps && Object.entries(filteredAuthorizedDapps)) ?? [];
 
   return (
-    <Stack alignItems='center' direction='column' sx={{ height: '460px', position: 'relative', pt: '10px' }}>
+    <Stack alignItems='center' direction='column' sx={{ height: isSidePanel ? 'calc(100vh - 210px)' : '460px', position: 'relative', pt: '10px' }}>
       <Typography color='text.secondary' sx={{ p: isExtension ? '0 10px' : '10px 25px' }} variant='B-4'>
         {t('Control website access to your visible accounts. Edit the access list or delete a site to remove permissions. Only visible accounts are accessible.')}
       </Typography>
@@ -126,7 +127,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
           {t('action')}
         </Typography>
       </Stack>
-      <Container disableGutters ref={refContainer} sx={{ height: ' 400px', overflow: 'hidden', overflowY: 'auto', p: isExtension ? '0 15px 50px' : '0 5px 50px' }}>
+      <Container disableGutters ref={refContainer} sx={{ flex: isSidePanel ? '1 1 auto' : undefined, height: isSidePanel ? 'auto' : '400px', minHeight: 0, overflow: 'hidden', overflowY: 'auto', p: isExtension ? '0 15px 90px' : '0 5px 50px' }}>
         {dAppsToShow.map(([url, info], index) => {
           const isIncluded = info.authorizedAccounts.find((address) => address === selectedAccount?.address);
 
@@ -216,7 +217,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
         }}
         title={t('Remove all access')}
       >
-        <Stack direction='column' sx={{ alignItems: 'center', px: '20px', pb: isExtension ? '12px' : '20px' }}>
+        <Stack direction='column' sx={{ alignItems: 'center', pb: isExtension ? '12px' : '20px', px: '20px' }}>
           <Typography color='text.secondary' sx={{ pb: isExtension ? '16px' : '25px', textAlign: 'center' }} variant='B-4'>
             {t('This will remove access for all authenticated websites. Are you sure you want to continue?')}
           </Typography>
@@ -244,6 +245,7 @@ function AccessList({ filteredAuthorizedDapps, setAccessToEdit, setRefresh, setS
 function WebsitesAccess({ onClose, open }: Props): React.ReactElement {
   const { t } = useTranslation();
   const isExtension = useIsExtensionPopup();
+  const isSidePanel = useIsSidePanel();
 
   const [authorizedDapps, setAuthorizedDapps] = useState<AuthUrls>();
   const [refreshList, setRefresh] = useState<boolean>(true);
@@ -283,23 +285,25 @@ function WebsitesAccess({ onClose, open }: Props): React.ReactElement {
       modalStyle={{ minHeight: '200px', padding: '20px 0px' }}
       onClose={handleClose}
       open={open}
-      popupProps={{ TitleIcon: accessToEdit ? undefined : Key, iconSize: 18, maxHeight: '460px', onBack: accessToEdit ? () => setAccessToEdit(undefined) : undefined, pt: 20, withoutTopBorder: true }}
+      popupProps={{ TitleIcon: accessToEdit ? undefined : Key, iconSize: 18, maxHeight: isSidePanel ? 'calc(100vh - 210px)' : '460px', onBack: accessToEdit ? () => setAccessToEdit(undefined) : undefined, pt: 20, withoutTopBorder: true }}
       title={t('Website access')}
     >
       {!Object.keys(authorizedDapps ?? {}).length
         ? <EmptyAccessList />
         : accessToEdit
-          ? <EditDappAccess
-            access={accessToEdit}
-            setAccessToEdit={setAccessToEdit}
-            setRefresh={setRefresh}
-          />
-          : <AccessList
-            filteredAuthorizedDapps={filteredAuthorizedDapps}
-            setAccessToEdit={setAccessToEdit}
-            setRefresh={setRefresh}
-            setSearchKeyword={setSearchKeyword}
-          />
+          ? (
+            <EditDappAccess
+              access={accessToEdit}
+              setAccessToEdit={setAccessToEdit}
+              setRefresh={setRefresh}
+            />)
+          : (
+            <AccessList
+              filteredAuthorizedDapps={filteredAuthorizedDapps}
+              setAccessToEdit={setAccessToEdit}
+              setRefresh={setRefresh}
+              setSearchKeyword={setSearchKeyword}
+            />)
       }
     </SharePopup>
   );
