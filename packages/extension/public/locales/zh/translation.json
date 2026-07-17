@@ -980,5 +980,7 @@
   "Clear selection": "清除选择",
   "Unable to derive account": "无法派生账户",
   "Password change failed": "密码更改失败",
-  "Biometric authentication failed": "生物识别认证失败"
+  "Biometric authentication failed": "生物识别认证失败",
+  "Open side panel": "打开侧边栏",
+  "Enable biometrics from the popup or fullscreen settings.": "请在弹出窗口或全屏设置中启用生物识别。"
 }

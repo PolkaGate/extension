@@ -980,5 +980,7 @@
   "Clear selection": "Очистить выбор",
   "Unable to derive account": "Не удалось создать производный аккаунт",
   "Password change failed": "Не удалось изменить пароль",
-  "Biometric authentication failed": "Не удалось выполнить биометрическую аутентификацию"
+  "Biometric authentication failed": "Не удалось выполнить биометрическую аутентификацию",
+  "Open side panel": "Открыть боковую панель",
+  "Enable biometrics from the popup or fullscreen settings.": "Включите биометрию в настройках всплывающего окна или полноэкранного режима."
 }

@@ -980,5 +980,7 @@
   "Clear selection": "Limpar seleção",
   "Unable to derive account": "Não foi possível derivar a conta",
   "Password change failed": "Falha ao alterar a senha",
-  "Biometric authentication failed": "Falha na autenticação biométrica"
+  "Biometric authentication failed": "Falha na autenticação biométrica",
+  "Open side panel": "Abrir painel lateral",
+  "Enable biometrics from the popup or fullscreen settings.": "Ative a biometria nas configurações do popup ou tela cheia."
 }
