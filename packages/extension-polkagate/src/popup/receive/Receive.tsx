@@ -4,7 +4,7 @@
 import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/types';
 import type { ExtensionPopupCloser } from '@polkadot/extension-polkagate/util/handleExtensionPopup';
 
-import { Container, Dialog, Grid, styled, Typography, useTheme } from '@mui/material';
+import { Grid, styled, Typography, useTheme } from '@mui/material';
 import { ArrowCircleLeft, DocumentCopy, ScanBarcode } from 'iconsax-react';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { QRCode } from 'react-qrcode-logo';
@@ -14,11 +14,10 @@ import { NothingFound } from '@polkadot/extension-polkagate/src/partials';
 import resolveLogoInfo from '@polkadot/extension-polkagate/src/util/logo/resolveLogoInfo';
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
-import { FadeOnScroll, Logo, NeonButton, SearchField, Transition } from '../../components';
+import { ExtensionPopup, FadeOnScroll, Logo, NeonButton, SearchField } from '../../components';
 import MySnackbar from '../../components/MySnackbar';
-import CustomCloseSquare from '../../components/SVG/CustomCloseSquare';
 import { useFormatted, useGenesisHashOptions, useIsDark, useIsSidePanel, useSelectedAccount, useTranslation } from '../../hooks';
-import { GradientDivider, RedGradient } from '../../style';
+import { GradientDivider } from '../../style';
 import { sanitizeChainName, toShortAddress } from '../../util';
 import BackButton from '../accountsLists/BackButton';
 
@@ -236,8 +235,6 @@ interface Props {
  * Only has been used in extension mode!
  */
 export default function Receive({ openPopup, setOpenPopup }: Props) {
-  const theme = useTheme();
-  const isDark = useIsDark();
   const selectedAddress = useSelectedAccount();
 
   const [selectedChain, setSelectedChain] = useState<DropdownOption | undefined>();
@@ -248,51 +245,27 @@ export default function Receive({ openPopup, setOpenPopup }: Props) {
   }, [setOpenPopup]);
 
   return (
-    <Dialog
-      PaperProps={{
-        sx: {
-          backgroundImage: 'unset',
-          bgcolor: 'transparent',
-          boxShadow: 'unset'
-        }
-      }}
-      TransitionComponent={Transition}
-      componentsProps={{
-        backdrop: {
-          sx: {
-            backdropFilter: 'blur(10px)',
-            background: theme.palette.gradient.radialOverlay,
-            bgcolor: 'transparent'
-          }
-        }
-      }}
-      fullScreen
-      open={openPopup}
+    <ExtensionPopup
+      compactInSidePanel={!!selectedChain}
+      handleClose={handleClose}
+      maxHeight='100%'
+      openMenu={openPopup}
+      withoutTopBorder
     >
-      <Container disableGutters sx={{ height: '100%', width: '100%' }}>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ pb: '12px', pt: '18px' }}>
-          <CustomCloseSquare color='#AA83DC' onClick={handleClose} size='48' style={{ cursor: 'pointer' }} />
-        </Grid>
-        <Grid alignItems='center' container item justifyContent='center' sx={{ bgcolor: isDark ? '#1B133C' : theme.palette.background.paper, border: '2px solid', borderColor: isDark ? '#FFFFFF0D' : '#DDE3F4', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', display: 'block', height: 'calc(100% - 78px)', overflow: 'hidden', p: '10px', position: 'relative' }}>
-          <div style={{ position: 'relative', zIndex: 1 }}>
-            {!selectedChain &&
-              <SelectNetwork
-                isEthereum={isEthereumAddress(selectedAddress?.address || '')}
-                setSelectedChain={setSelectedChain}
-              />
-            }
-            {selectedChain && selectedAddress?.address &&
-              <QrCode
-                address={selectedAddress.address}
-                onBackToAccount={handleClose}
-                selectedChain={selectedChain}
-                setSelectedChain={setSelectedChain}
-              />
-            }
-          </div>
-          <RedGradient style={{ top: '-140px' }} />
-        </Grid>
-      </Container>
-    </Dialog>
+      {!selectedChain &&
+        <SelectNetwork
+          isEthereum={isEthereumAddress(selectedAddress?.address || '')}
+          setSelectedChain={setSelectedChain}
+        />
+      }
+      {selectedChain && selectedAddress?.address &&
+        <QrCode
+          address={selectedAddress.address}
+          onBackToAccount={handleClose}
+          selectedChain={selectedChain}
+          setSelectedChain={setSelectedChain}
+        />
+      }
+    </ExtensionPopup>
   );
 }
