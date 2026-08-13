@@ -1,5 +1,12 @@
 # Change Log
 
+## [2.14.1](https://github.com/polkagate/extension/compare/v2.14.0...v2.14.1) (2026-08-13)
+
+
+### Bug Fixes
+
+* prevent popup width growth on slide animation by clipping root overflow ([ac4572b](https://github.com/polkagate/extension/commit/ac4572b9d7e2503ff2f3fb8411f1c3be0665d8e0))
+
 # [2.14.0](https://github.com/polkagate/extension/compare/v2.13.0...v2.14.0) (2026-07-16)
 
 
