@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
 import { type BN, BN_ZERO } from '@polkadot/util';
 
-import { useAccountAssets, useChainInfo, useHighCommissionNominationAlert, usePrices, useRouteRefresh, useSoloStakingInfo, useStakingRewardsChart } from '../../../hooks';
+import { useAccountAssets, useChainInfo, useHighCommissionNominationAlert, usePrices, useRetiredValidatorAlert, useRouteRefresh, useSoloStakingInfo, useStakingRewardsChart } from '../../../hooks';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
 import StakingPortfolioAndTiles from '../partials/StakingPortfolioAndTiles';
@@ -35,6 +35,11 @@ export default function SoloFullScreen(): React.ReactElement {
     genesisHash,
     nominatedValidatorsIds: stakingInfo.stakingAccount?.nominators?.map((item) => item.toString()),
     stakingType: 'solo'
+  });
+
+  useRetiredValidatorAlert({
+    genesisHash,
+    nominatedValidatorsIds: stakingInfo.stakingAccount?.nominators?.map((item) => item.toString())
   });
 
   const [selectedPosition, setSelectedPosition] = useState<PositionInfo | undefined>(undefined);

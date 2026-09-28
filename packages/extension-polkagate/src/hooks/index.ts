@@ -83,6 +83,7 @@ export { default as useProfileAccounts } from './useProfileAccounts';
 export { default as useProfiles } from './useProfiles';
 export { default as useProxies } from './useProxies';
 export { default as useReservedDetails } from './useReservedDetails';
+export { default as useRetiredValidatorAlert } from './useRetiredValidatorAlert';
 export { default as useRouteRefresh } from './useRouteRefresh';
 export { default as useScrollbarAutoHide } from './useScrollbarAutoHide';
 export { default as useSelectedAccount } from './useSelectedAccount';

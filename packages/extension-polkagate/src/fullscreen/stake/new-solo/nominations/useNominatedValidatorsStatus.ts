@@ -20,6 +20,7 @@ export interface NominatedValidatorsStatus {
   isLoading: boolean;
   isNominated: boolean | undefined;
   nonElected: ValidatorInformation[];
+  retired: ValidatorInformation[];
   setSearch: (input: string) => void;
   setSortConfig: React.Dispatch<React.SetStateAction<string>>;
   sortConfig: string;
@@ -42,13 +43,34 @@ export default function useNominatedValidatorsStatus(stakingInfo: SoloStakingInf
   const isLoading = useMemo(() => (stakingInfo?.stakingAccount === undefined || nominatedValidatorsInformation === undefined), [nominatedValidatorsInformation, stakingInfo?.stakingAccount]);
   const isLoaded = useMemo(() => sortedAndFilteredValidators !== undefined, [sortedAndFilteredValidators]);
 
+  /** All known validator IDs (elected + waiting). Used to distinguish retired from non-elected. */
+  const allValidatorIds = useMemo(
+    () => new Set([
+      ...(validatorsInfo?.validatorsInformation.elected.map(({ accountId }) => String(accountId)) ?? []),
+      ...(validatorsInfo?.validatorsInformation.waiting.map(({ accountId }) => String(accountId)) ?? [])
+    ]),
+    [validatorsInfo?.validatorsInformation.elected, validatorsInfo?.validatorsInformation.waiting]
+  );
+
   const nominatedStatuses = useMemo(() => {
     const elected: typeof nominatedValidatorsInformation = [];
     const active: typeof nominatedValidatorsInformation = [];
     const nonElected: typeof nominatedValidatorsInformation = [];
+    const retired: typeof nominatedValidatorsInformation = [];
 
     sortedAndFilteredValidators?.forEach((info) => {
-      const isElected = electedIds.has(String(info.accountId));
+      const id = String(info.accountId);
+
+      // A validator absent from both elected and waiting is retired.
+      // We only classify as retired once validatorsInfo has loaded (allValidatorIds is non-empty
+      // OR we have some validators info at all), to avoid false positives during initial load.
+      if (validatorsInfo && !allValidatorIds.has(id)) {
+        retired.push(info);
+
+        return;
+      }
+
+      const isElected = electedIds.has(id);
       const others = (info.exposurePaged as unknown as SpStakingExposurePage | undefined)?.others;
 
       if (isElected) {
@@ -60,8 +82,8 @@ export default function useNominatedValidatorsStatus(stakingInfo: SoloStakingInf
       }
     });
 
-    return { active, elected, nonElected };
-  }, [electedIds, sortedAndFilteredValidators, stakingInfo?.stakingAccount?.accountId]);
+    return { active, elected, nonElected, retired };
+  }, [allValidatorIds, electedIds, sortedAndFilteredValidators, stakingInfo?.stakingAccount?.accountId, validatorsInfo]);
 
   return {
     isLoaded,

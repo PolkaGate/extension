@@ -19,11 +19,12 @@ interface Props {
   bgcolor?: string | undefined,
   genesisHash: string | undefined,
   isActive?: boolean | undefined,
+  isRetired?: boolean,
   validators: ValidatorInformation[],
   withCurve?: boolean
 }
 
-export const Validators = React.memo(function Validators({ address, bgcolor, genesisHash, isActive, validators, withCurve }: Props): React.ReactElement {
+export const Validators = React.memo(function Validators({ address, bgcolor, genesisHash, isActive, isRetired, validators, withCurve }: Props): React.ReactElement {
   return (
     <>
       {
@@ -51,6 +52,7 @@ export const Validators = React.memo(function Validators({ address, bgcolor, gen
                 bgcolor={bgcolor}
                 genesisHash={genesisHash}
                 isActive={isActive}
+                isRetired={isRetired}
                 key={index}
                 myShare={myShare}
                 style={{ marginLeft: '2.5%', width: '95.5%' }}
