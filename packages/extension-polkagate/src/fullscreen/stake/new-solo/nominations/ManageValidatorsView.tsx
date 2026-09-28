@@ -29,6 +29,8 @@ interface Props {
   isSelected: (validator: ValidatorInformation) => boolean;
   itemsPerPage: string | number;
   itemsToShow: ValidatorInformation[] | undefined;
+  /** IDs of all known active/waiting validators. Validators absent from this set are shown as retired. */
+  knownValidatorIds?: Set<string>;
   maximum: number;
   onBack: () => void;
   onNext: () => void;
@@ -56,6 +58,7 @@ export default function ManageValidatorsView({ description,
   isSelected,
   itemsPerPage,
   itemsToShow,
+  knownValidatorIds,
   maximum,
   onBack,
   onNext,
@@ -108,17 +111,22 @@ export default function ManageValidatorsView({ description,
             </TableToolbar>
             <Stack direction='column' sx={{ gap: '2px', height: 'calc(100vh - 390px)', overflow: 'auto', width: '100%' }}>
               {isLoaded &&
-                itemsToShow?.map((validator) => (
-                  <ValidatorInfo
-                    genesisHash={genesisHash}
-                    isAlreadySelected={isAlreadySelected(validator)}
-                    isSelected={isSelected(validator)}
-                    key={String(validator.accountId)}
-                    onSelect={onSelect(validator)}
-                    reachedMaximum={reachedMaximum}
-                    validatorInfo={validator}
-                  />
-                ))
+                itemsToShow?.map((validator) => {
+                  const isRetired = knownValidatorIds !== undefined && !knownValidatorIds.has(String(validator.accountId));
+
+                  return (
+                    <ValidatorInfo
+                      genesisHash={genesisHash}
+                      isAlreadySelected={isAlreadySelected(validator)}
+                      isRetired={isRetired || undefined}
+                      isSelected={isSelected(validator)}
+                      key={String(validator.accountId)}
+                      onSelect={onSelect(validator)}
+                      reachedMaximum={reachedMaximum}
+                      validatorInfo={validator}
+                    />
+                  );
+                })
               }
               {isLoading &&
                 Array.from({ length: DEFAULT_VALIDATORS_PER_PAGE })

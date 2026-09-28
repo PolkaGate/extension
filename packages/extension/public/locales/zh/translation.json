@@ -983,5 +983,9 @@
   "Biometric authentication failed": "生物识别认证失败",
   "Open side panel": "打开侧边栏",
   "Enable biometrics from the popup or fullscreen settings.": "请在弹出窗口或全屏设置中启用生物识别。",
-  "Retired": "退休"
+  "Retired": "退休",
+  "You are nominating retired validators. Update your nominations to select current validators.": "您正在提名已退休的验证人。请更新您的提名以选择当前的验证人。",
+  "Your nomination pool has nominated retired validators. The pool should update its nominations to select current validators.": "您的提名池已提名了已退休的验证人。该池应更新其提名以选择当前的验证人。",
+  "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "{{chain}} 上的验证人 {{name}} 的佣金较高（{{commission}}%）。",
+  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "{{chain}} 上的池 {{pool}} 提名了佣金较高的验证人 {{name}}（{{commission}}%）。"
 }

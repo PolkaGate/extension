@@ -25,6 +25,11 @@ function ManageValidators() {
       ? [...info.elected, ...info.waiting]
       : undefined;
   }, [validatorsInfo]);
+
+  const knownValidatorIds = useMemo(() => new Set([
+    ...(validatorsInfo?.validatorsInformation.elected.map(({ accountId }) => String(accountId)) ?? []),
+    ...(validatorsInfo?.validatorsInformation.waiting.map(({ accountId }) => String(accountId)) ?? [])
+  ]), [validatorsInfo]);
   const nominatedValidatorsIds = useMemo(
     () => stakingInfo.pool === undefined
       ? undefined
@@ -90,6 +95,7 @@ function ManageValidators() {
         isSelected={isSelected}
         itemsPerPage={itemsPerPage}
         itemsToShow={itemsToShow}
+        knownValidatorIds={knownValidatorIds}
         maximum={maximum}
         onBack={backToStakingHome}
         onNext={toggleReview}

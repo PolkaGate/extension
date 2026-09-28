@@ -983,5 +983,9 @@
   "Biometric authentication failed": "Échec de l'authentification biométrique",
   "Open side panel": "Ouvrir le panneau latéral",
   "Enable biometrics from the popup or fullscreen settings.": "Activez la biométrie depuis les paramètres du popup ou en plein écran.",
-  "Retired": "Retraité"
+  "Retired": "Retraité",
+  "You are nominating retired validators. Update your nominations to select current validators.": "Vous nommez des validateurs retirés. Mettez à jour vos nominations pour sélectionner des validateurs actuels.",
+  "Your nomination pool has nominated retired validators. The pool should update its nominations to select current validators.": "Votre pool de nomination a désigné des validateurs retirés. Le pool devrait mettre à jour ses nominations pour sélectionner des validateurs actuels.",
+  "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "Le validateur {{name}} sur {{chain}} a une commission élevée ({{commission}}%).",
+  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "Le pool {{pool}} sur {{chain}} a nommé le validateur {{name}} avec une commission élevée ({{commission}}%)."
 }

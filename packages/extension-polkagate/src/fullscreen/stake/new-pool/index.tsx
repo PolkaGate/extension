@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 import { getStakingAsset } from '@polkadot/extension-polkagate/src/popup/staking/utils';
 import { BN_ZERO } from '@polkadot/util';
 
-import { useAccountAssets, useChainInfo, useHighCommissionNominationAlert, usePoolStakingInfo, usePrices, useRouteRefresh, useStakingRewardsChart } from '../../../hooks';
+import { useAccountAssets, useChainInfo, useHighCommissionNominationAlert, usePoolStakingInfo, usePrices, useRetiredValidatorAlert, useRouteRefresh, useStakingRewardsChart } from '../../../hooks';
 import { isHexToBn } from '../../../util';
 import HomeLayout from '../../components/layout';
 import StakingIcon from '../partials/StakingIcon';
@@ -36,6 +36,12 @@ export default function PoolFullScreen(): React.ReactElement {
     genesisHash,
     nominatedValidatorsIds: stakingInfo.pool?.stashIdAccount?.nominators?.map((item) => item.toString()),
     poolName: stakingInfo.pool?.metadata,
+    stakingType: 'pool'
+  });
+
+  useRetiredValidatorAlert({
+    genesisHash,
+    nominatedValidatorsIds: stakingInfo.pool?.stashIdAccount?.nominators?.map((item) => item.toString()),
     stakingType: 'pool'
   });
 

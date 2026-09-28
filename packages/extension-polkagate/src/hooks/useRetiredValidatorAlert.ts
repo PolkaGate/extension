@@ -5,14 +5,17 @@ import { useEffect, useRef } from 'react';
 
 import useAlerts from './useAlerts';
 import useChainInfo from './useChainInfo';
+import useTranslation from './useTranslation';
 import useValidatorsInformation from './useValidatorsInformation';
 
 interface RetiredValidatorAlertParams {
   genesisHash: string | undefined;
   nominatedValidatorsIds: string[] | null | undefined;
+  stakingType?: 'solo' | 'pool';
 }
 
-export default function useRetiredValidatorAlert({ genesisHash, nominatedValidatorsIds }: RetiredValidatorAlertParams): void {
+export default function useRetiredValidatorAlert({ genesisHash, nominatedValidatorsIds, stakingType = 'solo' }: RetiredValidatorAlertParams): void {
+  const { t } = useTranslation();
   const { notify } = useAlerts();
   const { chainName } = useChainInfo(genesisHash, true);
   const validatorsInfo = useValidatorsInformation(genesisHash);
@@ -56,9 +59,11 @@ export default function useRetiredValidatorAlert({ genesisHash, nominatedValidat
 
     lastAlertKeyRef.current = alertKey;
     removeAlertRef.current = notify(
-      `You are nominating retired validators on ${chainName}. One or more of your nominated validators are no longer validators. Update your nominations to select active validators.`,
+      stakingType === 'pool'
+        ? t('Your nomination pool has nominated retired validators. The pool should update its nominations to select current validators.')
+        : t('You are nominating retired validators. Update your nominations to select current validators.'),
       'warning',
       true
     );
-  }, [chainName, genesisHash, nominatedValidatorsIds, notify, validatorsInfo]);
+  }, [chainName, genesisHash, nominatedValidatorsIds, notify, stakingType, t, validatorsInfo]);
 }
