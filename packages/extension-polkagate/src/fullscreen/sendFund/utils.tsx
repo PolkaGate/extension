@@ -6,7 +6,7 @@ import type { DropdownOption } from '@polkadot/extension-polkagate/src/util/type
 import type { AnyNumber } from '@polkadot/types-codec/types';
 import type { BN } from '@polkadot/util';
 
-import { CHAINS, getNativeAssets, getSupportedAssets, hasSupportForAsset, type TChain } from '@paraspell/sdk-pjs';
+import { CHAINS, getAllAssetsSymbols, getNativeAssets, getSupportedAssets, type TChain } from '@paraspell/sdk-pjs';
 import { Foreign, ForeignAbstract, getParaId, getRelayChainSymbol, isTLocation, Native, SUBSTRATE_CHAINS, type TCurrencyCore, type TSubstrateChain } from '@paraspell/sdk-pjs';
 
 import { decodeMultiLocation, isOnAssetHub } from '@polkadot/extension-polkagate/src/util';
@@ -44,7 +44,7 @@ export const isParaspellSupportedAsset = (chainName: string | undefined, symbol:
 
   const _chainName = normalizeChainName(chainName) as TSubstrateChain;
 
-  return hasSupportForAsset(_chainName, symbol);
+  return getAllAssetsSymbols(_chainName).includes(symbol);
 };
 
 export const isOnSameChain = (senderChainName: string | undefined, recipientChainName: string | undefined) => {

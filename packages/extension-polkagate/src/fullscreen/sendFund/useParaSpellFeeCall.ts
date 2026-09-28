@@ -83,40 +83,70 @@ export default function useParaSpellFeeCall(address: string | undefined, isReady
           .from(fromChain as TSubstrateChain)
           .to(toChain as TDestination)
           .currency({ amount, ...currency })
-          .address(recipientAddress)
-          .senderAddress(address)
+          .recipient(recipientAddress)
+          .sender(address)
           .keepAlive(false) // to drain the account completely
         : isEthereumAddress(address)
           ? Builder({ abstractDecimals: false })
             .from(fromChain as TSubstrateChain)
             .to(toChain as TDestination)
             .currency({ amount, ...currency })
-            .address(recipientAddress)
-            .senderAddress(address)
+            .recipient(recipientAddress)
+            .sender(address)
             .ahAddress(evmToAddress(address))
           : Builder({ abstractDecimals: false })
             .from(fromChain as TSubstrateChain)
             .to(toChain as TDestination)
             .currency({ amount, ...currency })
-            .address(recipientAddress)
-            .senderAddress(address);
+            .recipient(recipientAddress)
+            .sender(address);
 
       let cancelled = false;
 
-      Promise.all([builder.build(), builder.getTransferInfo()])
-        .then(([tx, info]) => {
+      /** Returns true for RPC/runtime errors that should not block the user (e.g.
+       *  Paseo AssetHub WASM trap on TransactionPaymentApi_query_info). */
+      const isRpcRuntimeError = (err: unknown) => {
+        const msg = (err instanceof Error ? err.message : String(err)).toLowerCase();
+
+        return msg.includes('wasm') || msg.includes('unreachable') || /\b4003\b/.test(msg);
+      };
+
+      builder.build()
+        .then((tx) => {
           if (cancelled) {
             return;
           }
 
-          setParaSpellState({
-            paraSpellFee: {
-              destinationFee: info.destination.xcmFee,
-              originFee: info.origin.xcmFee
-            },
-            paraSpellTransaction: tx
-          });
-        }).catch((err) => {
+          // Set the transaction immediately so the user is not blocked.
+          setParaSpellState({ paraSpellTransaction: tx });
+
+          // Fee estimation is best-effort; failures here must not block the send flow.
+          builder.getTransferInfo()
+            .then((info) => {
+              if (cancelled) {
+                return;
+              }
+
+              setParaSpellState({
+                paraSpellFee: {
+                  destinationFee: info.destination.xcmFee,
+                  originFee: info.origin.xcmFee
+                },
+                paraSpellTransaction: tx
+              });
+            })
+            .catch((err: unknown) => {
+              if (!cancelled && !isRpcRuntimeError(err)) {
+                setInputs((prevInputs) => ({
+                  ...prevInputs,
+                  error: 'Something went wrong while calculating estimated fee!'
+                }));
+              }
+
+              console.error('fee calc error', err);
+            });
+        })
+        .catch((err: unknown) => {
           if (!cancelled) {
             setInputs((prevInputs) => ({
               ...prevInputs,
