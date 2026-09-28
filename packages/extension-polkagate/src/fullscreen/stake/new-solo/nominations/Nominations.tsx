@@ -38,13 +38,14 @@ export default function Nominations({ address, genesisHash, stakingInfo }: Props
     isLoading,
     isNominated,
     nonElected,
+    retired,
     setSearch,
     setSortConfig,
     sortConfig } = useNominatedValidatorsStatus(stakingInfo);
 
   const [notElectedCollapse, setNotElectedCollapse] = React.useState<boolean>(false);
   const [electedCollapse, setElectedCollapse] = React.useState<boolean>(true);
-  const hasVisibleNominations = active.length + elected.length + nonElected.length > 0;
+  const hasVisibleNominations = active.length + elected.length + nonElected.length + retired.length > 0;
 
   const onSearch = useCallback((input: string) => setSearch(input), [setSearch]);
   const openValidatorManagement = useCallback(() => address && genesisHash && navigate('/fullscreen-stake/solo/manage-validator/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
@@ -101,7 +102,7 @@ export default function Nominations({ address, genesisHash, stakingInfo }: Props
             <LabelBar
               Icon={Timer}
               color='#8E8E8E'
-              count={nonElected?.length}
+              count={(nonElected?.length ?? 0) + retired.length}
               description={t('Waiting')}
               isCollapsed={notElectedCollapse}
               label={t('Not Elected')}
@@ -110,12 +111,19 @@ export default function Nominations({ address, genesisHash, stakingInfo }: Props
             <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={notElectedCollapse} sx={{ height: 'fit-content', minHeight: 'auto' }}>
               <Stack direction='column' sx={{ gap: '2px', height: 'fit-content', position: 'relative', width: '100%' }}>
                 <Line
-                  height={44 * nonElected.length}
+                  height={44 * (nonElected.length + retired.length)}
                 />
                 <Validators
                   bgcolor={isDark ? 'transparent' : '#FFFFFF'}
                   genesisHash={genesisHash}
                   validators={nonElected}
+                  withCurve
+                />
+                <Validators
+                  bgcolor={isDark ? 'transparent' : '#FFFFFF'}
+                  genesisHash={genesisHash}
+                  isRetired
+                  validators={retired}
                   withCurve
                 />
               </Stack>

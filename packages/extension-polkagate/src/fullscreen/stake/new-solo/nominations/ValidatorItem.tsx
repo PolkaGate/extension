@@ -66,6 +66,7 @@ interface ValidatorInfoProp {
   genesisHash: string | undefined;
   isAlreadySelected?: boolean;
   isActive?: boolean | undefined;
+  isRetired?: boolean;
   isSelected?: boolean;
   myShare?: number | undefined;
   onSelect?: () => void;
@@ -74,7 +75,7 @@ interface ValidatorInfoProp {
   style?: React.CSSProperties;
 }
 
-const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActive, isAlreadySelected, isSelected, myShare, onSelect, reachedMaximum, style = {}, validatorInfo }: ValidatorInfoProp) {
+const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActive, isAlreadySelected, isRetired, isSelected, myShare, onSelect, reachedMaximum, style = {}, validatorInfo }: ValidatorInfoProp) {
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
@@ -93,7 +94,9 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
 
   const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);
   const isHighCommission = commission > HIGH_COMMISSION_THRESHOLD;
-  const notElected = isActive === undefined && !onSelect;
+  // notElected drives the wider identity column (no badge slot occupying space).
+  // When isRetired, the badge IS rendered, so identity uses the narrower width — same as elected rows.
+  const notElected = isActive === undefined && !onSelect && !isRetired;
   const baseBgcolor = bgcolor ?? (isSelected ? '#FF4FB926' : isAlreadySelected ? (isDark ? '#AA83DC1A' : '#EEF1FF') : isDark ? '#05091C' : '#FFFFFF');
   const activeBadgeBg = isDark ? '#82FFA526' : '#DDF8EA';
   const activeBadgeColor = 'success.main';
@@ -134,21 +137,27 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
             style={{ m: 0, mr: '10px', width: 'fit-content' }}
           />
         }
-        {isActive !== undefined &&
-          <Typography
-            sx={{
-              bgcolor: isActive ? activeBadgeBg : inactiveBadgeBg,
-              borderRadius: '6px',
-              color: isActive ? activeBadgeColor : inactiveBadgeColor,
-              lineHeight: '16px',
-              minWidth: '54px',
-              mr: '8px',
-              px: '8px'
-            }}
-            variant='B-5'
-          >
-            {isActive ? t('Active') : t('Inactive')}
-          </Typography>
+        {/* Badge slot — always occupies space so the identity column and all columns after it never shift */}
+        {(isRetired || isActive !== undefined)
+          ? <Typography
+              sx={{
+                bgcolor: isRetired
+                  ? (isDark ? alpha(theme.palette.error.main, 0.15) : '#FFE8E8')
+                  : (isActive ? activeBadgeBg : inactiveBadgeBg),
+                borderRadius: '6px',
+                color: isRetired
+                  ? (isDark ? theme.palette.error.light : theme.palette.error.main)
+                  : (isActive ? activeBadgeColor : inactiveBadgeColor),
+                lineHeight: '16px',
+                minWidth: '54px',
+                mr: '8px',
+                px: '8px'
+              }}
+              variant='B-5'
+            >
+              {isRetired ? t('Retired') : isActive ? t('Active') : t('Inactive')}
+            </Typography>
+          : null
         }
         <ValidatorIdentity
           style={{ m: 0, ml: notElected ? '15px' : 0, width: myShare ? '185px' : notElected ? '352px' : '305px' }}
