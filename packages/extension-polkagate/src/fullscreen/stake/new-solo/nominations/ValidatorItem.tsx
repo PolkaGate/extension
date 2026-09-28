@@ -216,7 +216,7 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
           style={{ justifyContent: 'center', width: '125px' }}
           validatorDetail={validatorInfo}
         />
-        <IconButton onClick={openValidatorDetail} sx={{ bgcolor: isDark ? (bgcolor ? '#1B133C' : '#2D1E4A') : '#EEF1FF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '8px', height: '40px', width: '36px' }}>
+        <IconButton disabled={isRetired} onClick={openValidatorDetail} sx={{ bgcolor: isDark ? (bgcolor ? '#1B133C' : '#2D1E4A') : '#EEF1FF', border: isDark ? 'none' : '1px solid #DDE3F4', borderRadius: '8px', height: '40px', opacity: isRetired ? 0.3 : 1, width: '36px' }}>
           <ArrowRight2 color={isDark ? '#AA83DC' : '#6F5A96'} size='14' variant='Bold' />
         </IconButton>
       </Container>
