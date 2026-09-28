@@ -1,7 +1,6 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type { DMKTransport } from '@zondax/ledger-js';
 import type { AccountOptions, LedgerAddress, LedgerSignature, LedgerVersion } from '@polkadot/hw-ledger/types';
 
 import { PolkadotGenericApp } from '@zondax/ledger-substrate';
@@ -24,7 +23,7 @@ export async function loadWasm() {
   return await WebAssembly.instantiateStreaming(fetch('./metadata_shortener.wasm'), imports);
 }
 
-export class GenericLedger extends BaseLedger<PolkadotGenericApp<DMKTransport>> {
+export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
   protected scheme = SCHEME.ED25519;
   protected ss58_addr_type = 42;
 
@@ -107,11 +106,11 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp<DMKTransport>> 
     });
   }
 
-  getApp = async(): Promise<PolkadotGenericApp<DMKTransport>> => {
+  getApp = async(): Promise<PolkadotGenericApp> => {
     if (!this.app) {
       const transport = await GenericLedger.transportManager.getTransport();
 
-      this.app = new PolkadotGenericApp<DMKTransport>(transport);
+      this.app = new PolkadotGenericApp(transport);
     }
 
     return this.app;

@@ -35,6 +35,7 @@
     "@polkadot/ui-settings": "^3.15.2",
     "@polkadot/util": "latest",
     "@polkadot/util-crypto": "latest",
+    "@zondax/ledger-js": "^2.1.0",
     "@zondax/ledger-substrate": "^3.0.0",
     "file-saver": "^2.0.5",
     "i18next": "^21.8.8",
