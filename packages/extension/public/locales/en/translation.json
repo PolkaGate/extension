@@ -982,5 +982,6 @@
   "Password change failed": "",
   "Biometric authentication failed": "",
   "Open side panel": "",
-  "Enable biometrics from the popup or fullscreen settings.": ""
+  "Enable biometrics from the popup or fullscreen settings.": "",
+  "Retired": ""
 }

@@ -982,5 +982,6 @@
   "Password change failed": "पासवर्ड बदलने में विफल",
   "Biometric authentication failed": "बायोमेट्रिक प्रमाणीकरण विफल",
   "Open side panel": "साइड पैनल खोलें",
-  "Enable biometrics from the popup or fullscreen settings.": "पॉपअप या फ़ुलस्क्रीन सेटिंग्स से बायोमेट्रिक्स सक्षम करें।"
+  "Enable biometrics from the popup or fullscreen settings.": "पॉपअप या फ़ुलस्क्रीन सेटिंग्स से बायोमेट्रिक्स सक्षम करें।",
+  "Retired": "सेवानिवृत्त"
 }

@@ -982,5 +982,6 @@
   "Password change failed": "Не удалось изменить пароль",
   "Biometric authentication failed": "Не удалось выполнить биометрическую аутентификацию",
   "Open side panel": "Открыть боковую панель",
-  "Enable biometrics from the popup or fullscreen settings.": "Включите биометрию в настройках всплывающего окна или полноэкранного режима."
+  "Enable biometrics from the popup or fullscreen settings.": "Включите биометрию в настройках всплывающего окна или полноэкранного режима.",
+  "Retired": "Отключена"
 }

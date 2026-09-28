@@ -982,5 +982,6 @@
   "Password change failed": "Falha ao alterar a senha",
   "Biometric authentication failed": "Falha na autenticação biométrica",
   "Open side panel": "Abrir painel lateral",
-  "Enable biometrics from the popup or fullscreen settings.": "Ative a biometria nas configurações do popup ou tela cheia."
+  "Enable biometrics from the popup or fullscreen settings.": "Ative a biometria nas configurações do popup ou tela cheia.",
+  "Retired": "Desativado"
 }
