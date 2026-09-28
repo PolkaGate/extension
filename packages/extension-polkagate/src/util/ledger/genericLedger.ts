@@ -1,6 +1,7 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
+import type { DMKTransport } from '@zondax/ledger-js';
 import type { AccountOptions, LedgerAddress, LedgerSignature, LedgerVersion } from '@polkadot/hw-ledger/types';
 
 import { PolkadotGenericApp } from '@zondax/ledger-substrate';
@@ -23,7 +24,7 @@ export async function loadWasm() {
   return await WebAssembly.instantiateStreaming(fetch('./metadata_shortener.wasm'), imports);
 }
 
-export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
+export class GenericLedger extends BaseLedger<PolkadotGenericApp<DMKTransport>> {
   protected scheme = SCHEME.ED25519;
   protected ss58_addr_type = 42;
 
@@ -33,7 +34,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
   }
 
   getVersion(): Promise<LedgerVersion> {
-    return this.withApp(async (app): Promise<LedgerVersion> => {
+    return this.withApp(async(app): Promise<LedgerVersion> => {
       const { deviceLocked: locked, major, minor, patch, testMode } = await app.getVersion();
 
       return {
@@ -53,7 +54,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
   }
 
   getAddress(confirm?: boolean, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerAddress> {
-    return this.withApp(async (app): Promise<LedgerAddress> => {
+    return this.withApp(async(app): Promise<LedgerAddress> => {
       const path = this.serializePath(accountOffset, addressOffset, accountOptions);
       const isEcdsa = this.scheme === SCHEME.ECDSA;
 
@@ -69,7 +70,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
   }
 
   async signTransaction(tx: Uint8Array, metadata: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature> {
-    return this.withApp(async (app): Promise<LedgerSignature> => {
+    return this.withApp(async(app): Promise<LedgerSignature> => {
       const path = this.serializePath(accountOffset, addressOffset, accountOptions);
 
       const signer = this.scheme === SCHEME.ECDSA ? 'signWithMetadataEcdsa' : 'signWithMetadataEd25519';
@@ -82,7 +83,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
   }
 
   async signMessage(message: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature> {
-    return this.withApp(async (app): Promise<LedgerSignature> => {
+    return this.withApp(async(app): Promise<LedgerSignature> => {
       const path = this.serializePath(accountOffset, addressOffset, accountOptions);
       const signer = this.scheme === SCHEME.ECDSA ? 'signRawEcdsa' : 'signRawEd25519';
 
@@ -106,11 +107,11 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
     });
   }
 
-  getApp = async (): Promise<PolkadotGenericApp> => {
+  getApp = async(): Promise<PolkadotGenericApp<DMKTransport>> => {
     if (!this.app) {
       const transport = await GenericLedger.transportManager.getTransport();
 
-      this.app = new PolkadotGenericApp(transport);
+      this.app = new PolkadotGenericApp<DMKTransport>(transport);
     }
 
     return this.app;

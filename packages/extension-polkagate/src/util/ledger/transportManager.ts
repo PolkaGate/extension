@@ -1,14 +1,20 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import type Transport from '@ledgerhq/hw-transport';
-import type { LedgerTypes } from './types';
+import type { DiscoveredDevice } from '@ledgerhq/device-management-kit';
 
-import { transports } from '@polkadot/hw-ledger-transports';
+import { DeviceManagementKitBuilder } from '@ledgerhq/device-management-kit';
+import { webHidTransportFactory } from '@ledgerhq/device-transport-kit-web-hid';
+import { DMKTransport } from '@zondax/ledger-js';
+
+const dmk = new DeviceManagementKitBuilder()
+  .addTransport(webHidTransportFactory)
+  .build();
 
 export class LedgerTransportManager {
   private static instance: LedgerTransportManager;
-  private transport: Transport | null = null;
+  private transport: DMKTransport | null = null;
+  private sessionId: string | null = null;
 
   static getInstance(): LedgerTransportManager {
     if (!LedgerTransportManager.instance) {
@@ -18,48 +24,51 @@ export class LedgerTransportManager {
     return LedgerTransportManager.instance;
   }
 
-  async getTransport(): Promise<Transport> {
+  async getTransport(): Promise<DMKTransport> {
     if (this.transport) {
       return this.transport;
     }
 
-    const transportType = this.getLedgerTransportTypeSupport();
-
-    if (!transportType) {
-      throw new Error('No supported Ledger transport found');
-    }
-
-    const def = transports.find(({ type }) => type === transportType);
-
-    if (!def) {
-      throw new Error(`Unable to find a transport for ${transportType}`);
-    }
-
-    this.transport = await def.create();
-
-    this.transport.on?.('disconnect', () => {
-      this.transport = null;
-      console.warn('[Ledger] Disconnected');
+    const device = await new Promise<DiscoveredDevice>((resolve, reject) => {
+      const subscription = dmk.startDiscovering({}).subscribe({
+        error: reject,
+        next: (discovered) => {
+          subscription.unsubscribe();
+          resolve(discovered);
+        }
+      });
     });
+
+    this.sessionId = await dmk.connect({
+      device,
+      sessionRefresherOptions: { isRefresherDisabled: true }
+    });
+
+    this.transport = new DMKTransport(dmk, this.sessionId);
 
     return this.transport;
   }
 
-  public async closeTransport() {
-    if (this.transport) {
-      await this.transport.close();
-      this.transport = null;
+  public async closeTransport(): Promise<void> {
+    if (this.sessionId) {
+      await dmk.disconnect({ sessionId: this.sessionId });
+      this.sessionId = null;
     }
+
+    this.transport = null;
   }
 
   public onTransportDisconnect(callback: () => void): void {
-    if (this.transport) {
-      const disconnectListener = () => {
-        callback();
-        this.transport?.off?.('disconnect', disconnectListener);
-      };
+    if (this.sessionId) {
+      const sessionId = this.sessionId;
 
-      this.transport.on?.('disconnect', disconnectListener);
+      dmk.getDeviceSessionState({ sessionId }).subscribe((state) => {
+        if ('isConnected' in state && !state.isConnected) {
+          this.transport = null;
+          this.sessionId = null;
+          callback();
+        }
+      });
     }
   }
 
@@ -67,11 +76,4 @@ export class LedgerTransportManager {
   private constructor() {
     // No implementation needed here
   }
-
-  private getLedgerTransportTypeSupport = (): LedgerTypes | null => {
-    const supportsHID = 'hid' in navigator || 'HID' in window;
-    const supportsWebUSB = 'usb' in navigator || 'USB' in window;
-
-    return supportsHID ? 'hid' : supportsWebUSB ? 'webusb' : null;
-  };
 }
