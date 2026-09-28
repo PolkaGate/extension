@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.15.0](https://github.com/polkagate/extension/compare/v2.14.1...v2.15.0) (2026-09-28)
+
+
+### Features
+
+* detect and display retired nominated validators with alert ([#2187](https://github.com/polkagate/extension/issues/2187)) ([a510638](https://github.com/polkagate/extension/commit/a51063804f6bae347b453e5f57613376144a69be))
+
 ## [2.14.1](https://github.com/polkagate/extension/compare/v2.14.0...v2.14.1) (2026-08-13)
 
 
