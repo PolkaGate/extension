@@ -3,8 +3,6 @@
 
 import type { AccountOptions, LedgerAddress, LedgerSignature, LedgerVersion } from '@polkadot/hw-ledger/types';
 
-export type LedgerTypes = 'hid' | 'webusb';
-
 export abstract class Ledger {
   abstract getAddress(confirm?: boolean, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerAddress>;
 

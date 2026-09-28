@@ -17,6 +17,8 @@
   "type": "module",
   "version": "0.47.5",
   "dependencies": {
+    "@ledgerhq/device-management-kit": "^1.10.0",
+    "@ledgerhq/device-transport-kit-web-hid": "^1.2.4",
     "@polkadot-api/merkleize-metadata": "^1.1.29",
     "@polkadot/extension-base": "^0.47.5",
     "@polkadot/extension-chains": "^0.47.5",
@@ -33,7 +35,8 @@
     "@polkadot/ui-settings": "^3.15.2",
     "@polkadot/util": "latest",
     "@polkadot/util-crypto": "latest",
-    "@zondax/ledger-substrate": "^1.0.1",
+    "@zondax/ledger-js": "^2.1.0",
+    "@zondax/ledger-substrate": "^3.0.0",
     "file-saver": "^2.0.5",
     "i18next": "^21.8.8",
     "react": "^18.1.0",

@@ -33,7 +33,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
   }
 
   getVersion(): Promise<LedgerVersion> {
-    return this.withApp(async (app): Promise<LedgerVersion> => {
+    return this.withApp(async(app): Promise<LedgerVersion> => {
       const { deviceLocked: locked, major, minor, patch, testMode } = await app.getVersion();
 
       return {
@@ -53,7 +53,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
   }
 
   getAddress(confirm?: boolean, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerAddress> {
-    return this.withApp(async (app): Promise<LedgerAddress> => {
+    return this.withApp(async(app): Promise<LedgerAddress> => {
       const path = this.serializePath(accountOffset, addressOffset, accountOptions);
       const isEcdsa = this.scheme === SCHEME.ECDSA;
 
@@ -69,7 +69,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
   }
 
   async signTransaction(tx: Uint8Array, metadata: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature> {
-    return this.withApp(async (app): Promise<LedgerSignature> => {
+    return this.withApp(async(app): Promise<LedgerSignature> => {
       const path = this.serializePath(accountOffset, addressOffset, accountOptions);
 
       const signer = this.scheme === SCHEME.ECDSA ? 'signWithMetadataEcdsa' : 'signWithMetadataEd25519';
@@ -82,7 +82,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
   }
 
   async signMessage(message: Uint8Array, accountOffset?: number, addressOffset?: number, accountOptions?: Partial<AccountOptions>): Promise<LedgerSignature> {
-    return this.withApp(async (app): Promise<LedgerSignature> => {
+    return this.withApp(async(app): Promise<LedgerSignature> => {
       const path = this.serializePath(accountOffset, addressOffset, accountOptions);
       const signer = this.scheme === SCHEME.ECDSA ? 'signRawEcdsa' : 'signRawEd25519';
 
@@ -106,7 +106,7 @@ export class GenericLedger extends BaseLedger<PolkadotGenericApp> {
     });
   }
 
-  getApp = async (): Promise<PolkadotGenericApp> => {
+  getApp = async(): Promise<PolkadotGenericApp> => {
     if (!this.app) {
       const transport = await GenericLedger.transportManager.getTransport();
 
