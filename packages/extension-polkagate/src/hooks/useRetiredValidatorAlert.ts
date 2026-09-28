@@ -17,9 +17,12 @@ export default function useRetiredValidatorAlert({ genesisHash, nominatedValidat
   const { chainName } = useChainInfo(genesisHash, true);
   const validatorsInfo = useValidatorsInformation(genesisHash);
   const lastAlertKeyRef = useRef<string | undefined>(undefined);
+  const removeAlertRef = useRef<(() => void) | undefined>(undefined);
 
   useEffect(() => {
     if (!chainName || !nominatedValidatorsIds?.length || !validatorsInfo) {
+      removeAlertRef.current?.();
+      removeAlertRef.current = undefined;
       lastAlertKeyRef.current = undefined;
 
       return;
@@ -35,6 +38,8 @@ export default function useRetiredValidatorAlert({ genesisHash, nominatedValidat
       .sort();
 
     if (retiredIds.length === 0) {
+      removeAlertRef.current?.();
+      removeAlertRef.current = undefined;
       lastAlertKeyRef.current = undefined;
 
       return;
@@ -46,9 +51,11 @@ export default function useRetiredValidatorAlert({ genesisHash, nominatedValidat
       return;
     }
 
-    lastAlertKeyRef.current = alertKey;
+    // Remove the previous alert (different key = different set of retired validators).
+    removeAlertRef.current?.();
 
-    notify(
+    lastAlertKeyRef.current = alertKey;
+    removeAlertRef.current = notify(
       `You are nominating retired validators on ${chainName}. One or more of your nominated validators are no longer validators. Update your nominations to select active validators.`,
       'warning',
       true
