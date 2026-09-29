@@ -192,6 +192,8 @@ async function processDirectIdentities(api, validatorsInfo, validatorsInformatio
     console.log(`Fetching validators identity, DONE 👍 : ${validatorsInformation.length}/${validatorsInfo.length}`);
   } catch (error) {
     console.error('Error fetching identity:', error);
+    // Preserve unprocessed validators so they continue through the sub-identity pipeline.
+    mayHaveSubId.push(...validatorsInfo.slice(totalProcessed));
   }
 }
 
@@ -259,6 +261,8 @@ async function processSubIdentities(api, mayHaveSubId, validatorsInformation, ac
     console.log(`Fetching validators sub-identity, DONE 👍 : ${accountSubInfo.length}/${mayHaveSubId.length}`);
   } catch (error) {
     console.error('Error fetching validators sub-identity:', error);
+    // Preserve unprocessed validators with no identity so they still appear in the output.
+    validatorsInformation.push(...mayHaveSubId.slice(totalProcessed).map((v) => ({ ...v, identity: undefined })));
   }
 }
 
@@ -312,5 +316,7 @@ async function processParentIdentities(api, accountSubInfo, validatorsInformatio
     console.log(`Fetching validators parent identity, DONE 👍 : ${accountSubInfo.length}/${accountSubInfo.length}`);
   } catch (error) {
     console.error('Error fetching parent identities:', error);
+    // Preserve unprocessed validators as-is — they already have sub-identity data, just no parent display.
+    validatorsInformation.push(...accountSubInfo.slice(totalProcessed));
   }
 }
