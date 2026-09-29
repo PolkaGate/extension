@@ -94,9 +94,7 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
 
   const commission = useMemo(() => Number(validatorInfo.validatorPrefs.commission) / (10 ** 7) < 1 ? 0 : Number(validatorInfo.validatorPrefs.commission) / (10 ** 7), [validatorInfo.validatorPrefs.commission]);
   const isHighCommission = commission > HIGH_COMMISSION_THRESHOLD;
-  // notElected drives the wider identity column (no badge slot occupying space).
-  // When isRetired, the badge IS rendered, so identity uses the narrower width — same as elected rows.
-  const notElected = isActive === undefined && !onSelect && !isRetired;
+  const hasBadge = isRetired || isActive !== undefined;
   const baseBgcolor = bgcolor ?? (isSelected ? '#FF4FB926' : isAlreadySelected ? (isDark ? '#AA83DC1A' : '#EEF1FF') : isDark ? '#05091C' : '#FFFFFF');
   const activeBadgeBg = isDark ? '#82FFA526' : '#DDF8EA';
   const activeBadgeColor = 'success.main';
@@ -137,9 +135,10 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
             style={{ m: 0, mr: '10px', width: 'fit-content' }}
           />
         }
-        {/* Badge slot — always occupies space so the identity column and all columns after it never shift */}
-        {(isRetired || isActive !== undefined)
-          ? <Typography
+        {/* Identity group — badge (when applicable) sits inline before identity, no fixed widths on either */}
+        <Container disableGutters sx={{ alignItems: 'center', display: 'flex', flexDirection: 'row', flexShrink: 0, gap: '8px', ml: '10px', width: myShare ? '185px' : '305px' }}>
+          {hasBadge &&
+            <Typography
               sx={{
                 bgcolor: isRetired
                   ? (isDark ? alpha(theme.palette.error.main, 0.15) : '#FFE8E8')
@@ -148,21 +147,20 @@ const ValidatorInfo = memo(function ValidatorInfo({ bgcolor, genesisHash, isActi
                 color: isRetired
                   ? (isDark ? theme.palette.error.light : theme.palette.error.main)
                   : (isActive ? activeBadgeColor : inactiveBadgeColor),
+                flexShrink: 0,
                 lineHeight: '16px',
-                minWidth: '54px',
-                mr: '8px',
                 px: '8px'
               }}
               variant='B-5'
             >
               {isRetired ? t('Retired') : isActive ? t('Active') : t('Inactive')}
             </Typography>
-          : null
-        }
-        <ValidatorIdentity
-          style={{ m: 0, ml: notElected ? '15px' : 0, width: myShare ? '185px' : notElected ? '352px' : '305px' }}
-          validatorInfo={validatorInfo}
-        />
+          }
+          <ValidatorIdentity
+            style={{ m: 0, overflow: 'hidden' }}
+            validatorInfo={validatorInfo}
+          />
+        </Container>
         {
           !!myShare &&
           <InfoWithIcons

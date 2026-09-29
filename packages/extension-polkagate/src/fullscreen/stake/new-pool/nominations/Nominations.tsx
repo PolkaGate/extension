@@ -65,13 +65,31 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
   const isLoading = useMemo(() => poolInfo === undefined || nominatedValidatorsIds === undefined || nominatedValidatorsInformation === undefined, [nominatedValidatorsIds, nominatedValidatorsInformation, poolInfo]);
   const stashAddress = poolInfo?.stashIdAccount?.accountId?.toString();
 
-  const { active, elected, nonElected } = useMemo(() => {
+  /** All known validator IDs (elected + waiting). Used to distinguish retired from non-elected. */
+  const allValidatorIds = useMemo(
+    () => new Set([
+      ...(validatorsInfo?.validatorsInformation.elected.map(({ accountId }) => String(accountId)) ?? []),
+      ...(validatorsInfo?.validatorsInformation.waiting.map(({ accountId }) => String(accountId)) ?? [])
+    ]),
+    [validatorsInfo?.validatorsInformation.elected, validatorsInfo?.validatorsInformation.waiting]
+  );
+
+  const { active, elected, nonElected, retired } = useMemo(() => {
     const active: ValidatorInformation[] = [];
     const elected: ValidatorInformation[] = [];
     const nonElected: ValidatorInformation[] = [];
+    const retired: ValidatorInformation[] = [];
 
     sortedAndFilteredValidators?.forEach((info) => {
-      const isElected = electedIds.has(String(info.accountId));
+      const id = String(info.accountId);
+
+      if (validatorsInfo && !allValidatorIds.has(id)) {
+        retired.push(info);
+
+        return;
+      }
+
+      const isElected = electedIds.has(id);
       const others = (info.exposurePaged as unknown as SpStakingExposurePage | undefined)?.others;
 
       if (isElected) {
@@ -83,9 +101,9 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
       }
     });
 
-    return { active, elected, nonElected };
-  }, [electedIds, sortedAndFilteredValidators, stashAddress]);
-  const hasVisibleNominations = useMemo(() => (active.length + elected.length + nonElected.length) > 0, [active.length, elected.length, nonElected.length]);
+    return { active, elected, nonElected, retired };
+  }, [allValidatorIds, electedIds, sortedAndFilteredValidators, stashAddress, validatorsInfo]);
+  const hasVisibleNominations = useMemo(() => (active.length + elected.length + nonElected.length + retired.length) > 0, [active.length, elected.length, nonElected.length, retired.length]);
 
   const onSearch = useCallback((input: string) => setSearch(input), []);
   const openValidatorManagement = useCallback(() => address && genesisHash && navigate('/fullscreen-stake/pool/manage-validator/' + address + '/' + genesisHash) as void, [address, genesisHash, navigate]);
@@ -142,7 +160,7 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
             <LabelBar
               Icon={Timer}
               color='#8E8E8E'
-              count={nonElected.length}
+              count={nonElected.length + retired.length}
               description={t('Waiting')}
               isCollapsed={notElectedCollapse}
               label={t('Not Elected')}
@@ -151,12 +169,19 @@ export default function Nominations({ genesisHash, poolInfo }: Props): React.Rea
             <Collapse easing={{ enter: '200ms', exit: '150ms' }} in={notElectedCollapse} sx={{ height: 'fit-content', minHeight: 'auto' }}>
               <Stack direction='column' sx={{ gap: '2px', height: 'fit-content', position: 'relative', width: '100%' }}>
                 <Line
-                  height={44 * nonElected.length}
+                  height={44 * (nonElected.length + retired.length)}
                 />
                 <Validators
                   bgcolor={isDark ? 'transparent' : '#FFFFFF'}
                   genesisHash={genesisHash}
                   validators={nonElected}
+                  withCurve
+                />
+                <Validators
+                  bgcolor={isDark ? 'transparent' : '#FFFFFF'}
+                  genesisHash={genesisHash}
+                  isRetired
+                  validators={retired}
                   withCurve
                 />
               </Stack>

@@ -982,5 +982,10 @@
   "Password change failed": "Не удалось изменить пароль",
   "Biometric authentication failed": "Не удалось выполнить биометрическую аутентификацию",
   "Open side panel": "Открыть боковую панель",
-  "Enable biometrics from the popup or fullscreen settings.": "Включите биометрию в настройках всплывающего окна или полноэкранного режима."
+  "Enable biometrics from the popup or fullscreen settings.": "Включите биометрию в настройках всплывающего окна или полноэкранного режима.",
+  "Retired": "Отключена",
+  "You are nominating retired validators. Update your nominations to select current validators.": "Вы выдвигаете неактивных валидаторов. Обновите номинации, выбрав действующих валидаторов.",
+  "Your nomination pool has nominated retired validators. The pool should update its nominations to select current validators.": "Ваш пул номинации выдвинул неактивных валидаторов. Пул должен обновить номинации, выбрав действующих валидаторов.",
+  "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "Валидатор {{name}} в сети {{chain}} имеет высокую комиссию ({{commission}}%).",
+  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "Пул {{pool}} в сети {{chain}} выдвинул валидатора {{name}} с высокой комиссией ({{commission}}%)."
 }

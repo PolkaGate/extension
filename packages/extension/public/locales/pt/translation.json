@@ -982,5 +982,10 @@
   "Password change failed": "Falha ao alterar a senha",
   "Biometric authentication failed": "Falha na autenticação biométrica",
   "Open side panel": "Abrir painel lateral",
-  "Enable biometrics from the popup or fullscreen settings.": "Ative a biometria nas configurações do popup ou tela cheia."
+  "Enable biometrics from the popup or fullscreen settings.": "Ative a biometria nas configurações do popup ou tela cheia.",
+  "Retired": "Desativado",
+  "You are nominating retired validators. Update your nominations to select current validators.": "Você está nomeando validadores inativos. Atualize suas nomeações para selecionar validadores atuais.",
+  "Your nomination pool has nominated retired validators. The pool should update its nominations to select current validators.": "Seu pool de nomeação indicou validadores inativos. O pool deve atualizar suas nomeações para selecionar validadores atuais.",
+  "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "O validador {{name}} na rede {{chain}} tem uma comissão alta ({{commission}}%).",
+  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "O pool {{pool}} na rede {{chain}} nomeou o validador {{name}} com uma comissão alta ({{commission}}%)."
 }
