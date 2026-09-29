@@ -18,6 +18,11 @@ function ManageValidators() {
   const stakingInfo = useSoloStakingInfo(address, genesisHash);
   const { nominatedValidatorsInformation, validatorsInfo, validatorsInformation } = useNominatedValidatorsInfo(stakingInfo);
 
+  const knownValidatorIds = useMemo(() => new Set([
+    ...(validatorsInfo?.validatorsInformation.elected.map(({ accountId }) => String(accountId)) ?? []),
+    ...(validatorsInfo?.validatorsInformation.waiting.map(({ accountId }) => String(accountId)) ?? [])
+  ]), [validatorsInfo]);
+
   const selectedBestValidators = useValidatorSuggestion(validatorsInfo, genesisHash);
   const stakingConsts = useStakingConsts(genesisHash);
   const maximum = useMemo(() => stakingConsts?.maxNominations ?? 0, [stakingConsts?.maxNominations]);
@@ -72,6 +77,7 @@ function ManageValidators() {
         isSelected={isSelected}
         itemsPerPage={itemsPerPage}
         itemsToShow={itemsToShow}
+        knownValidatorIds={knownValidatorIds}
         maximum={maximum}
         onBack={backToStakingHome}
         onNext={toggleReview}

@@ -983,5 +983,9 @@
   "Biometric authentication failed": "बायोमेट्रिक प्रमाणीकरण विफल",
   "Open side panel": "साइड पैनल खोलें",
   "Enable biometrics from the popup or fullscreen settings.": "पॉपअप या फ़ुलस्क्रीन सेटिंग्स से बायोमेट्रिक्स सक्षम करें।",
-  "Retired": "सेवानिवृत्त"
+  "Retired": "सेवानिवृत्त",
+  "You are nominating retired validators. Update your nominations to select current validators.": "आप सेवानिवृत्त सत्यापकों को नामांकित कर रहे हैं। वर्तमान सत्यापकों को चुनने के लिए अपने नामांकन अपडेट करें।",
+  "Your nomination pool has nominated retired validators. The pool should update its nominations to select current validators.": "आपके नामांकन पूल ने सेवानिवृत्त सत्यापकों को नामांकित किया है। पूल को वर्तमान सत्यापकों को चुनने के लिए अपने नामांकन अपडेट करने चाहिए।",
+  "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "{{chain}} पर सत्यापक {{name}} का कमीशन अधिक है ({{commission}}%)।",
+  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "{{chain}} पर पूल {{pool}} ने अधिक कमीशन वाले सत्यापक {{name}} को नामांकित किया ({{commission}}%)।"
 }

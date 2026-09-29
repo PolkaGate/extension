@@ -11,7 +11,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { BackWithLabel, Motion } from '../../../components';
-import { useAccountAssets, useBackground, useChainInfo, useClaimRewardPool, useHighCommissionNominationAlert, usePoolStakingInfo, useSelectedAccount, useTransactionFlow, useTranslation, useWithdrawPool } from '../../../hooks';
+import { useAccountAssets, useBackground, useChainInfo, useClaimRewardPool, useHighCommissionNominationAlert, usePoolStakingInfo, useRetiredValidatorAlert, useSelectedAccount, useTransactionFlow, useTranslation, useWithdrawPool } from '../../../hooks';
 import { UserDashboardHeader } from '../../../partials';
 import { isHexToBn } from '../../../util';
 import { PROXY_TYPE } from '../../../util/constants';
@@ -57,6 +57,12 @@ export default function Pool(): React.ReactElement {
     genesisHash,
     nominatedValidatorsIds: stakingInfo.pool?.stashIdAccount?.nominators?.map((item) => item.toString()),
     poolName: stakingInfo.pool?.metadata,
+    stakingType: 'pool'
+  });
+
+  useRetiredValidatorAlert({
+    genesisHash,
+    nominatedValidatorsIds: stakingInfo.pool?.stashIdAccount?.nominators?.map((item) => item.toString()),
     stakingType: 'pool'
   });
 

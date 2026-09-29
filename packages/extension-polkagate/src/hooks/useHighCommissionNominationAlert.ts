@@ -9,6 +9,7 @@ import { toShortAddress } from '../util';
 import { HIGH_COMMISSION_THRESHOLD } from '../util/constants';
 import useAlerts from './useAlerts';
 import useChainInfo from './useChainInfo';
+import useTranslation from './useTranslation';
 import useValidatorsInformation from './useValidatorsInformation';
 
 const COMMISSION_DIVISOR = 10 ** 7;
@@ -45,6 +46,7 @@ function formatCommission(commission: number): string {
 }
 
 export default function useHighCommissionNominationAlert({ genesisHash, nominatedValidatorsIds, poolName, stakingType }: HighCommissionNominationAlertParams): void {
+  const { t } = useTranslation();
   const { notify } = useAlerts();
   const { chainName } = useChainInfo(genesisHash, true);
   const validatorsInfo = useValidatorsInformation(genesisHash);
@@ -99,10 +101,10 @@ export default function useHighCommissionNominationAlert({ genesisHash, nominate
 
     notify(
       stakingType === 'solo'
-        ? `Validator ${getValidatorDisplayName(validator)} on ${chainName} has a high commission (${formatCommission(commission)}%).`
-        : `Pool ${trimmedPoolName} on ${chainName} nominated validator ${getValidatorDisplayName(validator)} with a high commission (${formatCommission(commission)}%).`,
+        ? t('Validator {{name}} on {{chain}} has a high commission ({{commission}}%).', { chain: chainName, commission: formatCommission(commission), name: getValidatorDisplayName(validator) })
+        : t('Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).', { chain: chainName, commission: formatCommission(commission), name: getValidatorDisplayName(validator), pool: trimmedPoolName }),
       'warning',
       true
     );
-  }, [chainName, genesisHash, highCommissionNomination, notify, poolName, stakingType]);
+  }, [chainName, genesisHash, highCommissionNomination, notify, poolName, stakingType, t]);
 }
