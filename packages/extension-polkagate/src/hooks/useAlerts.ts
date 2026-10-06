@@ -18,7 +18,8 @@ export default function useAlerts() {
   }, [setAlerts]);
 
   const notify = useCallback((text: string, severity?: Severity, persist = false, action?: { label: string; onClick: () => void }) => {
-    let id = '';
+    const newId = random.string({ length: 10 });
+    let id = newId;
 
     setAlerts((prev) => {
       // Deduplicate — don't stack alerts with identical text
@@ -28,9 +29,7 @@ export default function useAlerts() {
         return prev;
       }
 
-      id = random.string({ length: 10 });
-
-      return [...prev, { action, id, persist, severity: severity || 'info', text }];
+      return [...prev, { action, id: newId, persist, severity: severity || 'info', text }];
     });
 
     return () => removeAlert(id);
