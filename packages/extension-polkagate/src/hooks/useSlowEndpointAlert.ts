@@ -74,7 +74,7 @@ export default function useSlowEndpointAlert(
     }
 
     removeRef.current = notify(
-      t('Your selected node may be unreachable. Try switching to auto mode or another endpoint.'),
+      t('Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.'),
       'warning',
       true,
       { label: t('Switch Endpoint'), onClick: onSwitchEndpoint }
