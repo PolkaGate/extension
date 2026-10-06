@@ -79,8 +79,7 @@ export default function useSlowEndpointAlert(
       true,
       { label: t('Switch Endpoint'), onClick: onSwitchEndpoint }
     );
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSlowEndpoint, isManualEndpoint]);
+  }, [isManualEndpoint, isSlowEndpoint, notify, onSwitchEndpoint, t]);
 
   // Clean up alert on unmount
   useEffect(() => {
