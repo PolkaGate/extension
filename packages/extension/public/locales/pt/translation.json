@@ -987,5 +987,7 @@
   "You are nominating retired validators. Update your nominations to select current validators.": "Você está nomeando validadores inativos. Atualize suas nomeações para selecionar validadores atuais.",
   "Your nomination pool has nominated retired validators. The pool should update its nominations to select current validators.": "Seu pool de nomeação indicou validadores inativos. O pool deve atualizar suas nomeações para selecionar validadores atuais.",
   "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "O validador {{name}} na rede {{chain}} tem uma comissão alta ({{commission}}%).",
-  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "O pool {{pool}} na rede {{chain}} nomeou o validador {{name}} com uma comissão alta ({{commission}}%)."
+  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "O pool {{pool}} na rede {{chain}} nomeou o validador {{name}} com uma comissão alta ({{commission}}%).",
+  "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "O nó selecionado pode estar inacessível. Tente mudar para o modo automático ou escolher outro endpoint.",
+  "Switch Endpoint": "Trocar endpoint"
 }

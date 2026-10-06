@@ -3,42 +3,25 @@
 
 import { useEffect, useState } from 'react';
 
-const CHECK_INTERNET_CONNECTIVITY_PERIOD = 5000; // ms
-
-async function checkInternetAccess() {
-  try {
-    const response = await fetch('https://www.google.com', {
-      cache: 'no-store', // Ensure it doesn't get cached
-      method: 'HEAD' // Only request headers (no content)
-    });
-
-    if (response.ok) {
-      return true; // Internet is accessible
-    } else {
-      throw new Error('No internet access.');
-    }
-  } catch (error) {
-    console.log('No internet access.', error);
-
-    return false;
-  }
-}
-
 export default function useIsOnline(): boolean | undefined {
-  const [isOnline, setIsOnline] = useState<boolean>();
+  const [isOnline, setIsOnline] = useState<boolean | undefined>(
+    typeof navigator !== 'undefined' ? navigator.onLine : undefined
+  );
 
   useEffect(() => {
-    checkInternetAccess().then((_isOnline) => {
-      setIsOnline(_isOnline);
-    }).catch(console.error);
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
 
-    const intervalId = setInterval(() => {
-      checkInternetAccess().then((_isOnline) => {
-        setIsOnline(_isOnline);
-      }).catch(console.error);
-    }, CHECK_INTERNET_CONNECTIVITY_PERIOD);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
 
-    return () => clearInterval(intervalId);
+    // Set initial value in case it changed before the listeners attached
+    setIsOnline(navigator.onLine);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   return isOnline;

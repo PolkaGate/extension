@@ -987,5 +987,7 @@
   "You are nominating retired validators. Update your nominations to select current validators.": "Вы выдвигаете неактивных валидаторов. Обновите номинации, выбрав действующих валидаторов.",
   "Your nomination pool has nominated retired validators. The pool should update its nominations to select current validators.": "Ваш пул номинации выдвинул неактивных валидаторов. Пул должен обновить номинации, выбрав действующих валидаторов.",
   "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "Валидатор {{name}} в сети {{chain}} имеет высокую комиссию ({{commission}}%).",
-  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "Пул {{pool}} в сети {{chain}} выдвинул валидатора {{name}} с высокой комиссией ({{commission}}%)."
+  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "Пул {{pool}} в сети {{chain}} выдвинул валидатора {{name}} с высокой комиссией ({{commission}}%).",
+  "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "Выбранный вами узел может быть недоступен. Попробуйте переключиться в автоматический режим или выбрать другой эндпоинт.",
+  "Switch Endpoint": "Сменить эндпоинт"
 }

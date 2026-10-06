@@ -3,7 +3,7 @@
 
 import type { AlertType } from '../util/types';
 
-import { Alert as MuiAlert, Box, Typography, useTheme } from '@mui/material';
+import { Alert as MuiAlert, Box, Button, Typography, useTheme } from '@mui/material';
 import { keyframes } from '@mui/system';
 import { CloseCircle, Danger, InfoCircle, TickCircle } from 'iconsax-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -96,6 +96,7 @@ function Alert({ alert }: Props): React.ReactElement {
     borderRadius: '50%',
     display: 'flex',
     justifyContent: 'center',
+    marginTop: '2px',
     padding: '2px'
   };
 
@@ -105,7 +106,7 @@ function Alert({ alert }: Props): React.ReactElement {
         <Box ref={nodeRef} sx={{ ...defaultTransitionStyle, ...transitionStyles[state], pointerEvents: 'auto', width: 'fit-content' }}>
           <MuiAlert
             action={
-              <span onClick={closeAlert} style={{ cursor: 'pointer', fontSize: '26px', fontWeight: 300, transform: 'translateY(-12px)' }}>
+              <span onClick={closeAlert} style={{ cursor: 'pointer', fontSize: '26px', fontWeight: 300, lineHeight: 1, marginTop: '2px' }}>
                 ×
               </span>
             }
@@ -129,7 +130,7 @@ function Alert({ alert }: Props): React.ReactElement {
             onClose={closeAlert}
             severity={alert.severity}
             sx={{
-              alignItems: 'center',
+              alignItems: 'flex-start',
               bgcolor: isLight ? '#FFFFFF' : '#2D1E4A',
               border: isLight ? '1px solid #DDE3F4' : 'none',
               borderRadius: '12px',
@@ -144,6 +145,27 @@ function Alert({ alert }: Props): React.ReactElement {
             <Typography color={isLight ? '#6F5A96' : theme.palette.text.primary} sx={{ display: 'block', textAlign: 'left' }} variant={isExtension ? 'B-1' : 'B-2'}>
               {t(alert.text)}
             </Typography>
+            {alert.action &&
+              <Button
+                onClick={alert.action.onClick}
+                size='small'
+                sx={{
+                  '&:hover': { bgcolor: isLight ? 'rgba(89,106,255,0.12)' : 'rgba(89,106,255,0.20)' },
+                  bgcolor: isLight ? 'rgba(89,106,255,0.08)' : 'rgba(89,106,255,0.15)',
+                  borderRadius: '8px',
+                  color: isLight ? '#405CFF' : '#7B8FFF',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  mt: '6px',
+                  px: '10px',
+                  py: '4px',
+                  textTransform: 'none',
+                  width: 'fit-content'
+                }}
+              >
+                {t(alert.action.label)}
+              </Button>
+            }
             {!alert.persist &&
               <Box
                 sx={{

@@ -17,10 +17,21 @@ export default function useAlerts() {
     setAlerts((prev) => prev.filter(({ id }) => id !== idToRemove));
   }, [setAlerts]);
 
-  const notify = useCallback((text: string, severity?: Severity, persist = false) => {
-    const id = random.string({ length: 10 });
+  const notify = useCallback((text: string, severity?: Severity, persist = false, action?: { label: string; onClick: () => void }) => {
+    let id = '';
 
-    setAlerts((prev) => [...prev, { id, persist, severity: severity || 'info', text }]);
+    setAlerts((prev) => {
+      // Deduplicate — don't stack alerts with identical text
+      if (prev.some((a) => a.text === text)) {
+        id = prev.find((a) => a.text === text)!.id;
+
+        return prev;
+      }
+
+      id = random.string({ length: 10 });
+
+      return [...prev, { action, id, persist, severity: severity || 'info', text }];
+    });
 
     return () => removeAlert(id);
   }, [random, removeAlert, setAlerts]);

@@ -88,6 +88,8 @@ export { default as useRouteRefresh } from './useRouteRefresh';
 export { default as useScrollbarAutoHide } from './useScrollbarAutoHide';
 export { default as useSelectedAccount } from './useSelectedAccount';
 export { default as useSelectedChains } from './useSelectedChains';
+export { default as useSlowEndpoint } from './useSlowEndpoint';
+export { default as useSlowEndpointAlert } from './useSlowEndpointAlert';
 export { default as useSelectedLanguage } from './useSelectedLanguage';
 export { default as useSelectedProfile } from './useSelectedProfile';
 export { default as useSoloSettings } from './useSoloSettings';

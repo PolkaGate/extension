@@ -987,5 +987,7 @@
   "You are nominating retired validators. Update your nominations to select current validators.": "आप सेवानिवृत्त सत्यापकों को नामांकित कर रहे हैं। वर्तमान सत्यापकों को चुनने के लिए अपने नामांकन अपडेट करें।",
   "Your nomination pool has nominated retired validators. The pool should update its nominations to select current validators.": "आपके नामांकन पूल ने सेवानिवृत्त सत्यापकों को नामांकित किया है। पूल को वर्तमान सत्यापकों को चुनने के लिए अपने नामांकन अपडेट करने चाहिए।",
   "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "{{chain}} पर सत्यापक {{name}} का कमीशन अधिक है ({{commission}}%)।",
-  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "{{chain}} पर पूल {{pool}} ने अधिक कमीशन वाले सत्यापक {{name}} को नामांकित किया ({{commission}}%)।"
+  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "{{chain}} पर पूल {{pool}} ने अधिक कमीशन वाले सत्यापक {{name}} को नामांकित किया ({{commission}}%)।",
+  "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "आपका चुना हुआ नोड पहुँच योग्य नहीं हो सकता। ऑटो मोड पर स्विच करने या कोई अन्य एंडपॉइंट चुनने का प्रयास करें।",
+  "Switch Endpoint": "एंडपॉइंट बदलें"
 }
