@@ -3,24 +3,42 @@
 
 import type { ApiPromise } from '@polkadot/api';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
 import { APIContext } from '../components';
-import { useEndpoints } from '.';
+import { useEndpoint, useEndpoints } from '.';
 
 export default function useApi(genesisHash: string | null | undefined): ApiPromise | undefined | null {
   const { getApi } = useContext(APIContext);
   const endpoints = useEndpoints(genesisHash);
+  const { endpoint } = useEndpoint(genesisHash);
 
-  const [api, setApi] = useState<ApiPromise | undefined | null>(undefined);
+  const connectionKey = `${genesisHash ?? ''}:${endpoint ?? ''}`;
+  const requestId = useRef(0);
+  const [apiState, setApiState] = useState<{ api: ApiPromise | undefined; connectionKey: string }>({
+    api: undefined,
+    connectionKey: ''
+  });
 
   useEffect(() => {
+    const currentRequest = ++requestId.current;
+
+    setApiState({ api: undefined, connectionKey });
+
     if (!genesisHash || !endpoints) {
-      return;
+      return () => { requestId.current += 1; };
     }
 
-    getApi(genesisHash, endpoints)?.then(setApi).catch(console.error);
-  }, [endpoints, genesisHash, getApi]);
+    getApi(genesisHash, endpoints)?.then((nextApi) => {
+      if (currentRequest === requestId.current) {
+        setApiState({ api: nextApi, connectionKey });
+      }
+    }).catch(console.error);
+
+    return () => { requestId.current += 1; };
+  }, [connectionKey, endpoints, genesisHash, getApi]);
+
+  const api = apiState.connectionKey === connectionKey ? apiState.api : undefined;
 
   return endpoints.length === 0
     ? null

@@ -860,7 +860,8 @@ export interface AlertType {
   id: string;
   persist?: boolean;
   text: string;
-  severity: Severity
+  severity: Severity;
+  action?: { label: string; onClick: () => void };
 }
 
 export interface AlertContextType {

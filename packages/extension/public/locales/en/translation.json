@@ -987,5 +987,7 @@
   "You are nominating retired validators. Update your nominations to select current validators.": "",
   "Your nomination pool has nominated retired validators. The pool should update its nominations to select current validators.": "",
   "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "",
-  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": ""
+  "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "",
+  "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "",
+  "Switch Endpoint": ""
 }
