@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.17.0](https://github.com/polkagate/extension/compare/v2.16.0...v2.17.0) (2026-10-08)
+
+
+### Features
+
+* alert users when their manual endpoint is unreachable with a Switch Endpoint action ([#2191](https://github.com/polkagate/extension/issues/2191)) ([fcf07b0](https://github.com/polkagate/extension/commit/fcf07b01137abfe6fba155e5a0f47f43012f7e29))
+
 # [2.16.0](https://github.com/polkagate/extension/compare/v2.15.0...v2.16.0) (2026-09-28)
 
 
