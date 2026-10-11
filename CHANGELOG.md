@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.18.0](https://github.com/polkagate/extension/compare/v2.17.0...v2.18.0) (2026-10-11)
+
+
+### Features
+
+* Add new menu style ([#2192](https://github.com/polkagate/extension/issues/2192)) ([94c05f5](https://github.com/polkagate/extension/commit/94c05f56c23387fd4e573fc639ca83d2be41a398))
+
 # [2.17.0](https://github.com/polkagate/extension/compare/v2.16.0...v2.17.0) (2026-10-08)
 
 
