@@ -90,7 +90,7 @@ function MenuItem({ ButtonIcon, iconVariant = 'Bulk', isDrawerTransitioning, isH
 
   return (
     <>
-      <Grid container item onClick={() => { onClearHover(); onClick(); }} onMouseEnter={() => refContainer.current && onHover(refContainer.current)} ref={refContainer} sx={{ alignItems: 'flex-start', cursor: 'pointer', flex: 1, height: '100%', justifyContent: 'center', pt: '8px', position: 'relative', zIndex: 1 }}>
+      <Grid aria-label={tooltip} container item onClick={() => { onClearHover(); onClick(); }} onMouseEnter={() => refContainer.current && onHover(refContainer.current)} ref={refContainer} sx={{ alignItems: 'flex-start', cursor: 'pointer', flex: 1, height: '100%', justifyContent: 'center', pt: '8px', position: 'relative', zIndex: 1 }}>
         <ButtonIcon color={isHovered ? 'transparent' : isSelected ? theme.palette.mode === 'light' ? '#4C7BF0' : '#FF80C8' : theme.palette.mode === 'light' ? '#7F7AAE' : theme.palette.menuIcon.active} size='24' style={{ position: 'relative', zIndex: 1 }} variant={isSelected ? 'Bold' : iconVariant} />
         <div style={{ bottom: '4px', color: theme.palette.mode === 'light' ? '#2B2552' : '#FFFFFF', fontSize: '12.5px', fontWeight: 800, left: 0, lineHeight: '20px', opacity: isHovered || (isSelected && isDrawerTransitioning) ? 1 : 0, pointerEvents: 'none', position: 'absolute', textAlign: 'center', transform: isHovered || (isSelected && isDrawerTransitioning) ? 'translateY(0)' : 'translateY(6px)', transition: 'opacity 300ms ease, transform 360ms ease', whiteSpace: 'nowrap', width: '100%' }}>{tooltip}</div>
       </Grid>

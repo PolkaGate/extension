@@ -89,7 +89,7 @@ function MenuItem({ ButtonIcon, isDrawerTransitioning, isHovered, isSelected = f
 
   return (
     <>
-      <Grid container item onClick={() => { onClearHover(); onClick(); }} onMouseEnter={(event) => onHover(event.currentTarget)} sx={{ alignItems: 'flex-start', cursor: 'pointer', flex: 1, height: '100%', justifyContent: 'center', pt: '8px', position: 'relative', zIndex: 1 }}>
+      <Grid aria-label={tooltip} container item onClick={() => { onClearHover(); onClick(); }} onMouseEnter={(event) => onHover(event.currentTarget)} sx={{ alignItems: 'flex-start', cursor: 'pointer', flex: 1, height: '100%', justifyContent: 'center', pt: '8px', position: 'relative', zIndex: 1 }}>
         <ButtonIcon color={isHovered ? 'transparent' : isSelected ? isDark ? '#FF80C8' : '#4C7BF0' : iconColor} size='24' variant={isSelected ? 'Bold' : 'Bulk'} />
         <div style={{ bottom: '4px', color: isDark ? '#FFFFFF' : '#2B2552', fontSize: '12.5px', fontWeight: 800, left: 0, lineHeight: '20px', opacity: isHovered || (isSelected && isDrawerTransitioning) ? 1 : 0, pointerEvents: 'none', position: 'absolute', textAlign: 'center', transform: isHovered || (isSelected && isDrawerTransitioning) ? 'translateY(0)' : 'translateY(6px)', transition: 'opacity 300ms ease, transform 360ms ease', whiteSpace: 'nowrap', width: '100%' }}>{tooltip}</div>
       </Grid>
