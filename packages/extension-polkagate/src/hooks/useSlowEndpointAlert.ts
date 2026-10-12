@@ -9,14 +9,13 @@ import { useNavigate } from 'react-router-dom';
 import { noop } from '@polkadot/util';
 
 import { useTranslation } from '.';
-import { AUTO_MODE } from '../util/constants';
 import useAlerts from './useAlerts';
-import useEndpoint from './useEndpoint';
 import useSlowEndpoint from './useSlowEndpoint';
 
 /**
- * Fires a persistent, actionable "Switch Endpoint" alert when the user's
- * manually-pinned endpoint is unreachable or an RPC call is hanging.
+ * Fires a persistent, actionable alert when an endpoint is unreachable or hanging:
+ * - Manual endpoint: "Switch Endpoint" action → opens endpoint settings.
+ * - Auto mode: informational warning that auto selection failed, same action to pick manually.
  * Automatically removes the alert when the endpoint changes or API resolves.
  *
  * @param genesisHash  Active chain's genesis hash
@@ -34,9 +33,7 @@ export default function useSlowEndpointAlert(
   const { t } = useTranslation();
   const { notify } = useAlerts();
   const navigate = useNavigate();
-  const { endpoint } = useEndpoint(genesisHash);
-  const isManualEndpoint = !!endpoint && endpoint !== AUTO_MODE.value;
-  const isSlowEndpoint = useSlowEndpoint(genesisHash, api, isFetching);
+  const slowKind = useSlowEndpoint(genesisHash, api, isFetching);
 
   // Keep a stable ref to onOpenModal so the action onClick stays current
   const onOpenModalRef = useRef(onOpenModal);
@@ -69,17 +66,21 @@ export default function useSlowEndpointAlert(
     removeRef.current();
     removeRef.current = noop;
 
-    if (!isSlowEndpoint || !isManualEndpoint) {
+    if (!slowKind) {
       return;
     }
 
+    const message = slowKind === 'auto'
+      ? t('Unable to reach any node. Check your internet connection or add a working endpoint for this chain.')
+      : t('Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.');
+
     removeRef.current = notify(
-      t('Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.'),
+      message,
       'warning',
       true,
       { label: t('Switch Endpoint'), onClick: onSwitchEndpoint }
     );
-  }, [isManualEndpoint, isSlowEndpoint, notify, onSwitchEndpoint, t]);
+  }, [slowKind, notify, onSwitchEndpoint, t]);
 
   // Clean up alert on unmount
   useEffect(() => {

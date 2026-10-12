@@ -989,5 +989,6 @@
   "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "{{chain}} 上的验证人 {{name}} 的佣金较高（{{commission}}%）。",
   "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "{{chain}} 上的池 {{pool}} 提名了佣金较高的验证人 {{name}}（{{commission}}%）。",
   "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "您选择的节点可能无法访问。请尝试切换到自动模式或选择其他端点。",
-  "Switch Endpoint": "切换端点"
+  "Switch Endpoint": "切换端点",
+  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": "无法连接到任何节点。请检查您的网络连接，或为该链添加一个可用的端点。"
 }
