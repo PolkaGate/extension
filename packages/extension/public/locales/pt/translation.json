@@ -989,5 +989,6 @@
   "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "O validador {{name}} na rede {{chain}} tem uma comissão alta ({{commission}}%).",
   "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "O pool {{pool}} na rede {{chain}} nomeou o validador {{name}} com uma comissão alta ({{commission}}%).",
   "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "O nó selecionado pode estar inacessível. Tente mudar para o modo automático ou escolher outro endpoint.",
-  "Switch Endpoint": "Trocar endpoint"
+  "Switch Endpoint": "Trocar endpoint",
+  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": "Não foi possível alcançar nenhum nó. Verifique sua conexão com a internet ou adicione um endpoint funcional para esta chain."
 }

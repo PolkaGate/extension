@@ -989,5 +989,6 @@
   "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "{{chain}} पर सत्यापक {{name}} का कमीशन अधिक है ({{commission}}%)।",
   "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "{{chain}} पर पूल {{pool}} ने अधिक कमीशन वाले सत्यापक {{name}} को नामांकित किया ({{commission}}%)।",
   "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "आपका चुना हुआ नोड पहुँच योग्य नहीं हो सकता। ऑटो मोड पर स्विच करने या कोई अन्य एंडपॉइंट चुनने का प्रयास करें।",
-  "Switch Endpoint": "एंडपॉइंट बदलें"
+  "Switch Endpoint": "एंडपॉइंट बदलें",
+  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": "किसी भी नोड तक नहीं पहुँचा जा सका। अपना इंटरनेट कनेक्शन जाँचें या इस चेन के लिए एक कार्यशील एंडपॉइंट जोड़ें।"
 }

@@ -989,5 +989,6 @@
   "Validator {{name}} on {{chain}} has a high commission ({{commission}}%).": "",
   "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "",
   "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "",
-  "Switch Endpoint": ""
+  "Switch Endpoint": "",
+  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": ""
 }

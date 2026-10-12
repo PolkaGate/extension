@@ -20,6 +20,7 @@ const Dotenv = require('dotenv-webpack');
 const envPath = path.resolve(__dirname, '../../', '.env');
 
 const EXT_NAME = manifest.short_name;
+const BUILD_ENV = process.env.EXTENSION_BUILD_ENV || process.env.NODE_ENV || 'production';
 
 const packages = [
   'extension',
@@ -99,7 +100,7 @@ module.exports = (entry, alias = {}) => ({
     new webpack.DefinePlugin({
       'process.env.EXTENSION_PREFIX': JSON.stringify(process.env.EXTENSION_PREFIX || EXT_NAME),
       'process.env.EXTENSION_VERSION': JSON.stringify(pkgJson.version),
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
+      'process.env.NODE_ENV': JSON.stringify(BUILD_ENV),
       'process.env.PORT_PREFIX': JSON.stringify(blake2AsHex(JSON.stringify(manifest), 64)),
     }),
     new CopyPlugin({ patterns: [{ from: 'public' }] }),
@@ -113,7 +114,7 @@ module.exports = (entry, alias = {}) => ({
     }),
     new Dotenv({ path: envPath }),
     // Put the Sentry Webpack plugin after all other plugins
-    ...(process.env.NODE_ENV === 'development'
+    ...(BUILD_ENV === 'development'
       ? []
       : [sentryWebpackPlugin({
         authToken: process.env.SENTRY_AUTH_TOKEN,
