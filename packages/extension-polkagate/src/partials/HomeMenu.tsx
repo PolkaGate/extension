@@ -35,40 +35,40 @@ const SpotlightOrb = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
   alignItems: 'center',
   background: mode === 'light' ? 'radial-gradient(circle at 30% 22%, #8DB3FF, #4C7BF0 55%, #3A45D6)' : 'radial-gradient(circle at 30% 22%, #FF80C8, #C02A86 52%, #6A2FD0)',
   borderRadius: '50%',
-  boxShadow: mode === 'light' ? '0 12px 26px -4px rgba(61, 107, 228, 0.7)' : '0 12px 28px -4px rgba(255, 93, 177, 0.75)',
+  boxShadow: mode === 'light' ? '0 8px 18px -4px rgba(61, 107, 228, 0.65)' : '0 8px 18px -4px rgba(255, 93, 177, 0.65)',
   display: 'flex',
-  height: '52px',
+  height: '40px',
   justifyContent: 'center',
   pointerEvents: 'none',
   position: 'absolute',
-  top: '-24px',
+  top: '-20px',
   transform: 'translateX(-50%)',
   transition: 'left 450ms cubic-bezier(0.3, 1.35, 0.5, 1), opacity 300ms ease-out',
-  width: '52px',
+  width: '40px',
   zIndex: 3
 }));
 
 const SpotlightCone = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
-  background: mode === 'light' ? 'linear-gradient(to top, rgba(79, 125, 240, 0.24), rgba(79, 125, 240, 0))' : 'linear-gradient(to top, rgba(255, 93, 177, 0.2), rgba(255, 93, 177, 0))',
-  clipPath: 'polygon(34% 100%, 66% 100%, 100% 0, 0 0)',
-  height: '150px',
+  background: mode === 'light' ? 'linear-gradient(to top, rgba(79, 125, 240, 0.13), rgba(79, 125, 240, 0))' : 'linear-gradient(to top, rgba(255, 93, 177, 0.13), rgba(255, 93, 177, 0))',
+  clipPath: 'polygon(30% 100%, 70% 100%, 100% 0, 0 0)',
+  height: '80px',
   pointerEvents: 'none',
   position: 'absolute',
   transition: 'left 450ms cubic-bezier(0.3, 1.35, 0.5, 1), opacity 300ms ease-out',
-  width: '150px'
+  width: '100px'
 }));
 
 const SpotlightRing = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
   border: mode === 'light' ? '1.5px solid rgba(61, 107, 228, 0.55)' : '1.5px solid rgba(255, 93, 177, 0.6)',
   borderRadius: '50%',
   clipPath: 'inset(50% 0 0 0)',
-  height: '68px',
+  height: '56px',
   pointerEvents: 'none',
   position: 'absolute',
-  top: '-34px',
+  top: '-28px',
   transform: 'translateX(-50%)',
   transition: 'left 450ms cubic-bezier(0.3, 1.35, 0.5, 1), opacity 300ms ease-out',
-  width: '68px',
+  width: '56px',
   zIndex: 0
 }));
 
@@ -185,9 +185,9 @@ function HomeMenu(): React.ReactElement {
       <Container disableGutters sx={{ bottom: 0, left: 0, maxWidth: 'none', position: 'fixed', width: '100%', zIndex: 10 }}>
         <Grid alignItems='center' onMouseLeave={clearHover} sx={{ display: 'flex', height: hoveredMenu || isDrawerTransitioning ? '72px' : '48px', isolation: 'isolate', justifyContent: 'space-between', overflow: 'visible', px: '16px', position: 'relative', transition: 'height 420ms cubic-bezier(0.2, 0.8, 0.2, 1)' }}>
           {spotlightPosition !== null && <>
-            <SpotlightCone mode={theme.palette.mode} sx={{ bottom: '72px', left: `${spotlightPosition - 75}px`, opacity: hoveredMenu ? 1 : 0 }} />
+            <SpotlightCone mode={theme.palette.mode} sx={{ bottom: '88px', left: `${spotlightPosition - 50}px`, opacity: hoveredMenu ? 1 : 0 }} />
             <SpotlightRing mode={theme.palette.mode} sx={{ left: `${spotlightPosition}px`, opacity: hoveredMenu ? 1 : 0 }} />
-            <SpotlightOrb mode={theme.palette.mode} sx={{ left: `${spotlightPosition}px`, opacity: hoveredMenu ? 1 : 0 }}>{hoveredIcon && React.createElement(hoveredIcon, { color: '#FFFFFF', size: '26', variant: 'Bold' })}</SpotlightOrb>
+            <SpotlightOrb mode={theme.palette.mode} sx={{ left: `${spotlightPosition}px`, opacity: hoveredMenu ? 1 : 0 }}>{hoveredIcon && React.createElement(hoveredIcon, { color: '#FFFFFF', size: '20', variant: 'Bold' })}</SpotlightOrb>
           </>}
           <MenuItem ButtonIcon={ArrowCircleRight2} iconVariant={theme.palette.mode === 'light' ? 'Bold' : undefined} isDrawerTransitioning={isDrawerTransitioning} isHovered={hoveredMenu === 'send'} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} onClearHover={clearHover} onHover={handleHover('send')} tooltip={t('Send')} />
           <MenuItem ButtonIcon={ArrowCircleDown2} iconVariant={theme.palette.mode === 'light' ? 'Bold' : undefined} isDrawerTransitioning={isDrawerTransitioning} isHovered={hoveredMenu === 'receive'} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} onClearHover={clearHover} onHover={handleHover('receive')} tooltip={t('Receive')} />
@@ -195,7 +195,7 @@ function HomeMenu(): React.ReactElement {
           <MenuItem ButtonIcon={Record} isDrawerTransitioning={isDrawerTransitioning} isHovered={hoveredMenu === 'governance'} isSelected={currentMenu === 'governance'} onClick={handleMenuClick('governance')} onClearHover={clearHover} onHover={handleHover('governance')} tooltip={t('Governance')} />
           <MenuItem ButtonIcon={Setting} iconVariant={theme.palette.mode === 'light' ? 'Bold' : undefined} isDrawerTransitioning={isDrawerTransitioning} isHovered={hoveredMenu === 'settings'} isSelected={currentMenu === 'settings'} onClick={handleMenuClick('settings')} onClearHover={clearHover} onHover={handleHover('settings')} tooltip={t('Settings')} />
           <MenuItem ButtonIcon={Clock} iconVariant={theme.palette.mode === 'light' ? 'Bold' : undefined} isDrawerTransitioning={isDrawerTransitioning} isHovered={hoveredMenu === 'history'} isSelected={currentMenu === 'history'} onClick={handleMenuClick('history')} onClearHover={clearHover} onHover={handleHover('history')} tooltip={t('History')} />
-          <MenuBackground mode={theme.palette.mode} style={spotlightPosition === null || !hoveredMenu ? undefined : { maskImage: `radial-gradient(circle at ${spotlightPosition}px 0, transparent 34px, #000 35px)`, WebkitMaskImage: `radial-gradient(circle at ${spotlightPosition}px 0, transparent 34px, #000 35px)` } as React.CSSProperties} />
+          <MenuBackground mode={theme.palette.mode} style={spotlightPosition === null || !hoveredMenu ? undefined : { maskImage: `radial-gradient(circle at ${spotlightPosition}px 0, transparent 27px, #000 28px)`, WebkitMaskImage: `radial-gradient(circle at ${spotlightPosition}px 0, transparent 27px, #000 28px)` } as React.CSSProperties} />
         </Grid>
       </Container>
       <Receive
