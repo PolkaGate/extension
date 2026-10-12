@@ -25,18 +25,18 @@ const MenuBackground = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => (
   zIndex: -1
 }));
 
-const SpotlightCone = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
-  background: mode === 'light' ? 'linear-gradient(to top, rgba(79, 125, 240, 0.13), rgba(79, 125, 240, 0))' : 'linear-gradient(to top, rgba(255, 93, 177, 0.13), rgba(255, 93, 177, 0))',
+const SpotlightCone = styled('div')({
+  background: 'linear-gradient(to top, rgba(79, 125, 240, 0.13), rgba(79, 125, 240, 0))',
   clipPath: 'polygon(30% 100%, 70% 100%, 100% 0, 0 0)',
   height: '80px',
   pointerEvents: 'none',
   position: 'absolute',
   transition: 'left 450ms cubic-bezier(0.3, 1.35, 0.5, 1), opacity 300ms ease-out',
   width: '100px'
-}));
+});
 
-const SpotlightRing = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
-  border: mode === 'light' ? '1.5px solid rgba(61, 107, 228, 0.55)' : '1.5px solid rgba(255, 93, 177, 0.6)',
+const SpotlightRing = styled('div')({
+  border: '1.5px solid rgba(61, 107, 228, 0.55)',
   borderRadius: '50%',
   clipPath: 'inset(50% 0 0 0)',
   height: '56px',
@@ -47,13 +47,13 @@ const SpotlightRing = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
   transition: 'left 450ms cubic-bezier(0.3, 1.35, 0.5, 1), opacity 300ms ease-out',
   width: '56px',
   zIndex: 0
-}));
+});
 
-const SpotlightOrb = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
+const SpotlightOrb = styled('div')({
   alignItems: 'center',
-  background: mode === 'light' ? 'radial-gradient(circle at 30% 22%, #8DB3FF, #4C7BF0 55%, #3A45D6)' : 'radial-gradient(circle at 30% 22%, #FF80C8, #C02A86 52%, #6A2FD0)',
+  background: 'radial-gradient(circle at 30% 22%, #8DB3FF, #4C7BF0 55%, #3A45D6)',
   borderRadius: '50%',
-  boxShadow: mode === 'light' ? '0 8px 18px -4px rgba(61, 107, 228, 0.65)' : '0 8px 18px -4px rgba(255, 93, 177, 0.65)',
+  boxShadow: '0 8px 18px -4px rgba(61, 107, 228, 0.65)',
   display: 'flex',
   height: '40px',
   justifyContent: 'center',
@@ -64,7 +64,7 @@ const SpotlightOrb = styled('div')(({ mode }: { mode: 'light' | 'dark' }) => ({
   transition: 'left 450ms cubic-bezier(0.3, 1.35, 0.5, 1), opacity 300ms ease-out',
   width: '40px',
   zIndex: 3
-}));
+});
 
 interface MenuItemProps {
   ButtonIcon: Icon;
@@ -89,8 +89,8 @@ function MenuItem({ ButtonIcon, isDrawerTransitioning, isHovered, isSelected = f
 
   return (
     <>
-      <Grid aria-label={tooltip} container item onClick={() => { onClearHover(); onClick(); }} onMouseEnter={(event) => onHover(event.currentTarget)} sx={{ alignItems: 'flex-start', cursor: 'pointer', flex: 1, height: '100%', justifyContent: 'center', pt: '8px', position: 'relative', zIndex: 1 }}>
-        <ButtonIcon color={isHovered ? 'transparent' : isSelected ? isDark ? '#FF80C8' : '#4C7BF0' : iconColor} size='24' variant={isSelected ? 'Bold' : 'Bulk'} />
+      <Grid aria-label={tooltip} container item onClick={() => { onClearHover(); onClick(); }} onMouseEnter={(event) => onHover(event.currentTarget)} sx={{ '&::before': { content: '""', cursor: 'pointer', height: '28px', left: 0, position: 'absolute', right: 0, top: '-28px' }, alignItems: 'flex-start', cursor: 'pointer', flex: 1, height: '100%', justifyContent: 'center', pt: '8px', position: 'relative', zIndex: 1 }}>
+        <ButtonIcon color={isHovered ? 'transparent' : isSelected ? '#4C7BF0' : iconColor} size='24' variant={isSelected ? 'Bold' : 'Bulk'} />
         <div style={{ bottom: '4px', color: isDark ? '#FFFFFF' : '#2B2552', fontSize: '12.5px', fontWeight: 800, left: 0, lineHeight: '20px', opacity: isHovered || (isSelected && isDrawerTransitioning) ? 1 : 0, pointerEvents: 'none', position: 'absolute', textAlign: 'center', transform: isHovered || (isSelected && isDrawerTransitioning) ? 'translateY(0)' : 'translateY(6px)', transition: 'opacity 300ms ease, transform 360ms ease', whiteSpace: 'nowrap', width: '100%' }}>{tooltip}</div>
       </Grid>
     </>
@@ -199,12 +199,12 @@ function StakingMenu({ genesisHash, pool, type }: Props): React.ReactElement {
 
   return (
     <>
-      <Container disableGutters sx={{ bottom: 0, left: 0, maxWidth: 'none', position: 'fixed', width: '100%', zIndex: 10 }}>
-        <Grid alignItems='center' onMouseLeave={clearHover} sx={{ display: 'flex', height: hoveredMenu || isDrawerTransitioning ? '72px' : '48px', isolation: 'isolate', justifyContent: 'space-between', overflow: 'visible', px: '16px', position: 'relative', transition: 'height 420ms cubic-bezier(0.2, 0.8, 0.2, 1)' }}>
+      <Container disableGutters onMouseLeave={clearHover} sx={{ bottom: 0, height: hoveredMenu || isDrawerTransitioning ? '100px' : '48px', left: 0, maxWidth: 'none', position: 'fixed', width: '100%', zIndex: 10 }}>
+        <Grid alignItems='center' sx={{ bottom: 0, display: 'flex', height: hoveredMenu || isDrawerTransitioning ? '72px' : '48px', isolation: 'isolate', justifyContent: 'space-between', left: 0, overflow: 'visible', px: '16px', position: 'absolute', transition: 'height 420ms cubic-bezier(0.2, 0.8, 0.2, 1)', width: '100%' }}>
           {spotlightPosition !== null && <>
-            <SpotlightCone mode={theme.palette.mode} sx={{ bottom: '88px', left: `${spotlightPosition - 50}px`, opacity: hoveredMenu ? 1 : 0 }} />
-            <SpotlightRing mode={theme.palette.mode} sx={{ left: `${spotlightPosition}px`, opacity: hoveredMenu ? 1 : 0 }} />
-            <SpotlightOrb mode={theme.palette.mode} sx={{ left: `${spotlightPosition}px`, opacity: hoveredMenu ? 1 : 0 }}>{hoveredIcon && React.createElement(hoveredIcon, { color: '#FFFFFF', size: '20', variant: 'Bold' })}</SpotlightOrb>
+            <SpotlightCone sx={{ bottom: '88px', left: `${spotlightPosition - 50}px`, opacity: hoveredMenu ? 1 : 0 }} />
+            <SpotlightRing sx={{ left: `${spotlightPosition}px`, opacity: hoveredMenu ? 1 : 0 }} />
+            <SpotlightOrb sx={{ left: `${spotlightPosition}px`, opacity: hoveredMenu ? 1 : 0 }}>{hoveredIcon && React.createElement(hoveredIcon, { color: '#FFFFFF', size: '20', variant: 'Bold' })}</SpotlightOrb>
           </>}
           {pageConfig.map(({ icon: ButtonIcon, tooltip, url }, index) => {
             const path = url.replace('genesisHash', genesisHash);

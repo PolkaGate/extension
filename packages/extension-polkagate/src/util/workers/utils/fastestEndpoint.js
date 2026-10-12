@@ -115,7 +115,7 @@ function probeEndpoint(endpoint, timeout = ENDPOINT_PROBE_TIMEOUT) {
       const response = JSON.parse(event.data);
       const genesisHash = response.result;
 
-      console.info(`${endpoint} genesisHash:`, genesisHash);
+      //console.info(`${endpoint} genesisHash:`, genesisHash);
 
       const delay = Date.now() - startedAt;
 

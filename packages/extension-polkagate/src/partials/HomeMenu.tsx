@@ -90,7 +90,7 @@ function MenuItem({ ButtonIcon, iconVariant = 'Bulk', isDrawerTransitioning, isH
 
   return (
     <>
-      <Grid aria-label={tooltip} container item onClick={() => { onClearHover(); onClick(); }} onMouseEnter={() => refContainer.current && onHover(refContainer.current)} ref={refContainer} sx={{ alignItems: 'flex-start', cursor: 'pointer', flex: 1, height: '100%', justifyContent: 'center', pt: '8px', position: 'relative', zIndex: 1 }}>
+      <Grid aria-label={tooltip} container item onClick={() => { onClearHover(); onClick(); }} onMouseEnter={() => refContainer.current && onHover(refContainer.current)} ref={refContainer} sx={{ '&::before': { content: '""', cursor: 'pointer', height: '28px', left: 0, position: 'absolute', right: 0, top: '-28px' }, alignItems: 'flex-start', cursor: 'pointer', flex: 1, height: '100%', justifyContent: 'center', pt: '8px', position: 'relative', zIndex: 1 }}>
         <ButtonIcon color={isHovered ? 'transparent' : isSelected ? theme.palette.mode === 'light' ? '#4C7BF0' : '#FF80C8' : theme.palette.mode === 'light' ? '#7F7AAE' : theme.palette.menuIcon.active} size='24' style={{ position: 'relative', zIndex: 1 }} variant={isSelected ? 'Bold' : iconVariant} />
         <div style={{ bottom: '4px', color: theme.palette.mode === 'light' ? '#2B2552' : '#FFFFFF', fontSize: '12.5px', fontWeight: 800, left: 0, lineHeight: '20px', opacity: isHovered || (isSelected && isDrawerTransitioning) ? 1 : 0, pointerEvents: 'none', position: 'absolute', textAlign: 'center', transform: isHovered || (isSelected && isDrawerTransitioning) ? 'translateY(0)' : 'translateY(6px)', transition: 'opacity 300ms ease, transform 360ms ease', whiteSpace: 'nowrap', width: '100%' }}>{tooltip}</div>
       </Grid>
@@ -182,8 +182,8 @@ function HomeMenu(): React.ReactElement {
 
   return (
     <>
-      <Container disableGutters sx={{ bottom: 0, left: 0, maxWidth: 'none', position: 'fixed', width: '100%', zIndex: 10 }}>
-        <Grid alignItems='center' onMouseLeave={clearHover} sx={{ display: 'flex', height: hoveredMenu || isDrawerTransitioning ? '72px' : '48px', isolation: 'isolate', justifyContent: 'space-between', overflow: 'visible', px: '16px', position: 'relative', transition: 'height 420ms cubic-bezier(0.2, 0.8, 0.2, 1)' }}>
+      <Container disableGutters onMouseLeave={clearHover} sx={{ bottom: 0, height: hoveredMenu || isDrawerTransitioning ? '100px' : '48px', left: 0, maxWidth: 'none', position: 'fixed', width: '100%', zIndex: 10 }}>
+        <Grid alignItems='center' sx={{ bottom: 0, display: 'flex', height: hoveredMenu || isDrawerTransitioning ? '72px' : '48px', isolation: 'isolate', justifyContent: 'space-between', left: 0, overflow: 'visible', px: '16px', position: 'absolute', transition: 'height 420ms cubic-bezier(0.2, 0.8, 0.2, 1)', width: '100%' }}>
           {spotlightPosition !== null && <>
             <SpotlightCone mode={theme.palette.mode} sx={{ bottom: '88px', left: `${spotlightPosition - 50}px`, opacity: hoveredMenu ? 1 : 0 }} />
             <SpotlightRing mode={theme.palette.mode} sx={{ left: `${spotlightPosition}px`, opacity: hoveredMenu ? 1 : 0 }} />
