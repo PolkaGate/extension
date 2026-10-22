@@ -110,6 +110,14 @@ const DAPPS: DappEntry[] = [
     logo: 'https://faucet.polkadot.io/favicon.png',
     name: 'polkadotfaucet',
     url: 'https://faucet.polkadot.io/'
+  },
+  {
+    category: 'Governance',
+    description: 'Bounties management and tracking for Polkadot & Kusama governance',
+    label: 'PAPI Bounties',
+    logo: 'https://bounties.usepapi.app/papi_logo-dark.svg',
+    name: 'papibounties',
+    url: 'https://bounties.usepapi.app/'
   }
 ];
 
