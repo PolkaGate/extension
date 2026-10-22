@@ -1,5 +1,12 @@
 # Change Log
 
+# [2.19.0](https://github.com/polkagate/extension/compare/v2.18.0...v2.19.0) (2026-10-22)
+
+
+### Features
+
+* add in-extension dApp explorer ([300d17a](https://github.com/polkagate/extension/commit/300d17a3b884d35f2833c39d5d7d9fd2e74a8024))
+
 # [2.18.0](https://github.com/polkagate/extension/compare/v2.17.0...v2.18.0) (2026-10-11)
 
 
