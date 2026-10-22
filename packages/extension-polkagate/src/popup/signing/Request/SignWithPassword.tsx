@@ -67,37 +67,50 @@ export default function SignWithPassword({ address, error, fee, genesisHash, isS
     setError(null);
   }, [setError, setPassword]);
 
-  return isSignable
-    ? (
-      <>
-        {isLocked && (
-          <PasswordInput
-            focused
-            hasError={!!error}
-            onEnterPress={onSign}
-            onPassChange={onPassChange}
-            title={t('Your Password')}
-          />
-        )}
-        {canPayFee === false &&
-          <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: !isLocked ? '150px' : '125px', position: 'absolute' }}>
-            <Warning2 color='#FFCE4F' size='24px' variant='Bold' />
-            <Typography color={isDark ? '#EAEBF1' : '#745E9F'} variant='B-4'>
-              {t('Insufficient balance to cover the transaction fee')}
-            </Typography>
-          </Grid>
-        }
-        <DecisionButtons
-          direction='vertical'
-          disabled={(!!isLocked && !password) || !!error}
-          isBusy={isBusy}
-          onPrimaryClick={onSign}
-          onSecondaryClick={onCancel}
-          primaryBtnText={t('Approve')}
-          secondaryBtnText={t('Cancel')}
-          style={{ bottom: '0px', position: 'absolute', ...style }}
+  if (!isSignable) {
+    return (
+      <DecisionButtons
+        direction='vertical'
+        disabled
+        isBusy={false}
+        onPrimaryClick={onSign}
+        onSecondaryClick={onCancel}
+        primaryBtnText={t('Approve')}
+        secondaryBtnText={t('Cancel')}
+        style={{ bottom: '0px', position: 'absolute', ...style }}
+      />
+    );
+  }
+
+  return (
+    <>
+      {isLocked && (
+        <PasswordInput
+          focused
+          hasError={!!error}
+          onEnterPress={onSign}
+          onPassChange={onPassChange}
+          title={t('Your Password')}
         />
-      </>
-    )
-    : <></>;
+      )}
+      {canPayFee === false &&
+        <Grid alignItems='center' columnGap='5px' container item sx={{ bottom: !isLocked ? '150px' : '125px', position: 'absolute' }}>
+          <Warning2 color='#FFCE4F' size='24px' variant='Bold' />
+          <Typography color={isDark ? '#EAEBF1' : '#745E9F'} variant='B-4'>
+            {t('Insufficient balance to cover the transaction fee')}
+          </Typography>
+        </Grid>
+      }
+      <DecisionButtons
+        direction='vertical'
+        disabled={(!!isLocked && !password) || !!error}
+        isBusy={isBusy}
+        onPrimaryClick={onSign}
+        onSecondaryClick={onCancel}
+        primaryBtnText={t('Approve')}
+        secondaryBtnText={t('Cancel')}
+        style={{ bottom: '0px', position: 'absolute', ...style }}
+      />
+    </>
+  );
 }
