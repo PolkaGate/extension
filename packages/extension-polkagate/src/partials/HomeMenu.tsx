@@ -10,7 +10,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useTranslation } from '../components/translate';
-import GovernanceModal from '../fullscreen/components/GovernanceModal';
 import { useSelectedAccount } from '../hooks';
 import useAccountSelectedChain from '../hooks/useAccountSelectedChain';
 import { windowOpen } from '../messaging';
@@ -156,8 +155,6 @@ function HomeMenu(): React.ReactElement {
         return (account && windowOpen(`/send/${account.address}/${lastSelectedAccountGenesisHash}/${assetId ?? 0}`)) as unknown as void;
       case 'receive':
         return extensionPopupOpener(ExtensionPopups.RECEIVE)();
-      case 'governance':
-        return extensionPopupOpener(ExtensionPopups.GOVERNANCE)();
       default:
         navigate(`/${input}`, { state: { menuDrawerTransition: true, previousUrl: page } }) as void;
     }
@@ -169,7 +166,7 @@ function HomeMenu(): React.ReactElement {
     send: ArrowCircleRight2,
     receive: ArrowCircleDown2,
     stakingIndex: BuyCrypto,
-    governance: Record,
+    explorer: Record,
     settings: Setting,
     history: Clock
   }[hoveredMenu ?? ''];
@@ -192,7 +189,7 @@ function HomeMenu(): React.ReactElement {
           <MenuItem ButtonIcon={ArrowCircleRight2} iconVariant={theme.palette.mode === 'light' ? 'Bold' : undefined} isDrawerTransitioning={isDrawerTransitioning} isHovered={hoveredMenu === 'send'} isSelected={currentMenu === 'send'} onClick={handleMenuClick('send')} onClearHover={clearHover} onHover={handleHover('send')} tooltip={t('Send')} />
           <MenuItem ButtonIcon={ArrowCircleDown2} iconVariant={theme.palette.mode === 'light' ? 'Bold' : undefined} isDrawerTransitioning={isDrawerTransitioning} isHovered={hoveredMenu === 'receive'} isSelected={currentMenu === 'receive'} onClick={handleMenuClick('receive')} onClearHover={clearHover} onHover={handleHover('receive')} tooltip={t('Receive')} />
           <MenuItem ButtonIcon={BuyCrypto} isDrawerTransitioning={isDrawerTransitioning} isHovered={hoveredMenu === 'stakingIndex'} isSelected={currentMenu === 'stakingIndex'} onClick={handleMenuClick('stakingIndex')} onClearHover={clearHover} onHover={handleHover('stakingIndex')} tooltip={t('Staking')} />
-          <MenuItem ButtonIcon={Record} isDrawerTransitioning={isDrawerTransitioning} isHovered={hoveredMenu === 'governance'} isSelected={currentMenu === 'governance'} onClick={handleMenuClick('governance')} onClearHover={clearHover} onHover={handleHover('governance')} tooltip={t('Governance')} />
+          <MenuItem ButtonIcon={Record} isDrawerTransitioning={isDrawerTransitioning} isHovered={hoveredMenu === 'explorer'} isSelected={currentMenu === 'explorer'} onClick={handleMenuClick('explorer')} onClearHover={clearHover} onHover={handleHover('explorer')} tooltip={t('Explore')} />
           <MenuItem ButtonIcon={Setting} iconVariant={theme.palette.mode === 'light' ? 'Bold' : undefined} isDrawerTransitioning={isDrawerTransitioning} isHovered={hoveredMenu === 'settings'} isSelected={currentMenu === 'settings'} onClick={handleMenuClick('settings')} onClearHover={clearHover} onHover={handleHover('settings')} tooltip={t('Settings')} />
           <MenuItem ButtonIcon={Clock} iconVariant={theme.palette.mode === 'light' ? 'Bold' : undefined} isDrawerTransitioning={isDrawerTransitioning} isHovered={hoveredMenu === 'history'} isSelected={currentMenu === 'history'} onClick={handleMenuClick('history')} onClearHover={clearHover} onHover={handleHover('history')} tooltip={t('History')} />
           <MenuBackground mode={theme.palette.mode} style={spotlightPosition === null || !hoveredMenu ? undefined : { maskImage: `radial-gradient(circle at ${spotlightPosition}px 0, transparent 27px, #000 28px)`, WebkitMaskImage: `radial-gradient(circle at ${spotlightPosition}px 0, transparent 27px, #000 28px)` } as React.CSSProperties} />
@@ -202,10 +199,6 @@ function HomeMenu(): React.ReactElement {
         openPopup={extensionPopup === ExtensionPopups.RECEIVE}
         setOpenPopup={extensionPopupCloser}
       />
-      {extensionPopup === ExtensionPopups.GOVERNANCE &&
-        <GovernanceModal
-          setOpen={extensionPopupCloser}
-        />}
     </>
   );
 }

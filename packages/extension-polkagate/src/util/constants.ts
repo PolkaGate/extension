@@ -292,6 +292,7 @@ export enum ExtensionPopups {
   IMPORT_PROXIED,
   DAPPS,
   DERIVE,
+  EXPLORER,
   EXPORT,
   GOVERNANCE,
   LANGUAGE,

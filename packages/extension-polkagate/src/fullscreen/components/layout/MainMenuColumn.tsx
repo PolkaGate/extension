@@ -16,7 +16,6 @@ import { mapRelayToSystemGenesisIfMigrated } from '@polkadot/extension-polkagate
 
 import { useSelectedAccount, useStakingPositions, useTranslation } from '../../../hooks';
 import NeedHelp from '../../onboarding/NeedHelp';
-import GovernanceModal from '../GovernanceModal';
 import Language from './Language';
 import LogoWithText from './LogoWithText';
 import MenuButton from './MenuButton';
@@ -123,8 +122,8 @@ function MainMenuColumn(): React.ReactElement {
       />
       <MenuButton
         Icon={Record}
-        onClick={extensionPopupOpener(ExtensionPopups.GOVERNANCE)}
-        text={t('Governance')}
+        path='/explorefs'
+        text={t('Explore')}
       />
       <MenuButton
         Icon={Setting}
@@ -151,10 +150,6 @@ function MainMenuColumn(): React.ReactElement {
         <ReceiveGeneral
           closePopup={extensionPopupCloser}
           openPopup={extensionPopupOpener}
-        />}
-      {extensionPopup === ExtensionPopups.GOVERNANCE &&
-        <GovernanceModal
-          setOpen={extensionPopupCloser}
         />}
     </Grid>
   );

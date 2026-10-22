@@ -4,11 +4,13 @@
 import type { RouteConfig } from './RouteDefinitions';
 
 import AccountInteractions from '@polkadot/extension-polkagate/src/fullscreen/accountInteractions';
+import ExplorerFullScreen from '@polkadot/extension-polkagate/src/fullscreen/explorer';
 import HistoryFs from '@polkadot/extension-polkagate/src/fullscreen/history';
 import ManageProxies from '@polkadot/extension-polkagate/src/fullscreen/manageProxies';
 import NFTAlbum from '@polkadot/extension-polkagate/src/fullscreen/nft';
 import Send from '@polkadot/extension-polkagate/src/fullscreen/sendFund';
 import Settings from '@polkadot/extension-polkagate/src/fullscreen/settings';
+import ExplorerPage from '@polkadot/extension-polkagate/src/popup/explorer';
 import History from '@polkadot/extension-polkagate/src/popup/history/newDesign';
 import Notification from '@polkadot/extension-polkagate/src/popup/notification';
 import NotificationSettings from '@polkadot/extension-polkagate/src/popup/notification/NotificationSettings';
@@ -59,6 +61,16 @@ export const FEATURE_ROUTES: RouteConfig[] = [
     Component: NotificationSettings,
     path: '/notification/settings',
     trigger: 'notification-settings'
+  },
+  {
+    Component: ExplorerPage,
+    path: '/explorer',
+    trigger: 'explorer'
+  },
+  {
+    Component: ExplorerFullScreen,
+    path: '/explorefs',
+    trigger: 'explorer-fullscreen'
   },
   {
     Component: MigratePasswords,
