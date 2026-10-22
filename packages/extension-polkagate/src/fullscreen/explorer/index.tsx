@@ -112,11 +112,11 @@ function ExplorerFullScreen(): React.ReactElement {
   const filtered = useMemo(() => {
     return DAPPS.filter((d) => {
       const matchesCategory = activeCategory === 'All' || d.category === activeCategory;
-      const matchesSearch = !search || d.label.toLowerCase().includes(search) || d.description.toLowerCase().includes(search) || d.category.toLowerCase().includes(search);
+      const matchesSearch = !search || d.label.toLowerCase().includes(search) || d.description.toLowerCase().includes(search) || t(d.category).toLowerCase().includes(search);
 
       return matchesCategory && matchesSearch;
     });
-  }, [search, activeCategory]);
+  }, [search, activeCategory, t]);
 
   return (
     <HomeLayout childrenStyle={{ paddingLeft: '25px', position: 'relative', zIndex: 1 }}>
