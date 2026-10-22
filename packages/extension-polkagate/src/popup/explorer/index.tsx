@@ -226,7 +226,6 @@ function ExplorerPage(): React.ReactElement {
                       alignItems='center'
                       container
                       item
-                      justifyContent='space-between'
                       sx={{
                         ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' },
                         bgcolor: isDark ? '#05091C' : '#FFFFFF',
@@ -255,19 +254,6 @@ function ExplorerPage(): React.ReactElement {
                           </Typography>
                         </Stack>
                       </Stack>
-                      <Chip
-                        label={t(dapp.category)}
-                        size='small'
-                        sx={{
-                          bgcolor: isDark ? '#2A1F4A' : '#EEE9FF',
-                          borderRadius: '6px',
-                          color: isDark ? '#C4ADE8' : '#6D5ACD',
-                          flexShrink: 0,
-                          fontSize: '10px',
-                          fontWeight: 600,
-                          ml: '8px'
-                        }}
-                      />
                     </Grid>
                   </Link>
                 ))
