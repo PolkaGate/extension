@@ -991,5 +991,13 @@
   "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "Пул {{pool}} в сети {{chain}} выдвинул валидатора {{name}} с высокой комиссией ({{commission}}%).",
   "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "Выбранный вами узел может быть недоступен. Попробуйте переключиться в автоматический режим или выбрать другой эндпоинт.",
   "Switch Endpoint": "Сменить эндпоинт",
-  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": "Не удаётся достичь ни одного узла. Проверьте подключение к интернету или добавьте рабочий эндпоинт для этой сети."
+  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": "Не удаётся достичь ни одного узла. Проверьте подключение к интернету или добавьте рабочий эндпоинт для этой сети.",
+  "Explore dApps": "Обзор dApp",
+  "Select a dApp to continue": "Выберите dApp для продолжения",
+  "🔍 Search dApps": "🔍 Поиск dApp",
+  "No dApps found": "dApp не найдены",
+  "DeFi": "DeFi",
+  "Bridge": "Мост",
+  "Developer": "Разработчик",
+  "Security": "Безопасность"
 }

@@ -990,5 +990,13 @@
   "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "{{chain}} 上的池 {{pool}} 提名了佣金较高的验证人 {{name}}（{{commission}}%）。",
   "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "您选择的节点可能无法访问。请尝试切换到自动模式或选择其他端点。",
   "Switch Endpoint": "切换端点",
-  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": "无法连接到任何节点。请检查您的网络连接，或为该链添加一个可用的端点。"
+  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": "无法连接到任何节点。请检查您的网络连接，或为该链添加一个可用的端点。",
+  "Explore dApps": "探索 dApp",
+  "Select a dApp to continue": "选择一个 dApp 以继续",
+  "🔍 Search dApps": "🔍 搜索 dApp",
+  "No dApps found": "未找到 dApp",
+  "DeFi": "DeFi",
+  "Bridge": "跨链桥",
+  "Developer": "开发者",
+  "Security": "安全"
 }

@@ -990,5 +990,13 @@
   "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "{{chain}} पर पूल {{pool}} ने अधिक कमीशन वाले सत्यापक {{name}} को नामांकित किया ({{commission}}%)।",
   "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "आपका चुना हुआ नोड पहुँच योग्य नहीं हो सकता। ऑटो मोड पर स्विच करने या कोई अन्य एंडपॉइंट चुनने का प्रयास करें।",
   "Switch Endpoint": "एंडपॉइंट बदलें",
-  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": "किसी भी नोड तक नहीं पहुँचा जा सका। अपना इंटरनेट कनेक्शन जाँचें या इस चेन के लिए एक कार्यशील एंडपॉइंट जोड़ें।"
+  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": "किसी भी नोड तक नहीं पहुँचा जा सका। अपना इंटरनेट कनेक्शन जाँचें या इस चेन के लिए एक कार्यशील एंडपॉइंट जोड़ें।",
+  "Explore dApps": "dApps एक्सप्लोर करें",
+  "Select a dApp to continue": "जारी रखने के लिए एक dApp चुनें",
+  "🔍 Search dApps": "🔍 dApps खोजें",
+  "No dApps found": "कोई dApp नहीं मिली",
+  "DeFi": "DeFi",
+  "Bridge": "ब्रिज",
+  "Developer": "डेवलपर",
+  "Security": "सुरक्षा"
 }

@@ -990,5 +990,13 @@
   "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "Pool {{pool}} auf {{chain}} hat Validator {{name}} mit einer hohen Provision nominiert ({{commission}}%).",
   "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "Der ausgewählte Knoten ist möglicherweise nicht erreichbar. Versuche, in den automatischen Modus zu wechseln oder einen anderen Endpunkt zu wählen.",
   "Switch Endpoint": "Endpunkt wechseln",
-  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": "Es konnte kein Knoten erreicht werden. Überprüfe deine Internetverbindung oder füge einen funktionierenden Endpunkt für diese Chain hinzu."
+  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": "Es konnte kein Knoten erreicht werden. Überprüfe deine Internetverbindung oder füge einen funktionierenden Endpunkt für diese Chain hinzu.",
+  "Explore dApps": "dApps erkunden",
+  "Select a dApp to continue": "Wähle eine dApp aus, um fortzufahren",
+  "🔍 Search dApps": "🔍 dApps suchen",
+  "No dApps found": "Keine dApps gefunden",
+  "DeFi": "DeFi",
+  "Bridge": "Bridge",
+  "Developer": "Entwickler",
+  "Security": "Sicherheit"
 }
