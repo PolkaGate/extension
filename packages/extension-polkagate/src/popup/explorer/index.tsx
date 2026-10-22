@@ -86,6 +86,14 @@ const DAPPS: DappEntry[] = [
     logo: chainsPolkadotCircleSVG as string,
     name: 'polkadotjs',
     url: 'https://polkadot.js.org/apps/'
+  },
+  {
+    category: 'Security',
+    description: 'A recovery service for compromised wallets on Polkadot-based chains, helping recover assets that remain technically recoverable.',
+    label: 'PAPI Rescue',
+    logo: 'https://www.papirescue.now/apple-touch-icon.png',
+    name: 'papirescue',
+    url: 'https://www.papirescue.now/'
   }
 ];
 

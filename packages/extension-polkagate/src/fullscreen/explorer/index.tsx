@@ -90,7 +90,7 @@ const DAPPS: DappEntry[] = [
     category: 'Security',
     description: 'A recovery service for compromised wallets on Polkadot-based chains, helping recover assets that remain technically recoverable.',
     label: 'PAPI Rescue',
-    logo: 'https://www.papirescue.now/favicon.ico',
+    logo: 'https://www.papirescue.now/apple-touch-icon.png',
     name: 'papirescue',
     url: 'https://www.papirescue.now/'
   }
