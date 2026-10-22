@@ -94,6 +94,14 @@ const DAPPS: DappEntry[] = [
     logo: 'https://www.papirescue.now/apple-touch-icon.png',
     name: 'papirescue',
     url: 'https://www.papirescue.now/'
+  },
+  {
+    category: 'DeFi',
+    description: 'Staking and portfolio management for the Bittensor (TAO) network',
+    label: 'Tao App',
+    logo: 'https://coin-images.coingecko.com/coins/images/28452/small/ARUsPeNQ_400x400.jpeg?1696527447',
+    name: 'taoapp',
+    url: 'https://www.tao.app/'
   }
 ];
 
