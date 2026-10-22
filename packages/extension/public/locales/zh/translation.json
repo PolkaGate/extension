@@ -998,5 +998,18 @@
   "DeFi": "DeFi",
   "Bridge": "跨链桥",
   "Developer": "开发者",
-  "Security": "安全"
+  "Security": "安全",
+  "On-chain governance discussions and voting": "链上治理讨论与投票",
+  "Cross-chain liquidity and swaps on Polkadot": "Polkadot 上的跨链流动性与兑换",
+  "Trustless Ethereum ↔ Polkadot bridge": "无需信任的 Ethereum ↔ Polkadot 跨链桥",
+  "Interoperability protocol for cross-chain messaging": "跨链消息传递的互操作性协议",
+  "NFT marketplace built on Polkadot & Kusama": "基于 Polkadot & Kusama 的 NFT 市场",
+  "Advanced NFT infrastructure and marketplace": "先进的 NFT 基础设施与市场",
+  "Multi-chain block explorer and analytics": "多链区块浏览器与分析",
+  "Developer interface for Polkadot & Substrate chains": "Polkadot & Substrate 链的开发者界面",
+  "A recovery service for compromised wallets on Polkadot-based chains, helping recover assets that remain technically recoverable.": "针对 Polkadot 生态链上受损钱包的资产恢复服务。",
+  "Staking and portfolio management for the Bittensor (TAO) network": "Bittensor (TAO) 网络的质押与资产组合管理",
+  "Get test tokens for Polkadot, Kusama, and their testnets": "获取 Polkadot、Kusama 及其测试网的测试代币",
+  "Bounties management and tracking for Polkadot & Kusama governance": "Polkadot & Kusama 治理的赏金管理与追踪",
+  "AMM-based DeFi protocol on Kusama for swaps and liquidity provision": "Kusama 上基于 AMM 的 DeFi 协议，用于兑换和流动性提供"
 }

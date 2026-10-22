@@ -998,5 +998,18 @@
   "DeFi": "DeFi",
   "Bridge": "ब्रिज",
   "Developer": "डेवलपर",
-  "Security": "सुरक्षा"
+  "Security": "सुरक्षा",
+  "On-chain governance discussions and voting": "ऑन-चेन गवर्नेंस चर्चा और मतदान",
+  "Cross-chain liquidity and swaps on Polkadot": "Polkadot पर क्रॉस-चेन लिक्विडिटी और स्वैप",
+  "Trustless Ethereum ↔ Polkadot bridge": "भरोसारहित Ethereum ↔ Polkadot ब्रिज",
+  "Interoperability protocol for cross-chain messaging": "क्रॉस-चेन संदेश के लिए इंटरऑपरेबिलिटी प्रोटोकॉल",
+  "NFT marketplace built on Polkadot & Kusama": "Polkadot & Kusama पर NFT मार्केटप्लेस",
+  "Advanced NFT infrastructure and marketplace": "उन्नत NFT इन्फ्रास्ट्रक्चर और मार्केटप्लेस",
+  "Multi-chain block explorer and analytics": "मल्टी-चेन ब्लॉक एक्सप्लोरर और एनालिटिक्स",
+  "Developer interface for Polkadot & Substrate chains": "Polkadot & Substrate चेन के लिए डेवलपर इंटरफ़ेस",
+  "A recovery service for compromised wallets on Polkadot-based chains, helping recover assets that remain technically recoverable.": "Polkadot-आधारित चेन पर समझौता किए गए वॉलेट के लिए एक पुनर्प्राप्ति सेवा।",
+  "Staking and portfolio management for the Bittensor (TAO) network": "Bittensor (TAO) नेटवर्क के लिए स्टेकिंग और पोर्टफोलियो प्रबंधन",
+  "Get test tokens for Polkadot, Kusama, and their testnets": "Polkadot, Kusama और उनके टेस्टनेट के लिए टेस्ट टोकन प्राप्त करें",
+  "Bounties management and tracking for Polkadot & Kusama governance": "Polkadot & Kusama गवर्नेंस के लिए बाउंटी प्रबंधन और ट्रैकिंग",
+  "AMM-based DeFi protocol on Kusama for swaps and liquidity provision": "Kusama पर स्वैप और लिक्विडिटी के लिए AMM-आधारित DeFi प्रोटोकॉल"
 }

@@ -998,5 +998,18 @@
   "DeFi": "DeFi",
   "Bridge": "Ponte",
   "Developer": "Desenvolvedor",
-  "Security": "Segurança"
+  "Security": "Segurança",
+  "On-chain governance discussions and voting": "Discussões e votações de governança on-chain",
+  "Cross-chain liquidity and swaps on Polkadot": "Liquidez cross-chain e trocas no Polkadot",
+  "Trustless Ethereum ↔ Polkadot bridge": "Ponte sem confiança Ethereum ↔ Polkadot",
+  "Interoperability protocol for cross-chain messaging": "Protocolo de interoperabilidade para mensagens cross-chain",
+  "NFT marketplace built on Polkadot & Kusama": "Marketplace de NFT construído no Polkadot & Kusama",
+  "Advanced NFT infrastructure and marketplace": "Infraestrutura e marketplace de NFT avançados",
+  "Multi-chain block explorer and analytics": "Explorador de blocos e análises multi-chain",
+  "Developer interface for Polkadot & Substrate chains": "Interface de desenvolvedor para cadeias Polkadot & Substrate",
+  "A recovery service for compromised wallets on Polkadot-based chains, helping recover assets that remain technically recoverable.": "Serviço de recuperação para carteiras comprometidas em cadeias baseadas em Polkadot.",
+  "Staking and portfolio management for the Bittensor (TAO) network": "Staking e gestão de portfólio para a rede Bittensor (TAO)",
+  "Get test tokens for Polkadot, Kusama, and their testnets": "Obtenha tokens de teste para Polkadot, Kusama e suas testnets",
+  "Bounties management and tracking for Polkadot & Kusama governance": "Gestão e rastreamento de recompensas para governança Polkadot & Kusama",
+  "AMM-based DeFi protocol on Kusama for swaps and liquidity provision": "Protocolo DeFi baseado em AMM no Kusama para trocas e provisão de liquidez"
 }

@@ -155,7 +155,7 @@ function ExplorerFullScreen(): React.ReactElement {
   const filtered = useMemo(() => {
     return DAPPS.filter((d) => {
       const matchesCategory = activeCategory === 'All' || d.category === activeCategory;
-      const matchesSearch = !search || d.label.toLowerCase().includes(search) || d.description.toLowerCase().includes(search) || t(d.category).toLowerCase().includes(search);
+      const matchesSearch = !search || d.label.toLowerCase().includes(search) || t(d.description).toLowerCase().includes(search) || t(d.category).toLowerCase().includes(search);
 
       return matchesCategory && matchesSearch;
     });
@@ -246,7 +246,7 @@ function ExplorerFullScreen(): React.ReactElement {
                         {dapp.label}
                       </Typography>
                       <Typography color={isDark ? '#BEAAD8' : '#7A68A4'} textAlign='left' variant='B-4'>
-                        {dapp.description}
+                        {t(dapp.description)}
                       </Typography>
                     </Stack>
                   </Stack>
