@@ -9,7 +9,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { BackWithLabel, Motion, SearchField } from '../../components';
-import { useBackground, useIsDark, useTranslation } from '../../hooks';
+import { useBackground, useIsDark, useIsSidePanel, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 
@@ -147,6 +147,7 @@ function ExplorerPage(): React.ReactElement {
 
   const { t } = useTranslation();
   const isDark = useIsDark();
+  const isSidePanel = useIsSidePanel();
   const navigate = useNavigate();
 
   const [search, setSearch] = useState('');
@@ -169,21 +170,21 @@ function ExplorerPage(): React.ReactElement {
 
   return (
     <>
-      <Grid alignContent='flex-start' container sx={{ flexDirection: 'column', flexWrap: 'nowrap', height: '100vh', overflow: 'hidden', pb: '86px', position: 'relative' }}>
+      <Grid alignContent='flex-start' container sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? '100vh' : undefined, overflow: isSidePanel ? 'hidden' : undefined, pb: isSidePanel ? '86px' : undefined, position: 'relative' }}>
         <UserDashboardHeader homeType='default' />
         <BackWithLabel
           onClick={onBack}
           style={{ pb: 0 }}
           text={t('Explore dApps')}
         />
-        <Motion style={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }} variant='slide'>
+        <Motion style={isSidePanel ? { display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0, overflow: 'hidden' } : undefined} variant='slide'>
           <SearchField
             onInputChange={onSearch}
             placeholder={t('🔍 Search dApps')}
             style={{ padding: '8px 4% 4px' }}
           />
           {/* Category filter chips */}
-          <Container disableGutters sx={{ display: 'flex', flexWrap: 'nowrap', gap: '6px', overflowX: 'auto', px: '4%', py: '8px' }}>
+          <Container disableGutters sx={{ display: 'flex', flexShrink: 0, flexWrap: 'nowrap', gap: '6px', overflowX: 'auto', px: '4%', py: '8px' }}>
             {ALL_CATEGORIES.map((cat) => (
               <Chip
                 icon={React.cloneElement(CATEGORY_ICONS[cat] ?? <Category size='13' variant='Bulk' />, {
@@ -210,7 +211,7 @@ function ExplorerPage(): React.ReactElement {
               />
             ))}
           </Container>
-          <Container disableGutters sx={{ flex: '1 1 auto', minHeight: 0, overflowY: 'auto', pb: '8px', px: '4%' }}>
+          <Container disableGutters sx={{ flex: isSidePanel ? '1 1 auto' : undefined, minHeight: isSidePanel ? 0 : undefined, overflowY: isSidePanel ? 'auto' : undefined, pb: '8px', px: '4%' }}>
             <VelvetBox>
               <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #E3E8F7', borderRadius: '15px', boxShadow: isDark ? 'none' : '0 12px 24px rgba(133, 140, 176, 0.12)', width: '100%' }}>
                 {filtered.length > 0
