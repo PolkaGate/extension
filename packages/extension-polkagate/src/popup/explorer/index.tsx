@@ -170,14 +170,14 @@ function ExplorerPage(): React.ReactElement {
 
   return (
     <>
-      <Grid alignContent='flex-start' container sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? '100vh' : undefined, overflow: isSidePanel ? 'hidden' : undefined, pb: isSidePanel ? '86px' : undefined, position: 'relative' }}>
+      <Grid alignContent='flex-start' container sx={{ flexDirection: 'column', flexWrap: 'nowrap', height: '100vh', overflow: 'hidden', pb: '86px', position: 'relative' }}>
         <UserDashboardHeader homeType='default' />
         <BackWithLabel
           onClick={onBack}
           style={{ pb: 0 }}
           text={t('Explore dApps')}
         />
-        <Motion style={isSidePanel ? { display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0, overflow: 'hidden' } : undefined} variant='slide'>
+        <Motion style={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }} variant='slide'>
           <SearchField
             onInputChange={onSearch}
             placeholder={t('🔍 Search dApps')}
@@ -211,7 +211,7 @@ function ExplorerPage(): React.ReactElement {
               />
             ))}
           </Container>
-          <VelvetBox style={{ flex: isSidePanel ? '1 1 auto' : undefined, margin: '0 4%', minHeight: isSidePanel ? 0 : '200px', overflowY: isSidePanel ? 'auto' : undefined, width: '92%' }}>
+          <VelvetBox style={{ flex: '1 1 auto', margin: '0 4%', minHeight: 0, overflowY: 'auto', width: '92%' }}>
             <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #E3E8F7', borderRadius: '15px', boxShadow: isDark ? 'none' : '0 12px 24px rgba(133, 140, 176, 0.12)', width: '100%' }}>
               {filtered.length > 0
                 ? filtered.map((dapp, index) => (
@@ -226,6 +226,7 @@ function ExplorerPage(): React.ReactElement {
                       alignItems='center'
                       container
                       item
+                      justifyContent='space-between'
                       sx={{
                         ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' },
                         bgcolor: isDark ? '#05091C' : '#FFFFFF',
@@ -239,36 +240,34 @@ function ExplorerPage(): React.ReactElement {
                         transition: 'all 250ms ease-out'
                       }}
                     >
-                      <Stack alignItems='center' direction='row' gap='12px' sx={{ flex: 1, minWidth: 0 }}>
+                      <Stack alignItems='center' direction='row' gap='12px' sx={{ minWidth: 0, overflow: 'hidden' }}>
                         <Avatar
                           src={dapp.logo}
                           sx={{ borderRadius: '10px', flexShrink: 0, height: '38px', width: '38px' }}
                           variant='square'
                         />
                         <Stack alignItems='flex-start' direction='column' gap='2px' sx={{ minWidth: 0 }}>
-                          <Stack alignItems='center' direction='row' gap='6px'>
-                            <Typography noWrap textAlign='left' variant='B-2'>
-                              {dapp.label}
-                            </Typography>
-                            <Chip
-                              label={t(dapp.category)}
-                              size='small'
-                              sx={{
-                                bgcolor: isDark ? '#2A1F4A' : '#EEE9FF',
-                                borderRadius: '6px',
-                                color: isDark ? '#C4ADE8' : '#6D5ACD',
-                                flexShrink: 0,
-                                fontSize: '10px',
-                                fontWeight: 600,
-                                height: '16px'
-                              }}
-                            />
-                          </Stack>
-                          <Typography color={isDark ? '#BEAAD8' : '#7A68A4'} noWrap textAlign='left' variant='B-4'>
+                          <Typography noWrap textAlign='left' variant='B-2'>
+                            {dapp.label}
+                          </Typography>
+                          <Typography color={isDark ? '#BEAAD8' : '#7A68A4'} textAlign='left' variant='B-4'>
                             {t(dapp.description)}
                           </Typography>
                         </Stack>
                       </Stack>
+                      <Chip
+                        label={t(dapp.category)}
+                        size='small'
+                        sx={{
+                          bgcolor: isDark ? '#2A1F4A' : '#EEE9FF',
+                          borderRadius: '6px',
+                          color: isDark ? '#C4ADE8' : '#6D5ACD',
+                          flexShrink: 0,
+                          fontSize: '10px',
+                          fontWeight: 600,
+                          ml: '8px'
+                        }}
+                      />
                     </Grid>
                   </Link>
                 ))
