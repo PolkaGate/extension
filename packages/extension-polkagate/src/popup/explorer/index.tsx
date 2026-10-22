@@ -131,7 +131,7 @@ const DAPPS: DappEntry[] = [
 
 const ALL_CATEGORIES = ['All', ...Array.from(new Set(DAPPS.map((d) => d.category)))];
 
-const CATEGORY_ICONS: Record<string, React.ReactElement> = {
+const CATEGORY_ICONS: Record<string, React.ReactElement<{ color?: string }>> = {
   'All': <Category size='13' variant='Bulk' />,
   'Governance': <Judge size='13' variant='Bulk' />,
   'DeFi': <Convertshape2 size='13' variant='Bulk' />,
@@ -186,7 +186,7 @@ function ExplorerPage(): React.ReactElement {
           <Container disableGutters sx={{ display: 'flex', flexWrap: 'nowrap', gap: '6px', overflowX: 'auto', px: '4%', py: '8px' }}>
             {ALL_CATEGORIES.map((cat) => (
               <Chip
-                icon={React.cloneElement(CATEGORY_ICONS[cat] ?? <Category size='13' variant='Bulk' /> as React.ReactElement<{ color?: string }>, {
+                icon={React.cloneElement(CATEGORY_ICONS[cat] ?? <Category size='13' variant='Bulk' />, {
                   color: activeCategory === cat ? '#FFF' : isDark ? '#C4ADE8' : '#6D5ACD'
                 })}
                 key={cat}
