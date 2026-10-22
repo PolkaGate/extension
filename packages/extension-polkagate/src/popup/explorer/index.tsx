@@ -102,6 +102,14 @@ const DAPPS: DappEntry[] = [
     logo: 'https://coin-images.coingecko.com/coins/images/28452/small/ARUsPeNQ_400x400.jpeg?1696527447',
     name: 'taoapp',
     url: 'https://www.tao.app/'
+  },
+  {
+    category: 'Developer',
+    description: 'Get test tokens for Polkadot, Kusama, and their testnets',
+    label: 'Polkadot Faucet',
+    logo: 'https://faucet.polkadot.io/favicon.png',
+    name: 'polkadotfaucet',
+    url: 'https://faucet.polkadot.io/'
   }
 ];
 
