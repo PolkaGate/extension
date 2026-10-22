@@ -180,7 +180,7 @@ function ExplorerFullScreen(): React.ReactElement {
       <Stack direction='row' sx={{ flexWrap: 'wrap', gap: '8px', mt: '12px' }}>
         {ALL_CATEGORIES.map((cat) => (
           <Chip
-            icon={React.cloneElement(CATEGORY_ICONS[cat] ?? <Category size='13' variant='Bulk' />, {
+            icon={React.cloneElement(CATEGORY_ICONS[cat] ?? <Category size='13' variant='Bulk' /> as React.ReactElement<{ color?: string }>, {
               color: activeCategory === cat ? '#FFF' : isDark ? '#C4ADE8' : '#6D5ACD'
             })}
             key={cat}

@@ -9,7 +9,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { BackWithLabel, Motion, SearchField } from '../../components';
-import { useBackground, useIsDark, useIsSidePanel, useTranslation } from '../../hooks';
+import { useBackground, useIsDark, useTranslation } from '../../hooks';
 import { HomeMenu, UserDashboardHeader } from '../../partials';
 import { VelvetBox } from '../../style';
 
@@ -148,7 +148,6 @@ function ExplorerPage(): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
   const navigate = useNavigate();
-  const isSidePanel = useIsSidePanel();
 
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
@@ -187,7 +186,7 @@ function ExplorerPage(): React.ReactElement {
           <Container disableGutters sx={{ display: 'flex', flexWrap: 'nowrap', gap: '6px', overflowX: 'auto', px: '4%', py: '8px' }}>
             {ALL_CATEGORIES.map((cat) => (
               <Chip
-                icon={React.cloneElement(CATEGORY_ICONS[cat] ?? <Category size='13' variant='Bulk' />, {
+                icon={React.cloneElement(CATEGORY_ICONS[cat] ?? <Category size='13' variant='Bulk' /> as React.ReactElement<{ color?: string }>, {
                   color: activeCategory === cat ? '#FFF' : isDark ? '#C4ADE8' : '#6D5ACD'
                 })}
                 key={cat}
