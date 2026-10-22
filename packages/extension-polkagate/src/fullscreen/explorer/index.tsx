@@ -117,6 +117,14 @@ const DAPPS: DappEntry[] = [
     logo: 'https://bounties.usepapi.app/papi_logo-dark.svg',
     name: 'papibounties',
     url: 'https://bounties.usepapi.app/'
+  },
+  {
+    category: 'DeFi',
+    description: 'AMM-based DeFi protocol on Kusama for swaps and liquidity provision',
+    label: 'Basilisk',
+    logo: 'https://app.basilisk.cloud/favicon.ico',
+    name: 'basilisk',
+    url: 'https://app.basilisk.cloud/'
   }
 ];
 
