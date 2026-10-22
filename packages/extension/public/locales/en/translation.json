@@ -990,5 +990,9 @@
   "Pool {{pool}} on {{chain}} nominated validator {{name}} with a high commission ({{commission}}%).": "",
   "Your selected node may be unreachable. Try switching to auto mode or choosing another endpoint.": "",
   "Switch Endpoint": "",
-  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": ""
+  "Unable to reach any node. Check your internet connection or add a working endpoint for this chain.": "",
+  "Explore dApps": "",
+  "Select a dApp to continue": "",
+  "🔍 Search dApps": "",
+  "No dApps found": ""
 }
