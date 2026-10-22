@@ -211,65 +211,67 @@ function ExplorerPage(): React.ReactElement {
               />
             ))}
           </Container>
-          <VelvetBox style={{ flex: '1 1 auto', margin: '0 4%', minHeight: 0, overflowY: 'auto', width: '92%' }}>
-            <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #E3E8F7', borderRadius: '15px', boxShadow: isDark ? 'none' : '0 12px 24px rgba(133, 140, 176, 0.12)', width: '100%' }}>
-              {filtered.length > 0
-                ? filtered.map((dapp, index) => (
-                  <Link
-                    href={dapp.url}
-                    key={dapp.name}
-                    rel='noreferrer'
-                    sx={{ color: 'inherit', textDecoration: 'none', width: '100%' }}
-                    target='_blank'
-                  >
-                    <Grid
-                      alignItems='center'
-                      container
-                      item
-                      sx={{
-                        ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' },
-                        bgcolor: isDark ? '#05091C' : '#FFFFFF',
-                        borderBottom: `1px solid ${isDark ? '#1B133C' : '#EEF1FF'}`,
-                        borderBottomLeftRadius: index === filtered.length - 1 ? '14px' : 0,
-                        borderBottomRightRadius: index === filtered.length - 1 ? '14px' : 0,
-                        borderTopLeftRadius: index === 0 ? '14px' : 0,
-                        borderTopRightRadius: index === 0 ? '14px' : 0,
-                        cursor: 'pointer',
-                        p: '10px 12px',
-                        transition: 'all 250ms ease-out'
-                      }}
+          <Container disableGutters sx={{ flex: '1 1 auto', minHeight: 0, overflowY: 'auto', pb: '8px', px: '4%' }}>
+            <VelvetBox>
+              <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #E3E8F7', borderRadius: '15px', boxShadow: isDark ? 'none' : '0 12px 24px rgba(133, 140, 176, 0.12)', width: '100%' }}>
+                {filtered.length > 0
+                  ? filtered.map((dapp, index) => (
+                    <Link
+                      href={dapp.url}
+                      key={dapp.name}
+                      rel='noreferrer'
+                      sx={{ color: 'inherit', textDecoration: 'none', width: '100%' }}
+                      target='_blank'
                     >
-                      <Stack alignItems='center' direction='row' gap='12px' sx={{ minWidth: 0, overflow: 'hidden' }}>
-                        <Avatar
-                          src={dapp.logo}
-                          sx={{ borderRadius: '10px', flexShrink: 0, height: '38px', width: '38px' }}
-                          variant='square'
-                        />
-                        <Stack alignItems='flex-start' direction='column' gap='2px' sx={{ minWidth: 0 }}>
-                          <Typography noWrap textAlign='left' variant='B-2'>
-                            {dapp.label}
-                          </Typography>
-                          <Typography color={isDark ? '#BEAAD8' : '#7A68A4'} textAlign='left' variant='B-4'>
-                            {t(dapp.description)}
-                          </Typography>
+                      <Grid
+                        alignItems='center'
+                        container
+                        item
+                        sx={{
+                          ':hover': { background: isDark ? '#1B133C' : '#f4f7ff', px: '8px' },
+                          bgcolor: isDark ? '#05091C' : '#FFFFFF',
+                          borderBottom: `1px solid ${isDark ? '#1B133C' : '#EEF1FF'}`,
+                          borderBottomLeftRadius: index === filtered.length - 1 ? '14px' : 0,
+                          borderBottomRightRadius: index === filtered.length - 1 ? '14px' : 0,
+                          borderTopLeftRadius: index === 0 ? '14px' : 0,
+                          borderTopRightRadius: index === 0 ? '14px' : 0,
+                          cursor: 'pointer',
+                          p: '10px 12px',
+                          transition: 'all 250ms ease-out'
+                        }}
+                      >
+                        <Stack alignItems='center' direction='row' gap='12px' sx={{ minWidth: 0, overflow: 'hidden' }}>
+                          <Avatar
+                            src={dapp.logo}
+                            sx={{ borderRadius: '10px', flexShrink: 0, height: '38px', width: '38px' }}
+                            variant='square'
+                          />
+                          <Stack alignItems='flex-start' direction='column' gap='2px' sx={{ minWidth: 0 }}>
+                            <Typography noWrap textAlign='left' variant='B-2'>
+                              {dapp.label}
+                            </Typography>
+                            <Typography color={isDark ? '#BEAAD8' : '#7A68A4'} textAlign='left' variant='B-4'>
+                              {t(dapp.description)}
+                            </Typography>
+                          </Stack>
                         </Stack>
+                      </Grid>
+                    </Link>
+                  ))
+                  : (
+                    <Grid alignItems='center' container item justifyContent='center' sx={{ p: '40px 0' }}>
+                      <Stack alignItems='center' direction='column' gap='8px'>
+                        <Record color={isDark ? '#4A3870' : '#C4B8E8'} size='32' variant='Bulk' />
+                        <Typography color={isDark ? '#5A4880' : '#A090C8'} variant='B-3'>
+                          {t('No dApps found')}
+                        </Typography>
                       </Stack>
                     </Grid>
-                  </Link>
-                ))
-                : (
-                  <Grid alignItems='center' container item justifyContent='center' sx={{ p: '40px 0' }}>
-                    <Stack alignItems='center' direction='column' gap='8px'>
-                      <Record color={isDark ? '#4A3870' : '#C4B8E8'} size='32' variant='Bulk' />
-                      <Typography color={isDark ? '#5A4880' : '#A090C8'} variant='B-3'>
-                        {t('No dApps found')}
-                      </Typography>
-                    </Stack>
-                  </Grid>
-                )
-              }
-            </Grid>
-          </VelvetBox>
+                  )
+                }
+              </Grid>
+            </VelvetBox>
+          </Container>
         </Motion>
       </Grid>
       <HomeMenu />
