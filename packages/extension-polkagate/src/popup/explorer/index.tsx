@@ -4,7 +4,7 @@
 import { chainsHydrationSVG, chainsPolkadotCircleSVG, chainsSnowbridgePNG } from '@polkagate/apps-config/ui/logos/chains';
 import { externalKodadotSVG, externalSubscanPNG, externalSubsquareSVG } from '@polkagate/apps-config/ui/logos/external';
 import { Avatar, Chip, Container, Grid, Link, Stack, Typography } from '@mui/material';
-import { Record } from 'iconsax-react';
+import { ArrowSwapHorizontal, Category, Code, Convertshape2, Diamonds, Judge, Record, SearchNormal1, Shield } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -131,6 +131,17 @@ const DAPPS: DappEntry[] = [
 
 const ALL_CATEGORIES = ['All', ...Array.from(new Set(DAPPS.map((d) => d.category)))];
 
+const CATEGORY_ICONS: Record<string, React.ReactElement> = {
+  'All': <Category size='13' variant='Bulk' />,
+  'Governance': <Judge size='13' variant='Bulk' />,
+  'DeFi': <Convertshape2 size='13' variant='Bulk' />,
+  'Bridge': <ArrowSwapHorizontal size='13' variant='Bulk' />,
+  'NFTs': <Diamonds size='13' variant='Bulk' />,
+  'Explorer': <SearchNormal1 size='13' variant='Bulk' />,
+  'Developer': <Code size='13' variant='Bulk' />,
+  'Security': <Shield size='13' variant='Bulk' />
+};
+
 function ExplorerPage(): React.ReactElement {
   useBackground('default');
 
@@ -176,12 +187,16 @@ function ExplorerPage(): React.ReactElement {
           <Container disableGutters sx={{ display: 'flex', flexWrap: 'nowrap', gap: '6px', overflowX: 'auto', px: '4%', py: '8px' }}>
             {ALL_CATEGORIES.map((cat) => (
               <Chip
+                icon={React.cloneElement(CATEGORY_ICONS[cat] ?? <Category size='13' variant='Bulk' />, {
+                  color: activeCategory === cat ? '#FFF' : isDark ? '#C4ADE8' : '#6D5ACD'
+                })}
                 key={cat}
                 label={t(cat)}
                 onClick={() => setActiveCategory(cat)}
                 size='small'
                 sx={{
                   '&:hover': { opacity: 0.9 },
+                  '& .MuiChip-icon': { color: 'inherit', ml: '6px' },
                   bgcolor: activeCategory === cat
                     ? isDark ? '#7B3FBE' : '#6D5ACD'
                     : isDark ? '#2A1F4A' : '#EEE9FF',
