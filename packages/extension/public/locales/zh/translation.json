@@ -1011,5 +1011,6 @@
   "Staking and portfolio management for the Bittensor (TAO) network": "Bittensor (TAO) 网络的质押与资产组合管理",
   "Get test tokens for Polkadot, Kusama, and their testnets": "获取 Polkadot、Kusama 及其测试网的测试代币",
   "Bounties management and tracking for Polkadot & Kusama governance": "Polkadot & Kusama 治理的赏金管理与追踪",
-  "AMM-based DeFi protocol on Kusama for swaps and liquidity provision": "Kusama 上基于 AMM 的 DeFi 协议，用于兑换和流动性提供"
+  "AMM-based DeFi protocol on Kusama for swaps and liquidity provision": "Kusama 上基于 AMM 的 DeFi 协议，用于兑换和流动性提供",
+  "Explorer": "浏览器"
 }
