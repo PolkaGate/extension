@@ -170,14 +170,14 @@ function ExplorerPage(): React.ReactElement {
 
   return (
     <>
-      <Grid alignContent='flex-start' container sx={{ flexDirection: isSidePanel ? 'column' : undefined, flexWrap: isSidePanel ? 'nowrap' : undefined, height: isSidePanel ? '100vh' : undefined, overflow: isSidePanel ? 'hidden' : undefined, pb: isSidePanel ? '86px' : undefined, position: 'relative' }}>
+      <Grid alignContent='flex-start' container sx={{ flexDirection: 'column', flexWrap: 'nowrap', height: isSidePanel ? '100vh' : '600px', overflow: 'hidden', position: 'relative' }}>
         <UserDashboardHeader homeType='default' />
         <BackWithLabel
           onClick={onBack}
           style={{ pb: 0 }}
           text={t('Explore dApps')}
         />
-        <Motion style={isSidePanel ? { display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0, overflow: 'hidden' } : undefined} variant='slide'>
+        <Motion style={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }} variant='slide'>
           <SearchField
             onInputChange={onSearch}
             placeholder={t('🔍 Search dApps')}
@@ -211,7 +211,7 @@ function ExplorerPage(): React.ReactElement {
               />
             ))}
           </Container>
-          <Container disableGutters sx={{ flex: isSidePanel ? '1 1 auto' : undefined, minHeight: isSidePanel ? 0 : undefined, overflowY: isSidePanel ? 'auto' : undefined, pb: '8px', px: '4%' }}>
+          <Container disableGutters sx={{ flex: '1 1 auto', minHeight: 0, overflowY: 'auto', pb: '56px', px: '4%' }}>
             <VelvetBox>
               <Grid container item sx={{ bgcolor: isDark ? '#1B133C' : '#FFFFFF', border: isDark ? 'none' : '1px solid #E3E8F7', borderRadius: '15px', boxShadow: isDark ? 'none' : '0 12px 24px rgba(133, 140, 176, 0.12)', width: '100%' }}>
                 {filtered.length > 0
@@ -236,6 +236,8 @@ function ExplorerPage(): React.ReactElement {
                           borderTopLeftRadius: index === 0 ? '14px' : 0,
                           borderTopRightRadius: index === 0 ? '14px' : 0,
                           cursor: 'pointer',
+                          minWidth: 0,
+                          overflow: 'hidden',
                           p: '10px 12px',
                           transition: 'all 250ms ease-out'
                         }}
@@ -250,7 +252,12 @@ function ExplorerPage(): React.ReactElement {
                             <Typography noWrap textAlign='left' variant='B-2'>
                               {dapp.label}
                             </Typography>
-                            <Typography color={isDark ? '#BEAAD8' : '#7A68A4'} textAlign='left' variant='B-4'>
+                            <Typography
+                              color={isDark ? '#BEAAD8' : '#7A68A4'}
+                              sx={{ WebkitBoxOrient: 'vertical', WebkitLineClamp: 2, display: '-webkit-box', overflow: 'hidden', wordBreak: 'break-word' }}
+                              textAlign='left'
+                              variant='B-4'
+                            >
                               {t(dapp.description)}
                             </Typography>
                           </Stack>
