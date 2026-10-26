@@ -1,152 +1,22 @@
 // Copyright 2019-2026 @polkadot/extension-polkagate authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { chainsHydrationSVG, chainsPolkadotCircleSVG, chainsSnowbridgePNG } from '@polkagate/apps-config/ui/logos/chains';
-import { externalKodadotSVG, externalSubscanPNG, externalSubsquareSVG } from '@polkagate/apps-config/ui/logos/external';
 import { Avatar, Chip, Grid, Link, Stack, Typography } from '@mui/material';
-import { ArrowSwapHorizontal, Category, Code, Convertshape2, Diamonds, Judge, Record, SearchNormal1, Shield } from 'iconsax-react';
+import { Category, Record } from 'iconsax-react';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { SearchField } from '../../components';
-import { useIsDark, useTranslation } from '../../hooks';
+import { CATEGORY_ICONS, useDapps, useIsDark, useTranslation } from '../../hooks';
 import { VelvetBox } from '../../style';
 import HomeLayout from '../components/layout';
-
-interface DappEntry {
-  name: string;
-  label: string;
-  url: string;
-  logo: string;
-  category: string;
-  description: string;
-}
-
-const DAPPS: DappEntry[] = [
-  {
-    category: 'Governance',
-    description: 'On-chain governance discussions and voting',
-    label: 'Subsquare',
-    logo: externalSubsquareSVG as string,
-    name: 'subsquare',
-    url: 'https://polkadot.subsquare.io/'
-  },
-  {
-    category: 'DeFi',
-    description: 'Cross-chain liquidity and swaps on Polkadot',
-    label: 'Hydration',
-    logo: chainsHydrationSVG as string,
-    name: 'hydration',
-    url: 'https://app.hydration.net/'
-  },
-  {
-    category: 'Bridge',
-    description: 'Trustless Ethereum ↔ Polkadot bridge',
-    label: 'Snowbridge',
-    logo: chainsSnowbridgePNG as string,
-    name: 'snowbridge',
-    url: 'https://app.snowbridge.network/'
-  },
-  {
-    category: 'Bridge',
-    description: 'Interoperability protocol for cross-chain messaging',
-    label: 'Hyperbridge',
-    logo: 'https://hyperbridge.network/favicon.ico',
-    name: 'hyperbridge',
-    url: 'https://hyperbridge.network/'
-  },
-  {
-    category: 'NFTs',
-    description: 'NFT marketplace built on Polkadot & Kusama',
-    label: 'KodaDot',
-    logo: externalKodadotSVG as string,
-    name: 'kodadot',
-    url: 'https://kodadot.xyz/'
-  },
-  {
-    category: 'NFTs',
-    description: 'Advanced NFT infrastructure and marketplace',
-    label: 'Unique Network',
-    logo: 'https://unique.network/favicon.ico',
-    name: 'unique',
-    url: 'https://unique.network/'
-  },
-  {
-    category: 'Explorer',
-    description: 'Multi-chain block explorer and analytics',
-    label: 'Subscan',
-    logo: externalSubscanPNG as string,
-    name: 'subscan',
-    url: 'https://polkadot.subscan.io/'
-  },
-  {
-    category: 'Developer',
-    description: 'Developer interface for Polkadot & Substrate chains',
-    label: 'Polkadot.js Apps',
-    logo: chainsPolkadotCircleSVG as string,
-    name: 'polkadotjs',
-    url: 'https://polkadot.js.org/apps/'
-  },
-  {
-    category: 'Security',
-    description: 'A recovery service for compromised wallets on Polkadot-based chains, helping recover assets that remain technically recoverable.',
-    label: 'PAPI Rescue',
-    logo: 'https://www.papirescue.now/apple-touch-icon.png',
-    name: 'papirescue',
-    url: 'https://www.papirescue.now/'
-  },
-  {
-    category: 'DeFi',
-    description: 'Staking and portfolio management for the Bittensor (TAO) network',
-    label: 'Tao App',
-    logo: 'https://coin-images.coingecko.com/coins/images/28452/small/ARUsPeNQ_400x400.jpeg?1696527447',
-    name: 'taoapp',
-    url: 'https://www.tao.app/'
-  },
-  {
-    category: 'Developer',
-    description: 'Get test tokens for Polkadot, Kusama, and their testnets',
-    label: 'Polkadot Faucet',
-    logo: 'https://faucet.polkadot.io/favicon.png',
-    name: 'polkadotfaucet',
-    url: 'https://faucet.polkadot.io/'
-  },
-  {
-    category: 'Governance',
-    description: 'Bounties management and tracking for Polkadot & Kusama governance',
-    label: 'PAPI Bounties',
-    logo: 'https://bounties.usepapi.app/papi_logo-dark.svg',
-    name: 'papibounties',
-    url: 'https://bounties.usepapi.app/'
-  },
-  {
-    category: 'DeFi',
-    description: 'AMM-based DeFi protocol on Kusama for swaps and liquidity provision',
-    label: 'Basilisk',
-    logo: 'https://app.basilisk.cloud/favicon.ico',
-    name: 'basilisk',
-    url: 'https://app.basilisk.cloud/'
-  }
-];
-
-const ALL_CATEGORIES = ['All', ...Array.from(new Set(DAPPS.map((d) => d.category)))];
-
-const CATEGORY_ICONS: Record<string, React.ReactElement<{ color?: string }>> = {
-  'All': <Category size='13' variant='Bulk' />,
-  'Governance': <Judge size='13' variant='Bulk' />,
-  'DeFi': <Convertshape2 size='13' variant='Bulk' />,
-  'Bridge': <ArrowSwapHorizontal size='13' variant='Bulk' />,
-  'NFTs': <Diamonds size='13' variant='Bulk' />,
-  'Explorer': <SearchNormal1 size='13' variant='Bulk' />,
-  'Developer': <Code size='13' variant='Bulk' />,
-  'Security': <Shield size='13' variant='Bulk' />
-};
 
 function ExplorerFullScreen(): React.ReactElement {
   const { t } = useTranslation();
   const isDark = useIsDark();
+  const { ALL_CATEGORIES, DAPPS, tAll } = useDapps();
 
   const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState('All');
+  const [activeCategory, setActiveCategory] = useState(tAll);
 
   const onSearch = useCallback((val: string) => {
     setSearch(val.trim().toLowerCase());
@@ -154,12 +24,12 @@ function ExplorerFullScreen(): React.ReactElement {
 
   const filtered = useMemo(() => {
     return DAPPS.filter((d) => {
-      const matchesCategory = activeCategory === 'All' || d.category === activeCategory;
-      const matchesSearch = !search || d.label.toLowerCase().includes(search) || t(d.description).toLowerCase().includes(search) || t(d.category).toLowerCase().includes(search);
+      const matchesCategory = activeCategory === tAll || d.category === activeCategory;
+      const matchesSearch = !search || d.label.toLowerCase().includes(search) || d.description.toLowerCase().includes(search) || d.category.toLowerCase().includes(search);
 
       return matchesCategory && matchesSearch;
     });
-  }, [search, activeCategory, t]);
+  }, [DAPPS, search, activeCategory, tAll]);
 
   return (
     <HomeLayout childrenStyle={{ paddingLeft: '25px', position: 'relative', zIndex: 1 }}>
@@ -184,7 +54,7 @@ function ExplorerFullScreen(): React.ReactElement {
               color: activeCategory === cat ? '#FFF' : isDark ? '#C4ADE8' : '#6D5ACD'
             })}
             key={cat}
-            label={t(cat)}
+            label={cat}
             onClick={() => setActiveCategory(cat)}
             size='small'
             sx={{
@@ -246,12 +116,12 @@ function ExplorerFullScreen(): React.ReactElement {
                         {dapp.label}
                       </Typography>
                       <Typography color={isDark ? '#BEAAD8' : '#7A68A4'} textAlign='left' variant='B-4'>
-                        {t(dapp.description)}
+                        {dapp.description}
                       </Typography>
                     </Stack>
                   </Stack>
                   <Chip
-                    label={t(dapp.category)}
+                    label={dapp.category}
                     size='small'
                     sx={{
                       bgcolor: isDark ? '#2A1F4A' : '#EEE9FF',
